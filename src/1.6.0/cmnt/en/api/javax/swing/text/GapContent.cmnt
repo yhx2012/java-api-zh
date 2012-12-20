@@ -1,0 +1,217 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.GapContent extends javax.swing.text.GapVector implements javax.swing.text.AbstractDocument.Content, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An implementation of the AbstractDocument.Content interface 
+ implemented using a gapped buffer similar to that used by emacs.
+ The underlying storage is a array of unicode characters with
+ a gap somewhere.  The gap is moved to the location of changes
+ to take advantage of common behavior where most changes are
+ in the same location.  Changes that occur at a gap boundary are
+ generally cheap and moving the gap is generally cheaper than
+ moving the array contents directly to accomodate the change.
+ <p>
+ The positions tracking change are also generally cheap to
+ maintain.  The Position implementations (marks) store the array
+ index and can easily calculate the sequential position from
+ the current gap location.  Changes only require update to the
+ the marks between the old and new gap boundaries when the gap
+ is moved, so generally updating the marks is pretty cheap.
+ The marks are stored sorted so they can be located quickly
+ with a binary search.  This increases the cost of adding a
+ mark, and decreases the cost of keeping the mark updated.
+
+ @author  Timothy Prinzing
+ @version 1.21 12/03/01
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.GapContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new GapContent object.  Initial size defaults to 10.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.GapContent(int initialLength)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new GapContent object, with the initial
+ size specified.  The initial size will not be allowed
+ to go below 2, to give room for the implied break and
+ the gap.
+
+ @param initialLength the initial size
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object javax.swing.text.GapContent.allocateArray(int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allocate an array to store items of the type
+ appropriate (which is determined by the subclass).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.GapContent.getArrayLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Get the length of the allocated array.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.GapContent.length()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the length of the content.
+
+ @return the length >= 1
+ @see AbstractDocument.Content#length
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.UndoableEdit javax.swing.text.GapContent.insertString(int where, String str) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Inserts a string into the content.
+
+ @param where the starting position >= 0, < length()
+ @param str the non-null string to insert
+ @return an UndoableEdit object for undoing
+ @exception BadLocationException if the specified position is invalid
+ @see AbstractDocument.Content#insertString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.UndoableEdit javax.swing.text.GapContent.remove(int where, int nitems) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes part of the content.
+
+ @param where the starting position >= 0, where + nitems < length()
+ @param nitems the number of characters to remove >= 0
+ @return an UndoableEdit object for undoing
+ @exception BadLocationException if the specified position is invalid
+ @see AbstractDocument.Content#remove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.GapContent.getString(int where, int len) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves a portion of the content.
+
+ @param where the starting position >= 0
+ @param len the length to retrieve >= 0
+ @return a string representing the content
+ @exception BadLocationException if the specified position is invalid
+ @see AbstractDocument.Content#getString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.GapContent.getChars(int where, int len, Segment chars) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves a portion of the content.  If the desired content spans
+ the gap, we copy the content.  If the desired content does not
+ span the gap, the actual store is returned to avoid the copy since
+ it is contiguous.
+
+ @param where the starting position >= 0, where + len <= length()
+ @param len the number of characters to retrieve >= 0
+ @param chars the Segment object to return the characters in
+ @exception BadLocationException if the specified position is invalid
+ @see AbstractDocument.Content#getChars
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Position javax.swing.text.GapContent.createPosition(int offset) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a position within the content that will
+ track change as the content is mutated.
+
+ @param offset the offset to track >= 0
+ @return the position
+ @exception BadLocationException if the specified position is invalid
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftEnd(int newSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Make the gap bigger, moving any necessary data and updating 
+ the appropriate marks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGap(int newGapStart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Move the start of the gap to a new location,
+ without changing the size of the gap.  This 
+ moves the data in the array and updates the
+ marks accordingly.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.resetMarksAtZero()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Resets all the marks that have an offset of 0 to have an index of
+ zero as well.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGapStartDown(int newGapStart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adjust the gap end downward.  This doesn't move
+ any data, but it does update any marks affected 
+ by the boundary change.  All marks from the old
+ gap start down to the new gap start are squeezed
+ to the end of the gap (their location has been
+ removed).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGapEndUp(int newGapEnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adjust the gap end upward.  This doesn't move
+ any data, but it does update any marks affected 
+ by the boundary change. All marks from the old
+ gap end up to the new gap end are squeezed
+ to the end of the gap (their location has been
+ removed).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector javax.swing.text.GapContent.getPositionsInRange(java.util.Vector v, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a Vector containing instances of UndoPosRef for the
+ Positions in the range
+ <code>offset</code> to <code>offset</code> + <code>length</code>.
+ If <code>v</code> is not null the matching Positions are placed in
+ there. The vector with the resulting Positions are returned.
+
+ @param v the Vector to use, with a new one created on null
+ @param offset the starting offset >= 0
+ @param length the length >= 0
+ @return the set of instances
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.updateUndoPositions(java.util.Vector positions, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Resets the location for all the UndoPosRef instances
+ in <code>positions</code>.
+ <p>
+ This is meant for internal usage, and is generally not of interest
+ to subclasses.
+
+ @param positions the UndoPosRef instances to reset
+
+<!-- END DATA -->

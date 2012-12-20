@@ -1,0 +1,71 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.FilteredRowSet extends javax.sql.rowset.WebRowSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有标准 <code>FilteredRowSet</code> 实现都必须实现的标准接口。<code>FilteredRowSetImpl</code> 类提供了可在需要时扩展的参考实现。另外，供应商可通过实现此接口来随意实现其自己的版本。
+
+<h3>1.0 背景</h3>
+
+有时 <code>RowSet</code> 对象需要对其内容进行某种程度的过滤。一种可能的解决方案是为所有标准的 <code>RowSet</code> 实现提供一种查询语言；但是这对诸如非连接 <code>RowSet</code> 对象之类的轻量级组件而言是一种不切实际的方法。<code>FilteredRowSet</code> 接口寻求在不提供重量级查询语言和这种查询语言所需处理的情况下解决这一需求问题。
+ <p>
+JDBC <code>FilteredRowSet</code> 标准实现可实现 <code>RowSet</code> 接口并扩展 <code>CachedRowSet</code><sup><font size=-2>TM</font></sup> 类。<code>CachedRowSet</code> 类提供了一组受保护的光标操纵方法，<code>FilteredRowSet</code> 实现可重写这些方法将来提供过滤支持。
+
+<h3>2.0 Predicate 共享</h3>
+
+如果使用父接口中继承的 <code>createShared</code> 方法共享了 <code>FilteredRowSet</code> 实现，则应所有 <code>FilteredRowSet</code> 实例副本应共享 <code>Predicate</code> 并不做任何修改。 
+
+<h3>3.0 使用</h3>
+ <p>
+通过实现 <code>Predicate</code>（请参阅 <a href="Predicate.html">Predicate</a> 类 JavaDoc 中的示例），便可以按下述方式使用 <code>FilteredRowSet</code>。
+ <P>
+ <code>
+ <pre>
+     FilteredRowSet frs = new FilteredRowSetImpl();
+     frs.populate(rs);
+ 
+     Range name = new Range(&quot;Alpha&quot;, &quot;Bravo&quot;, &quot;columnName&quot;);
+     frs.setFilter(name);
+ 
+     frs.next() // only names from &quot;Alpha&quot; to &quot;Bravo&quot; will be returned
+ </pre>
+</code> 在上面的示例中，我们初始化了一个 <code>Range</code> 对象，它实现了 <code>Predicate</code> 接口。此对象表示以下约束条件：从此 <code>FilteredRowSet</code> 对象输出或修改的所有行必须在列 'columnName' 中，在值 'Alpha' 和 'Bravo' 之间（包括这两个值）。如果对不包含过滤器范围内的数据的 <code>FilteredRowSet</code> 对象应用过滤器，则不返回任何行。 
+ <p>
+此框架允许多个类实现 predicate，从而能以组合方式使用其来达到所需的过滤结果，无需进行查询语言处理。
+ <p>
+<h3>4.0 更新 <code>FilteredRowSet</code> 对象</h3>
+在 <code>FilteredRowSet</code> 对象上设置的 predicate 对 <code>RowSet</code> 对象中的所有行应用了一个标准，用来管理 <code>RowSet</code> 对象中的一个行子集。此标准控制可见的行子集，定义可以被修改、删除或插入的列。
+ <p>
+因此，必须将 <code>FilteredRowSet</code> 对象上设置的 predicate 视为双向的，将设置的标准视为 <code>FilteredRowSet</code> 对象的所有视图和更新的控制机制。试图更新违反该标准的 <code>FilteredRowSet</code> 将导致抛出 <code>SQLException</code> 对象。
+ <p> 
+可在任何时间向 <code>FilteredRowSet</code> 实例应用新的 <code>Predicate</code> 对象来修改 <code>FilteredRowSet</code> 范围标准。如果没有检测到对 <code>FilteredRowSet</code> 对象的任何附加引用，则修改范围标准是可能的。新的过滤器对 <code>FilteredRowSet</code> 对象内所执行的标准会立即产生影响，所有后续视图和更新都将受到类似执行的影响。
+ <p>
+<h3>5.0 过滤器外部各行的行为</h3>
+在移除过滤器或应用新的过滤器之前，不能修改那些位于 <code>FilteredRowSet</code> 对象上设置的过滤器范围外的各行。
+ <p> 
+此外，只有位于过滤器范围内的各行才与数据源同步。
+
+@author Jonathan Bruce
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.FilteredRowSet.setFilter(Predicate p) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>Predicate</code> 对象应用到此 <code>FilteredRowSet</code> 对象。过滤器同时控制入境 (inbound) 视图和出境 (outbound) 视图，限制哪些行是可见的，哪些行是可以操作的。
+ <p>
+可以在任何时间设置新的 <code>Predicate</code> 对象。这样可以更改 <code>RowSet</code> 对象数据上的约束条件。另外，在运行时修改过滤器会出现问题，所以多个组件可以在一个 <code>FilteredRowSet</code> 对象上进行操作。当 <code>FilteredRowSet</code> 对象的底层 <code>Predicate</code> 对象更改时，应用程序开发人员必须负责管理对 FilteredRowSet 对象的多重处理。
+
+@param p <code>Predicate</code> 对象，它定义了此 <code>FilteredRowSet</code> 对象的过滤器。设置 <b>null</b> 值将清除 predicate，允许所有行成为可见行。
+ 
+@throws SQLException 如果在设置 <code>Predicate</code> 对象时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.Predicate javax.sql.rowset.FilteredRowSet.getFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>FilteredRowSet</code> 对象的活动过滤器。
+
+@return 此 <code>FilteredRowSet</code> 对象的 <code>Predicate</code>；如果没有设置过滤器，则返回 <code>null</code>。
+
+<!-- END DATA -->

@@ -1,0 +1,59 @@
+<!-- BEGIN KEY -->
+javax.management.openmbean
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>提供开放数据类型和 Open MBean 描述符类。<em>Open MBean</em> 是一种 MBean，其中的属性和操作参数的类型和返回值是使用预定义的 Java 类的小集合构建的。Open MBeans 通过远程管理程序简化了操作，无需访问特定于应用程序的类型（包括非 Java 程序）。</p>
+
+<p>每个 MBean 都有一个 {@link javax.management.MBeanInfo MBeanInfo}，它包含关于 MBean 本身、其属性、操作、构造方法和通知的信息。在 Open MBean 中，此 <code>MBeanInfo</code> 实现 {@link javax.management.openmbean.OpenMBeanInfo OpenMBeanInfo} 接口，通常通过作为 {@link javax.management.openmbean.OpenMBeanInfoSupport OpenMBeanInfoSupport} 的实例来实现。</p>
+
+<p>由 {@link javax.management.MBeanInfo#getAttributes() MBeanInfo.getAttributes} 为 Open MBean 返回的属性信息是实现 {@link javax.management.openmbean.OpenMBeanAttributeInfo OpenMBeanAttributeInfo} 的对象的数组，通常为 {@link javax.management.openmbean.OpenMBeanAttributeInfoSupport OpenMBeanAttributeInfoSupport} 的实例。除关于属性的一般信息外，<code>OpenMBeanAttributeInfo</code> 还指定属性的 {@link javax.management.openmbean.OpenType OpenType}。可能的 <code>OpenType</code> 值是预定义的，这可以确保远程管理人员能够理解它们。</p>
+
+<p>类似的注释可应用于操作和构造方法的参数类型，以及操作的返回类型。</p>
+
+<p>{@link javax.management.MBeanAttributeInfo#getType() getType()} 返回的属性的 Java 语言类型和 {@link javax.management.openmbean.OpenMBeanAttributeInfo#getOpenType() getOpenType()} 返回的 <code>OpenType</code> 之间存在差别。例如，如果 Java 语言类型为 <code>java.lang.String</code>，则 <code>OpenType</code> 将为 {@link javax.management.openmbean.SimpleType#STRING SimpleType.String}。如果 Java 语言类型为 {@link javax.management.openmbean.CompositeData}，则 <code>OpenType</code> 将为 {@link javax.management.openmbean.CompositeType CompositeType}，它描述属性的 <code>CompositeData</code> 实例中的项。</p>
+
+<h2><a name="constraints">默认值和约束条件</a></h2>
+
+    <p>在 Open MBean 中，属性和参数可以在 {@code OpenMBeanAttributeInfo} 或 {@code OpenMBeanParameterInfo} 中拥有默认值和/或与之相关的约束条件。有两种指定这些约束条件的方法。一种是将值直接指定为 {@code OpenMBeanAttributeInfoSupport} 或 {@code OpenMBeanParameterInfoSupport} 的构造方法的一个参数，例如，{@link javax.management.openmbean.OpenMBeanParameterInfoSupport#OpenMBeanParameterInfoSupport( String, String, OpenType, Object, Object[])}；另一种是在作为构造方法的参数给定的 {@link javax.management.Descriptor Descriptor} 中指定值。</p>
+
+    <p>当使用 {@code Descriptor} 时，相关的字段有：</p>
+
+    <ul>
+
+      <li>{@code defaultValue} 定义 {@link javax.management.openmbean.OpenMBeanParameterInfo#getDefaultValue() getDefaultValue()} 返回的值。
+
+      <li>{@code minValue} 定义 {@link javax.management.openmbean.OpenMBeanParameterInfo#getMinValue() getMinValue()} 返回的值。
+
+      <li>{@code maxValue} 定义 {@link javax.management.openmbean.OpenMBeanParameterInfo#getMaxValue() getMaxValue()} 返回的值。
+
+      <li>{@code legalValues} 定义 {@link javax.management.openmbean.OpenMBeanParameterInfo#getLegalValues() getLegalValues()} 返回的值。
+
+    </ul>
+
+    <p>对于 {@code defaultValue}、{@code minValue} 和 {@code maxValue}，关联值必须是对应于 {@code openType} 的 Java 类型，或者是可转换为该类型的字符串。转换使用的是静态方法 {@code valueOf(String)}（如果有）；否则使用带单个 {@code String} 参数的构造方法（如果有这样的构造方法）；或者转换将失败。</p>
+
+    <p>对于 {@code legalValues}，关联值必须是一个数组或 {@code Set}，并且数组或 set 的元素必须能够根据对 {@code defaultValue} 等的描述进行转换。</p>
+
+    <p>对于这些字段必须满足以下约束条件：</p>
+
+    <ul>
+      <li>如上所述，值必须是恰当类型，或者是可以转换为恰当类型的字符串；
+
+      <li>如果存在 {@code legalValues}，则无须存在 {@code minValue} 和 {@code maxValue}；
+
+      <li>如果 {@code defaultValue} 存在，则当 {@code legalValues}、{@code minValue} 或 {@code maxValue} 也存在时 {@code defaultValue} 必须满足它们所定义的约束条件。
+
+      <li>如果 {@code minValue} 和 {@code maxValue} 都存在，则 {@code minValue} 不得大于 {@code maxValue}。
+    </ul>
+
+@see <a href="{@docRoot}/../technotes/guides/jmx/">
+      Java SE 6 Platform documentation on JMX technology</a>，
+    特别是 
+    <a href="{@docRoot}/../technotes/guides/jmx/JMX_1_4_specification.pdf">
+      JMX Specification, version 1.4</a>
+
+@since 1.5
+@since.unbundled JMX 1.1
+
+<!-- END DATA -->

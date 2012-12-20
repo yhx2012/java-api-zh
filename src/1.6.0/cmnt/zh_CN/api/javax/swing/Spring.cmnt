@@ -1,0 +1,234 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.Spring extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该 <code>Spring</code> 类的实例将存储以下三个表示其行为特征的属性：<em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值。根据一系列规则定义其第四个 <em>value</em> 属性时可能涉及其中每一个属性。
+  <p>
+该 <code>Spring</code> 类的实例就像从其首选值进行压缩或伸展的 spring 一样，显示为一个提供回复力的机械弹簧。此回复力被建模为从首选值开始的距离的线性函数，但有两个不同的常量 - 一个是压缩力常量，一个是张力常量。这些常量由 spring 的最小值和最大值指定，这样处于最小值的 spring 产生一个与其处于最大值时创建的力相等且相对的力。因此，<em>preferred</em> 和 <em>minimum</em> 值之间的区别表示使用该值压缩 spring 的容易性，其 <em>maximum</em> 和 <em>preferred</em> 值之间的区别指示使用该值扩展 <code>Spring</code> 的容易性。有关详细信息，请参阅 {@link #sum} 方法。
+
+  <p>
+通过在 <code>Spring</code> 上定义简单的算术运算，可以将 <code>Spring</code> 集合的行为减少到普通（非复合）<code>Spring</code> 的行为。我们在 <code>Spring</code> 上定义 &quot;+&quot;、&quot;-&quot;、<em>max</em> 和 <em>min</em> 运算符，以便每种情况下的结果都是一个 <code>Spring</code>，其特征是将一个有用的数学关系用于其组成的 spring。
+
+  <p>
+一个 <code>Spring</code> 可以视为一对具有以下单个公共点的区间：首选值。以下规则定义一些可以应用于区间（<code>[a, b]</code> 指从 <code>a</code> 到 <code>b</code> 的区间，其中 <code>a &lt;= b</code>）的算术运算符。
+  <p>
+  <pre>
+          [a1, b1] + [a2, b2] = [a1 + a2, b1 + b2]
+
+                      -[a, b] = [-b, -a]
+
+      max([a1, b1], [a2, b2]) = [max(a1, a2), max(b1, b2)]
+  </pre>
+  <p>
+  
+如果我们将 <code>Spring</code> 表示为 <code>[a, b, c]</code>（其中 <code>a &lt;= b &lt;= c</code>），则我们可以在 <code>Spring</code> 上定义以下相同的算术运算符：
+  <p>
+  <pre>
+          [a1, b1, c1] + [a2, b2, c2] = [a1 + a2, b1 + b2, c1 + c2]
+
+                           -[a, b, c] = [-c, -b, -a]
+
+      max([a1, b1, c1], [a2, b2, c2]) = [max(a1, a2), max(b1, b2), max(c1, c2)]
+  </pre>
+  <p>
+通过这些区间和 <code>Spring</code>，我们可以根据以下相反数定义 &quot;-&quot; 和 <em>min</em>：
+  <p>
+  <pre>
+      X - Y = X + (-Y)
+
+      min(X, Y) = -max(-X, -Y)
+  </pre>
+  <p>
+对于此类中包含算术运算符的静态方法，我们不会像在调用此静态方法时对该方法参数的属性值进行快照一样实际执行相关的操作。相反，该静态方法创建一个新 <code>Spring</code> 实例，该实例包含对该方法参数的引用，以便新 spring 的特征跟踪原来生成它的 spring 的潜在不断变化的特征。这有点类似于函数性语言中 <em>lazy value</em> 的概念。
+ <p>
+如果您正在实现一个 <code>SpringLayout</code>，则可以在 <em>The Java Tutorial</em> 中的 <a  href="http://java.sun.com/docs/books/tutorial/uiswing/layout/spring.html">How to Use SpringLayout</a> 一节找到更详细的信息和示例。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see SpringLayout
+@see SpringLayout.Constraints
+
+@version 1.9 12/19/03
+@author 	Philip Milne
+@since       1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.Spring.UNSET
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个表示属性值尚未计算的整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.Spring()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由工厂方法创建 <code>Spring</code> 时使用。
+ 
+@see #constant(int)
+@see #constant(int, int, int)
+@see #max
+@see #minus
+@see #sum
+@see SpringLayout.Constraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.Spring.getMinimumValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Spring</code> 的 <em>minimum</em> 值。
+
+@return 此 <code>Spring</code> 的 <code>minimumValue</code> 属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.Spring.getPreferredValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Spring</code> 的 <em>preferred</em> 值。
+
+@return 此 <code>Spring</code> 的 <code>preferredValue</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.Spring.getMaximumValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Spring</code> 的 <em>maximum</em> 值。
+
+@return 此 <code>Spring</code> 的 <code>maximumValue</code> 属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.Spring.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Spring</code> 的当前 <em>value</em>。
+
+@return 此 <code>Spring</code> 的 <code>value</code> 属性
+
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.Spring.setValue(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Spring</code> 的当前 <em>value</em> 设置为 <code>value</code>。
+
+@param   value 该 <code>value</code> 属性的新设置值
+
+@see #getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.constant(int pref)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 strut -- 一个其 <em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值每个都有值 <code>pref</code> 的 spring。
+
+@param  pref 该新 spring 的 <em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值
+@return 一个其 <em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值每个都有值 <code>pref</code> 的 spring
+
+@see Spring
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.constant(int min, int pref, int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个其 <em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值具有以下值的 spring：分别是 <code>min</code>、<code>pref</code> 和 <code>max</code>。
+
+@param  min 新 spring 的 <em>minimum</em> 值
+@param  pref 新 spring 的 <em>preferred</em> 值
+@param  max 新 spring 的 <em>maximum</em> 值
+@return 一个其 <em>minimum</em>、<em>preferred</em> 和 <em>maximum</em> 值具有以下值的 spring：分别是 <code>min</code>、<code>pref</code> 和 <code>max</code>
+
+@see Spring
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.minus(Spring s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>-s</code>：一个以与 <code>s</code> 相反方向运行的 spring。
+
+@return <code>-s</code>：一个以与 <code>s</code> 相反方向运行的 spring
+
+@see Spring
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.sum(Spring s1, Spring s2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>s1+s2</code>：一个连续表示 <code>s1</code> 和 <code>s2</code> 的 spring。从总数上说，<code>s3</code> 等于两个 spring <code>s1</code> 和 <code>s2</code>，<code>s1</code>、<code>s2</code> 和 <code>s3</code> 的 <em>strains</em> 在同一个级别（它们的整数 <em>value</em> 暗示的精度内）上进行维护。压缩形式下的 spring 的 strain 为：
+ <pre>
+         value - pref
+         ------------
+          pref - min
+ </pre>
+伸展形式下的 spring 的 strain 为：
+ <pre>
+         value - pref
+         ------------
+          max - pref
+ </pre>
+在对总共 spring（也即 <code>s3</code>）调用 <code>setValue</code> 时，使用上述某个公式计算 <code>s3</code> 中的 strain。一旦知道了总共的 strain，就能设置 <code>s1</code> 和 <code>s2</code> 的 <em>value</em>，以使它们的 strain 与总共的 strain 相等。对这些公式进行评诂，以便将舍入错误考虑在内并确保 <code>s1</code> 和 <code>s2</code> 的 <em>value</em> 值的总和正好与 <code>s3</code> 的 <em>value</em> 相等。
+
+@return <code>s1+s2</code>：一个连续表示 <code>s1</code> 和 <code>s2</code> 的 spring
+
+@see Spring
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.max(Spring s1, Spring s2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>max(s1, s2)</code>：一个其值始终大于（或等于）<code>s1</code> 加 <code>s2</code> 的值的 spring。
+
+@return <code>max(s1, s2)</code>：一个其值始终大于（或等于）<code>s1</code> 加 <code>s2</code> 的值的 spring
+@see Spring
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.scale(Spring s, float factor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 spring，其 <em>minimum</em>、<em>preferred</em>、<em>maximum</em> 和 <em>value</em> 属性都是参数 spring <code>s</code> 的属性的倍数。当 <code>factor</code> 为负（根据间隔算法规则）时，Minimum 和 maximum 属性可以交换。
+ <p>
+例如，当因子为 0.5f 时，该结果表示此输入的&ldquo;中点&rdquo; - 一种对居中容器中组件很有用的操作。
+
+@param s 要缩放的 spring
+@param factor 要缩放的量。
+@return  一个 spring，其属性为输入 spring <code>s</code> 乘以 <code>factor</code> 得到的值
+@throws NullPointerException 如果 <code>s</code> 为 null
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.width(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 spring，其 <em>minimum</em>、<em>preferred</em>、<em>maximum</em> 和 <em>value</em> 属性由所提供组件的 <em>minimumSize</em>、<em>preferredSize</em>、<em>maximumSize</em> 和 <em>size</em> 属性的宽度定义。返回的 spring 是一个&ldquo;包装器&rdquo;实现，其方法调用所提供组件的适当大小方法。因此，返回的 spring 的最小、首选、最大和值属性将报告组件中适当属性的当前状态，并在它们发生更改时进行跟踪。
+
+@param c 用于计算大小的组件
+@return  一个 spring，其属性由该组件大小方法的水平组件定义。
+@throws NullPointerException 如果 <code>c</code> 为 null
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Spring javax.swing.Spring.height(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 spring，其 <em>minimum</em>、<em>preferred</em>、<em>maximum</em> 和 <em>value</em> 属性由所提供组件的 <em>minimumSize</em>、<em>preferredSize</em>、<em>maximumSize</em> 和 <em>size</em> 属性的高度定义。返回的 spring 是一个&ldquo;包装器&rdquo;实现，其方法调用所提供组件的适当大小方法。因此，返回的 spring 的最小、首选、最大和值属性将报告组件中适当属性的当前状态，并在它们发生更改时进行跟踪。
+
+@param c 用于计算大小的组件
+@return  一个 spring，其属性由该组件大小方法的垂直组件定义。
+@throws NullPointerException 如果 <code>c</code> 为 null
+@since 1.5
+
+<!-- END DATA -->

@@ -1,0 +1,57 @@
+<!-- BEGIN KEY -->
+java.beans
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+包含与开发 <em>beans</em> 有关的类，即基于 JavaBeans<sup><font size=-2>TM</font></sup> 架构的组件。少数类可由 bean 使用，也能以应用程序的形式运行。例如，event 类由激发属性和禁止更改事件的 bean 使用（参见 {@link java.beans.PropertyChangeEvent}）。不过，此包中的大多数类由 bean 编辑器（即自定义 bean 并将其汇集起来以创建应用程序的开发环境）使用。特别要指出的是，这些类帮助 bean 编辑器创建用户可以用来自定义 bean 的用户界面。例如，bean 可能包含 bean 编辑器也许不知道如何处理的特殊类型的属性。通过使用 <code>PropertyEditor</code> 接口，bean 开发人员可以为此特殊类型提供一个编辑器。
+
+<p>
+为了最大限度地减少 bean 使用的资源，只在要编辑 bean 时加载 bean 编辑器使用的类。当 bean 以应用程序的形式运行时，不需要这些类，所以不用加载它们。此信息在称为 bean-info 的类中（参见 {@link java.beans.BeanInfo}）。
+
+<p>
+除非显式声明，否则 null 值或空 String 对于此包中的方法是无效参数。如果使用这些参数，可能将引发异常。
+
+<h2>长期持久性</h2>
+
+从 v1.4 开始，<code>java.beans</code> 包提供了对<em>长期持久性</em> 的支持，即以其属性值的文本表示形式读取或写入 bean。这些属性值被视为 bean，它们被递归地读取或写入，以捕获其公共可用状态。此方法适用于长期存储，因为它只依赖于公共 API 而不是很可能发生更改的私有实现。
+
+<blockquote>
+<hr>
+<b>注：</b> 持久性方案无法自动实例化自定义内部类，比如用于事件处理程序。通过使用 {@link java.beans.EventHandler} 类而不是自定义事件处理程序的内部类，可以避免此问题。
+<hr>
+</blockquote>
+
+<p>
+
+可分别使用 {@link java.beans.XMLDecoder} 和 {@link java.beans.XMLEncoder} 类读取和写出 XML 格式的 bean。持久性方案的一个显著特性是，读入 bean 不需要该 bean 的特定信息。
+
+<p>
+另一方面，写出 bean 有时需要 bean 类型的特定信息。如果可以只使用无参数构造方法以及公共获取方法和设置方法表达 bean 的状态，则无需 bean 的特定信息。否则，bean 需要一个自定义<em>持久委托</em>，即负责写出特殊类型的 bean 的对象。从 <code>java.awt.Component</code> 继承的 JDK 中提供的所有类及其所有属性都将自动拥有持久委托。
+
+<p>
+
+如果需要（或选择）为 bean 提供持久委托，则可以通过使用 {@link java.beans.DefaultPersistenceDelegate} 实例或通过创建自己的 <code>PersistenceDelegate</code> 子类来实现。如果 bean 需要持久委托的唯一原因是因为用户想调用 bean 使用属性值作为参数的构造方法，则可以使用单参数的 <code>DefaultPersistenceDelegate</code> 构造方法创建 bean 的持久委托。否则，用户需要实现自己的持久委托，对此，可能需要以下类：
+
+<dl>
+<dt> {@link java.beans.PersistenceDelegate}
+<dd> 这是一个抽象类，所有持久委托都是从它遗传的。子类应该使用它所知的 bean 类型信息来提供创建 bean 和恢复其状态所需的任何 <code>Statement</code> 和 <code>Expression</code>。
+<dt> {@link java.beans.Statement}
+<dd> 表示某一对象上的单个方法的调用。包括该方法的参数集合。
+<dt> {@link java.beans.Expression}
+<dd> 用于返回一个值的那些方法的 <code>Statement</code> 的子类。
+</dl>
+
+<p>
+一旦创建了一个持久委托，就可以使用 <code>XMLEncoder</code> 的 <code>setPersistenceDelegate</code> 方法注册它。
+
+
+<h2>相关文档</h2>
+
+有关概述、架构和教程文档的信息，请参阅：
+<ul>
+<li><a href="http://java.sun.com/docs/books/tutorial/javabeans/">JavaBeans</a>，<em>The Java Tutorial</em> 的结尾处。
+<li><a href="http://java.sun.com/products/jfc/tsc/articles/persistence2/">Long-Term Persistence</a>，<em>The Swing Connection</em> 中的一篇文章。
+</ul>
+<p>
+
+<!-- END DATA -->

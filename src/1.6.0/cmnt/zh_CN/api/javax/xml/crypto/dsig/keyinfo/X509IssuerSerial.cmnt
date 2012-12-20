@@ -1,0 +1,48 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.keyinfo.X509IssuerSerial extends javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>X509IssuerSerial</code> 元素的表示形式。<code>X509IssuerSerial</code> 对象包含 X.509 发布方标识名 (DN) 和序列号对。XML Schema Definition 的定义如下： 
+
+  <pre>
+   &lt;element name="X509IssuerSerial" type="ds:X509IssuerSerialType"/&gt;
+   &lt;complexType name="X509IssuerSerialType"&gt;
+     &lt;sequence&gt;
+       &lt;element name="X509IssuerName" type="string"/&gt; 
+       &lt;element name="X509SerialNumber" type="integer"/&gt; 
+     &lt;/sequence&gt;  
+   &lt;/complexType&gt;
+ </pre>
+
+通过调用 {@link KeyInfoFactory} 类的 {@link KeyInfoFactory#newX509IssuerSerial newX509IssuerSerial} 方法，并向其传递表示 X.500 DN 和序列号的 <code>String</code> 和 <code>BigInteger</code>，可以创建 <code>X509IssuerSerial</code> 实例。下面是一个示例，该示例根据现有 {@link X509Certificate} 的发布方 DN 和序列号来创建 <code>X509IssuerSerial</code>：
+ <pre>
+KeyInfoFactory factory = KeyInfoFactory.getInstance(&quot;DOM&quot;);
+X509IssuerSerial issuer = factory.newX509IssuerSerial
+   (cert.getIssuerX500Principal().getName(), cert.getSerialNumber());
+ </pre>
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+@see X509Data#getContent
+@see KeyInfoFactory#newX509IssuerSerial(String, BigInteger)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.keyinfo.X509IssuerSerial.getIssuerName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <a href="http://www.ietf.org/rfc/rfc2253.txt">RFC 2253</a> String 格式的此 <code>X509IssuerSerial</code> 的 X.500 标识名。
+
+@return  RFC 2253 String 格式的 X.500 标识名（不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger javax.xml.crypto.dsig.keyinfo.X509IssuerSerial.getSerialNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>X509IssuerSerial</code> 的序列号。
+
+@return 序列号（不能为 <code>null</code>）
+
+<!-- END DATA -->

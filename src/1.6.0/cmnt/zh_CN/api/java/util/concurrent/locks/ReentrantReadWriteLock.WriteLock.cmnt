@@ -1,0 +1,203 @@
+<!-- BEGIN KEY -->
+public static class java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock extends java.lang.Object implements java.util.concurrent.locks.Lock, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link ReentrantReadWriteLock#writeLock} 方法返回的锁。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock(ReentrantReadWriteLock lock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类使用的构造方法
+@param lock 外部锁对象
+
+@throws NullPointerException 如果锁为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.lock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取写入锁。 
+
+<p>如果另一个线程既没有保持读取锁也没有保持写入锁，则获取写入锁并立即返回，并将写入锁保持计数设置为 1。
+
+<p>如果当前线程已经保持写入锁，则保持计数增加 1，该方法立即返回。
+
+<p>如果该锁被另一个线程保持，出于线程调度的目的，将禁用当前线程，并且在获得写入锁之前，该线程将一直处于休眠状态，此时写入锁保持计数设置为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.lockInterruptibly() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取写入锁，除非当前线程被{@linkplain Thread#interrupt 中断}。
+
+<p>如果另一个线程既没有保持读取锁也没有保持写入锁，则获取写入锁并立即返回，并将写入锁保持计数设置为 1。
+
+<p>如果当前线程已经保持此锁，则将保持计数加 1，该方法立即返回。
+
+<p>如果锁被另一个线程保持，则出于线程调度目的，禁用当前线程，并且在发生以下两种情况之一以前，该线程将一直处于休眠状态：
+
+ <ul>
+
+<li>写入锁由当前线程获得；或者
+
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程。
+
+ </ul>
+
+<p>如果当前线程获得写入锁，则将锁保持计数设置为 1。
+
+<p>如果当前线程：
+
+ <ul>
+
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+
+<li>在获取写入锁的同时被{@linkplain Thread#interrupt 中断}。
+
+ </ul>
+
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>在此实现中，因为此方法是一个显式中断点，所以要优先考虑响应中断，而不是响应锁的普通获取或重入获取。
+
+@throws  InterruptedException 如果当前线程是已中断的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.tryLock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅当写入锁在调用期间未被另一个线程保持时获取该锁。
+
+<p>如果另一个线程既没有保持读取锁也没有保持写入锁，则获取写入锁并立即返回 {@code true} 值，并将写入锁保持计数设置为 1。即使已将此锁设置为使用公平排序策略，但是调用 {@code tryLock()} 仍<em>将</em> 立即获取锁（如果有可用的），不管其他线程当前是否正在等待写入锁。在某些情况下，此&ldquo;闯入&rdquo;行为可能很有用，即使它会打破公平性也如此。如果希望遵守此锁的公平设置，则使用 {@link #tryLock(long, TimeUnit) tryLock(0, TimeUnit.SECONDS) }，它几乎是等效的（它也检测中断）。
+
+<p> 如果当前线程已经保持此锁，则将保持计数加 1，该方法将返回 {@code true}。
+
+<p>如果锁被另一个线程保持，则此方法将立即返回 {@code false} 值。
+
+@return 如果锁是自由的并且被当前线程获取，或者当前线程已经保持写入锁，则返回 {@code true}；否则返回 {@code false}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.tryLock(long timeout, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果另一个线程在给定的等待时间内没有保持写入锁，并且当前线程未被{@linkplain Thread#interrupt 中断}，则获取写入锁。
+
+<p>如果另一个线程既没有保持读取锁也没有保持写入锁，则获取写入锁并立即返回 {@code true} 值，并将写入锁保持计数设置为 1。如果为了使用公平的排序策略，已经设置此锁，并且其他线程都在等待写入锁，则<em>不会</em> 获取一个可用的锁。这与 {@link #tryLock()} 方法相反。如果想使用一个允许闯入公平锁的定时 {@code tryLock}，那么可以将定时形式和不定时形式组合在一起：
+
+ <pre>if (lock.tryLock() || lock.tryLock(timeout, unit) ) { ... }
+ </pre>
+
+<p>如果当前线程已经保持此锁，则将保持计数加 1，该方法将返回 {@code true}。
+
+<p>如果锁被另一个线程保持，则出于线程调度目的，禁用当前线程，并且在发生以下三种情况之一以前，该线程将一直处于休眠状态：
+
+ <ul>
+
+<li>写入锁由当前线程获得；或者
+
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+
+<li>已超过指定的等待时间
+
+ </ul>
+
+<p>如果获取了写入锁，则返回 {@code true} 值，并将写入锁保持计数设置为 1。
+
+<p>如果当前线程：
+
+ <ul>
+
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+
+<li>在获取写入锁的同时被{@linkplain Thread#interrupt 中断}。
+
+ </ul> 
+
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>如果超出了指定的等待时间，则返回值为 {@code false}。如果该时间小于等于 0，则此方法根本不会等待。
+
+<p>在此实现中，因为此方法是一个显式中断点，所以要优先考虑响应中断，而不是响应锁的普通获取或重入获取，或者报告所用的等待时间。
+
+@param timeou 等待写入锁的时间
+@param unit timeout 参数的时间单位
+
+@return 如果锁是自由的并且由当前线程获取，或者当前线程已经保持写入锁，则返回 {@code true}；如果在获取该锁之前已经到达等待时间，则返回 {@code false}。
+
+@throws InterruptedException 如果当前线程被中断
+@throws NullPointerException 如果时间单位为 null
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.unlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图释放此锁。  
+
+<p>如果当前线程保持此锁，则将保持计数减 1。如果保持计数现在为 0，则释放该锁。如果当前线程不是此锁的持有者，则抛出 {@link IllegalMonitorStateException}。
+
+@throws IllegalMonitorStateException 如果当前线程没有保持此锁。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.locks.Condition java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.newCondition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个用来与此 {@link Lock} 实例一起使用的 {@link Condition} 实例。 
+<p>在使用内置监视器锁时，返回的 {@link Condition} 实例支持与 {@link Object} 的监视器方法（{@link Object#wait() wait}、{@link Object#notify notify} 和 {@link Object#notifyAll notifyAll}）相同的用法。
+
+ <ul>
+
+<li>如果当调用任何 {@link Condition} 方法时没有保持此写入锁，则抛出 {@link IllegalMonitorStateException}。（因为保持读取锁是独立于写入锁的，所以读取锁将不被检查或受影响。但是，在当前线程已经获取读取锁时，调用一个条件等待方法实质上一直是错误的做法，因为能够解除阻塞该方法的其他线程将无法获取写入锁。）
+
+<li>当调用{@linkplain Condition#await() 等待}条件方法并释放写入锁时，在它们返回之前，会重新获取写入锁，并将锁保持计数恢复到调用该方法时的值。
+
+<li>如果线程在等待时被{@linkplain Thread#interrupt 中断}，则等待将终止，并将抛出 {@link InterruptedException}，清除线程的已中断状态。
+
+<li>等待线程按 FIFO 顺序收到信号。
+
+<li>等待方法返回的线程重新获取锁的顺序与线程最初获取锁的顺序相同，在默认情况下，未指定此顺序，但对于<em>公平</em> 锁，它们更倾向于那些等待时间最长的线程。
+ 
+ </ul>
+
+@return Condition 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此锁及其锁状态的字符串。该状态括在括号中，它包括字符串 {@code "Unlocked"} 或字符串 {@code "Locked by"}，后跟所拥有线程的{@linkplain Thread#getName 名称}。
+
+@return 标识此锁及其锁状态的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.isHeldByCurrentThread()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 查询此写入锁是否由当前线程保持。与 {@link ReentrantReadWriteLock#isWriteLockedByCurrentThread} 效果相同。
+
+ @return 如果当前线程保持此锁，则返回 {@code true}；否则返回 {@code false}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock.getHoldCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询当前线程保持写入锁的数量。对于与解锁操作不匹配的每个锁操作，线程都会为其保持一个锁。与 {@link ReentrantReadWriteLock#getWriteHoldCount} 效果相同。
+
+@return 当前线程保持的锁数量，如果当前线程没有保持此锁，则返回 0
+@since 1.6
+
+<!-- END DATA -->
+
+

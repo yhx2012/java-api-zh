@@ -1,0 +1,269 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.AbstractList extends java.util.AbstractCollection implements java.util.List
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 {@link List} 接口的骨干实现，以最大限度地减少实现“随机访问”数据存储（如数组）支持的该接口所需的工作。对于连续的访问数据（如链表），应优先使用 {@link AbstractSequentialList}，而不是此类。
+
+<p>要实现不可修改的列表，编程人员只需扩展此类，并提供 {@link #get(int)} 和 {@link List#size() size()} 方法的实现。
+
+<p>要实现可修改的列表，编程人员必须另外重写 {@link #set(int, Object) set(int, E)} 方法（否则将抛出 {@code UnsupportedOperationException}）。如果列表为可变大小，则编程人员必须另外重写 {@link #add(int, Object) add(int, E)} 和 {@link #remove(int)} 方法。
+
+<p>按照 {@link Collection} 接口规范中的建议，编程人员通常应该提供一个 void（无参数）和 collection 构造方法。
+
+<p>与其他抽象 collection  实现不同，编程人员<i>不必</i> 提供迭代器实现；迭代器和列表迭代器由此类在以下“随机访问”方法上实现：{@link #get(int)}、{@link #set(int, Object) set(int, E)}、{@link #add(int, Object) add(int, E)} 和 {@link #remove(int)}。
+
+<p>此类中每个非抽象方法的文档详细描述了其实现。如果要实现的 collection 允许更有效的实现，则可以重写所有这些方法。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.52, 06/16/06
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient int java.util.AbstractList.modCount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已<i>从结构上修改</i> 此列表的次数。从结构上修改是指更改列表的大小，或者打乱列表，从而使正在进行的迭代产生错误的结果。
+
+<p>此字段由 {@code iterator} 和 {@code listIterator} 方法返回的迭代器和列表迭代器实现使用。如果意外更改了此字段中的值，则迭代器（或列表迭代器）将抛出 {@code ConcurrentModificationException} 来响应 {@code next}、{@code remove}、{@code previous}、{@code set} 或 {@code add} 操作。在迭代期间面临并发修改时，它提供了<i>快速失败</i> 行为，而不是非确定性行为。
+
+<p><b>子类是否使用此字段是可选的。</b>如果子类希望提供快速失败迭代器（和列表迭代器），则它只需在其 {@code add(int, E)} 和 {@code remove(int)} 方法（以及它所重写的、导致列表结构上修改的任何其他方法）中增加此字段。对 {@code add(int, E)} 或 {@code remove(int)} 的单个调用向此字段添加的数量不得超过 1，否则迭代器（和列表迭代器）将抛出虚假的 {@code ConcurrentModificationExceptions}。如果某个实现不希望提供快速失败迭代器，则可以忽略此字段。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.AbstractList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。（由子类构造方法调用，通常是隐式的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractList.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素添加到此列表的尾部（可选操作）。
+
+<p>支持此操作的列表可能对列表可以添加的元素做出一些限制。具体来说，某些列表将拒绝添加 null 元素，另一些列表将在可以添加的元素类型上施加限制。List 类应该在它们的文档中明确指定可以添加何种元素的所有限制。
+
+ <p>此实现调用 {@code add(size(), e)}。
+
+ <p>注意，除非重写 {@link #add(int, Object) add(int, E)}，否则此实现将抛出 {@code UnsupportedOperationException}。
+
+@param e 将添加到此列表的元素
+@return {@code true}（正如 {@link Collection#add} 所指定的那样）
+@throws UnsupportedOperationException 如果此列表不支持 {@code add} 操作
+@throws ClassCastException 如果指定元素的类不允许将该元素添加到此列表
+@throws NullPointerException 如果指定元素为 null 并且此列表不允许使用 null 元素
+@throws IllegalArgumentException 如果此元素的某些属性不允许将该元素添加到此列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract E java.util.AbstractList.get(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.AbstractList.set(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现始终抛出 {@code UnsupportedOperationException}。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+@throws IndexOutOfBoundsException     {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.AbstractList.add(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现始终抛出 {@code UnsupportedOperationException}。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+@throws IndexOutOfBoundsException     {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.AbstractList.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现始终抛出 {@code UnsupportedOperationException}。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws IndexOutOfBoundsException     {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractList.indexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现首先获取一个列表迭代器（使用 {@code listIterator()}）。然后它迭代列表，直至找到指定的元素，或者到达列表的末尾。
+
+@throws ClassCastException   {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractList.lastIndexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<p>此实现首先获取一个指向列表末尾的列表迭代器（使用 {@code listIterator(size())}）。然后它逆向迭代列表，直至找到指定的元素，或者到达列表的开头。
+
+@throws ClassCastException   {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.AbstractList.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表中移除所有元素（可选操作）。此调用返回后，列表将为空。
+
+<p>此实现调用 {@code removeRange(0, size())}。
+
+<p>注意，除非重写 {@code remove(int
+ index)} 或 {@code removeRange(int fromIndex, int toIndex)}，否则此实现将抛出 {@code UnsupportedOperationException}。
+
+@throws UnsupportedOperationException 如果此列表不支持 {@code clear} 操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractList.addAll(int index, java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现获取指定 collection 上的迭代器并迭代它，使用 {@code add(int, E)} 将迭代器获取的元素插入此列表的适当位置，一次一个。为了提高效率，多数实现将重写此方法。
+
+<p>注意，除非重写 {@link #add(int, Object) add(int, E)}，否则此实现将抛出 {@code UnsupportedOperationException}。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+@throws IndexOutOfBoundsException     {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.AbstractList.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以恰当顺序在此列表的元素上进行迭代的迭代器。
+
+<p>此实现返回 iterator 接口的一个直接实现，具体取决于底层实现列表的 {@code size()}、{@code get(int)} 和 {@code remove(int)} 方法。
+
+<p>注意，除非重写列表的 {@code remove(int)} 方法，否则此方法返回的迭代器将抛出一个 {@code UnsupportedOperationException} 来响应其 {@code remove} 方法。
+
+<p>根据 (protected) {@code modCount} 字段规范中的描述，在面临并发修改时，可以使此实现抛出运行时异常。
+ 
+@see #modCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ListIterator<E> java.util.AbstractList.listIterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ 
+@return 此列表中的元素的迭代器（按适当顺序）。
+<p>此实现返回 {@code listIterator(0)}。
+ 
+@see #listIterator(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ListIterator<E> java.util.AbstractList.listIterator(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+<p>此实现返回 {@code ListIterator} 接口的直接实现，扩展了由 {@code iterator()} 方法返回的 {@code Iterator} 接口的实现。{@code ListIterator} 实现依赖于底层实现列表的 {@code get(int)}、{@code set(int, E)}、{@code add(int, E)} 和 {@code remove(int)} 方法。
+
+<p>注意，除非重写列表的 {@code remove(int)}、{@code set(int, E)} 和 {@code add(int, E)} 方法，否则此实现返回的列表迭代器将抛出 {@code UnsupportedOperationException} 来响应其 {@code remove}、{@code set} 和 {@code add} 方法。
+
+<p>根据 (protected) {@code modCount} 字段规范中的描述，在面临并发修改时，可以使此实现抛出运行时异常。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+ 
+@see #modCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<E> java.util.AbstractList.subList(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回一个子类化 {@code AbstractList} 的列表。子类在 private 字段中存储底层实现列表中 subList 的偏移量、subList 的大小（随其生存期变化）以及底层实现列表的预期 {@code modCount}  值。子类有两个变体，其中一个实现 {@code RandomAccess}。如果此列表实现 {@code RandomAccess}，则返回的列表将是实现 {@code RandomAccess} 的子类实例。
+
+<p>子类的 {@code set(int, E)}、{@code get(int)}、{@code add(int, E)}、{@code remove(int)}、{@code addAll(int,
+ Collection)} 和 {@code removeRange(int, int)} 方法在对索引进行边界检查和调整偏移量之后，都委托给底层实现抽象列表上的相应方法。{@code addAll(Collection c)} 方法返回 {@code addAll(size,
+ c)}。
+
+<p>{@code listIterator(int)} 方法返回底层实现列表的列表迭代器上的“包装器对象”，使用底层实现列表上的相应方法可创建该迭代器。{@code iterator} 方法返回 {@code listIterator()}，{@code size} 方法返回子类的 {@code size} 字段。
+
+<p>所有方法都将首先检查底层实现列表的实际 {@code modCount} 是否与其预期的值相等，并且在不相等时将抛出 {@code ConcurrentModificationException}。
+
+@throws IndexOutOfBoundsException 端点索引值超出范围 {@code (fromIndex < 0 || toIndex > size)}
+@throws IllegalArgumentException 端点索引顺序颠倒 {@code (fromIndex > toIndex)}
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractList.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的对象与此列表进行相等性比较。当且仅当指定的对象也是一个列表，两个列表具有相同的大小，而且两个列表中所有相应的元素对都<i>相等</i> 时，才返回 {@code true}。（如果 {@code (e1==null ? e2==null :
+ e1.equals(e2))}，则元素 {@code e1} 和 {@code e2} <i>相等</i>。）换句话说，如果两个列表包含相同的元素，且元素的顺序也相同，才将它们定义为相等。<p>
+
+此实现首先检查指定的对象是否为此列表。如果是，则返回 {@code true}；否则，它将检查指定的对象是否为一个列表。如果不是，它将返回 {@code false}；如果是，它将迭代两个列表，比较相应的元素对。如果有任何比较结果返回 {@code false}，则此方法将返回 {@code false}。如果某中某个迭代器在另一迭代器之前迭代完元素，则会返回 {@code false}（因为列表是不等长的）；否则，在迭代完成时将返回 {@code true}。
+
+@param o 与此列表进行相等性比较的对象。
+ 
+@return  如果指定对象与此列表相等，则返回 {@code true}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractList.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表的哈希码值。
+
+<p>此实现使用在 {@link List#hashCode} 方法的文档中用于定义列表哈希函数的代码。
+
+@return 此列表的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.AbstractList.removeRange(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表中移除索引在 {@code fromIndex}（包括）和 {@code toIndex}（不包括）之间的所有元素。向左移动所有后续元素（减小其索引）。此调用缩短了 ArrayList，将其减少了 {@code (toIndex - fromIndex)} 个元素。（如果 {@code toIndex==fromIndex}，则此操作无效。）<p>
+
+此方法由此列表及其 subList 上的 {@code clear} 操作调用。重写此方法以利用内部列表实现可以<i>极大地</i> 改进此列表及其 subList 上 {@code clear} 操作的性能。
+
+<p>此实现获取一个位于 {@code fromIndex} 之前的列表迭代器，并在移除该范围内的元素前重复调用 {@code ListIterator.next}（后跟 {@code ListIterator.remove}）。<b>注：如果 {@code ListIterator.remove} 需要的时间与元素数呈线性关系，那么此实现需要的时间与元素数的平方呈线性关系。</b>
+
+@param fromIndex 要移除的第一个元素的索引。
+@param toIndex 要移除的最后一个元素之后的索引。
+
+<!-- END DATA -->

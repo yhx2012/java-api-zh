@@ -1,0 +1,432 @@
+<!-- BEGIN KEY -->
+public interface javax.imageio.stream.ImageOutputStream extends javax.imageio.stream.ImageInputStream, java.io.DataOutput
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 <code>ImageWriter</code> 使用的可查找输出流接口。各种输出目标（如 <code>OutputStream</code>、<code>File</code> 以及将来的快速 I/O 目标）都可以通过此接口的恰当实现进行&ldquo;包装&rdquo;，供 Image I/O API 使用。
+
+<p> 与标准 <code>OutputStream</code> 不同的是，ImageOutputStream 扩展其对应方 <code>ImageInputStream</code>。因此它能够在对流进行写入的同时从该流进行读取。尽管处理字节定位写入操作之前非零位偏移量的语义一定不同于处理字节定位读取操作之前非零位偏移量的语义，但读取操作和写入操作使用相同的查找和刷新位置。读取字节时，任何位偏移量在读取前都被设置为 0；写入字节时，如果位偏移量不为零，则字节中的剩余位将被写入 0。然后，字节定位写入开始于下一个字节位置。
+
+@see ImageInputStream
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.write(int b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个字节写入到流中的当前位置。<code>b</code> 的 24 个高位将被忽略。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。实现方可使用 {@link ImageOutputStreamImpl <code>ImageOutputStreamImpl</code>} 的 {@link ImageOutputStreamImpl#flushBits <code>flushBits</code>} 方法来保证这一点。
+
+@param b 一个 <code>int</code>，其低 8 位将被写入。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.write(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列写入到流中的当前位置。如果 <code>b.length</code> 为 0，则不写入任何字节。首先写入字节 <code>b[0]</code>，然后写入字节 <code>b[1]</code>，依此类推。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param b 要写入的 <code>byte</code> 数组。
+
+@exception  NullPointerException  如果 <code>b</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.write(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入字节 <code>b[off]</code>，然后写入字节 <code>b[off + 1]</code>，依此类推。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。实现方可使用 {@link ImageOutputStreamImpl <code>ImageOutputStreamImpl</code>} 的 {@link ImageOutputStreamImpl#flushBits <code>flushBits</code>} 方法来保证这一点。
+
+@param b 要写入的 <code>byte</code> 数组。
+@param off   数据中的初始偏移量。
+@param len 要写入的 <code>byte</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>b.length</code>。
+@exception  NullPointerException  如果 <code>b</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeBoolean(boolean v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>boolean</code> 值写入到流中。如果 <code>v</code> 为 true，则写入值 <code>(byte)1</code>；如果 <code>v</code> 为 false，则写入值 <code>(byte)0</code>。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 要写入的 <code>boolean</code> 值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeByte(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>v</code> 的 8 个低位写入到流中。忽略 <code>v</code> 的 24 个高位。（这意味着 <code>writeByte</code> 的作用与使用整数做参数的 <code>write</code> 完全相同。）
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>int</code>，包含要写入的 byte 值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeShort(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>v</code> 的 16 个低位写入到流中。忽略 <code>v</code> 的 16 个高位。如果流使用网络字节顺序，则写入的字节将依次为：
+
+ <pre>
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+ (byte)(v &amp; 0xff)
+ </pre>
+
+否则，写入的字节将为：
+
+ <pre>
+ (byte)(v &amp; 0xff)
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+ </pre>
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>int</code>，包含要写入的 short 值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeChar(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法与 {@link #writeShort <code>writeShort</code>} 同义。
+
+@param v 一个 <code>int</code>，它包含要写入的 char（无符号 short）值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+@see #writeShort(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeInt(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>v</code> 的 32 个位写入到流中。如果流使用网络字节顺序，则写入的字节将依次为：
+
+ <pre>
+(byte)((v &gt;&gt; 24) &amp; 0xff)
+(byte)((v &gt;&gt; 16) &amp; 0xff)
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+ (byte)(v &amp; 0xff)
+ </pre>
+
+否则，写入的字节将为：
+
+ <pre>
+ (byte)(v &amp; 0xff)
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+(byte)((v &gt;&gt; 16) &amp; 0xff)
+(byte)((v &gt;&gt; 24) &amp; 0xff)
+ </pre>
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>int</code>，它包含要写入的值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeLong(long v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>v</code> 的 64 个位写入到流中。如果流使用网络字节顺序，则写入的字节将依次为：
+
+ <pre>
+(byte)((v &gt;&gt; 56) &amp; 0xff)
+(byte)((v &gt;&gt; 48) &amp; 0xff)
+(byte)((v &gt;&gt; 40) &amp; 0xff)
+(byte)((v &gt;&gt; 32) &amp; 0xff)
+(byte)((v &gt;&gt; 24) &amp; 0xff)
+(byte)((v &gt;&gt; 16) &amp; 0xff)
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+ (byte)(v &amp; 0xff)
+ </pre>
+
+否则，写入的字节将为：
+
+ <pre>
+ (byte)(v &amp; 0xff)
+(byte)((v &gt;&gt; 8) &amp; 0xff)
+(byte)((v &gt;&gt; 16) &amp; 0xff)
+(byte)((v &gt;&gt; 24) &amp; 0xff)
+(byte)((v &gt;&gt; 32) &amp; 0xff)
+(byte)((v &gt;&gt; 40) &amp; 0xff)
+(byte)((v &gt;&gt; 48) &amp; 0xff)
+(byte)((v &gt;&gt; 56) &amp; 0xff)
+ </pre>
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>long</code>，它包含要写入的值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeFloat(float v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>float</code> 值（由四个字节组成）写入输出流。实现方式是：首先使用与 <code>Float.floatToIntBits</code> 方法完全相同的方式将此 <code>float</code> 值转换为一个 <code>int</code> 值，然后使用与 <code>writeInt</code> 方法完全相同的方式写入该 <code>int</code> 值。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>float</code>，它包含要写入的值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeDouble(double v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>double</code> 值写入输出流，该值由四个字节组成。实现这一点的方式是：首先使用与 <code>Double.doubleToLongBits</code> 方法相同的方式将此 <code>double</code> 值转换为一个 <code>long</code> 值，然后使用与 <code>writeLong</code> 方法完全相同的方式写入该 <code>long</code> 值。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param v 一个 <code>double</code>，它包含要写入的值。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeBytes(String s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个字符串写入输出流。字符串 <code>s</code> 中的每一个字符被依次写入输出流，每个字符用一个字节表示。如果 <code>s</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+
+<p> 如果 <code>s.length</code> 为零，则不写入任何字节。否则，首先写入字符 <code>s[0]</code>，然后写入字符 <code>s[1]</code>，依此类推；最后一个写入字符是 <code>s[s.length-1]</code>。对于每个字符，将使用与 <code>writeByte</code> 方法完全相同的方式把字符的低位写入一个低位字节。字符串中每个字符的八个高位将被忽略。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param s 一个 <code>String</code>，它包含要写入的值。
+
+@exception NullPointerException 如果 <code>s</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeChars(String s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个字符串写入输出流。字符串 <code>s</code> 中的每个字符将根据当前字节顺序设置依次写入输出流，每个字符用两个字节表示。如果使用网络字节顺序，则首先写入高位字节；否则相反。如果 <code>s</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+
+<p> 如果 <code>s.length</code> 为零，则不写入字节。否则，首先写入字符 <code>s[0]</code>，然后写入字符 <code>s[1]</code>，依此类推；最后一个写入字符是 <code>s[s.length-1]</code>。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param s 一个 <code>String</code>，它包含要写入的值。
+
+@exception NullPointerException 如果 <code>s</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeUTF(String s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示长度信息的两个字节按网络字节顺序写入输出流，后跟字符串 <code>s</code> 中每个字符的 <a href="../../../java/io/DataInput.html#modified-utf-8">UTF-8 修改版</a>表示形式。如果 <code>s</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。根据字符的值，将字符串 <code>s</code> 中每个字符转换成一个字节、两个字节或三个字节的字节组。
+
+<p> 如果字符 <code>c</code> 在 <code>\u0001</code> 到 <code>\u007f</code> 的范围内，则用一个字节表示：
+
+ <p><pre>
+(byte)(b)
+ </pre>
+
+<p> 如果字符 <code>c</code> 是 <code>\u0000</code> 或者它在 <code>\u0080</code> 到 <code>\u07ff</code> 的范围内，则用两个字节表示，写入顺序如下：
+
+ <p> <pre><code>
+ (byte)(0xc0 | (0x1f &amp; (c &gt;&gt; 6)))
+ (byte)(0x80 | (0x3f &amp; c))
+ </code></pre>
+
+<p> 如果字符 <code>c</code> 在 <code>\u0800</code> 到 <code>\uffff</code> 的范围内，则用三个字节表示，写入顺序如下：
+
+ <p> <pre><code>
+ (byte)(0xe0 | (0x0f &amp; (c &gt;&gt; 12)))
+ (byte)(0x80 | (0x3f &amp; (c &gt;&gt; 6)))
+ (byte)(0x80 | (0x3f &amp; c))
+ </code></pre>
+
+<p> 首先，要计算表示 <code>s</code> 中所有字符所需的字节总数。如果总数大于 <code>65535</code>，则抛出 <code>UTFDataFormatException</code>。否则，使用与 <code>writeShort</code> 方法完全相同的方式将此长度写入输出流，然后写入字符串 <code>s</code> 中所有字符的 1 字节、2 字节或 3 字节表示形式。
+
+<p> 忽略当前字节顺序设置。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+<p><strong>注：</strong>使用标准 UTF-8 图像格式的实现不应该使用此方法，因为此处使用的 UTF-8 修改版与标准 UTF-8 不兼容。
+
+@param s 一个 <code>String</code>，它包含要写入的值。
+
+@exception NullPointerException 如果 <code>s</code> 为 <code>null</code>。
+@exception UTFDataFormatException 如果 <code>s</code> 的 UTF-8 修改版表示形式要求的字节数大于 65536。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeShorts(short[] s, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 short 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 short <code>s[off]</code>，然后写入 short <code>s[off + 1]</code>，依此类推。流的字节顺序用来确定写入各个字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param s 要写入的 <code>short</code> 数组。
+@param   off 数据中的初始偏移量。
+@param len 要写入的 <code>short</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>s.length</code>。
+@exception NullPointerException 如果 <code>s</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeChars(char[] c, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 char 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 char <code>c[off]</code>，然后写入 char <code>c[off + 1]</code>，依此类推。流的字节顺序用来确定写入个别字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param c 要写入的 <code>char</code> 数组。
+@param    off   数据中的初始偏移量。
+@param len 要写入的 <code>char</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>c.length</code>。
+@exception NullPointerException 如果 <code>c</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeInts(int[] i, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 int 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 int <code>i[off]</code>，然后写入 int <code>i[off + 1]</code>，依此类推。流的字节顺序用来确定写入个别字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param i 要写入的 <code>int</code> 数组。
+@param      off   数据中的初始偏移量。
+@param len 要写入的 <code>int</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>i.length</code>。
+@exception NullPointerException 如果 <code>i</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeLongs(long[] l, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 long 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 long <code>l[off]</code>，然后写入 long <code>l[off + 1]</code>，依此类推。流的字节顺序用来确定写入个别字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param l 要写入的 <code>long</code> 数组。
+@param      off   数据中的初始偏移量。
+@param len 要写入的 <code>long</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>l.length</code>。
+@exception NullPointerException 如果 <code>l</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeFloats(float[] f, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 float 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 float <code>f[off]</code>，然后写入 float <code>f[off + 1]</code>，依此类推。流的字节顺序用来确定写入个别字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param f 要写入的 <code>float</code> 数组。
+@param      off   数据中的初始偏移量。
+@param len 要写入的 <code>float</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>f.length</code>。
+@exception NullPointerException 如果 <code>f</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeDoubles(double[] d, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 double 序列写入到流中的当前位置。如果 <code>len</code> 为 0，则不写入任何字节。首先写入 double <code>d[off]</code>，然后写入 double <code>d[off + 1]</code>，依此类推。流的字节顺序用来确定写入个别字节的顺序。
+
+<p> 如果流中的位偏移量不为零，则首先将当前字节的余项用 0 填充并将其写出。写出后位偏移量将为 0。
+
+@param d 要写入的 <code>double</code> 数组。
+@param      off   数据中的初始偏移量。
+@param len 要写入的 <code>double</code> 数。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>d.length</code>。
+@exception NullPointerException 如果 <code>d</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeBit(int bit) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个位（由参数的最低有效位给定）写入到流的当前字节位置中的当前位偏移量。忽略参数的高 31 位。给定位将替代之前位于该位置的位。将位偏移量加 1 并将其模数减 8。
+
+<p> 如果在刷新某个字节的缓冲并转送到目标时一直没有设置过该字节的某些位，则这些位将被自动设置为 0。
+
+@param bit 一个 <code>int</code>，其最低有效位将被写入到流中。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.writeBits(long bits, int numBits) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个位序列（由 <code>bits</code> 参数的 <code>numBits</code> 个最低有效位按从左到右的顺序给定）写入到流的当前字节位置中的当前位偏移量。忽略参数的高 <code>64 - numBits</code> 位。位偏移量将加 <code>numBits</code> 并减少模数 8。注意，位偏移量 0 总是指示字节的最高有效位，位字节按照遇到它们的顺序依次被写入。因此以网络字节顺序进行位的写入总是有效的。忽略实际流字节顺序设置。
+
+<p> 在调用 <code>flushBefore</code> 之前，位数据可以在内存中无限累积。调用时将写入刷新位置之前的所有位数据。
+
+<p> 如果在刷新字节缓冲并转到目标时特定字节的某些位一直没有被设置，则这些位将自动设置为 0。
+
+@param bits 一个 <code>long</code>，它包含要写入的位（从 <code>numBits - 1</code> 开始下至最低有效位）。
+ 
+@param numBits 一个 0 到 64 之间（包括两者）的 <code>int</code>。
+
+@exception IllegalArgumentException 如果 <code>numBits</code> 不在 0 到 64 之间（包括两者）。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageOutputStream.flushBefore(long pos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新给定位置之前所有数据的缓冲并转到底层目标（如 <code>OutputStream</code> 或 <code>File</code>）。试图查找流的刷新部分将导致抛出 <code>IndexOutOfBoundsException</code>。
+
+@param pos 一个 <code>long</code>，它包含可能被刷新并转到目标的流前缀的长度。
+
+@exception IndexOutOfBoundsException 如果 <code>pos</code> 位于流缓冲的刷新部分或当前流位置之后。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->

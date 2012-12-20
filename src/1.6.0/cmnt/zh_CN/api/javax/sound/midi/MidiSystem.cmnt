@@ -1,0 +1,359 @@
+<!-- BEGIN KEY -->
+public class javax.sound.midi.MidiSystem extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MidiSystem</code> 类提供了对已安装的 MIDI 系统资源的访问，包括诸如 synthesizer、sequencer 和 MIDI 输入和输出端口等设备。典型的简单 MIDI 应用程序可通过调用一个或多个 <code>MidiSystem</code> 方法开始，这样可了解已安装的设备并获得该应用程序中所需要的设备。
+ <p>
+该类还有用于读取那些包含了标准 MIDI 文件数据或音库的文件、流和 URL 的方法。可以查询 <code>MidiSystem</code> 了解指定 MIDI 文件的格式。
+ <p>
+无法实例化 <code>MidiSystem</code>；所有的方法都是静态的。
+
+<p>属性可用于指定默认的 MIDI 设备。系统属性和属性文件都可用于指定默认 MIDI 设备。属性文件是位于 JRE 目录中的 &quot;lib/sound.properties&quot;。如果一个属性既是系统属性，又包含在属性文件中，则系统属性优先。如果两者都未指定，则会在可用的设备中选择一个合适的默认值。属性文件的语法在 {@link java.util.Properties#load(InputStream) Properties.load} 中指定。下表列出了可用的属性键和获取该属性的方法：
+
+ <table border=0>
+  <tr>
+<th>属性键</th>
+<th>接口</th>
+<th>起作用的方法</th>
+  </tr>
+  <tr>
+   <td><code>javax.sound.midi.Receiver</code></td>
+   <td>{@link Receiver}</td>
+   <td>{@link #getReceiver}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.midi.Sequencer</code></td>
+   <td>{@link Sequencer}</td>
+   <td>{@link #getSequencer}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.midi.Synthesizer</code></td>
+   <td>{@link Synthesizer}</td>
+   <td>{@link #getSynthesizer}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.midi.Transmitter</code></td>
+   <td>{@link Transmitter}</td>
+   <td>{@link #getTransmitter}</td>
+  </tr>
+ </table>
+
+属性值包含提供者类名和设备名，二者通过哈希标记 (&quot;#&quot;) 分隔。提供者类名是具体 {@link javax.sound.midi.spi.MidiDeviceProvider MIDI device provider} 类的完全限定名称。设备名与由 <code>MidiDevice.Info</code> 的 <code>getName</code> 方法返回的 <code>String</code> 匹配。 类名或设备名都可以被忽略。如果只指定了类名，则尾部的哈希标记是可选的。
+
+<p>如果指定了提供者类，并且可从所安装的提供者中成功地检索到此类，则从该提供者检索 <code>MidiDevice.Info</code> 对象列表。否则，当这些设备未提供后续匹配时，则从 {@link #getMidiDeviceInfo} 检索该列表以包含所有可用的 <code>MidiDevice.Info</code> 对象。
+
+<p>如果指定了设备名，则搜索得到的 <code>MidiDevice.Info</code> 对象列表：将返回第一个具有匹配的名称，并且其 <code>MidiDevice</code> 实现了相应接口的结果。如果未找到任何匹配的 <code>MidiDevice.Info</code> 对象，或者未指定设备名称，则从结果列表返回第一个适合的设备。对于 Sequencer 和 Synthesizer，如果设备实现了相应的接口，则该设备为适合的设备；对于 Receiver 和 Transmitter，如果设备既未实现 Sequencer 也未实现 Synthesizer，并且至少分别提供了一个 Receiver 或 Transmitter，则该设备为适合的设备。
+
+例如，对于具有 <code>&quot;com.sun.media.sound.MidiProvider#SunMIDI1&quot;</code> 值的属性 <code>javax.sound.midi.Receiver</code>，在调用 <code>getReceiver</code> 时，它将具有下面的结果：如果类 <code>com.sun.media.sound.MidiProvider</code> 出现在已安装的 MIDI 设备提供者列表中，则将返回第一个名称为 <code>&quot;SunMIDI1&quot;</code> 的 <code>Receiver</code> 设备。如果未找到此种设备，则将返回该提供者的第一个 <code>Receiver</code>，不考虑其名称。如果没有，则将返回所有设备列表中的第一个名称为 <code>&quot;SunMIDI1&quot;</code> 的 <code>Receiver</code>（如同从 <code>getMidiDeviceInfo</code> 返回的结果），如果未找到，则返回在所有设备列表中能找到的第一个 <code>Receiver</code>。如果仍未找到，则抛出 <code>MidiUnavailableException</code>。
+
+@version 1.68, 06/05/02
+@author Kara Kytle
+@author Florian Bomers
+@author Matthias Pfisterer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.MidiDevice.Info[] javax.sound.midi.MidiSystem.getMidiDeviceInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得信息对象数组，表示系统中可用的所有 MIDI 设备集。然后，通过调用 {@link #getMidiDevice(MidiDevice.Info) getMidiDevice}，可使用返回的信息对象获得相应的设备对象。
+
+@return 一个 <code>MidiDevice.Info</code> 对象的数组，每个已安装的 MIDI 设备对应一个对象。如果未安装这样的设备，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.MidiDevice javax.sound.midi.MidiSystem.getMidiDevice(MidiDevice.Info info) throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得请求的 MIDI 设备。
+
+@param info 表示所需设备的设备信息对象。
+@return 所请求的设备
+@throws MidiUnavailableException 如果由于资源限制使所请求的设备不可用
+@throws IllegalArgumentException 如果 info 对象并不表示系统上已安装的 MIDI 设备
+@see #getMidiDeviceInfo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Receiver javax.sound.midi.MidiSystem.getReceiver() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从外部 MIDI 端口或其他默认设备获得 MIDI 接收器。
+
+<p>如果定义了系统属性 <code>javax.sound.midi.Receiver</code>，或者在文件 &quot;sound.properties&quot; 中定义了该属性，则它可用于标识提供了默认接收器的设备。有关详细信息，请参阅{@link MidiSystem 类描述}。
+
+如果没有适合的 MIDI 端口可用，则从已安装的合成器中检索 Receiver。
+
+<p>如果此方法成功返回，则隐式打开 <code>Receiver</code> 所属于的 {@link javax.sound.midi.MidiDevice MidiDevice}（如果它尚未打开）。通过在返回的 <code>Receiver</code> 上调用 {@link javax.sound.midi.Receiver#close close} 可以关闭一个隐式打开的设备。所有打开的 <code>Receiver</code> 实例都必须关闭，以释放由 <code>MidiDevice</code> 所占用的系统资源。有关打开/关闭行为的详细描述，请参见 {@link javax.sound.midi.MidiDevice MidiDevice} 的类描述。
+
+@return 默认的 MIDI 接收器
+@throws MidiUnavailableException 如果由于资源限制使默认的接收器不可用，或者系统上未安装任何提供接收器的设备
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Transmitter javax.sound.midi.MidiSystem.getTransmitter() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从外部 MIDI 端口或其他默认源获得 MIDI 传输器。
+
+<p>如果定义了系统属性 <code>javax.sound.midi.Transmitter</code>，或者在文件 &quot;sound.properties&quot; 中定义了该属性，则它可用于标识提供了默认传输器的设备。有关详细信息，请参阅{@link MidiSystem 类描述}。
+
+如果此方法成功返回，则隐式打开 <code>Transmitter</code> 所属于的 {@link javax.sound.midi.MidiDevice MidiDevice}（如果它尚未打开）。通过在返回的 <code>Transmitter</code> 上调用 {@link javax.sound.midi.Transmitter#close close} 可以关闭一个隐式打开的设备。所有打开的 <code>Transmitter</code> 实例都必须关闭，以释放由 <code>MidiDevice</code> 所占用的系统资源。有关打开/关闭行为的详细描述，请参见 {@link javax.sound.midi.MidiDevice MidiDevice} 的类描述。
+
+@return 默认的 MIDI 传输器
+@throws MidiUnavailableException 如果由于资源限制使默认的传输器不可用，或者系统上未安装任何提供传输器的设备
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Synthesizer javax.sound.midi.MidiSystem.getSynthesizer() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得默认的合成器。
+
+<p>如果定义了系统属性 <code>javax.sound.midi.Synthesizer</code>，或者在文件 &quot;sound.properties&quot; 中定义了该属性，则它可用于标识默认的合成器。有关详细信息，请参阅{@link MidiSystem 类描述}。
+
+@return 默认的合成器
+@throws MidiUnavailableException 如果由于资源限制使合成器不可用，或者系统上未安装任何合成器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Sequencer javax.sound.midi.MidiSystem.getSequencer() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得连接到默认设备上的默认的 <code>Sequencer</code>。返回的 <code>Sequencer</code> 实例连接到默认的 <code>Synthesizer</code>，如同由 {@link #getSynthesizer} 返回的结果。如果没有可用的 <code>Synthesizer</code>，或者默认的 <code>Synthesizer</code> 无法打开，则 <code>sequencer</code> 会连接到默认的 <code>Receiver</code>，如同由 {@link #getReceiver} 返回的结果。该连接是通过从 <code>Sequencer</code> 检索 <code>Transmitter</code> 实例并设置其 <code>Receiver</code> 来建立的。关闭和重新打开 sequencer 将恢复到默认设备的连接。
+
+<p>此方法等效于调用 <code>getSequencer(true)</code>。
+
+<p>如果定义了系统属性 <code>javax.sound.midi.Sequencer</code>，或者在文件 &quot;sound.properties&quot; 中定义了该属性，则它可用于标识默认的 sequencer。有关详细信息，请参阅{@link MidiSystem 类描述}。
+
+@return 连接到默认 Receiver 上的默认 sequencer
+@throws MidiUnavailableException 如果由于资源限制使 sequencer 不可用，或者任何已安装的 <code>MidiDevice</code> 上都没有可用的 <code>Receiver</code>，或者系统中未安装 sequencer。
+@see #getSequencer(boolean)
+@see #getSynthesizer
+@see #getReceiver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Sequencer javax.sound.midi.MidiSystem.getSequencer(boolean connected) throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得默认的 <code>Sequencer</code>，它可选地连接到默认设备上。
+
+<p>如果 <code>connected</code> 为 true，则返回的 <code>Sequencer</code> 实例连接到默认的 <code>Synthesizer</code>，如同由 {@link #getSynthesizer} 返回的结果。如果没有可用的 <code>Synthesizer</code>，或者默认的 <code>Synthesizer</code> 无法打开，则 <code>sequencer</code> 会连接到默认的 <code>Receiver</code>，如同由 {@link #getReceiver} 返回的结果。该连接是通过从 <code>Sequencer</code> 检索 <code>Transmitter</code> 实例并设置其 <code>Receiver</code> 来建立的。关闭和重新打开 sequencer 将恢复到默认设备的连接。
+
+<p>如果 <code>connected</code> 为 false，则返回的 <code>Sequencer</code> 实例为未连接，它没有打开的 <code>Transmitter</code>。为了在 MIDI 设备或 <code>Synthesizer</code> 上运行 sequencer，有必要获得 <code>Transmitter</code> 并设置其 <code>Receiver</code>。
+
+<p>如果定义了系统属性 <code>javax.sound.midi.Sequencer</code>，或者在文件 &quot;sound.properties&quot; 中定义了该属性，则它可用于标识默认的 sequencer。有关详细信息，请参阅{@link MidiSystem 类描述}。
+
+@return 默认的 sequencer
+@throws MidiUnavailableException 如果由于资源限制使 sequencer 不可用，或者系统中未安装 sequencer，或者如果 <code>connected</code> 为 true 并且任何已安装的 <code>MidiDevice</code> 都没有可用的 <code>Receiver</code>
+@see #getSynthesizer
+@see #getReceiver
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Soundbank javax.sound.midi.MidiSystem.getSoundbank(InputStream stream) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过从指定的流读取来构造一个 MIDI 音库。该流必须指向有效的 MIDI 音库文件。通常，MIDI 文件提供者可能需要在确定它们是否支持流之前从中读取一些数据。这些解析器必须能够标记流，读取足够多的数据来确定它们是否支持流，并且如果不支持，则将流的阅读指针重新设置到其初始位置。如果输入流不支持此操作，则此方法可能会失败，并抛出 IOException。
+@param stream 音库数据的源。
+@return 音库
+@throws InvalidMidiDataException 如果该流没有指向系统识别的有效 MIDI 音库数据
+@throws IOException 如果加载音库时发生 I/O 错误
+@see InputStream#markSupported
+@see InputStream#mark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Soundbank javax.sound.midi.MidiSystem.getSoundbank(URL url) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过从指定的 URL 处读取来构造一个 <code>Soundbank</code>。该 URL 必须指向有效的 MIDI 音库文件。
+
+@param url 音库数据的源
+@return 音库
+@throws InvalidMidiDataException 如果 URL 未指向系统识别的有效 MIDI 音库数据
+@throws IOException 如果加载音库时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Soundbank javax.sound.midi.MidiSystem.getSoundbank(File file) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过从指定的 <code>File</code> 读取来构造一个 <code>Soundbank</code>。该 <code>File</code> 必须指向有效的 MIDI 音库文件。
+
+@param file 音库数据的源
+@return 音库
+@throws InvalidMidiDataException 如果 <code>File</code> 未指向系统识别的有效 MIDI 音库数据
+@throws IOException 如果加载音库时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.MidiFileFormat javax.sound.midi.MidiSystem.getMidiFileFormat(InputStream stream) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定的输入流中数据的 MIDI 文件格式。该流必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+此方法和/或它调用的代码可能需要从流读取一些数据，以确定是否支持流的数据格式。因此实现可能需要标记流、读取足够的数据来确定流是否为支持的格式，并将流的阅读指针重新设置到其初始位置。如果输入流不允许此组操作，则此方法可能会失败，并抛出 <code>IOException</code>。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在确定文件格式时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param stream 应从中提取文件格式信息的输入流
+@return 描述 MIDI 文件格式的 <code>MidiFileFormat</code> 对象
+@throws InvalidMidiDataException 如果流没有指向系统识别的有效 MIDI 文件数据
+@throws IOException 如果访问流时发生 I/O 异常
+@see #getMidiFileFormat(URL)
+@see #getMidiFileFormat(File)
+@see InputStream#markSupported
+@see InputStream#mark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.MidiFileFormat javax.sound.midi.MidiSystem.getMidiFileFormat(URL url) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 URL 中数据的 MIDI 文件格式。该 URL 必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在确定文件格式时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param url 应该从中提取文件格式信息的 URL
+@return 描述 MIDI 文件格式的 <code>MidiFileFormat</code> 对象
+@throws InvalidMidiDataException 如果 URL 没有指向系统识别的有效 MIDI 文件数据
+@throws IOException 如果访问 URL 时发生 I/O 异常
+
+
+@see #getMidiFileFormat(InputStream)
+@see #getMidiFileFormat(File)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.MidiFileFormat javax.sound.midi.MidiSystem.getMidiFileFormat(File file) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 <code>File</code> 的 MIDI 文件格式。该 <code>File</code> 必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在确定文件格式时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param file 应该从中提取文件格式信息的 <code>File</code>
+@return 描述 MIDI 文件格式的 <code>MidiFileFormat</code> 对象
+@throws InvalidMidiDataException 如果 <code>File</code> 没有指向系统可识别的有效 MIDI 文件数据
+@throws IOException 如果访问文件时发生 I/O 异常
+
+
+@see #getMidiFileFormat(InputStream)
+@see #getMidiFileFormat(URL)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Sequence javax.sound.midi.MidiSystem.getSequence(InputStream stream) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的输入流获得 MIDI 序列。该流必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+此方法和/或它调用的代码可能需要从流读取一些数据，以确定是否支持流的数据格式。因此实现可能需要标记流、读取足够的数据来确定流是否为支持的格式，并将流的阅读指针重新设置到其初始位置。如果输入流不允许此组操作，则此方法可能会失败，并抛出 <code>IOException</code>。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在从文件数据构造 <code>Sequence</code> 对象时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param stream 应该从中构造 <code>Sequence</code> 的输入流
+@return 基于输入流中包含的 MIDI 文件数据的 <code>Sequence</code> 对象
+@throws InvalidMidiDataException 如果流没有指向系统识别的有效 MIDI 文件数据
+@throws IOException 如果访问流时发生 I/O 异常
+@see InputStream#markSupported
+@see InputStream#mark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Sequence javax.sound.midi.MidiSystem.getSequence(URL url) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 URL 获得 MIDI 序列。该 URL 必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在从文件数据构造 <code>Sequence</code> 对象时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param url 应该从中构造 <code>Sequence</code> 的 URL
+@return 基于由 URL 指向的 MIDI 文件数据的 <code>Sequence</code> 对象
+@throws InvalidMidiDataException 如果 URL 没有指向系统识别的有效 MIDI 文件数据
+@throws IOException 如果访问 URL 时发生 I/O 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.midi.Sequence javax.sound.midi.MidiSystem.getSequence(File file) throws javax.sound.midi.InvalidMidiDataException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 <code>File</code> 获得 MIDI 序列。该 <code>File</code> 必须指向系统可识别的文件类型的有效 MIDI 文件数据。
+ <p>
+只有针对那些能由已安装的文件 reader 所解析的类型的文件，该操作才能成功。即使是有效的文件，如果未安装兼容的文件 reader，则也会失败并抛出 InvalidMidiDataException。如果安装了兼容的文件 reader，但在从文件数据构造 <code>Sequence</code> 对象时遇到错误，则也会失败并抛出 InvalidMidiDataException。
+
+@param file 应该从中构造 <code>Sequence</code> 的 <code>File</code>
+@return 基于由 File 指向的 MIDI 文件数据的 <code>Sequence</code> 对象
+@throws InvalidMidiDataException 如果 File 没有指向系统识别的有效 MIDI 文件数据
+@throws IOException 如果发生 I/O 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int[] javax.sound.midi.MidiSystem.getMidiFileTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得系统为其提供文件写入支持的 MIDI 文件类型的集合。
+@return 唯一文件类型的数组。如果不支持任何文件类型，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.midi.MidiSystem.isFileTypeSupported(int fileType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示系统是否提供了指定 MIDI 文件类型的文件写入支持。
+@param fileType 查询其写入功能的文件类型
+@return 如果支持文件类型，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int[] javax.sound.midi.MidiSystem.getMidiFileTypes(Sequence sequence)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得系统可从指定 sequence 写入的 MIDI 文件类型集合。
+@param sequence 为其查询 MIDI 文件类型支持的序列
+@return 唯一的受支持文件类型的集合。如果不支持任何文件类型，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.midi.MidiSystem.isFileTypeSupported(int fileType, Sequence sequence)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否可从指示的序列写入指定文件类型的 MIDI 文件。
+@param fileType 查询其写入功能的文件类型
+@param sequence 查询其文件写入支持的序列
+@return  如果支持此序列的文件类型，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.sound.midi.MidiSystem.write(Sequence in, int fileType, OutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示所指示 MIDI 文件类型的文件的字节流写入提供的输出流。
+@param in 包含要写入文件的 MIDI 数据的序列
+@param fileType 要写入输出流的文件的文件类型
+@param out 应将文件数据写入的流
+@return 写入到输出流的字节数
+@throws IOException 如果发生 I/O 异常
+@throws IllegalArgumentException 如果系统不支持该文件格式
+@see #isFileTypeSupported(int, Sequence)
+@see	#getMidiFileTypes(Sequence)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.sound.midi.MidiSystem.write(Sequence in, int type, File out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示所指示 MIDI 文件类型的文件的字节流写入提供的外部文件。
+@param in 包含要写入文件的 MIDI 数据的序列
+@param type 要写入输出流的文件的文件类型
+@param out 应将文件数据写入的外部文件
+@return 写入到文件的字节数
+@throws IOException 如果发生 I/O 异常
+@throws IllegalArgumentException 如果系统不支持该文件类型
+@see #isFileTypeSupported(int, Sequence)
+@see	#getMidiFileTypes(Sequence)
+
+<!-- END DATA -->

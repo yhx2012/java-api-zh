@@ -1,0 +1,189 @@
+<!-- BEGIN KEY -->
+public interface java.sql.Array
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+SQL 类型 <code>ARRAY</code> 在 Java 编程语言中的映射关系。默认情况下，<code>Array</code> 值是对 SQL <code>ARRAY</code> 值的事务处理期引用。默认情况下，<code>Array</code> 对象是使用 SQL LOCATOR(array) 内部实现的，这意味着 <code>Array</code> 对象包含一个指向 SQL <code>ARRAY</code> 值中数据的逻辑指针，而不是包含 <code>ARRAY</code> 值的数据。
+ <p>
+<code>Array</code> 接口提供了某些方法将 SQL <code>ARRAY</code> 值的数据作为数组或 <code>ResultSet</code> 对象传送到客户端。如果 SQL <code>ARRAY</code> 的元素是一个 UDT，那么可以自定义映射它们。要创建自定义映射关系，编程人员必须做两件事：
+ <ul>
+<li>为将被自定义映射的 UDT 创建一个实现 {@link SQLData} 接口的类。 
+<li>在类型映射表中生成一个项，该项包含
+   <ul>
+<li>UDT 的完全限定 SQL 类型名称
+<li>实现 <code>SQLData</code> 的类的 <code>Class</code> 对象
+   </ul>
+ </ul>
+ <p>
+在将带有对应于基本类型的项的类型映射表提供给 <code>getArray</code> 和 <code>getResultSet</code> 方法时，该表所包含的映射关系将用于映射 <code>ARRAY</code> 值的元素。如果没有提供类型映射表（通常是这种情况），则默认使用连接的类型映射表。如果该连接的类型映射表或为某一方法提供的类型映射表没有对应于基本类型的项，则根据标准映射关系来映射这些元素。
+ <p>
+如果 JDBC 驱动程序支持该数据类型，则必须完全实现 <code>Array</code> 接口上的所有方法。
+
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.Array.getBaseTypeName() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在由此 <code>Array</code> 对象指定的数组中获取元素的 SQL 类型名称。如果元素是内置类型，则返回这些元素特定于数据库的类型名称。如果元素是用户定义类型 (UDT)，则此方法返回完全限定 SQL 类型名称。
+
+@return 一个 <code>String</code>，对于内置基本类型，该字符串是特定于数据库的名称；对于为 UDT 的基本类型，该字符串是完全限定的 SQL 类型名称
+@exception SQLException 如果在试图访问该类型名称时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Array.getBaseType() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在由此 <code>Array</code> 对象指定的数组中获取元素的 JDBC 类型。
+
+@return {@link java.sql.Types} 类中的一个常量，它是由此 <code>Array</code> 对象指定的数组中的元素的类型代码
+@exception SQLException 如果在试图访问该基本类型时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.Array.getArray() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言数组的形式获取由此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的内容。这一 <code>getArray</code> 方法使用与该连接相关联的类型映射表来自定义类型映射关系。
+ <p>
+<strong>注意：</strong>当 <code>getArray</code> 用于实现映射到基本数据类型的基类型时，返回数组是该基本数据类型数组还是 <code>Object</code> 数组将由实现定义。
+
+@return 一个 Java 编程语言形式的数组，它包含由此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的有序元素
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.Array.getArray(java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取由此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的内容。此方法使用指定的 <code>map</code> 进行类型映射自定义，除非数组的基本类型与 <code>map</code> 中用户定义类型不匹配，这种情况下使用标准映射关系。这一 <code>getArray</code> 方法使用给定类型映射表或标准映射关系；它绝不会使用与连接关联的类型映射表。
+ <p>
+<strong>注意：</strong>当 <code>getArray</code> 用于实现映射到基本数据类型的基类型时，返回数组是该基本数据类型数组还是 <code>Object</code> 数组将由实现定义。
+
+@param map 一个 <code>java.util.Map</code> 对象，该对象包含 SQL 类型名称到 Java 编程语言形式的类的映射关系
+@return 一个 Java 编程语言形式的数组，该数组包含由此对象指定的 SQL 数组的有序元素
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.Array.getArray(long index, int count) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取由此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的一部分，从指定 <code>index</code> 开始，包含 SQL 数组中 <code>count</code> 个连续元素。此方法使用与连接关联的类型映射表来自定义类型映射关系。
+ <p>
+<strong>注意：</strong>当 <code>getArray</code> 用于实现映射到基本数据类型的基类型时，返回数组是该基本数据类型数组还是 <code>Object</code> 数组将由实现定义。
+
+
+@param index 要获取的第一个元素的数组索引；第一个元素位于索引 1 处
+@param count 要获取的连续 SQL 数组元素的数量
+@return 包含 <code>count</code> 个连续 SQL 数组元素的数组，从元素 <code>index</code> 开始
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.Array.getArray(long index, int count, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取由此 <code>ARRAY</code> 对象指定的 SQL <code>Array</code> 值的一部分，从指定 <code>index</code> 开始，包含 SQL 数组中 <code>count</code> 个连续元素。  
+ <P>
+此方法使用指定的 <code>map</code> 进行类型映射自定义，除非数组的基本类型与 <code>map</code> 中用户定义类型不匹配，这种情况下使用标准映射关系。这一 <code>getArray</code> 方法使用给定类型映射表或标准映射关系；它绝不会使用与连接关联的类型映射表。
+ <p>
+<strong>注意：</strong>当 <code>getArray</code> 用于实现映射到基本数据类型的基类型时，返回数组是该基本数据类型数组还是 <code>Object</code> 数组将由实现定义。
+
+
+@param index 要获取的第一个元素的数组索引；第一个元素位于索引 1 处
+@param count 要获取的连续 SQL 数组元素的数量
+@param map 一个 <code>java.util.Map</code> 对象，该对象包含 SQL 类型名称以及它们所映射的 Java 编程语言形式的类 
+@return 一个数组，它包含此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的 <code>count</code> 个连续元素（从元素 <code>index</code> 开始）
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet java.sql.Array.getResultSet() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取包含此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的元素的结果集合。如果合适，则使用该连接的类型映射表来映射数组的元素；否则使用标准映射关系。
+ <p>
+结果集合中每个数组元素占一行，每行有两列。第二列存储元素值；第一列存储元素数组中的索引（第一个数组元素位于索引 1 处）。这些行按升序排列，对应于索引的顺序。
+
+@return 一个 {@link ResultSet} 对象，它在为此 <code>Array</code> 对象指定的数组中的每个元素包含一个行，这些行基于索引按升序排列。
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet java.sql.Array.getResultSet(java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取包含由此 <code>Array</code> 对象指定的 SQL <code>ARRAY</code> 值的元素的结果集合。此方法使用指定的 <code>map</code> 进行类型映射自定义，除非数组的基本类型与 <code>map</code> 中用户定义类型不匹配，这种情况下使用标准映射关系。这一 <code>getResultSet</code> 方法使用给定类型映射表或标准映射关系；它绝不会使用与连接关联的类型映射表。
+ <p>
+结果集合中每个数组元素占一行，每行有两列。第二列存储元素值；第一列存储元素数组中的索引（第一个数组元素位于索引 1 处）。这些行按升序排列，对应于索引的顺序。
+
+@param map 包含 SQL 用户定义类型到 Java 编程语言形式的类的映射关系
+@return 一个 <code>ResultSet</code> 对象，它在为此 <code>Array</code> 对象指定的数组中的每个元素包含一个行，这些行基于索引按升序排列。
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet java.sql.Array.getResultSet(long index, int count) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取保存子数组的元素的结果集合，从索引 <code>index</code> 开始，包含 <code>count</code> 个连续元素。此方法使用连接的类型映射表来映射数组的元素，如果该映射表包含一个对应于基本类型的项。否则使用标准映射关系。
+ <P>
+结果集合中此对象指定的 SQL 数组的每个元素对应有一个行，第一行包含位于索引 <code>index</code> 处的元素。结果集合中包含 <code>count</code> 个行，这些行基于索引按升序排列。每行有两列：第二列存储元素值；第一列存储该元素数组中的索引。
+
+@param index 要获取的第一个元素的数组索引；第一个元素位于索引 1 处
+@param count 要获取的连续 SQL 数组元素的数量
+@return 一个 <code>ResultSet</code> 对象，该对象包含此 <code>Array</code> 对象指定的 SQL 数组的 <code>count</code> 个连续元素（从索引 <code>index</code> 开始）。
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet java.sql.Array.getResultSet(long index, int count, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取保存子数组的元素的结果集合，从索引 <code>index</code> 开始，包含 <code>count</code> 个连续元素。此方法使用指定的 <code>map</code> 进行类型映射自定义，除非数组的基本类型与 <code>map</code> 中用户定义类型不匹配，这种情况下使用标准映射关系。这一 <code>getResultSet</code> 方法使用给定类型映射表或标准映射关系；它绝不会使用与连接关联的类型映射表。
+ <P>
+结果集合中此对象指定的 SQL 数组的每个元素对应有一个行，第一行包含位于索引 <code>index</code> 处的元素。结果集合中包含 <code>count</code> 个行，这些行基于索引按升序排列。每行有两列：第二列存储元素值；第一列存储该元素数组中的索引。
+
+@param index 要获取的第一个元素的数组索引；第一个元素位于索引 1 处
+@param count 要获取的连续 SQL 数组元素的数量
+@param map <code>Map</code> 对象，包含从 SQL 类型名称到 Java(tm) 编程语言形式的类的映射关系 
+@return 一个 <code>ResultSet</code> 对象，该对象包含此 <code>Array</code> 对象指定的 SQL 数组的 <code>count</code> 个连续元素（从索引 <code>index</code> 开始）。
+@exception SQLException 如果在试图访问该数组时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.Array.free() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法释放 <code>Array</code> 对象以及它占用的资源。调用 <code>free</code> 方法后，该对象无效。
+<p>
+已调用 <code>free</code> 之后，任何调用 <code>free</code> 以外方法的尝试将会导致抛出 <code>SQLException</code>。如果多次调用 <code>free</code>，则后续对 <code>free</code> 的调用被视为无操作。
+<p>
+ 
+@throws SQLException 如果释放 Array 资源时发生错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->

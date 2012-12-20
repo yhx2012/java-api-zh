@@ -1,0 +1,152 @@
+<!-- BEGIN KEY -->
+public final class java.io.FilePermission extends java.security.Permission implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示对文件和目录的访问。FilePermission 由路径名和对该路径名有效的操作集合组成。
+ <P>
+路径名是授予指定操作的文件或目录的路径名。以 &quot;/*&quot;（其中 &quot;/&quot; 是文件分隔符字符，即 <code>File.separatorChar</code>）结尾的路径名指示包含在该目录中的所有文件和目录。以 &quot;/-&quot; 结尾的路径名（递归地）指示包含在该目录中的所有文件和子目录。由特殊标记 &quot;&lt;&lt;ALL FILES&gt;&gt;&quot; 组成的路径名可匹配<b>任何</b>文件。
+ <P>
+注：由单个 &quot;*&quot; 组成的路径名指示当前目录中的所有文件，而由单个 &quot;-&quot; 组成的路径名指示当前目录中的所有文件，并（递归地）指示包含在当前目录中的所有文件和子目录。
+ <P>
+将所要授予的操作以字符串的形式传递给构造方法，该字符串包含由一个或多个用逗号分隔的关键字组成的列表。可能的关键字有 &quot;read&quot;、&quot;write&quot;、&quot;execute&quot; 和 &quot;delete&quot;。其含义定义如下：
+ <P>
+ <DL> 
+<DT> read<DD> 读权限
+<DT> write<DD> 写权限
+    <DT> execute 
+<DD> 执行权限。允许调用 <code>Runtime.exec</code>。对应于 <code>SecurityManager.checkExec</code>。
+    <DT> delete
+<DD> 删除权限。允许调用 <code>File.delete</code>。对应于 <code>SecurityManager.checkDelete</code>。
+ </DL>
+ <P>
+处理前会将操作字符串转换为小写字母。
+ <P>
+在授予 FilePermission 权限时要小心。在对各种文件和目录授予读访问权和（尤其是）写访问权时，一定要慎重。对写操作授予 &quot;&lt;&lt;ALL FILES&gt;&gt;&quot; 权限特别危险。这允许对整个文件系统进行写操作。事实上它甚至允许对系统中的二进制文件（包括 JVM 运行时环境）进行替换。
+ 
+<p>请注意：代码总是可以读取自身所在目录（或该目录的子目录）中的文件，不需要对其进行显式授权。
+ 
+@see java.security.Permission
+@see java.security.Permissions
+@see java.security.PermissionCollection
+
+@version 1.80 05/11/17
+
+@author Marianne Mueller
+@author Roland Schemers
+@since 1.2
+
+@serial exclude
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.io.FilePermission.actions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+操作字符串。 
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.FilePermission(String path, String actions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定操作的新 FilePermission 对象，<i>path</i> 是文件或目录的路径名，<i>actions</i> 包含对文件或目录授予的所需操作的列表，该列表由逗号分隔。可能的操作有 &quot;read&quot;、&quot;write&quot;、&quot;execute&quot; 和 &quot;delete&quot;。 
+ 
+<p>以 &quot;/*&quot;（其中 &quot;/&quot; 是文件分隔符，即 <code>File.separatorChar</code>）结尾的路径名指示所有包含在该目录中的文件和目录。以 &quot;/-&quot; 结尾的路径名（递归地）指示包含在该目录中的所有文件和子目录。特殊路径名 &quot;&lt;&lt;ALL FILES&gt;&gt;&quot; 与任意文件都匹配。
+ 
+<p>由单个 &quot;*&quot; 组成的路径名指示当前目录中的所有文件，而由单个 &quot;-&quot; 组成的路径名指示当前目录中的所有文件，并（递归地）指示包含在当前目录中的所有文件和子目录。
+
+<p>包含空字符串的路径名表示一个空路径。
+ 
+@param path 文件/目录的路径名。
+@param actions 操作字符串。
+
+@throws IllegalArgumentException	如果 actions 为 <code>null</code> 或空，或者包含一个除指定可能的操作之外的操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.FilePermission.implies(Permission p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查 FilePermission 对象是否&ldquo;隐含&rdquo;指定的权限。
+ <P>
+更明确地说，如果此方法满足以下条件，则返回 true：<p>
+ <ul>
+<li> <i>p</i> 是 FilePermission 的一个实例，<p>
+<li> <i>p</i> 的操作是此对象的操作的一个真子集，并且 <p>
+<li> 此对象的路径名隐含 <i>p</i> 的路径名。例如，&quot;/tmp/*&quot; 隐含 &quot;/tmp/foo&quot;，因为 &quot;/tmp/*&quot; 涵盖 &quot;/tmp&quot; 目录中所有文件，包括命名为 &quot;foo&quot; 的文件。
+ </ul>
+
+@param p 所要检查的权限。
+
+@return  如果指定的权限不为 <code>null</code> 并且此对象隐含该权限，则返回 <code>true</code>；否则返回 <code>false</code>。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.FilePermission.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 FilePermission 对象是否相等。检查 <i>obj</i> 是否是一个 FilePermission，是否与此对象具有相同的路径名和操作。
+ <P>
+@param obj 要与此对象进行相等性测试的对象。
+@return 如果 obj 是一个 FilePermission，并且与此 FilePermission 对象具有相同的路径名和操作，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.FilePermission.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的哈希码值。
+ 
+@return  此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.FilePermission.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回操作的&ldquo;规范化字符串表示形式&rdquo;。也就是说，此方法总是以下列顺序返回存在的操作：read、write、execute、delete。例如，如果此 FilePermission 对象允许写和读操作，则调用 <code>getActions</code> 将返回字符串 &quot;read,write&quot;。
+
+@return 操作的规范化字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.io.FilePermission.newPermissionCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于存储 FilePermission 对象的新 PermissionCollection 对象。
+ <p>
+FilePermission 对象必须以允许将它们按任意顺序插入集合的方式来存储，但同时也允许以有效（并一致）的方式实现 PermissionCollection 的 <code>implies</code> 方法。
+ 
+<p>例如，如果有两个 FilePermissions：
+ <OL>
+ <LI>  <code>&quot;/tmp/-&quot;, &\quot;read&quot;</code>
+ <LI>  <code>&quot;/tmp/scratch/foo&quot;, &quot;write&quot;</code>
+ </OL>
+ 
+<p>并且您正利用 FilePermission 权限调用 <code>implies</code> 方法： 
+ 
+ <pre>
+   &quot;/tmp/scratch/foo&quot;, &quot;read,write&quot;, 
+ </pre>
+ 
+那么 <code>implies</code> 函数必须对 &quot;/tmp/-&quot; 和 &quot;/tmp/scratch/foo&quot; 这两种权限都进行考虑，因此有效权限是 &quot;read,write&quot;，并且 <code>implies</code> 返回 true。FilePermission 的 &quot;implies&quot; 语义由此 <code>newPermissionCollection</code> 方法返回的 PermissionCollection 对象恰当地处理。
+
+@return 适合存储 FilePermissions 的新 PermissionCollection 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.io.FilePermission.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 readObject，从流中恢复 FilePermission 的状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.io.FilePermission.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 WriteObject，将 FilePermission 的状态保存到流中。操作已被序列化，超类负责管理名称。
+
+<!-- END DATA -->

@@ -1,0 +1,445 @@
+<!-- BEGIN KEY -->
+public class javax.security.auth.kerberos.KerberosTicket extends java.lang.Object implements javax.security.auth.Destroyable, javax.security.auth.Refreshable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This class encapsulates a Kerberos ticket and associated
+ information as viewed from the client's point of view. It captures all
+ information that the Key Distribution Center (KDC) sends to the client
+ in the reply message KDC-REP defined in the Kerberos Protocol
+ Specification (<a href=http://www.ietf.org/rfc/rfc1510.txt>RFC 1510</a>).
+ <p>
+ All Kerberos JAAS login modules that authenticate a user to a KDC should
+ use this class. Where available, the login module might even read this 
+ information from a ticket cache in the operating system instead of
+ directly communicating with the KDC. During the commit phase of the JAAS
+ authentication process, the JAAS login module should instantiate this
+ class and store the instance in the private credential set of a
+ {@link javax.security.auth.Subject Subject}.<p>
+
+ It might be necessary for the application to be granted a
+ {@link javax.security.auth.PrivateCredentialPermission 
+ PrivateCredentialPermission} if it needs to access a KerberosTicket
+ instance from a Subject. This permission is not needed when the
+ application depends on the default JGSS Kerberos mechanism to access the
+ KerberosTicket. In that case, however, the application will need an
+ appropriate
+ {@link javax.security.auth.kerberos.ServicePermission ServicePermission}.
+ <p>
+ Note that this class is applicable to both ticket granting tickets and
+ other regular service tickets. A ticket granting ticket is just a
+ special case of a more generalized service ticket.
+
+ @see javax.security.auth.Subject
+ @see javax.security.auth.PrivateCredentialPermission
+ @see javax.security.auth.login.LoginContext
+ @see org.ietf.jgss.GSSCredential
+ @see org.ietf.jgss.GSSManager
+ 
+ @author Mayank Upadhyay
+ @version 1.21, 07/27/06
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] javax.security.auth.kerberos.KerberosTicket.asn1Encoding
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ ASN.1 DER Encoding of the Ticket as defined in the 
+ Kerberos Protocol Specification RFC1510.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KeyImpl javax.security.auth.kerberos.KerberosTicket.sessionKey
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>KeyImpl</code> is serialized by writing out the ASN1 Encoded bytes 
+ of the encryption key. The ASN1 encoding is defined in RFC1510 and as
+ follows:
+ <pre>		
+			EncryptionKey ::=   SEQUENCE {
+				keytype[0]    INTEGER,
+				keyvalue[1]   OCTET STRING    	
+				}
+ </pre>
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean[] javax.security.auth.kerberos.KerberosTicket.flags
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ Ticket Flags as defined in the Kerberos Protocol Specification RFC1510.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.authTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ Time of initial authentication 
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.startTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ Time after which the ticket is valid.
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.endTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ Time after which the ticket will not be honored. (its expiration time).
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.renewTill
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ For renewable Tickets it indicates the maximum endtime that may be 
+ included in a renewal. It can be thought of as the absolute expiration 
+ time for the ticket, including all renewals. This field may be null
+ for tickets that are not renewable.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.client
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ Client that owns the service ticket
+ 
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.server
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ The service for which the ticket was issued.
+ 
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.net.InetAddress[] javax.security.auth.kerberos.KerberosTicket.clientAddresses
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ The addresses from where the ticket may be used by the client. 
+ This field may be null when the ticket is usable from any address.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.kerberos.KerberosTicket(byte[] asn1Encoding, KerberosPrincipal client, KerberosPrincipal server, byte[] sessionKey, int keyType, boolean[] flags, Date authTime, Date startTime, Date endTime, Date renewTill, java.net.InetAddress[] clientAddresses)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a KerberosTicket using credentials information that a
+ client either receives from a KDC or reads from a cache.
+
+ @param asn1Encoding the ASN.1 encoding of the ticket as defined by
+ the Kerberos protocol specification.
+ @param client the client that owns this service
+ ticket
+ @param server the service that this ticket is for
+ @param sessionKey the raw bytes for the session key that must be
+ used to encrypt the authenticator that will be sent to the server
+ @param keyType the key type for the session key as defined by the
+ Kerberos protocol specification.
+ @param flags the ticket flags. Each element in this array indicates
+ the value for the corresponding bit in the ASN.1 BitString that
+ represents the ticket flags. If the number of elements in this array 
+ is less than the number of flags used by the Kerberos protocol,
+ then the missing flags will be filled in with false.
+ @param authTime the time of initial authentication for the client
+ @param startTime the time after which the ticket will be valid. This 
+ may be null in which case the value of authTime is treated as the
+ startTime.
+ @param endTime the time after which the ticket will no longer be
+ valid
+ @param renewTill an absolute expiration time for the ticket,
+ including all renewal that might be possible. This field may be null 
+ for tickets that are not renewable.
+ @param clientAddresses the addresses from where the ticket may be
+ used by the client. This field may be null when the ticket is usable 
+ from any address.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.getClient()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the client principal associated with this ticket.
+
+ @return the client principal.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.getServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the service principal associated with this ticket.
+
+ @return the service principal.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.crypto.SecretKey javax.security.auth.kerberos.KerberosTicket.getSessionKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the session key associated with this ticket.
+
+ @return the session key.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int javax.security.auth.kerberos.KerberosTicket.getSessionKeyType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the key type of the session key associated with this
+ ticket as defined by the Kerberos Protocol Specification.
+
+ @return the key type of the session key associated with this
+ ticket.
+
+ @see #getSessionKey()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isForwardable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines if this ticket is forwardable.
+
+ @return true if this ticket is forwardable, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isForwarded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines if this ticket had been forwarded or was issued based on
+ authentication involving a forwarded ticket-granting ticket.
+
+ @return true if this ticket had been forwarded or was issued based on
+ authentication involving a forwarded ticket-granting ticket,
+ false otherwise.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isProxiable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines if this ticket is proxiable.
+
+ @return true if this ticket is proxiable, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isProxy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines is this ticket is a proxy-ticket.
+
+ @return true if this ticket is a proxy-ticket, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isPostdated()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines is this ticket is post-dated.
+
+ @return true if this ticket is post-dated, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isRenewable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines is this ticket is renewable. If so, the {@link #refresh() 
+ refresh} method can be called, assuming the validity period for
+ renewing is not already over.
+
+ @return true if this ticket is renewable, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isInitial()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines if this ticket was issued using the Kerberos AS-Exchange
+ protocol, and not issued based on some ticket-granting ticket.
+
+ @return true if this ticket was issued using the Kerberos AS-Exchange
+ protocol, false if not.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean[] javax.security.auth.kerberos.KerberosTicket.getFlags()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the flags associated with this ticket. Each element in the
+ returned array indicates the value for the corresponding bit in the
+ ASN.1 BitString that represents the ticket flags.
+
+ @return the flags associated with this ticket.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getAuthTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the time that the client was authenticated.
+
+ @return the time that the client was authenticated
+         or null if not set.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getStartTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the start time for this ticket's validity period.
+
+ @return the start time for this ticket's validity period
+         or null if not set.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getEndTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the expiration time for this ticket's validity period.
+
+ @return the expiration time for this ticket's validity period.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getRenewTill()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the latest expiration time for this ticket, including all
+ renewals. This will return a null value for non-renewable tickets.
+
+ @return the latest expiration time for this ticket.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.net.InetAddress[] javax.security.auth.kerberos.KerberosTicket.getClientAddresses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a list of addresses from where the ticket can be used.
+ 
+ @return ths list of addresses or null, if the field was not
+ provided.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] javax.security.auth.kerberos.KerberosTicket.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an ASN.1 encoding of the entire ticket.
+
+ @return an ASN.1 encoding of the entire ticket.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.isCurrent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Determines if this ticket is still current.  
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.kerberos.KerberosTicket.refresh() throws javax.security.auth.RefreshFailedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Extends the validity period of this ticket. The ticket will contain
+ a new session key if the refresh operation succeeds. The refresh
+ operation will fail if the ticket is not renewable or the latest
+ allowable renew time has passed. Any other error returned by the
+ KDC will also cause this method to fail.
+
+ Note: This method is not synchronized with the the accessor
+ methods of this object. Hence callers need to be aware of multiple
+ threads that might access this and try to renew it at the same
+ time.
+
+ @throws RefreshFailedException if the ticket is not renewable, or
+ the latest allowable renew time has passed, or the KDC returns some
+ error.
+
+ @see #isRenewable()
+ @see #getRenewTill()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.kerberos.KerberosTicket.destroy() throws javax.security.auth.DestroyFailedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Destroys the ticket and destroys any sensitive information stored in
+ it.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.isDestroyed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Determines if this ticket has been destroyed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.kerberos.KerberosTicket.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a hashcode for this KerberosTicket. 
+
+ @return a hashCode() for the <code>KerberosTicket</code>
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.equals(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Compares the specified Object with this KerberosTicket for equality.
+ Returns true if the given object is also a 
+ <code>KerberosTicket</code> and the two
+ <code>KerberosTicket</code> instances are equivalent. 
+
+ @param other the Object to compare to
+ @return true if the specified object is equal to this KerberosTicket,
+ false otherwise. NOTE: Returns false if either of the KerberosTicket
+ objects has been destroyed.
+ @since 1.6
+
+<!-- END DATA -->

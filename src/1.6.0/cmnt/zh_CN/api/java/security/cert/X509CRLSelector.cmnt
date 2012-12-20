@@ -1,0 +1,274 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.X509CRLSelector extends java.lang.Object implements java.security.cert.CRLSelector
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择与所有指定标准相匹配的 <code>X509CRL</code> 的 <code>CRLSelector</code>。从 <code>CertStore</code> 中选择 CRL 以检查特定证书的撤消状态时，此类特别有用。
+ <p>
+最初构造 <code>X509CRLSelector</code> 时，它没有启用任何标准，并且每个 <code>get</code> 方法都返回一个默认值 (<code>null</code>)。因此，对于任意 <code>X509CRL</code> 而言，{@link #match match} 方法将返回 <code>true</code>。通常，启用多种标准（例如通过调用 {@link #setIssuers setIssuers} 或 {@link #setDateAndTime setDateAndTime}），然后将 <code>X509CRLSelector</code> 传递到 {@link CertStore#getCRLs CertStore.getCRLs} 或某个类似方法。
+ <p>
+有关 X.509 CRL 各字段和下面所述各扩展的定义，请参阅 RFC 2459。
+ <p>
+<b>并发访问</b>
+ <p>
+除非另行指定，否则此类中所定义的方法不是线程安全的。需要并发访问单个对象的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同对象的多个线程而言，无需实现同步。
+
+@see CRLSelector
+@see X509CRL
+
+@version 	1.16 07/16/04
+@since	1.4
+@author	Steve Hanna
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.X509CRLSelector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>X509CRLSelector</code>。最初未设置任何标准，所以任何 <code>X509CRL</code> 都匹配。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setIssuers(java.util.Collection<javax.security.auth.x500.X500Principal> issuers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 issuerNames 标准。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。如果指定的标识名为 <code>null</code>，则将匹配任意发布方标识名。
+ <p>
+此方法允许调用方（使用单个方法调用）指定 <code>X509CRL</code> 可能包含的全部发布方名称集。指定的值会替换 issuerNames 标准以前的值。
+ <p>
+<code>names</code> 参数（如果不为 <code>null</code>）是一个 <code>X500Principal</code> 的 <code>Collection</code>。
+ <p>
+注意，<code>names</code> 参数可以包含重复的标识名，但是可能从 {@link #getIssuers getIssuers} 方法返回的名称 <code>Collection</code> 中将其移除。
+ <p>
+注意，要对该 <code>Collection</code> 执行复制以防后续修改。
+
+@param issuers X500Principals 的 <code>Collection</code>（或者为 <code>null</code>）
+@see #getIssuers
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setIssuerNames(java.util.Collection<?> names) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>注意：</strong>请使用 {@linkplain #setIssuers(Collection)} 方法，或者使用此方法时仅指定 byte 数组形式的标识名。有关更多信息，请参阅 {@link #addIssuerName(String)}。
+ <p>
+设置 issuerNames 标准。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。如果指定的标识名为 <code>null</code>，则将匹配任意发布方标识名。
+ <p>
+此方法允许调用方（使用单个方法调用）指定 <code>X509CRL</code> 可能包含的全部发布方名称集。指定的值会替换 issuerNames 标准以前的值。
+ <p>
+<code>names</code> 参数（如果不为 <code>null</code>）是一个名称的 <code>Collection</code>。每个名称都是一个 <code>String</code> 或 byte 数组（分别为 RFC 2253 或 ASN.1 DER 编码形式），表示一个标识名。如果为此参数提供 <code>null</code> 值，则不执行 issuerNames 检查。
+ <p>
+注意，<code>names</code> 参数可以包含重复的标识名，但是可能从 {@link #getIssuerNames getIssuerNames} 方法返回的名称 <code>Collection</code> 中将其移除。
+ <p>
+如果以 byte 数组的形式指定名称，那么它应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。此结构的 ASN.1 表示如下：
+ <pre><code>
+ Name ::= CHOICE {
+   RDNSequence }
+
+ RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+
+ RelativeDistinguishedName ::=
+   SET SIZE (1 .. MAX) OF AttributeTypeAndValue
+
+ AttributeTypeAndValue ::= SEQUENCE {
+   type     AttributeType,
+   value    AttributeValue }
+
+ AttributeType ::= OBJECT IDENTIFIER
+
+ AttributeValue ::= ANY DEFINED BY AttributeType
+ ....
+ DirectoryString ::= CHOICE {
+       teletexString           TeletexString (SIZE (1..MAX)),
+       printableString         PrintableString (SIZE (1..MAX)),
+       universalString         UniversalString (SIZE (1..MAX)),
+       utf8String              UTF8String (SIZE (1.. MAX)),
+       bmpString               BMPString (SIZE (1..MAX)) }
+ </code></pre>
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@param names 一个名称 <code>Collection</code>（或者为 <code>null</code>）
+@throws IOException 如果发生解析错误
+@see #getIssuerNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.addIssuer(X500Principal issuer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 issuerNames 标准中添加名称。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。
+ <p>
+此方法允许调用方向 <code>X509CRL</code> 可能包含的发布方名称集中添加一个名称。将指定的名称添加到 issuerNames 标准的以前值中。如果指定的名称是重复的，则忽略它。
+
+@param issuer X500Principal 形式的发布方
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.addIssuerName(String name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，使用 {@linkplain #addIssuer(X500Principal)} 或 {@linkplain #addIssuerName(byte[])} 替代。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些 CRL 不匹配时不应该依赖它。
+ <p>
+向 issuerNames 标准中添加名称。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。
+ <p>
+此方法允许调用方向 <code>X509CRL</code> 可能包含的发布方名称集中添加一个名称。将指定的名称添加到 issuerNames 标准的以前值中。如果指定的名称是重复的，则忽略它。
+
+@param name RFC 2253 形式的名称
+@throws IOException 如果发生解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.addIssuerName(byte[] name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 issuerNames 标准中添加名称。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。
+ <p>
+此方法允许调用方向 <code>X509CRL</code> 可能包含的发布方名称集中添加一个名称。将指定的名称添加到 issuerNames 标准的以前值中。如果指定的名称是重复的，则忽略它。如果以 byte 数组的形式指定名称，那么它应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。此结构的 ASN.1 表示如下：
+ <p>
+以 byte 数组的形式提供该名称。此 byte 数组应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。{@link #setIssuerNames setIssuerNames(Collection names)} 的文档中提供了此结构的 ASN.1 表示。
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+
+@param name 包含 ASN.1 DER 编码形式名称的 byte 数组
+@throws IOException 如果发生解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setMinCRLNumber(BigInteger minCRL)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 minCRLNumber 标准。<code>X509CRL</code> 具有的 CRL 数字扩展的值必须大于或等于指定值。如果其值为 <code>null</code>，则不执行 minCRLNumber 检查。
+
+@param minCRL 接受的最小 CRL 数字（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setMaxCRLNumber(BigInteger maxCRL)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 maxCRLNumber 标准。<code>X509CRL</code> 具有的 CRL 数字扩展的值必须小于等于指定值。如果其值为 <code>null</code>，则不执行 maxCRLNumber 检查。
+
+@param maxCRL 接受的最大 CRL 数字（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setDateAndTime(Date dateAndTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 dateAndTime 标准。指定的日期必须等于或迟于 <code>X509CRL</code> 的 thisUpdate 组件的日期，且早于 nextUpdate 组件的值日期。如果 <code>X509CRL</code> 不包含 nextUpdate 组件，则没有匹配。如果其值为 <code>null</code>，则不执行 dateAndTime 检查。
+ <p>
+注意，要复制此处提供的 <code>Date</code> 以防后续修改。
+
+@param dateAndTime 要进行匹配的 <code>Date</code>（或者为 <code>null</code>）
+@see #getDateAndTime
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CRLSelector.setCertificateChecking(X509Certificate cert)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要检查的证书。这不是一个标准。相反，这是一个可选的信息，在检查指定证书的撤消状态时，它可帮助 <code>CertStore</code> 找到相关的 CRL。如果指定为 <code>null</code>，则不提供此种可选的信息。
+
+@param cert 要检查的 <code>X509Certificate</code>（或者为 <code>null</code>）
+@see #getCertificateChecking
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<javax.security.auth.x500.X500Principal> java.security.cert.X509CRLSelector.getIssuers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 issuerNames 标准。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。如果返回值为 <code>null</code>，则任意发布方标识名都匹配。
+ <p>
+如果返回值不为 <code>null</code>，则是一个 <code>X500Principal</code> 的不可修改的 <code>Collection</code>。
+
+@return 一个不可修改的名称 <code>Collection</code>（或者为 <code>null</code>）
+@see #setIssuers
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.lang.Object> java.security.cert.X509CRLSelector.getIssuerNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 issuerNames 标准的一个副本。<code>X509CRL</code> 中的发布方标识名必须至少与某个指定的标识名相匹配。如果返回值为 <code>null</code>，则任意发布方标识名都匹配。
+ <p>
+如果返回值不为 <code>null</code>，则是一个名称 <code>Collection</code>。每个名称都是一个 <code>String</code> 或 byte 数组（分别为 RFC 2253 或 ASN.1 DER 编码形式），表示一个标识名。注意，返回的 <code>Collection</code> 可能包含重复的名称。
+ <p>
+如果以 byte 数组的形式指定名称，那么它应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。{@link #setIssuerNames setIssuerNames(Collection names)} 的文档中给出了此结构的 ASN.1 表示。
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@return 一个名称 <code>Collection</code>（或者为 <code>null</code>）
+@see #setIssuerNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.security.cert.X509CRLSelector.getMinCRL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 minCRLNumber 标准。<code>X509CRL</code> 具有的 CRL 数字扩展的值必须大于或等于指定值。如果其值为 <code>null</code>，则不执行 minCRLNumber 检查。
+
+@return 接受的最小 CRL 数字（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.security.cert.X509CRLSelector.getMaxCRL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 maxCRLNumber 标准。<code>X509CRL</code> 具有的 CRL 数字扩展的值必须小于等于指定值。如果其值为 <code>null</code>，则不执行 maxCRLNumber 检查。
+
+@return 接受的最大 CRL 数字（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.security.cert.X509CRLSelector.getDateAndTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 dateAndTime 标准。指定的日期必须等于或迟于 <code>X509CRL</code> 的 thisUpdate 组件的日期，且早于 nextUpdate 组件的日期。如果 <code>X509CRL</code> 不包含 nextUpdate 组件，则没有匹配。如果其值为 <code>null</code>，则不执行 dateAndTime 检查。
+ <p>
+注意，要复制返回的 <code>Date</code> 以防后续修改。
+
+@return 要进行匹配的 <code>Date</code>（或者为 <code>null</code>）
+@see #setDateAndTime
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.X509Certificate java.security.cert.X509CRLSelector.getCertificateChecking()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要检查的证书。这不是一个标准。相反，这是一个可选的信息，在检查指定证书的撤消状态时，它可帮助 <code>CertStore</code> 找到相关的 CRL。如果返回值为 <code>null</code>，则不提供此种可选的信息。
+
+@return 要检查的证书（或者为 <code>null</code>）
+@see #setCertificateChecking
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.X509CRLSelector.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>X509CRLSelector</code> 的可打印表示形式。
+
+@return 描述该 <code>X509CRLSelector</code> 内容的 <code>String</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.X509CRLSelector.match(CRL crl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+决定是否应该选择某个 <code>CRL</code>。
+
+@param crl 要检查的 <code>CRL</code>
+@return 如果应该选择该 <code>CRL</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.cert.X509CRLSelector.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的副本。
+
+@return 副本
+
+<!-- END DATA -->

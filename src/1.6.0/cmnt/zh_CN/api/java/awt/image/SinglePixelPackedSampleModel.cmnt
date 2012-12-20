@@ -1,0 +1,283 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.SinglePixelPackedSampleModel extends java.awt.image.SampleModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示压缩的像素数据：将 N 个样本组成的单个像素存储在单个数据数组元素中，每个数据数组元素只保存一个像素的样本。此类支持 {@link DataBuffer#TYPE_BYTE TYPE_BYTE}、{@link DataBuffer#TYPE_USHORT TYPE_USHORT} 和 {@link DataBuffer#TYPE_INT TYPE_INT} 数据类型。所有数据数组元素都位于 DataBuffer 的第一个存储单元中。该类提供了一些存取方法，以便直接操作图像数据。扫描行间距是给定样本和下一个扫描行同一列中对应样本之间的数据数组元素数。位掩码是提取表示像素 band 样本所需的掩码。位偏移量是样本数据数组元素中位的偏移量，其中样本表示像素的 band。
+ <p>
+以下代码说明了如何从 DataBuffer <code>data</code> 中提取表示像素 <code>x,y</code> 处 band <code>b</code> 的样本位：
+ <pre>
+      int sample = data.getElem(y * scanlineStride + x);
+      sample = (sample &amp; bitMasks[b]) &gt;&gt;&gt; bitOffsets[b];
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SinglePixelPackedSampleModel(int dataType, int w, int h, int[] bitMasks)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有 bitMasks.length band 的 SinglePixelPackedSampleModel。每个样本都存储在数据数组元素中其对应位掩码的位置处。每个位掩码必须是连续的，掩码不得重叠。
+@param dataType	存储样本使用的数据类型。
+@param w	所描述的图像数据区域的宽度（以像素为单位）。
+@param h	所描述的图像数据区域的高度（以像素为单位）。
+@param bitMasks  所有 band 的位掩码。
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SinglePixelPackedSampleModel(int dataType, int w, int h, int scanlineStride, int[] bitMasks)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 SinglePixelPackedSampleModel，使其具有 bitMasks.length band，且扫描行间距等于 scanlineStride 数据数组元素。每个样本都存储在数据数组元素中其对应位掩码的位置处。每个位掩码必须是连续的，掩码不得重叠。
+@param dataType	存储样本使用的数据类型。
+@param w	所描述的图像数据区域的宽度（以像素为单位）。
+@param h	所描述的图像数据区域的高度（以像素为单位）。
+@param scanlineStride 图像数据的行间距。
+@param bitMasks  所有 band 的位掩码。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+@throws IllegalArgumentException 如果 <code>bitMask</code> 中的任何掩码不连续
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SinglePixelPackedSampleModel.getNumDataElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 getDataElements 和 setDataElements 方法传输一个像素所需的数据元素数。对于 SinglePixelPackedSampleModel，此元素数为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.SinglePixelPackedSampleModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定宽度和高度的新 SinglePixelPackedSampleModel。新 SinglePixelPackedSampleModel 的存储数据类型和位掩码与此 SinglePixelPackedSampleModel 相同。
+@param w 得到的 <code>SampleModel</code> 的宽度
+@param h 得到的 <code>SampleModel</code> 的高度
+@return 具有指定宽度和高度的 <code>SinglePixelPackedSampleModel</code>。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.DataBuffer java.awt.image.SinglePixelPackedSampleModel.createDataBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建一个对应于此 SinglePixelPackedSampleModel 的 DataBuffer。DataBuffer 的数据类型和大小将与此 SinglePixelPackedSampleModel 一致。DataBuffer 只有一个存储单元。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getSampleSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有 band 的每样本位数。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SinglePixelPackedSampleModel.getSampleSize(int band)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 band 的每样本位数。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SinglePixelPackedSampleModel.getOffset(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素 (x,y)（在数据数组元素中）的偏移量。包含像素 <code>x,y</code> 的数据元素可以使用 SinglePixelPackedSampleModel <code>sppsm</code> 从 DataBuffer <code>data</code> 中检索：
+ <pre>
+        data.getElem(sppsm.getOffset(x, y));
+ </pre>
+@param x 指定像素的 X 坐标
+@param y 指定像素的 Y 坐标
+@return 指定像素的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getBitOffsets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示所有 band 像素的数据数组元素中的位偏移量。
+@return 表示所有 band 像素的位偏移量。     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getBitMasks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有 band 的位掩码。
+@return 所有 band 的位掩码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SinglePixelPackedSampleModel.getScanlineStride()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 SinglePixelPackedSampleModel 的扫描行间距。
+@return 此 <code>SinglePixelPackedSampleModel</code> 的扫描行间距。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.SinglePixelPackedSampleModel.createSubsetSampleModel(int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新 SinglePixelPackedSampleModel，使其具有此 SinglePixelPackedSampleModel 的 band 子集。新 SinglePixelPackedSampleModel 可以使用现有 SinglePixelPackedSampleModel 可使用的 DataBuffer。新 SinglePixelPackedSampleModel/DataBuffer 组合将表示一个图像，该图像具有原始 SinglePixelPackedSampleModel/DataBuffer 组合的 band 子集。
+@exception RasterFormatException 如果 band 参数的长度大于样本模型中 band 的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.SinglePixelPackedSampleModel.getDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回 TransferType 类型基本数组中单个像素的数据。对于 SinglePixelPackedSampleModel，数组将有一个元素，且类型与存储数据类型相同。通常，obj 作为 null 传入，从而 Object 将被自动创建，并具有正确的基本数据类型。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SinglePixelPackedSampleModel <code>sppsm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SinglePixelPackedSampleModel <code>sppsm2</code> 描述）。该传输通常比使用 getPixel/setPixel 更有效。
+ <pre>
+ 	     SinglePixelPackedSampleModel sppsm1, sppsm2;
+	     DataBufferInt db1, db2;
+ 	     sppsm2.setDataElements(x, y, sppsm1.getDataElements(x, y, null,
+                              db1), db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+如果 obj 不为 null，则它应是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在范围内，或者 obj 不为 null 且大小不足以保存像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param obj       如果不为 null，则 obj 是接收返回像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@return 指定像素的数据。
+@see #setDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 int 数组中返回对应于指定像素的所有样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param iArray    如果不为 null，则在此数组中返回样本
+@param data	包含图像数据的 DataBuffer。
+@return 对应于指定像素的所有样本。
+@see #setPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 int 数组中返回对应于指定像素矩形的所有样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param iArray    如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定像素区域的所有样本。
+@see #setPixels(int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SinglePixelPackedSampleModel.getSample(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 int 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要返回的 band。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素的样本。
+@see #setSample(int, int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SinglePixelPackedSampleModel.getSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 int 数组中返回指定 band 中对应于指定像素矩形的样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要返回的 band。
+@param iArray    如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素区域的样本。
+@see #setSamples(int, int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SinglePixelPackedSampleModel.setDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 TransferType 类型的基本数组设置指定 DataBuffer 中单个像素的数据。对于 SinglePixelPackedSampleModel，只有数组的第一个元素将保存有效值，且数组类型必须与 SinglePixelPackedSampleModel 的存储数据类型相同。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SinglePixelPackedSampleModel <code>sppsm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SinglePixelPackedSampleModel <code>sppsm2</code> 描述）。该传输通常比使用 getPixel/setPixel 更有效。
+ <pre>
+ 	     SinglePixelPackedSampleModel sppsm1, sppsm2;
+	     DataBufferInt db1, db2;
+ 	     sppsm2.setDataElements(x, y, sppsm1.getDataElements(x, y, null,
+                              db1), db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+obj 必须是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在范围内，或者 obj 的大小不足以容纳像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param obj       包含像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@see #getDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SinglePixelPackedSampleModel.setPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入样本的 int 数组设置 DataBuffer 中的像素。如果坐标不在范围内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param iArray	int 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SinglePixelPackedSampleModel.setPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置像素矩形的所有样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param iArray	int 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixels(int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SinglePixelPackedSampleModel.setSample(int x, int y, int b, int s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 int 设置指定 band 中对应于 DataBuffer (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要设置的 band。
+@param s	int 形式的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSample(int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SinglePixelPackedSampleModel.setSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置指定 band 中对应于指定像素矩形的样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要设置的 band。
+@param iArray	int 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSamples(int, int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->

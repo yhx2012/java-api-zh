@@ -1,0 +1,56 @@
+<!-- BEGIN KEY -->
+public abstract class javax.print.StreamPrintServiceFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>StreamPrintServiceFactory</code> 是 {@link StreamPrintService} 实例的工厂，{@link StreamPrintService} 可以 mime 类型所描述的特定文档格式向输出流中打印数据。典型的输出文档格式为 Postscript(TM)。 
+ <p>
+此类由服务实现，并通过服从 <a href="../../../technotes/guides/jar/jar.html#Service Provider">SPI JAR File specification</a> 的实现查找。
+ <p>
+应用程序可调用 {@link #lookupStreamPrintServiceFactories(DocFlavor, String)} 方法来查找此类的实例。
+ <p>
+应用程序可使用从工厂获得的 <code>StreamPrintService</code> 来代替表示物理打印机设备的 <code>PrintService</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.print.StreamPrintServiceFactory[] javax.print.StreamPrintServiceFactory.lookupStreamPrintServiceFactories(DocFlavor flavor, String outputMimeType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找 PrintService 的工厂，PrintJob 可使用它来输出数据流，数据格式由 <code>flavor</code> 指定。例如，doc flavor 是用户希望创建的文档类型，不是打印前的文档 flavor。
+ <p>
+虽然在 StreamPrintService 的查找中使用 null 是可接受的值，但是通常要搜索所需的特定格式，如 Postscript(TM)。
+ <p>
+@param flavor 输入文档的类型 - null 意味着匹配所有类型。
+@param outputMimeType 表示所需的输出格式，用于标识适合的流打印机工厂。null 值意味着匹配所有格式。
+@return 用于 StreamPrintService 实例的匹配工厂，如果无法找到适合的工厂，则返回一个空工厂。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String javax.print.StreamPrintServiceFactory.getOutputFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询该工厂，了解从此工厂获得的打印机所发出的文档的格式。
+
+@return 以 mime 类型描述的输出格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.print.DocFlavor[] javax.print.StreamPrintServiceFactory.getSupportedDocFlavors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询该工厂，了解从此工厂所获得打印机可接受的 doc flavor。
+@return 受支持的 doc flavor 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.print.StreamPrintService javax.print.StreamPrintServiceFactory.getPrintService(OutputStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回可打印到指定输出流的 <code>StreamPrintService</code>。由应用程序创建并管理该输出流。应用程序负责关闭该流，并确保不再使用此打印机。从打印机创建的所有 PrintJob 完成前，应用程序不应关闭此流。提前关闭此流可能生成 <code>PrinterException</code> 和一个指示作业失败的事件。
+ <p>
+尽管可以重用连接到物理打印机的 <code>PrintService</code>，但不能重用连接到流的 <code>StreamPrintService</code>。从 <code>DocPrintJob</code> 的 {@link DocPrintJob#print(Doc, javax.print.attribute.PrintRequestAttributeSet) print} 方法返回前，打印系统可使用 {@link StreamPrintService#dispose() dispose} 方法处置底层的 <code>StreamPrintService</code>，这样该打印系统就知道此打印机不再是可使用的。这等效于从此转至脱机状态的物理打印机。应用程序可以提供一个 null 打印流来创建可查询的服务。为这种流创建一个 PrintJob 是无效的。在构造时分配资源的实现应该检查该流，并且仅在该流不为 null 时才分配资源。
+ <p>
+@param out 已生成输出的目标流。
+@return 一个 PrintService，它将生成由此工厂所支持的 DocFlavor 所指定的格式。
+
+<!-- END DATA -->

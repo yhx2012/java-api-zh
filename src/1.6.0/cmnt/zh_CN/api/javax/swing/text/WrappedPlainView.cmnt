@@ -1,0 +1,212 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.WrappedPlainView extends javax.swing.text.BoxView implements javax.swing.text.TabExpander
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+进行换行的纯文本（仅有一种字体和颜色的文本）视图。此视图期望其关联元素具有表示其应该换行的子元素。它实现为一个包含逻辑行视图的垂直框。逻辑行视图是嵌套类，如果逻辑行太宽以至于分配无法容纳时，这些类把逻辑行呈现为多个物理行。行视图针对其状态利用外部类来减少其内存需求。
+ <p>
+行视图通过 <code>drawLine</code> 方法来执行其所有的呈现操作，此方法通过 <code>drawSelectedText</code> 和 <code>drawUnselectedText</code> 方法来依次执行其所有呈现操作。这使得子类能容易地专用于呈现而不考虑布局问题。
+
+@author  Timothy Prinzing
+@version 1.38 05/26/04
+@see     View
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.WrappedPlainView(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 WrappedPlainView。将在字符边界换行。
+
+@param elem 作为视图基础的元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.WrappedPlainView(Element elem, boolean wordWrap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 WrappedPlainView。可以在字符或者单词边界换行，具体取决于 wordWrap 参数的设置。
+
+@param elem 作为视图基础的元素
+@param wordWrap 应该在单词边界换行吗？
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.WrappedPlainView.getTabSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文档的制表符大小设置，默认为 8。
+
+@return 制表符大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.WrappedPlainView.drawLine(int p0, int p1, Graphics g, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消结尾空格并扩展所有制表符，从而呈现一行文本。实现此方法来调用方法 <code>drawUnselectedText</code> 和 <code>drawSelectedText</code>，以便自定义呈现选择和未选择文本的方式。
+
+@param p0 要使用的文档起始位置，该值 &gt;= 0
+@param p1 要使用的文档结尾位置，该值 &gt;= p0
+@param g 图形上下文
+@param x 起始 X 位置，该值 &gt;= 0
+@param y 起始 Y 位置，该值 &gt;= 0
+@see #drawUnselectedText
+@see #drawSelectedText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.WrappedPlainView.drawUnselectedText(Graphics g, int x, int y, int p0, int p1) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型中的给定范围呈现为普通未选择的文本。  
+
+@param g 图形上下文
+@param x 起始 X 坐标，该值 &gt;= 0
+@param y 起始 Y 坐标，该值 &gt;= 0
+@param p0 模型中的开始位置，该值 &gt;= 0
+@param p1 模型中的结束位置，该值 &gt;= p0
+@return 结尾范围的 X 位置，该值 &gt;= 0
+@exception BadLocationException 如果范围无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.WrappedPlainView.drawSelectedText(Graphics g, int x, int y, int p0, int p1) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型中给定的范围呈现为所选文本。实现此方法以使用承载组件中指定的颜色来呈现文本。假定 highlighter 将呈现所选背景。
+
+@param g 图形上下文
+@param x 起始 X 坐标，该值 &gt;= 0
+@param y 起始 Y 坐标，该值 &gt;= 0
+@param p0 模型中的开始位置，该值 &gt;= 0
+@param p1 模型中的结束位置，该值 &gt;= p0
+@return 范围结尾处的位置
+@exception BadLocationException 如果范围无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.Segment javax.swing.text.WrappedPlainView.getLineBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供对能用于从关联文档获取文本的缓冲区的访问。
+
+@return 缓冲区
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.WrappedPlainView.calculateBreakPosition(int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法由嵌套换行视图调用，以确定拆分位置。可以重新实现此方法来改变拆分行为。它将在单词还是字符边界分解，取决于在构造方法中给定的拆分参数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.WrappedPlainView.loadChildren(ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载所有子级来初始化视图。此方法由 <code>setParent</code> 方法调用。子类可以重新实现此方法以使用一种不同的方式初始化其子视图。默认的实现为每个子元素创建一个子视图。
+
+@param f 视图工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.WrappedPlainView.nextTabStop(float x, int tabOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定引用位置之后的下一个制表位位置。此实现不支持诸如居中之类的操作，所以它会忽略 tabOffset 参数。
+
+@param x 当前位置，该值 &gt;= 0
+@param tabOffset 文本流中制表符出现的位置，该值 &gt;= 0。
+@return 以点为单位的制表位，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.WrappedPlainView.paint(Graphics g, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的呈现表面和表现上的区域来呈现。实现此方法来隐藏供嵌套行使用的选择位置、选择颜色和字体规格。
+
+@param g 要使用的呈现表面
+@param a 要在其中呈现的分配区域
+
+@see View#paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.WrappedPlainView.setSize(float width, float height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的大小。如果此方法有任何布局的职责，则它将促使视图沿给定轴进行布局。
+
+@param width 宽度，该值 &gt;= 0
+@param height 高度，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.WrappedPlainView.getPreferredSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的首选跨距。实现此方法以在第一次确保当前字体规格已被缓存（对于使用该规格来确定可能的换行高度的嵌套行而言）后提供超类的行为。
+
+@param axis 可能是 View.X_AXIS 或者 View.Y_AXIS
+@return 将要在其中呈现视图的跨距。通常告知视图呈现在返回的跨距中，但并不保证如此。父级可能选择调整视图大小或者拆分视图。
+@see View#getPreferredSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.WrappedPlainView.getMinimumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最小跨距。实现此方法以在第一次确保当前字体规格已被缓存（对于使用该规格来确定可能的换行高度的嵌套行而言）后提供超类的行为。
+
+@param axis 可能是 View.X_AXIS 或者 View.Y_AXIS
+@return 视图可能想要在其中呈现的跨距。通常告知视图呈现在返回的跨距中，但并不保证如此。父级可能选择调整视图大小或者拆分视图。
+@see View#getMinimumSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.WrappedPlainView.getMaximumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最大跨距。实现此方法以在第一次确保当前字体规格已被缓存（对于使用该规格来确定可能的换行高度的嵌套行而言）后提供超类的行为。
+
+@param axis 可能是 View.X_AXIS 或者 View.Y_AXIS
+@return 视图可能想要在其中呈现的跨距。通常告知视图呈现在返回的跨距中，但并不保证如此。父级可能选择调整视图大小或者拆分视图。
+@see View#getMaximumSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.WrappedPlainView.insertUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出在文档中此视图负责的位置插入了某些内容的通知。实现此方法以便只更新子级。
+
+@param e 发自关联文档的更改信息
+@param a 视图的当前分配
+@param f 视图有子级时用于重建的工厂
+@see View#insertUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.WrappedPlainView.removeUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出从文档中此视图负责的位置移除了某些内容的通知。实现此方法以便只更新子级。
+
+@param e 发自关联文档的更改信息
+@param a 视图的当前分配
+@param f 视图有子级时用于重建的工厂
+@see View#removeUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.WrappedPlainView.changedUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出文档中此视图负责的位置上的属性已发生更改的通知。
+
+@param e 发自关联文档的更改信息
+@param a 视图的当前分配
+@param f 视图有子级时用于重建的工厂 View#changedUpdate
+
+<!-- END DATA -->

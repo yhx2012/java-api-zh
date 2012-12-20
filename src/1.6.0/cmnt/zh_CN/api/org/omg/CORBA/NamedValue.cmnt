@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.NamedValue extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 DII 和 DSI 中用来描述参数和返回值的对象。<code>NamedValue</code> 对象还用在 <code>Context</code> 对象例程中传递属性名称和值的列表。
+ <P>
+<code>NamedValue</code> 对象包含：
+ <UL>
+<LI>名称：如果 <code>NamedValue</code> 对象用于描述某个请求的参数，则名称将是所描述操作的 OMG IDL 接口定义中指定的参数标识符。
+<LI>一个值：<code>Any</code> 对象
+<LI>参数模式标志，以下标志之一：
+   <UL>
+    <LI><code>ARG_IN.value</code>
+    <LI><code>ARG_OUT.value</code>
+    <LI><code>ARG_INOUT.value</code>
+<LI>0：如果此 <code>NamedValue</code> 对象表示 <code>Context</code> 对象中的一个属性，而不是参数或返回值
+   </UL>
+ </UL>
+ <P>
+<code>NamedValue</code> 类具有三个可访问其字段的方法。以下代码段展示了如何创建 <code>NamedValue</code> 对象，然后访问其字段：
+ <PRE>
+    ORB orb = ORB.init(args, null);
+    String s = &quot;argument_1&quot;;
+    org.omg.CORBA.Any myAny = orb.create_any();
+    myAny.insert_long(12345);
+    int in = org.omg.CORBA.ARG_IN.value;
+
+    org.omg.CORBA.NamedValue nv = orb.create_named_value(
+        s, myAny, in);
+    System.out.println(&quot;This nv name is &quot; + nv.name());
+    try {
+        System.out.println(&quot;This nv value is &quot; + nv.value().extract_long());
+        System.out.println(&quot;This nv flag is &quot; + nv.flags());
+    } catch (org.omg.CORBA.BAD_OPERATION b) {
+      System.out.println(&quot;extract failed&quot;);
+    }
+ </PRE>
+
+ <P>
+如果将此代码片段放入 <code>main</code> 方法中，则输出将如下所示：
+ <PRE>
+    This nv name is argument_1
+    This nv value is 12345
+    This nv flag is 1
+ </PRE>
+ <P>
+注意，方法 <code>value</code> 返回 <code>Any</code> 对象。若要访问 <code>Any</code> 对象中包含的 <code>long</code> 值，可使用方法 <code>extract_long</code>。
+
+@see Any
+@see ARG_IN
+@see ARG_INOUT
+@see ARG_OUT
+
+@version 1.12 ,09/09/97
+@since       JDK1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.NamedValue.name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 <code>NamedValue</code> 对象的名称。
+
+@return			表示此 <code>NamedValue</code> 对象名称的 <code>String</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Any org.omg.CORBA.NamedValue.value()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 <code>NamedValue</code> 对象的值。
+
+@return			包含此 <code>NamedValue</code> 对象值的 <code>Any</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int org.omg.CORBA.NamedValue.flags()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索用于此 <code>NamedValue</code> 对象的参数模式标志。
+
+@return			表示此 <code>NamedValue</code> 对象参数模式的 <code>int</code> 值
+
+<!-- END DATA -->

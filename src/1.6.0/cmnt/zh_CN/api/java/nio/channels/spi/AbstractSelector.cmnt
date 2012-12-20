@@ -1,0 +1,124 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.spi.AbstractSelector extends java.nio.channels.Selector
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择器的基本实现类。
+
+<p> 此类封装了实现中断选择操作所需的低级别机制。在调用可能无限期阻塞的 I/O 操作之前和之后，具体的选择器类必须分别调用 {@link #begin begin} 和 {@link #end end} 方法。为了确保始终能够调用 {@link #end end} 方法，应该在 <tt>try</tt>&#xA0;...&#xA0;<tt>finally</tt> 块中使用这些方法： <a name="be">
+
+ <blockquote><pre>
+ try {
+     begin();
+     // Perform blocking I/O operation here
+     ...
+ } finally {
+     end();
+ }</pre></blockquote>
+
+<p> 此类还定义了用于维护选择器的已取消键集和从其通道的键集中移除键的方法，并且为了执行实际的通道注册工作，还声明了由可选择通道的 {@link AbstractSelectableChannel#register register} 方法所调用的抽象 {@link #register register} 方法。  </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.19, 04/05/05
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.spi.AbstractSelector(SelectorProvider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.nio.channels.spi.AbstractSelector.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此选择器。
+
+<p> 如果已关闭该选择器，则此方法立即返回。否则它会将该选择器标记为已关闭，然后调用 {@link #implCloseSelector implCloseSelector} 方法以完成关闭操作。  </p>
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.nio.channels.spi.AbstractSelector.implCloseSelector() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此选择器。
+
+<p> 为了实际关闭选择器，由 {@link #close close} 方法调用此方法。仅在尚未关闭此选择器时才能调用此方法，并且只能调用一次。
+
+<p> 此方法的实现必须安排阻塞于此选择器上选择操作中的所有其他线程立即返回，就像调用 {@link java.nio.channels.Selector#wakeup wakeup} 方法一样。 </p>
+
+@throws IOException 如果关闭选择器的同时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.spi.SelectorProvider java.nio.channels.spi.AbstractSelector.provider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建此通道的提供者。
+
+@return 创建此通道的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.util.Set<java.nio.channels.SelectionKey> java.nio.channels.spi.AbstractSelector.cancelledKeys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此选择器的已取消键集。
+
+<p> 仅应在该键集上实现同步后才能使用它。  </p>
+
+@return 已取消键集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.nio.channels.SelectionKey java.nio.channels.spi.AbstractSelector.register(AbstractSelectableChannel ch, int ops, Object att)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此选择器注册给定的通道。
+
+<p> 为了实际向此选择器注册通道，由该通道的 {@link AbstractSelectableChannel#register register} 方法调用此方法。  </p>
+
+@param ch 要注册的通道
+
+@param ops 初始的相关操作集，必须是有效的
+
+@param att 所得键的初始附件
+
+@return 表示给定通道向此选择器注册的新键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractSelector.deregister(AbstractSelectionKey key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从其通道的键集中移除给定的键。
+
+<p> 必须由选择器为所注销的每个通道调用此方法。</p>
+
+@param key 要移除的选择键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractSelector.begin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记可能无限期阻塞的 I/O 操作的开始。
+
+<p> 为了实现此选择器的中断，应该使用<a href="#be">上面</a>所示的 <tt>try</tt>&#xA0;...&#xA0;<tt>finally</tt> 块先后调用此方法和 {@link #end end} 方法。
+
+<p> 如果调用某个线程的 {@link Thread#interrupt interrupt} 方法的同时该线程阻塞于选择器上的某个 I/O 操作中，则调用此方法来安排选择器的 {@link Selector#wakeup wakeup} 方法被调用。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractSelector.end()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记可能无限期阻塞的 I/O 操作的结束。
+
+<p> 为了实现此选择器的中断，应该使用<a href="#be">上面</a>所示的 <tt>try</tt>&#xA0;...&#xA0;<tt>finally</tt> 块先后调用此方法和 {@link #begin begin} 方法。  </p>
+
+<!-- END DATA -->

@@ -1,0 +1,157 @@
+<!-- BEGIN KEY -->
+public class org.ietf.jgss.MessageProp extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+这是一个在 per-message GSSContext 方法中使用的、用来传送 per-message 属性的实用工具类。<p>
+
+当与 GSSContext 接口的 wrap 和 getMIC 方法一起使用时，此类的一个实例用于指示需要的&ldquo;Quality-of-Protection&rdquo;（保护质量，即 QOP），并请求是否将机密性服务应用于调用者提供的数据（仅限于 wrap）。要请求默认的 QOP，应该使用 0 值。<p>
+
+当与 GSSContext 接口的 unwrap 和 verifyMIC 方法一起使用时，此类的一个实例用于指示在提供的消息上所应用的 QOP 和机密性服务。如果使用 verifyMIC，则机密性状态将始终为 <code>false</code>。从这些方法返回后，此对象还将包含可用于处理过的标记的任何增补状态值。增补状态值可以表示旧的标记、无序列标记、间距标记或重复的标记。<p>
+ 
+@see GSSContext#wrap
+@see GSSContext#unwrap
+@see GSSContext#getMIC
+@see GSSContext#verifyMIC
+
+@author Mayank Upadhyay
+@version 1.10, 11/17/05
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.ietf.jgss.MessageProp(boolean privState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所需私密状态的构造方法。所用的 QOP 值为 0。
+
+@param privState 私密（亦即机密性）状态
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.ietf.jgss.MessageProp(int qop, boolean privState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置 qop 和私密状态值的构造方法。
+ 
+@param qop QOP 值
+@param privState 私密（亦即机密性）状态
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.ietf.jgss.MessageProp.getQOP()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+检索 QOP 值。
+ 
+@return 表示 QOP 值的 int
+@see #setQOP
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.MessageProp.getPrivacy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+检索私密状态。
+ 
+@return 如果私密（即机密性）状态为 true，则返回 true，否则，则返回 false。
+@see #setPrivacy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.ietf.jgss.MessageProp.setQOP(int qop)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置 QOP 值。
+ 
+@param qop 将 QOP 设置为的 int 值
+@see #getQOP
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.ietf.jgss.MessageProp.setPrivacy(boolean privState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置私密状态。
+ 
+@return privState 如果私密（即机密性）状态为 true，则返回 true，否则，返回 false。
+@see #getPrivacy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.MessageProp.isDuplicateToken()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+测试此标记是否为先前标记的一个副本。
+
+@return 如果是副本，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.MessageProp.isOldToken()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+测试此标记是否还有效（即是否标记已经太陈旧而无法检查其复制情况）。
+
+@return 如果标记的有效期已过，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.MessageProp.isUnseqToken()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+测试后面的标记是否已进行处理。
+
+@return 如果后面的标记已经处理，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.MessageProp.isGapToken()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+测试是否未接收到需要的标记（即一个或多个原先的标记尚未成功处理）。
+
+@return 如果未接收到需要的 per-message 标记，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.ietf.jgss.MessageProp.getMinorStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索基础验证机制可能已经为此 per-message 操作设置的次要状态码.
+
+@return int 次要状态
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.ietf.jgss.MessageProp.getMinorString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索解释次要状态码的字符串。 
+
+@return 一个与次要状态码对应的字符串。当未曾设置次要状态码时，将返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.ietf.jgss.MessageProp.setSupplementaryStates(boolean duplicate, boolean old, boolean unseq, boolean gap, int minorStatus, String minorString)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法将设置 MessageProp 中的增补信息标记的状态和次要状态。它不是由应用程序使用，而是由 GSS 实现使用，用来将此信息返回到 per-message context 方法的调用者。
+
+@param duplicate 如果标记是先前标记的一个副本，则返回 true，否则，返回 false
+@param old 如果标记的有效期已过，则返回 true，否则，返回 false
+@param unseq 如果后面的标记已处理过，则返回 true，否则，返回 false
+@param gap 如果一个或多个原先的标记尚未成功处理过，则返回 true，否则，返回 false
+@param minorStatus per-message 操作的 int 次要状态码
+@param  minorString minorStatus 值的文本表示形式
+
+<!-- END DATA -->

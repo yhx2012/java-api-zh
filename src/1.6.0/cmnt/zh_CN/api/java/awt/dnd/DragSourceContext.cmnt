@@ -1,0 +1,284 @@
+<!-- BEGIN KEY -->
+public class java.awt.dnd.DragSourceContext extends java.lang.Object implements java.awt.dnd.DragSourceListener, java.awt.dnd.DragSourceMotionListener, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DragSourceContext</code> 类负责管理 Drag 和 Drop 协议的起始端。特别是负责管理对 <code>DragSourceListener</code> 和 <code>DragSourceMotionListener</code> 的拖动事件通知，并提供表示拖动操作源数据的 <code>Transferable</code>。
+<p>
+注意，<code>DragSourceContext</code> 自行实现 <code>DragSourceListener</code> 和 <code>DragSourceMotionListener</code> 接口。这就允许 <code>DragSource</code> 创建的平台同位体（<code>DragSourceContextPeer</code> 实例）能够在正在进行的操作中通知 <code>DragSourceContext</code> 状态改变。从而允许 <code>DragSourceContext</code> 介入平台和拖动操作起始端所提供的侦听器之间。
+
+@see DragSourceListener
+@see DragSourceMotionListener
+@version 1.53, 04/04/06
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+updateCurrentCursor() 使用的 <code>int</code> 值，指示应该将 <code>Cursor</code> 改为默认（未放置）的 <code>Cursor</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.ENTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+updateCurrentCursor() 使用的 <code>int</code> 值，指示 <code>Cursor</code> 已进入 <code>DropTarget</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.OVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+updateCurrentCursor() 使用的 <code>int</code> 值，指示 <code>Cursor</code> 处于 <code>DropTarget</code> 上。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+updateCurrentCursor() 使用的 <code>int</code> 值，指示用户操作已改变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.dnd.DragGestureEvent java.awt.dnd.DragSourceContext.trigger
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+触发拖动开始的事件。
+ 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.Cursor java.awt.dnd.DragSourceContext.cursor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前的拖动光标。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.dnd.DragSourceContext.useCustomCursor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果使用了自定义的拖动光标，而不是默认的拖动光标，则为 <code>true</code>。
+ 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final int java.awt.dnd.DragSourceContext.sourceActions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DnDConstants</code> 的位掩码，表示拖动源针对与此 <code>DragSourceContext</code> 关联的拖动操作所支持的放置动作集合。
+ 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSourceContext(DragSourceContextPeer dscp, DragGestureEvent trigger, Cursor dragCursor, Image dragImage, Point offset, Transferable t, DragSourceListener dsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 从 <code>DragSource</code> 调用，此构造方法创建一个新 <code>DragSourceContext</code>，使其具有为此 Drag 指定的 <code>DragSourceContextPeer</code>、触发该 Drag 的 <code>DragGestureEvent</code>、用于该 Drag 的初始 <code>Cursor</code>、进行 Drag 时显示的 <code>Image</code>（可选）、<code>Image</code> 原点与触发事件时距离热点的偏移量、<code>Transferable</code> 目标数据、Drag 和 Drop 操作期间使用的 <code>DragSourceListener</code>。
+<br>如果 <code>DragSourceContextPeer</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+<br>如果 <code>DragGestureEvent</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+<br>如果 <code>Cursor</code> 为 <code>null</code>，不抛出任何异常，并为此次拖动操作激活默认的拖动光标行为。<br>如果 <code>Image</code> 为 <code>null</code>，不抛出任何异常。<br>如果 <code>Image</code> 不为 <code>null</code> 且 offset 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+<br>如果 <code>Transferable</code> 为 <code>null</code>，则抛出 <code>NullPointerException</code>。
+<br>如果 <code>DragSourceListener</code> 为 <code>null</code>，不抛出任何异常。
+ 
+@param dscp  此 Drag 的 <code>DragSourceContextPeer</code> 
+@param trigger  触发事件 
+@param dragCursor 初始的 <code>Cursor</code>
+@param dragImage  要拖动的 <code>Image</code>（或者为 <code>null</code>）
+@param offset  图像原点与触发事件时距离热点的偏移量
+@param t  <code>Transferable</code>
+@param dsl <code>DragSourceListener</code>
+
+@throws IllegalArgumentException 如果与触发事件关联的 <code>Component</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果触发事件的 <code>DragSource</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果该触发事件的拖动动作为 <code>DnDConstants.ACTION_NONE</code>
+@throws IllegalArgumentException 如果与触发事件关联的 <code>DragGestureRecognizer</code> 的源动作等于 <code>DnDConstants.ACTION_NONE</code>
+@throws NullPointerException 如果 dscp、trigger 或 t 为 null，或者 dragImage 为非 null 且 offset 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSource java.awt.dnd.DragSourceContext.getDragSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实例化此 <code>DragSourceContext</code> 的 <code>DragSource</code>。
+ 
+@return 实例化此 <code> DragSourceContext</code> 的 <code>DragSource</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.dnd.DragSourceContext.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>DragSourceContext</code> 关联的 <code>Component</code>。
+ 
+@return 启动拖动的 <code>Component</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragGestureEvent java.awt.dnd.DragSourceContext.getTrigger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最初触发该拖动的 <code>DragGestureEvent</code>。
+ 
+@return 触发拖动的 Event
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceContext.getSourceActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>DnDConstants</code> 的位掩码，表示拖动源针对与此 <code>DragSourceContext</code> 关联的拖动操作所支持的放置动作集合。
+
+@return 拖动源支持的放置动作
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.setCursor(Cursor c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此拖动操作的光标设置为指定的 <code>Cursor</code>。
+如果指定的 <code>Cursor</code> 为 <code>null</code>，则为此拖动操作激活默认的拖动光标行为，否则停用该默认行为。
+ 
+@param c 要显示的 <code>Cursor</code>，或者为 <code>null</code>，表示激活默认拖动光标行为
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Cursor java.awt.dnd.DragSourceContext.getCursor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的拖动 <code>Cursor</code>
+<p>
+@return 当前的拖动 <code>Cursor</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.addDragSourceListener(DragSourceListener dsl) throws java.util.TooManyListenersException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果尚未将 <code>DragSourceListener</code> 添加到此 <code>DragSourceContext</code>，则添加一个。如果 <code>DragSourceListener</code> 已存在，则此方法抛出 <code>TooManyListenersException</code>。
+<p>
+@param dsl 要添加的 <code>DragSourceListener</code>。注意，虽然不禁止 <code>null</code>，但它作为参数是不可接受的值。
+<p>
+@throws <code>TooManyListenersException</code> 如果已添加 <code>DragSourceListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.removeDragSourceListener(DragSourceListener dsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>DragSourceContext</code> 移除指定的 <code>DragSourceListener</code>。
+ 
+@param dsl 要移除的 <code>DragSourceListener</code>；注意，虽然不禁止 <code>null</code>，但它作为参数是不可接受的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.transferablesFlavorsChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知同位体该 <code>Transferable</code> 的 <code>DataFlavor</code> 已改变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragEnter(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向此 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceListener</code> 调用 <code>dragEnter</code>，并将指定的 <code>DragSourceDragEvent</code> 传递给它们。
+ 
+@param dsde  <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragOver(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向此 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceContext</code> 调用 <code>dragOver</code>，并将指定的 <code>DragSourceDragEvent</code> 传递给它们。
+ 
+@param dsde <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragExit(DragSourceEvent dse)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向此 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceListener</code> 调用 <code>dragExit</code>，并将指定的 <code>DragSourceEvent</code> 传递给它们。
+ 
+@param dse <code>DragSourceEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dropActionChanged(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向此 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceListener</code> 调用 <code>dropActionChanged</code>，并将指定的 <code>DragSourceDragEvent</code> 传递给它们。
+ 
+@param dsde <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragDropEnd(DragSourceDropEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向此 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceListener</code> 调用 <code>dragDropEnd</code>，并将指定的 <code>DragSourceDropEvent</code> 传递给它们。
+
+@param dsde <code>DragSourceDropEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragMouseMoved(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对向与此 <code>DragSourceContext</code> 关联的 <code>DragSource</code> 注册的 <code>DragSourceMotionListener</code> 调用 <code>dragMouseMoved</code>，并将指定的 <code>DragSourceDragEvent</code> 传递给它们。
+ 
+@param dsde <code>DragSourceDragEvent</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.Transferable java.awt.dnd.DragSourceContext.getTransferable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>DragSourceContext</code> 关联的 <code>Transferable</code>。
+ 
+@return <code>Transferable</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.awt.dnd.DragSourceContext.updateCurrentCursor(int sourceAct, int targetAct, int status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果默认拖动光标行为处于活动状态，则此方法将为默认拖动光标设置受拖动源、放置目标动作和状态支持的指定动作，否则此方法不执行任何操作。
+ 
+ @param sourceAct 受拖动源支持的动作
+ @param targetAct 放置目标动作
+ @param status <code>DEFAULT</code>、<code>ENTER</code>、<code>OVER</code> 和 <code>CHANGED</code> 字段之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.dnd.DragSourceContext.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+反序列化此 <code>DragSourceContext</code>
+此方法首先为所有的非 <code>transient</code> 字段执行默认的反序列化。然后通过使用流中的下两个对象，还要反序列化此对象的 <code>Transferable</code> 和 <code>DragSourceListener</code>
+如果得到的 <code>Transferable</code> 为 <code>null</code>，则将此对象的 <code>Transferable</code> 设置为支持无 <code>DataFlavor</code> 的虚拟 <code>Transferable</code>。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.dnd.DragSourceContext.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+序列化此 <code>DragSourceContext</code>
+此方法首先执行默认的序列化。然后当且仅当可以序列化此对象的 <code>Transferable</code> 时将其写出。如果无法序列化，则写出 <code>null</code>
+在这种情况下，从得到的反序列化流中创建的 <code>DragSourceContext</code> 将包含一个支持无 <code>DataFlavor</code> 的虚拟 <code>Transferable</code>。最后，当且仅当可以序列化此对象的 <code>DragSourceListener</code> 时将其写出。如果无法序列化，则写出 <code>null</code>。
+ 
+@serialData 按字母顺序排列的默认可序列化字段，后跟 <code>Transferable</code> 实例或 <code>null</code>，然后是 <code>DragSourceListener</code> 实例或 <code>null</code>。
+@since 1.4
+
+<!-- END DATA -->

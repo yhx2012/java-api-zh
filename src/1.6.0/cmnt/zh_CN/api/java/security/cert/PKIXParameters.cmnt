@@ -1,0 +1,365 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.PKIXParameters extends java.lang.Object implements java.security.cert.CertPathParameters
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用作 PKIX <code>CertPathValidator</code> 算法的输入的参数。 
+ <p>
+PKIX <code>CertPathValidator</code> 使用这些参数、根据 PKIX 证书路径验证算法来验证 <code>CertPath</code>。
+
+<p>要实例化 <code>PKIXParameters</code> 对象，应用程序必须指定一个或多个由 PKIX 证书路径验证算法所定义的<i>最受信任的 CA</i>。可以使用两个构造方法中的一个来指定最受信任的 CA。应用程序可以调用 {@link #PKIXParameters(Set) PKIXParameters(Set)} 来指定一个 <code>TrustAnchor</code> 对象 <code>Set</code>，其中每个对象都标识一个最受信任的 CA。另外，应用程序也可调用 {@link #PKIXParameters(KeyStore) PKIXParameters(KeyStore)} 来指定一个 <code>KeyStore</code> 实例，其中包含多个受信任的证书项，每个项都认为是一个最受信任的 CA。
+ <p>
+一旦创建了 <code>PKIXParameters</code> 对象，就可以指定其他参数（例如通过调用 {@link #setInitialPolicies setInitialPolicies} 或 {@link #setDate setDate}），然后沿着要被 {@link CertPathValidator#validate CertPathValidator.validate} 所验证的 <code>CertPath</code> 传递 <code>PKIXParameters</code>。 
+ <p>
+所有未设置（或被设置为 <code>null</code>）的参数将被设置为该参数的默认值。<code>date</code> 参数的默认值是 <code>null</code>，指示验证该路径时的当前时间。其余参数的默认值是约束最少的。
+ <p>
+<b>并发访问</b>
+ <p>
+除非另行指定，否则此类中所定义的方法不是线程安全的。需要并发访问单个对象的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同对象的多个线程而言，无需实现同步。
+
+@see CertPathValidator
+
+@version 	1.17 12/19/03
+@since	1.4
+@author	Sean Mullan
+@author	Yassir Elley
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.PKIXParameters(java.util.Set<java.security.cert.TrustAnchor> trustAnchors) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定最受信任 CA <code>Set</code> 的 <code>PKIXParameters</code> 的实例。该 set 中的每个元素都是一个 {@link TrustAnchor TrustAnchor}。
+ <p>
+注意，要复制该 <code>Set</code> 以防对其进行后续修改。
+
+@param trustAnchors <code>TrustAnchor</code> 的 <code>Set</code>
+@throws InvalidAlgorithmParameterException 如果指定的 <code>Set</code> 为空 <code>(trustAnchors.isEmpty() == true)</code>
+@throws NullPointerException 如果指定的 <code>Set</code> 为 <code>null</code>
+@throws ClassCastException 如果该 <code>Set</code> 中任一元素不是 <code>java.security.cert.TrustAnchor</code> 类型的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.PKIXParameters(KeyStore keystore) throws java.security.KeyStoreException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>PKIXParameters</code> 实例，它根据指定 <code>KeyStore</code> 中所包含的受信证书项生成最受信任的 CA 集。只考虑那些包含受信 <code>X509Certificates</code> 的 keystore 项；忽略所有其他证书类型。
+ 
+@param keystore 一个 <code>KeyStore</code>，将根据它来生成最受信任的 CA 集
+@throws KeyStoreException 如果尚未初始化 keystore
+@throws InvalidAlgorithmParameterException 如果 keystore 不包含一个受信证书项
+@throws NullPointerException 如果 keystore 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.security.cert.TrustAnchor> java.security.cert.PKIXParameters.getTrustAnchors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回不可变的、最受信任的 CA <code>Set</code>。
+
+@return 不可变的 <code>TrustAnchor</code> <code>Set</code>（从不为 <code>null</code>）
+
+@see #setTrustAnchors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setTrustAnchors(java.util.Set<java.security.cert.TrustAnchor> trustAnchors) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置最受信任的 CA <code>Set</code>。
+ <p>
+注意，要复制该 <code>Set</code> 以防对其进行后续修改。
+
+@param trustAnchors <code>TrustAnchor</code> 的 <code>Set</code>
+@throws InvalidAlgorithmParameterException 如果指定的 <code>Set</code> 为空 <code>(trustAnchors.isEmpty() == true)</code>
+@throws NullPointerException 如果指定的 <code>Set</code> 为 <code>null</code>
+@throws ClassCastException 如果该 Set 中的任一元素不是 <code>java.security.cert.TrustAnchor</code> 类型的
+
+@see #getTrustAnchors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.String> java.security.cert.PKIXParameters.getInitialPolicies()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回初始策略标识符（OID 字符串）的不可变 <code>Set</code>，指示出于证书路径处理的目的，所有这些策略都可被证书用户接受。默认返回值是一个空 <code>Set</code>，它可以解释为任意策略均是可接受的。
+
+@return 初始策略 OID（以 <code>String</code> 的形式）的不可变 <code>Set</code>，或者是空 <code>Set</code>（暗示所有策略均是可接受的）。从不返回 <code>null</code>。
+
+@see #setInitialPolicies
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setInitialPolicies(java.util.Set<java.lang.String> initialPolicies)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置初始策略标识符（OID 字符串）的 <code>Set</code>，指示出于证书路径处理的目的，所有这些策略都可被证书用户接受。默认情况下，任意策略（也就是所有策略）都是可接受的，所以想要任意策略都为可接受的用户不必调用此方法，或者可以用空的 <code>Set</code>（或者 <code>null</code>）调用此方法。
+ <p>
+注意，要复制该 <code>Set</code> 以防对其进行后续修改。
+
+@param initialPolicies 初始策略 OID（以 <code>String</code> 格式）的 <code>Set</code>（或者为 <code>null</code>）
+@throws ClassCastException 如果该 set 中的任一元素不是 <code>String</code> 类型的
+
+@see #getInitialPolicies
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setCertStores(java.util.List<java.security.cert.CertStore> stores)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在查找证书和 CRL 时所使用的 <code>CertStore</code> 列表。可以为 <code>null</code>，在这种情况下将不使用 <code>CertStore</code>。列表中前面出现的 <code>CertStore</code> 可能优先于后面出现的 CertStore 使用。 
+ <p>
+注意，要复制该 <code>List</code> 以防对其进行后续修改。
+
+@param stores <code>CertStore</code> 的 <code>List</code>（或者为 <code>null</code>）
+@throws ClassCastException 如果该 list 中的任一元素不是 <code>java.security.cert.CertStore</code> 类型的
+
+@see #getCertStores
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.addCertStore(CertStore store)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>CertStore</code> 添加到查找证书和 CRL 所使用的 <code>CertStore</code> 列表末尾。
+
+@param store 要添加的 <code>CertStore</code>。如果为 <code>null</code>，则忽略该 CertStore（不添加到列表中）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.security.cert.CertStore> java.security.cert.PKIXParameters.getCertStores()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于查找证书和 CRL 的不可变 <code>CertStore</code> <code>List</code>。
+
+@return 一个不可变的 <code>CertStore</code> <code>List</code>（可能为空，但从不为 <code>null</code>）
+
+@see #setCertStores
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setRevocationEnabled(boolean val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 RevocationEnabled 标志。如果此标志为 true，则使用底层 PKIX 服务提供者的默认撤消检查机制。如果此标志为 false，则禁用（不使用）默认撤消检查机制。 
+ <p>
+创建 <code>PKIXParameters</code> 对象时，此标志被设置为 true。此设置反映了检查撤消最常见的策略，因为每个服务提供者必须支持撤消检查是遵守 PKIX 的。当复杂的应用程序没有实际使用 PKIX 服务提供者的默认撤消检查机制时，或者使用一个替代的撤消检查机制来替换（仍通过调用 {@link #addCertPathChecker addCertPathChecker} 或 {@link #setCertPathCheckers setCertPathCheckers} 方法）时，应该将此标志设置为 false。
+
+@param val RevocationEnabled 标志的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.PKIXParameters.isRevocationEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查 RevocationEnabled 标志。如果此标志为 true，则将使用底层 PKIX 服务提供者的默认撤消检查机制。如果此标志为 false，则禁用（不使用）默认撤消检查机制。有关设置此标志值的更多细节，请参见 {@link #setRevocationEnabled setRevocationEnabled} 方法。
+
+@return RevocationEnabled 标志的当前值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setExplicitPolicyRequired(boolean val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 ExplicitPolicyRequired 标志。如果此标志为 true，则需要在每个证书中显式地标识一个可接受的策略。默认情况下，ExplicitPolicyRequired 标志为 false。
+
+@param val 如果需要显式策略，则为 <code>true</code>；否则为 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.PKIXParameters.isExplicitPolicyRequired()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否需要显式策略。如果此标志为 true，则需要在每个证书中显式地标识一个可接受的策略。默认情况下，ExplicitPolicyRequired 标志为 false。
+
+@return 如果需要显式策略，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setPolicyMappingInhibited(boolean val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 PolicyMappingInhibited 标志。如果此标志为 true，则禁止策略映射。默认情况下，不禁止策略映射（其标志为 false）。
+
+@param val 如果禁止策略映射，则为 <code>true</code>；否则为 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.PKIXParameters.isPolicyMappingInhibited()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否禁止策略映射。如果此标志为 true，则禁止策略映射。默认情况下，不禁止策略映射（其标志为 false）。
+
+@return 如果禁止策略映射，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setAnyPolicyInhibited(boolean val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置状态，以确定当证书中包括了策略 OID 时是否应该处理它。默认情况下，不禁止任何策略 OID（{@link #isAnyPolicyInhibited isAnyPolicyInhibited()} 返回 <code>false</code>）。
+
+@param val 如果要禁止任何策略 OID，则为 <code>true</code>；否则为 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.PKIXParameters.isAnyPolicyInhibited()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查当证书中包括了任何策略 OID 时是否应该处理它。
+
+@return 如果禁止任何策略 OID，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setPolicyQualifiersRejected(boolean qualifiersRejected)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 PolicyQualifiersRejected 标志。如果此标志为 true，则在其被标记为关键的证书策略扩展中包括策略限定符的证书被拒绝。如果该标志为 false，则不拒绝此种证书。
+
+<p> 创建 <code>PKIXParameters</code> 对象后，此标志设置为 true。此设置反映了处理策略限定符最常见（也是最简单的）的策略。希望使用更复杂策略的应用程序必须将此标志设置为 false。
+ <p>
+注意，PKIX 证书路径验证算法规定，对标记为关键的证书策略扩展中的策略限定符必须加以处理和验证。否则必须放弃该证书路径。如果 policyQualifiersRejected 标志设置为 false，那么为了遵守 PKIX ，由应用程序以此方式来验证所有的策略限定符。
+
+@param qualifiersRejected PolicyQualifiersRejected 标志的新值
+@see #getPolicyQualifiersRejected
+@see PolicyQualifierInfo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.PKIXParameters.getPolicyQualifiersRejected()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 PolicyQualifiersRejected 标志。如果此标志为 true，则在其被标记为关键的证书策略扩展中包括策略限定符的证书被拒绝。如果该标志为 false，则不拒绝此种证书。
+
+<p> 创建 <code>PKIXParameters</code> 对象后，此标志设置为 true。此设置反映了处理策略限定符最常见（也是最简单的）的策略。希望使用更复杂策略的应用程序必须将此标志设置为 false。
+
+@return PolicyQualifiersRejected 标志的当前值
+@see #setPolicyQualifiersRejected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.security.cert.PKIXParameters.getDate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回应该确定证书路径有效性的时间。如果返回 <code>null</code>，则使用当前时间。
+ <p>
+注意，要复制返回的 <code>Date</code> 以防对其进行后续修改。 
+
+@return <code>Date</code>，如果未设置，则返回 <code>null</code>
+@see #setDate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setDate(Date date)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置应该确定证书路径有效性的时间。如果返回 <code>null</code>，则使用当前时间。
+ <p>
+注意，要复制此处提供的 <code>Date</code> 以防对其进行后续修改。 
+
+@param date <code>Date</code>，如果使用当前时间，则为 <code>null</code>
+@see #getDate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setCertPathCheckers(java.util.List<java.security.cert.PKIXCertPathChecker> checkers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置其他证书路径检查器的 <code>List</code>。如果指定的 <code>List</code> 包含不是 <code>PKIXCertPathChecker</code> 的对象，则忽略它。
+ <p>
+每个指定的 <code>PKIXCertPathChecker</code> 都对证书进行额外的检查。通常，这些检查是对证书中所包含的私有扩展进行处理和验证。应该使用执行该检查所需的所有初始化参数对每个 <code>PKIXCertPathChecker</code> 进行实例化。
+ <p>
+此方法允许复杂的应用程序扩展 PKIX <code>CertPathValidator</code> 或 <code>CertPathBuilder</code>。依次由 PKIX <code>CertPathValidator</code> 或 <code>CertPathBuilder</code> 为每个要处理或验证的证书调用每个指定的 <code>PKIXCertPathChecker</code>。 
+ <p>
+不管是否设置了这些额外的 <code>PKIXCertPathChecker</code>，PKIX <code>CertPathValidator</code> 或 <code>CertPathBuilder</code> 都必须对每个证书执行所有所需的 PKIX 检查。此规则的一个例外是，RevocationEnabled 标志设置为 false 的情况（请参见 {@link #setRevocationEnabled setRevocationEnabled} 方法）。 
+ <p>
+注意，将复制此处提供的 <code>List</code>，并且复制该 List 中的所有 <code>PKIXCertPathChecker</code> 以防对其进行后续修改。
+
+@param checkers <code>PKIXCertPathChecker</code> 的 <code>List</code>。可以为 <code>null</code>，在这种情况下将不使用其他的检查器。
+@throws ClassCastException 如果该 List 中的任一元素不是 <code>java.security.cert.PKIXCertPathChecker</code> 类型的
+@see #getCertPathCheckers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.security.cert.PKIXCertPathChecker> java.security.cert.PKIXParameters.getCertPathCheckers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回证书路径检查器的 <code>List</code>。返回的 <code>List</code> 是不可变的，并且复制该 <code>List</code> 中的所有 <code>PKIXCertPathChecker</code> 以防对其进行后续修改。
+
+@return 一个不可变的 <code>PKIXCertPathChecker</code> <code>List</code>（可能为空，但从不为 <code>null</code>）
+@see #setCertPathCheckers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.addCertPathChecker(PKIXCertPathChecker checker)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向证书路径检查器列表中添加一个 <code>PKIXCertPathChecker</code>。有关详细信息，请参见 {@link #setCertPathCheckers setCertPathCheckers} 方法。
+ <p>
+注意，要复制该 <code>PKIXCertPathChecker</code> 以防对其进行后续修改。
+
+@param checker 要添加到检查列表中的 <code>PKIXCertPathChecker</code>。如果为 <code>null</code>，则忽略该检查器（不添加到列表中）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.PKIXParameters.getSigProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回签名提供者的名称，如果未设置，则返回 <code>null</code>。
+
+@return 签名提供者的名称（或者返回 <code>null</code>）
+@see #setSigProvider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setSigProvider(String sigProvider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置签名提供者的名称。创建 {@link java.security.Signature Signature} 对象时将首选该指定的提供者。如果为 <code>null</code> 或未设置，则将使用所找到的、支持该算法的第一个提供者。
+
+@param sigProvider 签名提供者的名称（或者为 <code>null</code>）
+@see #getSigProvider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.CertSelector java.security.cert.PKIXParameters.getTargetCertConstraints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目标证书所需的限制。以 <code>CertSelector</code> 实例的形式返回这些限制。如果为 <code>null</code>，则未定义限制。
+
+<p>注意，要复制返回的 <code>CertSelector</code> 以防对其进行后续修改。
+
+@return 指定目标证书限制的 <code>CertSelector</code>（或者返回 <code>null</code>）
+@see #setTargetCertConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.PKIXParameters.setTargetCertConstraints(CertSelector selector)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置目标证书所需的限制。以 <code>CertSelector</code> 实例的形式指定这些限制。如果为 <code>null</code>，则未定义限制。
+
+<p>注意，要复制所指定的 <code>CertSelector</code> 以防对其进行后续修改。
+
+@param selector 指定目标证书限制的 <code>CertSelector</code>（或者为 <code>null</code>）
+@see #getTargetCertConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.cert.PKIXParameters.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对此 <code>PKIXParameters</code> 对象进行复制。对副本的更改不会影响原件，反之亦然。
+
+@return 此 <code>PKIXParameters</code> 对象的副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.PKIXParameters.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述该参数的格式化字符串。
+
+@return 描述该参数的格式化字符串。
+
+<!-- END DATA -->

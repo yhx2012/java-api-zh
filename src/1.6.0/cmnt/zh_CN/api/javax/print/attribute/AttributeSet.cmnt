@@ -1,0 +1,182 @@
+<!-- BEGIN KEY -->
+public interface javax.print.attribute.AttributeSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接口 AttributeSet 为打印属性集指定接口。打印属性是一个对象，其类实现接口 {@link Attribute Attribute}。 
+ <P>
+属性集包含一组<I>属性值</I>，在该集合中，不允许出现重复值。此外，属性集中的每个值是某一<I>类别</I> 的成员，在该集合的任何特定类别中最多允许有一个值。对于某个属性集，值都是 {@link Attribute Attribute} 对象，类别都是 {@link java.lang.Class Class} 对象。属性的类别是该类属性的类层次结构的根处的类（或接口）。注意，属性对象的类别可以是属性对象的类的超类，而不是属性对象的类本身。通过调用接口 {@link Attribute Attribute} 中定义的 {@link Attribute#getCategory() <CODE>getCategory()</CODE>} 方法确定属性对象的类别。 
+ <P>
+AttributeSet 的接口与 Java Collections API 的 java.util.Map 的接口类似，但是对于它将要接受的类型有更强的限制性，并且将键和值组合到了属性中。
+ <P>
+在 Print Service API 中，多处使用了属性集。在每个上下文中，只有某些属性（{@link DocAttribute DocAttribute}、{@link PrintRequestAttribute PrintRequestAttribute}、{@link PrintJobAttribute PrintJobAttribute} 和 {@link PrintServiceAttribute PrintServiceAttribute}）允许出现在属性集中，这由属性类实现的标记接口确定。一个属性集有四种规范，它们限于只能分别包含以下四种属性之一：{@link DocAttributeSet DocAttributeSet}、{@link PrintRequestAttributeSet PrintRequestAttributeSet}、{@link PrintJobAttributeSet PrintJobAttributeSet} 和 {@link PrintServiceAttributeSet PrintServiceAttributeSet}。注意，许多属性类会实现多个标记接口，因此可以出现在多个上下文中。 
+ <UL>
+ <LI>
+包含 {@link DocAttribute DocAttribute} 的 {@link DocAttributeSet DocAttributeSet} 指定单个文档的特征和应用到单个文档的打印作业的设置。
+ <P>
+ <LI>
+包含 {@link PrintRequestAttribute PrintRequestAttribute} 的 {@link PrintRequestAttributeSet PrintRequestAttributeSet} 指定应用到整个打印作业和打印作业中的所有文档的设置。 
+ <P>
+ <LI>
+包含 {@link PrintJobAttribute PrintJobAttribute} 的 {@link PrintJobAttributeSet PrintJobAttributeSet} 报告打印作业的状态。 
+ <P>
+ <LI>
+包含 {@link PrintServiceAttribute PrintServiceAttribute} 的 {@link PrintServiceAttributeSet PrintServiceAttributeSet} 报告 Print Service 实例的状态。 
+ </UL>
+ <P>
+在某些上下文中，仅允许客户机检查属性集的内容，但不允许更改它们（该集合是只读的）。在其他地方，允许客户机检查和更改属性集的内容（该集合是可读写的）。对于只读属性集，调用更改操作会抛出一个 UnmodifiableSetException。 
+ <P>
+Print Service API 提供接口 AttributeSet 的一个实现，即类 {@link HashAttributeSet HashAttributeSet}。客户机可以使用类 {@link HashAttributeSet HashAttributeSet}，或提供其自已的接口 AttributeSet 的实现。Print Service API 还提供接口 AttributeSet 的子接口的实现，即类 {@link HashDocAttributeSet HashDocAttributeSet}、{@link HashPrintRequestAttributeSet HashPrintRequestAttributeSet}、{@link HashPrintJobAttributeSet HashPrintJobAttributeSet} 和 {@link HashPrintServiceAttributeSet HashPrintServiceAttributeSet}。 
+ <P>
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.Attribute javax.print.attribute.AttributeSet.get(java.lang.Class<?> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此属性集在给定的属性类别中包含的属性值。如果此属性集在给定的属性类别中不包含任何属性值，则返回 <tt>null</tt>。
+
+@param  category  将返回其关联的属性值的属性类别。它必须是实现接口 {@link Attribute Attribute} 的 {@link java.lang.Class Class}。 
+
+@return  此属性集中包含的给定属性类别中的属性值，如果此属性集在给定的属性类别中不包含任何属性值，则返回 <tt>null</tt>。 
+ 
+@throws  NullPointerException （未经检查的异常）如果 <CODE>category</CODE> 为 null，则抛出该异常。
+@throws  ClassCastException （未经检查的异常）如果 <CODE>category</CODE> 不是实现接口 {@link Attribute Attribute} 的 {@link java.lang.Class Class}，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.add(Attribute attribute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的属性尚不存在，则将它添加到此属性集中，首先要移除与指定属性值相同的属性类别中的任何现有值。 
+
+@param  attribute  要添加到此属性集的属性值。
+
+@return  如果此属性集由于调用而发生改变（即给定的属性值还不是此属性集的成员），则返回 <tt>true</tt>。 
+ 
+@throws  NullPointerException （未经检查的异常）如果 <CODE>attribute</CODE> 为 null，则抛出该异常。
+@throws  UnmodifiableSetException （未经检查的异常）如果此属性集不支持 <CODE>add()</CODE> 操作，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.remove(java.lang.Class<?> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此属性集移除此类别的任何属性（如果存在）。如果 <CODE>category</CODE> 为 null，则 <CODE>remove()</CODE> 不执行任何操作，并返回 <tt>false</tt>。 
+
+@param  category 要从此属性集移除的属性类别。
+
+@return  如果此属性集由于调用而发生改变（即给定的属性值已经成为此属性集的成员），则返回 <tt>true</tt>。 
+ 
+@throws  UnmodifiableSetException （未经检查的异常）如果此属性集不支持 <CODE>remove()</CODE> 操作，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.remove(Attribute attribute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此属性集移除指定的属性（如果存在）。如果 <CODE>attribute</CODE> 为 null，则 <CODE>remove()</CODE> 不执行任何操作，并返回 <tt>false</tt>。 
+
+@param  attribute 从此属性集移除的属性值。
+
+@return  如果此属性集由于调用而发生改变（即给定的属性值已经成为此属性集的成员），则返回 <tt>true</tt>。 
+ 
+@throws  UnmodifiableSetException （未经检查的异常）如果此属性集不支持 <CODE>remove()</CODE> 操作，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.containsKey(java.lang.Class<?> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此属性集包含指定类别的一个属性，则返回 <tt>true</tt>。
+
+@param category 将测试其是否存在于此属性集中的类别。
+
+@return  如果此属性集包含指定类别的一个属性值，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.containsValue(Attribute attribute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此属性集包含给定的属性值，则返回 <tt>true</tt>。
+
+@param  attribute  将测试其是否存在于此属性集中的属性值。
+
+@return  如果此属性集包含给定的属性值，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.addAll(AttributeSet attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定集合中的所有元素添加到此属性中。该结果与使用指定集合中的每个元素将 = {@link #add(Attribute) <CODE>add(Attribute)</CODE>} 操作成功地应用到此属性集中相同。如果正在进行此操作的同时修改了指定的集合，则 <CODE>addAll(AttributeSet)</CODE> 操作的行为是不确定的。
+ <P>
+如果 <CODE>addAll(AttributeSet)</CODE> 操作抛出一个异常，则对此属性集状态的影响取决于实现方法；在异常点之前，不一定将指定集合中的元素添加到了此属性集。
+
+@param  attributes  要将其元素添加到此属性集中的属性。
+
+@return 如果此属性集由于调用而发生改变，则返回 <tt>true</tt>。
+ 
+@throws  UnmodifiableSetException （未经检查的异常）如果此属性集不支持 <tt>addAll(AttributeSet)</tt> 方法，则抛出该异常。
+@throws  NullPointerException （未经检查的异常）如果指定集合中的某一元素为 null，则抛出该异常。
+
+@see #add(Attribute)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.AttributeSet.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此属性集中属性的数量。如果此属性集包含的元素多于 <tt>Integer.MAX_VALUE</tt> ，则返回 <tt>Integer.MAX_VALUE</tt>。
+
+@return  此属性集中属性的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.Attribute[] javax.print.attribute.AttributeSet.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此集合中包含的属性的数组。
+@return 作为数组包含在此集合中的属性，如果 AttributeSet 为空，则返回零长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.print.attribute.AttributeSet.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此属性集中移除所有属性。
+
+@throws  UnmodifiableSetException （未经检查的异常）如果此属性集不支持 <CODE>clear()</CODE> 操作，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此属性集不包含任何属性，则返回 true。
+
+@return 如果此属性集不包含任何属性，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.AttributeSet.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定的对象与此属性集的相等性。如果给定的对象也是一个属性集，并且两个属性集包含相同的属性类别到属性值的映射关系，则返回 <tt>true</tt>。这确保了 <tt>equals()</tt> 方法能跨越 AttributeSet 接口的不同实现正常运行。 
+
+@param  object 要与此属性集进行相等性比较的对象。
+
+@return 如果指定对象等于此属性集，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.AttributeSet.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此属性集的哈希码值。属性集的哈希码被定义为 AttributeSet 中每个条目的哈希码的总和。这确保了 <tt>t1.equals(t2)</tt> 意味对于任何两个属性集 <tt>t1</tt> 和 <tt>t2</tt> 而言，都存在 <tt>t1.hashCode()==t2.hashCode()</tt>，这是 {@link java.lang.Object#hashCode() <CODE>Object.hashCode()</CODE>} 的通用协定所要求的。 
+
+@return  此属性集的哈希码值。
+
+<!-- END DATA -->

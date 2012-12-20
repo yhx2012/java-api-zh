@@ -1,0 +1,56 @@
+<!-- BEGIN KEY -->
+public interface javax.naming.spi.DirStateFactory extends javax.naming.spi.StateFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示一个工厂，该工厂用来获得对象的状态和用于绑定的相应属性。
+<p>
+JNDI 框架允许通过<tt>对象工厂</tt>动态加载对象实现。
+ <p>
+<tt>DirStateFactory</tt> 扩展了 <tt>StateFactory</tt>，它允许将 <tt>Attributes</tt> 实例提供给 <tt>getStateToBind()</tt> 方法并由该方法返回。<tt>DirStateFactory</tt> 实现将由 <tt>DirContext</tt> 服务提供者使用。当调用者使用 <tt>DirContext.bind()</tt> 绑定对象时，还可以指定一个与该对象绑定在一起的属性集合。要绑定的对象和属性被传递给工厂的 <tt>getStateToBind()</tt> 方法。如果该工厂处理这些对象和属性，则它会返回由对象和要绑定的属性组成的相应对。如果该工厂没有处理该对象，则必须返回 null。
+<p>
+例如，调用者可以将一个打印机对象与一些与打印机相关的属性绑定在一起。
+<blockquote><pre>
+ ctx.rebind(&quot;inky&quot;, printer, printerAttrs);
+</pre></blockquote>
+用于 <tt>ctx</tt> 的 LDAP 服务提供者使用 <tt>DirStateFactory</tt>（直接通过 <tt>DirectoryManager.getStateToBind()</tt>）并向它提供 <tt>printer</tt> 和 <tt>printerAttrs</tt>。用于 LDAP 目录的工厂可以将 <tt>printer</tt> 转换成一个属性集，并将它们与 <tt>printerAttrs</tt> 合并在一起。然后服务提供者使用得到的属性创建一个 LDAP 项并更新目录。
+
+<p> 因为 <tt>DirStateFactory</tt> 扩展了 <tt>StateFactory</tt>，所以它有两个 <tt>getStateToBind()</tt> 方法，其中一个方法在属性参数上不同于另一个方法。<tt>DirectoryManager.getStateToBind()</tt> 将只使用接受属性参数的形式，而 <tt>NamingManager.getStateToBind()</tt> 将只使用不接受属性参数的形式。
+
+<p> 可以使用不同的参数多次调用 DirStateFactory 任何一种形式的 <tt>getStateToBind()</tt> 方法。该实现是线程安全的。
+
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.12 05/11/17
+
+
+@see DirectoryManager#getStateToBind
+@see DirObjectFactory
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.spi.DirStateFactory.Result javax.naming.spi.DirStateFactory.getStateToBind(Object obj, Name name, Context nameCtx, java.util.Hashtable<?, ?> environment, Attributes inAttrs) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定要传输的对象和属性的情况下检索用于绑定的对象的状态。
+<p>
+<tt>DirectoryManager.getStateToBind()</tt> 接连在状态工厂中加载。如果某一工厂实现 <tt>DirStateFactory</tt>，则 <tt>DirectoryManager</tt> 将调用此方法；否则，它将调用 <tt>StateFactory.getStateToBind()</tt>。它将持续这样做，直到某一工厂产生非 null 响应。
+<p>
+当某一工厂抛出异常时，该异常被传递给 <tt>DirectoryManager.getStateToBind()</tt> 的调用者。停止搜索可能产生非 null 应答的其他工厂。工厂只有在可以确定它是唯一需要的工厂并且不应该再尝试其他工厂时才抛出异常。如果此对象工厂无法使用所提供的参数创建对象，则它应该返回 null。 
+ <p>
+可以有选择地使用 <code>name</code> 和 <code>nameCtx</code> 参数来指定要创建的对象的名称。有关详细信息，请参阅 {@link ObjectFactory#getObjectInstance ObjectFactory.getObjectInstance()} 中&ldquo;名称和上下文参数&rdquo;的描述。如果某一工厂使用 <code>nameCtx</code>，则它应该将其使用与并发访问同步，因为无法保证上下文实现是线程安全的。
+<p>
+<tt>name</tt>、<tt>inAttrs</tt> 和 <tt>environment</tt> 参数都归调用者所有。该实现不会修改这些对象或保存对它们的引用，尽管它可能保存对这些对象的副本的引用。此方法返回的对象归调用者所有。该实现随后不会对它进行修改。它或者包含一个同样归调用者所有的新 <tt>Attributes</tt> 对象，或者包含对原始 <tt>inAttrs</tt> 参数的引用。
+
+@param obj 将检索其状态的对象（可能为 null）。
+@param name 此对象相对于 <code>nameCtx</code> 的名称，如果没有指定名称，则该参数为 null。
+@param nameCtx 一个上下文，<code>name</code> 参数是相对于该上下文指定的，如果 <code>name</code> 相对于默认初始上下文，则该参数为 null。
+@param environment 将在创建对象的状态时使用的环境（可能为 null）。
+@param inAttrs 将与对象绑定在一起的属性（可能为 null）。该工厂不得修改 <tt>inAttrs</tt>。
+@return 一个 <tt>Result</tt>，它包含用于绑定的对象状态和要绑定的相应属性；如果该对象没有使用此工厂，则返回 null。
+@exception NamingException 如果此工厂在试图获得对象的状态时遇到异常，并且不再尝试其他工厂。
+
+@see DirectoryManager#getStateToBind
+
+<!-- END DATA -->

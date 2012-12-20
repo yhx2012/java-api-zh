@@ -1,0 +1,244 @@
+<!-- BEGIN KEY -->
+public interface java.net.SocketOptions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取/设置套接字选项的方法的接口。此接口由 <B>SocketImpl</B> 和 <B>DatagramSocketImpl</B> 实现。它们的子类应该重写此接口的方法来支持它们自己的选项。
+ <P>
+在此接口中指定选项的方法和常量仅用于实现目的。如果不为 SocketImpl 或 DatagramSocketImpl 创建子类，就<B>不要直接使用它们。</B>在 Socket、ServerSocket、DatagramSocket 和 MulticastSocket 中，存在获取/设置所有这些选项的类型安全的方法。
+ <P>
+@version 1.32, 01/28/04
+@author David Brown
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.TCP_NODELAY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对此连接禁用 Nagle 算法。在确认以前的写入数据之前不会缓冲写入网络的数据。
+<P>
+仅对 TCP (SocketImpl) 有效。 
+ <P>
+
+@see Socket#setTcpNoDelay
+@see Socket#getTcpNoDelay
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_BINDADDR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取绑定套接字的本地地址（不能仅将此选项&ldquo;设置&rdquo;为&ldquo;得到&rdquo;，因为套接字是在创建时绑定的，所以本地绑定的地址不可更改）。套接字的默认本地地址为 INADDR_ANY，表示多宿主机 (multi-homed host) 上的任何本地地址。多宿主机可以使用此选项接受仅到其地址的连接（在使用 ServerSocket 或 DatagramSocket 的情况下），或者将其返回地址指定到同位体（对于 Socket 或 DatagramSocket）。此选项的参数为 InetAddress。
+ <P>
+此选项<B>必须</B>在构造方法中指定。
+ <P>
+对 SocketImpl、DatagramSocketImpl 有效。 
+ <P>
+
+@see Socket#getLocalAddress
+@see DatagramSocket#getLocalAddress
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_REUSEADDR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置套接字的 SO_REUSEADDR。在 java 中，它仅用于 MulticastSocket，默认情况下为 MulticastSocket 设置此选项。
+ <P>
+对 DatagramSocketImpl 有效。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_BROADCAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为套接字设置 SO_BROADCAST。此选项启用和禁用发送广播消息的处理能力。它仅用于数据报套接字和支持广播消息概念的网络上（例如，以太网、令牌网等），默认情况下为 DatagramSocket 设置此选项。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.IP_MULTICAST_IF
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于发送多播包的传出接口。可以在具有多个网络接口的主机上使用，在此类主机上应用程序可能希望使用系统默认值之外的接口。获取/返回 InetAddress。
+ <P>
+对多播（DatagramSocketImpl）有效。 
+ <P>
+
+@see MulticastSocket#setInterface(InetAddress)
+@see MulticastSocket#getInterface()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.IP_MULTICAST_IF2
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+同上。引入这一选项后，使用 IP_MULTICAST_IF 的行为与以前一样，而新选项可以支持利用 IPv4 和 IPv6 地址设置传出接口。
+
+注：确保不发生与此选项的冲突
+@see MulticastSocket#setNetworkInterface(NetworkInterface)
+@see MulticastSocket#getNetworkInterface()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.IP_MULTICAST_LOOP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此选项启用或禁用多播数据报的本地回送。默认情况下，为 Multicast Socket 启用此选项。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.IP_TOS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此选项为 TCP 或 UDP 套接字在 IP 地址头中设置服务类型或流量类字段。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_LINGER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定关闭时逗留的超时值。此选项启用/禁用从 TCP Socket 的 <B>close()</B> 立即返回。启用具有非零 Integer <I>超时值</I> 的此选项意味着 <B>close()</B> 在传输和确认写入到同位体的所有数据前将一直阻塞，在那时套接字将<I>从容地</I> 关闭。到达逗留超时值时，套接字将通过 TCP RST <I>强制性</I> 关闭。启用超时值为零的选项将立即强制关闭。如果指定的超时值大于 65,535，则其将被减少到 65,535。
+ <P>
+仅对 TCP（SocketImpl）有效。 
+ 
+@see Socket#setSoLinger
+@see Socket#getSoLinger
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_TIMEOUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置阻塞 Socket 操作的超时值：
+ <PRE>
+ ServerSocket.accept();
+ SocketInputStream.read();
+ DatagramSocket.receive();
+ </PRE>
+
+<P> 选项必须在进入阻塞操作前设置才能生效。如果超过超时值，操作将继续阻塞，将引发 <B>java.io.InterruptedIOException</B>。在此情况下，将不关闭 Socket。
+
+<P> 对所有套接字（SocketImpl、DatagramSocketImpl）都有效。 
+
+@see Socket#setSoTimeout
+@see ServerSocket#setSoTimeout
+@see DatagramSocket#setSoTimeout
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_SNDBUF
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置传出网络 I/O 的平台所使用的基础缓冲区大小的提示。在设置方法中使用时，这是一个对应用程序内核的建议，关于通过套接字发送数据时使用的缓冲区大小。在获取方法中使用时，它必须返回在此套接字上发送数据时平台实际使用的缓冲区大小。
+
+对所有套接字（SocketImpl、DatagramSocketImpl）都有效。 
+
+@see Socket#setSendBufferSize
+@see Socket#getSendBufferSize
+@see DatagramSocket#setSendBufferSize
+@see DatagramSocket#getSendBufferSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_RCVBUF
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置传入网络 I/O 的平台所使用基础缓冲区的大小的提示。在设置方法中使用时，这是一个对应用程序内核的建议，关于通过套接字接收数据时使用的缓冲区大小。在获取方法中使用时，它必须返回在此套接字上接收数据时平台实际使用的缓冲区大小。
+
+对所有套接字（SocketImpl、DatagramSocketImpl）都有效。 
+
+@see Socket#setReceiveBufferSize
+@see Socket#getReceiveBufferSize
+@see DatagramSocket#setReceiveBufferSize
+@see DatagramSocket#getReceiveBufferSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_KEEPALIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 TCP 套接字设置 keepalive 选项时，如果在 2 个小时（注：实际值与实现有关）内在任意方向上都没有跨越套接字交换数据，则 TCP 会自动将 keepalive 探头发送到同位体。此探头是同位体必须响应的 TCP 段。期望的响应为以下三种之一：1. 同位体通过期望的 ACK 响应。不通知应用程序（因为一切正常）。在另一个 2 小时的不活动时间过后，TCP 将发送另一个探头。2. 同位体通过 RST 响应，通知本地 TCP 同位体主机已崩溃并重新启动。套接字被关闭。3. 同位体没有响应。套接字被关闭。 
+
+此选项的目的是检测同位体主机是否崩溃。 
+
+仅对 TCP 套接字（SocketImpl）有效。 
+
+@see Socket#setKeepAlive
+@see Socket#getKeepAlive
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.SocketOptions.SO_OOBINLINE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 OOBINLINE 选项时，在套接字上接收的所有 TCP 紧急数据都将通过套接字输入流接收。禁用该选项时（默认），将悄悄丢弃紧急数据。
+
+@see Socket#setOOBInline
+@see Socket#getOOBInline
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.SocketOptions.setOption(int optID, Object value) throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用/禁用 <I>optID</I> 指定的选项。如果将启用选项，并且它采用选定于选项的 &quot;value&quot;，则将其传入 <I>value</I>。值的实际类型是特定于选项的，传递非期望类型的内容将发生错误： <BR><PRE>
+ SocketImpl s;
+ ...
+s.setOption(SO_LINGER, new Integer(10));
+    // OK - set SO_LINGER w/ timeout of 10 sec.
+ s.setOption(SO_LINGER, new Double(10));
+    // ERROR - expects java.lang.Integer
+</PRE>
+如果请求的选项是二进制的，则其可以由 java.lang.Boolean 使用此方法设置： <BR><PRE>
+ s.setOption(TCP_NODELAY, new Boolean(true));
+    // OK - enables TCP_NODELAY, a binary option
+ </PRE>
+<BR> 使用带有 Boolean(false) 的此方法可以禁用任何选项： <BR><PRE>
+ s.setOption(TCP_NODELAY, new Boolean(false));
+    // OK - disables TCP_NODELAY
+ s.setOption(SO_LINGER, new Boolean(false));
+    // OK - disables SO_LINGER
+ </PRE>
+<BR> 对于具有打开和关闭概念并且需要非 boolean 参数的选项，将其值设置为 <I>Boolean(false)</I> 之外的任何内容都会隐式地启用该选项。<BR> 如果未识别选项、套接字被关闭或者发生某种低级别的错误，则抛出 SocketException <BR>
+@param optID 标识选项
+@param value 套接字选项的参数
+@throws SocketException 如果未识别选项、套接字被关闭或者发生某种低级别的错误
+@see #getOption(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.net.SocketOptions.getOption(int optID) throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取选项的值。启用时，二进制选项将返回 java.lang.Boolean(true)；禁用时返回 java.lang.Boolean(false)，例如：<BR><PRE>
+ SocketImpl s;
+ ...
+ Boolean noDelay = (Boolean)(s.getOption(TCP_NODELAY));
+ if (noDelay.booleanValue()) {
+     // true if TCP_NODELAY is enabled...
+ ...
+ }
+ </PRE>
+ <P>
+对于将特定类型用作参数的选项，getOption(int) 将返回参数的值，另外返回 java.lang.Boolean(false)：
+ <PRE>
+ Object o = s.getOption(SO_LINGER);
+ if (o instanceof Integer) {
+     System.out.print(&quot;Linger time is &quot; + ((Integer)o).intValue());
+ } else {
+   // the true type of o is java.lang.Boolean(false);
+ }
+ </PRE>
+
+@param optID 标识要获取的选项的 <code>int</code>
+@return 选项的值
+@throws SocketException 如果套接字被关闭
+@throws SocketException 如果 <I>optID</I> 根据协议堆栈（包括 SocketImpl）是未知的
+@see #setOption(int, java.lang.Object)
+
+<!-- END DATA -->

@@ -1,0 +1,186 @@
+<!-- BEGIN KEY -->
+public class java.awt.EventQueue extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>EventQueue</code> 是一个与平台无关的类，它将来自于底层同位体类和受信任的应用程序类的事件列入队列。
+ <p>
+它封装了异步事件指派机制，该机制从队列中提取事件，然后通过对此 <code>EventQueue</code> 调用 {@link #dispatchEvent(AWTEvent) dispatchEvent(AWTEvent)} 方法来指派这些事件（事件作为参数被指派）。该机制的特殊行为是与实现有关的。指派实际排入到该队列中的事件（注意，正在发送到 <code>EventQueue</code> 中的事件可以被合并）的唯一要求是：
+ <dl>
+<dt> 按顺序指派。
+<dd> 也就是说，不允许同时从该队列中指派多个事件。
+<dt> 指派顺序与它们排队的顺序相同。
+<dd> 也就是说，如果 <code>AWTEvent</code>&nbsp;A 比 <code>AWTEvent</code>&#xA0;B 先排入到 <code>EventQueue</code> 中，那么事件 B 不能在事件 A 之前被指派。
+ </dl>
+ <p>
+一些浏览器将不同代码基中的 applet 分成独立的上下文，并在这些上下文之间建立一道道墙。在这样的场景中，每个上下文将会有一个 <code>EventQueue</code>。其他浏览器将所有的 applet 放入到同一个上下文中，这意味着所有 applet 只有一个全局 <code>EventQueue</code>。该行为是与实现有关的。有关更多信息，请参照浏览器的文档。
+ <p>
+有关事件指派机制的线程问题，请参阅 <a href="doc-files/AWTThreadIssues.html#Autoshutdown"
+ >AWT 线程问题</a>。
+
+@author Thomas Ball
+@author Fred Ecks
+@author David Mendenhall
+
+@version 	1.105, 07/11/06
+@since 	1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.EventQueue.postEvent(AWTEvent theEvent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 1.1 样式的事件发送到 <code>EventQueue</code> 中。如果在队列中存在具有相同 ID 和事件源的事件，则调用源 <code>Component</code> 的 <code>coalesceEvents</code> 方法。
+
+@param theEvent <code>java.awt.AWTEvent</code> 的实例，或者是它的子类
+@throws NullPointerException 如果 <code>theEvent</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.AWTEvent java.awt.EventQueue.getNextEvent() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>EventQueue</code> 中移除一个事件，并返回该事件。在另一个线程发送事件之前该方法被阻塞。
+@return 下一个 <code>AWTEvent</code>
+@exception InterruptedException 如果任何线程中断了此线程
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.AWTEvent java.awt.EventQueue.peekEvent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>EventQueue</code> 上的第一个事件，而不移除它。
+@return 第一个事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.AWTEvent java.awt.EventQueue.peekEvent(int id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 id（如果有） 的第一个事件。
+@param id 所需事件类型的 id
+@return 指定 id 的第一个事件，如果没有这样的事件，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.EventQueue.dispatchEvent(AWTEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指派一个事件。指派事件的方式取决于事件的类型和事件的源对象的类型：
+ <p> </p>
+ <table border=1 summary="Event types, source types, and dispatch methods">
+ <tr>
+<th>事件类型</th>
+<th>源类型</th> 
+<th>指派</th>
+ </tr>
+ <tr>
+     <td>ActiveEvent</td>
+<td>所有</td>
+     <td>event.dispatch()</td>
+ </tr>
+ <tr>
+<td>其他</td>
+     <td>Component</td>
+     <td>source.dispatchEvent(AWTEvent)</td>
+ </tr>
+ <tr>
+<td>其他</td>
+     <td>MenuComponent</td>
+     <td>source.dispatchEvent(AWTEvent)</td>
+ </tr>
+ <tr>
+<td>其他</td>
+<td>其他</td>
+<td>无动作（忽略）</td>
+ </tr>
+ </table>
+ <p> </p>
+@param event <code>java.awt.AWTEvent</code> 的实例或者是它的子类
+@throws NullPointerException 如果 <code>event</code> 为 <code>null</code>
+@since           1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static long java.awt.EventQueue.getMostRecentEventTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近事件的时间戳（如果有），该事件从 <code>EventQueue</code>（它与正在调用的线程相关）进行指派。如果具有时间戳的事件目前正被指派，则返回它的时间戳。如果没有事件被指派，则返回 EventQueue 的初始化时间。在 JDK 的当前版本中，只有 <code>InputEvent</code>、<code>ActionEvent</code> 和 <code>InvocationEvent</code> 有时间戳；但是，JDK 的未来版本可能将时间戳添加到其他事件类型中。注意，该方法只应该从应用程序事件的指派线程进行调用。如果从另一个线程调用该方法，则返回当前系统的时间（由 <code>System.currentTimeMillis()</code> 报告）。
+
+@return 最后一次 <code>InputEvent</code> 的时间戳，要指派的 <code>ActionEvent</code> 或 <code>InvocationEvent</code>，如果在不同于事件指派线程的线程上调用该方法，则返回 <code>System.currentTimeMillis()</code>
+@see java.awt.event.InputEvent#getWhen
+@see java.awt.event.ActionEvent#getWhen
+@see java.awt.event.InvocationEvent#getWhen
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.AWTEvent java.awt.EventQueue.getCurrentEvent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前正在被 <code>EventQueue</code>（它与正在调用的线程相关）指派的事件。只有某个方法需要访问事件时，但是并没有被设计为可以将事件作为参数来接受，则此方法很有用。注意，该方法应该只从应用程序的事件指派线程进行调用。如果从另一个线程调用该方法，则返回 null。
+
+@return 当前正被指派的事件；如果调用该方法的线程不是事件指派线程，则返回 null
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.EventQueue.push(EventQueue newEventQueue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的事件队列替换现有的 <code>EventQueue</code>。任何挂起的事件都被传输到 <code>EventQueue</code> 以备处理。
+
+@param newEventQueue 要使用的 <code>EventQueue</code>（或其子类的）的实例
+@see      java.awt.EventQueue#pop
+@throws NullPointerException 如果 <code>newEventQueue</code> 为 <code>null</code>
+@since           1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.EventQueue.pop() throws java.util.EmptyStackException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止使用此 <code>EventQueue</code> 指派事件。任何挂起的事件都被传输到以前的 <code>EventQueue</code> 以备处理。
+ <p>
+警告：为了避免死锁，不要在子类中将该方法声明为 synchronized。
+
+@exception EmptyStackException 如果以前没有对该 <code>EventQueue</code> 执行 push 操作
+@see      java.awt.EventQueue#push
+@since           1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.EventQueue.isDispatchThread()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果正在调用的线程是当前 AWT <code>EventQueue</code> 的指派线程，则返回 true。使用此调用确保给定的任务正在当前 AWT <code>EventDispatchThread</code> 上执行（或没有执行）。
+
+@return 如果给定的任务正在当前 AWT <code>EventQueue</code> 的指派线程上运行，则返回 true。
+@since           1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.awt.EventQueue.invokeLater(Runnable runnable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致 <code>runnable</code> 的 <code>run</code> 方法在 {@link Toolkit#getSystemEventQueue the system EventQueue} 的指派线程中被调用。
+
+@param runnable  <code>Runnable</code> 对象，其 <code>run</code> 方法应该在 <code>EventQueue</code> 上同步执行
+@see             #invokeAndWait
+@since           1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.awt.EventQueue.invokeAndWait(Runnable runnable) throws java.lang.InterruptedException, java.lang.reflect.InvocationTargetException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致 <code>runnable</code> 的 <code>run</code> 方法在 {@link Toolkit#getSystemEventQueue the system EventQueue} 的指派线程中被调用。在所有挂起事件被处理后才发生。在这发生之前调用被阻塞。如果从事件指派线程进行调用，则该方法将抛出 Error。
+
+@param runnable  <code>Runnable</code> 对象，其 <code>run</code> 方法应该在 <code>EventQueue</code> 上同步执行
+@exception       InterruptedException  如果任何线程中断了该线程
+@exception       InvocationTargetException  如果运行 <code>runnable</code> 时抛出一个 throwable
+@see             #invokeLater
+@since           1.2
+
+<!-- END DATA -->
+

@@ -1,0 +1,468 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.stream.XMLStreamWriter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+XMLStreamWriter 接口指定如何编写 XML。XMLStreamWriter 不在其输入中检查格式是否良好。但是，writeCharacters 方法需要转义属性值的 &amp;、&lt; 和 &gt;。writeAttribute 方法将转义上述字符以及 &quot;，以确保所有字符内容和属性值都是格式良好的。 
+
+必须单独编写每个 NAMESPACE 和 ATTRIBUTE。
+
+<table border="1" cellpadding="2" cellspacing="0">
+     <thead>
+         <tr>
+             <th colspan="5">XML Namespaces、<code>javax.xml.stream.isRepairingNamespaces</code> 和写入方法行为</th>            
+         </tr>
+         <tr>
+             <th>方法</th> <!-- method -->
+             <th colspan="2"><code>isRepairingNamespaces</code> == true</th>
+             <th colspan="2"><code>isRepairingNamespaces</code> == false</th>
+         </tr>
+         <tr>
+             <th></th> <!-- method -->
+             <th>namespaceURI 绑定</th>
+             <th>namespaceURI 未绑定</th>
+             <th>namespaceURI 绑定</th>
+             <th>namespaceURI 未绑定</th>
+         </tr>
+     </thead>
+     
+     <tbody>
+         <tr>
+             <th><code>writeAttribute(namespaceURI, localName, value)</code></th>
+             <!-- isRepairingNamespaces == true -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 prefix:localName="value"&nbsp;<sup>[1]</sup>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 xmlns:{generated}="namespaceURI" {generated}:localName="value"
+             </td>
+             <!-- isRepairingNamespaces == false -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 prefix:localName="value"&nbsp;<sup>[1]</sup>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 <code>XMLStreamException</code>
+             </td>
+         </tr>
+         
+         <tr>
+             <th><code>writeAttribute(prefix, namespaceURI, localName, value)</code></th>
+             <!-- isRepairingNamespaces == true -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 绑定到相同的前缀：<br />
+                 prefix:localName="value"&nbsp;<sup>[1]</sup><br />
+                 <br />
+                 绑定到不同的前缀：<br />
+                 xmlns:{generated}="namespaceURI" {generated}:localName="value"
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 xmlns:prefix="namespaceURI" prefix:localName="value"&nbsp;<sup>[3]</sup>
+             </td>
+             <!-- isRepairingNamespaces == false -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 绑定到相同的前缀：<br />
+                 prefix:localName="value"&nbsp;<sup>[1][2]</sup><br />
+                 <br />
+                 绑定到不同的前缀：<br />
+                 <code>XMLStreamException</code><sup>[2]</sup>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 xmlns:prefix="namespaceURI" prefix:localName="value"&nbsp;<sup>[2][5]</sup>
+             </td>
+         </tr>
+         
+         <tr>
+             <th><code>writeStartElement(namespaceURI, localName)</code><br />
+                 <br />
+                 <code>writeEmptyElement(namespaceURI, localName)</code></th>
+             <!-- isRepairingNamespaces == true -->
+             <td >
+                 <!-- namespaceURI bound -->
+                 &lt;prefix:localName&gt;&nbsp;<sup>[1]</sup>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 &lt;{generated}:localName xmlns:{generated}="namespaceURI"&gt;
+             </td>
+             <!-- isRepairingNamespaces == false -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 &lt;prefix:localName&gt;&nbsp;<sup>[1]</sup>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 <code>XMLStreamException</code>
+             </td>
+         </tr>
+         
+         <tr>
+             <th><code>writeStartElement(prefix, localName, namespaceURI)</code><br />
+                 <br />
+                 <code>writeEmptyElement(prefix, localName, namespaceURI)</code></th>
+             <!-- isRepairingNamespaces == true -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 绑定到相同的前缀：<br />
+                 &lt;prefix:localName&gt;&nbsp;<sup>[1]</sup><br />
+                 <br />
+                 绑定到不同的前缀：<br />
+                 &lt;{generated}:localName xmlns:{generated}="namespaceURI"&gt;
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 &lt;prefix:localName xmlns:prefix="namespaceURI"&gt;&nbsp;<sup>[4]</sup>
+             </td>
+             <!-- isRepairingNamespaces == false -->
+             <td>
+                 <!-- namespaceURI bound -->
+                 绑定到相同的前缀：<br />
+                 &lt;prefix:localName&gt;&nbsp;<sup>[1]</sup><br />
+                 <br />
+                 绑定到不同的前缀：<br />
+                 <code>XMLStreamException</code>
+             </td>
+             <td>
+                 <!-- namespaceURI unbound -->
+                 &lt;prefix:localName&gt;&nbsp;
+             </td>
+         </tr>
+     </tbody>
+     <tfoot>
+         <tr>
+             <td colspan="5">
+                 注：
+                 <ul>
+                     <li>[1] 如果 namespaceURI == default Namespace URI，则不写入任何前缀</li>
+                     <li>[2] 如果 prefix == "" || null && namespaceURI == ""，则不生成或写入任何前缀或 Namespace 声明</li>
+                     <li>[3] 如果 prefix == "" || null，则随机生成前缀</li>
+                     <li>[4] 如果 prefix == "" || null，则将其视为默认 Namespace，且不生成或写入任何前缀，如果 namespaceURI 是未绑定的，则生成并写入一个 xmlns 声明</li>
+                     <li>[5] 如果 prefix == "" || null，则试图定义默认 Namespace 将被视为无效，且将抛出 XMLStreamException</li>
+                 </ul>
+             </td>
+         </tr>
+     </tfoot>
+ </table>
+
+@version 1.0
+@author Copyright (c) 2003 by BEA Systems.All Rights Reserved.
+@see XMLOutputFactory
+@see XMLStreamReader
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartElement(String localName) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个开始标记。所有 writeStartElement 方法都在内部名称空间上下文中打开一个新的作用域。编写相应的 EndElement 导致作用域被关闭。
+@param localName 标记的本地名称，不可以为 null
+@throws XMLStreamException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartElement(String namespaceURI, String localName) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个开始标记
+@param namespaceURI 要使用的前缀的 namespaceURI ，不可以为 null
+@param localName 标记的本地名称，不可以为 null
+@throws XMLStreamException 如果名称空间 URI 未绑定到前缀并且 javax.xml.stream.isRepairingNamespaces 未设置为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartElement(String prefix, String localName, String namespaceURI) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个开始标记
+@param localName 标记的本地名称，不可以为 null
+@param prefix 标记的前缀，不可以为 null
+@param namespaceURI 要绑定前缀的 URI，不可以为 null
+@throws XMLStreamException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEmptyElement(String namespaceURI, String localName) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个空元素标记
+@param namespaceURI 要绑定标记的 URI，不可以为 null
+@param localName 标记的本地名称，不可以为 null
+@throws XMLStreamException 如果名称空间 URI 未绑定到前缀并且 javax.xml.stream.isRepairingNamespaces 未设置为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEmptyElement(String prefix, String localName, String namespaceURI) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个空元素标记
+@param prefix 标记的前缀，不可以为 null
+@param localName 标记的本地名称，不可以为 null
+@param namespaceURI 要绑定标记的 URI，不可以为 null
+@throws XMLStreamException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEmptyElement(String localName) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入一个空元素标记
+@param localName 标记的本地名称，不可以为 null
+@throws XMLStreamException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEndElement() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向依赖于 writer 内部状态的输出写入一个结束标记，以此确定事件的前缀和本地名称。
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEndDocument() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭所有开始标记并写入相应的结束标记。
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.close() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此 writer 并释放与 writer 关联的所有资源。此方法不得关闭底层输出流。
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.flush() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有缓存数据写入底层输出机制。
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeAttribute(String localName, String value) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出流写入一个不带前缀的属性。
+@param localName 属性的本地名称
+@param value 属性的值
+@throws IllegalStateException 如果当前状态不允许 Attribute 写入
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeAttribute(String prefix, String namespaceURI, String localName, String value) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出流写入一个属性
+@param prefix 此属性的前缀
+@param namespaceURI 此属性前缀的 URI
+@param localName 属性的本地名称
+@param value 属性的值
+@throws IllegalStateException 如果当前状态不允许 Attribute 写入
+@throws XMLStreamException 如果名称空间 URI 未绑定到前缀且 javax.xml.stream.isRepairingNamespaces 未设置为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeAttribute(String namespaceURI, String localName, String value) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出流写入一个属性
+@param namespaceURI 此属性前缀的 URI
+@param localName 属性的本地名称
+@param value 属性的值
+@throws IllegalStateException 如果当前状态不允许 Attribute 写入
+@throws XMLStreamException 如果名称空间 URI 未绑定到前缀且 javax.xml.stream.isRepairingNamespaces 未设置为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeNamespace(String prefix, String namespaceURI) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出流写入一个名称空间。如果此方法的 prefix 参数为空字符串、&quot;xmlns&quot; 或 null，则此方法将委托给 writeDefaultNamespace。
+
+@param prefix 要绑定名称空间的前缀
+@param namespaceURI 要绑定前缀的 URI
+@throws IllegalStateException 如果当前状态不允许 Namespace 写入
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeDefaultNamespace(String namespaceURI) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向流写入默认名称空间
+@param namespaceURI 要绑定默认名称空间的 URI
+@throws IllegalStateException 如果当前状态不允许 Namespace 写入
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeComment(String data) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写一个包含数据的 XML 注释
+@param data 包含在注释中的数据，可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeProcessingInstruction(String target) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写一条处理指令
+@param target 处理指令的目标，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeProcessingInstruction(String target, String data) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写一条处理指令
+@param target 处理指令的目标，不可以为 null
+@param data 处理指令中包含的数据，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeCData(String data) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写 CData 节
+@param data CData 节中包含的数据，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeDTD(String dtd) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写 DTD 节。此字符串代表 XML 1.0 规范的整个 doctypedecl 产品。
+
+@param dtd 要编写的 DTD
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeEntityRef(String name) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写一个实体引用
+@param name 实体的名称
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartDocument() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写 XML 声明。默认 XML 版本为 1.0，默认编码为 utf-8
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartDocument(String version) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写 XML 声明。默认 XML 版本为 1.0
+@param version xml 文档的版本
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeStartDocument(String encoding, String version) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编写 XML 声明。注意，编码参数不能设置底层输出的实际编码。它必须在使用 XMLOutputFactory 创建 XMLStreamWriter 实例时进行设置
+@param encoding XML 声明的编码
+@param version XML 文档的版本
+@throws XMLStreamException 如果给定编码与底层流的编码不匹配
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeCharacters(String text) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入文本
+@param text 要写入的值
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.writeCharacters(char[] text, int start, int len) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向输出写入文本
+@param text 要写入的值
+@param start 数组中的起始位置
+@param len 要写入的字符数
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamWriter.getPrefix(String uri) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取绑定 URI 的前缀
+@return 前缀或 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.setPrefix(String prefix, String uri) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置绑定 URI 的前缀。前缀在当前 START_ELEMENT / END_ELEMENT 对的范围内绑定。如果在写入 START_ELEMENT 之前调用此方法，则前缀在根范围内绑定。
+@param prefix 要绑定到 URI 的前缀，不可以为 null
+@param uri 要绑定到前缀的 URI，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.setDefaultNamespace(String uri) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 URI 绑定到默认名称空间。此 URI 在当前 START_ELEMENT / END_ELEMENT 对的范围内绑定。如果在写入 START_ELEMENT 之前调用此方法，则 URI 在根范围内绑定。
+@param uri 要绑定到默认名称空间的 URI，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamWriter.setNamespaceContext(NamespaceContext context) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置前缀和 URI 绑定的当前名称空间上下文。此上下文成为用于写入的根名称空间上下文，并将替换当前的根名称空间上下文。通过将传递到此方法的上下文用作解析名称空间的根上下文，对 setPrefix 和 setDefaultNamespace 的后续调用将绑定名称空间。此方法只能在文档开始处调用一次。这不会导致名称空间被声明。如果在名称空间上下文中存在前缀映射关系的名称空间 URI，则它将被视为已经声明，并且该前缀可以被 StreamWriter 使用。
+@param context 将用于此 writer 的名称空间上下文，不可以为 null
+@throws XMLStreamException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.NamespaceContext javax.xml.stream.XMLStreamWriter.getNamespaceContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前名称空间上下文。
+@return 当前 NamespaceContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.stream.XMLStreamWriter.getProperty(String name) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从底层实现获取功能/属性值
+@param name 属性的名称，不可以为 null
+@return 属性的值
+@throws IllegalArgumentException 如果属性不受支持
+@throws NullPointerException 如果名称为 null
+
+<!-- END DATA -->

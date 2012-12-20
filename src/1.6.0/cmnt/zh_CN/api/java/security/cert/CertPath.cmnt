@@ -1,0 +1,152 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.cert.CertPath extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不可变的证书序列（证书路径）。
+ <p>
+这是一个抽象类，定义了常用于所有 <code>CertPath</code> 的方法。其子类可处理不同类型的证书（X.509、PGP 等等）。
+ <p>
+所有 <code>CertPath</code> 对象都包含类型、<code>Certificate</code> 列表及其支持的一种或多种编码。由于 <code>CertPath</code> 类是不可变的，所以构造 <code>CertPath</code> 后无法以任何外部可见的方式更改它。此规定适用于此类的所有公共字段和方法，以及由子类添加或重写的所有公共字段和方法。
+ <p>
+类型是标识证书路径中 <code>Certificate</code> 类型的一个 <code>String</code>。对于证书路径 <code>certPath</code> 中的每个证书 <code>cert</code> 而言，<code>cert.getType().equals(certPath.getType())</code> 必须为 <code>true</code>。
+ <p>
+<code>Certificate</code> 列表是零个或多个 <code>Certificate</code> 的有序 <code>List</code>。此 <code>List</code> 和其中所包含的所有 <code>Certificate</code> 都必须是不可变的。
+ <p>
+每个 <code>CertPath</code> 对象必须支持一种或多种编码方式，这样可将对象转换成 byte 数组进行存储，或传输给其他方。这些编码最好应该具有记录良好的标准（例如 PKCS#7）。将 <code>CertPath</code> 支持的某种编码视为默认编码。如果没有显式地请求编码（例如，{@link #getEncoded() getEncoded()} 方法），则使用此编码。
+ <p>
+所有 <code>CertPath</code> 对象都是 <code>Serializable</code>。在序列化期间将 <code>CertPath</code> 对象解析为一个替换的 {@link CertPathRep CertPathRep} 对象。这就允许不管 <code>CertPath</code> 对象的基础实现如何，都可以将该对象序列化为等效的表示形式。
+ <p>
+可使用 <code>CertificateFactory</code> 创建 <code>CertPath</code> 对象，或者可通过其他类（如 <code>CertPathBuilder</code>）返回这些对象。
+ <p>
+按照惯例，X.509 <code>CertPath</code>（由 <code>X509Certificate</code> 组成）的顺序按照从目标证书开始，从信任的定位点所发布的证书结束。也就是说，证书的发布方是以下某个主体。表示 {@link TrustAnchor TrustAnchor} 的证书不应包括在证书路径中。未验证的 X.509 <code>CertPath</code> 可能不遵循这些约定。PKIX <code>CertPathValidator</code> 将检测任何与这些约定的偏差，这些偏差会导致证书路径无效并且抛出 <code>CertPathValidatorException</code>。
+ <p>
+<b>并发访问</b>
+ <p>
+所有 <code>CertPath</code> 对象必须是线程安全的。也就是说，多个线程在单个 <code>CertPath</code> 对象（或多个对象）上并发调用此类中所定义的各种方法不会产生坏的影响。对于 <code>CertPath.getCertificates</code> 返回的 <code>List</code> 也应如此。
+ <p>
+要求 <code>CertPath</code> 对象是不可变的并且是线程安全的，就允许将其传递到各种代码片断中，而无需担心协调访问。通常提供此种线程安全性并不难，因为相关的 <code>CertPath</code> 和 <code>List</code> 对象都是不可变的。
+
+@see CertificateFactory
+@see CertPathBuilder
+
+@version 1.9 12/19/03
+@author	Yassir Elley
+@since	1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.CertPath(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建指定类型的 <code>CertPath</code>。
+ <p>
+此构造方法是受保护的，因为大多数用户应该使用 <code>CertificateFactory</code> 来创建 <code>CertPath</code>。
+
+@param type 此路径中 <code>Certificate</code> 类型的标准名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.CertPath.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径中的 <code>Certificate</code> 类型。这与 {@link java.security.cert.Certificate#getType() cert.getType()} 为证书路径中的所有 <code>Certificate</code> 所返回的字符串相同。
+
+@return 此证书路径中的 <code>Certificate</code> 类型（从不为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Iterator<java.lang.String> java.security.cert.CertPath.getEncodings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径支持的编码的迭代，默认编码方式优先。试图修改返回的 <code>Iterator</code>（通过其 <code>remove</code> 方法）会导致抛出 <code>UnsupportedOperationException</code>。
+
+@return 在受支持的编码的名称（以 String 的形式）上进行迭代的 <code>Iterator</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.CertPath.equals(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此证书路径与指定对象的相等性。当且仅当两个 <code>CertPath</code> 的类型相等并且其证书 <code>List</code>（通过模拟这些 <code>List</code> 中的 <code>Certificate</code>）相等时，这两个 CertPath 才相等。<code>CertPath</code> 不会等于一个非 <code>CertPath</code> 对象。
+ <p>
+此方法实现此种算法。如果重写此方法，则必须维护在此指定的行为。
+
+@param other 要与此证书路径进行相等性测试的对象
+@return 如果指定的对象等于此证书路径，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.cert.CertPath.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径的哈希码。证书路径的哈希码定义为以下计算的结果：
+ <pre><code>
+  hashCode = path.getType().hashCode();
+  hashCode = 31*hashCode + path.getCertificates().hashCode();
+ </code></pre>
+这确保对于任意两个证书路径 <code>path1</code> 和 <code>path2</code> 而言，<code>path1.equals(path2)</code> 就意味着 <code>path1.hashCode()==path2.hashCode()</code>，正如 <code>Object.hashCode</code> 的常规协定所要求的那样。
+
+@return 此证书路径的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.CertPath.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径的字符串表示形式。这会在路径中的每个 <code>Certificate</code> 上调用 <code>toString</code> 方法。
+
+@return 此证书路径的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.CertPath.getEncoded() throws java.security.cert.CertificateEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径的编码形式，使用默认的编码。
+
+@return 已编码的字节
+@exception CertificateEncodingException 如果发生编码错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.CertPath.getEncoded(String encoding) throws java.security.cert.CertificateEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径的编码形式，使用指定的编码。
+
+@param encoding 要使用的编码名称
+@return 已编码的字节
+@exception CertificateEncodingException 如果发生编码错误或者编码请求不受支持
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.List<? extends java.security.cert.Certificate> java.security.cert.CertPath.getCertificates()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此证书路径中的证书列表。返回的 <code>List</code> 必须是不可变的和线程安全的。
+
+@return 一个不可变的 <code>Certificate</code> <code>List</code>（可以为空，但是不能为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.security.cert.CertPath.writeReplace() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>CertPathRep</code> 对象替换要被序列化的 <code>CertPath</code>。
+
+@return 要被序列化的 <code>CertPathRep</code>
+
+@throws ObjectStreamException 如果不能创建表示此证书路径的 <code>CertPathRep</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.security.cert.CertPath.writeReplace() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>CertPathRep</code> 对象替换要被序列化的 <code>CertPath</code>。
+
+@return 要被序列化的 <code>CertPathRep</code>
+
+@throws ObjectStreamException 如果不能创建表示此证书路径的 <code>CertPathRep</code> 对象
+
+<!-- END DATA -->

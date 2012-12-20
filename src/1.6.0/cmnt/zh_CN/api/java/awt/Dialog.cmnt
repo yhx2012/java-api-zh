@@ -1,0 +1,582 @@
+<!-- BEGIN KEY -->
+public class java.awt.Dialog extends java.awt.Window
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Dialog 是一个带标题和边界的顶层窗口，边界一般用于从用户处获得某种形式的输入。Dialog 的大小包括边界所指定的任何区域。边界区的维度可以使用 <code>getInsets</code> 方法获得，但是，由于这些维度是依赖于平台的，因此只有通过调用 <code>pack</code> 或 <code>show</code> 将 dialog 设置为可显示的，才能获得有效的 insets 值。由于 dialog 的总大小包括了边界区，因此边界有效地模糊了 dialog 的部分区域，约束了可用于在矩形中呈现或显示子部件的区域，矩形左上角的位置为 <code>(insets.left, insets.top)</code>，宽度为 <code>width - (insets.left + insets.right)</code>，长度为 <code>height - (insets.top + insets.bottom)</code>。 
+ <p>
+Dialog 的默认布局为 <code>BorderLayout</code>。
+ <p>
+Dialog 可以使用 <code>setUndecorated</code> 关闭本机装饰（例如 Frame &amp; Titlebar）。只有在 dialog 不是 {@link Component#isDisplayable() displayable} 时才能完成此操作。
+ <p>
+在构造 dialog 时，dialog 可以拥有另一个窗口作为它自己的窗口。当可见的 dialog 的所有者窗口被最小化时，dialog 会自动隐藏为对用户不可见。当所有者窗口被还原时，dialog 重新又变为用户可见的。
+ <p>
+在多屏幕环境中，可以在不同于其所有者的屏幕设备上创建 <code>Dialog</code>。有关更多信息，请参阅 {@link java.awt.Frame}。
+ <p>
+dialog 可以是无模式的（默认情况下）或有模式的。有模式的 dialog 会阻止将内容输入到应用程序中的其他一些顶层窗口中（将此 dialog 创建为其所有者的所有窗口除外）。有关细节，请参阅 <a href="doc-files/Modality.html">AWT Modality</a> 规范。
+ <p>
+Dialog 能够产生以下 <code>WindowEvents</code>：<code>WindowOpened</code>、<code>WindowClosing</code>、<code>WindowClosed</code>、<code>WindowActivated</code>、<code>WindowDeactivated</code>、<code>WindowGainedFocus</code>、<code>WindowLostFocus</code>。
+
+@see WindowEvent
+@see Window#addWindowListener
+
+@version	1.125, 06/21/06
+@author 	Sami Shaio
+@author 	Arthur van Hoff
+@since       JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.Dialog.ModalityType java.awt.Dialog.DEFAULT_MODALITY_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 有模式 dialog 的默认模式类型。默认模式类型是 <code>APPLICATION_MODAL</code>。调用旧式 <code>setModal(true)</code> 等效于调用 <code>setModalityType(DEFAULT_MODALITY_TYPE)</code>。
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Dialog.resizable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Dialog 的 resizable 属性。如果 Dialog 是可调整大小的，则为 true；否则为 false。
+
+@serial
+@see #setResizable(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Dialog.undecorated
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段指出 dialog 是否未装饰。此属性只可能在 dialog 不可显示时改变。如果 dialog 未装饰，则 <code>undecorated</code> 为 true，否则为 false。
+
+@serial
+@see #setUndecorated(boolean)
+@see #isUndecorated()
+@see Component#isDisplayable()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Dialog.modal
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 dialog 是有模式的 dialog，则返回 ture，如果 dialog 是无模式的 dialog，则返回 false。有模式 dialog 阻止用户将内容输入到某些应用程序顶级窗口中。保留此字段只是为了实现后向兼容。可以使用 {@link Dialog.ModalityType ModalityType} 枚举替换。
+
+ @serial
+ @see #isModal
+ @see #setModal
+ @see #getModalityType
+ @see #setModalityType
+ @see ModalityType
+ @see ModalityType#MODELESS
+ @see #DEFAULT_MODALITY_TYPE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Dialog.ModalityType java.awt.Dialog.modalityType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 dialog 的模式类型。如果 dialog 的模式类型不是 {@link Dialog.ModalityType#MODELESS ModalityType.MODELESS}，那么它将阻止所有用户将内容输入到某些应用程序顶级窗口中。
+
+ @serial
+
+ @see ModalityType
+ @see #getModalityType
+ @see #setModalityType
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.lang.String java.awt.Dialog.title
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 Dialog 的标题。此字段可以为 null。
+
+@serial
+@see #getTitle()
+@see #setTitle(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Frame owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定所有者 <code>Frame</code> 和一个空标题。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+@see java.awt.GraphicsEnvironment#isHeadless
+@see Component#setSize
+@see Component#setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Frame owner, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定所有者 <code>Frame</code>、模式和一个空标题。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param modal 指定在显示的时候是否阻止用户将内容输入到其他顶级窗口中。如果该参数为 <code>false</code>，则 dialog 是 <code>MODELESS</code>；如果该参数为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>
+@exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog.ModalityType#MODELESS
+ @see java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Frame owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定的所有者 <code>Frame</code> 和标题。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@exception IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+@see java.awt.GraphicsEnvironment#isHeadless
+@see Component#setSize
+@see Component#setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Frame owner, String title, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Frame</code>、标题和模式。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@param modal 指定在显示的时候是否阻止用户将内容输入到其他顶级窗口中。如果该参数为 <code>false</code>，则 dialog 是 <code>MODELESS</code>；如果该参数为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>
+@exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog.ModalityType#MODELESS
+ @see java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see Component#setSize
+ @see Component#setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Frame</code>、标题、模式和 <code>GraphicsConfiguration</code>。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@param modal 指定在显示的时候是否阻止用户将内容输入到其他顶级窗口中。如果该参数为 <code>false</code>，则 dialog 是 <code>MODELESS</code>；如果该参数为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>
+@param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>；如果该参数为 <code>null</code>，则假定默认系统为 <code>GraphicsConfiguration</code>
+@exception java.lang.IllegalArgumentException 如果 <code>gc</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog.ModalityType#MODELESS
+ @see java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see Component#setSize
+ @see Component#setVisible
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Dialog owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定所有者 <code>Dialog</code> 和一个空标题。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+@see java.awt.GraphicsEnvironment#isHeadless
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Dialog owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定的所有者 <code>Dialog</code> 和标题。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+@see java.awt.GraphicsEnvironment#isHeadless
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Dialog owner, String title, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Dialog</code>、标题和模式。
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@param modal 指定在显示的时候是否阻止用户将内容输入到其他顶级窗口中。如果该参数为 <code>false</code>，则 dialog 是 <code>MODELESS</code>；如果该参数为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>
+@exception IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog.ModalityType#MODELESS
+ @see java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Dialog</code>、标题、模式和 <code>GraphicsConfiguration</code>。 
+
+@param owner  dialog 的所有者，如果此 dialog 没有所有者，则该参数为 <code>null</code>
+@param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+@param modal 指定在显示的时候是否阻止用户将内容输入到其他顶级窗口中。如果该参数为 <code>false</code>，则 dialog 是 <code>MODELESS</code>；如果该参数为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>
+@param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>；如果该参数为 <code>null</code>，则假定默认系统为 <code>GraphicsConfiguration</code>
+@exception java.lang.IllegalArgumentException 如果 <code>gc</code> 不是来自某一屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog.ModalityType#MODELESS
+ @see java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see Component#setSize
+ @see Component#setVisible
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Window owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定所有者 <code>Window</code> 和一个空标题。
+
+ @param owner  dialog 的所有者。该所有者必须是 {@link java.awt.Dialog Dialog}、{@link java.awt.Frame Frame} 以及它们的任何后代的实例，或者是 <code>null</code>
+
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 不是 {@link java.awt.Dialog Dialog} 或 {@link java.awt.Frame Frame} 实例
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自屏幕设备
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.GraphicsEnvironment#isHeadless
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Window owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的、无模式的 <code>Dialog</code>，它带有指定的所有者 <code>Window</code> 和标题。
+
+ @param owner  dialog 的所有者。该所有者必须是 {@link java.awt.Dialog Dialog}、{@link java.awt.Frame Frame} 以及它们的任何后代的实例，或者是 <code>null</code>
+ @param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 不是 {@link java.awt.Dialog Dialog} 或 {@link java.awt.Frame Frame} 实例
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自屏幕设备
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时 
+ @see java.awt.GraphicsEnvironment#isHeadless
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Window owner, Dialog.ModalityType modalityType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个最初不可见的 <code>Dialog</code>，它带有指定所有者 <code>Window</code>、模式和一个空标题。
+
+ @param owner  dialog 的所有者。该所有者必须是 {@link java.awt.Dialog Dialog}、{@link java.awt.Frame Frame} 以及它们的任何后代的实例，或者是 <code>null</code>
+ @param modalityType 指定 dialog 是否阻止用户在显示的时候将内容输入其他窗口。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 不是 {@link java.awt.Dialog Dialog} 或 {@link java.awt.Frame Frame} 实例
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某个屏幕设备
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @exception SecurityException 如果调用线程没有使用给定 <code>modalityType</code> 创建有模式 dialog 的权限
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see java.awt.Toolkit#isModalityTypeSupported
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Window owner, String title, Dialog.ModalityType modalityType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Window</code>、标题和模式。
+
+ @param owner  dialog 的所有者。该所有者必须是 {@link java.awt.Dialog Dialog}、{@link java.awt.Frame Frame} 以及它们的任何后代的实例，或者是 <code>null</code>
+ @param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+ @param modalityType 指定 dialog 是否阻止用户在显示的时候将内容输入其他窗口中。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 不是 {@link java.awt.Dialog Dialog} 或 {@link java.awt.Frame Frame} 实例
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自某个屏幕设备
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @exception SecurityException 如果调用线程没有使用给定 <code>modalityType</code> 创建有模式 dialog 的权限
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see java.awt.Toolkit#isModalityTypeSupported
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog(Window owner, String title, Dialog.ModalityType modalityType, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 构造一个最初不可见的 <code>Dialog</code>，它带有指定的所有者 <code>Window</code>、标题、模式和 <code>GraphicsConfiguration</code>。
+
+ @param owner  dialog 的所有者。该所有者必须是 {@link java.awt.Dialog Dialog}、{@link java.awt.Frame Frame} 以及它们的任何后代的实例，或者是 <code>null</code>
+ @param title  dialog 的标题，如果此 dialog 没有标题，则该参数为 <code>null</code>
+ @param modalityType 指定 dialog 是否阻止用户在显示的时候将内容输入其他窗口。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>；如果该参数为 <code>null</code>，则假定默认系统为 <code>GraphicsConfiguration</code>
+
+ @exception java.lang.IllegalArgumentException 如果 <code>owner</code> 不是 {@link java.awt.Dialog Dialog} 或 {@link java.awt.Frame Frame} 实例
+ @exception java.lang.IllegalArgumentException 如果 <code>gc</code> 不是来自某一屏幕设备
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+ @exception SecurityException 如果调用线程没有使用给定 <code>modalityType</code> 创建有模式 dialog 的权限
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see java.awt.Toolkit#isModalityTypeSupported
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将此 Dialog 连接到本机屏幕资源，从而使其成为可显示的。如果 dialog 是可显示的，则其所有子级也将成为可显示的。由工具包在内部调用此方法，而不应该直接由程序调用。
+@see Component#isDisplayable
+@see #removeNotify
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Dialog.isModal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指出 dialog 是否为有模式的。
+<p>
+ 此方法已过时，保留它只是为了后向兼容。可以使用 {@link #getModalityType getModalityType()} 代替。
+
+ @return    如果此 dialog 窗口是有模式的，则返回 <code>true</code>；否则返回 <code>false</code>
+
+ @see       java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see       java.awt.Dialog.ModalityType#MODELESS
+ @see       java.awt.Dialog#setModal
+ @see       java.awt.Dialog#getModalityType
+ @see       java.awt.Dialog#setModalityType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setModal(boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定此 dialog 是否应该是有模式的。
+<p>
+ 此方法已过时，保留它只是为了后向兼容。可以使用 {@link #setModalityType setModalityType()} 代替。
+ <p>
+ 注：更改可见 dialog 的模式只在隐藏该 dialog 并再次显示它时产生效果。
+
+ @param modal 指定 dialog 是否阻止在显示的时候将内容输入其他窗口；调用 <code>setModal(true)</code> 等效于 <code>setModalityType(Dialog.DEFAULT_MODALITY_TYPE)</code>，而调用 <code>setModal(false)</code> 等效于 <code>setModalityType(Dialog.ModalityType.MODELESS)</code>
+
+ @see       java.awt.Dialog#DEFAULT_MODALITY_TYPE
+ @see       java.awt.Dialog.ModalityType#MODELESS
+ @see       java.awt.Dialog#isModal
+ @see       java.awt.Dialog#getModalityType
+ @see       java.awt.Dialog#setModalityType
+
+ @since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog.ModalityType java.awt.Dialog.getModalityType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 dialog 的模式类型。
+
+ @return 此 dialog 的模式类型
+
+ @see java.awt.Dialog#setModalityType
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setModalityType(Dialog.ModalityType type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置此 dialog 的模式类型。有关可能的模式类型，请参阅 {@link java.awt.Dialog.ModalityType ModalityType}。
+ <p>
+ 如果给定模式类型不受支持，则使用 <code>MODELESS</code>。您可能想在调用此方法之后调用 <code>getModalityType()</code>，以确保模式类型已被设置。
+ <p>
+注：更改可见 dialog 的模式只在隐藏该 dialog 并再次显示它时产生效果。
+
+ @param type 指定 dialog 是否阻止在显示的时候将内容输入其他窗口。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @exception SecurityException 如果调用线程没有使用给定 <code>modalityType</code> 创建有模式 dialog 的权限
+
+ @see       java.awt.Dialog#getModalityType
+ @see       java.awt.Toolkit#isModalityTypeSupported
+
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.Dialog.getTitle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 dialog 的标题。标题显示在 dialog 的边界中。
+@return    此 dialog 窗口的标题。标题可以为 <code>null</code>。
+@see       java.awt.Dialog#setTitle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setTitle(String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 Dialog 的标题。
+@param title 显示在 dialog 的边界中的标题；null 值会导致一个空标题
+@see #getTitle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setVisible(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 根据参数 {@code b} 的值显示或隐藏此 {@code Dialog}。
+ @param b 如果该参数为 {@code true}，则使 {@code Dialog} 可见，否则隐藏 {@code Dialog}。如果 dialog 和/或其所有者尚不可显示，则使它们都变成可显示的。在使 dialog 可见之前，将验证该 dialog。如果该参数为 {@code false}，则隐藏 {@code Dialog}，并且随后导致返回 {@code setVisible(true)}（如果它目前受阻塞）。
+ <p>
+ <b>对有模式 dialog 的注释</b>。
+ <ul>
+ <li>{@code setVisible(true)}：如果 dialog 尚不可见，则在通过调用 {@code setVisible(false)} 或 {@code dispose} 隐藏 dialog 之前，此调用不会返回。
+ <li>{@code setVisible(false)}：隐藏 dialog，然后返回 {@code setVisible(true)}（如果它目前受阻塞）。
+ <li>从事件指派线程调用此方法是受允许的，因为在此方法受阻塞时，工具包会确保其他事件不受阻塞。
+ </ul>
+ @see java.awt.Window#setVisible
+ @see java.awt.Window#dispose
+ @see java.awt.Component#isDisplayable
+ @see java.awt.Component#validate
+ @see java.awt.Dialog#isModal
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.show()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使 {@code Dialog} 可见。如果 dialog 和/或其所有者尚不可显示，则使它们都变成可显示的。在使 dialog 可见之前，将验证该 dialog。如果 dialog 已经可见，则此方法会使 dialog 显示在前面。
+<p>
+ 如果 dialog 是有模式的并且尚不可见，则在通过调用 hide 或 dispose 方法隐藏 dialog 之前，此调用不会返回。从事件指派线程显示有模式 dialog 是受允许的，因为调用此方法的线程受阻塞时，工具包会确保另一个事件队列的运行。
+ @see Component#hide
+ @see Component#isDisplayable
+ @see Component#validate
+ @see #isModal
+ @see Window#setVisible(boolean)
+ @deprecated 从 JDK 版本 1.5 开始，由 {@link #setVisible(boolean) setVisible(boolean)} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.hide()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+隐藏 Dialog 并随后导致返回 {@code show}（如果它目前受阻塞）。
+ @see Window#show
+ @see Window#dispose
+ @see Window#setVisible(boolean)
+ @deprecated 从 JDK 版本 1.5 开始，由 {@link #setVisible(boolean) setVisible(boolean)} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.toBack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ <p>
+ 如果此 dialog 是有模式的并且阻止某些窗口，则所有 dialog 都被发送回来，使它们位于正受阻塞的 dialog 下。
+
+ @see java.awt.Window#toBack
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Dialog.isResizable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指出此 dialog 是否可以由用户调整大小。默认情况下，所有 dialog 最初都是可调整的。
+@return    如果用户可以调整 dialog 的大小，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see       java.awt.Dialog#setResizable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setResizable(boolean resizable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 dialog 是否可以由用户调整大小。
+@param     resizable 如果用户可以调整 dialog 的大小，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see       java.awt.Dialog#isResizable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Dialog.setUndecorated(boolean undecorated)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+禁用或启用此 dialog 的装饰。只有在 dialog 不可显示时才调用此方法。
+@param  undecorated 如果没有启用 dialog 装饰，则为 <code>true</code>；如果启用了 dialog 装饰，则为 <code>false</code>。
+@throws <code>IllegalComponentStateException</code> 如果 dialog 是可显示的。
+@see    #isUndecorated
+@see    Component#isDisplayable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Dialog.isUndecorated()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指出此 dialog 是否未装饰。在默认情况下，所有 dialog 最初都是已装饰的。
+@return    如果 dialog 为未装饰，则为 <code>true</code>；否则为 <code>false</code>。
+@see       java.awt.Dialog#setUndecorated
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.Dialog.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 dialog 状态的字符串。此方法仅用于调试目的，对于这两种实现，返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return    此 dialog 窗口的参数字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.Dialog.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 Dialog 有关的 AccessibleContext。对于 dialog 来说，AccessibleContext 采用 AccessibleAWTDialog 的某种形式。必要时创建一个新的 AccessibleAWTDialog 实例。
+
+@return AccessibleAWTDialog，用作此 Dialog 的 AccessibleContext
+@since 1.3
+
+<!-- END DATA -->

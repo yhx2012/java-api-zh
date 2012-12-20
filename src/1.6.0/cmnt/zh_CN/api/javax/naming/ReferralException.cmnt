@@ -1,0 +1,133 @@
+<!-- BEGIN KEY -->
+public abstract class javax.naming.ReferralException extends javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此抽象类用于表示一个引用异常，该异常是在响应某一<em>引用</em>（比如 LDAP v3 服务器返回的引用）时生成的。
+ <p>
+服务提供者通过提供 <tt>getReferralInfo()</tt> 和 <tt>getReferralContext()</tt> 的实现（以及适当的构造方法和/或相应的 &quot;set&quot; 方法）来提供 <tt>ReferralException</tt> 的子类。
+ <p>
+以下代码示例展示了如何使用 <tt>ReferralException</tt>。
+ <p><blockquote><pre>
+	while (true) {
+	    try {
+		bindings = ctx.listBindings(name);
+		while (bindings.hasMore()) {
+		    b = bindings.next();
+		    ...
+		}
+		break;
+	    } catch (ReferralException e) {
+		ctx = e.getReferralContext();
+	    }
+	}
+ </pre></blockquote></p>
+<p>
+<tt>ReferralException</tt> 是一个抽象类。具体的实现确定其同步和序列化属性。
+<p>
+传递给 <tt>getReferralContext()</tt> 方法的环境属性归调用者所有。服务提供者不会修改该对象或保持对它的引用，但会保持对其副本的引用。
+ 
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.12 05/11/17
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.ReferralException(String explanation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用所提供的解释构造一个新的 ReferralException 实例。将所有其他字段都设置为 null。
+
+@param	explanation	有关此异常的附加详细信息。可以为 null。
+@see java.lang.Throwable#getMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.ReferralException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 ReferralException 实例。将所有字段都设置为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.naming.ReferralException.getReferralInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索与此引用有关的信息（比如 URL）。该程序可以检查或向用户显示此信息，以确定是否继续此引用，或确定继续此引用所需要提供的附加信息。
+
+@return 与此引用有关的非 null 引用信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.naming.Context javax.naming.ReferralException.getReferralContext() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索继续该方法的上下文。不管在上下文操作期间（例如在搜索枚举期间）是否直接或间接地遇到某一引用，引用异常都应该提供一个继续该操作的上下文。引用上下文是使用抛出 ReferralException 的上下文的环境属性创建的。
+
+<p>
+要继续该操作，客户端程序应该使用与初始调用相同的参数重新调用该方法。
+ 
+@return 将继续该操作的非 null 上下文。
+@exception NamingException 如果遇到命名异常。调用 <tt>retryReferral()</tt> 或 <tt>skipReferral()</tt> 来继续处理这些引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.naming.Context javax.naming.ReferralException.getReferralContext(java.util.Hashtable<?, ?> env) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用环境属性检索继续该方法的上下文。不管在上下文操作期间（例如在搜索枚举期间）是否直接或间接地遇到某一引用，引用异常都应该提供一个继续该操作的上下文。
+<p>
+引用上下文是通过使用 <tt>env</tt> 作为其环境属性来创建的。当调用者需要将不同的环境属性用于引用上下文时，应该使用此方法，而不是无参数的重载形式。例如，当需要为引用服务器提供不同的验证信息来创建引用上下文时，可能需要这样做。
+<p>
+要继续该操作，客户端程序应该使用与初始调用相同的参数重新调用该方法。
+ 
+@param env 检索引用上下文时要使用的环境（可能为 null）。如果为 null，则不使用环境属性。
+
+@return 将继续该操作的非 null 上下文。
+@exception NamingException 如果遇到命名异常。调用 <tt>retryReferral()</tt> 或 <tt>skipReferral()</tt> 来继续处理这些引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.naming.ReferralException.skipReferral()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+放弃将要处理的引用。调用此方法后应该调用 <code>getReferralContext</code>，以允许处理其他要继续的引用。以下代码片段展示了一个典型的使用模式。
+ <p><blockquote><pre>
+	} catch (ReferralException e) {
+	    if (!shallIFollow(e.getReferralInfo())) {
+		if (!e.skipReferral()) {
+		    return;
+		}
+	    }
+	    ctx = e.getReferralContext();
+	}
+ </pre></blockquote>
+
+@return 如果还有引用处理正被挂起，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.naming.ReferralException.retryReferral()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索当前正被处理的引用。调用此方法后应该调用 <code>getReferralContext</code>，以允许当前引用被重试。以下代码片段展示了一个典型的使用模式。
+ <p><blockquote><pre>
+	} catch (ReferralException e) {
+	    while (true) {
+		try {
+		    ctx = e.getReferralContext(env);
+		    break;
+		} catch (NamingException ne) {
+		    if (! shallIRetry()) {
+			return;
+		    }
+		    // modify environment properties (env), if necessary
+		    e.retryReferral();
+		}
+	    }
+	}
+ </pre></blockquote>
+
+
+<!-- END DATA -->

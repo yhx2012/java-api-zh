@@ -1,0 +1,178 @@
+<!-- BEGIN KEY -->
+public class javax.management.remote.rmi.RMIConnector extends java.lang.Object implements javax.management.remote.JMXConnector, java.io.Serializable, javax.management.remote.JMXAddressable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>A connection to a remote RMI connector.  Usually, such
+ connections are made using {@link
+ javax.management.remote.JMXConnectorFactory JMXConnectorFactory}.
+ However, specialized applications can use this class directly, for
+ example with an {@link RMIServer} stub obtained without going
+ through JNDI.</p>
+
+ @since 1.5
+ @since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final javax.management.remote.rmi.RMIServer javax.management.remote.rmi.RMIConnector.rmiServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @serial The RMIServer stub of the RMI JMX Connector server to
+ which this client connector is (or will be) connected. This
+ field can be null when <var>jmxServiceURL</var> is not
+ null. This includes the case where <var>jmxServiceURL</var>
+ contains a serialized RMIServer stub. If both
+ <var>rmiServer</var> and <var>jmxServiceURL</var> are null then
+ serialization will fail.
+
+ @see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final javax.management.remote.JMXServiceURL javax.management.remote.rmi.RMIConnector.jmxServiceURL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @serial The JMXServiceURL of the RMI JMX Connector server to
+ which this client connector will be connected. This field can
+ be null when <var>rmiServer</var> is not null. If both
+ <var>rmiServer</var> and <var>jmxServiceURL</var> are null then
+ serialization will fail.
+
+ @see #RMIConnector(JMXServiceURL,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIConnector(JMXServiceURL url, java.util.Map<java.lang.String, ?> environment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Constructs an <code>RMIConnector</code> that will connect
+ the RMI connector server with the given address.</p>
+
+ <p>The address can refer directly to the connector server,
+ using one of the following syntaxes:</p>
+
+ <pre>
+ service:jmx:rmi://<em>[host[:port]]</em>/stub/<em>encoded-stub</em>
+ service:jmx:iiop://<em>[host[:port]]</em>/ior/<em>encoded-IOR</em>
+ </pre>
+
+ <p>(Here, the square brackets <code>[]</code> are not part of the
+ address but indicate that the host and port are optional.)</p>
+
+ <p>The address can instead indicate where to find an RMI stub
+ through JNDI, using one of the following syntaxes:</p>
+
+ <pre>
+ service:jmx:rmi://<em>[host[:port]]</em>/jndi/<em>jndi-name</em>
+ service:jmx:iiop://<em>[host[:port]]</em>/jndi/<em>jndi-name</em>
+ </pre>
+
+ <p>An implementation may also recognize additional address
+ syntaxes, for example:</p>
+
+ <pre>
+ service:jmx:iiop://<em>[host[:port]]</em>/stub/<em>encoded-stub</em>
+ </pre>
+
+ @param url the address of the RMI connector server.
+
+ @param environment additional attributes specifying how to make
+ the connection.  For JNDI-based addresses, these attributes can
+ usefully include JNDI attributes recognized by {@link
+ InitialContext#InitialContext(Hashtable) InitialContext}.  This
+ parameter can be null, which is equivalent to an empty Map.
+
+ @exception IllegalArgumentException if <code>url</code>
+ is null.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIConnector(RMIServer rmiServer, java.util.Map<java.lang.String, ?> environment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Constructs an <code>RMIConnector</code> using the given RMI stub.
+
+ @param rmiServer an RMI stub representing the RMI connector server.
+ @param environment additional attributes specifying how to make
+ the connection.  This parameter can be null, which is
+ equivalent to an empty Map.
+
+ @exception IllegalArgumentException if <code>rmiServer</code>
+ is null.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.rmi.RMIConnector.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Returns a string representation of this object.  In general,
+ the <code>toString</code> method returns a string that
+ "textually represents" this object. The result should be a
+ concise but informative representation that is easy for a
+ person to read.</p>
+
+ @return a String representation of this object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXServiceURL javax.management.remote.rmi.RMIConnector.getAddress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>The address of this connector.</p>
+
+ @return the address of this connector, or null if it
+ does not have one.
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.management.remote.rmi.RMIConnector.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Read RMIConnector fields from an {@link java.io.ObjectInputStream
+ ObjectInputStream}.
+ Calls <code>s.defaultReadObject()</code> and then initializes
+ all transient variables that need initializing.
+ @param s The ObjectInputStream to read from.
+ @exception InvalidObjectException if none of <var>rmiServer</var> stub
+    or <var>jmxServiceURL</var> are set.
+ @see #RMIConnector(JMXServiceURL,Map)
+ @see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.management.remote.rmi.RMIConnector.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Writes the RMIConnector fields to an {@link java.io.ObjectOutputStream
+ ObjectOutputStream}.
+ <p>Connects the underlying RMIServer stub to an ORB, if needed,
+ before serializing it. This is done using the environment
+ map that was provided to the constructor, if any, and as documented
+ in {@link javax.management.remote.rmi}.</p>
+ <p>This method then calls <code>s.defaultWriteObject()</code>.
+ Usually, <var>rmiServer</var> is null if this object
+ was constructed with a JMXServiceURL, and <var>jmxServiceURL</var>
+ is null if this object is constructed with a RMIServer stub.
+ <p>Note that the environment Map is not serialized, since the objects
+ it contains are assumed to be contextual and relevant only
+ with respect to the local environment (class loader, ORB, etc...).</p>
+ <p>After an RMIConnector is deserialized, it is assumed that the
+ user will call {@link #connect(Map)}, providing a new Map that
+ can contain values which are contextually relevant to the new
+ local environment.</p>
+ <p>Since connection to the ORB is needed prior to serializing, and
+ since the ORB to connect to is one of those contextual parameters,
+ it is not recommended to re-serialize a just de-serialized object -
+ as the de-serialized object has no map. Thus, when an RMIConnector
+ object is needed for serialization or transmission to a remote
+ application, it is recommended to obtain a new RMIConnector stub
+ by calling {@link RMIConnectorServer#toJMXConnector(Map)}.</p>
+ @param s The ObjectOutputStream to write to.
+ @exception InvalidObjectException if none of <var>rmiServer</var> stub
+    or <var>jmxServiceURL</var> are set.
+ @see #RMIConnector(JMXServiceURL,Map)
+ @see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->

@@ -1,0 +1,213 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.AbstractMap extends java.lang.Object implements java.util.Map
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 <tt>Map</tt> 接口的骨干实现，以最大限度地减少实现此接口所需的工作。
+
+<p>要实现不可修改的映射，编程人员只需扩展此类并提供 <tt>entrySet</tt> 方法的实现即可，该方法将返回映射的映射关系 set 视图。通常，返回的 set 将依次在 <tt>AbstractSet</tt> 上实现。此 set 不支持 <tt>add</tt> 或 <tt>remove</tt> 方法，其迭代器也不支持 <tt>remove</tt> 方法。
+
+<p>要实现可修改的映射，编程人员必须另外重写此类的 <tt>put</tt> 方法（否则将抛出 <tt>UnsupportedOperationException</tt>），<tt>entrySet().iterator()</tt> 返回的迭代器也必须另外实现其 <tt>remove</tt> 方法。
+
+<p>按照 <tt>Map</tt> 接口规范中的建议，编程人员通常应该提供一个 void（无参数）构造方法和 map 构造方法。<p>
+
+此类中每个非抽象方法的文档详细描述了其实现。如果要实现的映射允许更有效的实现，则可以重写所有这些方法。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@param <K> 此映射维护的键的类型
+@param <V> 映射值的类型
+
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.50, 06/16/06
+@see Map
+@see Collection
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.AbstractMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。（由子类构造方法调用，通常是隐式的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回 <tt>entrySet().size()</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractMap.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc} 
+
+<p>此实现返回 <tt>size() == 0</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在 entrySet() 上进行迭代，以搜索带有指定值的条目。如果找到这样的条目，则返回 <tt>true</tt>。如果迭代终止，并且没有找到这样的条目，则返回 <tt>false</tt>。注意，此实现所需的时间与映射的大小呈线性关系。
+
+@throws ClassCastException   {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在 <tt>entrySet()</tt> 上进行迭代，以搜索带有指定键的条目。如果找到这样的条目，则返回 <tt>true</tt>。如果迭代终止，并且没有找到这样的条目，则返回 <tt>false</tt>。注意，此实现所需的时间与映射的大小呈线性关系；许多实现将重写此方法。
+
+@throws ClassCastException   {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.AbstractMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在 <tt>entrySet()</tt> 上进行迭代，以搜索带有指定键的条目。如果找到这样的条目，则返回该条目的值。如果迭代终止，并且没有找到这样的条目，则返回 <tt>null</tt>。注意，此实现所需的时间与映射的大小呈线性关系；许多实现将重写此方法。
+
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.AbstractMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现始终抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.AbstractMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在 <tt>entrySet()</tt> 上进行迭代，以搜索带有指定键的条目。如果找到这样的条目，则通过 <tt>getValue</tt> 操作获取该条目的值，然后使用迭代器的 <tt>remove</tt> 操作从 collection（以及底层实现映射）中移除该条目，并返回保存的值。如果迭代终止，并且没有找到这样的条目，则返回 <tt>null</tt>。注意，此实现所需的时间与映射大小呈线性关系；许多实现将重写此方法。
+
+<p>注意，如果 <tt>entrySet</tt> 迭代器不支持 <tt>remove</tt> 方法，并且此映射包含指定键的映射关系，则此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.AbstractMap.putAll(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在指定映射的 <tt>entrySet()</tt> collection 上进行迭代，并对迭代返回的每个条目调用一次此映射的 <tt>put</tt> 操作。
+
+<p>注意，如果此映射不支持 <tt>put</tt> 操作，并且指定映射为非空，则此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.AbstractMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现调用 <tt>entrySet().clear()</tt>。
+
+<p>注意，如果 <tt>entrySet</tt> 不支持 <tt>clear</tt> 操作，则此实现将抛出 <tt>UnsupportedOperationException</tt>。 
+
+@throws UnsupportedOperationException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.AbstractMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回一个子类化 {@link AbstractSet} 的 set。子类的 iterator 方法通过此映射的 <tt>entrySet()</tt> 迭代器返回一个“包装器对象”。<tt>size</tt> 方法委托给此映射的 <tt>size</tt> 方法，<tt>contains</tt> 方法委托给此映射的 <tt>containsKey</tt> 方法。
+
+<p>set 是在第一次调用此方法时创建的，并为响应所有后续调用而返回。 因为不执行同步操作，所以对此方法的多个调用几乎总是返回相同的 set。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.AbstractMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回一个子类化 {@link
+ AbstractCollection} 的 collection。子类的 iterator 方法通过此映射的 <tt>entrySet()</tt> 迭代器返回一个“包装器对象”。<tt>size</tt> 方法委托给此映射的 <tt>size</tt> 方法，<tt>contains</tt> 方法委托给此映射的 <tt>containsValue</tt> 方法。
+
+<p>collection 是在第一次调用此方法时创建的，并为响应所有后续调用而返回。因为不执行同步操作，所以对此方法的多个调用几乎总是返回相同的 collection。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractMap.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此映射的相等性。如果给定对象也是一个映射并且两个映射表示相同的映射关系，则返回 <tt>true</tt>。更确切地讲，如果 <tt>m1.entrySet().equals(m2.entrySet())</tt>，则两个映射 <tt>m1</tt> 和 <tt>m2</tt> 表示相同的映射关系。这可以确保 <tt>equals</tt> 方法在 <tt>Map</tt> 接口的不同实现中正常工作。
+
+<p>此实现首先检查指定的对象是否为此映射；如果是，则返回 <tt>true</tt>。然后，它将检查指定的对象是否是一个大小与此映射相等的映射；如果不是，则返回 <tt>false</tt>。如果是，则在此映射的 <tt>entrySet</tt> collection 上进行迭代，并检查指定的映射是否包含此映射所包含的每个映射关系。如果指定的映射中不包含这样的映射关系，则返回 <tt>false</tt>。如果迭代完成，则返回 <tt>true</tt>。
+
+@param o 要与此映射进行相等性比较的对象
+@return 如果指定的对象等于此映射，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractMap.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射的哈希码值。映射的哈希码被定义为该映射的 <tt>entrySet()</tt> 视图中每个条目的哈希码之和。这确保了 <tt>m1.equals(t2)</tt> 对于任意两个映射 <tt>m1</tt> 和 <tt>m2</tt> 都意味着 <tt>m1.hashCode()==m2.hashCode()</tt>，正如 {@link Object#hashCode} 的常规协定所要求的。
+
+<p>此实现在 <tt>entrySet()</tt> 上进行迭代，对 set 中的每个元素（条目）调用 {@link Map.Entry#hashCode hashCode()}，并合计结果。 
+
+@return 此映射的哈希码值。
+@see Map.Entry#hashCode()
+@see Object#equals(Object)
+@see Set#equals(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.AbstractMap.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射的字符串表示形式。该字符串表示形式由键-值映射关系列表组成，按照该映射 <tt>entrySet</tt> 视图的迭代器返回的顺序排列，并用括号 (<tt>"{}"</tt>) 括起来。相邻的映射关系是用字符 <tt>", "</tt>（逗号加空格）分隔的。每个键-值映射关系按以下方式呈现：键，后面是一个等号 (<tt>"="</tt>)，再后面是关联的值。键和值都通过 {@link String#valueOf(Object)} 转换为字符串。
+
+@return  此映射的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.util.AbstractMap.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>AbstractMap</tt> 实例的浅表副本：不复制键和值本身。
+
+@return  此映射的浅表副本
+
+<!-- END DATA -->

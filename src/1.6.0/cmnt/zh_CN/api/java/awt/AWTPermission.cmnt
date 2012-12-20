@@ -1,0 +1,136 @@
+<!-- BEGIN KEY -->
+public final class java.awt.AWTPermission extends java.security.BasicPermission
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于 AWT 权限。<code>AWTPermission</code> 包含一个目标名称，但是不包括操作列表；您可以有指定的权限，也可以没有。
+
+ <P>
+目标名称是 AWT 权限的名称（参见下面内容）。命名约定遵守层次结构属性命名约定。另外，可以用星号来表示所有的 AWT 权限。
+
+ <P>
+下表列出了所有可能的 <code>AWTPermission</code> 目标名称，并描述了每个名称允许何种权限，还讨论了授权代码权限的风险。
+ <P>
+
+<table border=1 cellpadding=5 summary="AWTPermission target names, descriptions, and associated risks.">
+<tr>
+<th>权限目标名称</th>
+<th>权限允许的操作</th>
+<th>允许权限所带来的风险</th>
+ </tr>
+
+ <tr>
+   <td>accessClipboard</td>
+   <td>向 AWT 剪贴板发送信息，以及获取来自 AWT 剪贴板的信息</td>
+   <td>这将允许非法代码共享潜在的敏感（或机密）信息。</td>
+ </tr>
+
+ <tr>
+   <td>accessEventQueue</td>
+   <td>访问 AWT 事件队列</td>
+   <td>检索 AWT 事件队列之后，恶意代码可能窥视甚至从其事件队列中移除现有的事件，也可能蓄意发出虚假事件，这些虚假事件可能以不安全的方式导致应用程序或 applet 行为异常。</td>
+ </tr>
+
+<tr>
+   <td>accessSystemTray</td>
+   <td>访问 AWT SystemTray 实例</td>
+   <td>这将允许使用恶意代码将托盘图标 (tray icon) 添加到系统托盘。首先，这样的图标看起来可能类似于某些已知应用程序的图标（比如防火墙或杀毒软件），它会命令用户做一些不安全的事（帮助发布大量虚假消息）。其次，系统托盘可能被托盘图标所充斥，从而无法再添加托盘图标。
+</td>
+ </tr>
+
+ <tr>
+   <td>createRobot</td>
+   <td>创建 java.awt.Robot 对象</td>
+   <td>java.awt.Robot 对象允许代码生成本机级别的鼠标和键盘事件，还允许读取屏幕内容。它可能允许恶意代码控制系统、运行其他程序、读取显示内容，以及拒绝用户访问鼠标和键盘。</td>
+ </tr>
+
+ <tr>
+   <td>fullScreenExclusive</td>
+   <td>进入全屏独占模式</td>
+   <td>进入全屏独占模式允许直接访问低层的显卡内存。这可能欺骗系统，因为程序直接控制了显示。</td>
+ </tr>
+
+ <tr>
+   <td>listenToAllAWTEvents</td>
+   <td>在系统范围内侦听所有 AWT 事件</td>
+   <td>添加 AWT 事件侦听器后，恶意代码可能扫描系统中指派的所有 AWT 事件，从而允许它读取所有用户输入（如密码）。每个 AWT 事件侦听器都是从该事件队列的 EventDispatchThread 上下文中调用的，因此，如果同时启用了 accessEventQueue 权限，那么恶意代码就能在系统范围内修改 AWT 事件队列的上下文，从而以不安全的方式导致应用程序或 applet 行为异常。</td>
+ </tr>
+
+ <tr>
+   <td>readDisplayPixels</td>
+   <td>从显示器屏幕读回像素</td>
+   <td>接口（如 java.awt.Composite 接口）或 java.awt.Robot 类允许任意代码检查显示器上的像素，这使得恶意代码能窥探用户的活动。</td>
+ </tr>
+
+ <tr>
+   <td>replaceKeyboardFocusManager</td>
+   <td>设置特定线程的 <code>KeyboardFocusManager</code>。
+   <td>当安装 <code>SecurityManager</code> 时，必须将此权限授权给调用线程，以便替代当前的 <code>KeyboardFocusManager</code>。如果没有授权，则抛出 <code>SecurityException</code>。
+ </tr>
+
+<tr>
+   <td>setAppletStub</td>
+   <td>设置实现 Applet 容器服务的 stub</td>
+   <td>恶意代码可能设置 applet 的 stub，这将导致不可预料的行为或拒绝对 applet 服务。</td>
+ </tr>
+
+ <tr>
+   <td>setWindowAlwaysOnTop</td>
+   <td>设置窗口的 always-on-top 属性：</td>
+   <td>恶意窗口可能会伪装成一个真实完整的桌面，于是，对此毫不怀疑的用户输入的信息将会被捕获，随后被滥用。</td> 
+ </tr>
+
+ <tr>
+   <td>showWindowWithoutWarningBanner</td>
+   <td>显示窗口，但不显示 applet 创建窗口的标志警告</td>
+   <td>没有此警告，可能突然弹出 applet 窗口，而用户却不知道它们属于 applet。因为用户可以基于窗口是否属于 applet 做出安全敏感的决策（例如，在对话框中输入用户名和密码），所以禁用此警告标志可能允许 applet 欺骗用户去输入这些信息。</td>
+ </tr>
+
+<tr>
+   <td>toolkitModality</td>
+   <td>创建 {@link Dialog.ModalityType#TOOLKIT_MODAL TOOLKIT_MODAL} 对话框并设置 {@link Dialog.ModalExclusionType#TOOLKIT_EXCLUDE TOOLKIT_EXCLUDE} 窗口属性。</td>
+   <td>当从某一个 applet 显示工具包模式的对话框时，浏览器中的其他所有 applet 都将受阻塞。当从 Java Web Start 启动应用程序时，它的窗口（比如安全对话框）也可能被此工具包模式对话框阻塞，并从这些应用程序显示。</td>
+ </tr>
+
+ <tr>
+   <td>watchMousePointer</td>
+   <td>获取任意时间鼠标指针位置的信息</td>
+   <td>通过对鼠标指针的持续观察，applet 可以猜出用户正在做的事情，也就是说，将鼠标移动到屏幕左下角很可能意味着用户将要启动某个应用程序。如果使用了虚拟键区，从而可以用鼠标模拟键盘，applet 可以猜出正在键入的文字。</td>
+ </tr>
+ 
+  </table>
+
+@see java.security.BasicPermission
+@see java.security.Permission
+@see java.security.Permissions
+@see java.security.PermissionCollection
+@see java.lang.SecurityManager
+
+@version 	1.32, 04/21/06
+
+@author Marianne Mueller
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.AWTPermission(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定名称的新 <code>AWTPermission</code>。参数 name 是 <code>AWTPermission</code> 的符号名，如 &quot;topLevelWindow&quot;、&quot;systemClipboard&quot; 等等。可以使用星号来指示所有的 AWT 权限。
+
+@param name AWTPermission 的名称
+@throws NullPointerException 如果 <code>name</code> 为 <code>null</code>。
+@throws IllegalArgumentException 如果 <code>name</code> 为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.AWTPermission(String name, String actions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定名称的新 <code>AWTPermission</code> 对象。参数 name 是 <code>AWTPermission</code> 的符号名，actions 字符串目前未被使用，应该为 <code>null</code>。
+
+@param name <code>AWTPermission</code> 的名称
+@param actions 应该为 <code>null</code>
+@throws NullPointerException 如果 <code>name</code> 为 <code>null</code>。
+@throws IllegalArgumentException 如果 <code>name</code> 为空。
+
+<!-- END DATA -->

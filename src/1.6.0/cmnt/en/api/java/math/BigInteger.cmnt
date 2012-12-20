@@ -1,0 +1,843 @@
+<!-- BEGIN KEY -->
+public class java.math.BigInteger extends java.lang.Number implements java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Immutable arbitrary-precision integers.  All operations behave as if
+ BigIntegers were represented in two's-complement notation (like Java's
+ primitive integer types).  BigInteger provides analogues to all of Java's
+ primitive integer operators, and all relevant methods from java.lang.Math.
+ Additionally, BigInteger provides operations for modular arithmetic, GCD
+ calculation, primality testing, prime generation, bit manipulation,
+ and a few other miscellaneous operations.
+ <p>
+ Semantics of arithmetic operations exactly mimic those of Java's integer
+ arithmetic operators, as defined in <i>The Java Language Specification</i>.
+ For example, division by zero throws an <tt>ArithmeticException</tt>, and
+ division of a negative by a positive yields a negative (or zero) remainder.
+ All of the details in the Spec concerning overflow are ignored, as
+ BigIntegers are made as large as necessary to accommodate the results of an
+ operation.
+ <p>
+ Semantics of shift operations extend those of Java's shift operators
+ to allow for negative shift distances.  A right-shift with a negative
+ shift distance results in a left shift, and vice-versa.  The unsigned
+ right shift operator (&gt;&gt;&gt;) is omitted, as this operation makes
+ little sense in combination with the "infinite word size" abstraction
+ provided by this class.
+ <p>
+ Semantics of bitwise logical operations exactly mimic those of Java's
+ bitwise integer operators.  The binary operators (<tt>and</tt>,
+ <tt>or</tt>, <tt>xor</tt>) implicitly perform sign extension on the shorter
+ of the two operands prior to performing the operation.
+ <p>
+ Comparison operations perform signed integer comparisons, analogous to
+ those performed by Java's relational and equality operators.
+ <p>
+ Modular arithmetic operations are provided to compute residues, perform
+ exponentiation, and compute multiplicative inverses.  These methods always
+ return a non-negative result, between <tt>0</tt> and <tt>(modulus - 1)</tt>,
+ inclusive.
+ <p>
+ Bit operations operate on a single bit of the two's-complement
+ representation of their operand.  If necessary, the operand is sign-
+ extended so that it contains the designated bit.  None of the single-bit
+ operations can produce a BigInteger with a different sign from the
+ BigInteger being operated on, as they affect only a single bit, and the
+ "infinite word size" abstraction provided by this class ensures that there
+ are infinitely many "virtual sign bits" preceding each BigInteger.
+ <p>
+ For the sake of brevity and clarity, pseudo-code is used throughout the
+ descriptions of BigInteger methods.  The pseudo-code expression
+ <tt>(i + j)</tt> is shorthand for "a BigInteger whose value is
+ that of the BigInteger <tt>i</tt> plus that of the BigInteger <tt>j</tt>."
+ The pseudo-code expression <tt>(i == j)</tt> is shorthand for
+ "<tt>true</tt> if and only if the BigInteger <tt>i</tt> represents the same
+ value as the BigInteger <tt>j</tt>."  Other pseudo-code expressions are
+ interpreted similarly.
+ <p>
+ All methods and constructors in this class throw
+ <CODE>NullPointerException</CODE> when passed
+ a null object reference for any input parameter.
+
+ @see     BigDecimal
+ @version 1.75, 06/28/06
+ @author  Josh Bloch
+ @author  Michael McCloskey
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.ZERO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The BigInteger constant zero.
+
+ @since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.ONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The BigInteger constant one.
+
+ @since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.TEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The BigInteger constant ten.
+
+ @since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.math.BigInteger.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Serializable fields for BigInteger.
+ 
+ @serialField signum  int
+              signum of this BigInteger.
+ @serialField magnitude int[]
+              magnitude array of this BigInteger.
+ @serialField bitCount  int
+              number of bits in this BigInteger
+ @serialField bitLength int
+              the number of bits in the minimal two's-complement
+              representation of this BigInteger
+ @serialField lowestSetBit int
+              lowest set bit in the twos complement representation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(byte[] val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Translates a byte array containing the two's-complement binary
+ representation of a BigInteger into a BigInteger.  The input array is
+ assumed to be in <i>big-endian</i> byte-order: the most significant
+ byte is in the zeroth element.
+
+ @param  val big-endian two's-complement binary representation of
+	       BigInteger.
+ @throws NumberFormatException <tt>val</tt> is zero bytes long.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int signum, byte[] magnitude)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Translates the sign-magnitude representation of a BigInteger into a
+ BigInteger.  The sign is represented as an integer signum value: -1 for
+ negative, 0 for zero, or 1 for positive.  The magnitude is a byte array
+ in <i>big-endian</i> byte-order: the most significant byte is in the
+ zeroth element.  A zero-length magnitude array is permissible, and will
+ result inin a BigInteger value of 0, whether signum is -1, 0 or 1.
+
+ @param  signum signum of the number (-1 for negative, 0 for zero, 1
+ 	       for positive).
+ @param  magnitude big-endian binary representation of the magnitude of
+ 	       the number.
+ @throws NumberFormatException <tt>signum</tt> is not one of the three
+	       legal values (-1, 0, and 1), or <tt>signum</tt> is 0 and
+	       <tt>magnitude</tt> contains one or more non-zero bytes.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(String val, int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Translates the String representation of a BigInteger in the specified
+ radix into a BigInteger.  The String representation consists of an
+ optional minus sign followed by a sequence of one or more digits in the
+ specified radix.  The character-to-digit mapping is provided by
+ <tt>Character.digit</tt>.  The String may not contain any extraneous
+ characters (whitespace, for example).
+
+ @param val String representation of BigInteger.
+ @param radix radix to be used in interpreting <tt>val</tt>.
+ @throws NumberFormatException <tt>val</tt> is not a valid representation
+	       of a BigInteger in the specified radix, or <tt>radix</tt> is
+	       outside the range from {@link Character#MIN_RADIX} to
+	       {@link Character#MAX_RADIX}, inclusive.
+ @see    Character#digit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(String val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Translates the decimal String representation of a BigInteger into a
+ BigInteger.  The String representation consists of an optional minus
+ sign followed by a sequence of one or more decimal digits.  The
+ character-to-digit mapping is provided by <tt>Character.digit</tt>.
+ The String may not contain any extraneous characters (whitespace, for
+ example).
+
+ @param val decimal String representation of BigInteger.
+ @throws NumberFormatException <tt>val</tt> is not a valid representation
+	       of a BigInteger.
+ @see    Character#digit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int numBits, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a randomly generated BigInteger, uniformly distributed over
+ the range <tt>0</tt> to <tt>(2<sup>numBits</sup> - 1)</tt>, inclusive.
+ The uniformity of the distribution assumes that a fair source of random
+ bits is provided in <tt>rnd</tt>.  Note that this constructor always
+ constructs a non-negative BigInteger.
+
+ @param  numBits maximum bitLength of the new BigInteger.
+ @param  rnd source of randomness to be used in computing the new
+	       BigInteger.
+ @throws IllegalArgumentException <tt>numBits</tt> is negative.
+ @see #bitLength()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int bitLength, int certainty, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a randomly generated positive BigInteger that is probably
+ prime, with the specified bitLength.<p>
+
+ It is recommended that the {@link #probablePrime probablePrime}
+ method be used in preference to this constructor unless there
+ is a compelling need to specify a certainty.
+
+ @param  bitLength bitLength of the returned BigInteger.
+ @param  certainty a measure of the uncertainty that the caller is
+         willing to tolerate.  The probability that the new BigInteger
+	       represents a prime number will exceed
+	       <tt>(1 - 1/2<sup>certainty</sup></tt>).  The execution time of
+	       this constructor is proportional to the value of this parameter.
+ @param  rnd source of random bits used to select candidates to be
+	       tested for primality.
+ @throws ArithmeticException <tt>bitLength &lt; 2</tt>.
+ @see    #bitLength()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.math.BigInteger java.math.BigInteger.probablePrime(int bitLength, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a positive BigInteger that is probably prime, with the
+ specified bitLength. The probability that a BigInteger returned
+ by this method is composite does not exceed 2<sup>-100</sup>.
+
+ @param  bitLength bitLength of the returned BigInteger.
+ @param  rnd source of random bits used to select candidates to be
+	       tested for primality.
+ @return a BigInteger of <tt>bitLength</tt> bits that is probably prime
+ @throws ArithmeticException <tt>bitLength &lt; 2</tt>.
+ @see    #bitLength()
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.nextProbablePrime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the first integer greater than this <code>BigInteger</code> that
+ is probably prime.  The probability that the number returned by this
+ method is composite does not exceed 2<sup>-100</sup>. This method will
+ never skip over a prime when searching: if it returns <tt>p</tt>, there
+ is no prime <tt>q</tt> such that <tt>this &lt; q &lt; p</tt>.
+
+ @return the first integer greater than this <code>BigInteger</code> that
+         is probably prime.
+ @throws ArithmeticException <tt>this &lt; 0</tt>.
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.math.BigInteger java.math.BigInteger.valueOf(long val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is equal to that of the
+ specified <code>long</code>.  This "static factory method" is
+ provided in preference to a (<code>long</code>) constructor
+ because it allows for reuse of frequently used BigIntegers.
+
+ @param  val value of the BigInteger to return.
+ @return a BigInteger with the specified value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.add(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this + val)</tt>.
+
+ @param  val value to be added to this BigInteger.
+ @return <tt>this + val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.subtract(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this - val)</tt>.
+
+ @param  val value to be subtracted from this BigInteger.
+ @return <tt>this - val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.multiply(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this * val)</tt>.
+
+ @param  val value to be multiplied by this BigInteger.
+ @return <tt>this * val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.divide(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this / val)</tt>.
+
+ @param  val value by which this BigInteger is to be divided.
+ @return <tt>this / val</tt>
+ @throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger[] java.math.BigInteger.divideAndRemainder(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an array of two BigIntegers containing <tt>(this / val)</tt>
+ followed by <tt>(this % val)</tt>.
+
+ @param  val value by which this BigInteger is to be divided, and the
+	       remainder computed.
+ @return an array of two BigIntegers: the quotient <tt>(this / val)</tt>
+	       is the initial element, and the remainder <tt>(this % val)</tt>
+	       is the final element.
+ @throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.remainder(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this % val)</tt>.
+
+ @param  val value by which this BigInteger is to be divided, and the
+	       remainder computed.
+ @return <tt>this % val</tt>
+ @throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.pow(int exponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this<sup>exponent</sup>)</tt>.
+ Note that <tt>exponent</tt> is an integer rather than a BigInteger.
+
+ @param  exponent exponent to which this BigInteger is to be raised.
+ @return <tt>this<sup>exponent</sup></tt>
+ @throws ArithmeticException <tt>exponent</tt> is negative.  (This would
+	       cause the operation to yield a non-integer value.)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.gcd(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is the greatest common divisor of
+ <tt>abs(this)</tt> and <tt>abs(val)</tt>.  Returns 0 if
+ <tt>this==0 &amp;&amp; val==0</tt>.
+
+ @param  val value with which the GCD is to be computed.
+ @return <tt>GCD(abs(this), abs(val))</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.abs()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is the absolute value of this
+ BigInteger. 
+
+ @return <tt>abs(this)</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.negate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(-this)</tt>.
+
+ @return <tt>-this</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.signum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the signum function of this BigInteger.
+
+ @return -1, 0 or 1 as the value of this BigInteger is negative, zero or
+	       positive.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.mod(BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this mod m</tt>).  This method
+ differs from <tt>remainder</tt> in that it always returns a
+ <i>non-negative</i> BigInteger.
+
+ @param  m the modulus.
+ @return <tt>this mod m</tt>
+ @throws ArithmeticException <tt>m &lt;= 0</tt>
+ @see    #remainder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.modPow(BigInteger exponent, BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is
+ <tt>(this<sup>exponent</sup> mod m)</tt>.  (Unlike <tt>pow</tt>, this
+ method permits negative exponents.)
+
+ @param  exponent the exponent.
+ @param  m the modulus.
+ @return <tt>this<sup>exponent</sup> mod m</tt>
+ @throws ArithmeticException <tt>m &lt;= 0</tt>
+ @see    #modInverse
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.modInverse(BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this<sup>-1</sup> mod m)</tt>.
+
+ @param  m the modulus.
+ @return <tt>this<sup>-1</sup> mod m</tt>.
+ @throws ArithmeticException <tt> m &lt;= 0</tt>, or this BigInteger
+	       has no multiplicative inverse mod m (that is, this BigInteger
+	       is not <i>relatively prime</i> to m).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.shiftLeft(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this &lt;&lt; n)</tt>.
+ The shift distance, <tt>n</tt>, may be negative, in which case
+ this method performs a right shift.
+ (Computes <tt>floor(this * 2<sup>n</sup>)</tt>.)
+
+ @param  n shift distance, in bits.
+ @return <tt>this &lt;&lt; n</tt>
+ @see #shiftRight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.shiftRight(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this &gt;&gt; n)</tt>.  Sign
+ extension is performed.  The shift distance, <tt>n</tt>, may be
+ negative, in which case this method performs a left shift.
+ (Computes <tt>floor(this / 2<sup>n</sup>)</tt>.) 
+
+ @param  n shift distance, in bits.
+ @return <tt>this &gt;&gt; n</tt>
+ @see #shiftLeft
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.and(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this &amp; val)</tt>.  (This
+ method returns a negative BigInteger if and only if this and val are
+ both negative.)
+
+ @param val value to be AND'ed with this BigInteger.
+ @return <tt>this &amp; val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.or(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this | val)</tt>.  (This method
+ returns a negative BigInteger if and only if either this or val is
+ negative.) 
+
+ @param val value to be OR'ed with this BigInteger.
+ @return <tt>this | val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.xor(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this ^ val)</tt>.  (This method
+ returns a negative BigInteger if and only if exactly one of this and
+ val are negative.)
+
+ @param val value to be XOR'ed with this BigInteger.
+ @return <tt>this ^ val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.not()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(~this)</tt>.  (This method
+ returns a negative value if and only if this BigInteger is
+ non-negative.)
+
+ @return <tt>~this</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.andNot(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is <tt>(this &amp; ~val)</tt>.  This
+ method, which is equivalent to <tt>and(val.not())</tt>, is provided as
+ a convenience for masking operations.  (This method returns a negative
+ BigInteger if and only if <tt>this</tt> is negative and <tt>val</tt> is
+ positive.)
+
+ @param val value to be complemented and AND'ed with this BigInteger.
+ @return <tt>this &amp; ~val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.testBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <tt>true</tt> if and only if the designated bit is set.
+ (Computes <tt>((this &amp; (1&lt;&lt;n)) != 0)</tt>.)
+
+ @param  n index of bit to test.
+ @return <tt>true</tt> if and only if the designated bit is set.
+ @throws ArithmeticException <tt>n</tt> is negative.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.setBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is equivalent to this BigInteger
+ with the designated bit set.  (Computes <tt>(this | (1&lt;&lt;n))</tt>.)
+
+ @param  n index of bit to set.
+ @return <tt>this | (1&lt;&lt;n)</tt>
+ @throws ArithmeticException <tt>n</tt> is negative.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.clearBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is equivalent to this BigInteger
+ with the designated bit cleared.
+ (Computes <tt>(this &amp; ~(1&lt;&lt;n))</tt>.)
+
+ @param  n index of bit to clear.
+ @return <tt>this & ~(1&lt;&lt;n)</tt>
+ @throws ArithmeticException <tt>n</tt> is negative.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.flipBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a BigInteger whose value is equivalent to this BigInteger
+ with the designated bit flipped.
+ (Computes <tt>(this ^ (1&lt;&lt;n))</tt>.)
+
+ @param  n index of bit to flip.
+ @return <tt>this ^ (1&lt;&lt;n)</tt>
+ @throws ArithmeticException <tt>n</tt> is negative.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.getLowestSetBit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the index of the rightmost (lowest-order) one bit in this
+ BigInteger (the number of zero bits to the right of the rightmost
+ one bit).  Returns -1 if this BigInteger contains no one bits.
+ (Computes <tt>(this==0? -1 : log<sub>2</sub>(this &amp; -this))</tt>.)
+
+ @return index of the rightmost one bit in this BigInteger.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.bitLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the number of bits in the minimal two's-complement
+ representation of this BigInteger, <i>excluding</i> a sign bit.
+ For positive BigIntegers, this is equivalent to the number of bits in
+ the ordinary binary representation.  (Computes
+ <tt>(ceil(log<sub>2</sub>(this &lt; 0 ? -this : this+1)))</tt>.)
+
+ @return number of bits in the minimal two's-complement
+         representation of this BigInteger, <i>excluding</i> a sign bit.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.bitCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the number of bits in the two's complement representation
+ of this BigInteger that differ from its sign bit.  This method is
+ useful when implementing bit-vector style sets atop BigIntegers.
+
+ @return number of bits in the two's complement representation
+         of this BigInteger that differ from its sign bit.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.isProbablePrime(int certainty)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <tt>true</tt> if this BigInteger is probably prime,
+ <tt>false</tt> if it's definitely composite.  If
+ <tt>certainty</tt> is <tt> &lt;= 0</tt>, <tt>true</tt> is
+ returned.
+
+ @param  certainty a measure of the uncertainty that the caller is
+	       willing to tolerate: if the call returns <tt>true</tt>
+	       the probability that this BigInteger is prime exceeds
+	       <tt>(1 - 1/2<sup>certainty</sup>)</tt>.  The execution time of
+ 	       this method is proportional to the value of this parameter.
+ @return <tt>true</tt> if this BigInteger is probably prime,
+ 	       <tt>false</tt> if it's definitely composite.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.compareTo(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Compares this BigInteger with the specified BigInteger.  This method is
+ provided in preference to individual methods for each of the six
+ boolean comparison operators (&lt;, ==, &gt;, &gt;=, !=, &lt;=).  The
+ suggested idiom for performing these comparisons is:
+ <tt>(x.compareTo(y)</tt> &lt;<i>op</i>&gt; <tt>0)</tt>,
+ where &lt;<i>op</i>&gt; is one of the six comparison operators.
+
+ @param  val BigInteger to which this BigInteger is to be compared.
+ @return -1, 0 or 1 as this BigInteger is numerically less than, equal
+         to, or greater than <tt>val</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.equals(Object x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Compares this BigInteger with the specified Object for equality.
+
+ @param  x Object to which this BigInteger is to be compared.
+ @return <tt>true</tt> if and only if the specified Object is a
+	       BigInteger whose value is numerically equal to this BigInteger.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.min(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the minimum of this BigInteger and <tt>val</tt>.
+
+ @param  val value with which the minimum is to be computed.
+ @return the BigInteger whose value is the lesser of this BigInteger and 
+	       <tt>val</tt>.  If they are equal, either may be returned.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.max(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the maximum of this BigInteger and <tt>val</tt>.
+
+ @param  val value with which the maximum is to be computed.
+ @return the BigInteger whose value is the greater of this and
+         <tt>val</tt>.  If they are equal, either may be returned.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the hash code for this BigInteger.
+
+ @return hash code for this BigInteger.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.math.BigInteger.toString(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the String representation of this BigInteger in the
+ given radix.  If the radix is outside the range from {@link
+ Character#MIN_RADIX} to {@link Character#MAX_RADIX} inclusive,
+ it will default to 10 (as is the case for
+ <tt>Integer.toString</tt>).  The digit-to-character mapping
+ provided by <tt>Character.forDigit</tt> is used, and a minus
+ sign is prepended if appropriate.  (This representation is
+ compatible with the {@link #BigInteger(String, int) (String,
+ <code>int</code>)} constructor.)
+
+ @param  radix  radix of the String representation.
+ @return String representation of this BigInteger in the given radix.
+ @see    Integer#toString
+ @see    Character#forDigit
+ @see    #BigInteger(java.lang.String, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.math.BigInteger.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the decimal String representation of this BigInteger.
+ The digit-to-character mapping provided by
+ <tt>Character.forDigit</tt> is used, and a minus sign is
+ prepended if appropriate.  (This representation is compatible
+ with the {@link #BigInteger(String) (String)} constructor, and
+ allows for String concatenation with Java's + operator.)
+
+ @return decimal String representation of this BigInteger.
+ @see    Character#forDigit
+ @see    #BigInteger(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.math.BigInteger.toByteArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a byte array containing the two's-complement
+ representation of this BigInteger.  The byte array will be in
+ <i>big-endian</i> byte-order: the most significant byte is in
+ the zeroth element.  The array will contain the minimum number
+ of bytes required to represent this BigInteger, including at
+ least one sign bit, which is <tt>(ceil((this.bitLength() +
+ 1)/8))</tt>.  (This representation is compatible with the
+ {@link #BigInteger(byte[]) (byte[])} constructor.)
+
+ @return a byte array containing the two's-complement representation of
+	       this BigInteger.
+ @see    #BigInteger(byte[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.intValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts this BigInteger to an <code>int</code>.  This
+ conversion is analogous to a <a
+ href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>narrowing
+ primitive conversion</i></a> from <code>long</code> to
+ <code>int</code> as defined in the <a
+ href="http://java.sun.com/docs/books/jls/html/">Java Language
+ Specification</a>: if this BigInteger is too big to fit in an
+ <code>int</code>, only the low-order 32 bits are returned.
+ Note that this conversion can lose information about the
+ overall magnitude of the BigInteger value as well as return a
+ result with the opposite sign.
+
+ @return this BigInteger converted to an <code>int</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.math.BigInteger.longValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts this BigInteger to a <code>long</code>.  This
+ conversion is analogous to a <a
+ href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>narrowing
+ primitive conversion</i></a> from <code>long</code> to
+ <code>int</code> as defined in the <a
+ href="http://java.sun.com/docs/books/jls/html/">Java Language
+ Specification</a>: if this BigInteger is too big to fit in a
+ <code>long</code>, only the low-order 64 bits are returned.
+ Note that this conversion can lose information about the
+ overall magnitude of the BigInteger value as well as return a
+ result with the opposite sign.
+
+ @return this BigInteger converted to a <code>long</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.math.BigInteger.floatValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts this BigInteger to a <code>float</code>.  This
+ conversion is similar to the <a
+ href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>narrowing
+ primitive conversion</i></a> from <code>double</code> to
+ <code>float</code> defined in the <a
+ href="http://java.sun.com/docs/books/jls/html/">Java Language
+ Specification</a>: if this BigInteger has too great a magnitude
+ to represent as a <code>float</code>, it will be converted to
+ {@link Float#NEGATIVE_INFINITY} or {@link
+ Float#POSITIVE_INFINITY} as appropriate.  Note that even when
+ the return value is finite, this conversion can lose
+ information about the precision of the BigInteger value.
+
+ @return this BigInteger converted to a <code>float</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.math.BigInteger.doubleValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts this BigInteger to a <code>double</code>.  This
+ conversion is similar to the <a
+ href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>narrowing
+ primitive conversion</i></a> from <code>double</code> to
+ <code>float</code> defined in the <a
+ href="http://java.sun.com/docs/books/jls/html/">Java Language
+ Specification</a>: if this BigInteger has too great a magnitude
+ to represent as a <code>double</code>, it will be converted to
+ {@link Double#NEGATIVE_INFINITY} or {@link
+ Double#POSITIVE_INFINITY} as appropriate.  Note that even when
+ the return value is finite, this conversion can lose
+ information about the precision of the BigInteger value.
+
+ @return this BigInteger converted to a <code>double</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.math.BigInteger.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reconstitute the <tt>BigInteger</tt> instance from a stream (that is,
+ deserialize it). The magnitude is read in as an array of bytes
+ for historical reasons, but it is converted to an array of ints
+ and the byte array is discarded.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.math.BigInteger.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Save the <tt>BigInteger</tt> instance to a stream.
+ The magnitude of a BigInteger is serialized as a byte array for
+ historical reasons.
+ 
+ @serialData two necessary fields are written as well as obsolete
+             fields for compatibility with older versions.
+
+<!-- END DATA -->

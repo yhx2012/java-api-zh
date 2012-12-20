@@ -1,0 +1,187 @@
+<!-- BEGIN KEY -->
+public final class java.rmi.activation.ActivationDesc extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活描述符包含激活对象所必需的信息： <ul>
+<li> 对象的组标识符，
+<li> 对象的完全限定的类名，
+<li> 对象的代码基（类中的位置），一个代码基 URL 路径，
+<li> 对象的重启&ldquo;模式&rdquo;，以及
+<li> 一个可包含特定于对象的初始化数据的&ldquo;编组&rdquo;对象。</ul>
+
+<p>一个描述符通过激活系统注册，可用于重建/激活描述符所指定的对象。对象描述符中的 <code>MarshalledObject</code> 被传入作为远程对象构造方法的第二个参数，供对象在重新初始化/激活过程中使用。
+
+@author 	Ann Wollrath
+@version	1.27, 12/19/03
+@since 	1.2
+@see         java.rmi.activation.Activatable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.activation.ActivationGroupID java.rmi.activation.ActivationDesc.groupID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 组标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.rmi.activation.ActivationDesc.className
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 对象的类名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.rmi.activation.ActivationDesc.location
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 对象的代码基
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.MarshalledObject<?> java.rmi.activation.ActivationDesc.data
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+@serial 对象的初始化数据
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.rmi.activation.ActivationDesc.restart
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 表示对象是否应当被重新启动。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc(String className, String location, java.rmi.MarshalledObject<?> data) throws java.rmi.activation.ActivationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类名为 <code>className</code> 的对象构造一个对象描述符，这可从代码 <code>location</code> 处加载，并且其初始化信息为 <code>data</code>。如果使用这种形式的构造方法，<code>groupID</code> 默认为此 VM 的 <code>ActivationGroup</code> 的当前 id。在同一 VM 中，具有相同 <code>ActivationGroupID</code> 的所有对象都被激活。
+
+<p>注意，由此构造方法所创建的描述符指定的对象将仅仅按需被激活（默认情况下，重启模式为 <code>false</code>）。如果一个可激活的对象需要重启服务，使用带有 boolean 参数 <code>restart</code> 的 <code>ActivationDesc</code> 构造方法之一。
+
+<p> 如果此 VM 当前没有任何激活组，则此构造方法将抛出 <code>ActivationException</code>。使用 <code>ActivationGroup.createGroup</code> 方法创建一个 <code>ActivationGroup</code>。
+
+@param className 对象的完全限定包的类名
+@param location 对象的代码基（类被加载处）
+@param data 以编组形式包含的对象初始化（激活）数据。
+@exception ActivationException 如果当前组不存在
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc(String className, String location, java.rmi.MarshalledObject<?> data, boolean restart) throws java.rmi.activation.ActivationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类名为 <code>className</code> 的对象构造一个对象描述符，这可从代码 <code>location</code> 处加载，并且其初始化信息为 <code>data</code>。如果使用这种形式的构造方法，<code>groupID</code> 默认为此 VM 的 <code>ActivationGroup</code> 的当前 id。在同一 VM 中，具有相同 <code>ActivationGroupID</code> 的所有对象都被激活。
+
+<p>如果此 VM 当前没有任何激活组，则此构造方法将抛出 <code>ActivationException</code>。使用 <code>ActivationGroup.createGroup</code> 方法创建一个 <code>ActivationGroup</code>。
+
+@param className 对象的完全限定包的类名
+@param location 对象的代码基（类被加载处）
+@param data 以编组形式包含的对象初始化（激活）数据。
+@param restart 如果为 true，则在一次意外崩溃之后，如果激活器被重启或者对象的激活组被重启，则该对象也会被重启（激活）；如果为 false，对象只能按需激活。指定 <code>restart</code> 为 <code>true</code>，不强制对新注册的对象立即进行一次初始激活操作；初始激活是延后的。
+@exception ActivationException 如果当前组不存在
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc(ActivationGroupID groupID, String className, String location, java.rmi.MarshalledObject<?> data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类名为 <code>className</code> 的对象构造一个对象描述符，这可从代码 <code>location</code> 处加载，并且其初始化信息为 <code>data</code>。在同一 VM 中，具有相同 <code>groupID</code> 的所有对象都被激活。
+
+<p>注意，由此构造方法所创建的描述符指定的对象将仅仅按需激活（默认情况下，重启模式为 <code>false</code>）。如果可激活对象需要重启服务，使用带有 boolean 参数 <code>restart</code> 的 <code>ActivationDesc</code> 构造方法之一。
+
+@param groupID 组的标识符（从注册 <code>ActivationSystem.registerGroup</code> 方法处获得）。该组指示 VM 中的对象应当被激活。
+@param className 对象的完全限定包的类名
+@param location 对象的代码基（类被加载处）
+@param data 以编组形式包含的对象初始化（激活）数据。
+@exception IllegalArgumentException 如果 <code>groupID</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc(ActivationGroupID groupID, String className, String location, java.rmi.MarshalledObject<?> data, boolean restart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类名为 <code>className</code> 的对象构造一个对象描述符，这可从代码的 <code>location</code> 处加载，并且其初始化信息为 <code>data</code>。在同一 VM 中，具有相同 <code>groupID</code> 的所有对象都被激活。
+
+@param groupID 组的标识符（从注册 <code>ActivationSystem.registerGroup</code> 方法中获得）。该组指示 VM 中的对象应当被激活。
+@param className 对象的完全限定包的类名
+@param location 对象的代码基（类被加载处）
+@param data 以编组形式包含的对象初始化（激活）数据。
+@param restart 如果为 true，则在一次意外崩溃之后，如果激活器被重启或者对象的激活组被重启，该对象将会被重启（激活）；如果为 false，对象只能按需激活。指定 <code>restart</code> 为 <code>true</code>，不强制对新创建的对象立即进行一次初始激活操作；初始激活是延后的。
+@exception IllegalArgumentException 如果 <code>groupID</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationGroupID java.rmi.activation.ActivationDesc.getGroupID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由此描述符指定的对象的组标识符。组提供一种将对象聚合到单个 Java 虚拟机中的方法。RMI 在同一虚拟机中创建/激活具有相同 <code>groupID</code> 的对象。
+
+@return 组标识符
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.activation.ActivationDesc.getClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此描述符指定的对象的类名。
+@return 类名
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.activation.ActivationDesc.getLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此描述符指定的对象的代码基。
+@return 代码基
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.MarshalledObject<?> java.rmi.activation.ActivationDesc.getData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此描述符指定的对象返回包含初始化/激活数据的&ldquo;编组对象&rdquo;。
+@return 特定于对象的&ldquo;初始化&rdquo;数据
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.activation.ActivationDesc.getRestartMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此激活描述符关联的对象的&ldquo;重启&rdquo;模式。
+
+@return 当守护程序出现或者对象的组在一次意外崩溃后被重启时，如果与此激活描述符关联的可激活对象也通过守护程序被重启，则返回 true；否则返回 false，这意味着该对象仅通过方法调用来按需激活。注意，如果重启模式为 <code>true</code>，则激活器不强制对新注册的对象立即进行一次初始激活操作；初始激活是延后的。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.activation.ActivationDesc.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个激活描述符的内容相等性。
+
+@param	obj	要与之比较的 Object
+@return	如果这些 Object 相等，则返回 true；否则返回 false。
+@see		java.util.Hashtable
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.activation.ActivationDesc.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类似的 <code>ActivationDesc</code> 返回相同的哈希码
+@return 一个整数
+@see java.util.Hashtable
+
+<!-- END DATA -->

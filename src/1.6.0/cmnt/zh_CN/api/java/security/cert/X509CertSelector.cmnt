@@ -1,0 +1,795 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.X509CertSelector extends java.lang.Object implements java.security.cert.CertSelector
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择与所有指定标准匹配的 <code>X509Certificates</code> 的 <code>CertSelector</code>。从 <code>CertStore</code> 中选择证书以构建一个符合 PKIX 的证书路径时，此类特别有用。
+ <p>
+最初构造 <code>X509CertSelector</code> 时，它没有启用任何标准，并且每个 <code>get</code> 方法都返回一个默认值（<code>null</code>，对于 {@link #getBasicConstraints getBasicConstraints} 方法，则返回 <code>-1</code>）。因此，对于任意 <code>X509Certificate</code> 而言，{@link #match match} 方法都将返回 <code>true</code>。通常，启用多种标准（例如通过调用 {@link #setIssuer setIssuer} 或 {@link #setKeyUsage setKeyUsage}），然后将 <code>X509CertSelector</code> 传递到 {@link CertStore#getCertificates CertStore.getCertificates} 或某个类似方法。
+ <p>
+可以启用多种标准（例如通过调用 {@link #setIssuer setIssuer} 和 {@link #setSerialNumber setSerialNumber}），这样通常 <code>match</code> 方法会唯一地匹配单个 <code>X509Certificate</code>。我们在此说&ldquo;通常&rdquo;，是因为两个发布证书的 CA 可能具有相同的标识名，并且这两个 CA 发布了具有相同序列号的证书。其他独特的组合包含 issuer、subject、subjectKeyIdentifier 和/或 subjectPublicKey 标准。
+ <p>
+有关下面所述各个 X.509 证书扩展的定义，请参阅 RFC 2459。
+ <p>
+<b>并发访问</b>
+ <p>
+除非另行指定，否则此类中所定义的方法不是线程安全的。需要并发访问单个对象的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同对象的多个线程而言，无需实现同步。
+
+@see CertSelector
+@see X509Certificate
+
+@version 	1.20, 06/08/04
+@since	       1.4
+@author	Steve Hanna
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.X509CertSelector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>X509CertSelector</code>。最初未设置任何标准，所以任何 <code>X509Certificate</code> 都匹配。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setCertificate(X509Certificate cert)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 certificateEquals 标准。指定的 <code>X509Certificate</code> 必须等于传入到 <code>match</code> 方法的 <code>X509Certificate</code>。如果它为 <code>null</code>，则不进行此项检查。
+
+<p>必需与单个证书匹配时，此方法特别有用。虽然可以与 certificateEquals 标准一起指定其他标准，但这样做通常不实用或不必要。
+
+@param cert 要匹配的 <code>X509Certificate</code>（或者为 <code>null</code>）
+@see #getCertificate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSerialNumber(BigInteger serial)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 serialNumber 标准。指定的 serialNumber 必须与 <code>X509Certificate</code> 中的证书 serialNumber 匹配。如果该 serialNumber 为 <code>null</code>，则与任何证书 serialNumber 匹配都可以。
+
+@param serial 要匹配的证书 serialNumber（或者为 <code>null</code>）
+@see #getSerialNumber
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setIssuer(X500Principal issuer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 issuer 标准。指定的标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果该发布方标识名为 <code>null</code>，则与任何发布方 标识名匹配都可以。
+
+@param issuer X500Principal 形式的标识名（或者为 <code>null</code>）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setIssuer(String issuerDN) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，使用 {@linkplain #setIssuer(X500Principal)} 或 {@linkplain #setIssuer(byte[])} 替代。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+ <p>
+设置 issuer 标准。指定的标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果该发布方标识名为 <code>null</code>，则与任何发布方标识名匹配都可以。
+ <p>
+如果 <code>issuerDN</code> 不为 <code>null</code>，则应该包含一个 RFC 2253 格式的标识名。
+
+@param issuerDN RFC 2253 格式的标识名（或者为 <code>null</code>）
+@throws IOException 如果出现解析错误（错误的 DN 形式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setIssuer(byte[] issuerDN) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 issuer 标准。指定的标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果指定了 <code>null</code>，则禁用 issuer 标准，且与任何发布方标识名匹配都可以。
+ <p>
+如果 <code>issuerDN</code> 不为 <code>null</code>，则应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。此结构的 ASN.1 表示如下：
+ <pre><code>
+ Name ::= CHOICE {
+   RDNSequence }
+
+ RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+
+ RelativeDistinguishedName ::=
+   SET SIZE (1 .. MAX) OF AttributeTypeAndValue
+
+ AttributeTypeAndValue ::= SEQUENCE {
+   type     AttributeType,
+   value    AttributeValue }
+
+ AttributeType ::= OBJECT IDENTIFIER
+
+ AttributeValue ::= ANY DEFINED BY AttributeType
+ ....
+ DirectoryString ::= CHOICE {
+       teletexString           TeletexString (SIZE (1..MAX)),
+       printableString         PrintableString (SIZE (1..MAX)),
+       universalString         UniversalString (SIZE (1..MAX)),
+       utf8String              UTF8String (SIZE (1.. MAX)),
+       bmpString               BMPString (SIZE (1..MAX)) }
+ </code></pre>
+ <p>
+注意，要复制此处指定的 byte 数组以防后续修改。
+
+@param issuerDN 一个 byte 数组，包含 ASN.1 DER 编码形式的标识名（或者为 <code>null</code>）
+@throws IOException 如果出现编码错误（错误的 DN 形式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubject(X500Principal subject)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subject 标准。指定的标识名必须与 <code>X509Certificate</code> 中的主体标识名匹配。如果该主体标识名为 <code>null</code>，则与任何主体标识名匹配都可以。
+
+@param subject X500Principal 形式的标识名（或者为 <code>null</code>）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubject(String subjectDN) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，使用 {@linkplain #setSubject(X500Principal)} 或 {@linkplain #setSubject(byte[])} 替代。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+ <p>
+设置 subject 标准。指定的标识名必须与 <code>X509Certificate</code> 中的 主体标识名匹配。如果该主体标识名为 <code>null</code>，则与任何主体标识名匹配都可以。
+ <p>
+如果 <code>subjectDN</code> 不为 <code>null</code>，则应该包含一个 RFC 2253 格式的标识名。
+
+@param subjectDN RFC 2253 格式的标识名（或者为 <code>null</code>）
+@throws IOException 如果出现解析错误（错误的 DN 形式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubject(byte[] subjectDN) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subject 标准。指定的标识名必须与 <code>X509Certificate</code> 中的主体标识名匹配。如果该主体标识名为 <code>null</code>，则与任何主体标识名匹配都可以。
+ <p>
+如果 <code>subjectDN</code> 不为 <code>null</code>，则应该包含单个 DER 编码形式的标识名，正如 X.501 中定义的一样。有关此结构的 ASN.1 表示，请参阅 {@link #setIssuer(byte [] issuerDN) setIssuer(byte [] issuerDN)}。
+
+@param subjectDN 一个 byte 数组，包含 ASN.1 DER 格式的标识名（或者为 <code>null</code>）
+@throws IOException 如果出现编码错误（错误的 DN 形式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubjectKeyIdentifier(byte[] subjectKeyID)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subjectKeyIdentifier 标准。<code>X509Certificate</code> 必须包含一个 SubjectKeyIdentifier 扩展，且该扩展的内容与指定的标准值匹配。如果该标准值为 <code>null</code>，则不执行 subjectKeyIdentifier 检查。
+ <p>
+如果 <code>subjectKeyID</code> 不为 <code>null</code>，则应该包含与 SubjectKeyIdentifier 扩展的扩展值内容（不包括对象标识符、关键性设置和封装 OCTET STRING）相对应的 DER 编码形式的值。此结构的 ASN.1 表示如下：
+ <p>
+ <pre><code>
+ SubjectKeyIdentifier ::= KeyIdentifier
+
+ KeyIdentifier ::= OCTET STRING
+ </code></pre>
+ <p>
+由于任何标准都没有要求 SubjectKeyIdentifier 的格式，所以 <code>X509CertSelector</code> 不解析 SubjectKeyIdentifier。相反，使用逐字节比较的方式来比较该值。
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+
+@param subjectKeyID SubjectKeyIdentifier（或者为 <code>null</code>）
+@see #getSubjectKeyIdentifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setAuthorityKeyIdentifier(byte[] authorityKeyID)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 authorityKeyIdentifier 扩展。<code>X509Certificate</code> 必须包含一个 AuthorityKeyIdentifier 扩展，且该扩展值的内容与指定的标准值匹配。如果该标准值为 <code>null</code>，则不执行 authorityKeyIdentifier 检查。
+ <p>
+如果 <code>authorityKeyID</code> 不为 <code>null</code>，则应该包含单个与 AuthorityKeyIdentifier 扩展的扩展值内容（不包括对象标识符、关键性设置和封装 OCTET STRING）相对应的 DER 编码形式的值。此结构的 ASN.1 表示如下：
+ <p>
+ <pre><code>
+ AuthorityKeyIdentifier ::= SEQUENCE {
+    keyIdentifier             [0] KeyIdentifier           OPTIONAL,
+    authorityCertIssuer       [1] GeneralNames            OPTIONAL,
+    authorityCertSerialNumber [2] CertificateSerialNumber OPTIONAL  }
+
+ KeyIdentifier ::= OCTET STRING
+ </code></pre>
+ <p>
+<code>X509CertSelector</code> 不解析 AuthorityKeyIdentifier。相反，使用逐字节比较的方式来比较该值。
+ <p>
+生成 <code>AuthorityKeyIdentifier</code> 的 <code>keyIdentifier</code> 字段时，通常从发布方证书中的 <code>SubjectKeyIdentifier</code> 扩展中获取该值。但是要注意，在发布方的证书上执行 <code>X509Certificate.getExtensionValue(&lt;SubjectKeyIdentifier Object Identifier&gt;)</code> 所得到的结果可能无法直接用作 <code>setAuthorityKeyIdentifier</code> 的输入。这是因为 SubjectKeyIdentifier 只包含一个 KeyIdentifier OCTET STRING（八位字节字符串），而不是 KeyIdentifier、GeneralNames 和 CertificateSerialNumber 的 SEQUENCE。为了使用发布方证书的 <code>SubjectKeyIdentifier</code> 扩展的扩展值，必需提取嵌入的 <code>KeyIdentifier</code> OCTET STRING 值，然后将此 OCTET STRING 以 DER 编码方式放入一个 SEQUENCE 中。有关 SubjectKeyIdentifier 的更多详细信息，请参见 {@link #setSubjectKeyIdentifier(byte[] subjectKeyID)}。
+ <p>
+还要注意，要复制此处提供的 byte 数组以防后续修改。
+ 
+@param authorityKeyID AuthorityKeyIdentifier（或者为 <code>null</code>）
+@see #getAuthorityKeyIdentifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setCertificateValid(Date certValid)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 certificateValid 标准。指定的日期必须在 <code>X509Certificate</code> 的证书有效期内。如果其值为 <code>null</code>，则不执行 certificateValid 检查。
+ <p>
+注意，要复制此处提供的 <code>Date</code> 以防后续修改。
+
+@param certValid 要检查的 <code>Date</code>（或者为 <code>null</code>）
+@see #getCertificateValid
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setPrivateKeyValid(Date privateKeyValid)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 privateKeyValid 标准。指定的日期必须在 <code>X509Certificate</code> 的私钥有效期内。如果为 <code>null</code>，则不执行 privateKeyValid 检查。
+ <p>
+注意，要复制此处提供的 <code>Date</code> 以防后续修改。
+
+@param privateKeyValid 要检查的 <code>Date</code>（或者为 <code>null</code>）
+@see #getPrivateKeyValid
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubjectPublicKeyAlgID(String oid) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subjectPublicKeyAlgID 标准。<code>X509Certificate</code> 必须包含一个具有指定算法的主体公钥。如果其值为 <code>null</code>，则不执行 subjectPublicKeyAlgID 检查。
+ 
+@param oid 用于检查的算法的对象标识符 (OID)（或者为 <code>null</code>）。OID 由一组句点分隔的非负整数来表示。
+@throws IOException 如果该 OID 无效，例如其第一部分不是 0、1 或 2，或第二部分大于 39。
+
+@see #getSubjectPublicKeyAlgID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubjectPublicKey(PublicKey key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subjectPublicKey 标准。<code>X509Certificate</code> 必须包含指定的主体公钥。如果其值为 <code>null</code>，则不执行 subjectPublicKey 检查。
+ 
+@param key 用于检查的 subjectPublicKey（或者为 <code>null</code>）
+@see #getSubjectPublicKey
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubjectPublicKey(byte[] key) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subjectPublicKey 标准。<code>X509Certificate</code> 必须包含指定的主体公钥。如果其值为 <code>null</code>，则不执行 subjectPublicKey 检查。
+ <p>
+因为此方法允许以 byte 数组的方式指定公钥，所以可将其用于未知的密钥类型。
+ <p>
+如果 <code>key</code> 不为 <code>null</code>，则它应该包含单个 DER 编码形式的 SubjectPublicKeyInfo 结构，正如 X.509 中定义的一样。此结构的 ASN.1 表示如下：
+ <pre><code>
+ SubjectPublicKeyInfo  ::=  SEQUENCE  {
+   algorithm            AlgorithmIdentifier,
+   subjectPublicKey     BIT STRING  }
+
+ AlgorithmIdentifier  ::=  SEQUENCE  {
+   algorithm               OBJECT IDENTIFIER,
+   parameters              ANY DEFINED BY algorithm OPTIONAL  }
+                              -- contains a value of the type
+                              -- registered for use with the
+                              -- algorithm object identifier value
+ </code></pre>
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+ 
+@param key 一个 byte 数组，包含 ASN.1 DER 编码形式的 subjectPublicKey（或者为 <code>null</code>）
+@throws IOException 如果出现编码错误（subjectPublicKey 形式不正确）
+@see #getSubjectPublicKey
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setKeyUsage(boolean[] keyUsage)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 keyUsage 标准。<code>X509Certificate</code> 必须允许使用指定的 keyUsage 值。如果其值为 <code>null</code>，则不执行 keyUsage 检查。注意，没有 keyUsage 扩展的 <code>X509Certificate</code> 隐式地允许使用所有 keyUsage 值。
+ <p>
+注意，要复制此处提供的 boolean 数组以防后续修改。
+
+@param keyUsage 一个 boolean 数组，其格式与 {@link X509Certificate#getKeyUsage() X509Certificate.getKeyUsage()} 返回的 boolean 数组格式相同。或者为 <code>null</code>。
+@see #getKeyUsage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setExtendedKeyUsage(java.util.Set<java.lang.String> keyPurposeSet) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 extendedKeyUsage 标准。<code>X509Certificate</code> 必须允许其 extendedKeyUsage 扩展中的指定 keyPurpose。如果 <code>keyPurposeSet</code> 为空或为 <code>null</code>，则不执行 extendedKeyUsage 检查。注意，没有 extendedKeyUsage 扩展的 <code>X509Certificate</code> 隐式地允许所有 keyPurpose。
+ <p>
+注意，要复制该 <code>Set</code> 以防后续修改。
+
+@param keyPurposeSet string 格式的 keyPurpose OID 的 <code>Set</code>（或者为 <code>null</code>）。每个 OID 都由一组句点分隔的非负整数来表示。
+@throws IOException 如果该 OID 无效，例如其第一部分不是 0、1 或 2，或第二部分大于 39。
+@see #getExtendedKeyUsage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setMatchAllSubjectAltNames(boolean matchAllNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许/禁止匹配 {@link #setSubjectAlternativeNames setSubjectAlternativeNames} 或 {@link #addSubjectAlternativeName addSubjectAlternativeName} 方法中所指定的所有 subjectAlternativeNames。如果允许匹配，则 <code>X509Certificate</code> 必须包含所有指定的 subjectAlternativeNames。如果禁止匹配，则 <code>X509Certificate</code> 至少必须包含某个指定的 subjectAlternativeName。
+
+<p>默认情况下，matchAllNames 标志为 <code>true</code>。
+
+@param matchAllNames 如果为 <code>true</code>，则启用该标志；如果为 <code>false</code>，则禁用该标志。
+@see #getMatchAllSubjectAltNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setSubjectAlternativeNames(java.util.Collection<java.util.List<?>> names) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 subjectAlternativeNames 标准。<code>X509Certificate</code> 必须包含所有或至少某个指定的 subjectAlternativeNames，这取决于 matchAllNames 标志的值（参见 {@link #setMatchAllSubjectAltNames setMatchAllSubjectAltNames}）。
+ <p>
+此方法允许调用方（使用单个方法调用）为 subjectAlternativeNames 标准指定完整的 subjectAlternativeNames 集。指定的值会替换 subjectAlternativeNames 标准以前的值。
+ <p>
+<code>names</code> 参数（如果不为 <code>null</code>）是一个 <code>Collection</code>，subjectAlternativeNames 标准中所包括的每个名称都对应该集合中的一项。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。相同类型可以有多个名称。如果为此参数提供的值为 <code>null</code>，则不执行 subjectAlternativeNames 检查。
+ <p>
+<code>Collection</code> 中的每个 subjectAlternativeNames 都可以指定为一个 <code>String</code> 或 一个 ASN.1 编码的 byte 数组。有关所用格式的更多详细信息，请参阅 {@link #addSubjectAlternativeName(int type, String name) addSubjectAlternativeName(int type, String name)} 和 {@link #addSubjectAlternativeName(int type, byte [] name) addSubjectAlternativeName(int type, byte [] name)}。
+ <p>
+<strong>注：</strong>对于标识名，应指定为 byte 数组，而不是 String。有关更多信息，请参阅 {@link #addSubjectAlternativeName(int, String)} 中的注视。 
+ <p>
+注意，<code>names</code> 参数可以包含重复的名称（相同的名称和名称类型），但是可能从 {@link #getSubjectAlternativeNames getSubjectAlternativeNames} 方法返回的名称 <code>Collection</code> 中将这些名称移除。
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@param names 一个名称 <code>Collection</code>（或者为 <code>null</code>）
+@throws IOException 如果出现解析错误
+@see #getSubjectAlternativeNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.addSubjectAlternativeName(int type, String name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 subjectAlternativeNames 标准中添加一个名称。<code>X509Certificate</code> 必须包含所有或至少某个指定的 subjectAlternativeNames，这取决于 matchAllNames 标志的值（参见 {@link #setMatchAllSubjectAltNames setMatchAllSubjectAltNames}）。
+ <p>
+此方法允许调用方向 subjectAlternativeNames 集中添加一个名称。将指定的名称添加到 subjectAlternativeNames 标准的以前值中。如果指定的名称是重复的，则忽略它。
+ <p>
+以 string 格式提供该名称。RFC 822、DNS 和 URI 名称使用这些类型（受 RFC 2459 中所包括的限制的影响）的 string 格式。使用四点表示法（dotted quad notation）提供 IPv4 地址名。OID 地址名用一系列句点分隔的非负整数来表示。以 RFC 2253 格式提供目录名（标识名）。对于 otherNames、X.400 名、EDI 方的名称、IPv6 地址名或其他所有名称类型，则没有定义标准 string 格式。应该使用 {@link #addSubjectAlternativeName(int type, byte [] name) addSubjectAlternativeName(int type, byte [] name)} 方法指定它们。
+ <p>
+<strong>注：</strong>对于标识名，请使用 {@linkplain #addSubjectAlternativeName(int, byte[])}。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+
+@param type 名称类型（0-8，在 RFC 2459 的 4.2.1.7 部分中指定）
+@param name string 形式的名称（不能为 <code>null</code>）
+@throws IOException 如果出现解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.addSubjectAlternativeName(int type, byte[] name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 subjectAlternativeNames 标准中添加一个名称。<code>X509Certificate</code> 必须包含所有或至少某个指定的 subjectAlternativeNames，这取决于 matchAllNames 标志的值（参见 {@link #setMatchAllSubjectAltNames setMatchAllSubjectAltNames}）。
+ <p>
+此方法允许调用方向 subjectAlternativeNames 集中添加一个名称。将指定的名称添加到 subjectAlternativeNames 标准的以前值中。如果指定的名称是重复的，则忽略它。
+ <p>
+以 byte 数组的形式提供该名称。此 byte 数组应该包含 DER 编码名称，因为它将出现在 RFC 2459 和 X.509 内所定义的 GeneralName 结构中。已编码的 byte 数组应该只包含该名称的已编码值，不应该包括 GeneralName 结构中与该名称关联的标记。此结构的 ASN.1 定义如下：
+ <pre><code>
+  GeneralName ::= CHOICE {
+       otherName                       [0]     OtherName,
+       rfc822Name                      [1]     IA5String,
+       dNSName                         [2]     IA5String,
+       x400Address                     [3]     ORAddress,
+       directoryName                   [4]     Name,
+       ediPartyName                    [5]     EDIPartyName,
+       uniformResourceIdentifier       [6]     IA5String,
+       iPAddress                       [7]     OCTET STRING,
+       registeredID                    [8]     OBJECT IDENTIFIER}
+ </code></pre>
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+ 
+@param type 名称类型（0-8，如上所列）
+@param name 一个 byte 数组，包含 ASN.1 DER 编码形式的名称
+@throws IOException 如果出现解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setNameConstraints(byte[] bytes) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 NameConstraints 标准。<code>X509Certificate</code> 必须具有满足指定 NameConstraints 要求的 subject 和 subjectAlternativeNames。
+ <p>
+以 byte 数组的形式指定该 NameConstraints。此 byte 数组应该包含 DER 编码形式的 NameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。此结构的 ASN.1 定义如下：
+
+ <pre><code>
+  NameConstraints ::= SEQUENCE {
+       permittedSubtrees       [0]     GeneralSubtrees OPTIONAL,
+       excludedSubtrees        [1]     GeneralSubtrees OPTIONAL }
+
+  GeneralSubtrees ::= SEQUENCE SIZE (1..MAX) OF GeneralSubtree
+
+  GeneralSubtree ::= SEQUENCE {
+       base                    GeneralName,
+       minimum         [0]     BaseDistance DEFAULT 0,
+       maximum         [1]     BaseDistance OPTIONAL }
+
+  BaseDistance ::= INTEGER (0..MAX)
+
+  GeneralName ::= CHOICE {
+       otherName                       [0]     OtherName,
+       rfc822Name                      [1]     IA5String,
+       dNSName                         [2]     IA5String,
+       x400Address                     [3]     ORAddress,
+       directoryName                   [4]     Name,
+       ediPartyName                    [5]     EDIPartyName,
+       uniformResourceIdentifier       [6]     IA5String,
+       iPAddress                       [7]     OCTET STRING,
+       registeredID                    [8]     OBJECT IDENTIFIER}
+ </code></pre>
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+
+@param bytes 一个 byte 数组，包含为检查 NameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码。只包括该扩展的值，不包括 OID 或关键性标志。其值可以为 <code>null</code>，此时将不执行 NameConstraints 检查。
+@throws IOException 如果出现解析错误
+@see #getNameConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setBasicConstraints(int minMaxPathLen)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 basicConstraints 限制。如果该值大于等于零，则 <code>X509Certificates</code> 包括的 basicConstraints 扩展具有的 pathLen 不能小于此值。如果该值为 -2，则只接受最终实体证书。如果该值为 -1，则不执行检查。
+ <p>
+构建正向证书路径（从目标到受信定位点）时，此限制很有用。如果已构建了部分路径，则任何候选证书的 maxPathLen 值都必须大于等于这些路径中的证书数。
+
+@param minMaxPathLen basicConstraints 限制的值
+@throws IllegalArgumentException 如果该值小于 -2
+@see #getBasicConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setPolicy(java.util.Set<java.lang.String> certPolicySet) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置策略限制。<code>X509Certificate</code> 至少必须包括其证书策略扩展中指定的一种策略。如果 <code>certPolicySet</code> 为空，则 <code>X509Certificate</code> 至少必须包括其证书策略扩展中指定的某个策略。如果 <code>certPolicySet</code> 为 <code>null</code>，则不执行策略检查。
+ <p>
+注意，要复制该 <code>Set</code> 以防后续修改。
+
+@param certPolicySet string 格式的证书策略 OID 的 <code>Set</code>（或者为 <code>null</code>）。每个 OID 都由一组句点分隔的非负整数来表示。
+@throws IOException 如果出现 OID 的解析错误，例如其第一部分不是 0、1 或 2，或第二部分大于 39。
+@see #getPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.setPathToNames(java.util.Collection<java.util.List<?>> names) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 pathToNames 标准。<code>X509Certificate</code> 不能包括禁止构建指定名称路径的 NameConstraints。
+ <p>
+此方法允许调用方（使用单个方法调用）指定 <code>X509Certificates</code> 的 NameConstraints 必须允许使用的完整名称集。指定的值会替换 pathToNames 标准以前的值。
+ <p>
+构建正向证书路径（从目标到受信定位点）时，此限制很有用。如果已构建了部分路径，则任何候选证书所包括的 NameConstraints 都不能禁止构建到达这些路径中任意名称的路径。
+ <p>
+<code>names</code> 参数（如果不为 <code>null</code>）是一个 <code>Collection</code>，pathToNames 标准中所包括的每个名称都对应该集合中的一项。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。相同类型可以有多个名称。如果提供的参数值为 <code>null</code>，则不执行 pathToNames 检查。
+ <p>
+<code>Collection</code> 中的每个名称都可以指定为一个 <code>String</code> 或一个 ASN.1 编码的 byte 数组。有关所用格式的更多详细信息，请参阅 {@link #addPathToName(int type, String name) addPathToName(int type, String name)} 和 {@link #addPathToName(int type, byte [] name) addPathToName(int type, byte [] name)}。
+ <p>
+<strong>注：</strong>对于标识名，应指定为 byte 数组，而不是 String。有关更多信息，请参阅 {@link #addPathToName(int, String)} 中的注释。 
+ <p>
+注意，<code>names</code> 参数可以包含重复的名称（相同的名称和名称类型），但是可能从 {@link #getPathToNames getPathToNames} 方法返回的名称 <code>Collection</code> 中将这些名称移除。
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@param names 每个名称都对应一项的 <code>Collection</code>（或者为 <code>null</code>）
+@throws IOException 如果出现解析错误
+@see #getPathToNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.addPathToName(int type, String name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 pathToNames 标准中添加一个名称。<code>X509Certificate</code> 不能包括禁止构建指定名称路径的 NameConstraints。
+ <p>
+此方法允许调用方向 <code>X509Certificates</code> 的 NameConstraints 必须允许使用的名称集中添加一个名称。将指定的名称添加到 pathToNames 标准的以前值中。如果该名称是重复的，则忽略它。
+ <p>
+以 string 格式提供该名称。RFC 822、DNS 和 URI 名称使用这些类型（受 RFC 2459 中所包括的限制的影响）的 string 格式。使用四点表示法（dotted quad notation）提供 IPv4 地址名。OID 地址名用一系列句点分隔的非负整数来表示。以 RFC 2253 格式提供目录名（标识名）。对于 otherNames、X.400 名、EDI 方的名称、IPv6 地址名或其他所有名称类型，则没有定义标准 string 格式。应该使用 {@link #addPathToName(int type, byte [] name) addPathToName(int type, byte [] name)} 方法指定它们。
+ <p>
+<strong>注：</strong>对于标识名，请使用 {@linkplain #addPathToName(int, byte[])}。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+
+@param type 名称类型（0-8，在 RFC 2459 的 4.2.1.7 部分中指定）
+@param name string 形式的名称
+@throws IOException 如果出现解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.cert.X509CertSelector.addPathToName(int type, byte[] name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 pathToNames 标准中添加一个名称。<code>X509Certificate</code> 不能包括禁止构建指定名称路径的 NameConstraints。
+ <p>
+此方法允许调用方向 <code>X509Certificates</code> 的 NameConstraints 必须允许使用的名称集中添加一个名称。将指定的名称添加到 pathToNames 标准的以前值中。如果该名称是重复的，则忽略它。
+ <p>
+以 byte 数组的形式提供该名称。此 byte 数组应该包含 DER 编码名称，因为它将出现在 RFC 2459 和 X.509 内所定义的 GeneralName 结构中。{@link #addSubjectAlternativeName(int type, byte [] name) addSubjectAlternativeName(int type, byte [] name)} 的文档中有此结构的 ASN.1 定义。
+ <p>
+注意，要复制此处提供的 byte 数组以防后续修改。
+
+@param type 名称类型（0-8，在 RFC 2459 的 4.2.1.7 部分中指定）
+@param name 一个 byte 数组，包含 ASN.1 DER 编码名称
+@throws IOException 如果出现解析错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.X509Certificate java.security.cert.X509CertSelector.getCertificate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 certificateEquals 标准。指定的 <code>X509Certificate</code> 必须等于传入到 <code>match</code> 方法的 <code>X509Certificate</code>。如果它为 <code>null</code>，则不进行此项检查。
+
+@return 要匹配的 <code>X509Certificate</code>（或者为 <code>null</code>）
+@see #setCertificate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.security.cert.X509CertSelector.getSerialNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 serialNumber 标准。指定的 serialNumber 必须与 <code>X509Certificate</code> 中的证书 serialNumber 匹配。如果该 serialNumber 为 <code>null</code>，则任何证书 serialNumber 都可以。
+ 
+@return 要匹配的证书 serialNumber（或者为 <code>null</code>）
+@see #setSerialNumber
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal java.security.cert.X509CertSelector.getIssuer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>X500Principal</code> 的形式返回 issuer 标准。此标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果该发布方标识名为 <code>null</code>，则禁用 issuer 标准，且与任何发布方标识名匹配都可以。
+
+@return 以 X500Principal 形式返回所要求的发布方标识名（或者为 <code>null</code>）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.X509CertSelector.getIssuerAsString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，使用 {@linkplain #getIssuer()} 或 {@linkplain #getIssuerAsBytes()} 替代。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+ <p>
+返回以 <code>String</code> 表示的 issuer 标准。此标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果该发布方标识名为 <code>null</code>，则禁用 issuer 标准，且与任何发布方标识名匹配都可以。
+ <p>
+如果返回的值不为 <code>null</code>，则是一个 RFC 2253 格式的标识名。
+
+@return 以 RFC 2253 格式返回所要求的发布方标识名（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.cert.X509CertSelector.getIssuerAsBytes() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 byte 数组表示的 issuer 标准。此标识名必须与 <code>X509Certificate</code> 中的发布方标识名匹配。如果该发布方标识名为 <code>null</code>，则禁用 issuer 标准，且与任何发布方标识名匹配都可以。
+ <p>
+如果返回的值不为 <code>null</code>，则是包含单个 DER 编码形式的标识名的 byte 数组，正如 X.501 中定义的一样。{@link #setIssuer(byte [] issuerDN) setIssuer(byte [] issuerDN)} 的文档中提供了此结构的 ASN.1 表示。
+ <p>
+注意，要复制返回的 byte 数组以防后续修改。
+
+@return 一个 byte 数组，以 ASN.1 DER 格式包含所要求的发布方标识名（或者为 <code>null</code>）
+@throws IOException 如果出现编码错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal java.security.cert.X509CertSelector.getSubject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>X500Principal</code> 的形式返回 subject 标准。此标识名必须与 <code>X509Certificate</code> 中的主体标识名匹配。如果该主体标识名为 <code>null</code>，则禁用 subject 标准，且与任何主体标识名匹配都可以。
+
+@return 以 X500Principal 形式返回所要求的主体标识名（或者为 <code>null</code>）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.X509CertSelector.getSubjectAsString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，使用 {@linkplain #getSubject()} 或 {@linkplain #getSubjectAsBytes()} 替代。由于某些 RFC 2253 String 形式的标识名中会丢失编码信息，所以当此方法与某些证书不匹配时不应该依赖它。
+ <p>
+返回以 <code>String</code> 表示的 subject 标准。此标识名必须与 <code>X509Certificate</code> 中的主体标识名匹配。如果该主体标识名为 <code>null</code>，则禁用 subject 标准，且与任何主体标识名匹配都可以。
+ <p>
+如果返回的值不为 <code>null</code>，则是一个 RFC 2253 格式的标识名。
+
+@return 以 RFC 2253 格式返回所要求的主体标识名（或者为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.cert.X509CertSelector.getSubjectAsBytes() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 byte 数组的形式返回 subject 标准。此标识名必须与 <code>X509Certificate</code> 中的主体标识名匹配。如果该主体标识名为 <code>null</code>，则禁用 subject 标准，且与任何主体标识名匹配都可以。
+ <p>
+如果返回的值不为 <code>null</code>，则是包含单个 DER 编码形式的标识名的 byte 数组，正如 X.501 中定义的一样。{@link #setSubject(byte [] subjectDN) setSubject(byte [] subjectDN)} 的文档中提供了此结构的 ASN.1 表示。
+ <p>
+注意，要复制返回的 byte 数组以防后续修改。
+
+@return 一个 byte 数组，以 ASN.1 DER 格式包含所要求的主体标识名（或者为 <code>null</code>）
+@throws IOException 如果出现编码错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.cert.X509CertSelector.getSubjectKeyIdentifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 subjectKeyIdentifier 标准。<code>X509Certificate</code> 必须包含一个具有指定值的 SubjectKeyIdentifier 扩展。如果其值为 <code>null</code>，则不执行 subjectKeyIdentifier 检查。
+ <p>
+注意，要复制返回的 byte 数组以防后续修改。
+
+@return 密钥标识符（或者为 <code>null</code>）
+@see #setSubjectKeyIdentifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.cert.X509CertSelector.getAuthorityKeyIdentifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 authorityKeyIdentifier 标准。<code>X509Certificate</code> 必须包含一个具有指定值的 AuthorityKeyIdentifier 扩展。如果其值为 <code>null</code>，则不执行 authorityKeyIdentifier 检查。
+ <p>
+注意，要复制返回的 byte 数组以防后续修改。
+
+@return 密钥标识符（或者为 <code>null</code>）
+@see #setAuthorityKeyIdentifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.security.cert.X509CertSelector.getCertificateValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 certificateValid 标准。指定的日期必须在 <code>X509Certificate</code> 的证书有效期内。如果其值为 <code>null</code>，则不执行 certificateValid 检查。
+ <p>
+注意，要复制返回的 <code>Date</code> 以防后续修改。
+
+@return 要检查的 <code>Date</code>（或者为 <code>null</code>）
+@see #setCertificateValid
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.security.cert.X509CertSelector.getPrivateKeyValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 privateKeyValid 标准。指定的日期必须在 <code>X509Certificate</code> 的私钥有效期内。如果其值为 <code>null</code>，则不执行 privateKeyValid 检查。
+ <p>
+注意，要复制返回的 <code>Date</code> 以防后续修改。
+
+@return 要检查的 <code>Date</code>（或者为 <code>null</code>）
+@see #setPrivateKeyValid
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.X509CertSelector.getSubjectPublicKeyAlgID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 subjectPublicKeyAlgID 标准。<code>X509Certificate</code> 必须包含一个具有指定算法的主体公钥。如果其值为 <code>null</code>，则不执行 subjectPublicKeyAlgID 检查。
+ 
+@return 用于检查的签名算法的对象标识符 (OID)（或者为 <code>null</code>）。OID 由一组句点分隔的非负整数来表示。
+@see #setSubjectPublicKeyAlgID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PublicKey java.security.cert.X509CertSelector.getSubjectPublicKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 subjectPublicKey 标准。<code>X509Certificate</code> 必须包含指定的主体公钥。如果其值为 <code>null</code>，则不执行 subjectPublicKey 检查。
+ 
+@return 用于检查的 subjectPublicKey（或者为 <code>null</code>）
+@see #setSubjectPublicKey
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean[] java.security.cert.X509CertSelector.getKeyUsage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 keyUsage 标准。<code>X509Certificate</code> 必须允许使用指定的 keyUsage 值。如果其值为 null，则不执行 keyUsage 检查。
+ <p>
+注意，要复制返回的 boolean 数组以防后续修改。
+
+@return 一个 boolean 数组，其格式与 {@link X509Certificate#getKeyUsage() X509Certificate.getKeyUsage()} 返回的 boolean 数组格式相同。或者为 <code>null</code>。
+@see #setKeyUsage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.String> java.security.cert.X509CertSelector.getExtendedKeyUsage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 extendedKeyUsage 标准。<code>X509Certificate</code> 必须允许其 extendedKeyUsage 扩展中的指定 keyPurpose。如果返回的 <code>keyPurposeSet</code> 为空或为 <code>null</code>，则不执行 extendedKeyUsage 检查。注意，没有 extendedKeyUsage 扩展的 <code>X509Certificate</code> 隐式地允许所有 keyPurpose。
+ 
+@return 一个 string 格式的 keyPurpose OID 的不可变 <code>Set</code>（或者为 <code>null</code>）
+@see #setExtendedKeyUsage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.X509CertSelector.getMatchAllSubjectAltNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 <code>X509Certificate</code> 是否必须包含 {@link #setSubjectAlternativeNames setSubjectAlternativeNames} 或 {@link #addSubjectAlternativeName addSubjectAlternativeName} 方法中所指定的所有或至少某个 subjectAlternativeNames。如果此方法返回值为 <code>true</code>，则 <code>X509Certificate</code> 必须包含所有指定的 subjectAlternativeNames。如果为 <code>false</code>，则 <code>X509Certificate</code> 必须至少包含某个指定的 subjectAlternativeNames。
+
+@return 如果启用此标志，则返回 <code>true</code>；如果禁用此标志，则返回 <code>false</code>。默认情况下此标志为 <code>true</code>。
+@see #setMatchAllSubjectAltNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.util.List<?>> java.security.cert.X509CertSelector.getSubjectAlternativeNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 subjectAlternativeNames 标准的一个副本。<code>X509Certificate</code> 必须包含所有或至少某个指定的 subjectAlternativeNames，这取决于 matchAllNames 标志的值（参见 {@link #getMatchAllSubjectAltNames getMatchAllSubjectAltNames}）。如果返回的值为 <code>null</code>，则不执行 subjectAlternativeNames 检查。
+ <p>
+如果返回的值不为 <code>null</code>，则是一个 <code>Collection</code>，subjectAlternativeNames 标准中所包括的每个名称在该集合中都对应一项。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。相同类型可以有多个名称。注意，返回的 <code>Collection</code> 可能包含重复的名称（相同的名称和名称类型）。
+ <p>
+<code>Collection</code> 中的每个 subjectAlternativeNames 都可以指定为一个 <code>String</code> 或 一个 ASN.1 编码的 byte 数组。有关所用格式的更多详细信息，请参阅 {@link #addSubjectAlternativeName(int type, String name) addSubjectAlternativeName(int type, String name)} 和 {@link #addSubjectAlternativeName(int type, byte [] name) addSubjectAlternativeName(int type, byte [] name)}。
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@return 一个名称 <code>Collection</code>（或者为 <code>null</code>）
+@see #setSubjectAlternativeNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.cert.X509CertSelector.getNameConstraints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 NameConstraints 标准。<code>X509Certificate</code> 必须具有满足指定 NameConstraints 要求的 subject 和 subjectAlternativeNames。
+ <p>
+以 byte 数组的形式返回该 NameConstraints。此 byte 数组包含 DER 编码形式的 NameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。{@link #setNameConstraints(byte [] bytes) setNameConstraints(byte [] bytes)} 的文档中提供了此结构的 ASN.1 表示。
+ <p>
+注意，要复制返回的 byte 数组以防后续修改。
+
+@return 一个 byte 数组，包含为检查 NameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码，如果不执行 NameConstraints 检查，则返回 <code>null</code>。
+@see #setNameConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.cert.X509CertSelector.getBasicConstraints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 BasicConstraints 限制。如果该值大于等于零，则 <code>X509Certificates</code> 包括的 basicConstraints 扩展具有的 pathLen 不能小于此值。如果该值为 -2，则只接受终最终实体证书。如果该值为 -1，则不执行 basicConstraints 检查。
+
+@return basicConstraints 限制的值
+@see #setBasicConstraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.String> java.security.cert.X509CertSelector.getPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回策略标准。<code>X509Certificate</code> 至少必须包括其证书策略扩展中指定的一种策略。如果返回的 <code>Set</code> 为空，则 <code>X509Certificate</code> 至少必须包括其证书策略扩展中指定的某个策略。如果返回的 <code>Set</code> 为 <code>null</code>，则不执行策略检查。
+
+@return 一个 string 格式的证书策略 OID 的不可变 <code>Set</code>（或者为 <code>null</code>）
+@see #setPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.util.List<?>> java.security.cert.X509CertSelector.getPathToNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 pathToNames 标准的一个副本。<code>X509Certificate</code> 不能包括禁止构建指定名称路径的 NameConstraints。如果返回的值为 <code>null</code>，则不执行 pathToNames 检查。
+ <p>
+如果返回的值不为 <code>null</code>，则是一个 <code>Collection</code>，pathToNames 标准中所包括的每个名称在该集合中都对应一项。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。相同类型可以有多个名称。注意，返回的 <code>Collection</code> 可能包含重复的名称（相同的名称和名称类型）。
+ <p>
+<code>Collection</code> 中的每个名称都可以指定为一个 <code>String</code> 或一个 ASN.1 编码的 byte 数组。有关所用格式的更多详细信息，请参阅 {@link #addPathToName(int type, String name) addPathToName(int type, String name)} 和 {@link #addPathToName(int type, byte [] name) addPathToName(int type, byte [] name)}。
+ <p>
+注意，要对该 <code>Collection</code> 执行深层复制以防后续修改。
+
+@return 一个名称 <code>Collection</code>（或者为 <code>null</code>）
+@see #setPathToNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.X509CertSelector.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>CertSelector</code> 的可打印表示形式。
+
+@return 描述此 <code>CertSelector</code> 内容的 <code>String</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.X509CertSelector.match(Certificate cert)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+决定是否应该选择某个 <code>Certificate</code>。
+
+@param cert 要检查的 <code>Certificate</code>
+@return 如果应该选择该 <code>Certificate</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.cert.X509CertSelector.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的副本。
+
+@return 副本
+
+<!-- END DATA -->

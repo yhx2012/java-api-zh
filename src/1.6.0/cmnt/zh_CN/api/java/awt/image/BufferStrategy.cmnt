@@ -1,0 +1,141 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.image.BufferStrategy extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BufferStrategy</code> 类表示用来在特定的 <code>Canvas</code> 或 <code>Window</code> 上组织复杂内存的机制。硬件和软件限制决定了是否能够实现特定的缓冲区策略以及如何实现它。从创建 <code>Canvas</code> 或 <code>Window</code> 时所用 <code>GraphicsConfiguration</code> 的性能中可以发觉这些限制。
+ <p>
+值得注意的是，术语 <i>buffer</i> 和 <i>surface</i> 意思相同：视频设备内存或系统内存中的连续内存区域。
+ <p>
+存在几种类型的复杂缓冲区策略，包括连续环形缓冲和 blit 缓冲。连续环形缓冲（即双缓冲或三次缓冲）是最常见的缓冲区策略；将一个应用程序绘制到单个<i>后备缓冲区</i>，然后只用一个步骤将其内容移入到前端（显示），这可通过复制数据或移动视频指针完成。移动视频指针可交换缓冲区，于是绘制的第一个缓冲区成为<i>前端缓冲区</i>，或称设备上当前所显示的内容；这称为<i>页面翻转</i>。
+ <p>
+作为一种替代方式，可以复制后备缓冲区的内容，即使用链而不是移动视频指针进行<i>位图传输 (blitted)</i>。
+ <p>
+ <pre>
+双缓冲：
+                    ***********         ***********
+                    *         * ------> *         *
+ [到显示器]    <---- * Front B *   显示  * Back B. * <---- 呈现
+                    *         * <------ *         *
+                    ***********         ***********
+
+三次缓冲：
+
+ [到      ***********         ***********        ***********
+显示器]   *         * --------+---------+------> *         *
+    <---- * Front B *   显示  * Mid. B. *        * Back B. * <---- 呈现
+          *         * <------ *         * <----- *         *
+          ***********         ***********        ***********
+ </pre>
+ <p>
+
+以下是一个如何创建和使用缓冲区策略的例子：
+ <pre><code>
+
+ // Check the capabilities of the GraphicsConfiguration
+ ...
+
+ // Create our component
+ Window w = new Window(gc);
+
+ // Show our window
+ w.setVisible(true);
+
+ // Create a general double-buffering strategy
+ w.createBufferStrategy(2);
+ BufferStrategy strategy = w.getBufferStrategy();
+
+// Main loop
+ while (!done) {
+     // Prepare for rendering the next frame
+     // ...
+
+     // Render single frame
+     do {
+         // The following loop ensures that the contents of the drawing buffer
+         // are consistent in case the underlying surface was recreated
+         do {
+             // Get a new graphics context every time through the loop
+             // to make sure the strategy is validated
+             Graphics graphics = strategy.getDrawGraphics();
+     
+             // Render to graphics
+             // ...
+
+             // Dispose the graphics
+             graphics.dispose();
+
+             // Repeat the rendering if the drawing buffer contents 
+             // were restored
+         } while (strategy.contentsRestored());
+
+         // Display the buffer
+         strategy.show();
+
+         // Repeat the rendering if the drawing buffer was lost
+     } while (strategy.contentsLost());
+ }
+
+ // Dispose the window
+ w.setVisible(false);
+ w.dispose();
+ </code></pre>
+
+ @see java.awt.Component
+ @see java.awt.GraphicsConfiguration
+ @see VolatileImage
+ @author Michael Martak
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.BufferCapabilities java.awt.image.BufferStrategy.getCapabilities()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>BufferStrategy</code> 的 <code>BufferCapabilities</code>。
+@return 此策略的缓冲性能
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Graphics java.awt.image.BufferStrategy.getDrawGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于绘制缓冲区的图形上下文。由于性能的原因，此方法可能不是同步的；多个线程使用此方法时，应该在应用层对其进行处理。对所得到的图形对象的释放必须由应用程序来处理。
+@return 用于绘制缓冲区的图形上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.image.BufferStrategy.contentsLost()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回上次调用 <code>getDrawGraphics</code> 后绘制缓冲区是否丢失。由于使用缓冲区策略的缓冲区通常是 <code>VolatileImage</code> 类型的，因此它们有可能丢失。有关对丢失缓冲区的讨论，请参阅 <code>VolatileImage</code>。
+@return 上次调用 <code>getDrawGraphics</code> 之后绘图缓冲区是否丢失
+@see java.awt.image.VolatileImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.image.BufferStrategy.contentsRestored()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回绘制缓冲区最近是否从丢失状态恢复，并重新初始化为默认背景色（白色）。由于使用缓冲区策略的缓冲区通常是 <code>VolatileImage</code> 类型的，因此它们有可能丢失。如果上次调用 <code>getDrawGraphics</code> 后，缓冲区最近已从丢失状态恢复，则缓冲区可能要求重新绘制。有关对丢失缓冲区的讨论，请参阅 <code>VolatileImage</code>。
+@return 上次调用 <code>getDrawGraphics</code> 之后是否恢复了绘图缓冲区
+@see java.awt.image.VolatileImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.image.BufferStrategy.show()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过复制内存（位图传输）或更改显示指针（翻转）使下一个可用缓冲区可见。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferStrategy.dispose()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 释放当前由此 <code>BufferStrategy</code> 使用的系统资源，并从关联 Component 中移除它们。在调用此方法之后，<code>getBufferStrategy</code> 将返回 null。试图在释放 <code>BufferStrategy</code> 后使用它将导致不确定的行为。
+
+ @see java.awt.Component#createBufferStrategy
+ @see java.awt.Component#getBufferStrategy
+ @since 1.6
+
+<!-- END DATA -->

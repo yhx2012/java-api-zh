@@ -1,0 +1,398 @@
+<!-- BEGIN KEY -->
+public class javax.management.timer.Timer extends javax.management.NotificationBroadcasterSupport implements javax.management.timer.TimerMBean, javax.management.MBeanRegistration
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ 提供对计时器 MBean 的实现。计时器 MBean 将在指定的时间发出警告，以唤醒所有注册的侦听器来接收计时器通知。
+ <P>
+ 
+ 此类管理一个过期的计时器通知列表。这是一种允许用户根据需要任意添加/移除通知的方法。当计时器发出计时器通知并过时后，会将该通知自动从计时器通知列表中移除。<BR>可以将其他计时器通知添加到常规重复发送的通知中。
+ <P>
+
+注：
+ <OL>
+ <LI>当发送计时器通知时，计时器将更新通知序列号，而不考虑通知类型。
+ <LI>计时器服务依赖于加载 <CODE>Timer</CODE> 类的主机的系统日期。如果侦听器主机具有不同的系统日期，则侦听器可能会不合时宜地接收到通知。为了避免此类问题，要同步所有需要计时的主机的系统日期。
+ <LI>定期通知的默认行为是<i>固定延迟执行</i>，这一点已在 {@link java.util.Timer} 中指定。为了使用<i>固定速率执行</i>，要使用重载的 {@link #addNotification(String, String, Object, Date, long, long, boolean)} 方法。
+ <LI>可能会在同一线程中执行所有这些通知侦听器。因此，必须快速执行以避免阻止其他侦听器或者打乱固定延迟执行的规律。请参见 {@link NotificationBroadcasterSupport}。
+ </OL>
+
+@version     4.63     12/29/05
+@author      Sun Microsystems, Inc
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.management.timer.Timer.ONE_SECOND
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一秒钟内的毫秒数。<CODE>addNotification</CODE> 方法的有用常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.management.timer.Timer.ONE_MINUTE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一分钟内的毫秒数。<CODE>addNotification</CODE> 方法的有用常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.management.timer.Timer.ONE_HOUR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一小时内的毫秒数。<CODE>addNotification</CODE> 方法的有用常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.management.timer.Timer.ONE_DAY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一天内的毫秒数。<CODE>addNotification</CODE> 方法的有用常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.management.timer.Timer.ONE_WEEK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一周内的毫秒数。<CODE>addNotification</CODE> 方法的有用常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.timer.Timer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.timer.Timer.preRegister(MBeanServer server, ObjectName name) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许计时器 MBean 在 MBean 服务器中注册之前执行任何所需的操作。
+ <P>
+ 未在此上下文中使用。
+
+@param server 将在其中注册计时器 MBean 的 MBean 服务器。
+@param name 计时器 MBean 的对象名。
+
+@return 已注册的计时器 MBean 的名称。
+
+@exception java.lang.Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.timer.Timer.postRegister(Boolean registrationDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许计时器 MBean 在 MBean 服务器中注册后或注册失败后执行任何所需的操作。
+ <P>
+ 未在此上下文中使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.timer.Timer.preDeregister() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许计时器 MBean 在 MBean 服务器注销它之前执行任何所需的操作。
+ <P>
+ 停止计时器。
+
+@exception java.lang.Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.timer.Timer.postDeregister()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许计时器 MBean 在 MBean 服务器注销它之后执行任何所需的操作。
+ <P>
+ 未在此上下文中使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.timer.Timer.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动计时器。
+ <P>
+ 如果有一个或多个计时器通知早于通知列表中的时间，则将根据 <CODE>sendPastNotifications</CODE> 标志发送通知，然后根据其周期和剩余出现数量更新通知。如果计时器通知日期早于当前日期，则仅从通知列表中移除此通知。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.timer.Timer.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止计时器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Integer javax.management.timer.Timer.addNotification(String type, String message, Object userData, Date date, long period, long nbOccurences, boolean fixedRate) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定 <CODE>type</CODE>、<CODE>message</CODE> 和 <CODE>userData</CODE> 的新计时器通知，并将其插入到带有给定日期、时段和出现数量的通知列表中。
+ <P>
+ 如果要插入的计时器通知其日期早于当前的日期，则该方法具有把指定的日期当做当前日期的行为。<BR> 对于&ldquo;一次性&rdquo;通知，将立即发出该通知。<BR> 对于定期通知，将立即发出第一个通知，而后续通知将根据 period 参数指定的间隔提供。
+ <P>
+ 注意，一旦将计时器通知添加到通知列表中，将不能更新其相关的日期、时段和出现数量。
+ <P>
+ 如果是定期通知，则参数 <i>fixedRate</i> 的值将用来指定执行方案，如在 {@link java.util.Timer} 中指定的那样。
+
+@param type 计时器通知类型。
+@param message 计时器通知详细消息。
+@param userData 计时器通知用户数据对象。
+@param date 发出通知时的日期。
+@param period 计时器通知的时段（以毫秒为单位）。
+@param nbOccurences 将发出的计时器通知的总数。
+@param fixedRate 如果为 <code>true</code> 并且通知是定期的，则使用<i>固定速率</i> 执行方案安排该通知。如果为 <code>false</code> 并且通知是定期的，则使用<i>固定延迟</i> 执行方案安排通知。如果通知不是定期的，则将被忽略。
+
+@return 新创建的计时器通知的标识符。
+
+@exception java.lang.IllegalArgumentException 如果 date 为 {@code null} 或者 period 或出现的数量为负数。
+
+@see #addNotification(String, String, Object, Date, long, long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Integer javax.management.timer.Timer.addNotification(String type, String message, Object userData, Date date, long period, long nbOccurences) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定 <CODE>type</CODE>、<CODE>message</CODE> 和 <CODE>userData</CODE> 的新计时器通知，并将其插入到带有给定日期、时段和出现数量的通知列表中。
+ <P>
+ 如果要插入的计时器通知其日期早于当前的日期，则该方法具有把指定的日期当做当前日期的行为。<BR> 对于&ldquo;一次性&rdquo;通知，将立即发出该通知。<BR> 对于定期通知，将立即发出第一个通知，而后续通知将根据 period 参数指定的间隔提供。
+ <P>
+ 注意，一旦将计时器通知添加到通知列表中，将不能更新其相关的日期、时段和出现数量。
+ <P>
+ 如果是定期通知，则使用<i>固定延迟</i> 执行方案，如在 {@link java.util.Timer} 中指定的那样。为了使用<i>固定速率</i> 执行方案，要使用 {@link #addNotification(String, String, Object, Date, long, long, boolean)}。
+
+@param type 计时器通知类型。
+@param message 计时器通知详细消息。
+@param userData 计时器通知用户数据对象。
+@param date 发出通知时的日期。
+@param period 计时器通知的时段（以毫秒为单位）。
+@param nbOccurences 将发出的计时器通知的总数。
+
+@return 新创建的计时器通知的标识符。
+
+@exception java.lang.IllegalArgumentException 如果 date 为 {@code null} 或者 period 或出现的数量为负数。
+
+@see #addNotification(String, String, Object, Date, long, long, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Integer javax.management.timer.Timer.addNotification(String type, String message, Object userData, Date date, long period) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定 <CODE>type</CODE>、<CODE>message</CODE> 和 <CODE>userData</CODE> 的新计时器通知，并将其插入到带有给定日期和时段，以及 null 出现数量的通知列表中。
+ <P>
+ 通过使用<i>固定延迟</i> 执行方案，计时器通知将持续重复使用计时器时段，如在 {@link java.util.Timer} 中指定的那样。为了使用<i>固定速率</i> 执行方案，要使用 {@link #addNotification(String, String, Object, Date, long, long, boolean)}。
+ <P>
+ 如果要插入的计时器通知其日期早于当前的日期，则该方法具有把指定的日期当做当前日期的行为。将立即发出第一个通知，而后续通知将根据 period 参数指定的间隔提供。
+ 
+@param type 计时器通知类型。
+@param message 计时器通知详细消息。
+@param userData 计时器通知用户数据对象。
+@param date 发出通知时的日期。
+@param period 计时器通知的时段（以毫秒为单位）。
+
+@return 新创建的计时器通知的标识符。
+
+@exception java.lang.IllegalArgumentException 如果 date 为 {@code null} 或者 period 或出现的数量为负数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Integer javax.management.timer.Timer.addNotification(String type, String message, Object userData, Date date) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定 <CODE>type</CODE>、<CODE>message</CODE> 和 <CODE>userData</CODE> 的新计时器通知，并将其插入到带有给定日期以及 null 时段和出现数量的通知列表中。
+ <P>
+ 计时器通知将在指定的日期一次性处理。
+ <P>
+ 如果要插入的计时器通知其日期早于当前的日期，则该方法具有把指定的日期当做当前日期的行为，并且将立即发出通知。
+ 
+@param type 计时器通知类型。
+@param message 计时器通知详细消息。
+@param userData 计时器通知用户数据对象。
+@param date 发出通知时的日期。
+
+@return 新创建的计时器通知的标识符。
+
+@exception java.lang.IllegalArgumentException 如果 date 为 {@code null}。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.timer.Timer.removeNotification(Integer id) throws javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从通知列表中移除与指定标识符对应的计时器通知。
+ 
+@param id 计时器通知标识符。
+
+@exception InstanceNotFoundException 如果指定的标识符不能与此计时器 MBean 通知列表中的任何计时器通知对应。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.timer.Timer.removeNotifications(String type) throws javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从通知列表中移除与指定类型对应的所有计时器通知。
+ 
+@param type 计时器通知类型。
+
+@exception InstanceNotFoundException 如果指定类型不能与此计时器 MBean 通知列表中的任何计时器通知对应。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.timer.Timer.removeAllNotifications()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从通知列表中删除所有计时器通知并重置用来更新计时器通知标识符的计数器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.management.timer.Timer.getNbNotifications()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得在通知列表中注册的计时器通知数。
+
+@return 计时器通知数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Vector<java.lang.Integer> javax.management.timer.Timer.getAllNotificationIDs()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得所有在通知列表中注册的计时器通知标识符。
+
+@return 一个包含所有计时器通知标识符的 <CODE>Integer</CODE> 对象的向量。<BR>如果不存在向此计时器 MBean 注册的计时器通知，则该向量为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Vector<java.lang.Integer> javax.management.timer.Timer.getNotificationIDs(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得所有与指定类型对应的计时器通知的标识符。
+
+@param type 计时器通知类型。
+
+@return 一个 <CODE>Integer</CODE> 对象的向量，该对象包含所有带指定 <CODE>type</CODE> 的计时器通知的标识符。<BR>如果不存在向此带指定 <CODE>type</CODE> 的计时器 MBean 注册的计时器通知，则该向量为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.timer.Timer.getNotificationType(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定标识符对应的计时器通知类型。
+
+@param id 计时器通知标识符。
+
+@return 计时器通知类型，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.timer.Timer.getNotificationMessage(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定标识符对应的计时器通知的详细消息。
+
+
+@param id 计时器通知标识符。
+
+
+@return 计时器通知详细消息，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.timer.Timer.getNotificationUserData(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定标识符对应的计时器通知用户数据对象。
+
+@param id 计时器通知标识符。
+
+@return 计时器通知用户数据对象，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date javax.management.timer.Timer.getDate(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与计时器通知关联的日期的一个副本。
+
+@param id 计时器通知标识符。
+
+@return 日期的一个副本，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Long javax.management.timer.Timer.getPeriod(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与计时器通知关联的时段（以毫秒为单位）的一个副本。
+
+@param id 计时器通知标识符。
+
+@return 时段的一个副本，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Long javax.management.timer.Timer.getNbOccurences(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与计时器通知关联的剩余出现数量的一个副本。
+
+@param id 计时器通知标识符。
+
+@return 剩余出现数量的一个副本，如果标识符不与向此计时器 MBean 注册的任何计时器通知对应，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Boolean javax.management.timer.Timer.getFixedRate(Integer id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此种标志的一个副本：该标志指示是以<i>固定延迟</i> 方式执行定期通知，还是以<i>固定速率</i> 方式执行。
+
+@param id 计时器通知标识符。
+
+@return 指示是以<i>固定延迟</i> 方式执行定期通知，还是以<i>固定速率</i> 方式执行的标志的一个副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.timer.Timer.getSendPastNotifications()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个指示计时器是否发送过期通知的标志。<BR>过期通知发送开/关标志的默认值为 <CODE>false</CODE>。
+
+@return 过期通知发送开/关标志值。
+
+@see #setSendPastNotifications
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.timer.Timer.setSendPastNotifications(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指示计时器是否发送过期通知的标志。<BR>过期通知发送开/关标志的默认值为 <CODE>false</CODE>。
+
+@param value 过期通知发送开/关标志值。
+
+@see #getSendPastNotifications
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.timer.Timer.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试计时器 MBean 是否处于激活状态。当调用 {@link #start start} 方法时，计时器 MBean 被标记为激活。当调用 {@link #stop stop} 方法时，该标记变为非激活。<BR>激活开/关标志的默认值为 <CODE>false</CODE>。
+
+@return 如果计时器 MBean 处于激活状态，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.timer.Timer.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试计时器通知列表是否为空。
+
+@return 如果计时器通知列表为空，则返回 <CODE>true</CODE>，否则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->

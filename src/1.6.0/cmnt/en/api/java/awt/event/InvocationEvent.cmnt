@@ -1,0 +1,241 @@
+<!-- BEGIN KEY -->
+public class java.awt.event.InvocationEvent extends java.awt.AWTEvent implements java.awt.ActiveEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An event which executes the <code>run()</code> method on a <code>Runnable
+ </code> when dispatched by the AWT event dispatcher thread. This class can
+ be used as a reference implementation of <code>ActiveEvent</code> rather
+ than declaring a new class and defining <code>dispatch()</code>.<p>
+
+ Instances of this class are placed on the <code>EventQueue</code> by calls
+ to <code>invokeLater</code> and <code>invokeAndWait</code>. Client code
+ can use this fact to write replacement functions for <code>invokeLater
+ </code> and <code>invokeAndWait</code> without writing special-case code
+ in any <code>AWTEventListener</code> objects.
+
+ @author	Fred Ecks
+ @author	David Mendenhall
+ @version	1.21, 04/07/06
+
+ @see		java.awt.ActiveEvent
+ @see		java.awt.EventQueue#invokeLater
+ @see		java.awt.EventQueue#invokeAndWait
+ @see		AWTEventListener
+
+ @since 	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_FIRST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Marks the first integer id for the range of invocation event ids.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The default id for all InvocationEvents.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_LAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Marks the last integer id for the range of invocation event ids.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Runnable java.awt.event.InvocationEvent.runnable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The Runnable whose run() method will be called.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.awt.event.InvocationEvent.notifier
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The (potentially null) Object whose notifyAll() method will be called
+ immediately after the Runnable.run() method returns.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.event.InvocationEvent.catchExceptions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set to true if dispatch() catches Throwable and stores it in the
+ exception instance variable. If false, Throwables are propagated up
+ to the EventDispatchThread's dispatch loop.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Exception java.awt.event.InvocationEvent.exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The (potentially null) Exception thrown during execution of the
+ Runnable.run() method. This variable will also be null if a particular
+ instance does not catch exceptions.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Throwable java.awt.event.InvocationEvent.throwable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The (potentially null) Throwable thrown during execution of the
+ Runnable.run() method. This variable will also be null if a particular
+ instance does not catch exceptions.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private long java.awt.event.InvocationEvent.when
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The timestamp of when this event occurred.
+
+ @serial
+ @see #getWhen
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InvocationEvent(Object source, Runnable runnable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an <code>InvocationEvent</code> with the specified
+ source which will execute the runnable's <code>run</code>
+ method when dispatched.
+ <p>This is a convenience constructor.  An invocation of the form
+ <tt>InvocationEvent(source, runnable)</tt>
+ behaves in exactly the same way as the invocation of
+ <tt>{@link #InvocationEvent(Object, Runnable, Object, boolean) InvocationEvent}(source, runnable, null, false)</tt>.
+ <p> This method throws an <code>IllegalArgumentException</code>
+ if <code>source</code> is <code>null</code>.
+
+ @param source	the <code>Object</code> that originated the event
+ @param runnable	the <code>Runnable</code> whose <code>run</code>
+                  method will be executed
+ @throws IllegalArgumentException if <code>source</code> is null
+
+ @see     #InvocationEvent(Object, Runnable, Object, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InvocationEvent(Object source, Runnable runnable, Object notifier, boolean catchThrowables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an <code>InvocationEvent</code> with the specified
+ source which will execute the runnable's <code>run</code>
+ method when dispatched.  If notifier is non-<code>null</code>,
+ <code>notifyAll()</code> will be called on it
+ immediately after <code>run</code> returns.
+ <p>An invocation of the form <tt>InvocationEvent(source,
+ runnable, notifier, catchThrowables)</tt>
+ behaves in exactly the same way as the invocation of
+ <tt>{@link #InvocationEvent(Object, int, Runnable, Object, boolean) InvocationEvent}(source, InvocationEvent.INVOCATION_DEFAULT, runnable, notifier, catchThrowables)</tt>.
+ <p>This method throws an <code>IllegalArgumentException</code>
+ if <code>source</code> is <code>null</code>.
+
+ @param source		the <code>Object</code> that originated
+                          the event
+ @param runnable		the <code>Runnable</code> whose
+                          <code>run</code> method will be
+                          executed
+ @param notifier		the Object whose <code>notifyAll</code>
+                          method will be called after
+                          <code>Runnable.run</code> has returned
+ @param catchThrowables	specifies whether <code>dispatch</code>
+                          should catch Throwable when executing
+                          the <code>Runnable</code>'s <code>run</code>
+                          method, or should instead propagate those
+                          Throwables to the EventDispatchThread's
+                          dispatch loop
+ @throws IllegalArgumentException if <code>source</code> is null
+
+ @see     #InvocationEvent(Object, int, Runnable, Object, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.event.InvocationEvent(Object source, int id, Runnable runnable, Object notifier, boolean catchThrowables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an <code>InvocationEvent</code> with the specified
+ source and ID which will execute the runnable's <code>run</code>
+ method when dispatched.  If notifier is non-<code>null</code>,
+ <code>notifyAll</code> will be called on it 
+ immediately after <code>run</code> returns.
+ <p>Note that passing in an invalid <code>id</code> results in
+ unspecified behavior. This method throws an
+ <code>IllegalArgumentException</code> if <code>source</code>
+ is <code>null</code>.
+
+ @param source		the <code>Object</code> that originated
+                          the event
+ @param id		the ID for the event
+ @param runnable		the <code>Runnable</code> whose
+                          <code>run</code> method will be executed
+ @param notifier		the <code>Object</code> whose <code>notifyAll</code>
+                          method will be called after
+                          <code>Runnable.run</code> has returned
+ @param catchThrowables	specifies whether <code>dispatch</code>
+                          should catch Throwable when executing the
+                          <code>Runnable</code>'s <code>run</code>
+                          method, or should instead propagate those
+                          Throwables to the EventDispatchThread's
+                          dispatch loop
+ @throws IllegalArgumentException if <code>source</code> is null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.event.InvocationEvent.dispatch()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Executes the Runnable's <code>run()</code> method and notifies the
+ notifier (if any) when <code>run()</code> returns.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Exception java.awt.event.InvocationEvent.getException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns any Exception caught while executing the Runnable's <code>run()
+ </code> method.
+
+ @return	A reference to the Exception if one was thrown; null if no
+		Exception was thrown or if this InvocationEvent does not
+		catch exceptions
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Throwable java.awt.event.InvocationEvent.getThrowable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns any Throwable caught while executing the Runnable's <code>run()
+ </code> method.
+
+ @return	A reference to the Throwable if one was thrown; null if no
+		Throwable was thrown or if this InvocationEvent does not
+		catch Throwables
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.awt.event.InvocationEvent.getWhen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the timestamp of when this event occurred.
+
+ @return this event's timestamp
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.event.InvocationEvent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a parameter string identifying this event.
+ This method is useful for event-logging and for debugging.
+
+ @return  A string identifying the event and its attributes
+
+<!-- END DATA -->

@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public class java.net.CookieManager extends java.net.CookieHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+CookieManager 提供 {@link CookieHandler} 的具体实现，它将 cookie 的存储区与围绕接受和拒绝 cookie 的策略分离开来。使用管理存储的 {@link CookieStore} 以及做出 cookie 接受/拒绝决策的 {@link CookiePolicy} 对象来初始化 CookieManager。
+
+<p> java.net 包中的 HTTP cookie 管理如下所示：
+ <blockquote>
+ <pre>
+use
+CookieHandler &lt;------- HttpURLConnection
+       ^
+| impl
+|         use
+CookieManager -------&gt; CookiePolicy
+|   use
+|--------&gt; HttpCookie
+             |              ^
+|              | use
+|   use        |
+|--------&gt; CookieStore
+                            ^
+| impl
+                            |
+Internal in-memory implementation
+ </pre>
+ <ul>
+   <li>
+CookieHandler 是 cookie 管理的核心所在。用户可以调用 CookieHandler.setDefault 设置要使用的具体 CookieHanlder 实现。
+   </li>
+   <li>
+CookieManager.put 调用 CookiePolicy.shouldAccept 以查看 cookie 是否应该被接受并放入 cookie 存储区。用户可以使用三种预定义 CookiePolicy（即 ACCEPT_ALL、ACCEPT_NONE 和 ACCEPT_ORIGINAL_SERVER）中的任何一种，或者定义自己的 CookiePolicy 实现并告知 CookieManager 使用该策略。
+   </li>
+   <li>
+CookieStore 是存储任何已接受 HTTP cookie 的地方。如果创建时未指定，那么 CookieManager 实例将使用内部内存实现。用户也可以实现一个 CookieStore 并告知 CookieManager 使用该存储区。
+   </li>
+   <li>
+当前，CookieManager 只能使用 CookieStore.add(URI, HttpCookie) 和 CookieStore.get(URI)。其他方法是出于完整性考虑，也可能是更复杂 CookieStore 实现（例如 NetscapeCookieSotre）的需要。
+   </li>
+ </ul>
+ </blockquote>
+
+<p>用户可以用各种方式&ldquo;钩住&rdquo;自己的 HTTP cookie 管理行为，例如：
+ <blockquote>
+ <ul>
+<li>使用 CookieHandler.setDefault 设置全新的 {@link CookieHandler} 实现
+<li>让 CookieManager 成为默认 {@link CookieHandler} 实现，但实现用户自己的 {@link CookieStore} 和 {@link CookiePolicy}， 并告知默认 CookieManager 使用它们：
+     <blockquote><pre>
+// this should be done at the beginning of an HTTP session
+CookieHandler.setDefault(new CookieManager(new MyCookieStore(), new MyCookiePolicy()));
+     </pre></blockquote>
+<li>让 CookieManager 成为默认 {@link CookieHandler} 实现，但使用自定义 {@link CookiePolicy}：
+     <blockquote><pre>
+// this should be done at the beginning of an HTTP session
+CookieHandler.setDefault(new CookieManager());
+// this can be done at any point of an HTTP session
+((CookieManager)CookieHandler.getDefault()).setCookiePolicy(new MyCookiePolicy());
+     </pre></blockquote>
+ </ul>
+ </blockquote>
+
+<p>该实现遵守 RFC 2965 的第 3.3 节。
+
+@version %I%, %E% 
+@author Edward Wang 
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新 cookie 管理器。
+
+<p>此构造方法将使用默认 cookie 存储区和接受策略创建新的 cookie 管理器。效果与 <tt>CookieManager(null, null)</tt> 相同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieManager(CookieStore store, CookiePolicy cookiePolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定 cookie 存储区和 cookie 策略创建一个新 cookie 管理器。
+
+@param store     cookie 管理器要使用的 <tt>CookieStore</tt>。如果为 <tt>null</tt>，则 cookie 管理器将使用默认存储区，即一个内存 CookieStore 实现。
+@param cookiePolicy      cookie 管理器用作策略回调的 <tt>CookiePolicy</tt> 实例。如果为 <tt>null</tt>，则使用 ACCEPT_ORIGINAL_SERVER。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.CookieManager.setCookiePolicy(CookiePolicy cookiePolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 cookie 管理器的 cookie 策略。
+
+<p> 默认情况下，<tt>CookieManager</tt> 实例具有 cookie 策略 ACCEPT_ORIGINAL_SERVER。用户总是可以调用此方法来设置另一种 cookie 策略。
+
+@param cookiePolicy      cookie 策略。可以为 <tt>null</tt>，表示对当前 cookie 策略没有影响。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieStore java.net.CookieManager.getCookieStore()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前 cookie 存储区。
+
+@return  cookie 管理器当前使用的 cookie 存储区。
+
+<!-- END DATA -->

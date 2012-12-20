@@ -1,0 +1,207 @@
+<!-- BEGIN KEY -->
+public final class java.awt.datatransfer.SystemFlavorMap extends java.lang.Object implements java.awt.datatransfer.FlavorMap, java.awt.datatransfer.FlavorTable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+SystemFlavorMap 是 &quot;native&quot; (String)（对应于特定于平台的数据格式）和 &quot;flavor&quot; (DataFlavor)（对应于与平台无关的 MIME 类型）之间的可配置映射。数据传输子系统使用此映射在 Java 和本机应用程序之间传输数据，以及在独立的 VM 中的 Java 应用程序之间传输数据。
+ <p>
+在 Sun 参考实现中，默认的 SystemFlavorMap 是通过文件 <code>jre/lib/flavormap.properties</code> 和 AWT 属性 <code>AWT.DnD.flavorMapFileURL</code> 所引用的 URL 的内容初始化的。有关详细信息，请参阅 <code>flavormap.properties</code>。
+
+@version 1.36, 05/05/04
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.datatransfer.FlavorMap java.awt.datatransfer.SystemFlavorMap.getDefaultFlavorMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此线程的 ClassLoader 的默认 FlavorMap。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.List<java.lang.String> java.awt.datatransfer.SystemFlavorMap.getNativesForFlavor(DataFlavor flav)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数据传输子系统可以将指定 <code>DataFlavor</code> 转换成的 <code>String</code> native 的 <code>List</code>。该 <code>List</code> 的排序方式是从最好的 native 到最差的 native。即第一个 native 最能将指定 flavor 的数据反映到底层的本机平台。
+ <p>
+如果指定的 <code>DataFlavor</code> 以前对于数据传输子系统而言是未知的，并且数据传输子系统未能将此 <code>DataFlavor</code> 转换为任何现有的 native，则调用此方法将在指定的 <code>DataFlavor</code> 和其 MIME 类型的编码版本之间建立一个双向映射，作为其 native。
+
+@param flav 应该返回其对应 native 的 <code>DataFlavor</code>。如果指定 <code>null</code>，则数据传输子系统当前已知的所有 native 都将以不确定的顺序返回。
+@return <code>java.lang.String</code> 对象的 <code>java.util.List</code>，这些对象是特定于平台的数据格式的特定于平台的表示形式
+
+@see #encodeDataFlavor
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.List<java.awt.datatransfer.DataFlavor> java.awt.datatransfer.SystemFlavorMap.getFlavorsForNative(String nat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数据传输子系统可以将指定 <code>String</code> native 转换成的 <code>DataFlavor</code> 的 <code>List</code>。该 <code>List</code> 的排序方式是从最好的 <code>DataFlavor</code> 到最差的 <code>DataFlavor</code>。即第一个 <code>DataFlavor</code> 最能将指定 native 中的数据反映到 Java 应用程序。
+ <p>
+如果指定的 native 以前对于数据传输子系统而言是未知的，并且该 native 编码正确，则调用此方法将在指定的 native 和 <code>DataFlavor</code>（其 MIME 类型为 native 的解码版本）之间建立一个双向映射。
+ <p>
+如果指定的 native 不是正确编码的 native，并且此 native 的映射关系没有使用 <code>setFlavorsForNative</code> 进行修改，则 <code>List</code> 的内容是与平台有关的，但是并不能返回 <code>null</code>。
+
+@param nat 应该返回其对应 <code>DataFlavor</code> 的 native。如果指定 <code>null</code>，则数据传输子系统当前已知的所有 <code>DataFlavor</code> 都将以不确定的顺序返回。
+@return <code>DataFlavor</code> 对象的 <code>java.util.List</code>，可以将特定于平台的指定 native 中特定于平台的数据转换为这些对象。
+
+@see #encodeJavaMIMEType
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Map<java.awt.datatransfer.DataFlavor, java.lang.String> java.awt.datatransfer.SystemFlavorMap.getNativesForFlavors(java.awt.datatransfer.DataFlavor[] flavors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 <code>DataFlavor</code> 到其大多数首选的 <code>String</code> native 的 <code>Map</code>。每一个 native 值都将与指定 flavor 的 <code>getNativesForFlavor</code> 所返回 List 中的第一个 native 相同。
+ <p>
+如果指定的 <code>DataFlavor</code> 以前对于数据传输子系统是未知的，那么调用此方法将在指定的 <code>DataFlavor</code> 和其 MIME 类型的编码版本之间建立一个双向映射，作为其 native。
+
+@param flavors 一组 <code>DataFlavor</code>，它们是返回 <code>Map</code> 的键集。如果指定了 <code>null</code>，则返回对数据传输子系统已知的所有 <code>DataFlavor</code> 到其大多数首选 <code>String</code> native 的映射。
+@return <code>DataFlavor</code> 到 <code>String</code> native 的 <code>java.util.Map</code>
+
+@see #getNativesForFlavor
+@see #encodeDataFlavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Map<java.lang.String, java.awt.datatransfer.DataFlavor> java.awt.datatransfer.SystemFlavorMap.getFlavorsForNatives(java.lang.String[] natives)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 <code>String</code> native 到其大多数首选 <code>DataFlavor</code> 的 <code>Map</code>。每一个 <code>DataFlavor</code> 值都将与指定 native 的 <code>getFlavorsForNative</code> 所返回 List 中的第一个 <code>DataFlavor</code> 相同。
+ <p>
+如果指定的 native 以前对于数据传输子系统而言是未知的，并且该 native 编码正确，则调用此方法将在指定的 native 和 <code>DataFlavor</code>（其 MIME 类型为 native 的解码版本）之间建立一个双向映射。
+
+@param native 一组 <code>String</code>，它们是返回 <code>Map</code> 的键集。如果指定了 <code>null</code>，则返回所有受支持 <code>String</code> native 到其大多数首选 <code>DataFlavor</code> 的映射。
+@return <code>String</code> native 到 <code>DataFlavor</code> 的 <code>java.util.Map</code>
+
+@see #getFlavorsForNative
+@see #encodeJavaMIMEType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.SystemFlavorMap.addUnencodedNativeForFlavor(DataFlavor flav, String nat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加从指定的 <code>DataFlavor</code>（和等于指定 <code>DataFlavor</code> 的所有 <code>DataFlavor</code>）到指定 <code>String</code> native 的映射。与 <code>getNativesForFlavor</code> 不同，该映射仅是单向建立的，并且不对 native 进行编码。要建立双向映射，请同时调用 <code>addFlavorForUnencodedNative</code>。新的映射优先级低于现有映射。如果从指定或相等 <code>DataFlavor</code> 到指定 <code>String</code> native 的映射已经存在，则此方法无效。
+
+@param flav 该映射的 <code>DataFlavor</code> 键
+@param nat 该映射的 <code>String</code> native 值
+@throws NullPointerException 如果 flav 或 nat 为 <code>null</code>
+
+@see #addFlavorForUnencodedNative
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.SystemFlavorMap.setNativesForFlavor(DataFlavor flav, java.lang.String[] natives)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+放弃指定 <code>DataFlavor</code> 和等于指定 <code>DataFlavor</code> 的所有 <code>DataFlavor</code> 的当前映射，并创建到指定 <code>String</code> native 的新映射。与 <code>getNativesForFlavor</code> 不同，这些映射仅是单向建立的，并且不对 native 进行编码。要建立双向映射，请同时调用 <code>setFlavorsForNative</code>。数组中的第一个 native 表示最高优先级的映射。后续 native 所表示的映射的优先级是递减的。
+ <p>
+如果数组包含多个引用相等 <code>String</code> native 的元素，则此方法将为其中第一个元素建立新映射，而忽略其余的元素。
+ <p> 
+建议客户机代码不要重置数据传输子系统建立的映射。此方法仅用于应用程序级的映射。
+
+@param flav 该映射的 <code>DataFlavor</code> 键
+@param natives 该映射的 <code>String</code> native 值
+@throws NullPointerException 如果 flav 或 native 为 <code>null</code> 或者 native 包含 <code>null</code> 元素
+
+@see #setFlavorsForNative
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.SystemFlavorMap.addFlavorForUnencodedNative(String nat, DataFlavor flav)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加从单个 <code>String</code> native 到单个 <code>DataFlavor</code> 的映射。与 <code>getFlavorsForNative</code> 不同，该映射仅是单向建立的，并且不对 native 进行编码。要建立双向映射，请同时调用 <code>addUnencodedNativeForFlavor</code>。新的映射优先级低于现有映射。如果从指定 <code>String</code> native 到指定或相等 <code>DataFlavor</code> 的映射已经存在，则此方法无效。
+
+@param nat 该映射的 <code>String</code> native 键
+@param flav 该映射的 <code>DataFlavor</code> 值
+@throws NullPointerException 如果 nat 或 flav 为 <code>null</code>
+
+@see #addUnencodedNativeForFlavor
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.SystemFlavorMap.setFlavorsForNative(String nat, java.awt.datatransfer.DataFlavor[] flavors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+放弃指定 <code>String</code> native 的当前映射，而创建指定 <code>DataFlavor</code> 的新映射。与 <code>getFlavorsForNative</code> 不同，这些映射将仅是单向建立的，并且不需要对 native 进行编码。要建立双向映射，请同时调用 <code>setNativesForFlavor</code>。数组中的第一个 <code>DataFlavor</code> 表示最高优先级的映射。后续 <code>DataFlavor</code> 所表示的映射的优先级是递减的。
+ <p>
+如果数组包含多个引用相等 <code>DataFlavor</code> 的元素，则为其中的第一个元素建立新映射，而忽略其余的元素。
+ <p>
+建议客户机代码不要重置数据传输子系统建立的映射。此方法仅用于应用程序级的映射。
+
+@param nat 映射的 <code>String</code> native 键
+@param flavor 映射的 <code>DataFlavor</code> 值
+@throws NullPointerException 如果 nat 或 flavor 为 <code>null</code> 或者 flavor 包含 <code>null</code> 元素
+
+@see #setNativesForFlavor
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.awt.datatransfer.SystemFlavorMap.encodeJavaMIMEType(String mimeType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编码 MIME 类型以用作 <code>String</code> native。MIME 类型的编码表示形式的格式是与实现有关的。仅有的限制是：
+ <ul>
+<li>当且仅当 MIME 类型 <code>String</code> 为 <code>null</code> 时，编码表示形式为 <code>null</code>。</li>
+<li>两个非 <code>null</code> MIME 类型 <code>String</code> 的编码表示形式相等的条件是，当且仅当根据 <code>String.equals(Object)</code> 这些 <code>String</code> 相等。</li>
+ </ul>
+ <p>
+Sun 对此方法的参考实现返回指定 MIME 类型 <code>String</code>，前缀为 <code>JAVA_DATAFLAVOR:</code>。
+
+@param mimeType 要编码的 MIME 类型
+@return 编码的 <code>String</code>，如果 mimeType 为 <code>null</code>，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.awt.datatransfer.SystemFlavorMap.encodeDataFlavor(DataFlavor flav)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编码 <code>DataFlavor</code> 以用作 <code>String</code> native。编码的 <code>DataFlavor</code> 的格式是与实现有关的。仅有的限制是：
+ <ul>
+<li>当且仅当指定 <code>DataFlavor</code> 为 <code>null</code> 或者其 MIME 类型 <code>String</code> 为 <code>null</code> 时，编码表示形式为 <code>null</code>。</li>
+<li>具有非 <code>null</code> MIME 类型 <code>String</code> 的两个非 <code>null</code> <code>DataFlavor</code> 的编码表示形式相等的条件是，根据 <code>String.equals(Object)</code> 当且仅当这些 <code>DataFlavor</code> 的 MIME 类型 <code>String</code> 相等。</li>
+ </ul>
+ <p>
+Sun 对此方法的参考实现返回前缀为 <code>JAVA_DATAFLAVOR:</code> 的指定 <code>DataFlavor</code> 的 MIME 类型 <code>String</code>。
+
+@param flav 要编码的 <code>DataFlavor</code>
+@return 编码的 <code>String</code>，如果 flav 为 <code>null</code> 或者具有 <code>null</code> MIME 类型，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.datatransfer.SystemFlavorMap.isJavaMIMEType(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定的 <code>String</code> 是否为编码的 Java MIME 类型。
+
+@param str 要测试的 <code>String</code>
+@return 如果对 <code>String</code> 进行了编码，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.awt.datatransfer.SystemFlavorMap.decodeJavaMIMEType(String nat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解码 <code>String</code> native 以用作 Java MIME 类型。
+
+@param nat 要解码的 <code>String</code>
+@return 解码的 Java MIME 类型，如果 nat 不是编码的 <code>String</code> native，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.datatransfer.DataFlavor java.awt.datatransfer.SystemFlavorMap.decodeDataFlavor(String nat) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解码 <code>String</code> native 以用作 <code>DataFlavor</code>。
+
+@param nat 要解码的 <code>String</code>
+@return 解码的 <code>DataFlavor</code>，如果 nat 不是编码的 <code>String</code> native，则返回 <code>null</code>
+
+<!-- END DATA -->

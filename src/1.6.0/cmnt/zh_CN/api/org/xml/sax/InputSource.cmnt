@@ -1,0 +1,230 @@
+<!-- BEGIN KEY -->
+public class org.xml.sax.InputSource extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+XML 实体的单一输入源。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>此类允许 SAX 应用程序封装有关单个对象中的输入源的信息，它可包括公共标识符、系统标识符、字节流（可能带有指定的编码）、基本 URI 和/ 或字符流。</p>
+
+<p>在以下两种情况下应用程序可以将输入源提供给解析器：作为 Parser.parse 方法的参数，或者作为 EntityResolver.resolveEntity 方法的返回值。</p>
+
+<p>SAX 解析器将使用 InputSource 对象来确定如何读取 XML 输入。如果有字符流可用，则解析器将直接读取该流，而忽略该流中找到的任何文本编码声明。如果没有字符流，但却有字节流，则解析器将使用该字节流，从而使用在 InputSource 中指定的编码，或者另外（如果未指定编码）通过使用某种诸如 XML 规范 中的算法算法自动探测字符编码。如果既没有字符流，又没有字节流可用，则解析器将尝试打开到由系统标识符标识的资源的 URI 连接。</p>
+
+<p>InputSource 对象属于该应用程序：SAX 解析器将不会以任何方式修改它（它可以在必要时修改副本）。但是，作为解析终止清除的一部分，对字节流和字符流的标准处理就是关闭这二者，因此在将此类流传递给解析器后应用程序不应尝试重新使用它们。  </p>
+
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.XMLReader#parse(org.xml.sax.InputSource)
+@see org.xml.sax.EntityResolver#resolveEntity
+@see java.io.InputStream
+@see java.io.Reader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+零参数默认构造方法。
+
+@see #setPublicId
+@see #setSystemId
+@see #setByteStream
+@see #setCharacterStream
+@see #setEncoding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource(String systemId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用系统标识符创建新的输入源。
+
+<p>应用程序可以使用 setPublicId 将公共标识符包括在内，也可以使用 setEncoding 来指定字符编码（如果已知）。</p>
+
+<p>如果系统标识符是 URL，则必须完整解析它（它不可以是相对 URL）。</p>
+
+@param systemId 系统标识符 (URI)。
+@see #setPublicId
+@see #setSystemId
+@see #setByteStream
+@see #setEncoding
+@see #setCharacterStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource(InputStream byteStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用字节流创建新的输入源。
+
+<p>应用程序编写者必须使用 setSystemId() 为解析相对 URI 提供基，还可以使用 setPublicId 将公共标识符包括在内，并且可以使用 setEncoding 来指定对象的字符编码。</p>
+
+@param byteStream 包含文档的原始字节流。
+@see #setPublicId
+@see #setSystemId
+@see #setEncoding
+@see #setByteStream
+@see #setCharacterStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource(Reader characterStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用字符流创建新的输入源。
+
+<p>应用程序编写者必须使用 setSystemId() 为解析相对 URI 提供基，并且可以使用 setPublicId 将公共标识符包括在内。</p>
+
+<p>字符流不能包括字节顺序标记。</p>
+
+@see #setPublicId
+@see #setSystemId
+@see #setByteStream
+@see #setCharacterStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.InputSource.setPublicId(String publicId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此输入源的公共标识符。
+
+<p>公共标识符始终为可选的：如果应用程序编写者包括一个公共标识符，则将把它作为位置信息的一部分提供。</p>
+
+@param publicId 字符串形式的公共标识符。
+@see #getPublicId
+@see org.xml.sax.Locator#getPublicId
+@see org.xml.sax.SAXParseException#getPublicId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.InputSource.getPublicId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此输入源的公共标识符。
+
+@return 公共标识符，如果未提供，则返回 null。
+@see #setPublicId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.InputSource.setSystemId(String systemId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此输入源的系统标识符。
+
+<p>如果有字节流或字符流，则系统标识符是可选的，但提供系统标识符非常有用，这是因为应用程序可以使用它解析相对 URI，并且可以将它包含在错误消息和警告中（解析器仅在未指定字节流或字符流时尝试打开到 URI 的连接）。</p>
+
+<p>如果应用程序知道系统标识符所指向的对象的字符编码，则可以使用 setEncoding 方法来注册编码。</p>
+
+<p>如果系统标识符是 URL，则必须完整解析它（它不可以是相对 URL）。</p>
+
+@param systemId 字符串形式的系统标识符。
+@see #setEncoding
+@see #getSystemId
+@see org.xml.sax.Locator#getSystemId
+@see org.xml.sax.SAXParseException#getSystemId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.InputSource.getSystemId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此输入源的系统标识符。
+
+<p>getEncoding 方法将返回所指向对象的字符编码，如果未知，则返回 null。</p>
+
+<p>如果系统 ID 是 URL，则将完整解析它。</p>
+
+@return 系统标识符，如果未提供，则返回 null。
+@see #setSystemId
+@see #getEncoding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.InputSource.setByteStream(InputStream byteStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此输入源的字节流。
+
+<p>如果还有指定的字符流，则 SAX 解析器将忽略此操作，它将优先于打开自己 URI 连接而使用字节流。</p>
+
+<p>如果应用程序知道字节流的字符编码，则必须使用 setEncoding 方法设置它。</p>
+
+@param byteStream 包含 XML 文档或其他实体的字节流。
+@see #setEncoding
+@see #getByteStream
+@see #getEncoding
+@see java.io.InputStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream org.xml.sax.InputSource.getByteStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此输入源的字节流。
+
+<p>getEncoding 方法将返回此字节流的字符编码，如果未知，则返回 null。</p>
+
+@return 字节流，如果未提供，则返回 null。
+@see #getEncoding
+@see #setByteStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.InputSource.setEncoding(String encoding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置字符编码（如果已知）。
+
+<p>编码必须是 XML 编码声明可接受的字符串（参见 &quot;XML 1.0 recommendation&quot; 的 4.3.3 节）。</p>
+
+<p>当应用程序提供字符流时，此方法无效。</p>
+
+@param encoding 描述字符编码的字符串。
+@see #setSystemId
+@see #setByteStream
+@see #getEncoding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.InputSource.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取字节流或 URI 的字符编码。当应用程序提供字符流时，将忽略此值。
+
+@return 编码，如果未提供，则返回 null。
+@see #setByteStream
+@see #getSystemId
+@see #getByteStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.InputSource.setCharacterStream(Reader characterStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此输入源的字符流。
+
+<p>如果有指定的字符流，则 SAX 解析器将忽略任何字节流，并且不尝试打开到系统标识符的 URI 连接。</p>
+
+@param characterStream 包含 XML 文档或其他实体的字符流。
+@see #getCharacterStream
+@see java.io.Reader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader org.xml.sax.InputSource.getCharacterStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此输入源的字符流。
+
+@return 字符流，如果未提供，则返回 null。
+@see #setCharacterStream
+
+<!-- END DATA -->

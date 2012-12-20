@@ -1,0 +1,229 @@
+<!-- BEGIN KEY -->
+public class javax.naming.InitialContext extends java.lang.Object implements javax.naming.Context
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是执行命名操作的初始上下文。
+<p>
+所有命名操作都相对于某一上下文。该初始上下文实现 Context 接口并提供解析名称的起始点。
+<p>
+<a name=ENVIRONMENT></a> 在构造初始上下文时，使用传递给构造方法的环境参数中以及所有<a href=Context.html#RESOURCEFILES>应用程序资源文件</a>中定义的属性初始化其环境。此外，可以将少数标准 JNDI 属性指定为系统属性或 applet 参数（通过使用 {@link Context#APPLET}）。这些特殊属性列于 <a href=Context.html#field_detail><tt>Context</tt></a> 和 <a href=ldap/LdapContext.html#field_detail><tt>LdapContext</tt></a> 接口文档的字段详细信息部分。
+<p>
+JNDI 通过按顺序合并取自以下两个源的值来确定每个属性值：
+ <ol>
+ <li>
+构造方法的环境参数、（适当属性的）applet 参数，以及系统属性中最先出现的属性。
+ <li>
+应用程序资源文件 (<tt>jndi.properties</tt>)。
+ </ol>
+对于同时存在于两个源或多个应用程序资源文件中的每个属性，用以下方式确定属性值。如果该属性是指定 JNDI 工厂列表的标准 JNDI 属性之一（参见 <a href=Context.html#LISTPROPS><tt>Context</tt></a>），则所有值都被串联成一个以冒号分隔的列表。对于其他属性，只使用最先找到的值。
+
+<p>
+初始上下文实现是在运行时确定的。默认策略使用环境属性 &quot;{@link Context#INITIAL_CONTEXT_FACTORY java.naming.factory.initial}&quot;，该属性包含初始上下文工厂的类名称。解析 URL 字符串时生成此策略的一个异常，如下所述。
+<p>
+在将 URL 字符串（一个 <em>scheme_id:rest_of_name</em> 形式的 <tt>String</tt>）作为名称参数传递给任一方法时，将定位处理该方案的一个 URL 上下文工厂，并将它用于解析该 URL。如果没有找到这样的工厂，则使用由 <tt>&quot;java.naming.factory.initial&quot;</tt> 指定的初始上下文。类似地，当将第一个组件是 URL 字符串的 <tt>CompositeName</tt> 对象作为名称参数传递给任一方法时，将定位一个 URL 上下文工厂并将它用于解析第一个名称组件。有关如何定位 URL 上下文工厂的描述，请参见 {@link NamingManager#getURLContext <tt>NamingManager.getURLContext()</tt>}。
+<p>
+这一定位初始上下文和 URL 上下文工厂的默认策略可以通过调用 <tt>NamingManager.setInitialContextFactoryBuilder()</tt> 重写。
+<p>
+当无法实例化初始上下文时，将抛出 NoInitialContextException。此异常可以在与 InitialContext 进行的任何交互期间抛出，而不仅仅是在构造 InitialContext 时。例如，初始上下文的实现可能仅当在其上调用实际方法时惰性获取上下文。当确定初始上下文存在时，应用程序不应该对它有任何依赖性。
+<p>
+当环境属性 &quot;java.naming.factory.initial&quot; 为非 null 值时，InitialContext 构造方法将试着创建在其中指定的初始上下文。此时，如果遇到问题，所涉及的初始上下文工厂可能抛出异常。不过，在验证并向初始上下文用户指示所有与环境属性或连接有关的问题时，这将与提供者的实现有关。提供者也可以以延迟方式做到这一点：延迟到在上下文上执行某一操作时；在更急切的情况下，延迟到构造上下文时。
+<p>
+InitialContext 实例对多个线程的并发访问不同步。对于每个线程都操作一个不同 InitialContext 实例的多个线程而言，无需实现同步。需要并发地访问单个 InitialContext 实例的线程应该在它们之间实现同步并提供必需的锁定。
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.15 06/01/06
+
+@see Context
+@see NamingManager#setInitialContextFactoryBuilder NamingManager.setInitialContextFactoryBuilder
+@since JNDI 1.1 / Java 2 Platform, Standard Edition, v 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Hashtable<java.lang.Object, java.lang.Object> javax.naming.InitialContext.myProps
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 InitialContext 关联的环境。它被初始化为 null，并由接受环境作为参数的构造方法或 <tt>init()</tt> 方法更新。
+@see #addToEnvironment
+@see #removeFromEnvironment
+@see #getEnvironment
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Context javax.naming.InitialContext.defaultInitCtx
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该字段保存调用 NamingManager.getInitialContext() 的结果。它由 getDefaultInitCtx() 在第一次调用 getDefaultInitCtx() 时设置。getDefaultInitCtx() 的后续调用返回 defaultInitCtx 的值。
+@see #getDefaultInitCtx
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.naming.InitialContext.gotDefault
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该字段指示是否已通过调用 NamingManager.getInitialContext() 获得了初始上下文。如果为 true，则其结果保存在 <code>defaultInitCtx</code> 中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.InitialContext(boolean lazy) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带有不进行初始化选项的初始上下文。如果子类在调用 <tt>InitialContext</tt> 构造方法时仍然未知环境属性的值，则可以在其中使用此构造方法。子类的构造方法将调用此构造方法，计算环境的值，然后在返回之前调用 <tt>init()</tt>。
+
+@param lazy 为 true 表示不初始化该初始上下文；为 false 等效于调用 <tt>new InitialContext()</tt>
+@throws	NamingException 如果遇到命名异常
+
+@see #init(Hashtable)
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.InitialContext() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个初始上下文。不提供环境属性。与 <tt>new InitialContext(null)</tt> 等效。
+
+@throws  NamingException 如果遇到命名异常
+
+
+@see #InitialContext(Hashtable)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.InitialContext(java.util.Hashtable<?, ?> environment) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用所提供的环境构造一个初始上下文。这些环境属性已在类描述中讨论。
+
+<p> 此构造方法不会修改 <tt>environment</tt> 或保存一个对它的引用，但可能保存一个副本。
+
+@param environment 用来创建初始上下文的环境。null 指示一个空环境。
+
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.naming.InitialContext.init(java.util.Hashtable<?, ?> environment) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用所提供的环境初始化初始上下文。这些环境属性已在类描述中讨论。
+
+<p> 此方法将修改 <tt>environment</tt> 并保存一个对它的引用。调用者可能不再修改它。
+
+@param environment 用来创建初始上下文的环境。null 指示一个空环境。
+
+@throws	NamingException 如果遇到命名异常
+
+@see #InitialContext(boolean)
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.naming.InitialContext.doLookup(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取指定对象的静态方法。
+此方法是一个快捷方法，等效于调用：
+ <p>
+ <code>
+        InitialContext ic = new InitialContext();
+        Object obj = ic.lookup();
+ </code>
+ <p> 如果 <tt>name</tt> 为空，则返回此上下文的一个新实例（该实例表示与此上下文相同的命名上下文，但可以独立地修改其环境，并可以并发地访问）。
+
+ @param name 要查找的对象名称
+ @return  绑定到 <tt>name</tt> 的对象
+ @throws  NamingException 如果遇到命名异常
+
+ @see #doLookup(String)
+ @see #lookup(Name)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.naming.InitialContext.doLookup(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取指定对象的静态方法。
+ 有关详细信息请参见 {@link #doLookup(Name)}。
+ @param name 要查找的对象名称
+ @return  绑定到 <tt>name</tt> 的对象
+ @throws  NamingException 如果遇到命名异常
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Context javax.naming.InitialContext.getDefaultInitCtx() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>NamingManager.getInitialContext()</code> 获取初始上下文，并将它缓存在 defaultInitCtx 中。设置 <code>gotDefault</code>，说明已执行过此操作。
+@return 缓存的非 null 初始上下文。
+@exception NoInitialContextException 如果无法找到初始上下文。
+@exception NamingException 如果遇到命名异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Context javax.naming.InitialContext.getURLOrDefaultInitCtx(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用来解析字符串名称 <code>name</code> 的上下文。如果 <code>name</code> 名称是一个 URL 字符串，则试着定位一个用于该字符串的 URL 上下文。如果没有找到这样的上下文，或者 <code>name</code> 不是一个 URL 字符串，则返回 <code>getDefaultInitCtx()</code>。
+<p>
+有关子类应该如何使用此方法的描述，请参见 getURLOrDefaultInitCtx(Name)。
+@param name 非 null 名称，将为其获得上下文。
+@return 用于 <code>name</code> 的 URL 上下文或者缓存的初始上下文。结果不能为 null。
+@exception NoInitialContextException 如果无法找到初始上下文。
+@exception NamingException 如果遇到命名异常。
+@see javax.naming.spi.NamingManager#getURLContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Context javax.naming.InitialContext.getURLOrDefaultInitCtx(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用来解析 <code>name</code> 的上下文。如果 <code>name</code> 名称的第一个组件是一个 URL 字符串，则试着查找一个用于该字符串的 URL 上下文。如果没有找到这样的上下文，或者 <code>name</code> 的第一个组件不是一个 URL 字符串，则返回 <code>getDefaultInitCtx()</code>。
+<p>
+在创建 InitialContext 的子类时，按以下方式使用此方法。定义一个使用此方法的新方法来获得所需子类的初始上下文。
+ <p><blockquote><pre>
+ protected XXXContext getURLOrDefaultInitXXXCtx(Name name) 
+ throws NamingException {
+  Context answer = getURLOrDefaultInitCtx(name);
+  if (!(answer instanceof XXXContext)) {
+    if (answer == null) {
+	    throw new NoInitialContextException();
+    } else {
+	    throw new NotContextException(&quot;Not an XXXContext&quot;);
+    }
+ 	}
+	return (XXXContext)answer;
+ }
+ </pre></blockquote>
+当为子类中的新方法提供实现时，使用这个新定义的方法获取初始上下文。
+ <p><blockquote><pre>
+ public Object XXXMethod1(Name name, ...) {
+	throws NamingException {
+    return getURLOrDefaultInitXXXCtx(name).XXXMethod1(name, ...);
+ }
+ </pre></blockquote>
+
+@param name 非 null 名称，将为其获取上下文。
+@return 用于 <code>name</code> 的 URL 上下文或者缓存的初始上下文。结果不能为 null。
+@exception NoInitialContextException 如果无法找到初始上下文。
+@exception NamingException 如果遇到命名异常。
+
+@see javax.naming.spi.NamingManager#getURLContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.InitialContext.composeName(String name, String prefix) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此上下文的名称与相对于此上下文的名称组合。因为绝不能相对于除本身以外的任何上下文命名初始上下文，所以 <tt>prefix</tt> 参数的值必须是一个空名称 (<tt>&quot;&quot;</tt>)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.InitialContext.composeName(Name name, Name prefix) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此上下文的名称与相对于此上下文的名称组合。因为绝不能相对于除本身以外的任何上下文命名初始上下文，所以 <tt>prefix</tt> 参数的值必须是一个空名称 (<tt>&quot;&quot;</tt>)。
+
+<!-- END DATA -->

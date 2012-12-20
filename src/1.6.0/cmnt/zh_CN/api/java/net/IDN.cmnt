@@ -1,0 +1,101 @@
+<!-- BEGIN KEY -->
+public final class java.net.IDN extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供在普通 Unicode 表示形式和 ASCII 兼容性编码 (ACE) 表示形式之间进行国际化域名 (IDN) 转换的方法。国际化域名可以使用整个 Unicode 范围内的字符，而传统域名只限于 ASCII 字符。ACE 是只使用 ASCII 字符的 Unicode 字符串编码方式，能够与只识别传统域名的软件（如 Domain Name System）一起使用。
+
+<p>国际化域名在 <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a> 中定义。RFC 3490 定义了两种操作：ToASCII 和 ToUnicode。这两种操作使用 <a href="http://www.ietf.org/rfc/rfc3491.txt">Nameprep</a> 算法（<a href="http://www.ietf.org/rfc/rfc3454.txt">Stringprep</a> 的配置文件）和 <a href="http://www.ietf.org/rfc/rfc3492.txt">Punycode</a> 算法来回地转换域名字符串。
+
+<p>上述转换处理的行为可以用各种标志进行调整：
+   <ul>
+<li>如果使用 ALLOW_UNASSIGNED 标志，则要转换的域名字符串可以包含 Unicode 3.2（IDN 转换所依据的 Unicode 版本）中未分配的代码点。如果未使用该标志，那么存在这种未分配的代码点将被视为一个错误。
+<li>如果使用 USE_STD3_ASCII_RULES 标志，则根据 <a href="http://www.ietf.org/rfc/rfc1122.txt">RFC 1122</a> 和 <a href="http://www.ietf.org/rfc/rfc1123.txt">RFC 1123</a> 检查 ASCII 字符串。如果它们不符合要求，则是一个错误。
+   </ul>
+这些标志在逻辑上可以&ldquo;或&rdquo;运算为一个整体。
+
+<p>有关国际化域名支持的安全考虑至关重要。例如，英文域名可能被拼写成<i>同形异义词</i>，即故意用非 Latin 字母替代而错拼的词。<a href="http://www.unicode.org/reports/tr36/">Unicode Technical Report #36</a> 讨论了 IDN 支持的安全问题以及可能的解决方案。在使用国际域名时应用程序负责采取足够的安全措施。
+
+@version 1.3, 05/11/17 
+@author Edward Wang 
+@since 1.6
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.IDN.ALLOW_UNASSIGNED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许处理未分配代码点的标志。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.net.IDN.USE_STD3_ASCII_RULES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 STD-3 ASCII 规则执行检查的标志。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.IDN.toASCII(String input, int flag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a> 的 ToASCII 操作中的定义，将字符串从 Unicode 转换为 ASCII 兼容性编码 (ACE)。
+
+<p>ToASCII 操作可能失败。如果其任何步骤失败，则 ToASCII 失败。如果 ToASCII 操作失败，则抛出 IllegalArgumentException。在这种情况下，输入字符串不应在国际化域名中使用。
+
+<p> 标签是域名的单独部分。根据 RFC 3490 中的定义，初始 ToASCII 操作只在单个标签上运行。通过假定域名中的标签始终用点分隔，此方法可以处理标签和整个域名。以下字符被识别为点：\u002E（句点）、\u3002（表意句点）、\uFF0E（全角句点）和 \uFF61（半角表意句点）。如果点被用作标签分隔符，则此方法在输出转换字符串中将它们全部更改为 \u002E（句点）。
+
+@param input     要处理的字符串 
+@param flag      处理标志；可以为 0 或任何可能标志的逻辑或
+
+@return          已转换的 <tt>String</tt>
+
+@throws IllegalArgumentException   如果输入字符串未遵守 RFC 3490 规范
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.IDN.toASCII(String input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a> 的 ToASCII 操作中的定义，将字符串从 Unicode 转换为 ASCII 兼容性编码 (ACE)。
+
+<p> 此便捷方法的工作方式类似于调用带两个参数的对应方法，如下所示：
+<blockquote><tt>{@link #toASCII(String, int) toASCII}(input,&#xA0;0);</tt></blockquote>
+
+@param input     要处理的字符串
+
+@return          已转换的 <tt>String</tt>
+
+@throws IllegalArgumentException   如果输入字符串未遵守 RFC 3490 规范
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.IDN.toUnicode(String input, int flag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a> 的 ToUnicode 操作中的定义，将字符串从 ASCII 兼容性编码 (ACE) 转换为 Unicode。
+
+<p>ToUnicode 永远不会失败。出现任何错误时，返回的输入字符串保持不变。
+
+<p> 标签是域名的单独部分。根据 RFC 3490 中的定义，初始 ToUnicode 操作只在单个标签上运行。通过假定域名中的标签始终用点分隔，此方法可以处理标签和整个域名。以下字符被识别为点：\u002E（句点）、\u3002（表意句点）、\uFF0E（全角句点）和 \uFF61（半角表意句点）。
+
+@param input     要处理的字符串 
+@param flag      处理标志；可以为 0 或任何可能标志的逻辑或
+
+@return          已转换的 <tt>String</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.IDN.toUnicode(String input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <a href="http://www.ietf.org/rfc/rfc3490.txt">RFC 3490</a> 的 ToUnicode 操作中的定义，将字符串从 ASCII 兼容性编码 ACE) 转换为 Unicode。
+
+<p> 此便捷方法的工作方式类似于调用带两个参数的对应方法，如下所示：
+<blockquote><tt>{@link #toUnicode(String, int) toUnicode}(input,&#xA0;0);</tt></blockquote>
+
+@param input     要处理的字符串
+
+@return          已转换的 <tt>String</tt>
+
+<!-- END DATA -->

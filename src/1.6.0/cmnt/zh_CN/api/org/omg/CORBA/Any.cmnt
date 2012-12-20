@@ -1,0 +1,572 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.Any extends java.lang.Object implements org.omg.CORBA.portable.IDLEntity
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+充当可用 IDL 描述的任何数据或任何 IDL 基本类型的容器。<code>Any</code> 对象可用作 <code>NamedValue</code> 对象的组件，NamedValue 对象提供关于请求中的参数或返回值的信息，也用来定义 <code>Context</code> 对象中的名称/值对。
+ <p>
+
+<code>Any</code> 对象由两部分组成：
+ <OL>
+<LI>数据值
+<LI>描述 <code>Any</code> 对象中所包含数据值类型的 <code>TypeCode</code> 对象。例如，用于数组的 <code>TypeCode</code> 对象包含一个用于数组长度的字段和一个用于数组中元素类型的字段。（注意，在这种情况下，<code>TypeCode</code> 对象的第二个字段本身也是一个 <code>TypeCode</code> 对象。）	
+ </OL>
+
+ <P>
+<a name=&quot;anyOps&quot;</a> 大部分 <code>Any</code> 类由以下方法对组成：将值插入 <code>Any</code> 对象的方法和从 <code>Any</code> 对象中析取值的方法。
+ <P>
+对于某一给定的基本类型 X，这些方法是：
+  <dl>
+	<dt><code><bold> void insert_X(X x)</bold></code>
+	<dd> 此方法允许将基本类型 <code>X</code> 的实例 <code>x</code> 插入 <code>Any</code> 对象的 <code>value</code> 字段。注意，如有必要，方法 <code>insert_X</code> 也能重置 <code>Any</code> 对象的 <code>type</code> 字段。
+	<dt> <code><bold>X extract_X()</bold></code>
+	<dd> 此方法允许从 <code>Any</code> 对象中析取类型 <code>X</code> 的实例。 <BR>
+    <P>
+此方法在以下两种情况下抛出异常 <code>BAD_OPERATION</code>：
+    <OL>
+<LI> <code>Any</code> 对象中所包含元素的类型不是 <code>X</code>
+<LI> 在设置 <code>Any</code> 对象的 <code>value</code> 字段之前调用 <code>extract_X</code> 方法
+    </OL>
+ </dl>
+ <P>
+对于每种基本 IDL 数据类型，存在不同的方法对（<code>insert_long</code> 和 <code>extract_long</code>、<code>insert_string</code> 和 <code>extract_string</code>，等等）。<BR>
+ <P>
+<code>Any</code> 类还拥有用于获取和设置类型代码的方法、用于测试两个 <code>Any</code> 对象是否相等的方法，以及用于从流中读取 <code>Any</code> 对象或将对象写入流中的方法。<BR>
+@version 1.12, 09/09/97
+@since   JDK1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean org.omg.CORBA.Any.equal(Any a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <code>Any</code> 对象与给定 <code>Any</code> 对象是否相等。如果两个 <code>Any</code> 对象的值和类型代码都相等，则这两个对象相等。
+
+@param a	将测试其是否相等的 <code>Any</code> 对象
+@return	如果两个 <code>Any</code> 对象是相等的，则返回 <code>true</code>；否则返回 <code>false</code>
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.Any.type()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Any</code> 对象中所包含元素的类型信息。
+
+@return		<code>TypeCode</code> 对象，它包含关于此 <code>Any</code> 对象中所包含值的类型信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.type(TypeCode t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Any</code> 对象的 <code>type</code> 字段设置为给定的 <code>TypeCode</code> 对象，并清除其值。
+ <P>
+注意，使用此方法设置类型代码会清除值（如果有）。提供该方法主要是为了能够为 IDL <code>out</code> 参数正确地设置类型。通常，设置类型由 <code>insert_X</code> 方法完成，如果类型没有被设置为 X，则该方法会将它设置为 X。
+
+@param t       为此 <code>Any</code> 对象中的值提供信息的 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.read_value(InputStream is, TypeCode t) throws org.omg.CORBA.MARSHAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定 typecode 读出（解组）给定输入流中某一 <code>Any</code> 对象的值。
+
+@param is <code>org.omg.CORBA.portable.InputStream</code> 对象，从其中读取此 <code>Any</code> 对象中所包含的值
+
+@param t	 一个 <code>TypeCode</code> 对象，它包含关于要读取的值的类型信息
+
+@exception MARSHAL 当给定 <code>TypeCode</code> 对象与输入流中包含的值不一致时
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.write_value(OutputStream os)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Any</code> 对象的值写出到给定输出流。如果 <code>typecode</code> 和 <code>value</code> 都需要写入，则先使用 <code>create_output_stream()</code> 创建一个 <code>OutputStream</code>，然后对该 <code>OutputStream</code> 使用 <code>write_any</code>。
+ <P>
+如果对 <code>Any</code> 对象调用此方法，而该对象没有将某个值插入其 <code>value</code> 字段，则将抛出异常 <code>java.lang.NullPointerException</code>。
+
+@param os	<code>org.omg.CORBA.portable.OutputStream</code> 对象，此 <code>Any</code> 对象的值将被编组到其中
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.portable.OutputStream org.omg.CORBA.Any.create_output_stream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个输出流，可以将此 <code>Any</code> 对象的值编组到其中。
+
+@return		新创建的 <code>OutputStream</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.portable.InputStream org.omg.CORBA.Any.create_input_stream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个输入流，可以从中解组此 <code>Any</code> 对象的值。
+
+@return		新创建的 <code>InputStream</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract short org.omg.CORBA.Any.extract_short() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>short</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>short</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>short</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_short(short s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>short</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param s		将插入此 <code>Any</code> 对象中的 <code>short</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int org.omg.CORBA.Any.extract_long() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>int</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>int</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>int</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_long(int l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>int</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param l		将插入此 <code>Any</code> 对象中的 <code>int</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long org.omg.CORBA.Any.extract_longlong() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>long</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>long</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>long</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_longlong(long l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>long</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param l		将插入此 <code>Any</code> 对象中的 <code>long</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract short org.omg.CORBA.Any.extract_ushort() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>short</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>short</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>short</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_ushort(short s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>short</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param s		将插入此 <code>Any</code> 对象中的 <code>short</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int org.omg.CORBA.Any.extract_ulong() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>int</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>int</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>int</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_ulong(int l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>int</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param l		将插入此 <code>Any</code> 对象中的 <code>int</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long org.omg.CORBA.Any.extract_ulonglong() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>long</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>long</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>long</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_ulonglong(long l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>long</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param l		将插入此 <code>Any</code> 对象中的 <code>long</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract float org.omg.CORBA.Any.extract_float() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>float</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>float</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>float</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_float(float f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>float</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param f		将插入此 <code>Any</code> 对象中的 <code>float</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract double org.omg.CORBA.Any.extract_double() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>double</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>double</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>double</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_double(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>double</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param d		将插入此 <code>Any</code> 对象中的 <code>double</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean org.omg.CORBA.Any.extract_boolean() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>boolean</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>boolean</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>boolean</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_boolean(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>boolean</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param b		将插入此 <code>Any</code> 对象中的 <code>boolean</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract char org.omg.CORBA.Any.extract_char() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>char</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>char</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>char</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_char(char c) throws org.omg.CORBA.DATA_CONVERSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>char</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param c		将插入此 <code>Any</code> 对象中的 <code>char</code> 值
+@exception DATA_CONVERSION 如果存在数据转换错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract char org.omg.CORBA.Any.extract_wchar() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>char</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>char</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>char</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_wchar(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>char</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param c		将插入此 <code>Any</code> 对象中的 <code>char</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte org.omg.CORBA.Any.extract_octet() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>byte</code> 值。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>byte</code> 值
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>byte</code> 以外的值，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_octet(byte b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>byte</code> 值插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param b		将插入此 <code>Any</code> 对象中的 <code>byte</code> 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Any org.omg.CORBA.Any.extract_any() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>Any</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>Any</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>Any</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_any(Any a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>Any</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param a		将插入此 <code>Any</code> 对象中的 <code>Any</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Object org.omg.CORBA.Any.extract_Object() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>org.omg.CORBA.Object</code>。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>org.omg.CORBA.Object</code>
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>org.omg.CORBA.Object</code> 以外的其他对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_Object(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>org.omg.CORBA.Object</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param o		将插入此 <code>Any</code> 对象中的 <code>org.omg.CORBA.Object</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.io.Serializable org.omg.CORBA.Any.extract_Value() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>java.io.Serializable</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>java.io.Serializable</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>java.io.Serializable</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_Value(Serializable v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>java.io.Serializable</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param v		将插入此 <code>Any</code> 对象中的 <code>java.io.Serializable</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_Value(Serializable v, TypeCode t) throws org.omg.CORBA.MARSHAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>java.io.Serializable</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param v		将插入此 <code>Any</code> 对象中的 <code>java.io.Serializable</code> 对象
+@param t     将插入此 <code>Any</code> 对象 <code>type</code> 字段中的 <code>TypeCode</code> 对象，它描述了将被插入的 <code>java.io.Serializable</code> 对象
+@throws MARSHAL 如果 ORB 在编组或解组参数时存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_Object(Object o, TypeCode t) throws org.omg.CORBA.BAD_PARAM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>org.omg.CORBA.Object</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param o		将插入此 <code>Any</code> 对象中的 <code>org.omg.CORBA.Object</code> 实例
+@param t     将插入此 <code>Any</code> 对象中的 <code>TypeCode</code> 对象，它描述了将被插入的 <code>Object</code>
+@exception BAD_OPERATION 如果此方法对于此 <code>Any</code> 对象无效
+              
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.Any.extract_string() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>String</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>String</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>String</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_string(String s) throws org.omg.CORBA.DATA_CONVERSION, org.omg.CORBA.MARSHAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>String</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param s		将插入此 <code>Any</code> 对象中的 <code>String</code> 对象
+@exception DATA_CONVERSION 如果存在数据转换错误
+@exception MARSHAL 如果 ORB 在编组或解组参数时存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.Any.extract_wstring() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>String</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>String</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>String</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_wstring(String s) throws org.omg.CORBA.MARSHAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>String</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param s		将插入此 <code>Any</code> 对象中的 <code>String</code> 对象
+@exception MARSHAL 如果 ORB 在编组或解组参数存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.Any.extract_TypeCode() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>TypeCode</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>TypeCode</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>TypeCode</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Any.insert_TypeCode(TypeCode t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>TypeCode</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+@param t		将插入此 <code>Any</code> 对象中的 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Principal org.omg.CORBA.Any.extract_Principal() throws org.omg.CORBA.BAD_OPERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>Principal</code> 对象。注意，<code>Principal</code> 类已过时。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>Principal</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>Principal</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 由 CORBA 2.2 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.Any.insert_Principal(Principal p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>Principal</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。注意，<code>Principal</code> 类已过时。
+
+@param p		将插入此 <code>Any</code> 对象中的 <code>Principal</code> 对象
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 由 CORBA 2.2 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.portable.Streamable org.omg.CORBA.Any.extract_Streamable() throws org.omg.CORBA.BAD_INV_ORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从此 <code>Any</code> 对象的 <code>value</code> 字段提取 <code>Streamable</code>。此方法允许提取非基本 IDL 类型。
+
+@return 存储在 <code>Any</code> 对象中的 <code>Streamable</code>。
+@throws BAD_INV_ORDER 如果调用者按错误的顺序调用了操作
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.Any.insert_Streamable(Streamable s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>Streamable</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。此方法允许插入非基本 IDL 类型。
+
+@param s		将插入此 <code>Any</code> 对象的 <code>Streamable</code> 对象，它可以是非基本 IDL 类型
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal org.omg.CORBA.Any.extract_fixed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取此 <code>Any</code> 对象 <code>value</code> 字段中的 <code>java.math.BigDecimal</code> 对象。
+
+@return 存储在此 <code>Any</code> 对象中的 <code>java.math.BigDecimal</code> 对象
+@exception BAD_OPERATION 如果此 <code>Any</code> 对象包含 <code>java.math.BigDecimal</code> 以外的对象，或者尚未设置 <code>value</code> 字段
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.Any.insert_fixed(BigDecimal value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 <a href="package-summary.html#NO_IMPLEMENT"><code>org.omg.CORBA.NO_IMPLEMENT</code></a> 异常。
+ <P>
+将给定 <code>java.math.BigDecimal</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param value		将插入此 <code>Any</code> 对象中的 <code>java.math.BigDecimal</code> 对象
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.Any.insert_fixed(BigDecimal value, TypeCode type) throws org.omg.CORBA.BAD_INV_ORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 <a href="package-summary.html#NO_IMPLEMENT"><code>org.omg.CORBA.NO_IMPLEMENT</code></a> 异常。
+ <P>
+将给定 <code>java.math.BigDecimal</code> 对象插入此 <code>Any</code> 对象的 <code>value</code> 字段。
+
+
+@param value		将插入此 <code>Any</code> 对象中的 <code>java.math.BigDecimal</code> 对象
+@param type     将插入此 <code>Any</code> 对象 <code>type</code> 字段中的 <code>TypeCode</code> 对象，它描述了将被插入的 <code>java.math.BigDecimal</code> 对象
+@throws org.omg.CORBA.BAD_INV_ORDER 如果不正确地调用此方法
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->

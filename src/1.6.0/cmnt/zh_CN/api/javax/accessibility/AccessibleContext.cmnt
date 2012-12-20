@@ -1,0 +1,548 @@
+<!-- BEGIN KEY -->
+public abstract class javax.accessibility.AccessibleContext extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+AccessibleContext 表示所有可访问对象返回的最少信息。此信息包括对象的可访问名称、描述、职责和状态，以及关于其父对象和子对象的信息。AccessibleContext 还包含用于获取更多关于组件的特定可访问信息的方法。如果组件支持这些方法，则它们将返回实现以下一个或多个接口的对象：
+ <P><ul>
+<li>{@link AccessibleAction} － 可以执行一个或多个动作的对象。此接口为辅助技术提供了标准机制，以确定这些动作并通知对象执行它们。任何可以操作的对象都应支持此接口。
+<li>{@link AccessibleComponent} － 具有图形表示形式的对象。此接口为辅助技术提供了标准机制，以确定和设置对象的图形表示形式。屏幕上呈现的任何对象都应该支持此接口。
+<li>{@link  AccessibleSelection} － 允许选择其子对象的对象。此接口为辅助技术提供了标准机制，以确定当前选定的子对象，并修改选择设置。任何具有可选子对象的对象都应支持此接口。
+<li>{@link AccessibleText} － 在显示器上显示可编辑文本信息的对象。此接口为辅助技术提供了标准机制，以通过文本的内容、属性和空间位置来访问该文本。任何包含可编辑文本的对象都应支持此接口。
+<li>{@link AccessibleValue} － 支持数字值的对象。此接口为辅助技术提供了标准机制，以确定和设置对象的当前值，以及最小值和最大值。任何支持数字值的对象都应支持此接口。</ul>
+
+@beaninfo attribute:isContainer false description: Minimal information that all accessible objects return
+
+@version     1.43 04/02/04
+@author	Peter Korn
+@author      Hans Muller
+@author      Willie Walker
+@author      Lynn Monsanto
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_NAME_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleName 属性已更改的常量。PropertyChangeEvent 中原有的值将为原有的 accessibleName，新值将为新的 accessibleName。
+
+@see #getAccessibleName
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_DESCRIPTION_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleDescription 属性已更改的常量。PropertyChangeEvent 中原有的值将为原有的 accessibleDescription，新值将为新的 accessibleDescription。
+
+@see #getAccessibleDescription
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_STATE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleStateSet 属性已更改的常量。accessibleStateSet 中原有值将为原有的 AccessibleState，新值将为新的 AccessibleState。例如，如果支持垂直和水平状态的某组件从垂直方向更改为水平方向，则原有值将为 AccessibleState.VERTICAL，新值将为 AccessibleState.HORIZONTAL。请注意这两个值也可以为 null。例如，当某组件从启用状态更改为禁用状态，则原有值将为 AccessibleState.ENABLED，新值将为 null。
+
+@see #getAccessibleStateSet
+@see AccessibleState
+@see AccessibleStateSet
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_VALUE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleValue 属性已更改的常量。PropertyChangeEvent 中原有的值将为表示原有值的 Number，新值将为表示新值的 Number
+
+@see #getAccessibleValue
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_SELECTION_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleSelection 已更改的常量。当前保留 PropertyChangeEvent 中的原有值和新值，供将来使用。
+
+@see #getAccessibleSelection
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_CARET_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 accessibleText 插入符已更改的常量。PropertyChangeEvent 中的原有值将为表示原有插入符位置的整数，新值将为表示新的/当前插入符位置的整数。
+
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_VISIBLE_DATA_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定对象的可见外观已更改的常量。当前保留 PropertyChangeEvent 中的原有值和新值，供将来使用。
+
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_CHILD_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定何时向对象添加或从对象移除 Accessible 子级的常量。如果要添加 Accessible 子级，则原有值将为 null，新值将为 Accessible 子级。如果要移除 Accessible 子级，则原有值将为 Accessible 子级，新值将为 null。
+
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_ACTIVE_DESCENDANT_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定组件的活动子级已更改的常量。活动的子级用于列表、树和表这样的对象，这些对象可能有临时子级。当活动子级已更改时，属性更改事件的原有值将为表示以前活动子级的 Accessible，新值将为表示当前活动子级的 Accessible。
+
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_CAPTION_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示表标题已更改的常量。PropertyChangeEvent 中的原有值将为表示以前表标题的 Accessible，新值将为表示新表标题的 Accessible。
+@see Accessible
+@see AccessibleTable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_SUMMARY_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示表摘要已更改的常量。PropertyChangeEvent 中的原有值将为表示以前表摘要的 Accessible，新值将为表示新表摘要的 Accessible。
+@see Accessible
+@see AccessibleTable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_MODEL_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示表数据已更改的常量。PropertyChangeEvent 中的原有值将为 null，新值将为表示表更改的 AccessibleTableModelChange。
+@see AccessibleTable
+@see AccessibleTableModelChange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_ROW_HEADER_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示行标题已更改的常量。PropertyChangeEvent 中的原有值将为 null，新值将为表示标题更改的 AccessibleTableModelChange。
+@see AccessibleTable
+@see AccessibleTableModelChange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_ROW_DESCRIPTION_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示行描述已更改的常量。PropertyChangeEvent 中的原有值将为 null，新值将为表示行索引的 Integer。
+@see AccessibleTable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_COLUMN_HEADER_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示列标题已更改的常量。PropertyChangeEvent 中的原有值将为 null，新值将为表示标题更改的 AccessibleTableModelChange。
+@see AccessibleTable
+@see AccessibleTableModelChange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TABLE_COLUMN_DESCRIPTION_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于指示列描述已更改的常量。PropertyChangeEvent 中的原有值将为 null，新值将为表示列索引的 Integer。
+@see AccessibleTable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_ACTION_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示支持的动作集已更改的常量。PropertyChangeEvent 中的原有值将为表示所支持的原有动作数的 Integer，新值将为表示所支持的新动作数的 Integer。
+@see AccessibleAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_HYPERTEXT_OFFSET
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示超文本元素已收到焦点的常量。PropertyChangeEvent 中的原有值将为表示以前具有焦点的元素在文档中的起始索引的 Integer，新值将为表示当前具有焦点的元素在文档中的起始索引的 Integer。值 -1 指示该元素现在不具有焦点或以前不具有焦点。
+@see AccessibleHyperlink
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TEXT_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示文本已更改的 PropertyChangeEvent。<br> 对于文本插入来说，oldValue 为 null，newValue 为指定所插入文本的 AccessibleTextSequence。<br> 对于文本删除来说，oldValue 为指定所删除文本的 AccessibleTextSequence，newValue 为 null。<br> 对于文本替换来说，oldValue 为指定原有文本的 AccessibleTextSequence，newValue 为指定新文本的 AccessibleTextSequence。
+
+@see #getAccessibleText
+@see #addPropertyChangeListener
+@see #AccessibleText.AccessibleTextSequence
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_INVALIDATE_CHILDREN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示某个组件（例如树或文本）的子级已发生重要更改的 PropertyChangeEvent。此更改通知事件侦听器，需要重新获取子组件的状态。oldValue 为 null，newValue 为其子级已无效的组件。
+
+@see #getAccessibleText
+@see #addPropertyChangeListener
+@see #AccessibleText.AccessibleTextSequence
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_TEXT_ATTRIBUTES_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示文本属性已更改的 PropertyChangeEvent。<br> 对于属性插入来说，oldValue 为 null，newValue 为指定所插入属性的 AccessibleAttributeSequence。<br>对于属性删除来说，oldValue 为指定所删除属性的 AccessibleAttributeSequence，newValue 为 null。<br>对于属性替换来说，oldValue 为指定原有属性的 AccessibleAttributeSequence，newValue 为指定新属性的 AccessibleAttributeSequence。
+
+@see #getAccessibleText
+@see #addPropertyChangeListener
+@see #AccessibleText.AccessibleAttributeSequence
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.accessibility.AccessibleContext.ACCESSIBLE_COMPONENT_BOUNDS_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示组件边界已更改的 PropertyChangeEvent。oldValue 为原有组件的边界，newValue 为新组件的界限。
+
+@see #addPropertyChangeListener
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.accessibility.Accessible javax.accessibility.AccessibleContext.accessibleParent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此对象的可访问父级。
+
+@see #getAccessibleParent
+@see #setAccessibleParent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.accessibility.AccessibleContext.accessibleName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含对象名称的本地化 String。
+
+@see #getAccessibleName
+@see #setAccessibleName 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.accessibility.AccessibleContext.accessibleDescription
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含对象描述的本地化 String。
+
+@see #getAccessibleDescription
+@see #setAccessibleDescription 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.accessibility.AccessibleContext.getAccessibleName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的 accessibleName 属性。对象的 accessibleName 属性是指定该对象功能的本地化 String。例如，标签和按钮的 accessibleName 属性可以是标签或按钮本身的文本。对于不显示其名称的对象，仍应设置 accessibleName。例如，对于用于输入城市名称的文本字段，在 en_US 语言环境下，accessibleName 可以为 &quot;city&quot;。
+
+@return 对象的本地化名称；如果此对象没有名称，则返回 null
+
+@see #setAccessibleName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.setAccessibleName(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此对象的可访问的本地化名称。更改名称将导致激发 ACCESSIBLE_NAME_PROPERTY 属性的 PropertyChangeEvent。
+
+@param s 对象的新本地化名称。
+
+@see #getAccessibleName
+@see #addPropertyChangeListener
+
+@beaninfo preferred:true description:设置组件的可访问名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.accessibility.AccessibleContext.getAccessibleDescription()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的 accessibleDescription 属性。此对象的 accessibleDescription 属性是描述该对象功能的本地化短语。例如，对于 &quot;Cancel&quot; 按钮，accessibleDescription 可以是 &quot;Ignore changes and close dialog box&quot;（忽略更改并关闭对话框）。
+
+@return 该对象的本地化描述；如果此对象没有描述，则返回 null
+
+@see #setAccessibleDescription
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.setAccessibleDescription(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此对象的可访问描述。更改名称将导致激发 ACCESSIBLE_DESCRIPTION_PROPERTY 属性的 PropertyChangeEvent。
+
+@param s 此对象的新的本地化描述
+
+@see #setAccessibleName
+@see #addPropertyChangeListener
+
+@beaninfo preferred:true description: 设置组件的可访问描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.accessibility.AccessibleRole javax.accessibility.AccessibleContext.getAccessibleRole()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的职责。对象的职责是此对象的类的一般功能或用途。例如，push 按钮的职责是 AccessibleRole.PUSH_BUTTON。AccessibleRole 中提供了一些职责，组件开发人员可以从一组预定义职责中进行选择。这就使辅助技术能为各种交互的组件子类（例如，对所有充当按钮的组件使用 AccessibleRole.PUSH_BUTTON）以及区分行为各异的子类（例如，复选框 AccessibleRole.CHECK_BOX 和单选框 AccessibleRole.RADIO_BUTTON）提供一致的接口。
+<p>注意，AccessibleRole 类也是可扩展的，因此如果预定义的职责集合不充分，则自定义组件的开发人员可以定义他们自己的 AccessibleRole。
+
+@return 描述该对象职责的 AccessibleRole 实例
+@see AccessibleRole
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.accessibility.AccessibleStateSet javax.accessibility.AccessibleContext.getAccessibleStateSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的状态集合。对象的 AccessibleStateSet 由一组唯一的 AccessibleState 组成。对象的 AccessibleStateSet 中的更改将导致激发 ACCESSIBLE_STATE_PROPERTY 属性的 PropertyChangeEvent。
+
+@return 包含对象的当前状态集合的 AccessibleStateSet 的实例
+@see AccessibleStateSet
+@see AccessibleState
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.Accessible javax.accessibility.AccessibleContext.getAccessibleParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的 Accessible 父对象。
+
+@return 此对象的 Accessible 父对象；如果此对象没有 Accessible 父对象，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.setAccessibleParent(Accessible a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此对象的 Accessible 父对象。这意味着此方法仅用于以下情形：即不应将实际组件的父级视为组件的可访问父级，并且此方法只应由可访问子级的父级调用。 
+
+@param a - 要设置为父级的 Accessible	
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.accessibility.AccessibleContext.getAccessibleIndexInParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象在其可访问父级中的基于零的索引。
+
+@return 返回此对象在父级中从零开始的索引；如果此对象没有可访问父级，则返回 -1。
+
+@see #getAccessibleParent
+@see #getAccessibleChildrenCount
+@see #getAccessibleChild
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.accessibility.AccessibleContext.getAccessibleChildrenCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该对象的可访问子级数。
+
+@return  该对象的可访问子级数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.accessibility.Accessible javax.accessibility.AccessibleContext.getAccessibleChild(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该对象的指定 Accessible 子级。Accessible 对象的 Accessible 子级是从零开始的，因此 Accessible 对象的第一个子对象的索引为 0，第二个子对象的索引为 1，依此类推。
+
+@param i 子级从零开始的索引
+@return 对象的 Accessible 子级
+@see #getAccessibleChildrenCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Locale javax.accessibility.AccessibleContext.getLocale() throws java.awt.IllegalComponentStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取该组件的语言环境。如果该组件没有语言环境，则返回其父级的语言环境。  
+
+@return 此组件的语言环境。如果此组件没有语言环境，则返回其父级的语言环境。
+
+@exception IllegalComponentStateException 如果该 Component 没有自己的语言环境，并且尚未被添加到可以从包含父级确定其语言环境的包含层次结构中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到侦听器列表。此侦听器为所有 Accessible 属性注册，并且将在这些属性发生更改时调用。
+
+@see #ACCESSIBLE_NAME_PROPERTY
+@see #ACCESSIBLE_DESCRIPTION_PROPERTY
+@see #ACCESSIBLE_STATE_PROPERTY
+@see #ACCESSIBLE_VALUE_PROPERTY
+@see #ACCESSIBLE_SELECTION_PROPERTY
+@see #ACCESSIBLE_TEXT_PROPERTY
+@see #ACCESSIBLE_VISIBLE_DATA_PROPERTY
+
+@param   listener   要添加的 PropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除 PropertyChangeListener。此方法移除一个为所有属性注册的 PropertyChangeListener。
+
+@param listener  要移除的 PropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleAction javax.accessibility.AccessibleContext.getAccessibleAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此对象关联的可支持一个或多个动作的 AccessibleAction。 
+
+@return 如果受对象支持，则返回 AccessibleAction；否则返回 null
+@see AccessibleAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleComponent javax.accessibility.AccessibleContext.getAccessibleComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此对象关联的 AccessibleComponent，它具有图形表示形式。
+
+@return 如果受对象支持，则返回 AccessibleComponent；否则返回 null
+@see AccessibleComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleSelection javax.accessibility.AccessibleContext.getAccessibleSelection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此对象关联的 AccessibleSelection，该对象允许选择其 Accessible 子级。  
+ 
+@return 如果受对象支持，则返回 AccessibleSelection；否则返回 null
+@see AccessibleSelection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleText javax.accessibility.AccessibleContext.getAccessibleText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与在显示器上显示文本的此对象关联的 AccessibleText。
+
+@return 如果受对象支持，则返回 AccessibleText；否则返回 null
+@see AccessibleText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleEditableText javax.accessibility.AccessibleContext.getAccessibleEditableText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与在显示器上显示可编辑文本的此对象关联的 AccessibleEditableText。
+
+@return 如果受对象支持，则返回 AccessibleEditableText；否则返回 null
+@see AccessibleEditableText
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleValue javax.accessibility.AccessibleContext.getAccessibleValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此对象关联的支持 Numerical 值的 AccessibleValue。 
+ 
+@return 如果受对象支持，则返回 AccessibleValue；否则返回 null
+@see AccessibleValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleIcon[] javax.accessibility.AccessibleContext.getAccessibleIcon()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此对象关联的具有一个或多个相关图标的 AccessibleIcons
+ 
+@return 如果受对象支持，则返回一个 AccessibleIcon 数组；否则返回 null
+@see AccessibleIcon
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleRelationSet javax.accessibility.AccessibleContext.getAccessibleRelationSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与某个对象关联的 AccessibleRelationSet
+ 
+@return 如果受对象支持，则返回 AccessibleRelationSet；否则返回 null
+@see AccessibleRelationSet
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleTable javax.accessibility.AccessibleContext.getAccessibleTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与某个对象关联的 AccessibleTable
+ 
+@return 如果受对象支持，则返回 AccessibleTable；否则返回 null
+@see AccessibleTable
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.accessibility.AccessibleContext.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对报告 bound 属性更改的支持。如果 oldValue 和 newValue 不相等，且 PropertyChangeEvent 侦听器列表不为空，则对每个侦听器激发一个 PropertyChange 事件。通常，这由 Accessible 对象自己使用，而不应由应用程序调用。
+@param propertyName  已更改的属性的计划名称。
+@param oldValue  属性的原有值。
+@param newValue  属性的新值。
+@see java.beans.PropertyChangeSupport
+@see #addPropertyChangeListener
+@see #removePropertyChangeListener
+@see #ACCESSIBLE_NAME_PROPERTY
+@see #ACCESSIBLE_DESCRIPTION_PROPERTY
+@see #ACCESSIBLE_STATE_PROPERTY
+@see #ACCESSIBLE_VALUE_PROPERTY
+@see #ACCESSIBLE_SELECTION_PROPERTY
+@see #ACCESSIBLE_TEXT_PROPERTY
+@see #ACCESSIBLE_VISIBLE_DATA_PROPERTY
+
+<!-- END DATA -->

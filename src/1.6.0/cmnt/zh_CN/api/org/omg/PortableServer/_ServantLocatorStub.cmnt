@@ -1,0 +1,31 @@
+<!-- BEGIN KEY -->
+public class org.omg.PortableServer._ServantLocatorStub extends org.omg.CORBA.portable.ObjectImpl implements org.omg.PortableServer.ServantLocator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+POA 具有 NON_RETAIN 策略时将使用 ServantLocator 这种 servant 管理器。因为 POA 了解此 servant 管理器返回的 servant 只用于单个请求，所以它可以向 servant 管理器的操作提供额外的信息，从而一对该 servant 管理器的操作也许能共同执行某些不同于 ServantActivator 的操作。POA 使用 ServantLocator 接口时，对 preinvoke 返回的 servant 调用该操作后，POA 将立即对 servant 管理器调用 postinvoke，同时将 ObjectId 值和 Servant 值（及其他值）作为参数传递。servant 管理器可以使用这一功能来强制调停每个对关联 POA 的对象的请求。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.PortableServer.Servant org.omg.PortableServer._ServantLocatorStub.preinvoke(byte[] oid, POA adapter, String operation, CookieHolder the_cookie) throws org.omg.PortableServer.ForwardRequest
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此操作用来获取一个 servant，该 servant 将用来处理导致调用 preinvoke 的请求。
+@param oid 关联所请求对象的对象 Id。
+@param adapter 将激活对象的 POA 的引用。
+@param operation 操作名称。
+@param the_cookie 一个不透明值，可由调用 postinvoke 期间使用的 servant 管理器设置。
+@return 用来处理传入请求的 Servant。
+@exception ForwardRequest 指示 ORB 负责将当前请求和后续请求传递给异常的向前引用 (forward_reference) 成员所表示的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableServer._ServantLocatorStub.postinvoke(byte[] oid, POA adapter, String operation, Object the_cookie, Servant the_servant)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+servant 完成请求时都将调用此操作。
+@param oid 关联所请求对象的对象 Id。
+@param adapter 已激活对象的 POA 的引用。
+@param the_cookie 一个包含 preinvoke 设置的数据的透明值。
+@param the_servant 对关联对象的 servant 的引用。
+
+<!-- END DATA -->

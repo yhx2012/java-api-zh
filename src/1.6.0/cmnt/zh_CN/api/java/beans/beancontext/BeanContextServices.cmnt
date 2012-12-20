@@ -1,0 +1,94 @@
+<!-- BEGIN KEY -->
+public interface java.beans.beancontext.BeanContextServices extends java.beans.beancontext.BeanContext, java.beans.beancontext.BeanContextServicesListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+BeanContextServices 接口为 BeanContext 提供某种机制，将一般的 &quot;services&quot; 向其中的 BeanContextChild 对象公开。
+ </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextServices.addService(java.lang.Class serviceClass, BeanContextServiceProvider serviceProvider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此 BeanContext 添加服务。<code>BeanContextServiceProvider</code> 调用此方法来向此上下文注册一个特定服务。如果该服务不是以前已添加的服务，则 <code>BeanContextServices</code> 会将该服务与 <code>BeanContextServiceProvider</code> 相关联，并对所有当前已注册的 <code>BeanContextServicesListeners</code> 激发一个 <code>BeanContextServiceAvailableEvent</code>。然后该方法返回 <code>true</code>，指示成功添加了服务。如果已添加给定服务，则此方法仅返回 <code>false</code>。
+@param serviceClass     要添加的服务
+@param serviceProvider  与该服务相关联的 <code>BeanContextServiceProvider</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextServices.revokeService(java.lang.Class serviceClass, BeanContextServiceProvider serviceProvider, boolean revokeCurrentServicesNow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+希望从此上下文中移除当前已注册服务的 BeanContextServiceProvider 可以通过调用此方法实现移除。在撤消该服务时，<code>BeanContextServices</code> 对当前已注册的 <code>BeanContextServiceRevokedListeners</code> 和 <code>BeanContextServicesListeners</code> 的列表触发一个 <code>BeanContextServiceRevokedEvent</code>。
+@param serviceClass 要从此 BeanContextServices 中取消的服务
+@param serviceProvider 与将取消的特定服务有关联的 BeanContextServiceProvider
+@param revokeCurrentServicesNow 值为 <code>true</code> 指示一个异常环境，在该环境中，<code>BeanContextServiceProvider</code> 或 <code>BeanContextServices</code> 希望立即终止为指定服务的所有当前突出引用提供服务。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextServices.hasService(java.lang.Class serviceClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告是否可以从此上下文中得到给定服务。
+@param serviceClass 相关服务
+@return 如果可得到服务，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.beans.beancontext.BeanContextServices.getService(BeanContextChild child, Object requestor, java.lang.Class serviceClass, Object serviceSelector, BeanContextServiceRevokedListener bcsrl) throws java.util.TooManyListenersException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BeanContextChild</code>（或任意与 <code>BeanContextChild</code> 关联的对象）可以通过调用此方法从其嵌套 <code>BeanContextServices</code> 中获得对当前已注册服务的引用。此方法在调用时通过在基础 <code>BeanContextServiceProvider</code> 上调用 getService() 获得服务。
+@param child 与此请求相关联的 <code>BeanContextChild</code>
+@param requestor 请求服务的对象
+@param serviceClass 所请求服务的类
+@param serviceSelector 与服务有关的参数
+@param bcsrl 通知稍后是否应该取消服务的 <code>BeanContextServiceRevokedListener</code>
+@throws TooManyListenersException
+@return 所请求的此上下文的指定 Service 的引用，或 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextServices.releaseService(BeanContextChild child, Object requestor, Object service)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在基础 <code>BeanContextServiceProvider</code> 上调用 releaseService() 释放 <code>BeanContextChild</code>（或与 BeanContextChild 关联的任意对象）对指定服务的引用。
+@param child <code>BeanContextChild</code>
+@param requestor 请求者
+@param service 服务
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator java.beans.beancontext.BeanContextServices.getCurrentServiceClasses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此上下文的当前可用服务。
+@return 由当前可用服务组成的 <code>Iterator</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator java.beans.beancontext.BeanContextServices.getCurrentServiceSelectors(java.lang.Class serviceClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在基础 BeanContextServiceProvider 上调用 getCurrentServiceSelectors() 获得指定服务的与服务有关的服务参数列表（服务选择器）。
+@param serviceClass 指定服务
+@return 指定 serviceClass 的当前可用的服务选择器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextServices.addBeanContextServicesListener(BeanContextServicesListener bcsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>BeanContextServicesListener</code> 添加到此 BeanContext
+@param bcsl 要添加的 <code>BeanContextServicesListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextServices.removeBeanContextServicesListener(BeanContextServicesListener bcsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>BeanContext</code> 中移除一个 <code>BeanContextServicesListener</code>
+@param bcsl 要从此上下文移除的 <code>BeanContextServicesListener</code>
+
+<!-- END DATA -->

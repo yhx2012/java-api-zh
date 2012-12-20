@@ -1,0 +1,94 @@
+<!-- BEGIN KEY -->
+public interface javax.naming.ldap.ExtendedRequest extends java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示在 <A HREF="ftp://ftp.isi.edu/in-notes/rfc2251.txt">RFC 2251</A> 中定义的 LDAPv3 扩展操作请求。
+ <pre>
+     ExtendedRequest ::= [APPLICATION 23] SEQUENCE {
+              requestName      [0] LDAPOID,
+              requestValue     [1] OCTET STRING OPTIONAL }
+ </pre>
+它包含对象标识符字符串和可选的 ASN.1 BER 编码值。
+<p>
+服务提供者使用此类中的方法构造发送到 LDAP 服务器的位。应用程序通常仅处理实现此接口的类，向它们提供特定扩展操作请求所需的任何信息。然后，它将这种类作为参数传递给 <tt>LdapContext.extendedOperation()</tt> 方法，从而执行 LDAPv3 扩展操作。
+<p>
+例如，假定 LDAP 服务器支持&ldquo;获取时间&rdquo;扩展操作。它将提供 GetTimeRequest 和 GetTimeResponse 类：
+<blockquote><pre>
+ public class GetTimeRequest implements ExtendedRequest {
+     public GetTimeRequest() {... };
+     public ExtendedResponse createExtendedResponse(String id, 
+ 	    byte[] berValue, int offset, int length) 
+	    throws NamingException {
+         return new GetTimeResponse(id, berValue, offset, length);
+     }
+     ...
+ }
+ public class GetTimeResponse implements ExtendedResponse {
+     long time;
+     public GetTimeResponse(String id, byte[] berValue, int offset, 
+ 	    int length) throws NamingException {
+time =	... // decode berValue to get time
+     }
+     public java.util.Date getDate() { return new java.util.Date(time) };
+     public long getTime() { return time };
+     ...
+ }
+</pre></blockquote>
+然后，程序将使用以下这些类：
+<blockquote><pre>
+ GetTimeResponse resp =
+ 	(GetTimeResponse) ectx.extendedOperation(new GetTimeRequest());
+ long time = resp.getTime();
+</pre></blockquote>
+ 
+@author Rosanna Lee
+@author Scott Seligman
+@author Vincent Ryan
+@version 1.10 05/11/17
+
+@see ExtendedResponse
+@see LdapContext#extendedOperation
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.ExtendedRequest.getID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索请求的对象标识符。
+
+@return 表示 LDAP <tt>ExtendedRequest.requestName</tt> 组件的非 null 对象标识符字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.naming.ldap.ExtendedRequest.getEncodedValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索 LDAP 扩展操作请求的 ASN.1 BER 编码值。如果值不存在，则返回 null。
+
+结果为原始 BER 字节，包括请求值的标记和长度。它不包括请求 OID。服务提供者调用此方法获取将置于扩展操作中的位，该操作将被发送给 LDAP 服务器。
+
+@return 表示 LDAP <tt>ExtendedRequest.requestValue</tt> 组件的 ASN.1 BER 编码内容的字节数组（可能为 null）。
+@exception IllegalStateException 如果因请求包含不足或无效的数据/状态而无法检索编码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.ExtendedResponse javax.naming.ldap.ExtendedRequest.createExtendedResponse(String id, byte[] berValue, int offset, int length) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建与此请求对应的响应对象。
+<p>
+在服务提供者将扩展操作请求发送到 LDAP 服务器后，它将从服务器收到响应。如果操作失败，则提供者将抛出 NamingException。如果操作成功，则提供者将使用从响应取回的数据调用此方法。此方法的任务是返回实现适合扩展操作请求的 ExtendedResponse 接口的类。
+<p>
+例如，Start TLS 扩展请求类需要知道如何处理 Start TLS 扩展响应。它通过创建实现 ExtendedResponse 的类完成此操作。
+
+@param id	响应控件的对象标识符（可能为 null）。
+@param berValue	响应控件的 ASN.1 BER 编码值（可能为 null）。此为原始 BER 字节，包括响应值的标记和长度。它不包括响应 OID。
+@param offset   berValue 中要使用的字节的开始位置。
+@param length   berValue 中要使用的字节数。
+
+@return 非 null 对象。
+@exception NamingException 如果因出错而无法创建扩展响应。
+@see ExtendedResponse
+
+<!-- END DATA -->

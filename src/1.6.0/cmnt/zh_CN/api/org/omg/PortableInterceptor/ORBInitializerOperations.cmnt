@@ -1,0 +1,85 @@
+<!-- BEGIN KEY -->
+public interface org.omg.PortableInterceptor.ORBInitializerOperations
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+便于注册 interceptor 和初始化 ORB。
+ <p>
+ORB 服务凭借 Interceptor 这一方法获得进行 ORB 处理的权力，Interceptor 实际上已成为 ORB 的一部分。因为 Interceptor 是 ORB 的一部分，所以当 <code>ORB.init</code> 返回 ORB 时，应该已经注册了 Interceptor。在已经调用 <code>ORB.init</code> 返回 Interceptor 后，不能在 ORB 上注册 Interceptor。
+ <p>
+通过注册实现 <code>ORBInitializer</code> 接口的关联的 <code>ORBInitializer</code> 对象才能注册 Interceptor。ORB 在初始化时，应该调用每个已注册 <code>ORBInitializer</code>，并将用来注册其 Interceptor 的 <code>ORBInitInfo</code> 对象传递给该 ORB。
+ <p>
+<b>用 Java 注册 ORB Initializer</b>
+ <p>
+ORBInitializer 通过 Java ORB 属性注册。
+ <p>
+属性名称的形式如下： 
+   <blockquote><code>org.omg.PortableInterceptor.ORBInitializerClass.&lt;Service&gt;</code></blockquote>
+其中 <code>&lt;Service&gt;</code> 是实现以下类的字符串名称： 
+   <blockquote><code>org.omg.PortableInterceptor.ORBInitializer</code></blockquote>
+要避免名称冲突，应使用与 DNS 名称约定相反的约定。例如，如果 X 公司有三个 initializer，则它能够定义以下属性： 
+ <ul>
+   <li><code>org.omg.PortableInterceptor.ORBInitializerClass.com.x.Init1</code></li>
+   <li><code>org.omg.PortableInterceptor.ORBInitializerClass.com.x.Init2</code></li>
+   <li><code>org.omg.PortableInterceptor.ORBInitializerClass.com.x.Init3</code></li>
+ </ul>
+在 ORB.init 期间，应该收集那些以 <code>org.omg.PortableInterceptor.ORBInitializerClass</code> 开头的属性，提取每个属性的 <code>&lt;Service&gt;</code> 部分，然后将该 <code>&lt;Service&gt;</code> 字符串作为类名来实例化某个对象，并对该对象调用 <code>pre_init</code> 和 <code>post_init</code> 方法。如果存在异常，ORB 应忽略这些异常并继续进行。 
+ <p>
+<b><i>示例</i></b>
+ <p>
+例如，X 公司编写的客户端登陆可能具有以下 ORBInitializer 实现： <code><pre>
+ package com.x.logging;
+ 
+ import org.omg.PortableInterceptor.Interceptor; 
+ import org.omg.PortableInterceptor.ORBInitializer; 
+ import org.omg.PortableInterceptor.ORBInitInfo; 
+ 
+ public class LoggingService implements ORBInitializer { 
+     void pre_init( ORBInitInfo info ) { 
+         // Instantiate the Logging Service s Interceptor. 
+         Interceptor interceptor = new LoggingInterceptor(); 
+
+         // Register the Logging Service s Interceptor. 
+         info.add_client_request_interceptor( interceptor ); 
+     } 
+ 
+     void post_init( ORBInitInfo info ) { 
+         // This service does not need two init points. 
+     } 
+ } 
+</pre></code> 要运行使用此日志记录服务的名为 <code>MyApp</code> 的程序，用户可以键入： 
+   <blockquote><code>java -Dorg.omg.PortableInterceptor.ORBInitializerClass.com.x.Logging.LoggingService MyApp</code></blockquote>
+ <p>
+<b>注册 Interceptor 的有关注意事项：</b>
+ <p>
+每个 ORB 都要注册请求 Interceptor。 
+ <p>
+要获得虚拟的针对对象的 Interceptor，应在截取点内的目标上查询策略以确定它们是否应该执行某些操作。 
+ <p>
+要获得虚拟的针对 POA 的 Interceptor，应使用不同的 ORB 实例化每个 POA。虽然在管理上 Interceptor 是有序的，但注册 Interceptor 时并不需要按顺序进行。请求 Interceptor 参与服务上下文。服务上下文没有顺序，因此请求 Interceptor 也没有必要有顺序。IOR Interceptor 参与带标记的组件。带标记的组件没有顺序，因此 IOR Interceptor 也没有必要有顺序。 
+ <p>
+注册代码应该避免使用 ORB（即使用提供的 <code>orb_id</code> 调用 <code>ORB.init</code>）。因为注册发生在初始化 ORB 期间，对出于此状态的 ORB 进行调用的结果是不确定的。 
+ 
+@see ORBInitInfo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitializerOperations.pre_init(ORBInitInfo info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+初始化 ORB 期间调用此方法。如果希望 interceptor 注册的初始服务可以供其他 interceptor 使用，则应该在此时通过调用 <code>ORBInitInfo.register_initial_reference</code> 注册那些初始服务。 
+ 
+@param info 提供 Interceptor 据以注册的初始化属性和操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitializerOperations.post_init(ORBInitInfo info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化 ORB 期间调用此方法。如果服务必须作为其初始化的一部分解析初始引用，则它应该假定此时所有的初始引用均可用。 
+ <p>
+调用 <code>post_init</code> 操作并不是初始化 ORB 的最后一项工作。调用 <code>post_init</code> 之后的最后一项工作是将已注册 interceptor 列表附加到 ORB。因此，在调用 <code>post_init</code> 期间，ORB 不包含 interceptor。如果从 <code>post_init</code> 内部进行间接 ORB 调用，则在该调用上不会调用任何请求 interceptor。类似的，如果执行了导致创建 IOR 的操作，也不会调用任何 IOR interceptor。 
+
+@param info 提供 Interceptor 据以注册的初始化属性和操作。
+
+<!-- END DATA -->

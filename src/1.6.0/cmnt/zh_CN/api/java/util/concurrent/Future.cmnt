@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public interface java.util.concurrent.Future
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>Future</tt> 表示异步计算的结果。它提供了检查计算是否完成的方法，以等待计算的完成，并获取计算的结果。计算完成后只能使用 <tt>get</tt> 方法来获取结果，如有必要，计算完成前可以阻塞此方法。取消则由 <tt>cancel</tt> 方法来执行。还提供了其他方法，以确定任务是正常完成还是被取消了。一旦计算完成，就不能再取消计算。如果为了可取消性而使用 <tt>Future</tt> 但又不提供可用的结果，则可以声明 <tt>Future&lt;?&gt;</tt> 形式类型、并返回 <tt>null</tt> 作为底层任务的结果。
+
+ <p>
+<b>用法示例</b>（注意，下列各类都是构造好的。）  <p>
+ <pre>
+ interface ArchiveSearcher { String search(String target); }
+ class App {
+   ExecutorService executor = ...
+   ArchiveSearcher searcher = ...
+   void showSearch(final String target)
+       throws InterruptedException {
+     Future&lt;String&gt; future
+       = executor.submit(new Callable&lt;String&gt;() {
+         public String call() {
+             return searcher.search(target);
+         }});
+     displayOtherThings(); // do other things while searching
+     try {
+       displayText(future.get()); // use future
+     } catch (ExecutionException ex) { cleanup(); return; }
+   }
+ }
+ </pre>
+
+{@link FutureTask} 类是 <tt>Future</tt> 的一个实现，<tt>Future</tt> 可实现 <tt>Runnable</tt>，所以可通过 <tt>Executor</tt> 来执行。例如，可用下列内容替换上面带有 <tt>submit</tt> 的构造：
+ <pre>
+     FutureTask&lt;String&gt; future =
+       new FutureTask&lt;String&gt;(new Callable&lt;String&gt;() {
+         public String call() {
+           return searcher.search(target);
+       }});
+     executor.execute(future);
+
+
+<p>内存一致性效果：异步计算采取的操作 <a href="package-summary.html#MemoryVisibility"> <i>happen-before</i></a> 另一线程中紧跟在相应的 {@code Future.get()} 之后的操作。
+
+ </pre>
+@see FutureTask
+@see Executor
+@since 1.5
+@author Doug Lea
+@param <V> 此 Future 的 <tt>get</tt> 方法所返回的结果类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.Future.cancel(boolean mayInterruptIfRunning)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图取消对此任务的执行。如果任务已完成、或已取消，或者由于某些其他原因而无法取消，则此尝试将失败。当调用 <tt>cancel</tt> 时，如果调用成功，而此任务尚未启动，则此任务将永不运行。如果任务已经启动，则 <tt>mayInterruptIfRunning</tt> 参数确定是否应该以试图停止任务的方式来中断执行此任务的线程。
+
+<p>此方法返回后，对 {@link #isDone} 的后续调用将始终返回 <tt>true</tt>。如果此方法返回 <tt>true</tt>，则对 {@link #isCancelled} 的后续调用将始终返回 <tt>true</tt>。
+
+@param mayInterruptIfRunning 如果应该中断执行此任务的线程，则为 <tt>true</tt>；否则允许正在运行的任务运行完成
+@return 如果无法取消任务，则返回 <tt>false</tt>，这通常是由于它已经正常完成；否则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.Future.isCancelled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果在任务正常完成前将其取消，则返回 <tt>true</tt>。
+
+@return 如果任务完成前将其取消，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.Future.isDone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果任务已完成，则返回 <tt>true</tt>。
+
+可能由于正常终止、异常或取消而完成，在所有这些情况中，此方法都将返回 <tt>true</tt>。
+ 
+@return 如果任务已完成，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.Future.get() throws java.lang.InterruptedException, java.util.concurrent.ExecutionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如有必要，等待计算完成，然后获取其结果。
+
+@return 计算的结果
+@throws CancellationException 如果计算被取消
+@throws ExecutionException 如果计算抛出异常
+@throws InterruptedException 如果当前的线程在等待时被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.Future.get(long timeout, TimeUnit unit) throws java.lang.InterruptedException, java.util.concurrent.ExecutionException, java.util.concurrent.TimeoutException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如有必要，最多等待为使计算完成所给定的时间之后，获取其结果（如果结果可用）。
+
+@param timeout 等待的最大时间
+@param unit timeout 参数的时间单位
+@return 计算的结果
+@throws CancellationException 如果计算被取消
+@throws ExecutionException 如果计算抛出异常
+@throws InterruptedException 如果当前的线程在等待时被中断
+@throws TimeoutException 如果等待超时
+
+<!-- END DATA -->

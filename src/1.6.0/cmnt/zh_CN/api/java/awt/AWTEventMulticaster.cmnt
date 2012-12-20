@@ -1,0 +1,707 @@
+<!-- BEGIN KEY -->
+public class java.awt.AWTEventMulticaster extends java.lang.Object implements java.awt.event.ComponentListener, java.awt.event.ContainerListener, java.awt.event.FocusListener, java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener, java.awt.event.WindowListener, java.awt.event.WindowFocusListener, java.awt.event.WindowStateListener, java.awt.event.ActionListener, java.awt.event.ItemListener, java.awt.event.AdjustmentListener, java.awt.event.TextListener, java.awt.event.InputMethodListener, java.awt.event.HierarchyListener, java.awt.event.HierarchyBoundsListener, java.awt.event.MouseWheelListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code AWTEventMulticaster} 实现对 {@code java.awt.event} 包中定义的 AWT 事件的指派，该指派是有效的、线程安全的多路广播事件指派。
+<p>
+以下实例阐释了如何使用此类：
+
+ <pre><code>
+ public myComponent extends Component {
+     ActionListener actionListener = null;
+
+     public synchronized void addActionListener(ActionListener l) {
+	   actionListener = AWTEventMulticaster.add(actionListener, l);
+     }
+     public synchronized void removeActionListener(ActionListener l) {
+  	   actionListener = AWTEventMulticaster.remove(actionListener, l);
+     }
+     public void processEvent(AWTEvent e) {
+         // when event occurs which causes &quot;action&quot; semantic
+         ActionListener listener = actionListener;
+         if (listener != null) {
+             listener.actionPerformed(new ActionEvent());
+         }
+     }
+ }
+ </code></pre>
+
+需要重点注意的是 {@code add} 和 {@code remove} 方法的第一个参数，它是维护侦听器的字段。此外，必须将 {@code add} 和 {@code remove} 方法的结果分配给维护侦听器的字段。
+ <p>
+{@code AWTEventMulticaster} 是作为一对 {@code EventListeners} 实现的，它们在构造时被设置。{@code AWTEventMulticaster} 是不可变的。{@code add} 和 {@code remove} 方法不得以任何方式改变 {@code AWTEventMulticaster}。如有必要，可以创建一个新的 {@code AWTEventMulticaster}。以这种方式在指派事件的过程中添加和移除侦听器是安全的。但是，不会向目前正指派的事件通知事件指派操作过程中添加的事件侦听器。
+ <p>
+允许所有 {@code add} 方法使用 {@code null} 参数。如果第一个参数是 {@code null}，则返回第二个参数。如果第一个参数不是 {@code null}，而第二个参数是 {@code null}，则返回第一个参数。如果两个参数都是 {@code non-null}，则使用这两个参数创建一个新的 {@code AWTEventMulticaster} 并返回它。
+ <p>
+对于使用两个参数的 {@code remove} 方法，返回以下内容：
+ <ul>
+   <li>{@code null}，如果第一个参数是 {@code null}，或者参数相等（{@code ==}）。
+   <li>第一个参数，如果第一个参数不是一个 {@code AWTEventMulticaster} 实例。
+   <li>在将第二个参数提供给 {@code remove(EventListener)} 方法的情况下，对第一个参数调用 {@code remove(EventListener)} 的结果。
+ </ul>
+ <p>Swing 基于类似的逻辑使用 {@link javax.swing.event.EventListenerList EventListenerList}。有关细节，请参见 {@link javax.swing.event.EventListenerList EventListenerList}。
+
+ @see javax.swing.event.EventListenerList
+
+ @author      John Rose
+ @author 	Amy Fowler
+ @version 	1.41, 08/16/06
+ @since 	1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.AWTEventMulticaster(EventListener a, EventListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个将侦听器 a 和侦听器 b 链接起来的事件多路广播器实例。输入参数 <code>a</code> 和 <code>b</code> 不应为 <code>null</code>，对于是否选择在这种情况下抛出 <code>NullPointerException</code>，因实现不同而各不相同。
+@param a 侦听器 a
+@param b 侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.EventListener java.awt.AWTEventMulticaster.remove(EventListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此多路广播器中移除一个侦听器。
+<p>
+ 除了所有出现的 {@code oldl} 之外，返回的多路广播器包含此多路广播器中的所有侦听器。如果得到的多路广播器只包含可能返回的常规侦听器。如果得到的多路广播器为空，则可能返回 {@code null}。
+ <p>
+ 如果 {@code oldl} 为 {@code null}，不会有异常抛出。
+
+ @param oldl 要移除的侦听器
+ @return 得到的侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentResized(ComponentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentResized 方法处理 componentResized 事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentMoved(ComponentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentMoved 方法处理 componentMoved 事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentShown(ComponentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentShown 方法处理 componentShown 事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentHidden(ComponentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentHidden 方法处理 componentHidden 事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentAdded(ContainerEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentAdded 方法处理 componentAdded 容器事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.componentRemoved(ContainerEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 componentRemoved 方法处理 componentRemoved 容器事件。
+@param e 组件事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.focusGained(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 focusGained 方法处理 focusGained 事件。
+@param e 焦点事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.focusLost(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 focusLost 方法处理 focusLost 事件。
+@param e 焦点事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.keyTyped(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 keyTyped 方法处理 keyTyped 事件。
+@param e 键事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.keyPressed(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 keyPressed 方法处理 keyPressed 事件。
+@param e 键事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.keyReleased(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 keyReleased 方法处理 keyReleased 事件。
+@param e 键事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseClicked(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseClicked 方法处理 mouseClicked 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mousePressed(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mousePressed 方法处理 mousePressed 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseReleased(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseReleased 方法处理 mouseReleased 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseEntered(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseEntered 方法处理 mouseEntered 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseExited(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseExited 方法处理 mouseExited 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseDragged(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseDragged 方法处理 mouseDragged 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseMoved(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseMoved 方法处理 mouseMoved 事件。
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowOpened(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowOpened 方法处理 windowOpened 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowClosing(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowClosing 方法处理 windowClosing 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowClosed(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowClosed 方法处理 windowClosed 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowIconified(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowIconified 方法处理 windowIconified 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowDeiconified(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowDeiconified 方法处理 windowDeiconified 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowActivated(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowActivated 方法处理 windowActivated 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowDeactivated(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowDeactivated 方法处理 windowDeactivated 事件。
+@param e 窗口事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowStateChanged(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowStateChanged 方法处理 windowStateChanged 事件。
+@param e 窗口事件
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowGainedFocus(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowGainedFocus 方法处理 windowGainedFocus 事件。
+@param e 窗口事件
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.windowLostFocus(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 windowLostFocus 方法处理 windowLostFocus 事件。
+@param e 窗口事件
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.actionPerformed(ActionEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 actionPerformed 方法处理 actionPerformed 事件。
+@param e 操作事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.itemStateChanged(ItemEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 itemStateChanged 方法处理 itemStateChanged 事件。
+@param e 项事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.adjustmentValueChanged(AdjustmentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 adjustmentValueChanged 方法处理 adjustmentValueChanged 事件。
+@param e 调整事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.inputMethodTextChanged(InputMethodEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 inputMethodTextChanged 方法处理 inputMethodTextChanged 事件。
+@param e 项事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.caretPositionChanged(InputMethodEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 caretPositionChanged 方法处理 caretPositionChanged 事件。
+@param e 项事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.hierarchyChanged(HierarchyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 hierarchyChanged 方法处理 hierarchyChanged 事件。
+@param e 项事件
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.ancestorMoved(HierarchyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 ancestorMoved 方法处理 ancestorMoved 事件。
+@param e 项事件
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.ancestorResized(HierarchyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 ancestorResized 方法处理 ancestorResized 事件。
+@param e 项事件
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.AWTEventMulticaster.mouseWheelMoved(MouseWheelEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在侦听器 a 和侦听器 b 上调用 mouseWheelMoved 方法处理 mouseWheelMoved 事件。
+@param e 鼠标事件
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ComponentListener java.awt.AWTEventMulticaster.add(ComponentListener a, ComponentListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加组件侦听器 a 和组件侦听器 b，并返回得到的多路广播侦听器。
+@param a 组件侦听器 a
+@param b 组件侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ContainerListener java.awt.AWTEventMulticaster.add(ContainerListener a, ContainerListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加容器侦听器 a 和容器侦听器 b，并返回得到的多路广播侦听器。
+@param a 容器侦听器 a
+@param b 容器侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.FocusListener java.awt.AWTEventMulticaster.add(FocusListener a, FocusListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加焦点侦听器 a 和焦点侦听器 b，并返回得到的多路广播侦听器。
+@param a 焦点侦听器 a
+@param b 焦点侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.KeyListener java.awt.AWTEventMulticaster.add(KeyListener a, KeyListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加键侦听器 a 和键侦听器 b，并返回得到的多路广播侦听器。
+@param a 键侦听器 a
+@param b 键侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseListener java.awt.AWTEventMulticaster.add(MouseListener a, MouseListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加鼠标侦听器 a 和鼠标侦听器 b，并返回得到的多路广播侦听器。
+@param a 鼠标侦听器 a
+@param b 鼠标侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseMotionListener java.awt.AWTEventMulticaster.add(MouseMotionListener a, MouseMotionListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加鼠标移动侦听器 a 和鼠标移动侦听器 b，并返回得到的多路广播侦听器。
+@param a 鼠标移动侦听器 a
+@param b 鼠标移动侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowListener java.awt.AWTEventMulticaster.add(WindowListener a, WindowListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加窗口侦听器 a 和窗口侦听器 b，并返回得到的多路广播侦听器。
+@param a 窗口侦听器 a
+@param b 窗口侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowStateListener java.awt.AWTEventMulticaster.add(WindowStateListener a, WindowStateListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加窗口状态侦听器 a 和窗口状态侦听器 b，并返回得到的多路广播侦听器。
+@param a 窗口状态侦听器 a
+@param b 窗口状态侦听器 b
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowFocusListener java.awt.AWTEventMulticaster.add(WindowFocusListener a, WindowFocusListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加窗口焦点侦听器 a 和窗口焦点侦听器 b，并返回得到的多路广播侦听器。
+@param a 窗口焦点侦听器 a
+@param b 窗口焦点侦听器 b
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ActionListener java.awt.AWTEventMulticaster.add(ActionListener a, ActionListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加操作侦听器 a 和操作侦听器 b，并返回得到的多路广播侦听器。
+@param a 操作侦听器 a
+@param b 操作侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ItemListener java.awt.AWTEventMulticaster.add(ItemListener a, ItemListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加项侦听器 a 和项侦听器 b，并返回得到的多路广播侦听器。
+@param a 项侦听器 a
+@param b 项侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.AdjustmentListener java.awt.AWTEventMulticaster.add(AdjustmentListener a, AdjustmentListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加调整侦听器 a 和调整侦听器 b，并返回得到的多路广播侦听器。
+@param a 调整侦听器 a
+@param b 调整侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.InputMethodListener java.awt.AWTEventMulticaster.add(InputMethodListener a, InputMethodListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加输入方法侦听器 a 和输入方法侦听器 b，并返回得到的多路广播侦听器。
+@param a 输入方法侦听器 a
+@param b 输入方法侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.HierarchyListener java.awt.AWTEventMulticaster.add(HierarchyListener a, HierarchyListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加层次结构侦听器 a 和层次结构侦听器 b，并返回得到的多路广播侦听器。
+@param a 层次结构侦听器 a
+@param b 层次结构侦听器 b
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.HierarchyBoundsListener java.awt.AWTEventMulticaster.add(HierarchyBoundsListener a, HierarchyBoundsListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加层次结构边界侦听器 a 和层次结构边界侦听器 b，并返回得到的多路广播侦听器。
+@param a 层次结构边界侦听器 a
+@param b 层次结构边界侦听器 b
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseWheelListener java.awt.AWTEventMulticaster.add(MouseWheelListener a, MouseWheelListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加鼠标滚轮侦听器 a 和鼠标滚轮侦听器 b，并返回得到的多路广播侦听器。
+@param a 鼠标滚轮侦听器 a
+@param b 鼠标滚轮侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ComponentListener java.awt.AWTEventMulticaster.remove(ComponentListener l, ComponentListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从组件侦听器 l 中移除旧的组件侦听器，并返回得到的多路广播侦听器。
+@param l 组件侦听器 l
+@param oldl 正移除的组件侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ContainerListener java.awt.AWTEventMulticaster.remove(ContainerListener l, ContainerListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从容器侦听器 l 中移除旧的容器侦听器，并返回得到的多路广播侦听器。
+@param l 容器侦听器 l
+@param oldl 正移除的容器侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.FocusListener java.awt.AWTEventMulticaster.remove(FocusListener l, FocusListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从焦点侦听器 l 中移除旧的焦点侦听器，并返回得到的多路广播侦听器。
+@param l 焦点侦听器 l
+@param oldl 正移除的焦点侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.KeyListener java.awt.AWTEventMulticaster.remove(KeyListener l, KeyListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从键侦听器 l 中移除旧的键侦听器，并返回得到的多路广播侦听器。
+@param l 键侦听器 l
+@param oldl 正移除的键侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseListener java.awt.AWTEventMulticaster.remove(MouseListener l, MouseListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从鼠标侦听器 l 中移除旧的鼠标侦听器，并返回得到的多路广播侦听器。
+@param l 鼠标侦听器 l
+@param oldl 正移除的鼠标侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseMotionListener java.awt.AWTEventMulticaster.remove(MouseMotionListener l, MouseMotionListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从鼠标移动侦听器 l 中移除旧的鼠标移动侦听器，并返回得到的多路广播侦听器。
+@param l 鼠标移动侦听器 l
+@param oldl 正移除的鼠标移动侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowListener java.awt.AWTEventMulticaster.remove(WindowListener l, WindowListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从窗口侦听器 l 中移除旧的窗口侦听器，并返回得到的多路广播侦听器。
+@param l 窗口侦听器 l
+@param oldl 正移除的窗口侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowStateListener java.awt.AWTEventMulticaster.remove(WindowStateListener l, WindowStateListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从窗口状态侦听器 l 中移除旧的窗口状态侦听器，并返回得到的多路广播侦听器。
+@param l 窗口状态侦听器 l
+@param oldl 正移除的窗口状态侦听器
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.WindowFocusListener java.awt.AWTEventMulticaster.remove(WindowFocusListener l, WindowFocusListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从窗口焦点侦听器 l 中移除旧的窗口焦点侦听器，并返回得到的多路广播侦听器。
+@param l 窗口焦点侦听器 l
+@param oldl 正移除的窗口焦点侦听器
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ActionListener java.awt.AWTEventMulticaster.remove(ActionListener l, ActionListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从操作侦听器 l 中移除旧的操作侦听器，并返回得到的多路广播侦听器。
+@param l 操作侦听器 l
+@param oldl 正移除的操作侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.ItemListener java.awt.AWTEventMulticaster.remove(ItemListener l, ItemListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从项侦听器 l 中移除旧的项侦听器，并返回得到的多路广播侦听器。
+@param l 项侦听器 l
+@param oldl 正移除的项侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.AdjustmentListener java.awt.AWTEventMulticaster.remove(AdjustmentListener l, AdjustmentListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从调整侦听器 l 中移除旧的调整侦听器，并返回得到的多路广播侦听器。
+@param l 调整侦听器 l
+@param oldl 正移除的调整侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.InputMethodListener java.awt.AWTEventMulticaster.remove(InputMethodListener l, InputMethodListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从输入方法侦听器 l 中移除旧的输入方法侦听器，并返回得到的多路广播侦听器。
+@param l 输入方法侦听器 l
+@param oldl 正移除的输入方法侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.HierarchyListener java.awt.AWTEventMulticaster.remove(HierarchyListener l, HierarchyListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从层次结构侦听器 l 中移除旧的层次结构侦听器，并返回得到的多路广播侦听器。
+@param l 层次结构侦听器 l
+@param oldl 正移除的层次结构侦听器
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.HierarchyBoundsListener java.awt.AWTEventMulticaster.remove(HierarchyBoundsListener l, HierarchyBoundsListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从层次结构边界侦听器 l 中移除旧的层次结构边界侦听器，并返回得到的多路广播侦听器。
+@param l 层次结构边界侦听器 l
+@param oldl 正移除的层次结构边界侦听器
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.event.MouseWheelListener java.awt.AWTEventMulticaster.remove(MouseWheelListener l, MouseWheelListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从鼠标滚轮侦听器 l 中移除旧的鼠标滚轮侦听器，并返回得到的多路广播侦听器。
+@param l 鼠标滚轮侦听器 l
+@param oldl 正移除的鼠标滚轮侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static java.util.EventListener java.awt.AWTEventMulticaster.addInternal(EventListener a, EventListener b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从正添加的侦听器 a 和侦听器 b 中一起返回得到的多路广播侦听器。如果侦听器 a 为 null，则此方法将返回侦听器 b；如果侦听器 b 为 null，则此方法将返回侦听器 a；如果侦听器 a 和侦听器 b 都不为 null，则返回一个将 a 和 b 链接的新 AWTEventMulticaster 实例。
+@param a 事件侦听器 a
+@param b 事件侦听器 b
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static java.util.EventListener java.awt.AWTEventMulticaster.removeInternal(EventListener l, EventListener oldl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在从侦听器 l 中移除旧的侦听器之后，返回得到的多路广播侦听器。如果侦听器 l 与旧的侦听器相同，或者侦听器 l 为 null，则返回 null。否则，如果侦听器 l 是 AWTEventMulticaster 的一个实例，则从中移除旧的侦听器。其他情况则返回侦听器 l。
+@param l 正在其中执行移除操作的侦听器
+@param oldl 正移除的侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T[] java.awt.AWTEventMulticaster.getListeners(EventListener l, java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过指定的 <code>java.util.EventListener</code> 链接为 <code><em>Foo</em>Listener</code> 的所有对象的数组。<code><em>Foo</em>Listener</code> 是使用 <code>add<em>Foo</em>Listener</code> 方法、通过 <code>AWTEventMulticaster</code> 链接的。如果已指定一个 <code>null</code> 侦听器，则此方法将返回一个空数组。如果指定的侦听器不是 <code>AWTEventMulticaster</code> 的一个实例，则此方法将返回一个只包含指定侦听器的数组。如果没有链接这样的侦听器，则此方法将返回一个空数组。
+
+@param l 指定的 <code>java.util.EventListener</code>
+@param listenerType 所需的侦听器类型；该参数应该指定一个从 <code>java.util.EventListener</code> 遗传下来的接口
+@return 通过指定的多路广播侦听器链接为 <code><em>Foo</em>Listener</code> 的所有对象的数组，如果没有通过指定的多路广播侦听器链接这样的侦听器，则返回一个空数组
+@exception NullPointerException 如果指定的 {@code listenertype} 参数为 {@code null}
+@exception ClassCastException 如果 <code>listenerType</code> 没有指定实现 <code>java.util.EventListener</code> 的类或接口
+
+@since 1.4
+
+<!-- END DATA -->

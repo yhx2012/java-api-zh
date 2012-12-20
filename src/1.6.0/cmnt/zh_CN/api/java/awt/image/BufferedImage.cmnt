@@ -1,0 +1,669 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.BufferedImage extends java.awt.Image implements java.awt.image.WritableRenderedImage, java.awt.Transparency
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<code>BufferedImage</code> 子类描述具有可访问图像数据缓冲区的 {@link java.awt.Image Image}。<code>BufferedImage</code> 由图像数据的 {@link ColorModel} 和 {@link Raster} 组成。<code>Raster</code> 的 {@link SampleModel} 中 band 的数量和类型必须与 <code>ColorModel</code> 所要求的数量和类型相匹配，以表示其颜色和 alpha 分量。所有 <code>BufferedImage</code> 对象的左上角坐标都为 (0,&nbsp;0)。因此，用来构造 <code>BufferedImage</code> 的任何 <code>Raster</code> 都必须满足：minX=0 且 minY=0。
+
+ <p>
+此类依靠 <code>Raster</code> 的数据获取方法、数据设置方法，以及 <code>ColorModel</code> 的颜色特征化方法。
+
+@see ColorModel
+@see Raster
+@see WritableRaster
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_CUSTOM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+没有识别出图像类型，因此它必定是一个自定义图像。此类型仅用作 getType() 方法的返回值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_INT_RGB
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个图像，它具有合成整数像素的 8 位 RGB 颜色分量。该图像具有不带 alpha 的 {@link DirectColorModel}。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_INT_ARGB
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个图像，它具有合成整数像素的 8 位 RGBA 颜色分量。该图像具有带 alpha 的 <code>DirectColorModel</code>。认为此图像中的颜色数据没有预乘以 alpha。当使用此类型作为 <code>BufferedImage</code> 构造方法的 <code>imageType</code> 参数时，所创建的图像与 JDK1.1 和更早期版本中创建的图像一致。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个图像，它具有合成整数像素的 8 位 RGBA 颜色分量。该图像具有带 alpha 的 <code>DirectColorModel</code>。认为此图像中的颜色数据已预乘以 alpha。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_INT_BGR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 8 位 RGB 颜色分量的图像，对应于 Windows 或 Solaris 风格的 BGR 颜色模型，具有打包为整数像素的 Blue、Green 和 Red 三种颜色。不存在 alpha。该图像具有一个 {@link DirectColorModel}。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_3BYTE_BGR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 8 位 RGB 颜色分量的图像，对应于 Windows 风格的 BGR 颜色模型，具有用 3 字节存储的 Blue、Green 和 Red 三种颜色。不存在 alpha。该图像具有一个 <code>ComponentColorModel</code>。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_4BYTE_ABGR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 8 位 RGBA 颜色分量的图像，具有用 3 字节存储的 Blue、Green 和 Red 颜色以及 1 字节的 alpha。该图像具有带 alpha 的 <code>ComponentColorModel</code>。认为此图像中的颜色数据没有预乘以 alpha。按照每个像素中字节地址从低到高的顺序 A、B、G、R 将字节数据插入单个字节数组中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_4BYTE_ABGR_PRE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 8 位 RGBA 颜色分量的图像，具有用 3 字节存储的 Blue、Green 和 Red 颜色以及 1 字节的 alpha。该图像具有带 alpha 的 <code>ComponentColorModel</code>。认为此图像中的颜色数据已预乘以 alpha。按照每个像素中字节地址从低到高的顺序 A、B、G、R 将字节数据插入单个字节数组中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_USHORT_565_RGB
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 5-6-5 RGB 颜色分量（5 位 red、6 位 green、5 位 blue）的图像，不带 alpha。该图像具有一个 <code>DirectColorModel</code>。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_USHORT_555_RGB
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个具有 5-5-5 RGB 颜色分量（5 位 red、5 位 green、5 位 blue）的图像，不带 alpha。此图像具有一个 <code>DirectColorModel</code>。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_BYTE_GRAY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示无符号 byte 灰度级图像（无索引）。该图像具有带 CS_GRAY {@link ColorSpace} 的 <code>ComponentColorModel</code>。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_USHORT_GRAY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个无符号 short 灰度级图像（无索引）。该图像具有带 CS_GRAY <code>ColorSpace</code> 的 <code>ComponentColorModel</code>。当具有透明 alpha 的数据存储在此类型的图像中时，必须将颜色数据调整为非预乘形式并丢弃 alpha，如 {@link java.awt.AlphaComposite} 文档中的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_BYTE_BINARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个不透明的以字节打包的 1、2 或 4 位图像。该图像具有不带 alpha 的 {@link IndexColorModel}。当此类型用作 <code>BufferedImage</code> 构造方法（带 <code>imageType</code> 参数而不是 <code>ColorModel</code> 参数）的 <code>imageType</code> 参数时，创建一个 1 位图像，且其 <code>IndexColorModel</code> 具有默认 sRGB <code>ColorSpace</code> 中的两种颜色：{0,&nbsp;0,&nbsp;0} 和 {255,&nbsp;255,&nbsp;255}。
+
+<p> 每个像素 2 位或 4 位的图像可以通过 <code>BufferedImage</code> 构造方法构造，该构造方法带一个 <code>ColorModel</code> 参数，这通过提供一个具有合适映射大小的 <code>ColorModel</code> 实现。
+
+<p> 每个像素 8 位的图像应该使用 <code>TYPE_BYTE_INDEXED</code> 或 <code>TYPE_BYTE_GRAY</code> 图像类型，具体取决于它们的 <code>ColorModel</code>。
+
+<p> 当颜色数据存储在此类型的图像中时，由 <code>IndexColorModel</code> 确定 colormap 中最接近的颜色，并存储得到的索引。根据 <code>IndexColorModel</code> colormap 中的颜色，可以得到 alpha 分量或颜色分量的近似值及丢失的 alpha 或颜色分量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.BufferedImage.TYPE_BYTE_INDEXED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示带索引的字节图像。当此类型用作 <code>BufferedImage</code> 构造方法（带 <code>imageType</code> 参数而不带 <code>ColorModel</code> 参数 ）的 <code>imageType</code> 参数时，创建一个 <code>IndexColorModel</code>，它具有 256 色 6/6/6 三色调色板，其余从 216 到 255 的颜色由默认 sRGB ColorSpace 的灰度级值填充。
+
+<p> 当颜色数据存储在此类型的图像中时，由 <code>IndexColorModel</code> 确定 colormap 中最接近的颜色，并存储得到的索引。根据 <code>IndexColorModel</code> colormap 中的颜色，可以得到 alpha 分量或颜色分量的近似值及丢失的 alpha 或颜色分量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage(int width, int height, int imageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个类型为预定义图像类型之一的 <code>BufferedImage</code>。该图像的 <code>ColorSpace</code> 为默认的 sRGB 空间。
+@param width     所创建图像的宽度
+@param height    所创建图像的高度
+@param imageType 所创建图像的类型
+@see ColorSpace
+@see #TYPE_INT_RGB
+@see #TYPE_INT_ARGB
+@see #TYPE_INT_ARGB_PRE
+@see #TYPE_INT_BGR
+@see #TYPE_3BYTE_BGR
+@see #TYPE_4BYTE_ABGR
+@see #TYPE_4BYTE_ABGR_PRE
+@see #TYPE_BYTE_GRAY
+@see #TYPE_USHORT_GRAY
+@see #TYPE_BYTE_BINARY
+@see #TYPE_BYTE_INDEXED
+@see #TYPE_USHORT_565_RGB
+@see #TYPE_USHORT_555_RGB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage(int width, int height, int imageType, IndexColorModel cm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个类型为预定义图像类型之一的 <code>BufferedImage</code>：TYPE_BYTE_BINARY 或 TYPE_BYTE_INDEXED。
+
+<p> 如果图像类型为 TYPE_BYTE_BINARY，则使用颜色模型中的条目数确定图像的每像素具有 1、2 还是 4 位。如果颜色模型具有 1 或 2 个条目，则该图像每像素具有 1 位。如果颜色模型具有 3 或 4 个条目，则该图像的每像素具有 2 位。如果颜色模型的条目数在 5 到 16 之间，则该图像的每像素具有 4 位。否则，将抛出 IllegalArgumentException。
+
+@param width     所创建图像的宽度
+@param height    所创建图像的高度
+@param imageType 所创建图像的类型
+@param cm        所创建图像的 <code>IndexColorModel</code>
+@throws IllegalArgumentException   如果 imageType 不为 TYPE_BYTE_BINARY 或 TYPE_BYTE_INDEXED，或者 imageType 为 TYPE_BYTE_BINARY 且颜色映射的条目数大于 16。
+@see #TYPE_BYTE_BINARY
+@see #TYPE_BYTE_INDEXED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage(ColorModel cm, WritableRaster raster, boolean isRasterPremultiplied, java.util.Hashtable<?, ?> properties)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定 <code>ColorModel</code> 和 <code>Raster</code> 的新 <code>BufferedImage</code>。如果 <code>Raster</code> 的 <code>SampleModel</code> 中 band 的数量和类型与 <code>ColorModel</code>（表示其颜色和 alpha 分量）所要求的数量和类型不匹配，则抛出 {@link RasterFormatException}。此方法可以将 <code>Raster</code> 颜色数据乘以或除以 alpha，以匹配 <code>ColorModel</code> 中的 <code>alphaPremultiplied</code> 状态。可以通过传入 <code>String</code>/<code>Object</code> 对的 {@link Hashtable} 建立此 <code>BufferedImage</code> 的属性。
+@param cm 新图像的 <code>ColorModel</code>
+@param raster  图像数据的 <code>Raster</code>
+@param isRasterPremultiplied   如果为 <code>true</code>，则 raster 中的数据已预乘以 alpha。
+@param properties <code>String</code>/<code>Object</code> 对的 <code>Hashtable</code>。
+@exception <code>RasterFormatException</code> 如果 <code>Raster</code> 的 <code>SampleModel</code> 中 band 的数量和类型与 <code>ColorModel</code>（表示其颜色和 alpha 分量）所要求的数量和类型不匹配。
+@exception <code>IllegalArgumentException</code> 如果 <code>raster</code> 与 <code>cm</code> 不一致
+@see ColorModel
+@see Raster
+@see WritableRaster
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像类型。如果它不是已知的类型之一，则返回 TYPE_CUSTOM 。
+@return 此 <code>BufferedImage</code> 的图像类型。
+@see #TYPE_INT_RGB
+@see #TYPE_INT_ARGB
+@see #TYPE_INT_ARGB_PRE
+@see #TYPE_INT_BGR
+@see #TYPE_3BYTE_BGR
+@see #TYPE_4BYTE_ABGR
+@see #TYPE_4BYTE_ABGR_PRE
+@see #TYPE_BYTE_GRAY
+@see #TYPE_BYTE_BINARY
+@see #TYPE_BYTE_INDEXED
+@see #TYPE_USHORT_GRAY
+@see #TYPE_USHORT_565_RGB
+@see #TYPE_USHORT_555_RGB
+@see #TYPE_CUSTOM
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorModel java.awt.image.BufferedImage.getColorModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ColorModel</code>。
+@return 此 <code>BufferedImage</code> 的 <code>ColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BufferedImage.getRaster()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link WritableRaster}。
+@return 此 <code>BufferedImage</code> 的 <code>WriteableRaster</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BufferedImage.getAlphaRaster()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>WritableRaster</code>，它使用支持单独空间 alpha 通道的 <code>ColorModel</code> 对象（比如 <code>ComponentColorModel</code> 和 <code>DirectColorModel</code>）表示 <code>BufferedImage</code> 对象的 alpha 通道。如果此图像中没有与 <code>ColorModel</code> 关联的 alpha 通道，则返回 <code>null</code>。此方法假定 <code>IndexColorModel</code> 之外的所有 <code>ColorModel</code> 对象都具有一个单独的 alpha 通道（如果 <code>ColorModel</code> 支持 alpha），该通道存储为图像数据的最后一个 band。如果该图像使用查找表中一个具有 alpha 的 <code>IndexColorModel</code>，则此方法返回 <code>null</code>，因为不存在空间上离散的 alpha 通道。此方法创建一个新的 <code>WritableRaster</code>，但是共享原数据数组。
+@return <code>WritableRaster</code>；如果此 <code>BufferedImage</code> 不具有与其 <code>ColorModel</code> 关联的 alpha 通道，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getRGB(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认 RGB 颜色模型 (TYPE_INT_ARGB) 和默认 sRGB 颜色空间中的整数像素。如果此默认模型与该图像的 <code>ColorModel</code> 不匹配，则发生颜色转换。在使用此方法所返回的数据中，每个颜色分量只有 8 位精度。
+
+ <p>
+
+如果坐标不在边界内部，则抛出 <code>ArrayOutOfBoundsException</code>。但是，不保证进行显式的边界检查。
+
+@param x 像素的 X 坐标，从该坐标可以得到默认 RGB 颜色模型和 sRGB 颜色空间中的像素
+@param y 像素的 Y 坐标，从该坐标可以得到默认 RGB 颜色模型和 sRGB 颜色空间中的像素
+@return 默认 RGB 颜色模型和默认 sRGB 颜色空间中的整数像素。
+@see #setRGB(int, int, int)
+@see #setRGB(int, int, int, int, int[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.BufferedImage.getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从图像数据的某一部分返回默认 RGB 颜色模型 (TYPE_INT_ARGB) 和默认 sRGB 颜色空间中整数像素数组。如果该默认模型与该图像的 <code>ColorModel</code> 不匹配，则发生颜色转换。在使用此方法所返回的数据中，每个颜色分量只有 8 位精度。通过图像中指定的坐标 (x,&nbsp;y)，ARGB 像素可以按如下方式访问：
+ </p>
+
+ <pre>
+    pixel   = rgbArray[offset + (y-startY)*scansize + (x-startX)]; </pre>
+
+ <p>
+
+如果该区域不在边界内部，则抛出 <code>ArrayOutOfBoundsException</code>。但是，不保证进行显式的边界检查。
+
+@param startX 起始 X 坐标
+@param startY 起始 Y 坐标
+@param w           区域的宽度
+@param h           区域的高度
+@param rgbArray    如果不为 <code>null</code>，则在此写入 rgb 像素
+@param offset      <code>rgbArray</code> 中的偏移量
+@param scansize    <code>rgbArray</code> 的扫描行间距
+@return           RGB 像素数组。
+@see #setRGB(int, int, int)
+@see #setRGB(int, int, int, int, int[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.BufferedImage.setRGB(int x, int y, int rgb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>BufferedImage</code> 中的像素设置为指定的 RGB 值。假定该像素使用默认 RGB 颜色模型、TYPE_INT_ARGB 和默认 sRGB 颜色空间。对于具有 <code>IndexColorModel</code> 的图像，则选择最接近的颜色的索引。
+
+ <p>
+
+如果坐标不在边界内部，则抛出 <code>ArrayOutOfBoundsException</code>。但是，不保证进行显式的边界检查。
+
+@param x 要设置的像素的 X 坐标
+@param y 要设置的像素的 Y 坐标
+@param rgb RGB 值
+@see #getRGB(int, int)
+@see #getRGB(int, int, int, int, int[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.setRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认 RGB 颜色模型 (TYPE_INT_ARGB) 和默认 sRGB 颜色空间中的整数像素数组设置为图像数据的一部分。如果该默认模型与该图像的 <code>ColorModel</code> 不匹配，则发生颜色转换。在使用此方法所返回的数据中，每个颜色分量只有 8 位精度。通过此图像中指定的坐标 (x,&#xA0;y)，ARGB 像素可以按如下方式访问：
+ <pre>
+    pixel   = rgbArray[offset + (y-startY)*scansize + (x-startX)];
+ </pre>
+警告：无抖动发生。
+
+ <p>
+
+如果该区域不在边界内部，则抛出 <code>ArrayOutOfBoundsException</code>。但是，不保证进行显式的边界检查。
+
+@param startX 起始 X 坐标
+@param startY 起始 Y 坐标
+@param w           区域的宽度
+@param h           区域的高度
+@param rgbArray    rgb 像素
+@param offset      <code>rgbArray</code> 中的偏移量
+@param scansize    <code>rgbArray</code> 的扫描行间距
+@see #getRGB(int, int)
+@see #getRGB(int, int, int, int, int[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>BufferedImage</code> 的宽度。
+@return 此 <code>BufferedImage</code> 的宽度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>BufferedImage</code> 的高度。
+@return 此 <code>BufferedImage</code> 的高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getWidth(ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>BufferedImage</code> 的宽度。
+@param observer 忽略
+@return 此 <code>BufferedImage</code> 的宽度 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getHeight(ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>BufferedImage</code> 的高度。
+@param observer 忽略
+@return 此 <code>BufferedImage</code> 的高度 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ImageProducer java.awt.image.BufferedImage.getSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回生成该图像像素的对象。
+@return 用于生成该图像像素的 {@link ImageProducer}。
+@see ImageProducer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.BufferedImage.getProperty(String name, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按名称返回图像的属性。个别属性名可用各种图像格式定义。如果属性不是为特定图像定义的，则此方法返回 <code>UndefinedProperty</code> 字段。如果此图像的属性目前未知，则此方法返回 <code>null</code>，然后通知 <code>ImageObserver</code> 对象。属性名 &quot;comment&quot; 应该用于存储可选注释，它可以作为对图像的描述（来源或作者）呈现给用户。
+@param name 属性名
+@param observer 接收关于图像信息通知的 <code>ImageObserver</code> 
+@return {@link Object}，它是由指定 <code>name</code> 所引用的属性；如果此图像的属性未知，则返回 <code>null</code>。
+@throws <code>NullPointerException</code> 如果属性名为 null。
+@see ImageObserver
+@see java.awt.Image#UndefinedProperty
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.BufferedImage.getProperty(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按名称返回图像的属性。
+@param name 属性名
+@return <code>Object</code>，它是由指定 <code>name</code> 所引用的属性。
+@throws <code>NullPointerException</code> 如果属性名为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics java.awt.image.BufferedImage.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回 {@link Graphics2D}，但此处是出于向后兼容性的考虑。{@link #createGraphics() createGraphics} 更为方便，因为它被声明为返回 <code>Graphics2D</code>。
+@return <code>Graphics2D</code>，可用于绘制此图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics2D java.awt.image.BufferedImage.createGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Graphics2D</code>，可以将它绘制到此 <code>BufferedImage</code> 中。
+@return <code>Graphics2D</code>，可用于绘制此图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.BufferedImage.getSubimage(int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由指定矩形区域定义的子图像。返回的 <code>BufferedImage</code> 与源图像共享相同的数据数组。
+@param x 指定矩形区域左上角的 X 坐标
+@param y 指定矩形区域左上角的 Y 坐标
+@param w 指定矩形区域的宽度
+@param h 指定矩形区域的高度
+@return <code>BufferedImage</code>，它是此 <code>BufferedImage</code> 的子图像。
+@exception <code>RasterFormatException</code> 如果指定区域不包含在此 <code>BufferedImage</code> 中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.BufferedImage.isAlphaPremultiplied()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已预乘以 alpha。如果不存在 alpha，则返回 <code>false</code>。
+@return 如果已经预乘以 alpha，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.coerceData(boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制该数据与 <code>isAlphaPremultiplied</code> 变量中指定的状态相匹配。可以将颜色 raster 数据乘以或除以 alpha，如果该数据处于正确状态，则不执行任何操作。
+@param isAlphaPremultiplied 如果已经预乘以 alpha，则为 <code>true</code>；否则为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.image.BufferedImage.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>BufferedImage</code> 对象及其值的 <code>String</code> 表示形式。
+@return 此 <code>BufferedImage</code> 的 <code>String</code> 表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector<java.awt.image.RenderedImage> java.awt.image.BufferedImage.getSources()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回 {@link RenderedImage} 对象的 {@link Vector}，该对象是此 <code>BufferedImage</code> 图像数据的直接来源，而不是这些直接来源的来源。如果 <code>BufferedImage</code> 没有关于其直接来源的信息，则此方法返回 <code>null</code>。如果 <code>BufferedImage</code> 没有直接来源，则它返回一个空 <code>Vector</code>。
+@return 一个 <code>Vector</code>，它包含此 <code>BufferedImage</code> 对象图像日期的直接来源；如果此 <code>BufferedImage</code> 没有关于其直接来源的信息，则返回 <code>null</code>；如果此 <code>BufferedImage</code> 没有直接来源，则返回一个空 <code>Vector</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.awt.image.BufferedImage.getPropertyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回由 {@link #getProperty(String) getProperty(String)} 识别的名称数组；如果没有识别出属性名，则返回 <code>null</code>。
+@return 一个 <code>String</code> 数组，它包含 <code>getProperty(String)</code> 识别的所有属性名；如果没有识别出属性名，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getMinX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此 <code>BufferedImage</code> 的最小 x 坐标。最小 x 坐标始终为零。
+@return 此 <code>BufferedImage</code> 的最小 x 坐标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getMinY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此 <code>BufferedImage</code> 的最小 y 坐标。最小 y 坐标始终为零。
+@return 此 <code>BufferedImage</code> 的最小 y 坐标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.BufferedImage.getSampleModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回与此 <code>BufferedImage</code> 关联的 <code>SampleModel</code>。
+@return 此 <code>BufferedImage</code> 的 <code>SampleModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getNumXTiles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 x 方向的 tile 数。它始终为 1。
+@return x 方向的 tile 数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getNumYTiles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 y 方向的 tile 数。它始终为 1。
+@return y 方向的 tile 数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getMinTileX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 x 方向的最小 tile 索引。它始终为零。
+@return x 方向的最小 tile 索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getMinTileY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 y 方向的最小 tile 索引。它始终为零。
+@return y 方向的最小 tile 索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getTileWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 tile 宽度（以像素为单位）。
+@return tile 宽度（以像素为单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getTileHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 tile 高度（以像素为单位）。
+@return tile 高度（以像素为单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getTileGridXOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 tile 网格相对于原点的 x 偏移量（例如，tile (0,&#xA0;0) 位置的 x 坐标）。它始终为零。
+@return tile 网格的 x 偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getTileGridYOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 tile 网格相对于原点的 y 偏移量（例如，tile (0,&#xA0;0) 位置的 y 坐标）。它始终为零。
+@return tile 网格的 y 偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.Raster java.awt.image.BufferedImage.getTile(int tileX, int tileY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回 tile (<code>tileX</code>,&nbsp;<code>tileY</code>)。注意，<code>tileX</code> 和 <code>tileY</code> 是 tile 数组中的索引，而不是像素位置。返回的 <code>Raster</code> 是动态的，这意味着如果图像改变，则 <code>Raster</code> 将更新。
+@param tileX tile 数组中所请求的 tile 的 x 索引
+@param tileY tile 数组中所请求的 tile 的 y 索引
+@return <code>Raster</code>，它是由参数 <code>tileX</code> 和 <code>tileY</code> 定义的 tile。
+@exception <code>ArrayIndexOutOfBoundsException</code> 如果 <code>tileX</code> 和 <code>tileY</code> 都不等于 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.Raster java.awt.image.BufferedImage.getData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以一个大 tile 的形式返回图像。返回的 <code>Raster</code> 是图像数据的副本，图像改变时它不会更新。
+@return <code>Raster</code>，它是图像数据的副本。
+@see #setData(Raster)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.Raster java.awt.image.BufferedImage.getData(Rectangle rect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+计算并返回 <code>BufferedImage</code> 的一个任意区域。返回的 <code>Raster</code> 是图像数据的副本，图像改变时它不会更新。
+@param rect 要返回的 <code>BufferedImage</code> 区域。
+@return <code>Raster</code>，它是 <code>BufferedImage</code> 指定区域的图像数据的副本
+@see #setData(Raster)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BufferedImage.copyData(WritableRaster outRaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+计算 <code>BufferedImage</code> 的一个任意矩形区域，并将其复制到指定的 <code>WritableRaster</code>。要计算的区域由指定 <code>WritableRaster</code> 的边界确定。指定 <code>WritableRaster</code> 必须具有与此图像兼容的 <code>SampleModel</code>。如果 <code>outRaster</code> 为 <code>null</code>，则创建一个合适的 <code>WritableRaster</code>。
+@param outRaster 保存图像返回部分的 <code>WritableRaster</code>, 或者为 <code>null</code>
+@return 对所提供的或创建的 <code>WritableRaster</code> 的引用。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.setData(Raster r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将图像的矩形区域设置为指定 <code>Raster</code> <code>r</code> 的内容，假定该区域与 <code>BufferedImage</code> 处于相同的坐标空间。操作被限制在 <code>BufferedImage</code> 的边界内。
+@param r 指定的 <code>Raster</code>
+@see #getData
+@see #getData(Rectangle)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.addTileObserver(TileObserver to)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个 tile observer。如果该 observer 已经存在，则它接收多个通知。
+@param to 指定的 {@link TileObserver}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.removeTileObserver(TileObserver to)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除一个 tile observer。如果 observer 没有注册，则不发生任何操作。如果 observer 已对多个通知注册，则现在其注册的通知数将减少一个。
+@param to 指定的 <code>TileObserver</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.BufferedImage.isTileWritable(int tileX, int tileY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前是否为写入签出 tile。
+@param tileX tile 的 x 索引。
+@param tileY tile 的 y 索引。
+@return 如果为写入签出了由指定索引所指定的 tile，则返回 <code>true</code>；否则，返回 <code>false</code>。
+@exception <code>ArrayIndexOutOfBoundsException</code> 如果 <code>tileX</code> 和 <code>tileY</code> 都不等于 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point[] java.awt.image.BufferedImage.getWritableTileIndices()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Point} 对象的数组，它指示为写入签出了哪些 tile。如果没有签出任何 tile，则返回 <code>null</code>。
+@return 一个 <code>Point</code> 数组，它指示为写入签出的 tile；如果没有为写入签出的 tile，则返回 <code>null</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.BufferedImage.hasTileWriters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否有为写入签出的 tile。语义上等效于
+ <pre>
+ (getWritableTileIndices() != null)。
+ </pre>
+@return 如果为写入签出了任何 tile，则返回 <code>true</code>；否则返回 <code>false</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BufferedImage.getWritableTile(int tileX, int tileY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为写入签出一个 tile。当一个 tile 从没有 writer 变为有一个 writer 时，通知所有已注册的 <code>TileObserver</code>。
+@param tileX tile 的 x 索引
+@param tileY tile 的 y 索引
+@return 一个 <code>WritableRaster</code>，它是为写入而签出的、由指定索引指示的 tile。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BufferedImage.releaseWritableTile(int tileX, int tileY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+放弃写入一个 tile 的权限。如果调用者继续写入 tile，则结果是不确定的。此方法的调用应该与 {@link #getWritableTile(int, int) getWritableTile(int, int)} 的调用成对出现。任何其他用法都会导致不明确的结果。当 tile 从有一个 writer 变为没有 writer 时，通知所有已注册的 <code>TileObserver</code>。
+@param tileX tile 的 x 索引
+@param tileY tile 的 y 索引
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BufferedImage.getTransparency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回透明度。返回 OPAQUE、BITMASK 或 TRANSLUCENT 中的一个。
+@return 此 <code>BufferedImage</code> 的透明度。
+@see Transparency#OPAQUE
+@see Transparency#BITMASK
+@see Transparency#TRANSLUCENT
+@since 1.5
+
+
+<!-- END DATA -->

@@ -1,0 +1,215 @@
+<!-- BEGIN KEY -->
+public class java.awt.event.MouseWheelEvent extends java.awt.event.MouseEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示鼠标滚轮在组件中滚动的事件。
+ <P>
+滚轮鼠标是一种用滚轮代替中间按键的鼠标。可朝向用户或背离用户旋转此滚轮。尽管鼠标滚轮也有其他用途，但最主要的是用于滚动。
+ <P>
+MouseWheelEvent 对象传递给每一个 <code>MouseWheelListener</code> 对象，该对象使用组件的 <code>addMouseWheelListener</code> 方法注册，以接收&ldquo;感兴趣&rdquo;鼠标事件。所有此类侦听器对象都获得包含鼠标事件的 <code>MouseEvent</code>。
+ <P>
+由于鼠标滚轮与滚动 Component 的特殊关系，传递 MouseWheelEvent 与传递其他 MouseEvent 稍有不同。这是因为，其他 MouseEvent 通常影响鼠标光标正下方 Component 的更改（如单击某个按钮时），而 MouseWheelEvent 常会在远离鼠标光标处产生影响（位于 ScrollPane 中的某个 Component 上时，滚动滚轮就能滚动 ScrollPane 上的某个 Scrollbar）。
+ <P>
+MouseWheelEvent 从鼠标光标下的 Component 开始传递。如果在该 Component 上没有启用 MouseWheelEvent，则把事件传递到启用 MouseWheelEvent 的第一个祖先 Container。这通常是启用了滚轮滚动的 ScrollPane。源 Component 和 x、y 坐标都是相对于该事件的最终目标 (ScrollPane)。这就允许将复杂的 GUI 不加修改地安装到 ScrollPane 中，并让传递到 ScrollPane 的所有 MouseWheelEvent 能够滚动。
+ <P>
+某些 AWT Component 是用本机小部件实现的，这些小部件显示它们自己的滚动条，并能自行处理滚动。这种特殊的 Component 因平台而异。当在这些 Component 上移动鼠标滚轮时，事件将直接传递到本机小部件而不会传播到其祖先。
+ <P>
+各种平台提供在移动鼠标滚轮时应该发生的自定义滚动量。两个最常见的设置是滚动一定的&ldquo;单位&rdquo;数（通常是基于文本的组件中的文本行），或者整个&ldquo;块&rdquo;（类似于 page-up/page-down）。MouseWheelEvent 提供了符合底层平台设置的各种方法。用户可在任何时间改变这些平台设置。MouseWheelEvent 反映最新的设置。
+
+@author Brent Christian
+@version 1.14 04/07/06
+@see MouseWheelListener
+@see java.awt.ScrollPane
+@see java.awt.ScrollPane#setWheelScrollingEnabled(boolean)
+@see javax.swing.JScrollPane
+@see javax.swing.JScrollPane#setWheelScrollingEnabled(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseWheelEvent.WHEEL_UNIT_SCROLL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示按&ldquo;单位&rdquo;进行滚动的常量（如使用方向键进行滚动）
+ 
+@see #getScrollType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseWheelEvent.WHEEL_BLOCK_SCROLL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示按&ldquo;块&rdquo;进行滚动的常量（如使用 page-up、page-down 键进行滚动）
+
+@see #getScrollType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseWheelEvent.scrollType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示根据平台的设置，应该发生哪类滚动来响应此事件。合法的值有：
+ <ul>
+ <li> WHEEL_UNIT_SCROLL
+ <li> WHEEL_BLOCK_SCROLL
+ </ul>
+ 
+@see #getScrollType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseWheelEvent.scrollAmount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅对 scrollType WHEEL_UNIT_SCROLL 有效。指示根据平台设置，鼠标滚轮每旋转一格应该滚动的单位数。
+
+@see #getScrollAmount
+@see #getScrollType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseWheelEvent.wheelRotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示鼠标滚轮的旋转范围。
+
+@see #getWheelRotation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.MouseWheelEvent(Component source, int id, long when, int modifiers, int x, int y, int clickCount, boolean popupTrigger, int scrollType, int scrollAmount, int wheelRotation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源组件、类型、修改键、坐标、滚动类型、滚动量和滚轮旋转的 <code>MouseWheelEvent</code>。
+<p>绝对坐标 xAbs 和 yAbs 被设置为屏幕上的原点位置加上相对坐标 x 和 y。如果不显示原点，则 xAbs 和 yAbs 被设置为零。
+<p>注意，传递无效的 <code>id</code> 将导致不明确的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source  产生该事件的 <code>Component</code> 
+@param id  标识事件的整数
+@param when  给出事件发生时间的 long 值
+@param modifiers   事件期间按下的修改键（如 shift、ctrl、alt、meta）
+@param x  鼠标位置的水平 x 坐标
+@param y  鼠标位置的垂直 y 坐标
+@param clickCount  与事件关联的鼠标单击数
+@param popupTrigger   一个 boolean 值，如果此事件是弹出菜单的触发器，则为 true 
+@param scrollType  响应此事件时应该发生的滚动类型；有效值有 <code>WHEEL_UNIT_SCROLL</code> 和 <code>WHEEL_BLOCK_SCROLL</code>
+@param  scrollAmount  对于 scrollType <code>WHEEL_UNIT_SCROLL</code>，该参数表示要滚动的单位数
+@param wheelRotation  鼠标滚轮的旋转量（&ldquo;喀哒声&rdquo;的次数）
+
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+@see MouseEvent#MouseEvent(java.awt.Component, int, long, int, int, int, int, boolean)
+@see MouseEvent#MouseEvent(java.awt.Component, int, long, int, int, int, int, int, int, boolean, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.MouseWheelEvent(Component source, int id, long when, int modifiers, int x, int y, int xAbs, int yAbs, int clickCount, boolean popupTrigger, int scrollType, int scrollAmount, int wheelRotation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 构造一个具有指定源组件、类型、修改键、坐标、绝对坐标、滚动类型、滚动量和滚轮滚动的 <code>MouseWheelEvent</code> 对象。
+ <p>注意，传入无效 <code>id</code> 将导致不明确的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+<p>
+ 即使将不一致的相对坐标值和绝对坐标值传递给构造方法，MouseWheelEvent 实例也能被创建，并且不抛出任何异常。 
+
+ @param source         产生该事件的 <code>Component</code>
+ @param id             标识事件的整数
+ @param when           给出事件发生时间的 long 值
+ @param modifiers      发生事件期间按下的修改键（shift、ctrl、alt 和 meta）
+ @param x              鼠标位置的水平 x 坐标
+ @param y              鼠标位置的垂直 y 坐标
+ @param xAbs           鼠标位置的绝对水平 x 坐标
+ @param yAbs           鼠标位置的绝对垂直 y 坐标
+ @param clickCount     与该事件有关的鼠标单击次数
+ @param popupTrigger   一个 boolean 值，如果此事件是弹出菜单的触发器，则为 true
+ @param scrollType     响应此事件时应该发生的滚动类型；有效值有 <code>WHEEL_UNIT_SCROLL</code> 和 <code>WHEEL_BLOCK_SCROLL</code>
+ @param  scrollAmount  对于 scrollType <code>WHEEL_UNIT_SCROLL</code>，是要滚动的单位数
+ @param wheelRotation  鼠标滚轮的旋转量（“喀哒声”的次数）
+
+ @throws IllegalArgumentException 如果 <code>source</code> 为 null
+ @see MouseEvent#MouseEvent(java.awt.Component, int, long, int, int, int, int, boolean)
+ @see MouseEvent#MouseEvent(java.awt.Component, int, long, int, int, int, int, int, int, boolean, int)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseWheelEvent.getScrollType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回响应此事件时应该发生的滚动类型。这由本机平台所决定。合法的值有：
+ <ul>
+ <li> MouseWheelEvent.WHEEL_UNIT_SCROLL
+ <li> MouseWheelEvent.WHEEL_BLOCK_SCROLL
+ </ul>
+
+@return 根据本机平台的配置，返回 MouseWheelEvent.WHEEL_UNIT_SCROLL 或 MouseWheelEvent.WHEEL_BLOCK_SCROLL。
+@see java.awt.Adjustable#getUnitIncrement
+@see java.awt.Adjustable#getBlockIncrement
+@see javax.swing.Scrollable#getScrollableUnitIncrement
+@see javax.swing.Scrollable#getScrollableBlockIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseWheelEvent.getScrollAmount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回每转动一下鼠标滚轮应该滚动的单位数。仅在 <code>getScrollType</code> 返回 <code>MouseWheelEvent.WHEEL_UNIT_SCROLL</code> 时有效。
+
+@return 要滚动的单位数；如果 <code>getScrollType</code> 返回 <code>MouseWheelEvent.WHEEL_BLOCK_SCROLL</code>，则为不明确的值
+@see #getScrollType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseWheelEvent.getWheelRotation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回鼠标滚轮旋转的&ldquo;喀哒声&rdquo;的次数。
+
+@return 如果鼠标滚轮向上/远离用户方向旋转，则为负值；如果鼠标滚轮向下/朝向用户方向旋转，则为正值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseWheelEvent.getUnitsToScroll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这是帮助实现常用 MouseWheelListener 的便捷方法，以使 ScrollPane 或 JScrollPane 的滚动量符合平台的设置。（注意，<code>ScrollPane</code> 和 <code>JScrollPane</code> 已内置了此功能。）
+ <P>
+当滚动类型是 MouseWheelEvent.WHEEL_UNIT_SCROLL 时，此方法返回要滚动的单位数，只有在 <code>getScrollType</code> 返回 MouseWheelEvent.WHEEL_UNIT_SCROLL 时才应该调用此方法。
+ <P>
+滚动方向、滚轮移动量和滚轮滚动的平台设置都要考虑在内。此方法没有也不能考虑 Adjustable/Scrollable 单位增量值，因为该值随滚动组件的不同而不同。
+ <P>
+以下简化的示例说明了在侦听器中如何使用此方法：
+ <pre> 
+  mouseWheelMoved(MouseWheelEvent event) {
+      ScrollPane sp = getScrollPaneFromSomewhere(); 
+      Adjustable adj = sp.getVAdjustable()
+      if (MouseWheelEvent.getScrollType() == WHEEL_UNIT_SCROLL) {
+          int totalScrollAmount =
+              event.getUnitsToScroll() *
+              adj.getUnitIncrement();
+          adj.setValue(adj.getValue() + totalScrollAmount);
+      }
+  }
+ </pre>
+
+@return 根据鼠标滚轮旋转的方向和旋转量，以及本机平台的滚轮滚动设置所得出的滚动单位数
+@see #getScrollType
+@see #getScrollAmount
+@see MouseWheelListener
+@see java.awt.Adjustable
+@see java.awt.Adjustable#getUnitIncrement
+@see javax.swing.Scrollable
+@see javax.swing.Scrollable#getScrollableUnitIncrement
+@see java.awt.ScrollPane
+@see java.awt.ScrollPane#setWheelScrollingEnabled
+@see javax.swing.JScrollPane
+@see javax.swing.JScrollPane#setWheelScrollingEnabled
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.event.MouseWheelEvent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此事件的参数字符串。此方法对于事件记录和调试很有用。
+
+@return 标识事件及其属性的字符串
+
+<!-- END DATA -->

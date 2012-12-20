@@ -1,0 +1,51 @@
+<!-- BEGIN KEY -->
+public final class javax.imageio.spi.IIORegistry extends javax.imageio.spi.ServiceRegistry
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于服务提供者实例的注册表。使用包含服务提供者类的 JAR 文件中的元信息可在运行时检测服务提供者。这是一种相对划算的加载和检查所有可用的服务提供者类的方式。然后可使用这些类定位和实例化更具重量级的将执行实际工作的类，这里指 <code>ImageReader</code>、<code>ImageWriter</code>、<code>ImageTranscoder</code>、<code>ImageInputStream</code> 和 <code>ImageOutputStream</code> 的实例。
+
+<p> 在系统类路径（<i>例如</i>，Sun 的 JDK 实现中的 <code>jre/lib/ext</code> 目录）中找到的服务提供者在此类实例化后即自动加载。
+
+<p> 调用 <code>registerApplicationClasspathSpis</code> 方法时，在应用程序类路径中的 JAR 文件的元信息部分声明的服务提供者实例将被加载。为声明服务提供者，在每个 JAR 文件都有的 <code>META-INF</code> 目录中加入一个 <code>services</code> 子目录。此目录针对每个在 JAR 文件中具有一个或多个实现类的服务提供者接口都包含一个文件。例如，假设 JAR 文件包含了一个名为 <code>com.mycompany.imageio.MyFormatReaderSpi</code> 的类，它实现 <code>ImageReaderSpi</code> 接口，则此 JAR 文件将包含一个名称如下所示的文件：
+
+ <pre>
+ META-INF/services/javax.imageio.spi.ImageReaderSpi
+ </pre>
+ 
+包含行：
+
+ <pre>
+ com.mycompany.imageio.MyFormatReaderSpi
+ </pre>
+
+<p> 服务提供者类为轻量级的，可快速加载。这些接口的实现应避免复杂化其他类和本地代码的依赖关系。
+
+<p> 还可以手动添加无法自动找到的服务提供者，也可以手动移除那些使用 <code>ServiceRegistry</code> 类的接口的服务提供者。因此，应用程序可根据需要自定义注册表的内容。
+
+<p> 有关声明服务提供者和通用 JAR 格式的更详细的信息，请参见 <a
+ href="{@docRoot}/../technotes/guides/jar/jar.html">JAR File Specification</a>。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.spi.IIORegistry javax.imageio.spi.IIORegistry.getDefaultInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Image I/O API 使用的默认 <code>IIORegistry</code> 实例。此实例应该用于所有注册表功能。
+
+<p> 每个 <code>ThreadGroup</code> 将收到其自身的实例；这样同一个浏览器（举例）中的每个不同的 <code>Applet</code> 都将有其自己的注册表。
+
+@return 当前 <code>ThreadGroup</code> 的默认注册表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.IIORegistry.registerApplicationClasspathSpis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认的 <code>ClassLoader</code> 注册应用程序类路径中找到的所有可用的服务提供者。此方法通常由 <code>ImageIO.scanForPlugins</code> 方法调用。
+
+@see javax.imageio.ImageIO#scanForPlugins
+@see ClassLoader#getResources
+
+<!-- END DATA -->

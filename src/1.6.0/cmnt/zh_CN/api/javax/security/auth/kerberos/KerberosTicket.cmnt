@@ -1,0 +1,374 @@
+<!-- BEGIN KEY -->
+public class javax.security.auth.kerberos.KerberosTicket extends java.lang.Object implements javax.security.auth.Destroyable, javax.security.auth.Refreshable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类封装了 Kerberos 票据和从客户端的视点所观察到的有关信息。它捕获 Key Distribution Center (KDC) 发送给客端的所有信息，这些信息定义在 Kerberos 协议规范(<a href=http://www.ietf.org/rfc/rfc1510.txt>RFC 1510</a>) 中的应答消息 KDC-REP 中。
+ <p>
+向 KDC 验证用户的所有 Kerberos JAAS 登录模块都应该使用此类。在可以使用的地方，登录模块甚至可以从操作系统的票据缓存中读取此信息，而不是直接与 KDC 通信。在 JAAS 验证过程的提交阶段，JAAS 登录模块应该实例化此类并将该实例存储在 {@link javax.security.auth.Subject Subject} 的私有证书集中。<p>
+
+如果应用程序需要从 Subject 访问 KerberosTicket 实例，可能必须授予应用程序 {@link javax.security.auth.PrivateCredentialPermission PrivateCredentialPermission} 权限。当应用程序依靠默认的 JGSS Kerberos 机制去访问 KerberosTicket 时，不需要此权限。但在这种情况下，应用程序将需要适当的 {@link javax.security.auth.kerberos.ServicePermission ServicePermission} 权限。
+ <p>
+注意此类适用于票据授权票据和其他的规则服务票据。票据授权票据就是更一般化的服务票据的特殊情况。
+
+@see javax.security.auth.Subject
+@see javax.security.auth.PrivateCredentialPermission
+@see javax.security.auth.login.LoginContext
+@see org.ietf.jgss.GSSCredential
+@see org.ietf.jgss.GSSManager
+ 
+@author Mayank Upadhyay
+@version 1.16, 06/02/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] javax.security.auth.kerberos.KerberosTicket.asn1Encoding
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+定义在 Kerberos Protocol Specification RFC1510 中的 Ticket ASN.1 DER Encoding。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KeyImpl javax.security.auth.kerberos.KerberosTicket.sessionKey
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过写出加密密钥的 ASN1 Encoded 字节来序列化 <code>KeyImpl</code>。ASN1 编码在 RFC1510 中定义如下：
+ <pre>		
+			EncryptionKey ::=   SEQUENCE {
+				keytype[0]    INTEGER,
+				keyvalue[1]   OCTET STRING    	
+				}
+ </pre>
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean[] javax.security.auth.kerberos.KerberosTicket.flags
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+Kerberos Protocol Specification RFC1510 中定义了票据标志。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.authTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+初始的验证时间。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.startTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+经过这段时间后票据开始生效。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.endTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+经过这段时间后将不再支持此票据。（其过期时间）。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date javax.security.auth.kerberos.KerberosTicket.renewTill
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+对于可更新的 Ticket，它指示包含在某一更新中的最长终止时间。可以认为它是票据的绝对过期时间，其中包括所有的更新。对于不可更新的票据，此字段可以为 null。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.client
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+拥有服务票据的客户端。
+ 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.server
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+一项服务，已将票据发送给它。
+ 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.net.InetAddress[] javax.security.auth.kerberos.KerberosTicket.clientAddresses
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+客户端可以从其所在位置使用票据的地址。如果票据在任何地址都是可用的，则此字段可以为 null。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.kerberos.KerberosTicket(byte[] asn1Encoding, KerberosPrincipal client, KerberosPrincipal server, byte[] sessionKey, int keyType, boolean[] flags, Date authTime, Date startTime, Date endTime, Date renewTill, java.net.InetAddress[] clientAddresses)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用客户端从 KDC 接收的或从缓存中读取的证书信息构造 KerberosTicket。
+
+@param asn1Encoding Kerberos 协议规范定义的票据的 ASN.1 编码
+@param client 拥有此服务票据的客户端
+@param server 适用此票据的服务
+@param sessionKey 必须用来加密将要发送给服务器的授权者的会话密钥的原始字节
+@param keyType Kerberos 协议规范定义的会话密钥的密钥类型。
+@param flags 票据标志。此数组中的每个元素指示表示票据标志的 ASN.1 BitString 中的相应位值。如果此数组中的元素的数量小于 Kerberos 协议使用的标志的数量，则将丢失的标记填充为 false。
+@param authTime 客户端的初始验证时间
+@param startTime 经过这段时间后票据将生效。将 authTime 的值视为 startTime 时，此值可以为 null。
+@param endTime 经过这段时间后票据将不再有效
+@param renewTill 票据的绝对过期时间，包括所有可能的更新。对于不可更新的票据，此字段可以为 null。
+@param clientAddresses 客户端可以在其所指的位置使用票据的地址。如果票据在任何地址都是可用的，则此字段可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.getClient()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此票据有关联的客户端主体。
+
+@return 客户端主体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosTicket.getServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此票据有关联的服务主体。
+
+@return 服务主体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.crypto.SecretKey javax.security.auth.kerberos.KerberosTicket.getSessionKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此票据有关联的会话密钥。
+
+@return 会话密钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int javax.security.auth.kerberos.KerberosTicket.getSessionKeyType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此票据有关联的会话密钥的密钥类型（由 Kerberos Protocol Specification 定义）。
+
+@return 与此票据关联的会话密钥的密钥类型。
+
+@see #getSessionKey()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isForwardable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是可转发的。
+
+@return 如果此票据是可转发的，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isForwarded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据验证（包括转发的票据授权票据）确定此票据是否已经转发或发出。
+
+@return 如果根据涉及转发的票据授权票据的验证确定此票据已经转发或发出，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isProxiable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是可代理的。
+
+@return 如果此票据是可代理的，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isProxy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是代理票据。
+
+@return 如果此票据是代理票据，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isPostdated()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是延后的。
+
+@return 如果此票据是延后的，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isRenewable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是可更新的。如果是可更新的，则调用 {@link #refresh() refresh} 方法，假定更新的有效期还没有结束。
+
+@return 如果此票据是可更新的，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.security.auth.kerberos.KerberosTicket.isInitial()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定此票据是否是使用 Kerberos AS-Exchange 协议发出的，而不是根据某些票据授权票据发出的。
+
+@return 如果此票据是使用 Kerberos AS-Exchange 协议发出的，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean[] javax.security.auth.kerberos.KerberosTicket.getFlags()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此票据有关联的标志。返回数组中的每个元素指示表示票据标志的 ASN.1 BitString 中的相应位值。
+
+@return 与此票据有关联的标志。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getAuthTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回客户端进行验证的时间。
+
+@return 对客户端进行验证的时间；如果未设置，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getStartTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此票据有效期的开始时间。
+
+@return 此票据有效期的开始时间；如果未设置，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getEndTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此票据有效期的期满时间。
+
+@return 此票据有效期的期满时间。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Date javax.security.auth.kerberos.KerberosTicket.getRenewTill()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此票据最新的期满时间，包括所有的更新。对于不可更新的票据将返回 null 值。
+
+@return 此票据最新的期满时间。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.net.InetAddress[] javax.security.auth.kerberos.KerberosTicket.getClientAddresses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可从其所指位置使用票据的地址列表。
+ 
+@return 地址列表，如果没有提供此字段，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] javax.security.auth.kerberos.KerberosTicket.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回整个票据的 ASN.1 编码。
+
+@return 整个票据的 ASN.1 编码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.isCurrent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此票据是否仍旧是当前的。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.kerberos.KerberosTicket.refresh() throws javax.security.auth.RefreshFailedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+延长此票据的有效期。如果刷新操作成功，则票据将包含一个新的会话密钥。如果票据是不可更新的或已经超出最新允许更新时间，则刷新操作将失败。任何由 KDC 返回的其他错误都将导致此方法失败。
+
+注：此方法与此对象的 accessor 方法不是同步的。因此调用者需要意识到有多个线程可能访问此方法并试图在同一时间更新它。
+
+@throws RefreshFailedException 如果票据是不可更新的，或已经超过了最新允许更新时间，抑或 KDC 返回了某些错误。
+
+@see #isRenewable()
+@see #getRenewTill()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.kerberos.KerberosTicket.destroy() throws javax.security.auth.DestroyFailedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁票据和存储在其中的敏感信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.isDestroyed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定是否已经销毁此票据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.kerberos.KerberosTicket.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 KerberosTicket 的哈希码。
+
+ @return <code>KerberosTicket</code> 的 hashCode()
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosTicket.equals(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 比较给定 Object 与此 KerberosTicket 的相等性。如果给定对象也是 <code>KerberosTicket</code> 并且两个 <code>KerberosTicket</code> 相等，则返回 true。
+
+
+ @param other 要比较的 Object
+ @return 如果指定对象等于此 KerberosTicket，则返回 true；否则返回 false。注：如果其中一个 KerberosTicket 已经销毁，则返回 false。
+ @since 1.6
+
+<!-- END DATA -->

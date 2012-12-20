@@ -1,0 +1,400 @@
+<!-- BEGIN KEY -->
+public class javax.management.modelmbean.RequiredModelMBean extends java.lang.Object implements javax.management.modelmbean.ModelMBean, javax.management.MBeanRegistration, javax.management.NotificationEmitter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是 ModelMBean 的实现。每个发行的 JMX Agent 必须带有 ModelMBean 的适当实现，且该类必须是指定的 RequiredModelMBean。
+ <P>
+Java 资源使用 MBeanServer 的 createMBean 方法来实例化 RequiredModelMBean，希望以这种方式获得可管理性。然后该资源设置 RequiredModelMBean 实例的 MBeanInfo 和 Descriptor。通过 ModelMBean 的 ModelMBeanInfo 公开的属性和操作像其他 MBean 一样可以从 MBean、连接器/适配器进行访问。通过使用 Descriptor，可以定义托管应用程序中的值和方法，并可以将它们映射到 ModelMBean 的属性和操作。此映射可以在 XML 格式的文件中定义，也可以以编程方式在运行时动态定义。
+ <P>
+MBeanServer 中实例化的每个 RequiredModelMBean 都将是可管理的：<br>通过连接到该 MBeanServer 的连接器/适配器，可以远程访问其属性和操作。
+ <P>
+Java 对象不能在 MBeanServer 中进行注册，除非它是 JMX 兼容的 MBean。通过实例化 RequiredModelMBean，资源得到了保证，因此 MBean 是有效的。每个公共方法必须抛出 MBeanException 和 RuntimeOperationsException，允许使用这些异常包装来自分布式通信（RMI、EJB 等）的异常。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.modelmbean.RequiredModelMBean() throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造带有空 ModelMBeanInfo 的 <CODE>RequiredModelMBean</CODE>。
+ <P>
+可以使用 {@link #setModelMBeanInfo} 方法来自定义 RequiredModelMBean 的 MBeanInfo 和 Descriptor。自定义 RequiredModelMBean 的 MBeanInfo 和 Descriptor 之后，可以在 MBeanServer 中注册 RequiredModelMBean。
+
+@exception MBeanException 包装了一个分布式通信异常。
+
+@exception RuntimeOperationsException 在对象的构造期间包装了一个 {@link RuntimeException}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.modelmbean.RequiredModelMBean(ModelMBeanInfo mbi) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用传入的 ModelMBeanInfo 构造 RequiredModelMBean 对象。只要尚未在 MBeanServer 中注册 RequiredModelMBean，就可以使用 {@link #setModelMBeanInfo} 方法自定义 RequiredModelMBean 的 MBeanInfo 和 Descriptor。自定义 RequiredModelMBean 的 MBeanInfo 和 Descriptor 之后，可以向 MBeanServer 注册 RequiredModelMBean。
+
+@param mbi  RequiredModelMBean 要使用的 ModelMBeanInfo 对象。给定的 ModelMBeanInfo 根据 {@link #setModelMBeanInfo} 指定的方式进行复制和修改
+
+@exception MBeanException 包装了一个分布式通信异常。
+@exception RuntimeOperationsException 包装了一个 {link java.lang.IllegalArgumentException}：传入参数中的 MBeanInfo 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.setModelMBeanInfo(ModelMBeanInfo mbi) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用传入的 ModelMBeanInfo 实例化 ModelMBean 对象。此方法能够设置 ModelMBean 上的自定义 ModelMBeanInfo（只要它尚未在 MBeanServer 中注册）。<br> 一旦自定义 ModelMBean 的 ModelMBeanInfo 并在 ModelMBean 上设置它（带有 Descriptor）之后，就可以在 MBeanServer 中注册 ModelMBean。
+ <P>
+如果目前已经注册了 ModelMBean，则此方法抛出包装 {@link IllegalStateException} 的 {@link javax.management.RuntimeOperationsException}
+ <P>
+如果给定的 <var>inModelMBeanInfo</var> 不包含任何 <code>GENERIC</code> 或 <code>ATTRIBUTE_CHANGE</code> 通知的 {@link ModelMBeanNotificationInfo}，则 RequiredModelMBean 将为这些缺少的通知提供它自己的默认 {@link ModelMBeanNotificationInfo ModelMBeanNotificationInfo}。
+
+@param mbi  ModelMBean 要使用的 ModelMBeanInfo 对象。
+	
+@exception MBeanException 包装了一个分布式通信异常。
+@exception RuntimeOperationsException 
+<ul><li>如果传入参数的 MBeanInfo 为 null，则包装一个 {@link IllegalArgumentException}。</li>
+<li>如果目前已经在 MBeanServer 中注册了 ModelMBean，则包装一个 {@link IllegalStateException}。</li>
+ </ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.setManagedResource(Object mr, String mr_type) throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException, javax.management.modelmbean.InvalidTargetObjectTypeException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置对象的实例句柄，我们将根据该句柄执行此 ModelMBean 管理接口（MBeanInfo 和 Descripto）中的所有方法。
+
+@param mr 作为托管资源的对象
+@param mr_type 托管资源的引用类型。<br>该参数可以是：&quot;ObjectReference&quot;、&quot;Handle&quot;、&quot;IOR&quot;、&quot;EJBHandle&quot; 或 &quot;RMIReference&quot;。<br>在此实现中仅支持 &quot;ObjectReference&quot;。
+
+@exception MBeanException 如果对象初始化程序已抛出异常。
+@exception InstanceNotFoundException 如果找不到托管资源对象
+@exception InvalidTargetObjectTypeException 托管资源对象应为 &quot;ObjectReference&quot;。
+@exception RuntimeOperationsException 如果设置资源时包装一个 {@link RuntimeException}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.load() throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用在持久存储中找到的 MBean 的数据实例化此 MBean。加载的数据可以包括属性和操作值。</p>
+
+<p>此方法的调用应在此实例的构造或实例化期间，且在向 MBeanServer 注册该 MBean 之前。</p>
+
+<p>如果此类的实例不支持持久存储，则抛出包装 {@link ServiceNotFoundException} 的 {@link MBeanException}。</p>
+
+@exception MBeanException 包装另一个异常，或者不支持持久存储
+@exception RuntimeOperationsException 包装来自持久机制的异常
+@exception InstanceNotFoundException 不能从持久存储找到或加载此 MBean
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.store() throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>捕获此 MBean 实例的当前状态，并将它写出到持久存储中。存储的状态可以包括属性和操作值。</p>
+
+<p>如果此类的实例不支持持久存储，则抛出包装 {@link ServiceNotFoundException} 的 {@link MBeanException}。</p>
+
+<p>来自 MBean 和属性描述符的持久策略用于指导此方法的执行。如果 'persistPolicy' 是以下值，则应存储 MBean：</p>
+
+ <PRE>  != &quot;never&quot;
+   = &quot;always&quot;
+   = &quot;onTimer&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'
+   = &quot;NoMoreOftenThan&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'
+   = "onUnregister"
+ </PRE>
+
+<p>如果 'persistPolicy' 字段是以下值，则不存储 MBean：</p>
+ <PRE>
+    = &quot;never&quot;
+    = &quot;onUpdate&quot;
+    = &quot;onTimer&quot; &amp;&amp; now &lt; 'lastPersistTime' + 'persistPeriod'
+ </PRE>
+
+@exception MBeanException 包装另一个异常，或者如果不支持持久存储
+@exception RuntimeOperationsException 包装来自持久机制的异常
+@exception InstanceNotFoundException 不能找到/访问持久存储
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanInfo javax.management.modelmbean.RequiredModelMBean.getMBeanInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 RequiredModelMBean 公开的属性、操作、构造方法和通知是为了便于管理。
+
+@return  允许检索此 MBean 的所有属性、操作和 Notification 的 ModelMBeanInfo 的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.modelmbean.RequiredModelMBean.invoke(String opName, java.lang.Object[] opArgs, java.lang.String[] sig) throws javax.management.MBeanException, javax.management.ReflectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 RequiredModelMBean 上的（或通过它调用）某个方法，并返回方法的执行结果。
+ <P>
+如果要调用的给定方法连同提供的签名与 RequiredModelMbean 可访问方法中的某个方法匹配，则将调用此匹配的方法。否则将在托管资源上尝试调用给定的方法。
+ <P>
+该操作返回的最后一个值可以在该操作的描述符中进行缓存，此描述符位于 ModelMBeanOperationInfo 的描述符中。有效值将位于 'value' 字段中（如果有）。如果描述符中的 'currencyTimeLimit' 字段为：
+ <UL>
+<LI><b>&lt;0</b> 则不缓存该值，且该值永远无效。调用 operation 方法。清除 'value' 和 'lastUpdatedTimeStamp' 字段。</LI>
+<LI><b>=0</b> 则总是缓存该值，且该值总有效。返回 'value' 字段。如果没有 'value' 字段，则调用属性的 operation 方法。将 'lastUpdatedTimeStamp' 字段和 `value' 字段设置为该操作返回的值和当前时间戳。</LI>
+<LI><b>&gt;0</b> 表示 'value' 字段有效的秒数。当 'lastUpdatedTimeStamp' + 'currencyTimeLimit' &gt; Now 时，'value' 字段不再有效。
+      <UL>
+<LI>当 'value' 有效时，返回 'value'。</LI>
+<LI>当 'value' 不再有效时，调用 operation 方法。更新 'lastUpdatedTimeStamp' 字段和 `value' 字段。</lI>
+      </UL>
+ </LI>
+ </UL>
+
+<p><b>注：</b>由于与此规范以前版本不一致，因此对于 <code>currencyTimeLimit</code>，建议不要使用负值或零。要指示某个缓存的值永远无效，请忽略 <code>currencyTimeLimit</code> 字段。要指示它总是有效，请为此字段使用一个非常大的值。</p>
+
+@param opName 要调用的方法名称。此名称可以是包括类名称的完全限定方法名，如果类名称是在操作描述符的 'class' 字段中定义的，则此名称也可以仅为方法名称。
+@param opArgs 包含调用操作时要设置的参数的数组
+@param sig 包含操作签名的数组。用于加载类对象的类加载器与用于加载 MBean（要在其上调用操作）的类加载器相同。
+
+@return  该方法返回的对象，它表示在指定托管资源上调用方法的结果。
+
+@exception MBeanException  包装以下 Exceptions 之一：
+ <UL>
+<LI> 由管理对象调用的方法抛出的 Exception。</LI>
+<LI> {@link ServiceNotFoundException}: 为指定操作或托管资源定义的 ModelMBeanOperationInfo 或 descriptor 都不为 null。</LI>
+<LI> {@link InvalidTargetObjectTypeException}: 'targetType' 字段值不为 'objectReference'。</LI>
+ </UL>
+@exception ReflectionException  包装一个试图调用该方法时抛出的 {@link java.lang.Exception}。
+@exception RuntimeOperationsException 包装一个 {@link IllegalArgumentException}。方法名称为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.modelmbean.RequiredModelMBean.getAttribute(String attrName) throws javax.management.AttributeNotFoundException, javax.management.MBeanException, javax.management.ReflectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为此 ModelMBean 定义的指定属性的值。该属性返回的最后一个值可以在该属性的描述符中进行缓存。有效值将位于 'value' 字段中（如果有）。如果描述符中的 'currencyTimeLimit' 字段为：
+ <UL>
+<LI>  <b>&lt;0</b> 则不缓存该值，且该值永远无效。调用该属性的获取方法。清除 'value' 和 'lastUpdatedTimeStamp' 字段。</LI>
+<LI>  <b>=0</b> 则总是缓存该值，且该值总有效。返回 'value' 字段。如果没有 'value' 字段，则调用属性的获取方法。将 'lastUpdatedTimeStamp' 字段和 'value' 字段设置为该属性值和当前时间戳。</LI>
+<LI>  <b>&gt;0</b> 表示 'value' 字段有效的秒数。当 'lastUpdatedTimeStamp' + 'currencyTimeLimit' &gt; Now 时，'value' 字段不再有效。
+   <UL>
+<LI>当 'value' 有效时，返回 'value'。</LI>
+<LI>当 'value' 不再有效时，调用该属性的获取方法。更新 'lastUpdatedTimeStamp' 字段和 `value' 字段。</LI>
+   </UL></LI>
+ </UL>
+
+<p><b>注：</b>由于与此规范以前版本不一致，因此对于 <code>currencyTimeLimit</code>，建议不要使用负值或零。要指示某个缓存的值永远无效，请忽略 <code>currencyTimeLimit</code> 字段。要指示它总是有效，请为此字段使用一个非常大的值。</p>
+
+<p>如果 'getMethod' 字段包含有效的操作描述符名称，则执行操作描述符所描述的方法。该方法的响应将作为属性值返回。如果操作失败或返回值的类型与属性声明的类型不兼容，则将抛出异常。</p>
+
+<p>如果没有定义 'getMethod' 字段，则返回属性的默认值。如果返回值的类型与属性声明的类型不兼容，则将抛出异常。</p>
+
+<p>属性声明的类型是 {@link ModelMBeanAttributeInfo#getType()} 返回的 String。如果以下条件中有一个为真，则值与此类型兼容：
+ <ul>
+ <li>值为 null；</li>
+ <li>声明的名称是基本类型名（比如 "int"）且该值是对应包装器类的实例（比如 java.lang.Integer）；</li>
+ <li>值类的名称与声明的名称完全相同；</li>
+ <li>声明的名称可以通过值的类加载器加载，并能生成一个类，且可以将值赋予该类。</li>
+ </ul>
+
+<p>在此实现中，对于需要调用 getMethod 的每种情况，因为该方法是通过标准的 &quot;invoke&quot; 方法调用的并因此需要 operationInfo，所以必须为该 getMethod 指定一个操作，以便调用正确工作。</p>
+
+@param attrName 指定要检索的属性名称的 String。它必须与 ModelMBeanAttributeInfo 名称匹配。
+
+@return 从描述符 'value' 字段或从描述符的 'getMethod' 字段中的操作调用检索到的属性值。
+
+@exception AttributeNotFoundException 如果指定的属性在 MBean 中不是可访问的。以下情况可能导致 AttributeNotFoundException：
+    <UL>
+<LI> 未找到 Model MBean 的 ModelMBeanInfo。</LI>
+<LI> 未找到指定属性名称的 ModelMBeanAttributeInfo。</LI>
+<LI> ModelMBeanAttributeInfo isReadable 方法返回 'false'。</LI>
+    </UL>
+@exception MBeanException  包装以下 Exception 之一：
+    <UL>
+      <LI> {@link InvalidAttributeValueException}: 从属性的获取方法检索到一个错误值类型，或者描述符中未定义属性的 'getMethod' 字段且默认值不存在。</LI>
+      <LI> {@link ServiceNotFoundException}: 没有为属性的获取方法定义 ModelMBeanOperationInfo，或者没有与 ModelMBeanOperationInfo 关联的描述符，或者托管资源为 null。</LI>
+<LI> {@link InvalidTargetObjectTypeException} 'targetType' 字段值不是 'objectReference'。</LI>
+<LI> 由管理对象的设置方法抛出的 Exception。</LI>
+    </UL>
+@exception ReflectionException  包装试图调用设置方法时抛出的 {@link java.lang.Exception}。
+@exception RuntimeOperationsException 包装 {@link IllegalArgumentException}：参数中的属性名称为 null。
+
+@see #setAttribute(javax.management.Attribute)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.modelmbean.RequiredModelMBean.getAttributes(java.lang.String[] attrNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ModelMBean 中几个属性的值。执行所传入的 attrNames 数组中每个属性名称的 getAttribute。
+
+@param attrNames 要检索的属性名称的 String 数组。
+
+@return 检索到的属性的数组。
+
+@exception RuntimeOperationsException 包装一个 {@link IllegalArgumentException}：参数中的对象名称为 null，或参数中的属性为 null。
+
+@see #setAttributes(javax.management.AttributeList)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.setAttribute(Attribute attribute) throws javax.management.AttributeNotFoundException, javax.management.InvalidAttributeValueException, javax.management.MBeanException, javax.management.ReflectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定的 ModelMBean 的指定属性值。如果属性描述符的 'setMethod' 字段包含有效的操作描述符名称，则执行操作描述符所描述的方法。在此实现中，必须正确指定操作描述符，并将它们分配给 modelMBeanInfo，以便 'setMethod' 正确工作。该方法的响应将被设置为描述符中的属性值。
+
+<p>如果 currencyTimeLimit  &gt; 0，则在属性描述符的 'value' 字段中缓存属性的新值，并且 'lastUpdatedTimeStamp' 字段设置为当前时间戳。
+
+<p>如果属性描述符的 persist 字段不为 null，则来自属性描述符的 Persistence 策略用于指导在持久存储中存储属性。<br>如果 'persistPolicy' 字段是以下值，则存储 MBean：
+ <UL>
+ <Li> != &quot;never&quot;</Li>
+ <Li> = &quot;always&quot;</Li>
+ <Li> = &quot;onUpdate&quot;</Li>
+ <Li> = &quot;onTimer&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'</Li>
+ <Li> = &quot;NoMoreOftenThan&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'</Li>
+ </UL>
+如果 'persistPolicy' 字段是以下值，则不存储 MBean：
+ <UL>
+ <Li> = &quot;never&quot;</Li>
+ <Li> = &quot;onTimer&quot; &amp;&amp; now &lt; 'lastPersistTime' + 'persistPeriod'</Li>
+ <Li> = "onUnregister"</Li>
+ <Li> = &quot;NoMoreOftenThan&quot; and now &lt; 'lastPersistTime' + 'persistPeriod'</Li>
+ </UL>
+
+<p>Model MBean 的 ModelMBeanInfo 存储于文件中。
+
+@param attribute 包含要设置的属性的名称和要设置的值的 Attribute 实例。
+
+@exception AttributeNotFoundException 如果指定的属性在 MBean 中不是可访问的。<br>以下情况可能导致 AttributeNotFoundException：
+   <UL>
+<LI> 未找到指定属性的 ModelMBeanAttributeInfo。</LI>
+<LI> ModelMBeanAttributeInfo 的 isWritable 方法返回 'false'。</LI>
+   </UL>
+@exception InvalidAttributeValueException 如果没有为指定的属性定义描述符。
+@exception MBeanException  包装以下 Exception 之一：
+   <UL>
+<LI> 由管理对象的设置方法抛出的 Exception。</LI>
+<LI> 如果在属性的描述符中定义了一个 setMethod 字段且托管资源为 null，或者没有定义任何 setMethod 字段且该属性没有启用缓存，则抛出 {@link ServiceNotFoundException}。注意，如果也没有定义任何 getMethod 字段，则将自动启用缓存。</LI>
+<LI> {@link InvalidTargetObjectTypeException} 'targetType' 字段值不是 'objectReference'。</LI>
+<LI> 由管理对象的设置方法抛出的 Exception。</LI>
+   </UL>
+@exception ReflectionException  包装试图调用设置方法时抛出的 {@link java.lang.Exception}。
+@exception RuntimeOperationsException 包装一个 {@link IllegalArgumentException}：参数中的属性为 null。
+
+@see #getAttribute(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.modelmbean.RequiredModelMBean.setAttributes(AttributeList attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 ModelMBean 的属性数组的值。为列表中每个属性执行 setAttribute() 方法。
+
+@param attributes 属性列表：要设置的属性的标识和这些属性要设置的值。
+
+@return  所设置的属性数组，以及 Attribute 实例中它们的新值。
+
+@exception RuntimeOperationsException 包装一个 {@link IllegalArgumentException}：参数中的对象名称为 null，或参数中的属性为 null。
+
+@see #getAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.addNotificationListener(NotificationListener listener, NotificationFilter filter, Object handback) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册一个将 NotificationListener 接口实现为侦听器的对象。当通过或由 ModelMBean 发布任何通知时，将调用此对象的 'handleNotification()' 方法。这不包括 attributeChangeNotifications。它们必须独立注册。
+
+@param listener 将处理由已注册的 MBean 发出的通知的侦听器对象。
+@param filter 过滤器对象。如果为 null，则在处理通知之前将不执行过滤。
+@param handback 当发出通知时，要发送到带有通知的侦听器的上下文。
+
+@exception IllegalArgumentException 侦听器不可以为 null。
+
+@see #removeNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.removeNotificationListener(NotificationListener listener) throws javax.management.ListenerNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 RequiredModelMBean 移除一个 Notification 的侦听器。
+
+@param listener 正在处理由注册的 MBean 发出的通知的侦听器名称。此方法将移除与此侦听器相关的所有信息。
+
+@exception ListenerNotFoundException 侦听器未在 MBean 中注册，或为 null。
+
+@see #addNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanNotificationInfo[] javax.management.modelmbean.RequiredModelMBean.getNotificationInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回总是由 RequiredModelMBean 生成的 Notification 数组。
+ <P>
+
+RequiredModelMBean 还可能总是发送两个其他通知：
+ <UL>
+<LI> 一个带有描述符 <code>&quot;name=GENERIC,descriptorType=notification,log=T,severity=6,displayName=jmx.modelmbean.generic&quot;</code></LI>
+<LI> 第二个是带有描述符 <code>&quot;name=ATTRIBUTE_CHANGE,descriptorType=notification,log=T,severity=6,displayName=jmx.attribute.change&quot;</code> 的标准属性更改通知</LI>
+ </UL>
+因此这两个通知总是被添加到由应用程序指定的通知中。
+
+@return MBeanNotificationInfo[]
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.management.loading.ClassLoaderRepository javax.management.modelmbean.RequiredModelMBean.getClassLoaderRepository()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于执行类加载的 Class Loader Repository。子类可能希望重新定义此方法，以便返回应在此对象中使用的适当 {@link javax.management.loading.ClassLoaderRepository}。
+
+@return 类加载器存储库。
+
+@since.unbundled JMX 1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.modelmbean.RequiredModelMBean.preRegister(MBeanServer server, ObjectName name) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许 MBean 在注册到 MBean 服务器之前执行任何所需要的操作。如果未指定 MBean 名称，则 MBean 可以提供其注册的名称。如果引发任何异常，MBean 将不会注册到 MBean 服务器中。
+ <P>
+为确保 RequireModelMBean 的运行时语义正确，重新加载或重写此方法的任何 RequiredModelMBean 的子类都应在自己的 <code>preRegister</code> 实现中调用 <code>super.preRegister(server, name)</code>。
+
+@param server 将在其中注册 MBean 的 MBean 服务器。
+
+@param name MBean 的对象名称。如果传递到 {@link MBeanServer} 接口中的 <code>createMBean</code> 或 <code>registerMBean</code> 方法的名称参数为 null，则此名称为 null。在这种情况下，此方法必须返回新 MBean 的非 null ObjectName。
+
+@return MBean 将注册的名称。此值必须不为 null。如果 <code>name</code> 参数不为 null，那么它通常（但并非必要）是返回的值。
+
+@exception java.lang.Exception 此异常由 MBean 服务器捕获，并以 {@link javax.management.MBeanRegistrationException MBeanRegistrationException} 的形式重新抛出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.postRegister(Boolean registrationDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许 MBean 在已注册到 MBean 服务器之后或注册失败之后执行任何所需要的操作。
+ <P>
+为确保 RequireModelMBean 的运行时语义正确，重新加载或重写此方法的任何 RequiredModelMBean 的子类都应在自己的 <code>postRegister</code> 实现中调用 <code>super.postRegister(registrationDone)</code>。
+
+@param registrationDone 指示 MBean 是否已成功注册到 MBean 服务器中。值 false 意味着注册失败。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.preDeregister() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许 MBean 在由 MBean 服务器注销之前执行任何所需要的操作。
+ <P>
+为确保 RequireModelMBean 的运行时语义正确，重新加载或重写此方法的任何 RequiredModelMBean 的子类都应在自己的 <code>preDeregister</code> 实现中调用 <code>super.preDeregister()</code>。
+
+@exception java.lang.Exception 此异常由 MBean 服务器捕获，并以 {@link javax.management.MBeanRegistrationException MBeanRegistrationException} 的形式重新抛出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.RequiredModelMBean.postDeregister()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许 MBean 在已从 MBean 服务器注销之后执行任何所需要的操作。
+ <P>
+为确保 RequireModelMBean 的运行时语义正确，重新加载或重写此方法的任何 RequiredModelMBean 的子类都应在自己的 <code>postDeregister</code> 实现中调用 <code>super.postDeregister()</code>。
+
+<!-- END DATA -->

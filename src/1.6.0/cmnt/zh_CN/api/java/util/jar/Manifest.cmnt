@@ -1,0 +1,128 @@
+<!-- BEGIN KEY -->
+public class java.util.jar.Manifest extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Manifest 类用于维护 Manifest 条目名称及其相关的 Attributes。既有主 Manifest 的 Attributes，也有每个条目的 Attributes。有关 Manifest 格式的信息，请参阅 <a href="../../../../technotes/guides/jar/jar.html"> Manifest 格式规范</a>。
+
+@author  David Connelly
+@version 1.45, 05/05/04
+@see	  Attributes
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Manifest()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造新的空 Manifest。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Manifest(InputStream is) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的输入流构造新的 Manifest。
+
+@param is 包含清单数据的输入流
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Manifest(Manifest man)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造新的 Manifest，它是指定 Manifest 的副本。
+
+@param man 要复制的 Manifest
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Attributes java.util.jar.Manifest.getMainAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Manifest 的主 Attributes。
+@return Manifest 的主 Attributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.util.jar.Attributes> java.util.jar.Manifest.getEntries()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Manifest 中所包含条目的 Map。每个条目由一个 String 名称（键）和相关的 Attributes（值）表示。Map 允许 {@code null} 键，但 {@link #read} 并不创建带有 null 键的条目，也不创建使用 {@link #write} 编写的条目。
+
+@return 此 Manifest 中所包含条目的 Map
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Attributes java.util.jar.Manifest.getAttributes(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定条目名称的 Attributes。此方法定义为：
+ <pre>
+	    return (Attributes)getEntries().get(name)
+ </pre>
+虽然 {@code null} 是有效的 {@code name}，当在 {@code Manifest}（从 jar 文件中获得）上调用 {@code getAttributes(null)} 时，将返回 {@code null}。尽管 jar 文件自身并不允许 {@code null} 命名的属性，则可以在 {@code Manifest} 上调用 {@link #getEntries}，然后在其结果之上调用带有 null 键和任意值的 {@code put}。{@code getAttributes(null)} 的后续调用将返回刚刚用 {@code put} 操作放入的值。
+
+ <p>
+注意此方法不返回清单的主要属性；请参阅 {@link #getMainAttributes}。
+
+@param name 条目名称。
+@return 指定条目名称的 Attributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Manifest.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除此 Manifest 中的主 Attributes 和条目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Manifest.write(OutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Manifest 写入指定的 OutputStream。在调用此方法前，必须在 MainAttributes 中设置 Attributes.Name.MANIFEST_VERSION。
+
+@param out 输出流。
+@exception IOException 如果发生 I/O 错误。
+@see #getMainAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Manifest.read(InputStream is) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 InputStream 读取 Manifest。读取的条目名称和属性将与当前的清单条目进行合并。
+
+@param is 输入流。
+@exception IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.jar.Manifest.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 Object 也是一个 Manifest，并且具有相同的主 Attributes 和条目，则返回 true。
+
+@param o 要进行比较的对象
+@return 如果指定的 Object 也是一个 Manifest，并且具有相同的主 Attributes 和条目，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.jar.Manifest.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Manifest 的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.util.jar.Manifest.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Manifest 的浅表副本。浅表副本的实现方式如下：
+ <pre>
+     public Object clone() { return new Manifest(this); }
+ </pre>
+@return Manifest 的浅表副本
+
+<!-- END DATA -->

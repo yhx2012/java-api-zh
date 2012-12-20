@@ -1,0 +1,451 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JTextField extends javax.swing.text.JTextComponent implements javax.swing.SwingConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JTextField</code> 是一个轻量级组件，它允许编辑单行文本。有关使用文本字段的信息和示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/textfield.html">How to Use Text Fields</a> 一节。
+
+ <p>
+<code>JTextField</code> 应与 <code>java.awt.TextField</code> 具有源代码兼容性，理应如此。此组件具有 <code>java.awt.TextField</code> 类中没有的功能。有关其他功能，请参考超类。
+ <p>
+<code>JTextField</code> 具有建立字符串的方法，此字符串用作针对被激发的操作事件的命令字符串。<code>java.awt.TextField</code> 把字段文本用作针对 <code>ActionEvent</code> 的命令字符串。如果通过 <code>setActionCommand</code> 方法设置的命令字符串不为 <code>null</code>，则 <code>JTextField</code> 将使用该字符串来保持与 <code>java.awt.TextField</code> 的兼容性，否则将使用字段文本来保持兼容性。
+ <p>
+<code>setEchoChar</code> 和 <code>getEchoChar</code> 方法不是直接提供的，以避免可插入的外观的新实现意外公开密码字符。为了提供类似密码的服务，单独的类 <code>JPasswordField</code> 扩展了 <code>JTextField</code>，从而通过可插入外观独立地提供此服务。
+ <p>
+通过添加 <code>TextEvent</code> 的 <code>TextListener</code>，可以监视 <code>java.awt.TextField</code> 的更改。在基于 <code>JTextComponent</code> 的组件中，通过 <code>DocumentEvent</code> 将更改从模型传播到 <code>DocumentListeners</code>。<code>DocumentEvent</code> 给出了更改的位置和更改种类（如果需要）。代码片段可能看起来如下所示：
+ <pre><code>
+ &nbsp;   DocumentListener myListener = ??;
+ &nbsp;   JTextField myArea = ??;
+ &nbsp;   myArea.getDocument().addDocumentListener(myListener);
+ </code></pre>
+ <p>
+<code>JTextField</code> 的水平对齐方式可以设置为左对齐、前端对齐、居中对齐、右对齐或尾部对齐。右对齐/尾部对齐在所需的字段文本尺寸小于为它分配的尺寸时使用。这是由 <code>setHorizontalAlignment</code> 和 <code>getHorizontalAlignment</code> 方法确定的。默认情况下为前端对齐。
+ <p>
+文本字段如何使用 VK_ENTER 事件取决于文本字段是否具有任何操作侦听器。如果具有操作侦听器，则 VK_ENTER 导致侦听器获取一个 ActionEvent，并使用 VK_ENTER 事件。这与 AWT 文本字段处理 VK_ENTER 事件的方式是兼容的。如果文本字段没有操作侦听器，则从 1.3 版本开始不使用 VK_ENTER 事件。而是处理祖先组件的绑定，这将启用 JFC/Swing 的默认按钮特性。
+ <p>
+通过对模型进行扩展和改变所提供的默认模型，可以很容易创建自定义字段。例如，以下代码片段将创建一个仅保存大写字符的字段。即使文本从剪贴板中粘贴过来或者通过编程方式而更改，此代码片段也是有效的。
+ <pre><code>
+
+&nbsp;public class UpperCaseField extends JTextField {
+&nbsp;
+&nbsp;    public UpperCaseField(int cols) {
+&nbsp;        super(cols);
+&nbsp;    }
+&nbsp;
+&nbsp;    protected Document createDefaultModel() {
+&nbsp;	      return new UpperCaseDocument();
+&nbsp;    }
+&nbsp;
+&nbsp;    static class UpperCaseDocument extends PlainDocument {
+&nbsp;
+&nbsp;        public void insertString(int offs, String str, AttributeSet a) 
+&nbsp;	          throws BadLocationException {
+&nbsp;
+&nbsp;	          if (str == null) {
+&nbsp;		      return;
+&nbsp;	          }
+&nbsp;	          char[] upper = str.toCharArray();
+&nbsp;	          for (int i = 0; i &lt; upper.length; i++) {
+&nbsp;		      upper[i] = Character.toUpperCase(upper[i]);
+&nbsp;	          }
+&nbsp;	          super.insertString(offs, new String(upper), a);
+&nbsp;	      }
+&nbsp;    }
+&nbsp;}
+
+ </code></pre>
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅　<a
+ href="package-summary.html#threading">Swing's Threading Policy</a>。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute:isContainer false 描述：一个组件，它允许编辑单行文本。
+
+@author  Timothy Prinzing
+@version 1.90 12/19/03
+@see #setActionCommand
+@see JPasswordField
+@see #addActionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JTextField.notifyAction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发送通知（已接收字段内容）的动作名称。通常它必须绑定到回车操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextField()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>TextField</code>。创建一个默认的模型，初始字符串为 <code>null</code>，列数设置为 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextField(String text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个用指定文本初始化的新 <code>TextField</code>。创建列数为 0 的默认模型。
+
+@param text 要显示的文本，或者为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextField(int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定列数的新的空 <code>TextField</code>。创建默认的模型，初始字符串设置为 <code>null</code>。
+
+@param columns  用来计算首选宽度的列数；如果列设置为 0，则首选宽度将是组件实现的自然结果
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextField(String text, int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个用指定文本和列初始化的新 <code>TextField</code>。创建默认的模型。
+
+@param text 要显示的文本，或者为 <code>null</code>
+@param columns 用来计算首选宽度的列数；如果列被设置为 0，则首选宽度将是组件实现的自然结果
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextField(Document doc, String text, int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>JTextField</code>，它使用给定文本存储模型和给定的列数。其他构造方法均调用此方法。如果文档为 <code>null</code>，则创建默认的模型。
+
+@param doc  要使用的文本存储；如果为 <code>null</code>，则通过调用 <code>createDefaultModel</code> 方法提供一个默认的存储
+@param text  要显示的初始文本，或者为 <code>null</code>
+@param columns  要用来计算首选宽度 &gt;= 0 的列数；如果 <code>columns</code> 被设置为 0，则首选宽度将为组件实现的自然结果
+@exception IllegalArgumentException 如果 <code>columns</code> &lt; 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTextField.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 UI 的类 ID。
+
+@return 字符串 &quot;TextFieldUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setDocument(Document doc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将编辑器与一个文本文档关联。当前注册的工厂用来生成文档的一个视图，此视图经过重新验证之后由编辑器来显示。将 PropertyChange 事件 (&quot;document&quot;) 传播到每个侦听器。
+
+@param doc  要显示/编辑的文档
+@see #getDocument
+@beaninfo description: 文本文档模型边界：true expert:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JTextField.isValidateRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用来自文本字段本身的 <code>revalidate</code>，将通过验证文本字段来处理，如果文本字段不包含在 <code>JViewport</code> 中，则在这种情况下将返回 false。
+
+@return 如果此文本字段的父字段为 <code>JViewPort</code>，则返回 false；否则返回 true
+ 
+
+@see JComponent#revalidate
+@see JComponent#isValidateRoot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextField.getHorizontalAlignment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文本的水平对齐方式。有效值包括：
+ <ul>
+ <li><code>JTextField.LEFT</code>
+ <li><code>JTextField.CENTER</code>
+ <li><code>JTextField.RIGHT</code>
+ <li><code>JTextField.LEADING</code>
+ <li><code>JTextField.TRAILING</code>
+ </ul>
+
+@return 水平对齐方式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setHorizontalAlignment(int alignment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置文本的水平对齐方式。有效值包括：
+ <ul>
+ <li><code>JTextField.LEFT</code>
+ <li><code>JTextField.CENTER</code>
+ <li><code>JTextField.RIGHT</code>
+ <li><code>JTextField.LEADING</code>
+ <li><code>JTextField.TRAILING</code>
+ </ul>
+当设置对齐方式时，调用 <code>invalidate</code> 和 <code>repaint</code>，并且激发 <code>PropertyChange</code> 事件（&quot;horizontalAlignment&quot;）。
+
+@param alignment 对齐方式
+@exception IllegalArgumentException 如果 <code>alignment</code> 不是一个有效键
+@beaninfo preferred:true bound:true 描述：将字段对齐方式设置为 LEFT、CENTER、RIGHT、LEADING（默认的）或者 TRAILING 枚举： LEFT JTextField.LEFT CENTER JTextField.CENTER RIGHT JTextField.RIGHT LEADING JTextField.LEADING TRAILING JTextField.TRAILING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Document javax.swing.JTextField.createDefaultModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果没有显式给出构造时要使用的模型，则创建该模型的默认实现。返回 <code>PlainDocument</code> 的一个实例。
+
+@return    默认的模型实现
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextField.getColumns()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextField</code> 中的列数。
+
+@return 列数 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setColumns(int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>TextField</code> 中的列数，然后验证布局。
+
+@param columns 列数 &gt;= 0
+@exception IllegalArgumentException 如果 <code>columns</code> 小于 0
+@beaninfo description:首选的显示列数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JTextField.getColumnWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列宽度。列的意义可以看作是一些字体的非常弱的概念。此方法用来定义列的宽度。对于所使用的字体，默认情况下这将被定义为字符 <em>m</em> 的宽度。此方法可以被重新定义为一些其他替代量。
+
+@return 列的宽度 &gt;= 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JTextField.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextField</code> 所需的首选大小 <code>Dimensions</code>。如果设置的列数为非 0 ，则将宽度设置为此数与列的宽度的乘积。 
+
+@return 此文本字段的尺寸
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setFont(Font f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前字体。这将移除缓存的行高和列宽，以便新的字体能够反映出来，设置字体后将调用 <code>revalidate</code>。
+
+@param f 新字体
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JTextField.addActionListener(ActionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的操作侦听器以从此文本字段接收操作事件。
+
+@param l 要添加的动作侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JTextField.removeActionListener(ActionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的操作侦听器，以便不再从此文本字段接收操作事件。
+
+@param l 要移除的操作侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.ActionListener[] javax.swing.JTextField.getActionListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 addActionListener() 添加到此 JTextField 中的所有 <code>ActionListener</code> 的数组。
+
+@return 所有添加的 <code>ActionListener</code>，或者不具有添加的侦听器时返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JTextField.fireActionPerformed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知对此事件类型需要的所有侦听器。以延迟方式创建的事件实例。侦听器列表按从后到前的顺序处理。
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setActionCommand(String command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于操作事件的命令字符串。
+
+@param command 命令字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setAction(Action a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>ActionEvent</code> 源的 <code>Action</code>。新的 <code>Action</code> 替换任何以前设置的 <code>Action</code>，而不影响通过 <code>addActionListener</code> 独立添加的 <code>ActionListeners</code>。如果 <code>Action</code> 已经是一个注册到 <code>ActionEvent</code> 源的 <code>ActionListener</code>，则不对它进行重新注册。
+ <p>
+设置 <code>Action</code> 将导致立即更改<a href="Action.html#buttonActions">支持 <code>Action</code> 的 Swing 组件</a>中描述的所有属性。随后，文本字段的属性将随着 <code>Action</code> 属性的变化而自动更新。
+ <p>
+此方法使用三个其他方法设置并帮助跟踪 <code>Action</code> 的属性值。它使用 <code>configurePropertiesFromAction</code> 方法立即更改文本字段的属性。要跟踪 <code>Action</code> 属性值中的更改，此方法应注册 <code>createActionPropertyChangeListener</code> 所返回的 <code>PropertyChangeListener</code>。当 {@code Action} 中的属性更改时，默认 {@code PropertyChangeListener} 调用 {@code actionPropertyChanged} 方法。
+
+@param a  <code>JTextField</code> 的 <code>Action</code>，或者为 <code>null</code>
+@since 1.3
+@see Action
+@see #getAction
+@see #configurePropertiesFromAction
+@see #createActionPropertyChangeListener
+@see #actionPropertyChanged 
+@beaninfo bound:true attribute:visualUpdate true 描述：与此 ActionEvent 源事件连接的 Action 实例
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Action javax.swing.JTextField.getAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ActionEvent</code> 源当前设置的 <code>Action</code>，如果没有设置 <code>Action</code> 则返回 <code>null</code>。
+
+@return 此 <code>ActionEvent</code> 源的 <code>Action</code>，或者 <code>null</code>
+@since 1.3
+@see Action
+@see #setAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JTextField.configurePropertiesFromAction(Action a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 在此文本字段上设置属性，以匹配指定 <code>Action</code> 中的值。有关此方法设置的是哪些属性的更多信息，请参阅<a href="Action.html#buttonActions">支持 <code>Action</code> 的 Swing 组件</a>。 
+
+@param a 从其获取属性的 <code>Action</code>，或者为 <code>null</code>
+@since 1.3
+@see Action
+@see #setAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JTextField.actionPropertyChanged(Action action, String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新文本字段的状态以响应关联动作中的属性更改。从 {@code createActionPropertyChangeListener} 所返回的 {@code PropertyChangeListener} 中调用此方法。子类通常不调用此方法。支持其他 {@code Action} 属性的子类应该重写此方法和 {@code configurePropertiesFromAction}。
+ <p>
+有关此方法设置的属性列表，请参阅<a href="Action.html#buttonActions">支持 <code>Action</code> 的 Swing 组件</a>中的表。
+
+ @param action 与此文本字段关联的 <code>Action</code> 
+ @param propertyName 已更改属性的名称
+ @since 1.6
+ @see Action
+ @see #configurePropertiesFromAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.beans.PropertyChangeListener javax.swing.JTextField.createActionPropertyChangeListener(Action a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个负责侦听指定 <code>Action</code> 的更改以及更新适当属性的 <code>PropertyChangeListener</code>。   
+  <p>
+<b>警告：</b>如果子类化此方法，则不要创建匿名的内部类。如果执行文本字段的生命周期，则它将被绑定到 <code>Action</code> 的值。 
+
+ @param a 文本字段的动作
+ @since 1.3
+ @see Action
+ @see #setAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Action[] javax.swing.JTextField.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器的命令列表。此命令列表受可插入的 UI 支持，此 UI 是通过编辑器本身支持的命令集进行扩展的。这些命令可以用于事件绑定，例如在 keymap 中。
+
+@return 命令列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.postActionEvent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+通过将其指派给所有已注册的 <code>ActionListener</code> 对象来处理发生在此文本字段上的操作事件。通常，这通过以文本字段注册的控制器来调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.BoundedRangeModel javax.swing.JTextField.getHorizontalVisibility()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本字段的可见性。如果字段大小大于分配给它的区域，则可以对它进行调整，从而改变可见区域的位置。
+
+ <p>
+字段的外观实现管理最小值、最大值，以及 <code>BoundedRangeModel</code> 的范围属性。
+ 
+@return 可见性
+@see BoundedRangeModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextField.getScrollOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取滚动偏移量（以像素为单位）。
+
+@return 偏移 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.setScrollOffset(int scrollOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取滚动偏移量（以像素为单位）。
+
+@param scrollOffset 偏移量 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextField.scrollRectToVisible(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字段向左或向右滚动。
+
+@param r 要滚动的区域
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JTextField.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JTextField</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JTextField</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JTextField.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>JTextField</code> 关联的 <code>AccessibleContext</code>。对于 <code>JTextFields</code> 组件，<code>AccessibleContext</code> 采用 <code>AccessibleJTextField</code> 的形式。必要时创建新的 <code>AccessibleJTextField</code> 实例。
+
+@return 一个 <code>AccessibleJTextField</code>，它充当此 <code>JTextField</code> 的 <code>AccessibleContext</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JTextField.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 中序列化的更多信息，请参阅 <code>JComponent</code> 中的 <code>readObject</code> 和 <code>writeObject</code>。
+
+<!-- END DATA -->

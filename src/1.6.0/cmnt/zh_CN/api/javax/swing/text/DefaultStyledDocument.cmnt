@@ -1,0 +1,278 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.DefaultStyledDocument extends javax.swing.text.AbstractDocument implements javax.swing.text.StyledDocument
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+能够以类似富文本格式 (Rich Text Format) 的方式对其字符和段落样式进行标记的文档。此文档的元素结构表示样式在运行时的相互引用。这些样式运行被映射到段落元素结构（也有可能以其他结构形式驻留）。样式运行在段落边界处中断，原因是段落边界被指派了逻辑样式。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@version 1.124 05/05/04
+@see     Document
+@see     AbstractDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.DefaultStyledDocument.BUFFER_SIZE_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始内容缓冲区的默认大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument(AbstractDocument.Content c, StyleContext styles)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造样式化文档。
+
+@param c  内容容器
+@param styles 可跨文档共享的资源和样式定义
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument(StyleContext styles)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有默认的内容存储实现和一组共享样式的样式化文档。
+
+@param styles 样式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造默认的样式化文档。此缓冲区输入内容大小为 <em>BUFFER_SIZE_DEFAULT</em> 并有一个由文档的生命周期确定其范围且不与其他文档共享的样式上下文。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getDefaultRootElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得默认的根元素。
+
+@return 根
+@see Document#getDefaultRootElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.create(javax.swing.text.DefaultStyledDocument.ElementSpec[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化文档，以反映给定元素结构（即由 <code>getDefaultRootElement</code> 方法报告的结构）。如果该文档包含了任何数据，将首先移除这些数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.insert(int offset, javax.swing.text.DefaultStyledDocument.ElementSpec[] data) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+批量插入新元素。这有助于在取消锁定状态下对文档进行解析并为元素结构修改做准备。此方法使用一个描述如何更新元素结构的标记数组，这样在异步更新的情况下写锁定的时间得到显著降低。     
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param offset 起始偏移量，该偏移量 &gt;= 0
+@param data 元素数据
+@exception BadLocationException 无效的起始偏移量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.addStyle(String nm, Style parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向逻辑样式层次结构中添加新样式。样式属性自下向上进行解析，所以在子级中指定的属性将重写父级中指定的属性。
+
+@param nm  样式的名称（在命名样式集合中必须是惟一的）。如果样式未命名，则此名称可能为 null，但是调用者要负责管理返回的引用，因为未命名的样式不能通过其名称获取。未命名的样式可以用于诸如字符属性重写这样的情况（例如在样式运行中）。
+@param parent 父样式。如果未指定的属性不需要以其他样式解析，则此值可以为 null。
+@return 样式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.removeStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前添加到文档中的已命名样式。  
+
+@param nm  要移除的样式的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.getStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取以前添加的已命名的样式。
+
+@param nm 样式名称
+@return 样式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<?> javax.swing.text.DefaultStyledDocument.getStyleNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取样式名称列表。
+
+@return 所有样式名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setLogicalStyle(int pos, Style s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置给定位置处用于段落的逻辑样式。如果没有为字符和段落属性显式设置属性，则它们将通过分配到段落的逻辑样式进行解析，也就是通过某个层次结构来解析，这些层次结构完全独立于文档中元素的层次结构。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。     
+
+@param pos 文档开始处的偏移量，该偏移量 &gt;= 0
+@param s  要分配给段落的逻辑样式，如果没有，则为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.getLogicalStyle(int p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取表示给定位置处分配给段落的逻辑样式。
+
+@param p 要转换为段落的位置和确定逻辑样式要分配到的位置，该值 &gt;= 0。这是文档开始处的偏移量。
+@return 样式，如果没有，则为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为文档某些部分设置属性。进行更改的过程中由此操作保持写锁定，并在更改成功完成后向侦听器发送一个 DocumentEvent。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param offset 文档中的偏移量，该偏移量 &gt;= 0
+@param length 长度，该长度 &gt;= 0
+@param s 属性
+@param replace 如果应在设置新属性之前替换原来的属性，则为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setParagraphAttributes(int offset, int length, AttributeSet s, boolean replace)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置段落属性。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。    
+
+@param offset 段落偏移量，该偏移量 &gt;= 0
+@param length 所影响的字符数，该字符数 &gt;= 0
+@param s 属性
+@param replace 确定是替换现有属性还是合并现有属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getParagraphElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得位于偏移量 <code>pos</code> 的段落元素。一个段落至少要包含一个子 Element，它通常为叶元素。
+
+@param pos 起始偏移量，该偏移量 &gt;= 0
+@return 元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getCharacterElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得基于某个位置的字符元素。
+
+@param pos 文档中的位置，该位置 &gt;= 0
+@return 元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.insertUpdate(AbstractDocument.DefaultDocumentEvent chng, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在文本插入后更新文档结构。这在一个写锁定内完成。此实现只解析插入的内容中的换行，然后为元素缓冲区建立一组指令。
+
+@param chng 对文档更改的描述
+@param attr 属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.removeUpdate(AbstractDocument.DefaultDocumentEvent chng)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在文本移除后更新文档结构。
+
+@param chng 对文档更改的描述
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AbstractDocument.AbstractElement javax.swing.text.DefaultStyledDocument.createDefaultRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于代表默认文档结构的根元素。
+
+@return 基本元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.DefaultStyledDocument.getForeground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性集获得前景色。
+
+@param attr 属性集
+@return 颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.DefaultStyledDocument.getBackground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性集获得背景颜色。
+
+@param attr 属性集
+@return 颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.text.DefaultStyledDocument.getFont(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性集获得字体。
+
+@param attr 属性集
+@return 字体
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.styleChanged(Style style)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此文档样式有任何改变时调用。子类可能希望对损坏情况进行感知。
+
+@param style 已发生更改的样式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.addDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加负责通知任何更改的文档侦听器。
+
+@param listener 侦听器
+@see Document#addDocumentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.removeDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除文档侦听器。
+
+@param listener 侦听器
+@see Document#removeDocumentListener
+
+<!-- END DATA -->

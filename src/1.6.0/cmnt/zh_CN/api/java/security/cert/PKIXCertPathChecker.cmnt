@@ -1,0 +1,90 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.cert.PKIXCertPathChecker extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对 <code>X509Certificate</code> 执行一种或多种检查的抽象类。 
+ 
+<p>可创建 <code>PKIXCertPathChecker</code> 类的具体实现，以扩展 PKIX 证书路径验证算法。例如，一种实现可以检查并处理证书路径中每个证书的一种关键私有扩展。
+
+<p><code>PKIXCertPathChecker</code> 实例可以用作 <code>PKIXParameters</code> 和 <code>PKIXBuilderParameters</code> 类中的 {@link PKIXParameters#setCertPathCheckers setCertPathCheckers} 或 {@link PKIXParameters#addCertPathChecker addCertPathChecker} 方法的参数。然后为 PKIX <code>CertPathValidator</code> 或 <code>CertPathBuilder</code> 实现所处理的每个证书依次调用每个 <code>PKIXCertPathChecker</code> 的 {@link #check check} 方法。
+ 
+<p>可以在证书路径中的连续证书上多次调用 <code>PKIXCertPathChecker</code>。应该由具体的子类维护那些检查连续证书所必需的所有内部状态。{@link #init init} 方法用于初始化该检查器的内部状态，这样就可以检查新证书路径中的各个证书。为了允许 PKIX <code>CertPathBuilder</code> 高效地回溯并尝试其他路径，如有必要，有状态的实现<b>必须</b>重写该 {@link #clone clone} 方法。在这种情况下，通过恢复已复制的 <code>PKIXCertPathChecker</code>，<code>CertPathBuilder</code> 能够恢复以前的路径验证状态。
+
+<p>呈现给 <code>PKIXCertPathChecker</code> 的证书顺序可以是正向的（从目标到最受信任的 CA），也可以是反向的（从最受信任的 CA 到目标）。<code>PKIXCertPathChecker</code> 实现<b>必须</b>支持反向检查（反向呈现证书时执行其检查的能力），并且<b>可以</b>支持正向检查（正向呈现证书时执行其检查的能力）。{@link #isForwardCheckingSupported isForwardCheckingSupported} 方法指示是否支持正向检查。
+ <p>
+执行检查所需的其他输入参数可以通过此类具体实现的构造方法来指定。
+ <p>
+<b>并发访问</b>
+ <p>
+除非另行指定，否则此类中所定义的方法不是线程安全的。需要并发访问单个对象的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同对象的多个线程而言，无需实现同步。
+
+@see PKIXParameters
+@see PKIXBuilderParameters
+
+@version 	1.7 12/19/03
+@since	1.4
+@author	Yassir Elley
+@author	Sean Mullan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.PKIXCertPathChecker()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.cert.PKIXCertPathChecker.init(boolean forward) throws java.security.cert.CertPathValidatorException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此 <code>PKIXCertPathChecker</code> 的内部状态。
+ <p> 
+<code>forward</code> 标志指定向 {@link #check check} 方法传递的证书顺序（是正向还是反向的）。<code>PKIXCertPathChecker</code> <b>必须</b>支持反向检查，并且<b>可以</b>支持正向检查。 
+
+@param forward 向 <code>check</code> 方法呈现证书的顺序。如果为 <code>true</code>，则按照从目标到最受信任的 CA（正向）的顺序来呈现各个证书；如果为 <code>false</code>，则按照从最受信任的 CA 到目标（反向）的顺序来呈现各个证书。
+@throws CertPathValidatorException 如果此 <code>PKIXCertPathChecker</code> 无法按指定的顺序检查各个证书；如果 forward 标志为 false，则永远不应抛出该异常，因为必须支持反向检查
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.security.cert.PKIXCertPathChecker.isForwardCheckingSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否支持正向检查。正向检查是指以正向（从目标到最受信任的 CA）将各个证书呈现给 <code>check</code> 方法时，<code>PKIXCertPathChecker</code> 可执行其检查的能力。
+
+@return 如果支持正向检查，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Set<java.lang.String> java.security.cert.PKIXCertPathChecker.getSupportedExtensions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个此 <code>PKIXCertPathChecker</code> 支持（也就是识别，即能够处理）的 X.509 证书扩展的不可变的 <code>Set</code>，如果不支持这些扩展，则返回 <code>null</code>。 
+ <p>
+该集合的每个元素都是一个 <code>String</code>，表示支持的 X.509 扩展的对象标识符 (OID)。该 OID 由一组句点分隔的非负整数来表示。
+ <p>
+该集合中应该包括 <code>PKIXCertPathChecker</code> 可以处理的所有 X.509 证书扩展。
+
+@return 一个此 <code>PKIXCertPathChecker</code> 支持的 X.509 扩展 OID（以 <code>String</code> 格式）的不可变 <code>Set</code>，如果不支持这些扩展，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.cert.PKIXCertPathChecker.check(Certificate cert, java.util.Collection<java.lang.String> unresolvedCritExts) throws java.security.cert.CertPathValidatorException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用其内部状态对指定的证书进行检查，并且将其处理的那些关键扩展从表示未解析的关键扩展的指定 OID 字符串集合中移除。按照 <code>init</code> 方法所指定的顺序呈现各个证书。
+
+@param cert 要检查的 <code>Certificate</code>
+@param unresolvedCritExts 一个 OID 字符串 <code>Collection</code>，表示当前未解析的关键扩展集
+@exception CertPathValidatorException 如果指定的证书无法通过检查
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.cert.PKIXCertPathChecker.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的副本。调用 <code>Object.clone()</code> 方法。如有必要，所有维护状态的子类必须支持并重写此方法。
+ 
+@return 此 <code>PKIXCertPathChecker</code> 的副本
+
+<!-- END DATA -->

@@ -1,0 +1,99 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.Transform extends javax.xml.crypto.XMLStructure, javax.xml.crypto.AlgorithmMethod
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>Transform</code> 元素的表示形式。XML Schema Definition 的定义如下：
+
+ <pre>
+&lt;element name=&quot;Transform&quot; type=&quot;ds:TransformType&quot;/&gt;
+&lt;complexType name=&quot;TransformType&quot; mixed=&quot;true&quot;&gt;
+&lt;choice minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;
+&lt;any namespace=&quot;##other&quot; processContents=&quot;lax&quot;/&gt;
+&lt;!-- (1,1) elements from (0,unbounded) namespaces --&gt;
+&lt;element name=&quot;XPath&quot; type=&quot;string&quot;/&gt;
+&lt;/choice&gt;
+&lt;attribute name=&quot;Algorithm&quot; type=&quot;anyURI&quot; use=&quot;required&quot;/&gt;
+&lt;/complexType&gt;
+ </pre>
+
+调用 {@link XMLSignatureFactory} 类的 {@link XMLSignatureFactory#newTransform newTransform} 方法可以创建 <code>Transform</code> 实例。
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+@see XMLSignatureFactory#newTransform(String, TransformParameterSpec)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.Transform.BASE64
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/2000/09/xmldsig#base64">Base64</a> 转换算法 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.Transform.ENVELOPED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/2000/09/xmldsig#enveloped-signature">Enveloped Signature</a> 转换算法 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.Transform.XPATH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/1999/REC-xpath-19991116">XPath</a> 转换算法 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.Transform.XPATH2
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/2002/06/xmldsig-filter2">XPath Filter 2</a> 转换算法 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.Transform.XSLT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/1999/REC-xslt-19991116">XSLT</a> 转换算法 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.spec.AlgorithmParameterSpec javax.xml.crypto.dsig.Transform.getParameterSpec()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>Transform</code> 关联的特定于算法的输入参数。
+ <p>
+可将返回的参数强制转换为 {@link TransformParameterSpec} 对象。
+
+@return 特定于算法的输入参数（如果未指定，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.Data javax.xml.crypto.dsig.Transform.transform(Data data, XMLCryptoContext context) throws javax.xml.crypto.dsig.TransformException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用底层转换算法对指定数据进行转换。
+
+@param data 要转换的数据
+@param context 包含其他上下文的 <code>XMLCryptoContext</code>（如果不适用，则该参数为 <code>null</code>）
+@return 已转换的数据
+@throws NullPointerException 如果 <code>data</code> 为 <code>null</code>
+@throws TransformException 如果执行转换时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.Data javax.xml.crypto.dsig.Transform.transform(Data data, XMLCryptoContext context, OutputStream os) throws javax.xml.crypto.dsig.TransformException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用底层转换算法对指定数据进行转换。如果此转换的输出是一个 <code>OctetStreamData</code>，则此方法将返回 <code>null</code>，并且将字节写入指定的 <code>OutputStream</code>。否则，将忽略 <code>OutputStream</code>，并且该方法的行为将类似于调用 {@link #transform(Data, XMLCryptoContext)}。
+
+@param data 要转换的数据
+@param context 包含其他上下文的 <code>XMLCryptoContext</code>（如果不适用，则该参数为 <code>null</code>）
+@param os 应写入已转换数据的 <code>OutputStream</code>
+@return 已转换的数据（如果将数据写入 <code>OutputStream</code> 参数，则返回 <code>null</code>）
+@throws NullPointerException 如果 <code>data</code> 或 <code>os</code> 为 <code>null</code>
+@throws TransformException 如果执行转换时出现错误
+
+<!-- END DATA -->

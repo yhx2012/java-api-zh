@@ -1,0 +1,547 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JViewport extends javax.swing.JComponent implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于查看底层信息的&ldquo;视口&rdquo;或&ldquo;观察孔&rdquo;。在滚动时，移动部分称为视口。这好像通过照相机的取景器进行查看。将取景器向上移动会将图片顶部的内部移入视野，而底部的内容将消失。
+ <p>
+默认情况下，<code>JViewport</code> 是不透明的。要进行更改，请使用 <code>setOpaque</code> 方法。
+ <p>
+<b>注：</b>我们已实现了更快的滚动算法，不需要引入缓存。该算法的工作方式如下：
+<ol><li>检查视图和父视图，了解它们是否为 <code>JComponents</code>，如果不是，则停止，然后重绘整个视口。
+<li>如果视口由祖先遮掩，则停止，然后重绘整个视口。
+<li>计算将变为可见的区域，如果可见区域的大小与视口一样，则停止，然后重绘整个视图区域。
+<li>获取祖先 <code>Window</code> 的图形，并在滚动区域上执行 <code>copyArea</code>。
+<li>传递视图消息以重绘新的可见区域。
+<li>下次绘制将在视口上调用，如果剪贴区域小于视口大小，将开始使用计时器重绘整个区域。
+ </ol>
+一般情况下，此方法相当快。与后备存储方法相比，这避免了维护屏幕外缓冲区和必须执行两个 <code>copyArea</code> 的开销。与非后备存储情况相比，此方法将大大减少绘制的区域。
+ <p>
+当视口被另一窗口遮掩或者部分在屏幕外时，此方法比后备存储方法更慢。当另一窗口遮掩该视口时，copyArea 将复制垃圾，并且系统将生成一个绘制事件，通知我们绘制新露出的区域。处理这一情况的惟一方法是重绘整个视口，这可能比后备存储情形的速度要慢。在多数应用程序中，在视口被另一窗口遮掩或在屏幕外时，用户很少滚动它，因此，在被遮掩时，通常值得使用这一优化来提高性能。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.114 05/18/04
+@author Hans Muller
+@author Philip Milne
+@see JScrollPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JViewport.isViewSizeSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在确定视口的维数后为 true。默认值为 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Point javax.swing.JViewport.lastPaintPosition
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+我们绘制的最后一个 <code>viewPosition</code>，因此我们知道有多少有效的后备存储图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JViewport.backingStore
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当此视口正在维护其内容的一个屏幕外图像时，将为 true，这样可以使用快速的&ldquo;位图传送&rdquo;操作执行一些滚动，而不用通过视图对象来构造此显示。默认值为 <code>false</code>。
+
+@deprecated 从 Java 2 平台 v1.3 开始
+@see #setScrollMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.awt.Image javax.swing.JViewport.backingStoreImage
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于后备存储的视图图像。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JViewport.scrollUnderway
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>scrollUnderway</code> 标志用于 <code>JList</code> 之类的组件。当在 <code>JList</code> 上按下向下箭头且所选单元格是列表中的最后一个单元格时，<code>scrollpane</code> 将自动滚动。这里，以前选中的单元格需要进行重绘，因此我们需要一个标志让该视口仅在存在对 <code>setViewPosition(Point)</code> 的显式调用时执行优化的绘制。当通过其他途径调用 <code>setBounds</code> 时，该标志关闭并且该视图按常规方法重绘。另一种方法是从 <code>JViewport</code> 类中移除此标志，并让 <code>JList</code> 通过使用 <code>setBackingStoreEnabled</code> 管理此情形。默认值为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JViewport.BLIT_SCROLL_MODE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>graphics.copyArea</code> 来实现滚动。对多数应用程序而言，这是最快的方法。
+
+@see #setScrollMode
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JViewport.BACKINGSTORE_SCROLL_MODE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将视口内容拉入屏幕外图像。这以前是 <code>JTable</code> 的默认模式。在某些情况下，此模式优于&ldquo;位图传送模式&rdquo;，但它需要大量的额外内存。
+
+@see #setScrollMode
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JViewport.SIMPLE_SCROLL_MODE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此模式使用非常简单的方法，在 scrollpane 每次滚动时重绘它的整个内容。这是 Swing 1.0 和 Swing 1.1 中的默认行为。在多数情况下，其他两个选项都将提供更好的性能。
+
+@see #setScrollMode
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.swing.JViewport.scrollMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #setScrollMode
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JViewport.hasHadValidView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否安装了有效的视图。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JViewport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>JViewport</code>。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ViewportUI javax.swing.JViewport.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的 L&F 对象。
+
+@return <code>ViewportUI</code> 对象
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setUI(ViewportUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的 L&F 对象。
+
+@param ui  <code>ViewportUI</code> L&F 对象
+@see UIDefaults#getUI
+@beaninfo bound: true hidden: true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel. 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 UI 属性重置为当前外观的值。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JViewport.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定呈现此组件的 L&F 类名称的字符串。
+
+@return 字符串&ldquo;ViewportUI&rdquo;
+
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JViewport.addImpl(Component child, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>JViewport</code> 的轻量子对象，可以为 <code>null</code>。（由于只存在一个占用整个视口的子对象，因此忽略 <code>constraints</code> 和 <code>index</code> 参数。）
+
+@param child       视口的轻量 <code>child</code>
+@param constraints 要考虑的 <code>constraint</code>
+@param index       索引
+@see #setView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.remove(Component child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除 <code>Viewport</code> 的一个轻量子对象。
+
+@see #setView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.scrollRectToVisible(Rectangle contentRect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动该视图，使该视图中的 <code>Rectangle</code> 变得可见。
+ <p>
+如果视图当前无效，则此操作将尝试在滚动前验证该视图 - <code>isValid</code> 返回 false。为避免在创建包含层次结构时验证时间过长，如果祖先之一没有同位体，或者不存在有效的根祖先，或者祖先之一不是 <code>Window</code> 或 <code>Applet</code>，则不进行验证。
+ <p>
+注意，此方法不会滚动到有效视口之外；例如，如果 <code>contentRect</code> 大于视口，滚动操作将限制在视口的边界之内。
+
+@param contentRect 要显示的 <code>Rectangle</code>
+@see JComponent#isValidateRoot
+@see java.awt.Component#isValid
+@see java.awt.Component#getPeer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JViewport.setBorder(Border border)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+视口通过常规父/子剪贴（一般该视图向滚动的相反方向移动）&ldquo;滚动&rdquo;其子视口（称为&ldquo;视图&rdquo;）。不支持非 <code>null</code> 边框或非零 inset，以防止此组件的几何结构复杂得无法禁止创建子类。要创建带边框的 <code>JViewport</code>，请将其添加到具有边框的 <code>JPanel</code>。
+<p>注：如果 <code>border</code> 为非 <code>null</code>，此方法将抛出一个异常，原因是在 <code>JViewPort</code> 上不支持边框。
+
+@param border 要设置的 <code>Border</code>
+@exception IllegalArgumentException 未实现此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.Insets javax.swing.JViewport.getInsets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 inset（边框）维数 (0,0,0,0)，因为在 <code>JViewport</code> 上不支持边框。
+
+@return 零维数和零区域的 <code>Rectange</code>
+@see #setBorder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.Insets javax.swing.JViewport.getInsets(Insets insets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此 <code>JViewport</code> 的 inset 值的 <code>inset</code> 对象。重新初始化传入的 <code>inset</code> 对象，此对象中所有现有值都将被重写。
+
+@param insets 可以重用的 <code>inset</code> 对象
+@return 此视口的 inset 值
+@see #getInsets
+@beaninfo expert: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JViewport.isOptimizedDrawingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JViewport</code> 重写此方法（在 <code>JComponent</code> 中返回 false）的默认实现。这确保了绘制机制将调用 <code>Viewport</code> 的 <code>paint</code> 实现，而不是直接通知 <code>JViewport</code> 的子对象。
+
+@return false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过后备存储绘制图像，或者使用后备存储&ldquo;位图传送&rdquo;剩余图像来仅绘制最新暴露的部分，这具体取决于是否启用 <code>backingStore</code>。
+ <blockquote>
+术语&ldquo;位图传送&rdquo;是 PDP-10 BLT (BLock Transfer) 指令的 pronounced 版，该指令复制位块。（在您感到好奇时。）
+ </blockquote>
+
+@param g  要在其中进行绘制的 <code>Graphics</code> 上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.reshape(int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此视口的边界。如果视口的宽度或高度已更改，则激发 <code>StateChanged</code> 事件。
+
+@param x 原视口的左边缘
+@param y 原视口的上边缘
+@param w 以像素为单位的宽度
+@param h 以像素为单位的高度
+
+@see JComponent#reshape(int, int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setScrollMode(int mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于控制滚动视口内容的方法。您可能需要更改此模式，以便在您的使用情形中获得最大性能。
+
+@param mode 下列值之一：
+ <ul>
+ <li> JViewport.BLIT_SCROLL_MODE
+ <li> JViewport.BACKINGSTORE_SCROLL_MODE
+ <li> JViewport.SIMPLE_SCROLL_MODE
+ </ul>
+
+@see #BLIT_SCROLL_MODE
+@see #BACKINGSTORE_SCROLL_MODE
+@see #SIMPLE_SCROLL_MODE
+
+@beaninfo bound: false description: Method of moving contents for incremental scrolls. enum: BLIT_SCROLL_MODE JViewport.BLIT_SCROLL_MODE BACKINGSTORE_SCROLL_MODE JViewport.BACKINGSTORE_SCROLL_MODE SIMPLE_SCROLL_MODE JViewport.SIMPLE_SCROLL_MODE
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JViewport.getScrollMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的滚动模式。
+
+@return <code>scrollMode</code> 属性
+@see #setScrollMode
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JViewport.isBackingStoreEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此视口维护其内容的一个屏幕外图像，则返回 <code>true</code>。
+
+@return 如果 <code>scrollMode</code> 为 <code>BACKINGSTORE_SCROLL_MODE</code>，则返回 <code>true</code> 
+
+@deprecated 从 Java 2 平台 1.3 版开始，由 <code>getScrollMode()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setBackingStoreEnabled(boolean enabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此视口维护其内容的一个屏幕外图像，则返回 true。此图像用于减少对 <code>viewPosition</code> 的较小一维更改的成本。我们使用 <code>Graphics.copyArea</code> 实现某些滚动，而不是重绘整个视口。
+
+@param enabled 如果为 true，则维持一个屏幕外后备存储
+
+@deprecated 从 Java 2 平台 1.3 版开始，由 <code>setScrollMode()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JViewport.getView()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>JViewport</code> 的一个子对象或 <code>null</code>。
+
+@return 返回视口的子对象，如果不存在，则返回 <code>null</code>
+
+@see #setView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setView(Component view)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>JViewport</code> 的一个轻量子对象 (<code>view</code>)，可以为 <code>null</code>。
+
+@param view 该视口的新轻量子对象
+
+@see #getView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JViewport.getViewSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果未显式设置视图的大小，则返回首选大小，否则返回该视图的当前大小。如果不存在视图，则返回（0,0）。
+
+@return 指定视图大小的 <code>Dimension</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setViewSize(Dimension newSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的大小。将引发状态更改的事件。
+
+@param newSize 指定视图新大小的 <code>Dimension</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JViewport.getViewPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回显示在视口左上角的视图坐标，如果不存在视图，则返回（0,0）。
+
+@return 给出左上角坐标的 <code>Point</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setViewPosition(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置显示在视口左上角的视图坐标，如果不存在视图，则不执行任何操作。
+
+@param p  给出左上角坐标的 <code>Point</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JViewport.getViewRect()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个矩形，其原位置在 <code>getViewPosition</code>，大小为 <code>getExtentSize</code>。这是视图在视图坐标中的可见部分。
+
+@return 使用视图坐标给出视图可见部分的 <code>Rectangle</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JViewport.computeBlit(int dx, int dy, Point blitFrom, Point blitTo, Dimension blitSize, Rectangle blitPaint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算 blit 的参数，其中后备存储图像当前在左上角包含 <code>oldLoc</code>，并且我们滚动到 <code>newLoc</code>。已修改该参数以返回 blit 所需的值。
+
+@param dx  水平 delta
+@param dy  垂直 delta
+@param blitFrom 我们从中传送的 <code>Point</code>
+@param blitTo 我们传送的 <code>Point</code>
+@param blitSize 要传送的区域的 <code>Dimension</code>
+@param blitPaint 要传送的区域
+@return  如果已修改参数并且我们已经准备好传送，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JViewport.getExtentSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视图坐标中视图的可见部分的大小。
+
+@return 给出视图大小的 <code>Dimension</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JViewport.toViewCoordinates(Dimension size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个大小的像素坐标转换为视图坐标。支持&ldquo;逻辑坐标&rdquo;的视口的子类将重写此方法。
+
+@param size  使用像素坐标的 <code>Dimension</code> 对象
+@return 转换为视图坐标的 <code>Dimension</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JViewport.toViewCoordinates(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个点的像素坐标转换为视图坐标。支持&ldquo;逻辑坐标&rdquo;的视口的子类将重写此方法。
+
+@param p  使用像素坐标的 <code>Point</code> 对象
+@return 转换为视图坐标的 <code>Point</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.setExtentSize(Dimension newExtent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用视图坐标设置该视图可见部分的大小。
+
+@param newExtent  指定视图大小的 <code>Dimension</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JViewport.ViewListener javax.swing.JViewport.createViewListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为该视图创建侦听器。
+@return <code>ViewListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.LayoutManager javax.swing.JViewport.createLayoutManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类可以重写此方法以在该构造方法中安装一个不同布局的管理器（或者为 <code>null</code>）。返回要在 <code>JViewport</code> 上安装的 <code>LayoutManager</code>。
+
+@return <code>LayoutManager</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>ChangeListener</code> 添加到每次在视图的大小、位置或视口的扩展大小更改时都会得到通知的列表。
+
+@param l 要添加的 <code>ChangeListener</code>
+@see #removeChangeListener
+@see #setViewPosition
+@see #setViewSize
+@see #setExtentSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从每次在视图的大小、位置或视口的扩展大小更改时都会得到通知的列表中移除 <code>ChangeListener</code>。
+
+@param l 要移除的 <code>ChangeListener</code>
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.JViewport.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 addChangeListener() 添加到此 JViewport 的所有 <code>ChangeListener</code> 的数组。
+
+@return 返回添加的所有 <code>ChangeListener</code>，如果未添加侦听器，则返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JViewport.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在视图的大小、位置或视口的扩展大小更改时通知所有 <code>ChangeListeners</code>。
+
+@see #addChangeListener
+@see #removeChangeListener
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JViewport.repaint(long tm, int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终在父坐标系统中重绘，以确保 <code>RepaintManager</code> 仅执行一种绘制方法。
+
+@param     tm   更新前等待的最长时间（以毫秒为单位）
+@param     x    <code>x</code> 坐标（像素从左端向上）
+@param     y    <code>y</code> 坐标（像素从顶部向下）
+@param     w    宽度
+@param     h   高度
+@see       java.awt.Component#update(java.awt.Graphics)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JViewport.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JViewport</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JViewport</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JViewport.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知侦听器发生的属性更改。已创建其子类以更新 <code>windowBlit</code> 属性。（<code>putClientProperty</code> 属性为最后属性）。
+
+@param propertyName 包含属性名的字符串
+@param oldValue 属性的旧值
+@param newValue  属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JViewport.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JViewport 关联的 AccessibleContext。对于视口来说，AccessibleContext 采用 AccessibleJViewport 的某种形式。必要时创建新的 AccessibleJViewport 实例。
+
+@return 一个 AccessibleJViewport，它充当此 JViewport 的 AccessibleContext 
+
+<!-- END DATA -->

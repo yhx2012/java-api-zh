@@ -1,0 +1,154 @@
+<!-- BEGIN KEY -->
+public class javax.swing.tree.TreePath extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示节点的路径。TreePath 是 TreeModel 提供的 Objects 的数组。对数组的元素进行排序，使根始终是数组的第一个元素 (index 为 0)。TreePath 是可序列化的，但是如果该路径的任何组件不可序列化，则它将不能写出。
+ <p>
+有关使用树路径的更多信息和示例，请参阅 <em>The Java Tutorial</em> 中的 <a  href="http://java.sun.com/docs/books/tutorial/uiswing/components/tree.html">How to Use Trees</a> 一节。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。<SPAN style="font-variant:small-caps"></SPAN>从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.29 12/19/03
+@author Scott Violet
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.tree.TreePath javax.swing.tree.TreePath.parentPath
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示父级的路径，如果 lastPathComponent 表示根，则路径为 null。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath(java.lang.Object[] path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 Objects 的数组构造路径，并根据树的数据模型的返回情况，唯一地标识树的根到指定节点的路径。
+ <p>
+该模型可自由地返回需要表示该路径的任何 Objects 的数组。DefaultTreeModel 返回 TreeNode 对象的数组。该路径中的第一个 TreeNode 是树的根，最后一个 TreeNode 是该路径标识的节点。
+
+@param path  表示节点路径的 Objects 数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath(Object singlePath)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造仅包含单个元素的 TreePath。这通常用于构造 TreeModel 的根的 TreePath。
+ <p>
+@param singlePath  表示节点路径的 Object
+@see #TreePath(Object[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreePath(TreePath parent, Object lastElement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 TreePath，它是以 <code>lastElement</code> 结束的 <code>parent</code> 标识的路径。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreePath(java.lang.Object[] path, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有长度为 <code>length</code> 的标识路径组件的新 TreePath。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreePath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+主要为以不同方式表示路径的子类提供。如果子类使用此构造方法，则它还应重写 <code>getPath</code>、<code>getPathCount</code> 和 <code>getPathComponent</code> 方法，并可能重写 <code>equals</code> 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.swing.tree.TreePath.getPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回有序的 Objects 数组，它包含此 TreePath 的组件。第一个元素 (index 为 0) 是根。
+
+@return 表示 TreePath 的 Objects 的数组
+@see #TreePath(Object[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.tree.TreePath.getLastPathComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此路径的最后一个组件。对于 DefaultTreeModel 返回的路径，它将返回一个 TreeNode 实例。
+
+@return 该路径结尾处的 Object
+@see #TreePath(Object[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.TreePath.getPathCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回路径中的元素数。
+
+@return 给出路径项计数的 int
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.tree.TreePath.getPathComponent(int element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定索引位置的路径组件。
+
+@param element  指定路径中元素的 int，其中 0 表示路径中的第一个元素
+@return 该索引位置的 Object
+@throws IllegalArgumentException 如果索引超过路径的长度
+@see #TreePath(Object[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.TreePath.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过检查路径中每个元素的相等性，测试两个 TreePaths 的相等性。如果两个路径等长，并且包含相同的元素 (<code>.equals</code>)，则认为它们相等。
+
+@param o 要比较的 Object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.TreePath.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该对象的 hashCode。TreePath 的哈希代码被定义为路径中最后一个组件的哈希代码。
+
+@return 此对象的 hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.TreePath.isDescendant(TreePath aTreePath)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>aTreePath</code> 为此 TreePath 的后代，则返回 true。如果 P1 包含组成 P2 路径的所有组件，则 TreePath P1 是 TreePath P2 的后代。例如，如果此对象具有路径 [a, b]，并且 <code>aTreePath</code> 具有路径 [a, b, c]，那么 <code>aTreePath</code> 为此对象的后代。但是，如果 <code>aTreePath</code> 具有路径 [a]，那么它不是此对象的后代。按照此定义，TreePath 始终被视为其自身的后代。也就是说，<code>aTreePath.isDescendant(aTreePath)</code> 返回 true。
+
+@return 如果 <code>aTreePath</code> 为此路径的后代，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath javax.swing.tree.TreePath.pathByAddingChild(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此对象的所有元素加上 <code>child</code> 的新路径。<code>child</code> 将是新创建的 TreePath 的最后一个元素。如果子对象为 null，将抛出 NullPointerException。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath javax.swing.tree.TreePath.getParentPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含除最后一个路径组件之外的此对象所有元素的路径。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.tree.TreePath.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个显示并标识此对象属性的字符串。
+
+@return 此对象的 String 表示形式
+
+<!-- END DATA -->

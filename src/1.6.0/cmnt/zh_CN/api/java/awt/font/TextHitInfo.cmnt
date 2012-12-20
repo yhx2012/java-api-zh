@@ -1,0 +1,139 @@
+<!-- BEGIN KEY -->
+public final class java.awt.font.TextHitInfo extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>TextHitInfo</code> 类表示文本模型中的字符位置以及字符的<b>斜线</b>或“边”。斜线是<EM>开始边</EM>（对于从左到右的字符为左边缘）或者<EM>结尾边</EM>（对于从左到右的字符为右边缘）。<code>TextHitInfo</code> 的实例用于指定插入符和在文本中的插入位置。
+ <p>
+例如，可以考虑一下文本 "abc"。TextHitInfo.trailing(1) 对应于文本中 'b' 的右边。
+ <p>
+<code>TextHitInfo</code> 主要由 {@link TextLayout} 和 <code>TextLayout</code> 的客户端使用。<code>TextLayout</code> 的客户端查询 <code>TextHitInfo</code> 实例，以获得插入偏移量，新文本在此处插入到文本模型中。插入偏移量等于 <code>TextHitInfo</code> 中的字符位置（如果斜线为开始边），或者在某个字符之后（如果斜线为结尾边）。TextHitInfo.trailing(1) 的插入偏移量为 2。
+ <p>
+有时，构造一个具有与现有 <code>TextHitInfo</code> 相同的插入偏移量的 <code>TextHitInfo</code> 很方便，不过要在相对的字符上。<code>getOtherHit</code> 方法构造一个具有与现有 <code>TextHitInfo</code> 相同的插入偏移量的新 <code>TextHitInfo</code>，目标字符在插入偏移量的另一侧。在 trailing(1) 上调用 <code>getOtherHit</code> 将返回 leading(2)。一般来说，trailing(n) 的 <code>getOtherHit</code> 返回 leading(n+1)，leading(n) 的 <code>getOtherHit</code> 返回 trailing(n-1)。
+ <p>
+<strong>示例</strong>：<p>
+将图形点转换为文本模型中的插入点
+ <blockquote><pre>
+ TextLayout layout = ...;
+ Point2D.Float hitPoint = ...;
+ TextHitInfo hitInfo = layout.hitTestChar(hitPoint.x, hitPoint.y);
+ int insPoint = hitInfo.getInsertionIndex();
+ // insPoint is relative to layout;  may need to adjust for use 
+ // in a text model
+ </pre></blockquote>
+
+@see TextLayout
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextHitInfo.getCharIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回目标字符的索引。
+@return 目标字符的索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextHitInfo.isLeadingEdge()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果字符的开始边是插入点，则返回 <code>true</code>。
+@return 如果字符的开始边是插入点，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextHitInfo.getInsertionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回插入索引。如果字符的开始边是插入点，则插入索引为字符索引，如果字符的结尾边是插入点，则插入索引比字符索引大 1。
+@return 插入索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextHitInfo.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回哈希码。
+@return 此 <code>TextHitInfo</code> 的哈希码，也是此 <code>TextHitInfo</code> 的 <code>charIndex</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextHitInfo.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 <code>Object</code> 是一个 <code>TextHitInfo</code> 并且等于此 <code>TextHitInfo</code>，则返回 <code>true</code>。
+@param obj 测试相等性的 <code>Object</code>
+@return 如果指定的 <code>Object</code> 等于此 <code>TextHitInfo</code>，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextHitInfo.equals(TextHitInfo hitInfo)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 <code>TextHitInfo</code> 具有与此 <code>TextHitInfo</code> 相同的 <code>charIndex</code> 和 <code>isLeadingEdge</code>，则返回 <code>true</code>。这与具有相同插入偏移量不同。
+@param hitInfo 一个指定的 <code>TextHitInfo</code>
+@return 如果指定的 <code>TextHitInfo</code> 具有与此 <code>TextHitInfo</code> 相同的 <code>charIndex</code> 和 <code>isLeadingEdge</code>，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.font.TextHitInfo.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 TextHitInfo 的 <code>String</code>，只用于调试目的。
+@return 表示此 <code>TextHitInfo</code> 的 <code>String</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.font.TextHitInfo java.awt.font.TextHitInfo.leading(int charIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定 <code>charIndex</code> 处的字符开始边上创建一个 <code>TextHitInfo</code>。
+@param charIndex 目标字符的索引
+@return 在指定 <code>charIndex</code> 处字符的开始边上的 <code>TextHitInfo</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.font.TextHitInfo java.awt.font.TextHitInfo.trailing(int charIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定 <code>charIndex</code> 处的字符的结尾边上创建一个 TextHitInfo。
+@param charIndex 目标字符的索引
+@return 在指定 <code>charIndex</code> 处的字符的结尾边上的 <code>TextHitInfo</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.font.TextHitInfo java.awt.font.TextHitInfo.beforeOffset(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定偏移量处创建一个与偏移量之前的字符关联的 <code>TextHitInfo</code>。
+@param offset 与偏移量之前的字符关联的偏移量
+@return 在指定偏移量处的 <code>TextHitInfo</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.font.TextHitInfo java.awt.font.TextHitInfo.afterOffset(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定偏移量处创建一个与偏移量之后的字符关联的 <code>TextHitInfo</code>。
+@param offset 与偏移量之后的字符关联的偏移量
+@return 在指定偏移量处的 <code>TextHitInfo</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextHitInfo.getOtherHit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在插入点的另一侧创建一个 <code>TextHitInfo</code>。此 <code>TextHitInfo</code> 保持不变。
+@return 插入点另一侧的 <code>TextHitInfo</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextHitInfo.getOffsetHit(int delta)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>TextHitInfo</code>，其字符索引从此 <code>TextHitInfo</code> 的 <code>charIndex</code> 偏移 <code>delta</code>。此 <code>TextHitInfo</code> 保持不变。
+@param delta 偏移此 <code>charIndex</code> 的值
+@return 一个 <code>TextHitInfo</code>，其 <code>charIndex</code> 从此 <code>TextHitInfo</code> 的 <code>charIndex</code> 偏移 <code>delta</code>。
+
+<!-- END DATA -->

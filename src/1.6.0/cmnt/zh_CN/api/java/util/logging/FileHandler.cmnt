@@ -1,0 +1,156 @@
+<!-- BEGIN KEY -->
+public class java.util.logging.FileHandler extends java.util.logging.StreamHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+简单的文件日志记录 <tt>Handler</tt>。
+ <p>
+<tt>FileHandler</tt> 可以写入指定的文件，也可以写入文件轮换集。  
+ <p>
+对于文件轮换集而言，到达每个文件的给定大小限制后，就关闭该文件，将其轮换出去，并打开新的文件。通过在基本文件名中添加 &quot;0&quot;、&quot;1&quot;、&quot;2&quot; 等来依次命名旧文件。
+ <p>
+默认情况下，IO 库中启用了缓冲，但当缓冲完成时，每个日志记录都要被刷新。 
+ <p>
+默认情况下，<tt>XMLFormatter</tt> 类用于格式化。
+ <p>
+<b>配置:</b> 默认情况下，每个 <tt>FileHandler</tt> 都是使用以下 <tt>LogManager</tt> 配置属性执行初始化的。如果没有定义属性（或者属性具有非法值），则使用指定的默认值。
+ <ul>
+<li>   java.util.logging.FileHandler.level 为 <tt>Handler</tt> 指定默认的级别（默认为 <tt>Level.ALL</tt>）。
+<li>   java.util.logging.FileHandler.filter 指定要使用的 <tt>Filter</tt> 类的名称（默认为无 <tt>Filter</tt>）。
+<li>   java.util.logging.FileHandler.formatter 指定要使用的 <tt>Formatter</tt> 类的名称（默认为 <tt>java.util.logging.XMLFormatter</tt>）。
+<li>   java.util.logging.FileHandler.encoding 指定要使用的字符集编码的名称（默认使用默认的平台编码）。
+<li>   java.util.logging.FileHandler.limit 指定要写入到任意文件的近似最大量（以字节为单位）。如果该数为 0，则没有限制（默认为无限制）。
+<li>   java.util.logging.FileHandler.count 指定有多少输出文件参与循环（默认为 1）。
+<li>   java.util.logging.FileHandler.pattern 为生成的输出文件名称指定一个模式。有关细节请参见以下内容（默认为 &quot;%h/java%u.log&quot;）。
+<li>   java.util.logging.FileHandler.append 指定是否应该将 FileHandler 追加到任何现有文件上（默认为 false）。
+ </ul>
+ <p>
+ <p>
+模式由包括以下特殊组件的字符串组成，则运行时要替换这些组件：
+ <ul>
+<li>     &quot;/&quot;    本地路径名分隔符
+<li>     &quot;%t&quot;   系统临时目录
+<li>     &quot;%h&quot;   &quot;user.home&quot; 系统属性的值
+<li>     &quot;%g&quot;   区分循环日志的生成号
+<li>     &quot;%u&quot;   解决冲突的唯一号码
+<li>     &quot;%%&quot;   转换为单个百分数符号&quot;%&quot;
+ </ul>
+如果未指定 &quot;%g&quot; 字段，并且文件计数大于 1，那么生成号将被添加到所生成文件名末尾的小数点后面。
+ <p> 
+例如，文件计数为 2 的 &quot;%t/java%g.log&quot; 模式通常导致在 Solaris 系统中将日志文件写入 /var/tmp/java0.log 和 /var/tmp/java1.log，而在 Windows 95 中，则将其写入 C:\TEMP\java0.log 和 C:\TEMP\java1.log。
+ <p> 
+按照 0、1、2 等的序列安排生成号。
+ <p>
+通常，将唯一字段 &quot;%u&quot; 设置为 0。但是如果 <tt>FileHandler</tt> 试图打开文件名并查找当前被另一个进程使用的文件，则增加唯一的字段号并再次重试。重复此操作直到 <tt>FileHandler</tt> 找到当前没有被使用的文件名。如果有冲突并且没有指定 &quot;%u&quot; 字段，则将该字段添加到文件名末尾的小数点后（它将位于所有自动添加的生成号后面）。
+ <p>
+因此，如果三个进程都试图将日志记录到 fred%u.%g.txt，那么它们可能将 fred0.0.txt、fred1.0.txt、fred2.0.txt 作为其循环序列中的首个文件而结束。
+ <p>
+注意，使用本地磁盘文件系统时，使用唯一的 id 以避免冲突是系统可靠运行的唯一保证。
+
+@version 1.34, 04/05/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.FileHandler() throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个默认的 <tt>FileHandler</tt>。可完全从 <tt>LogManager</tt> 属性（或其默认值）进行配置。
+ <p>
+@exception  IOException 如果打开文件时存在 IO 问题。
+@exception  SecurityException 如果安全管理器存在并且调用者不具有 <tt>LoggingPermission("control"))</tt>。
+@exception  NullPointerException 如果模式属性是一个空的 String。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.FileHandler(String pattern) throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化要写入给定文件名的 <tt>FileHandler</tt> 。
+ <p>
+根据 <tt>LogManager</tt> 属性（或其默认值）来配置 <tt>FileHandler</tt>（给定的模式参数用作文件名模式的情况除外），将文件限制设置为无限制，文件计数设置为 1。
+ <p>
+由于对写入的数据量没有限制，因此要谨慎使用。
+
+@param pattern  输出文件的名称。
+@exception IOException 如果打开文件时存在 IO 问题。
+@exception SecurityException  如果安全管理器存在并且调用者不具有 <tt>LoggingPermission("control")</tt>。
+@exception IllegalArgumentException 如果模式是一个空的 string。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.FileHandler(String pattern, boolean append) throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化要写入给定文件名的 <tt>FileHandler</tt>（使用可选的 append）。
+ <p>
+根据 <tt>LogManager</tt> 属性（或其默认值）来配置 <tt>FileHandler</tt>（给定的模式参数用作文件名模式的情况除外），将文件限制设置为无限制，文件计数设置为 1，将 append 模式设置为给定的 <tt>append</tt> 参数。
+ <p>
+由于对写入的数据量没有限制，因此要谨慎使用。
+
+@param pattern  输出文件的名称。
+@param append  指定 append 模式。
+@exception IOException 如果打开文件时存在 IO 问题。
+@exception SecurityException 如果安全管理器存在并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+@exception IllegalArgumentException 如果模式是一个空的 string。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.FileHandler(String pattern, int limit, int count) throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化要写入文件集的 <tt>FileHandler</tt>。已向某个文件写入给定限制的数据量（近似）后，则打开另一个文件。输出将在计数文件集中进行循环。
+ <p>
+根据 <tt>LogManager</tt> 属性（或其默认值）来配置 <tt>FileHandler</tt>（给定的模式参数用作文件名模式的情况除外），将文件限制设置为限制参数，将文件计数设置为给定的计数参数。
+ <p>
+计数必须至少为 1。
+
+@param pattern 为输出文件命名的模式。
+@param limit 写入到任何一个文件的最大字节数。
+@param count 要使用的文件数。
+@exception IOException 如果打开文件时存在 IO 问题。
+@exception SecurityException 如果安全管理器存在并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+@exception IllegalArgumentException 如果 limit < 0，或 count < 1。
+@exception IllegalArgumentException 如果模式是一个空的 string。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.FileHandler(String pattern, int limit, int count, boolean append) throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化要写入文件集的 <tt>FileHandler</tt>（使用可选的 append）。已向某个文件写入给定限制的数据量（近似）后，则打开另一个文件。输出将在计数文件集中进行循环。
+ <p>
+根据 <tt>LogManager</tt> 属性（或其默认值）来配置 <tt>FileHandler</tt>（给定的模式参数用作文件名模式的情况除外），将文件限制设置为限制参数，将文件计数设置为给定的计数参数，将 append 模式设置为给定的 <tt>append</tt> 参数。
+ <p>
+计数必须至少为 1。
+
+@param pattern 为输出文件命名的模式。
+@param limit 写入到任何一个文件的最大字节数。
+@param count 要使用的文件数。
+@param append 指定 append 模式。
+@exception IOException 如果打开文件时存在 IO 问题。
+@exception SecurityException 如果安全管理器存在并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+@exception IllegalArgumentException 如果 limit < 0，或 count < 1。
+@exception IllegalArgumentException 如果模式是一个空的 string。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.FileHandler.publish(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化并发布 <tt>LogRecord</tt>。
+
+@param  record  日志事件的描述。忽略 null 记录，并且也不发布它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.FileHandler.close() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭所有文件。
+
+@exception SecurityException 如果安全管理器存在并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+
+<!-- END DATA -->
+
+

@@ -1,0 +1,214 @@
+<!-- BEGIN KEY -->
+public class javax.management.monitor.GaugeMonitor extends javax.management.monitor.Monitor implements javax.management.monitor.GaugeMonitorMBean
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义专门用来观察尺度属性值的监视器 MBean。
+
+<P> 尺度监视器观察随着时间发展而不断变化的属性。尺度监视器将根据以下情况发送通知：
+
+ <UL>
+
+<LI> 如果属性值增加，变得与高阈值相等或大于高阈值，则发送一个{@link MonitorNotification#THRESHOLD_HIGH_VALUE_EXCEEDED 阈值过高通知}。必须将 notify high 标志设置为 <CODE>true</CODE>。
+
+<BR>除非属性值变得与低阈值相等或小于低阈值，否则高阈值的后续超出不会引发更多通知。</LI>
+
+<LI> 如果属性值减小，变得与低阈值相等或小于低阈值，则将发送一个{@link MonitorNotification#THRESHOLD_LOW_VALUE_EXCEEDED 阈值过低通知}。必须将 notify low 标志设置为 <CODE>true</CODE>。
+
+<BR>除非属性值变得等于或大于高阈值，否则后续低于阈值的超出不会引发更多通知。</LI>
+
+ </UL>
+
+这提供了一种滞后机制，可以避免属性值围绕高、低阈值小幅度摆动时重复触发通知。
+
+<P> 如果使用了尺度差分模式，则派生的尺度值将被视为两次连续观察到的观察尺度值之间的差分。
+
+<BR>派生的尺度值 (V[t]) 是使用以下方法计算的：
+ <UL>
+ <LI>V[t] = gauge[t] - gauge[t-GP]</LI>
+ </UL>
+
+尺度监视器的这一实现需要 observed 属性的类型为整数或浮点型（<CODE>Byte</CODE>、<CODE>Integer</CODE>、<CODE>Short</CODE>、<CODE>Long</CODE>、<CODE>Float</CODE> 和 <CODE>Double</CODE>）。
+
+@version     1.78     11/17/05
+@author      Sun Microsystems, Inc
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.monitor.GaugeMonitor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用尺度监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止尺度监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.GaugeMonitor.getDerivedGauge(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象包含在所观察的 MBeans 集中，则获取此对象派生的尺度，否则将为 <code>null</code>。
+
+@param object MBean 的名称。
+
+@return 指定对象的派生尺度。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.GaugeMonitor.getDerivedGaugeTimeStamp(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象包含在所观察的 MBeans 集中，则获取此对象的派生尺度的时间戳，否则将为 <code>0</code>。
+
+@param object 将返回其派生尺度时间戳的对象的名称。
+
+@return 指定对象的派生尺度时间戳。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.GaugeMonitor.getDerivedGauge()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所观察的 MBean 集中第一个对象的派生尺度。
+
+@return 派生的尺度。
+@deprecated 从 JMX 1.2 开始，由 {@link #getDerivedGauge(ObjectName)} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.GaugeMonitor.getDerivedGaugeTimeStamp()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所观察的 MBeans 集中第一个对象的派生尺度时间戳。
+
+@return 派生的尺度时间戳。
+@deprecated 从 JMX 1.2 开始，由 {@link #getDerivedGaugeTimeStamp(ObjectName)} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.GaugeMonitor.getHighThreshold()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有所观察的 MBean 的公共高阈值。
+
+@return 高阈值。
+
+@see #setThresholds
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.GaugeMonitor.getLowThreshold()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBean 的公共低阈值。
+
+@return 低阈值。
+
+@see #setThresholds
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.setThresholds(Number highValue, Number lowValue) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBean 的公共高、低阈值。
+
+@param highValue 高阈值。
+@param lowValue 低阈值。
+
+@exception IllegalArgumentException 指定的高/低阈值为 null，或者低阈值大于高阈值，或者高、低阈值不属于同一类型。
+
+ @see #getHighThreshold
+ @see #getLowThreshold
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.GaugeMonitor.getNotifyHigh()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBean 的公共高阈值通知 (high notification) 的开/关切换值。
+
+@return 如果超出高阈值时尺度监视器发出通知，则返回 <CODE>true</CODE>，否则返回 <CODE>false</CODE>。
+
+@see #setNotifyHigh
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.setNotifyHigh(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBean 的公共高阈值通知的开/关切换值。
+
+@param value 高阈值通知的开/关切换值。
+
+@see #getNotifyHigh
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.GaugeMonitor.getNotifyLow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBean 的公共低阈值通知 (low notification) 的开/关切换值。
+
+@return 如果超过低阈值时尺度监视器发出通知，则返回 <CODE>true</CODE>，否则返回 <CODE>false</CODE>。
+
+@see #setNotifyLow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.setNotifyLow(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBean 的公共低阈值通知的开/关切换值。
+
+@param value 低阈值通知的开/关切换值。
+
+@see #getNotifyLow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.GaugeMonitor.getDifferenceMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBean 的公共差分模式标志值。
+
+@return 如果使用了差分模式，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+@see #setDifferenceMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.GaugeMonitor.setDifferenceMode(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBean 的公共差分模式标志值。
+
+@param value 差分模式标志值。
+
+@see #getDifferenceMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanNotificationInfo[] javax.management.monitor.GaugeMonitor.getNotificationInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <CODE>NotificationInfo</CODE> 对象，它包含通知的 Java 类的名称和由尺度监视器发送的通知类型。
+
+<!-- END DATA -->

@@ -1,0 +1,201 @@
+<!-- BEGIN KEY -->
+public class java.text.RuleBasedCollator extends java.text.Collator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RuleBasedCollator</code> 类是 <code>Collator</code> 的具体子类，它提供了一个简单的、数据驱动的表 collator。可以通过此类来创建基于表的自定义 <code>Collator</code>。<code>RuleBasedCollator</code> 将字符映射到排序键。
+
+ <p>
+为了提高效率，对 <code>RuleBasedCollator</code> 做了如下限制（其他子类可以用于更复杂的语言）：
+ <ol>
+<li>如果指定了由 &lt;modifier&gt; 控制的特殊整理规则，则它将用于整个 collator 对象。
+<li>所有未指定的字符位于整理顺序的末尾。
+ </ol>
+
+ <p>
+整理表由一组整理规则组成，其中每个规则是以下三种形式之一：
+ <pre>
+    &lt;modifier&gt;
+    &lt;relation&gt; &lt;text-argument&gt;
+    &lt;reset&gt; &lt;text-argument&gt;
+ </pre>
+规则元素的定义如下：
+ <UL Type=disc>
+<LI><strong>文本参数</strong>：文本参数可以是任何的字符序列，不包括特殊字符（即公共空白字符 [0009-000D、0020] 和规则语法字符 [0021-002F、003A-0040、005B-0060、007B-007E]）。如果需要使用这些字符，可以把它们放在单引号内（例如 &amp; =&gt; '&amp;'）。注意，没有使用引号的空白字符将被忽略；例如 <code>b c</code> 视为 <code>bc</code>。
+<LI><strong>修饰符</strong>：目前有两个修饰符用于开启特殊的整理规则。
+        <UL Type=square>
+<LI>'@' : 开启重音字符的逆向排序（二级区别），以法语为例。
+<LI>'!' : 开启 Thai/Lao 元音-辅音字母交换。如果当 \U0E40-\U0E44 范围内的 Thai 元音字母排在 \U0E01-\U0E2E 范围内的 Thai 辅音字母前面，或者 \U0EC0-\U0EC4 范围内的 Lao 元音字母排在 \U0E81-\U0EAE 范围内的 Lao 辅音字母前面时此规则有效，那么经过整理后元音字母将被放置在辅音字母的后面。
+        </UL>
+<p>'@' : 指示重音字符按逆向排序，以法语为例。
+<LI><strong>关系</strong>：关系如下：
+        <UL Type=square>
+<LI>'&lt;' : 大于，当字母不同时（一级）
+<LI>';' : 大于，当重音不同时（二级）
+<LI>',' : 大于，当大小写不同时（三级)
+<LI>'=' : 等于
+        </UL>
+<LI><strong>重置</strong>：存在单一的重置主要用于规则集的缩减和扩充，但它也可以用于在规则集的末尾添加修改。
+<p>'&amp;' : 指示下一条规则在重置文本参数将要被排序的位置后面。
+ </UL>
+
+ <p>
+实际的操作要比看起来简单。例如，以下表达是等效的：
+ <blockquote>
+ <pre>
+ a &lt; b &lt; c
+ a &lt; b &amp; b &lt; c
+ a &lt; c &amp; a &lt; b
+ </pre>
+ </blockquote>
+注意，顺序很重要，因为后续项直接跟在文本参数的后面。以下是不等效的：
+ <blockquote>
+ <pre>
+ a &lt; b &amp; a &lt; c
+ a &lt; c &amp; a &lt; b
+ </pre>
+ </blockquote>
+序列中必须存在文本参数，或者存在某个文本参数的初始子字符串。(例如，&quot;a &lt; b &amp; ae &lt; e&quot; 是有效的，因为在 &quot;ae&quot; 被重置之前 &quot;a&quot; 存在）。在后一种情况中，&quot;ae&quot; 不是作为单个字符进行输入和处理的；相反，&quot;e&quot; 被排序，其结果类似于它被扩充为两个字符：&quot;a&quot; 后跟 &quot;e&quot;。此差别会出现在不同的自然语言中：在传统的西班牙语中，&quot;ch&quot; 被处理的结果类似于将它缩短为一个字符（表示为 &quot;c &lt; ch &lt; d&quot;），而在传统的德语中，a-umlaut 被处理的结果类似于将它扩充为两个字符（表示为 &quot;a,A &lt; b,B ...&ae;&AE;&quot;)。&ae;\u00e3&AE;\u00c3&quot;).当然，[\u00e3 和 \u00c3 是 a-umlaut 的转义序列。]
+ <p>
+<strong>可忽略的字符</strong>
+ <p>
+对于可忽略的字符，第一个规则必须从一个关系开始（以上例子实际上是不完整的；&quot;a &lt; b&quot; 实际上应该为 &quot;&lt; a &lt; b&quot;）。但是，如果第一个关系不是 &quot;&lt;&quot;，那么所有文本参数一直到第一个 &quot;&lt;&quot; 都将被忽略。例如，&quot;, - &lt; a &lt; b&quot; 将把 &quot;-&quot; 作为被忽略的字符，正如在前面的单词 &quot;black-birds&quot; 中所看到的。在不同语言的示例中，可以看到大多数重音字符被忽略。
+
+<p><strong>规范化和重音</strong>
+ <p>
+<code>RuleBasedCollator</code> 自动处理其规则表，以包含重音字符的预组合和组合后的字符版本。即使提供的规则字符串仅包含基本字符和独立的组合重音字符，匹配规则字符串中所有规范字符组合的预组合重音字符也将被输入到表中。
+ <p>
+即使 collator 被设置为 NO_DECOMPOSITION，这也允许使用 RuleBasedCollator 来比较重音字符串。但是有两点警告：首先，如果要整理的字符串包含不规范顺序的组合序列，那么应该把 collator 设置为 CANONICAL_DECOMPOSITION 或 FULL_DECOMPOSITION 以启用组合序列的排序。其次，如果字符串包含兼容性分解的字符（例如全角和半角形式），那么必须使用 FULL_DECOMPOSITION，因为规则表只包括规范的映射。
+
+<p><strong>错误</strong>
+ <p>
+以下为错误：
+ <UL Type=disc>
+<LI>文本参数包含未使用引号的标点符号（例如 &quot;a &lt; b-c &lt; d&quot;）。
+<LI>关系或重置字符后面没有文本参数（例如 &quot;a &lt; ,b&quot;）。
+<LI>文本参数（或者文本参数的初始子字符串）不在序列中的重置。（例如 &quot;a &lt; b &amp; e &lt; f&quot;）
+ </UL>
+如果发生这些错误，<code>RuleBasedCollator</code> 将抛出 <code>ParseException</code>。
+ 
+<p><strong>以下是例子</strong>
+ <p>Simple:     &quot;&lt; a &lt; b &lt; c &lt; d&quot;
+<p>在挪威语中：  &quot;&lt; a,A&lt; b,B&lt; c,C&lt; d,D&lt; e,E&lt; f,F&lt; g,G&lt; h,H&lt; i,I&lt; j,J &lt; k,K&lt; l,L&lt; m,M&lt; n,N&lt; o,O&lt; p,P&lt; q,Q&lt; r,R&lt; s,S&lt; t,T &lt; u,U&lt; v,V&lt; w,W&lt; x,X&lt; y,Y&lt; z,Z &lt; \u00E5=a\u030A,\u00C5=A\u030A ;aa,AA&lt; \u00E6,\u00C6&lt; \u00F8,\u00D8&quot;
+
+ <p>
+要创建 <code>RuleBasedCollator</code> 对象，使此对象具有特殊的规则以满足需要，应该根据 <code>String</code> 中包含的规则来构造 <code>RuleBasedCollator</code>。例如：
+ <blockquote>
+ <pre>
+ String simple = &quot;&lt; a&lt; b&lt; c&lt; d&quot;;
+ RuleBasedCollator mySimple = new RuleBasedCollator(simple);
+ </pre>
+ </blockquote>
+或者：
+ <blockquote>
+ <pre>
+ String Norwegian = &quot;&lt; a,A&lt; b,B&lt; c,C&lt; d,D&lt; e,E&lt; f,F&lt; g,G&lt; h,H&lt; i,I&lt; j,J&quot; +
+                 &quot;&lt; k,K&lt; l,L&lt; m,M&lt; n,N&lt; o,O&lt; p,P&lt; q,Q&lt; r,R&lt; s,S&lt; t,T&quot; +
+                 &quot;&lt; u,U&lt; v,V&lt; w,W&lt; x,X&lt; y,Y&lt; z,Z&quot; +
+                 &quot;&lt; \u00E5=a\u030A,\u00C5=A\u030A&quot; +
+                 &quot;;aa,AA&lt; \u00E6,\u00C6&lt; \u00F8,\u00D8&quot;;
+ RuleBasedCollator myNorwegian = new RuleBasedCollator(Norwegian);
+ </pre>
+ </blockquote>
+
+ <p>
+ 可以通过连接规则字符串来创建新的整理字符串。例如，可以连接由 {@link #getRules()} 返回的规则，以联合多个 <code>RuleBasedCollator</code>。
+ 
+<p>
+以下例子演示了如何改变无空格重音字符的顺序。
+ <blockquote>
+ <pre>
+ // old rule
+ String oldRules = &quot;=\u0301;\u0300;\u0302;\u0308&quot;    // main accents
+                 + &quot;;\u0327;\u0303;\u0304;\u0305&quot;    // main accents
+                 + &quot;;\u0306;\u0307;\u0309;\u030A&quot;    // main accents
+                 + &quot;;\u030B;\u030C;\u030D;\u030E&quot;    // main accents
+                 + &quot;;\u030F;\u0310;\u0311;\u0312&quot;    // main accents
+                 + &quot;&lt; a , A ; ae, AE ; \u00e6 , \u00c6&quot;
+                 + &quot;&lt; b , B &lt; c, C &lt; e, E &amp; C &lt; d, D&quot;;
+ // change the order of accent characters
+ String addOn = &quot;&amp; \u0300 ; \u0308 ; \u0302&quot;;
+ RuleBasedCollator myCollator = new RuleBasedCollator(oldRules + addOn);
+ </pre>
+ </blockquote>
+
+@see        Collator
+@see        CollationElementIterator
+@version    1.25 07/24/98
+@author     Helena Shih, Laura Werner, Richard Gillam
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.RuleBasedCollator(String rules) throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+RuleBasedCollator 构造方法。它采用表规则并生成一个整理表。有关整理规则语法的更多信息，请参阅 RuleBasedCollator 类描述。
+@see java.util.Locale
+@param rules 用来生成整理表的整理规则。
+@exception ParseException 如果规则的生成进程失败，则抛出一个格式异常。例如，生成规则 &quot;a &lt; ?&lt; d&quot; 将导致构造方法抛出 ParseException，因为 '?' 没有使用引号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.RuleBasedCollator.getRules()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 collation 对象的基于表的规则。
+@return 创建表 collation 对象的整理规则。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.CollationElementIterator java.text.RuleBasedCollator.getCollationElementIterator(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 String 的 CollationElementIterator。
+@see java.text.CollationElementIterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.CollationElementIterator java.text.RuleBasedCollator.getCollationElementIterator(CharacterIterator source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 String 的 CollationElementIterator。
+@see java.text.CollationElementIterator
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.text.RuleBasedCollator.compare(String source, String target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据表规则比较存储在两个不同字符串中的字符数据。返回关于一个字符串小于、大于等于另一个字符串的信息。在子类中这可以被重写。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.text.CollationKey java.text.RuleBasedCollator.getCollationKey(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字符串转换为能够与 CollationKey.compareTo 进行比较的一系列字符。这将重写 java.text.Collator.getCollationKey。在子类中它可以被重写。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.RuleBasedCollator.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标准重写，无语义变化。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.RuleBasedCollator.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个 collation 对象的相等性。
+@param obj 要与此对象进行比较的基于表的 collation 对象。
+@return 如果当前的基于表的 collation 对象与基于表的 collation 对象 obj 相同，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.RuleBasedCollator.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成基于表的 collation 对象的哈希码
+
+<!-- END DATA -->

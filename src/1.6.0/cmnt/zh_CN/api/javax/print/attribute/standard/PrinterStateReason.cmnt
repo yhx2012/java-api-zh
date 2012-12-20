@@ -1,0 +1,290 @@
+<!-- BEGIN KEY -->
+public class javax.print.attribute.standard.PrinterStateReason extends javax.print.attribute.EnumSyntax implements javax.print.attribute.Attribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+PrinterStateReason 类是打印属性类，它是一个枚举值，提供了有关打印机当前状态的附加信息，即扩充了打印机 {@link PrinterState PrinterState} 属性值的信息。类 PrinterStateReason 定义了标准的打印机状态原因值。Print Service 实现只需要报告这些打印机状态的原因，说明哪些原因合乎特定的实现；而不必报告每种已定义的打印机状态原因。 
+ <P>
+PrinterStateReason 的实例不会直接出现在 Print Service 的属性集中。而 {@link PrinterStateReasons PrinterStateReasons} 属性则会出现在 Print Service 的属性集中。{@link PrinterStateReasons PrinterStateReasons} 属性包括零、一个或多个与 Print Service 的状态相关的 PrinterStateReason 对象，并且每个 PrinterStateReason 对象都与 REPORT（不太严重）、WARNING 或 ERROR（最严重）的 {@link Severity Severity} 级别相关联。当相应的条件变成了打印机的真实条件时，打印机将把 PrinterStateReason 对象添加到 Print Service 的 {@link PrinterStateReasons PrinterStateReasons} 属性中，而当相应的条件变成虚假条件时，无论 Print Service 的总体 {@link PrinterState PrinterState} 是否也已更改，打印机都将再次移除 PrinterStateReason 对象。 
+ <P>
+<B>IPP 兼容性：</B>字符串值由每个 {@link PrinterStateReason} 和相关的 {@link Severity} 对象的 <CODE>toString()</CODE> 方法返回，它们之间用连字号（<CODE>&quot;-&quot;</CODE>）连接，该值提供了 {@link PrinterStateReasons} 的 IPP 关键字值。由 <CODE>getName()</CODE> 返回的类别名称提供了 IPP 属性名称。
+ <P>
+
+ @author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OTHER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机已经检测到了一个以下未列出的错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MEDIA_NEEDED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+纸盒中没有介质。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MEDIA_JAM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备中卡住了介质。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MOVING_TO_PAUSED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已经暂停了打印机，但设备要停下来还需要一些时间。然后，当所有的输出都停止后，{@link  PrinterState PrinterState} 将变为 STOPPED，PAUSED 值会取代 {@link PrinterStateReasons PrinterStateReasons} 属性中的 MOVING_TO_PAUSED 值。如果可以暂停打印机并且在某些特定情形下实现需要占用相当长时间来暂停设备，则必须支持此值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.PAUSED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已经暂停了打印机并且打印机的 {@link PrinterState PrinterState} 为 STOPPED。在此情况下，打印机必须不产生打印输出，但它必须执行客户端请求的其他操作。如果正在打印作业时暂停了打印机，则打印机必须在其打开后恢复打印该作业，并且在此暂停后的打印输出中不留下任何痕迹。如果可以暂停打印机，则必须支持此值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.SHUTDOWN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已经从服务中移除了打印机，并且可以给该打印机断电或者物理移除它。在此情况下，打印机必须不产生打印输出，并且如果仍处于活动状态的打印服务器无法识别该打印机，则该打印机必须不执行客户端请求的其他操作。如果打印机正在打印作业时被关闭，则在打开打印机后该打印机不必恢复打印该作业。如果打印机恢复打印此类作业，可能会在此类关机情况的打印输出中留下痕迹，例如，关机前打印的那一部分可能会在关机后再打印一次。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.CONNECTING_TO_DEVICE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机已经在输出设备中安排了作业，并且正在与共享的网络输出设备进行连接（并且可能在相当长的时间内无法实际开始打印作业，因为这取决于网络上其他服务器对该输出设备的使用情况）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.TIMED_OUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+服务器能够连接到输出设备（或始终处于连接状态），但却无法获得输出设备的响应。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.STOPPING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机正在停止设备，并且打印机也将很快停下来。停止设备后，打印机将把 {@link PrinterState PrinterState} 更改为 STOPPED。即使打印机只有一个输出设备，STOPPING 原因也永远不会是一个错误。当输出设备停止接受作业时，在输出设备完成打印时打印机的 {@link PrinterStateReasons PrinterStateReasons} 将具有此原因。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.STOPPED_PARTLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当打印机控制多个输出设备时，此原因指示一个或多个设备被停止。如果该原因的严重性是 report，则表示有不超过一半的输出设备被停止。如果该原因的严重性是 warning，则表示有一半或更多（但不是全部）的输出设备被停止。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.TONER_LOW
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备的碳粉不足。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.TONER_EMPTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备的碳粉用完。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.SPOOL_AREA_FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已达到为后台打印分配的持久存储限制。打印机暂时无法接受更多的作业。当打印机能够接受更多作业时将去除此原因。此值应该由一次只接受一项或少量作业的非后台打印打印机或者已经填满了后台打印空间的后台打印打印机使用。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.COVER_OPEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备上的一个或多个机盖处于打开状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.INTERLOCK_OPEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机上的一个或多个连锁设备未锁定。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.DOOR_OPEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备上的一个或多个门处于打开状态。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.INPUT_TRAY_MISSING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备中没有一个或多个输入纸盒。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MEDIA_LOW
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+至少一个输入纸盒的介质不足。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MEDIA_EMPTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+至少一个输入纸盒是空的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OUTPUT_TRAY_MISSING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备中没有一个或多个输出纸盒。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OUTPUT_AREA_ALMOST_FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个或多个输出区域几乎已经填满（例如纸盒、装订器、整理器）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OUTPUT_AREA_FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个或多个输出区域已经填满（例如纸盒、装订器、整理器）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MARKER_SUPPLY_LOW
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备上至少有一个指示器表示耗材（例如碳粉、墨水、色带）不足。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MARKER_SUPPLY_EMPTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备上至少有一个指示器表示耗材（例如碳粉、墨水、色带）已用完。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MARKER_WASTE_ALMOST_FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备指示器耗材废物容器几乎已填满。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.MARKER_WASTE_FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备指示器耗材废物容器已填满。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.FUSER_OVER_TEMP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+热熔器温度高于正常值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.FUSER_UNDER_TEMP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+热熔器温度低于正常值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OPC_NEAR_EOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+光敏导电体寿命将到期。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.OPC_LIFE_OVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+光敏导电体已不再运行。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.DEVELOPER_LOW
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备显影剂不足。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.DEVELOPER_EMPTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设备显影剂已用完。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.PrinterStateReason javax.print.attribute.standard.PrinterStateReason.INTERPRETER_RESOURCE_UNAVAILABLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解释器资源（例如字体、格式）不可用。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.standard.PrinterStateReason(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 PrinterStateReason 枚举值。 
+
+@param value 整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.print.attribute.standard.PrinterStateReason.getStringTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类 PrinterStateReason 的字符串表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.EnumSyntax[] javax.print.attribute.standard.PrinterStateReason.getEnumValueTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类 PrinterStateReason 的枚举值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.PrinterStateReason.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于类 PrinterStateReason 和任何供应商定义的子类，该类别都是类 PrinterStateReason 本身。 
+
+@return 打印属性类（类别），这是类 {@link java.lang.Class java.lang.Class} 的一个实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.PrinterStateReason.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别的名称，此属性值是该类别的一个实例。 
+ <P>
+对于类 PrinterStateReason 和任何供应商定义的子类，类别名称均是 <CODE>&quot;printer-state-reason&quot;</CODE>。 
+
+@return 属性类别名称。
+
+<!-- END DATA -->

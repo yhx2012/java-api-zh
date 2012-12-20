@@ -1,0 +1,218 @@
+<!-- BEGIN KEY -->
+public final class java.text.Bidi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类实现了 Unicode 双向算法 (Unicode Bidirectional Algorithm)。
+ <p>
+Bidi 对象提供了有关用于创建它的文本的双向重排序的信息。例如，这对于正确显示阿拉伯语或者希伯来语文本来说是必需的。这些语言本来是混合方向的，因为其从左向右排列数字，而大多数其他文本则从右向左排列。
+ <p>
+一旦创建完成，Bidi 对象就能查询，以查看文本表示都是从左向右或从右向左。这些对象都是非常轻量级的并且此文本也相对容易处理。
+ <p>
+如果有多次文本的运行，则可以通过索引访问运行的信息，以获得起始位置、限制和运行层次。层次代表了方向和一个方向运行的&ldquo;嵌套层次&rdquo;。奇数层次是从右到左，则偶数层次是从左到右。因此，例如层次 0 代表从左到右的文本，而层次 1 代表从右到左的文本，层次 2 代表嵌入在一个从右到左的运行中的从左到右的文本。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Bidi.DIRECTION_LEFT_TO_RIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示基本方向是从左到右的常量。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Bidi.DIRECTION_RIGHT_TO_LEFT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示基本方向是从右到左的常量。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Bidi.DIRECTION_DEFAULT_LEFT_TO_RIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示基本方向依赖于根据 Unicode 双向算法得到的文本中第一个强方向字符的常量。如果没有强方向字符，则基本方向是从左到右。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Bidi.DIRECTION_DEFAULT_RIGHT_TO_LEFT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示基本方向依赖于根据 Unicode 双向算法得到的文本中第一个强方向字符的常量。如果没有强方向字符，则基本方向是从右到左。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.Bidi(String paragraph, int flags)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由给定的文本段和基本方向构造 Bidi。
+@param paragraph 一个文本段
+@param flags 控制算法的标志集合。此算法识别标志 DIRECTION_LEFT_TO_RIGHT、DIRECTION_RIGHT_TO_LEFT、DIRECTION_DEFAULT_LEFT_TO_RIGHT 以及 DIRECTION_DEFAULT_RIGHT_TO_LEFT。其他值保留。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.Bidi(AttributedCharacterIterator paragraph)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由给定的文本段构造 Bidi。
+ <p>
+文本中 RUN_DIRECTION 属性（如果存在）定义了基本方向（从左到右或者从右到左）。如果不存在，使用 Unicode 双向算法计算基本方向，默认为如果文本中没有强方向字符则从左到右。此属性（如果存在）必须应用于段中所有文本。
+ <p>
+文本中 BIDI_EMBEDDING 属性（如果存在）代表了嵌入层次信息。从 -1 到 -62 的负值指示重写层次的绝对值。从 1 到 62 的正值指示嵌入。如果值为 0 或者没有定义，则基本的嵌入层次由假定的基本方向来决定。
+ <p>
+文本中的 NUMERIC_SHAPING 属性（如果存在）在运行双向算法之前将欧洲数字转换成其他十进制数字。此属性（如果存在）必须应用于段中所有文本。
+
+@param paragraph 具有可选的字符和段落属性信息的文本段。
+
+@see TextAttribute#BIDI_EMBEDDING
+@see TextAttribute#NUMERIC_SHAPING
+@see TextAttribute#RUN_DIRECTION
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.Bidi(char[] text, int textStart, byte[] embeddings, int embStart, int paragraphLength, int flags)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由给定的文本、嵌入和方向信息构造 Bidi。Embeddings 数组可以为 null。如果有的话，其值代表了嵌入层次信息。从 -1 到 -61 的负值指示重写层次的绝对值。从 1 到 61 的正值指示嵌入。如果值为 0，则基本的嵌入层次由假定的基本方向来决定。
+@param text 包含了要处理的文本段的一个数组。
+@param textStart 段落开始的文本数组中的索引。
+@param embeddings 包含了段落中每个字符的嵌入值的一个数组。在假定不存在外部嵌入信息的情况下可能为空。
+@param embStart 段落开始的嵌入数组中的索引。
+@param paragraphLength 在文本和嵌入数组中的段落长度。
+@param flags 控制算法的标志集合。此算法识别标志 DIRECTION_LEFT_TO_RIGHT、DIRECTION_RIGHT_TO_LEFT、DIRECTION_DEFAULT_LEFT_TO_RIGHT 和 DIRECTION_DEFAULT_RIGHT_TO_LEFT。其他值保留。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.Bidi java.text.Bidi.createLineBidi(int lineStart, int lineLimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 Bidi 对象，表示当前 Bidi 所代表的段落中的一行文本上的双向信息。如果整个段落装配在一行中则不需要此调用。
+@param lineStart 从段的开始到行的开始的偏移量。
+@param lineLimit 从段的开始到行的限制的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Bidi.isMixed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该行既不是从左到右也不是从右到左，则返回 true。这意味着它具有从左到右和从右到左文本的混合运行，或者基本方向与文本单运行的方向不同。
+@return 如果该行既不是从左到右也不是从右到左，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Bidi.isLeftToRight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该行都是从左到右的文本且基本方向也是从左到右，则返回 true。
+@return 如果该行都是从左到右的文本且基本方向也是从左到右，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Bidi.isRightToLeft()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该行都是从右到左的文本且基本方向也是从右到左，则返回 true。
+@return 如果该行都是从右到左的文本且基本方向也是从右到左，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该行中文本的长度。
+@return 该行中文本的长度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Bidi.baseIsLeftToRight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果基本方向是从左到右，则返回 true。
+@return 如果基本方向是从左到右，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getBaseLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回基本层次（如果是从左到右，则为 0；如果是从右到左，则为 1）。
+@return 基本层次
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getLevelAt(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回偏移位置处的字符的解析层次。如果偏移量小于 0 或者大于等于行的长度，则返回基本的方向层次。
+@param offset 返回层次的字符的索引
+@return 偏移位置处的字符的解析层次
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getRunCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回层次运行的数目。
+@return 层次运行的数目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getRunLevel(int run)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该行中第 n 次逻辑运行的层次。
+@param run 运行的索引，在 0 到 <code>getRunCount()</code> 之间
+@return 运行层次
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getRunStart(int run)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以该行开始的偏移量返回该行中第 n 次逻辑运行开始时的字符索引。
+@param run 运行的索引，在 0 到 <code>getRunCount()</code> 之间
+@return 运行的开始位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Bidi.getRunLimit(int run)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以该行开始的偏移量返回该行中第 n 次逻辑运行之后的字符索引。例如，这将返回该行上最后一次运行的行的长度。
+@param run 运行的索引，在 0 到 <code>getRunCount()</code> 之间
+@return 运行的限制
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.text.Bidi.requiresBidi(char[] text, int start, int limit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的文本需要双向解析，则返回 true。如果返回 false，该文本将从左到右显示。客户端可以避免构造一个 Bidi 对象。Unicode 的 Arabic Presentation Forms 区域的文本假定为已经针对显示进行整形和排序，因此不会导致此函数返回 true。
+
+@param text 包含测试字符的文本
+@param start 测试字符的范围的开始
+@param limit 测试字符的范围的限制
+@return 如果该字符范围需要双向解析，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.text.Bidi.reorderVisually(byte[] levels, int levelStart, java.lang.Object[] objects, int objectStart, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据对象的层次，在数组中将对象重新排序为可视顺序。当您有一个以逻辑顺序表示文本运行的对象集合时（其中每个运行包含同一个层次上的文本），这是一个可用的实用工具函数。假定每一个文本运行具有层次数组中相应的元素（位于 <code>index - objectStart + levelStart</code>）所指示的层次时，对象数组中位于 <code>index</code> 的元素从 <code>objectStart</code> 一直到 <code>objectStart + count</code> 将被重新排序为可视顺序。
+
+@param levels 表示每一个对象双向层次的数组
+@param levelStart 层次数组中的开始位置
+@param objects 将被重新排序为可视顺序的对象数组
+@param objectStart 对象数组中的开始位置
+@param count 要重新排序的对象数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.Bidi.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于调试时显示双向算法的内部状态。
+
+<!-- END DATA -->

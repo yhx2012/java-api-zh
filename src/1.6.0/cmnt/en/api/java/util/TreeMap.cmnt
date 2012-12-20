@@ -1,0 +1,599 @@
+<!-- BEGIN KEY -->
+public class java.util.TreeMap extends java.util.AbstractMap implements java.util.NavigableMap, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A Red-Black tree based {@link NavigableMap} implementation.
+ The map is sorted according to the {@linkplain Comparable natural
+ ordering} of its keys, or by a {@link Comparator} provided at map
+ creation time, depending on which constructor is used.
+
+ <p>This implementation provides guaranteed log(n) time cost for the
+ <tt>containsKey</tt>, <tt>get</tt>, <tt>put</tt> and <tt>remove</tt>
+ operations.  Algorithms are adaptations of those in Cormen, Leiserson, and
+ Rivest's <I>Introduction to Algorithms</I>.
+
+ <p>Note that the ordering maintained by a sorted map (whether or not an
+ explicit comparator is provided) must be <i>consistent with equals</i> if
+ this sorted map is to correctly implement the <tt>Map</tt> interface.  (See
+ <tt>Comparable</tt> or <tt>Comparator</tt> for a precise definition of
+ <i>consistent with equals</i>.)  This is so because the <tt>Map</tt>
+ interface is defined in terms of the equals operation, but a map performs
+ all key comparisons using its <tt>compareTo</tt> (or <tt>compare</tt>)
+ method, so two keys that are deemed equal by this method are, from the
+ standpoint of the sorted map, equal.  The behavior of a sorted map
+ <i>is</i> well-defined even if its ordering is inconsistent with equals; it
+ just fails to obey the general contract of the <tt>Map</tt> interface.
+
+ <p><strong>Note that this implementation is not synchronized.</strong>
+ If multiple threads access a map concurrently, and at least one of the
+ threads modifies the map structurally, it <i>must</i> be synchronized
+ externally.  (A structural modification is any operation that adds or
+ deletes one or more mappings; merely changing the value associated
+ with an existing key is not a structural modification.)  This is
+ typically accomplished by synchronizing on some object that naturally
+ encapsulates the map.
+ If no such object exists, the map should be "wrapped" using the
+ {@link Collections#synchronizedSortedMap Collections.synchronizedSortedMap}
+ method.  This is best done at creation time, to prevent accidental
+ unsynchronized access to the map: <pre>
+   SortedMap m = Collections.synchronizedSortedMap(new TreeMap(...));</pre>
+
+ <p>The iterators returned by the <tt>iterator</tt> method of the collections
+ returned by all of this class's "collection view methods" are
+ <i>fail-fast</i>: if the map is structurally modified at any time after the
+ iterator is created, in any way except through the iterator's own
+ <tt>remove</tt> method, the iterator will throw a {@link
+ ConcurrentModificationException}.  Thus, in the face of concurrent
+ modification, the iterator fails quickly and cleanly, rather than risking
+ arbitrary, non-deterministic behavior at an undetermined time in the future.
+
+ <p>Note that the fail-fast behavior of an iterator cannot be guaranteed
+ as it is, generally speaking, impossible to make any hard guarantees in the
+ presence of unsynchronized concurrent modification.  Fail-fast iterators
+ throw <tt>ConcurrentModificationException</tt> on a best-effort basis.
+ Therefore, it would be wrong to write a program that depended on this
+ exception for its correctness:   <i>the fail-fast behavior of iterators
+ should be used only to detect bugs.</i>
+
+ <p>All <tt>Map.Entry</tt> pairs returned by methods in this class
+ and its views represent snapshots of mappings at the time they were
+ produced. They do <em>not</em> support the <tt>Entry.setValue</tt>
+ method. (Note however that it is possible to change mappings in the
+ associated map using <tt>put</tt>.)
+
+ <p>This class is a member of the
+ <a href="{@docRoot}/../technotes/guides/collections/index.html">
+ Java Collections Framework</a>.
+
+ @param <K> the type of keys maintained by this map
+ @param <V> the type of mapped values
+
+ @author  Josh Bloch and Doug Lea
+ @version 1.73, 05/10/06
+ @see Map
+ @see HashMap
+ @see Hashtable
+ @see Comparable
+ @see Comparator
+ @see Collection
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.util.Comparator<? super K> java.util.TreeMap.comparator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The comparator used to maintain order in this tree map, or
+ null if it uses the natural ordering of its keys.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.TreeMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new, empty tree map, using the natural ordering of its
+ keys.  All keys inserted into the map must implement the {@link
+ Comparable} interface.  Furthermore, all such keys must be
+ <i>mutually comparable</i>: <tt>k1.compareTo(k2)</tt> must not throw
+ a <tt>ClassCastException</tt> for any keys <tt>k1</tt> and
+ <tt>k2</tt> in the map.  If the user attempts to put a key into the
+ map that violates this constraint (for example, the user attempts to
+ put a string key into a map whose keys are integers), the
+ <tt>put(Object key, Object value)</tt> call will throw a
+ <tt>ClassCastException</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.TreeMap(java.util.Comparator<? super K> comparator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new, empty tree map, ordered according to the given
+ comparator.  All keys inserted into the map must be <i>mutually
+ comparable</i> by the given comparator: <tt>comparator.compare(k1,
+ k2)</tt> must not throw a <tt>ClassCastException</tt> for any keys
+ <tt>k1</tt> and <tt>k2</tt> in the map.  If the user attempts to put
+ a key into the map that violates this constraint, the <tt>put(Object
+ key, Object value)</tt> call will throw a
+ <tt>ClassCastException</tt>.
+
+ @param comparator the comparator that will be used to order this map.
+        If <tt>null</tt>, the {@linkplain Comparable natural
+        ordering} of the keys will be used.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.TreeMap(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new tree map containing the same mappings as the given
+ map, ordered according to the <i>natural ordering</i> of its keys.
+ All keys inserted into the new map must implement the {@link
+ Comparable} interface.  Furthermore, all such keys must be
+ <i>mutually comparable</i>: <tt>k1.compareTo(k2)</tt> must not throw
+ a <tt>ClassCastException</tt> for any keys <tt>k1</tt> and
+ <tt>k2</tt> in the map.  This method runs in n*log(n) time.
+
+ @param  m the map whose mappings are to be placed in this map
+ @throws ClassCastException if the keys in m are not {@link Comparable},
+         or are not mutually comparable
+ @throws NullPointerException if the specified map is null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.TreeMap(java.util.SortedMap<K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new tree map containing the same mappings and
+ using the same ordering as the specified sorted map.  This
+ method runs in linear time.
+
+ @param  m the sorted map whose mappings are to be placed in this map,
+         and whose comparator is to be used to sort this map
+ @throws NullPointerException if the specified map is null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.TreeMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the number of key-value mappings in this map.
+
+ @return the number of key-value mappings in this map
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.TreeMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <tt>true</tt> if this map contains a mapping for the specified
+ key.
+
+ @param key key whose presence in this map is to be tested
+ @return <tt>true</tt> if this map contains a mapping for the
+         specified key
+ @throws ClassCastException if the specified key cannot be compared
+         with the keys currently in the map
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.TreeMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <tt>true</tt> if this map maps one or more keys to the
+ specified value.  More formally, returns <tt>true</tt> if and only if
+ this map contains at least one mapping to a value <tt>v</tt> such
+ that <tt>(value==null ? v==null : value.equals(v))</tt>.  This
+ operation will probably require time linear in the map size for
+ most implementations.
+
+ @param value value whose presence in this map is to be tested
+ @return <tt>true</tt> if a mapping to <tt>value</tt> exists;
+	       <tt>false</tt> otherwise
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.TreeMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the value to which the specified key is mapped,
+ or {@code null} if this map contains no mapping for the key.
+
+ <p>More formally, if this map contains a mapping from a key
+ {@code k} to a value {@code v} such that {@code key} compares
+ equal to {@code k} according to the map's ordering, then this
+ method returns {@code v}; otherwise it returns {@code null}.
+ (There can be at most one such mapping.)
+
+ <p>A return value of {@code null} does not <i>necessarily</i>
+ indicate that the map contains no mapping for the key; it's also
+ possible that the map explicitly maps the key to {@code null}.
+ The {@link #containsKey containsKey} operation may be used to
+ distinguish these two cases.
+
+ @throws ClassCastException if the specified key cannot be compared
+         with the keys currently in the map
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.firstKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.lastKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.TreeMap.putAll(java.util.Map<? extends K, ? extends V> map)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Copies all of the mappings from the specified map to this map.
+ These mappings replace any mappings that this map had for any
+ of the keys currently in the specified map.
+
+ @param  map mappings to be stored in this map
+ @throws ClassCastException if the class of a key or value in
+         the specified map prevents it from being stored in this map
+ @throws NullPointerException if the specified map is null or
+         the specified map contains a null key and this map does not
+         permit null keys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.TreeMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Associates the specified value with the specified key in this map.
+ If the map previously contained a mapping for the key, the old
+ value is replaced.
+
+ @param key key with which the specified value is to be associated
+ @param value value to be associated with the specified key
+
+ @return the previous value associated with <tt>key</tt>, or
+         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+         (A <tt>null</tt> return can also indicate that the map
+         previously associated <tt>null</tt> with <tt>key</tt>.)
+ @throws ClassCastException if the specified key cannot be compared
+         with the keys currently in the map
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.TreeMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes the mapping for this key from this TreeMap if present.
+
+ @param  key key for which mapping should be removed
+ @return the previous value associated with <tt>key</tt>, or
+         <tt>null</tt> if there was no mapping for <tt>key</tt>.
+         (A <tt>null</tt> return can also indicate that the map
+         previously associated <tt>null</tt> with <tt>key</tt>.)
+ @throws ClassCastException if the specified key cannot be compared
+         with the keys currently in the map
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.TreeMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes all of the mappings from this map.
+ The map will be empty after this call returns.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.util.TreeMap.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a shallow copy of this <tt>TreeMap</tt> instance. (The keys and
+ values themselves are not cloned.)
+
+ @return a shallow copy of this map
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.firstEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.lastEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.pollFirstEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.pollLastEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.lowerEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.lowerKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.floorEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.floorKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.ceilingEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.ceilingKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.TreeMap.higherEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.TreeMap.higherKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException {@inheritDoc}
+ @throws NullPointerException if the specified key is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.TreeMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a {@link Set} view of the keys contained in this map.
+ The set's iterator returns the keys in ascending order.
+ The set is backed by the map, so changes to the map are
+ reflected in the set, and vice-versa.  If the map is modified
+ while an iteration over the set is in progress (except through
+ the iterator's own <tt>remove</tt> operation), the results of
+ the iteration are undefined.  The set supports element removal,
+ which removes the corresponding mapping from the map, via the
+ <tt>Iterator.remove</tt>, <tt>Set.remove</tt>,
+ <tt>removeAll</tt>, <tt>retainAll</tt>, and <tt>clear</tt>
+ operations.  It does not support the <tt>add</tt> or <tt>addAll</tt>
+ operations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<K> java.util.TreeMap.navigableKeySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<K> java.util.TreeMap.descendingKeySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.TreeMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a {@link Collection} view of the values contained in this map.
+ The collection's iterator returns the values in ascending order
+ of the corresponding keys.
+ The collection is backed by the map, so changes to the map are
+ reflected in the collection, and vice-versa.  If the map is
+ modified while an iteration over the collection is in progress
+ (except through the iterator's own <tt>remove</tt> operation),
+ the results of the iteration are undefined.  The collection
+ supports element removal, which removes the corresponding
+ mapping from the map, via the <tt>Iterator.remove</tt>,
+ <tt>Collection.remove</tt>, <tt>removeAll</tt>,
+ <tt>retainAll</tt> and <tt>clear</tt> operations.  It does not
+ support the <tt>add</tt> or <tt>addAll</tt> operations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.TreeMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a {@link Set} view of the mappings contained in this map.
+ The set's iterator returns the entries in ascending key order.
+ The set is backed by the map, so changes to the map are
+ reflected in the set, and vice-versa.  If the map is modified
+ while an iteration over the set is in progress (except through
+ the iterator's own <tt>remove</tt> operation, or through the
+ <tt>setValue</tt> operation on a map entry returned by the
+ iterator) the results of the iteration are undefined.  The set
+ supports element removal, which removes the corresponding
+ mapping from the map, via the <tt>Iterator.remove</tt>,
+ <tt>Set.remove</tt>, <tt>removeAll</tt>, <tt>retainAll</tt> and
+ <tt>clear</tt> operations.  It does not support the
+ <tt>add</tt> or <tt>addAll</tt> operations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableMap<K, V> java.util.TreeMap.descendingMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableMap<K, V> java.util.TreeMap.subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>fromKey</tt> or <tt>toKey</tt> is
+         null and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableMap<K, V> java.util.TreeMap.headMap(K toKey, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>toKey</tt> is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableMap<K, V> java.util.TreeMap.tailMap(K fromKey, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>fromKey</tt> is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.TreeMap.subMap(K fromKey, K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>fromKey</tt> or <tt>toKey</tt> is
+         null and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.TreeMap.headMap(K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>toKey</tt> is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.TreeMap.tailMap(K fromKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws ClassCastException       {@inheritDoc}
+ @throws NullPointerException if <tt>fromKey</tt> is null
+         and this map uses natural ordering, or its comparator
+         does not permit null keys
+ @throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.TreeMap.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reconstitute the <tt>TreeMap</tt> instance from a stream (i.e.,
+ deserialize it).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.TreeMap.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Save the state of the <tt>TreeMap</tt> instance to a stream (i.e.,
+ serialize it).
+
+ @serialData The <i>size</i> of the TreeMap (the number of key-value
+             mappings) is emitted (int), followed by the key (Object)
+             and value (Object) for each key-value mapping represented
+             by the TreeMap. The key-value mappings are emitted in
+             key-order (as determined by the TreeMap's Comparator,
+             or by the keys' natural ordering if the TreeMap has no
+             Comparator).
+
+<!-- END DATA -->

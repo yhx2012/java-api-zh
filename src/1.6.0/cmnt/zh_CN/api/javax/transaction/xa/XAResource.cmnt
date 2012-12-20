@@ -1,0 +1,239 @@
+<!-- BEGIN KEY -->
+public interface javax.transaction.xa.XAResource
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>XAResource 接口是基于 X/Open CAE 规范（分布式事务处理：XA 规范）的工业标准 XA 接口的 Java 映射。 
+
+<p>在分布式事务处理 (DTP) 环境中，XA 接口定义资源管理器和事务管理器之间的协定。JDBC 驱动程序或 JMS 提供者实现此接口，以支持全局事务与数据库或消息服务连接之间的关联。
+
+<p>可由应用程序在外部事务管理器控制事务的环境中使用的任何事务资源均可支持 XAResource 接口。数据库管理系统就属于此类资源。应用程序可以通过多个数据库连接访问数据。通过事务管理器将每个数据库连接作为事务资源添加到列表中。事务管理器为参与全局事务的每个连接获取 XAResource。事务管理器使用 <code>start</code> 方法建立全局事务与资源之间的关联，而使用 <code>end</code> 方法取消事务与资源之间的关联。资源管理器负责将全局事务关联到在 start 与 end 方法调用之间对其数据执行的所有工作。
+
+<p>在事务提交时，事务管理器通知资源管理器根据二阶段提交协议准备、提交或回滚事务。</p>
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMENDRSCAN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+终止恢复扫描。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMFAIL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+取消关联调用者，并将事务分支标记为只回滚。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMJOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用者正连接现有事务分支。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMNOFLAGS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用 TMNOFLAGS 指示不选择任何标志值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMONEPHASE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用者正在使用一阶段优化。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMRESUME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用者正在恢复与挂起的事务分支的关联。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMSTARTRSCAN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+启动恢复扫描。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMSUCCESS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+取消调用者与事务分支的关联。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.TMSUSPEND
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用者正挂起（不是终止）其与事务分支的关联。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.XA_RDONLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事务分支是只读的，并且已提交。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.transaction.xa.XAResource.XA_OK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事务工作正常准备就绪。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.transaction.xa.XAResource.commit(Xid xid, boolean onePhase) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提交 xid 指定的全局事务。 
+
+@param xid 全局事务标识符
+
+@param onePhase 如果为 true，则资源管理器应使用单阶段提交协议提交代表 xid 执行的工作。
+
+@exception XAException 发生错误。可能的 XAExceptions 为 XA_HEURHAZ、XA_HEURCOM、XA_HEURRB、XA_HEURMIX、XAER_RMERR、XAER_RMFAIL、XAER_NOTA、XAER_INVAL 或 XAER_PROTO。
+ 
+<P>如果资源管理器不提交事务，并且将参数 onePhase 设置为 true，则资源管理器可能抛出 XA_RB* 异常之一。返回时，资源管理器已经回滚分支的工作，并且已经释放所有占用的资源。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.transaction.xa.XAResource.end(Xid xid, int flags) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+终止代表事务分支所执行的工作。资源管理器取消 XA 资源与指定的事务分支的关联，并使事务完成。
+
+<p>如果在标志中指定 TMSUSPEND，则事务分支将以未完成状态中暂时挂起。事务上下文处于挂起状态，必须通过 <code>start</code> 方法且将标志指定为 TMRESUME 来恢复。</p>
+
+<p>如果指定 TMFAIL，则部分工作将失败。资源管理器可以将事务标记为只回滚</p>
+
+<p>如果指定 TMSUCCESS，则将完成部分工作。</p>
+ 
+@param xid 全局事务标识符，它与以前在 <code>start</code> 方法中使用的标识符相同。
+ 
+@param flags TMSUCCESS、TMFAIL 或 TMSUSPEND 之一。
+
+@exception XAException 发生错误。可能的 XAException 值为 XAER_RMERR、XAER_RMFAILED、XAER_NOTA、XAER_INVAL、XAER_PROTO 或 XA_RB*。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.transaction.xa.XAResource.forget(Xid xid) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知资源管理器忽略以启发式完成的事务分支。
+
+@param xid 全局事务标识符
+
+@exception XAException 发生错误。可能的异常值为 XAER_RMERR、XAER_RMFAIL、XAER_NOTA、XAER_INVAL 或 XAER_PROTO。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.transaction.xa.XAResource.getTransactionTimeout() throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取为此 XAResource 实例设置的当前事务超时值。如果在调用此方法之前不使用 <CODE>XAResource.setTransactionTimeout</CODE>，则返回值是资源管理器的默认超时集；否则，返回在以前 <CODE>setTransactionTimeout</CODE> 调用中使用的值。
+
+@return 以秒为单位的事务超时值。
+
+@exception XAException 发生错误。可能的异常值为 XAER_RMERR 和 XAER_RMFAIL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.transaction.xa.XAResource.isSameRM(XAResource xares) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用此方法，以确定目标对象表示的资源管理器实例是否与参数 <i>xares</i> 表示的资源管理器实例相同。
+
+@param xares 其资源管理器实例将与目标对象的资源管理器实例进行比较的 XAResource 对象。
+
+@return 如果是相同的 RM 实例，则返回 <i>true</i>；否则返回 <i>false</i>。
+
+@exception XAException 发生错误。可能的异常值为 XAER_RMERR 和 XAER_RMFAIL。
+     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.transaction.xa.XAResource.prepare(Xid xid) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求资源管理器准备好 xid 中指定的事务的事务提交工作。
+
+@param xid 全局事务标识符
+
+@exception XAException 发生错误。可能的异常值为：XA_RB*、XAER_RMERR、XAER_RMFAIL、XAER_NOTA、XAER_INVAL 或 XAER_PROTO。
+
+@return 一个值，它指示资源管理器对事务结果的表决。可能的值为：XA_RDONLY 或 XA_OK。如果资源管理器要回滚事务，则应通过 prepare 方法中引发相应的 XAException 来实现此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.transaction.xa.Xid[] javax.transaction.xa.XAResource.recover(int flag) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从资源管理器获取准备的事务分支的列表。恢复过程中，事务管理器调用此方法以获取当前处于准备或以启发式完成的状态的事务分支列表。
+
+@param flag TMSTARTRSCAN、MENDRSCAN、MNOFLAGS 之一。参数中没有设置任何其他标志时，必须使用 MNOFLAGS。
+ 
+@exception XAException 发生错误。可能的值为 XAER_RMERR、XAER_RMFAIL、XAER_INVAL 和 XAER_PROTO。
+
+@return 资源管理器返回当前处于准备或以启发式完成的状态的事务分支的零或多个 XID。如果在操作过程中发生错误，则资源管理器应抛出适当的 XAException。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.transaction.xa.XAResource.rollback(Xid xid) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知资源管理器回滚代表事务分支执行的工作。
+
+@param xid 全局事务标识符
+
+@exception XAException 发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.transaction.xa.XAResource.setTransactionTimeout(int seconds) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<P>为此 <CODE>XAResource</CODE> 实例设置当前事务超时值。设置后，在使用其他值再次调用 <code>setTransactionTimeout</code> 之前，此超时值是有效的。要将超时值重设为资源管理器使用的默认值，请将该值设置为零。
+
+如果执行超时操作成功，则方法返回 <i>true</i>；否则返回 <i>false</i>。如果资源管理器不支持显式设置事务超时值，则此方法返回 <i>false</i>。
+
+@param seconds 以秒为单位的事务超时值。
+
+@return 如果成功设置事务超时值，则返回 <i>true</i>；否则返回 <i>false</i>。
+
+@exception XAException 发生错误。可能的异常值为 XAER_RMERR、XAER_RMFAIL 或 XAER_INVAL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.transaction.xa.XAResource.start(Xid xid, int flags) throws javax.transaction.xa.XAException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+代表 <code>xid</code> 中指定的事务分支开始工作。
+ 
+如果指定 TMJOIN，则该启动适用于连接资源管理器以前看到的事务。如果指定 TMRESUME，该启动适用于恢复参数 <code>xid</code> 中指定的挂起事务。
+
+如果 TMJOIN 和 TMRESUME 都没有指定，并且资源管理器以前查看到 <code>xid</code> 指定的事务，则资源管理器抛出带有 XAER_DUPID 错误代码的 XAException 异常。
+
+@param xid 与资源关联的全局事务标识符。
+ 
+@param flags TMNOFLAGS、TMJOIN 或 TMRESUME 之一。
+
+@exception XAException 发生错误。可能的异常为 XA_RB*、XAER_RMERR、XAER_RMFAIL、XAER_DUPID、XAER_OUTSIDE、XAER_NOTA、XAER_INVAL 或 XAER_PROTO。
+
+<!-- END DATA -->

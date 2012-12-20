@@ -1,0 +1,780 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.ImageWriteParam extends javax.imageio.IIOParam
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+描述如何对流进行编码的类。此类的实例或其子类用于提供 <code>ImageWriter</code> 实例的规定&ldquo;入门&rdquo;信息。
+
+<p> 用于特定图像格式的插件可以定义此类的一个子类，并从其 <code>ImageWriter</code> 实现的 <code>getDefaultWriteParam</code> 方法返回该类的对象。例如，内置 JPEG writer 插件将返回 <code>javax.imageio.plugins.jpeg.JPEGImageWriteParam</code> 的实例。
+
+<p> 要写入的图像区域通过第一次将图像的实际边界与 <code>IIOParam.setSourceRegion</code> 指定的矩形（如果有）的相交来确定。如果所得矩形的宽度或高度为零，则该 writer 将抛出 <code>IIOException</code>。如果相交区域为非空，则写入操作将从第一个二次取样的像素开始，并根据 {@link IIOParam#setSourceSubsampling <code>IIOParam.setSourceSubsampling</code>} 指定的水平和垂直二次取样因子包含相交边界内额外的像素。
+
+<p> 个别特征（比如 tiling、逐步编码和压缩）可以用以下四种模式之一设置。<code>MODE_DISABLED</code> 禁用这些特征；<code>MODE_DEFAULT</code> 使用带有受控于 writer 的参数值启用这些特征；<code>MODE_EXPLICIT</code> 启用这些特定并允许使用 <code>set</code> 方法提供额外的参数；<code>MODE_COPY_FROM_METADATA</code> 则从流以及传递给 writer 的图像元数据对象中复制相关的参数值。所有特征的默认模式是 <code>MODE_COPY_FROM_METADATA</code>。鼓励使用子类中提供的非标准特征，但不要求使用类似的方案。
+
+<p> 插件 writer 可以通过提供实现额外的、特定于插件的接口来扩展 <code>ImageWriteParam</code> 的功能。由插件负责记录哪些接口可用以及如何使用。writer 将安静地忽略所有其未知的 <code>ImageWriteParam</code> 子类扩展功能。此外，将忽略通常在通过 <code>getDefaultWriteParam</code> 创建自己的 <code>ImageWriteParam</code> 实例时禁用的所有可选功能。
+
+<p> 注意，如果不存在针对某一功能的查询方法，所有 <code>ImageWriter</code> 实现就必须都支持该功能（<i>例如</i>，逐步编码是可选的，但二次取样必须受支持）。
+
+@version 0.5
+ 
+@see ImageReadParam
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.ImageWriteParam.MODE_DISABLED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个常量值，可以传入诸如 <code>setTilingMode</code>、<code>setProgressiveMode</code> 和 <code>setCompressionMode</code> 之类的方法中，以禁用用于以后的写入操作的某个特征。也就是说，在设置此模式时，该流将<b>不</b>被平铺、逐步编码或压缩，相关的访问器方法将抛出 <code>IllegalStateException</code>。
+
+@see #MODE_EXPLICIT
+@see #MODE_COPY_FROM_METADATA
+@see #MODE_DEFAULT
+@see #setProgressiveMode
+@see #getProgressiveMode
+@see #setTilingMode
+@see #getTilingMode
+@see #setCompressionMode
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.ImageWriteParam.MODE_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个常量值，可以传入诸如 <code>setTilingMode</code>、<code>setProgressiveMode</code> 和 <code>setCompressionMode</code> 之类的方法中，以启用用于以后的写入操作的特征。也就是说，在启用此模式时，将根据 writer 以与插件有关的方式内部选择的明智默认值来平铺、逐步编码和压缩该流，相关的访问器方法将抛出 <code>IllegalStateException</code>。
+
+@see #MODE_DISABLED
+@see #MODE_EXPLICIT
+@see #MODE_COPY_FROM_METADATA
+@see #setProgressiveMode
+@see #getProgressiveMode
+@see #setTilingMode
+@see #getTilingMode
+@see #setCompressionMode
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.ImageWriteParam.MODE_EXPLICIT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个常量值，可以传入诸如 <code>setTilingMode</code> 或 <code>setCompressionMode</code> 之类的方法中，以启用用于以后的写入操作的特征。也就是说，在设置此模式时，将根据为此类中的相应 <code>set</code> 方法提供的额外信息和可以从相应 <code>get</code> 方法中获取到的信息来平铺或压缩该流。注意，此模式不支持逐步输出。
+
+@see #MODE_DISABLED
+@see #MODE_COPY_FROM_METADATA
+@see #MODE_DEFAULT
+@see #setProgressiveMode
+@see #getProgressiveMode
+@see #setTilingMode
+@see #getTilingMode
+@see #setCompressionMode
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.ImageWriteParam.MODE_COPY_FROM_METADATA
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个常量值，可以传入诸如 <code>setTilingMode</code>、<code>setProgressiveMode</code> 或 <code>setCompressionMode</code> 之类的方法中，以启用用于以后的写入操作的特征。也就是说，在启用此模式时，将根据传入写入操作的流内容和/或图像元数据来平铺、逐步编码和压缩该流，所有相关访问器方法都将抛出 <code>IllegalStateException</code>。
+
+<p> 这是所有特征的默认模式，因此，如果一个包括元数据的读取操作之后将进行包括元数据的写入操作，则读取操作将保留尽可能多的信息。
+
+@see #MODE_DISABLED
+@see #MODE_EXPLICIT
+@see #MODE_DEFAULT
+@see #setProgressiveMode
+@see #getProgressiveMode
+@see #setTilingMode
+@see #getTilingMode
+@see #setCompressionMode
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageWriteParam.canWriteTiles
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>ImageWriteParam</code> 允许设置 tile 的宽度和高度参数，则返回为 <code>true</code> 的 <code>boolean</code> 值。默认情况下，该值为 <code>false</code>。子类必须手工设置该值。
+
+<p> 不支持写入 tile 的子类应该确保此值被设置为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.tilingMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+控制 tiling 设置的模式，必须将它设置为以下四个 <code>MODE_*</code> 值之一。默认值为 <code>MODE_COPY_FROM_METADATA</code>。
+
+<p> 不支持写入 tile 的子类可以忽略此值。
+
+@see #MODE_DISABLED
+@see #MODE_EXPLICIT
+@see #MODE_COPY_FROM_METADATA
+@see #MODE_DEFAULT
+@see #setTilingMode
+@see #getTilingMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Dimension[] javax.imageio.ImageWriteParam.preferredTileSizes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+首选 tile 大小范围对组成的数组。默认值为 <code>null</code>，指示没有首选大小。如果该值为非 <code>null</code> 值，则首选大小的平均长度必须至少为 2。
+
+<p> 不支持写入 tile 的子类可以忽略此值。
+
+@see #getPreferredTileSizes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageWriteParam.tilingSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经指定 tiling 参数，则返回一个为 <code>true</code> 的 <code>boolean</code> 值。
+
+<p> 不支持写入 tile 的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.tileWidth
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经设置 tiling，则返回每个 tile 的宽度，否则返回 0。
+
+<p> 不支持 tiling 的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.tileHeight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经设置 tiling，则返回每个 tile 的高度，否则返回 0。初始值为 <code>0</code>。
+
+<p> 不支持 tiling 的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageWriteParam.canOffsetTiles
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>ImageWriteParam</code> 允许使用 tiling 网格偏移量参数，则返回为 <code>true</code> 的 <code>boolean</code> 值。默认情况下，该值为 <code>false</code>。子类必须手工设置该值。
+
+<p> 不支持写入 tile 的子类或支持写入 tile 但不支持将 tile 偏移的子类必须确保此值被设置为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.tileGridXOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经设置 tiling，则返回 tile 网格原点应该从图像原点水平偏移的量。否则返回 0。初始值为 <code>0</code>。
+
+<p> 不支持将 tile 偏移的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.tileGridYOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经设置 tiling，则返回 tile 网格原点应该从图像原点垂直偏移的量。否则返回 0。初始值为 <code>0</code>。
+
+<p> 不支持将 tile 偏移的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageWriteParam.canWriteProgressive
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>ImageWriteParam</code> 允许以一个质量递增传递的逐步序列的方式写入图像，则返回为 <code>true</code> 的 <code>boolean</code> 值。默认情况下，该值为 <code>false</code>。子类必须手工设置该值。
+
+<p> 不支持逐步编码的子类必须确保此值被设置为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.progressiveMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+控制逐步编码的模式，必须将它设置为除 <code>MODE_EXPLICIT</code> 以外的四个 <code>MODE_*</code> 值之一。默认值为 <code>MODE_COPY_FROM_METADATA</code>。
+
+<p> 不支持逐步编码的子类可以忽略此值。
+
+@see #MODE_DISABLED
+@see #MODE_EXPLICIT
+@see #MODE_COPY_FROM_METADATA
+@see #MODE_DEFAULT
+@see #setProgressiveMode
+@see #getProgressiveMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageWriteParam.canWriteCompressed
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 writer 可以使用压缩写入图像，则返回为 <code>true</code> 的 <code>boolean</code> 值。默认情况下，该值为 <code>false</code>。子类必须手工设置该值。
+
+<p> 不支持压缩的子类必须确保此值被设置为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageWriteParam.compressionMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+控制压缩设置的模式，必须将它设置为四个 <code>MODE_*</code> 值之一。默认值为 <code>MODE_COPY_FROM_METADATA</code>。
+
+<p> 不支持压缩的子类可以忽略此值。
+
+@see #MODE_DISABLED
+@see #MODE_EXPLICIT
+@see #MODE_COPY_FROM_METADATA
+@see #MODE_DEFAULT
+@see #setCompressionMode
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.imageio.ImageWriteParam.compressionTypes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含可用压缩类型名称的 <code>String</code> 数组。子类必须手工设置该值。
+
+<p> 不支持压缩的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.imageio.ImageWriteParam.compressionType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含当前压缩类型名称的 <code>String</code>，如果没有设置压缩类型，则返回 <code>null</code>。
+
+<p> 不支持压缩的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.imageio.ImageWriteParam.compressionQuality
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含当前压缩质量设置的 <code>float</code> 值。初始值为 <code>1.0F</code>。
+
+<p> 不支持压缩的子类可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Locale javax.imageio.ImageWriteParam.locale
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于本地化压缩类型名称和质量描述的 <code>Locale</code>，<code>null</code> 表示使用默认 <code>Locale</code>。子类必须手工设置该值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.ImageWriteParam()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个空的 <code>ImageWriteParam</code>。由子类负责恰当地设置实例变量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageWriteParam(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>ImageWriteParam</code> 集，以使用给定 <code>Locale</code>。
+
+@param locale 将用于本地化压缩类型名称和质量描述的 <code>Locale</code>，或者为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale javax.imageio.ImageWriteParam.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前设置的 <code>Locale</code>，如果仅支持默认 <code>Locale</code>，则返回 <code>null</code>。
+
+@return 当前 <code>Locale</code> 或 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriteParam.canWriteTiles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 在执行写入操作的同时可以进行平铺，则返回 <code>true</code>。如果此方法返回 <code>false</code>，则 <code>setTiling</code> 将抛出 <code>UnsupportedOperationException</code>。
+
+@return 如果 writer 支持平铺，则返回 <code>true</code>。
+
+@see #canOffsetTiles()
+@see #setTiling(int, int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriteParam.canOffsetTiles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 在执行写入操作的同时可以使用非零网格偏移量进行平铺，则返回 <code>true</code>。如果此方法返回 <code>false</code>，则 <code>setTiling</code> 将抛出 <code>UnsupportedOperationException</code>，如果网格偏移量参数不同时为零的话。如果 <code>canWriteTiles</code> 返回 <code>false</code>，则此方法也将返回 <code>false</code>。
+
+@return 如果 writer 支持非零 tile 偏移量，则返回 <code>true</code>。
+
+@see #canWriteTiles()
+@see #setTiling(int, int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setTilingMode(int mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定图像在输出流中是否将被平铺，如果将被平铺，将如何确定 tiling 参数。对这些模式的解释如下：
+
+ <ul>
+
+<li><code>MODE_DISABLED</code> - 图像不会被平铺，<code>setTiling</code> 将抛出 <code>IllegalStateException</code>。
+
+<li><code>MODE_DEFAULT</code> - 将使用默认参数平铺图像。<code>setTiling</code> 将抛出 <code>IllegalStateException</code>。
+
+<li><code>MODE_EXPLICIT</code> - 将根据 {@link #setTiling <code>setTiling</code>} 方法中给定的参数平铺图像。任何以前设置的 tiling 参数都将被丢弃。
+
+<li><code>MODE_COPY_FROM_METADATA</code> - 图像将与传入某一写入操作中的元数据对象一致。<code>setTiling</code> 将抛出 <code>IllegalStateException</code>。
+
+ </ul>
+
+@param mode 用于 tiling 的模式。
+
+@exception UnsupportedOperationException 如果 <code>canWriteTiles</code> 返回 <code>false</code>。
+@exception IllegalArgumentException 如果 <code>mode</code> 不是上面列出的模式之一。
+
+@see #setTiling
+@see #getTilingMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getTilingMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果支持平铺，则返回当前平铺模式。否则抛出 <code>UnsupportedOperationException</code>。
+
+@return 当前平铺模式。
+
+@exception UnsupportedOperationException 如果 <code>canWriteTiles</code> 返回 <code>false</code>。
+
+@see #setTilingMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension[] javax.imageio.ImageWriteParam.getPreferredTileSizes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Dimension</code> 数组，指示在输出文件或流中进行编码时 tile 的合法大小范围。返回的数组是一个副本。
+
+<p> 信息以对集合的形式返回；对的第一个元素包含最小宽度和高度（包括在内），第二个元素包含最大宽度和高度（包括在内）。将其放到一起，每个对便定义了一个有效大小范围。要定义固定大小，则对两个元素使用相同的宽度和高度。要定义任意范围，则使用 <code>null</code> 值替代实际 <code>Dimension</code> 数组。
+
+<p> 如果构造方法上没有指定数组，但允许进行平铺，则此方法返回 <code>null</code>。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+
+@return 一个 <code>Dimension</code> 数组，其平均长度至少为 2；或者 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setTiling(int tileWidth, int tileHeight, int tileGridXOffset, int tileGridYOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定应该在输出流中平铺图像。<code>tileWidth</code> 和 <code>tileHeight</code> 参数指定文件中 tile 的宽度和高度。如果 tile 的宽度或高度大于图像的宽度或高度，则图像无法使用该维数平铺。
+
+<p> 如果 <code>canOffsetTiles</code> 返回 <code>false</code>，则 <code>tileGridXOffset</code> 和 <code>tileGridYOffset</code> 参数必须为零。
+
+@param tileWidth 每个 tile 的宽度。
+@param tileHeight 每个 tile 的高度。
+@param tileGridXOffset tile 网格的水平偏移量。
+@param tileGridYOffset tile 网格的垂直偏移量。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+@exception UnsupportedOperationException 如果插件不支持网格偏移量，且网格偏移量并不都为零。
+@exception IllegalArgumentException 如果 tile 大小不在 <code>getPreferredTileSizes</code> 返回的某个所允许范围内。
+@exception IllegalArgumentException 如果 <code>tileWidth</code> 或 <code>tileHeight</code> 小于等于 0。
+
+@see #canWriteTiles
+@see #canOffsetTiles
+@see #getTileWidth()
+@see #getTileHeight()
+@see #getTileGridXOffset()
+@see #getTileGridYOffset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.unsetTiling()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除通过调用 <code>setTiling</code> 指定的所有以前的 tile 网格参数。
+
+<p> 默认实现将实例变量 <code>tileWidth</code>、<code>tileHeight</code>、<code>tileGridXOffset</code> 和 <code>tileGridYOffset</code> 都设置为 <code>0</code>。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+
+@see #setTiling(int, int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getTileWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像中每个 tile 的宽度，将根据该宽度对输出流进行写入。如果没有设置 tiling 参数，则抛出 <code>IllegalStateException</code>。
+
+@return 将用于编码的 tile 宽度。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException  如果尚未设置 tiling 参数。
+ 
+@see #setTiling(int, int, int, int)
+@see #getTileHeight()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getTileHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像中每个 tile 的高度，将根据该高度对输出流进行写入。如果没有设置 tiling 参数，则抛出 <code>IllegalStateException</code>。
+ 
+@return 将用于编码的 tile 高度。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException  如果尚未设置 tiling 参数。
+ 
+@see #setTiling(int, int, int, int)
+@see #getTileWidth()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getTileGridXOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像的水平 tile 网格偏移量，将根据该偏移量对输出流进行写入。如果没有设置 tiling 参数，则抛出 <code>IllegalStateException</code>。
+ 
+@return 将用于编码的 tile 网格 X 偏移量。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException  如果尚未设置 tiling 参数。
+ 
+@see #setTiling(int, int, int, int)
+@see #getTileGridYOffset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getTileGridYOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像的垂直 tile 网格偏移量，将根据该偏移量对输出流进行写入。如果没有设置 tiling 参数，则抛出 <code>IllegalStateException</code>。
+ 
+@return 将用于编码的 tile 网格 Y 偏移量。
+
+@exception UnsupportedOperationException 如果插件不支持平铺。
+@exception IllegalStateException 如果平铺模式不为 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException  如果尚未设置 tiling 参数。
+ 
+@see #setTiling(int, int, int, int)
+@see #getTileGridXOffset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriteParam.canWriteProgressive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 能够以一系列质量逐渐递增的传递的方式将图像写出，则返回 <code>true</code>。
+
+@return 如果 writer 支持逐步编码，则返回 <code>true</code>。
+
+@see #setProgressiveMode
+@see #getProgressiveMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setProgressiveMode(int mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 writer 使用逐步模式写出图像，从而输出流将包含一系列质量递增的扫描。如果不支持逐步编码，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p>  mode 参数确定如何选择 progression 参数，并且必须是 <code>MODE_DISABLED</code>、<code>MODE_COPY_FROM_METADATA</code> 或 <code>MODE_DEFAULT</code>。否则抛出 <code>IllegalArgumentException</code>。
+
+<p> 对这些模式的解释如下：
+
+ <ul>
+<li><code>MODE_DISABLED</code> - 不前进。使用此模式则停止前进。
+
+<li><code>MODE_COPY_FROM_METADATA</code> - 输出图像将使用在传入 writer 的元数据对象中找到的任何 progression 参数。
+
+<li><code>MODE_DEFAULT</code> - 该图像将被逐步写入，参数由 writer 选择。
+ </ul>
+
+<p> 默认值为 <code>MODE_COPY_FROM_METADATA</code>。
+
+@param mode 用来在输出流中设置进度的模式。
+
+@exception UnsupportedOperationException 如果 writer 不支持逐步编码。
+@exception IllegalArgumentException 如果 <code>mode</code> 不是上面列出的模式之一。
+
+@see #getProgressiveMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getProgressiveMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以逐步方式将数据写入流的当前模式。
+
+@return 逐步编码的当前模式。
+
+@exception UnsupportedOperationException 如果 writer 不支持逐步编码。
+
+@see #setProgressiveMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriteParam.canWriteCompressed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 writer 支持压缩，则返回 <code>true</code>。
+
+@return 如果 writer 支持压缩，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setCompressionMode(int mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定是否执行压缩，如果执行压缩，将如何确定 compression 参数。<code>mode</code> 参数必须是四种模式之一，对它们的解释如下：
+
+ <ul>
+<li><code>MODE_DISABLED</code> - 如果该模式被设置为 <code>MODE_DISABLED</code>，则查询或修改压缩类型或参数的方法将会抛出 <code>IllegalStateException</code>（如果插件通常支持压缩）。一些 writer（比如 JPEG）通常不提供未压缩的输出。在这种情况下，试图将模式设置为 <code>MODE_DISABLED</code> 将会抛出 <code>UnsupportedOperationException</code> 并且将不更改该模式。
+
+<li><code>MODE_EXPLICIT</code> - 使用此 <code>ImageWriteParam</code> 中指定的压缩类型和质量设置进行压缩。任何以前设置的 compression 参数都将被丢弃。
+
+<li><code>MODE_COPY_FROM_METADATA</code> - 使用传入 writer 的元数据对象中指定的 compression 参数。
+
+<li><code>MODE_DEFAULT</code> - 使用默认 compression 参数。
+ </ul>
+
+<p> 默认值为 <code>MODE_COPY_FROM_METADATA</code>。
+
+@param mode 用来在输出流中设置压缩的模式。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩，或者不支持所请求的模式。
+@exception IllegalArgumentException 如果 <code>mode</code> 不是上面列出的模式之一。
+
+@see #getCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriteParam.getCompressionMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果支持压缩，则返回当前压缩模式。
+
+@return 当前压缩模式。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+
+@see #setCompressionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.ImageWriteParam.getCompressionTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以数组或 <code>String</code> 形式返回可用压缩类型的列表，如果不能使用这些接口选择压缩类型，则返回 <code>null</code>。返回的数组是一个副本。
+
+<p> 如果 writer 只提供某一强制形式的压缩，则没有必要提供所有指定的压缩类型。指定压缩类型只应该在用户能够在不同方案之间作出有意义选择的情况下使用。
+
+<p> 默认实现检查是否支持压缩，如果不支持，则抛出 <code>UnsupportedOperationException</code>。否则，如果 <code>compressionTypes</code> 实例变量为非 <code>null</code>，则返回该变量的副本，否则返回 <code>null</code>。
+
+@return 包含可用压缩类型的（非本地化）名称的 <code>String</code> 数组，或者返回 <code>null</code>。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setCompressionType(String compressionType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将压缩类型设置为 <code>getCompressionTypes</code> 指示的值之一。如果传入的是 <code>null</code> 值，则移除所有以前的设置。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是，则调用 <code>getCompressionTypes</code> 并检查 <code>compressionType</code> 是否是合法值之一。如果是合法值，则设置 <code>compressionType</code> 实例变量。如果 <code>compressionType</code> 为 <code>null</code>，则设置该实例变量而不执行任何检查。
+
+@param compressionType 由 <code>getCompressionTypes</code> 返回的 <code>String</code> 之一；或者为 <code>null</code>，表示移除所有以前的设置。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception UnsupportedOperationException 如果没有可设置的压缩类型。
+@exception IllegalArgumentException 如果 <code>compressionType</code> 为非 <code>null</code> 但不是 <code>getCompressionTypes</code> 返回的值之一。
+
+@see #getCompressionTypes
+@see #getCompressionType
+@see #unsetCompression
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.ImageWriteParam.getCompressionType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前设置的压缩类型，如果没有设置任何压缩类型，则返回 <code>null</code>。以 <code>String</code> 的形式返回该类型，它是 <code>getCompressionTypes</code> 返回的那些类型之一。如果没有设置压缩类型，则返回 <code>null</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，则返回 <code>compressionType</code> 实例变量的值。
+
+@return <code>String</code> 形式的当前压缩类型，如果没有设置压缩类型，则返回 <code>null</code>。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+
+@see #setCompressionType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.unsetCompression()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有以前的压缩类型和质量设置。
+
+<p> 默认实现将实例变量 <code>compressionType</code> 设置为 <code>null</code>，并将实例变量 <code>compressionQuality</code> 设置为 <code>1.0F</code>。
+
+@exception UnsupportedOperationException 如果插件不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+
+@see #setCompressionType
+@see #setCompressionQuality
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.ImageWriteParam.getLocalizedCompressionTypeName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前压缩类型的本地化名称，使用 <code>getLocale</code> 返回的 <code>Locale</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，或者 <code>compressionType</code> 为非 <code>null</code>，则作为一种便捷方式返回 <code>getCompressionType</code> 的值。
+
+@return 包含当前压缩类型的本地化名称的 <code>String</code>。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果没有设置压缩类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriteParam.isCompressionLossless()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前压缩类型提供无损失的压缩，则返回 <code>true</code>。如果插件只提供一个强制压缩类型，则可以在不先调用 <code>setCompressionType</code> 的情况下调用此方法。
+
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 为 <code>null</code> 或 <code>getCompressionType()</code> 为非 <code>null</code>，则作为一种便捷方式返回 <code>true</code>。
+
+@return 如果当前压缩类型是无损失的，则返回 <code>true</code>。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriteParam.setCompressionQuality(float quality)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将压缩质量设置为 <code>0</code> 和 <code>1</code> 之间的某个值。默认情况下，只支持一种压缩质量设置；writer 可以提供扩展的 <code>ImageWriteParam</code>，其提供了更多控制。对于有损失的压缩方案，压缩质量应该控制文件大小与图像质量之间的权衡（例如，通过在写入 JPEG 图像时选择量化表）。对于无损失方案，可以使用压缩质量控制文件大小与执行压缩所用时间之间的权衡（例如，通过在写入 PNG 图像时优化行过滤器并设置 ZLIB 压缩级别）。
+
+<p> 压缩质量为 0.0 通常被解释为&ldquo;高度压缩很重要&rdquo;，而该设置为 1.0 通常被解释为&ldquo;高图像质量很重要&rdquo;。
+
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 返回 <code>null</code> 或 <code>compressionType</code> 为非 <code>null</code>，则设置 <code>compressionQuality</code> 实例变量。
+
+@param quality 指示所需质量级别的 <code>0</code> 与 <code>1</code> 之间的一个 <code>float</code> 值。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>quality</code> 不在 <code>0</code> 与 <code>1</code>（包括两者）之间。
+
+@see #getCompressionQuality
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.imageio.ImageWriteParam.getCompressionQuality()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前压缩质量设置。
+ 
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 为 <code>null</code> 或 <code>getCompressionType()</code> 为非 <code>null</code>，则返回 <code>compressionQuality</code> 实例变量的值。
+
+@return 当前压缩质量设置。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+
+@see #setCompressionQuality
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.imageio.ImageWriteParam.getBitRate(float quality)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>float</code> 值，该值指示对给定质量级别上用于输入图像数据的每个位的输出数据位数的估计。该值通常位于 <code>0</code> 与 <code>1</code> 之间，值越小则压缩得越紧。特殊值 <code>-1.0F</code> 用于指示没有估计数可用。
+
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 为 <code>null</code> 或 <code>getCompressionType()</code> 为非 <code>null</code>，并且 <code>quality</code> 在适当范围内，则返回 <code>-1.0</code>。
+
+@param quality 将查询其位率 (bit rate) 的查询设置。
+
+@return 压缩位率的估计数，如果没有估计数可用，则返回 <code>-1.0F</code>。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>quality</code> 不在 <code>0</code> 与 <code>1</code>（包括两者）之间。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.ImageWriteParam.getCompressionQualityDescriptions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，可作为用户界面的一部分与 <code>getCompressionQualityValues</code> 一起使用，以设置或显示压缩质量级别。索引为 <code>i</code> 的 <code>String</code> 提供对质量级别范围的描述，该范围在 <code>getCompressionQualityValues[i]</code> 与 <code>getCompressionQualityValues[i + 1]</code> 之间。注意，从 <code>getCompressionQualityValues</code> 返回的数组长度将总是大于从 <code>getCompressionQualityDescriptions</code> 返回的数组长度。
+
+<p> 例如，字符串 &quot;Good&quot;、&quot;Better&quot; 和 &quot;Best&quot; 可以与范围 <code>[0, .33)</code>、<code>[.33, .66)</code> 和 <code>[.66, 1.0]</code> 关联。在这种情况下，<code>getCompressionQualityDescriptions</code> 将返回 <code>{ &quot;Good&quot;, &quot;Better&quot;, &quot;Best&quot; }</code>，<code>getCompressionQualityValues</code> 将返回 <code>{ 0.0F, .33F, .66F, 1.0F }</code>。
+
+<p> 如果没有描述可用，则返回 <code>null</code>。如果从 <code>getCompressionQualityValues</code> 返回 <code>null</code>，则此方法也必须返回 <code>null</code>。
+
+<p> 应该为由 <code>getLocale</code> 返回的 <code>Locale</code> 将描述本地化，如果 Locale 为非 <code>null</code> 的话。
+
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 为 <code>null</code> 或 <code>getCompressionType()</code> 为非 <code>null</code>，则返回 <code>null</code>。
+
+@return 包含压缩质量级别的本地化描述的 <code>String</code> 数组。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+
+@see #getCompressionQualityValues
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] javax.imageio.ImageWriteParam.getCompressionQualityValues()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>float</code> 数组，可作为用户界面的一部分与 <code>getCompressionQualityDescriptions</code> 一起使用，以设置或显示压缩质量级别。有关更多信息，请参阅 {@link #getCompressionQualityDescriptions <code>getCompressionQualityDescriptions</code>}。
+
+<p> 如果没有描述可用，则返回 <code>null</code>。如果从 <code>getCompressionQualityDescriptions</code> 返回 <code>null</code>，则此方法也必须返回 <code>null</code>。
+
+<p> 如果有多个压缩类型，但没有设置任何一种压缩类型，则抛出 <code>IllegalStateException</code>。
+
+<p> 默认实现检查是否支持压缩，以及压缩模式是否为 <code>MODE_EXPLICIT</code>。如果是这样，而 <code>getCompressionTypes()</code> 为 <code>null</code> 或 <code>getCompressionType()</code> 为非 <code>null</code>，则返回 <code>null</code>。
+
+@return 一个 <code>float</code> 数组，指示 <code>getCompressionQualityDescriptions</code> 中的 <code>String</code> 描述的压缩质量级别之间的分界线。
+
+@exception UnsupportedOperationException 如果 writer 不支持压缩。
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+@exception IllegalStateException 如果合法压缩类型集为非 <code>null</code> 并且当前压缩类型为 <code>null</code>。
+
+@see #getCompressionQualityDescriptions
+
+<!-- END DATA -->

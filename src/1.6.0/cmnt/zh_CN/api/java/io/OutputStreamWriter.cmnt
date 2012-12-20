@@ -1,0 +1,142 @@
+<!-- BEGIN KEY -->
+public class java.io.OutputStreamWriter extends java.io.Writer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+OutputStreamWriter 是字符流通向字节流的桥梁：可使用指定的 {@link java.nio.charset.Charset <code>charset</code>} 将要写入流中的字符编码成字节。它使用的字符集可以由名称指定或显式给定，否则将接受平台默认的字符集。
+
+<p> 每次调用 write() 方法都会导致在给定字符（或字符集）上调用编码转换器。在写入底层输出流之前，得到的这些字节将在缓冲区中累积。可以指定此缓冲区的大小，不过，默认的缓冲区对多数用途来说已足够大。注意，传递给 write() 方法的字符没有缓冲。
+
+<p> 为了获得最高效率，可考虑将 OutputStreamWriter 包装到 BufferedWriter 中，以避免频繁调用转换器。例如：
+
+ <pre>
+ Writer out
+   = new BufferedWriter(new OutputStreamWriter(System.out));
+ </pre>
+
+<p> <i>代理对</i> 是一个字符，它由两个 <tt>char</tt> 值序列表示：<i>高</i> 代理项的范围为 '\uD800' 到 '\uDBFF'，后跟范围为 '\uDC00' 到 '\uDFFF' 的<i>低</i> 代理项。
+
+<p> <i>错误代理元素</i> 指的是后面不跟低代理项的高代理项，或前面没有高代理项的低代理项。
+
+<p>此类总是使用字符集的默认<i>替代序列</i> 替代错误代理元素和不可映射的字符序列。如果需要更多地控制编码过程，则应该使用 {@linkplain java.nio.charset.CharsetEncoder} 类。
+
+@see BufferedWriter
+@see OutputStream
+@see java.nio.charset.Charset
+
+@version 	1.47, 04/01/12
+@author	Mark Reinhold
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStreamWriter(OutputStream out, String charsetName) throws java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定字符集的 OutputStreamWriter。
+
+@param  out OutputStream
+
+@param  charsetName 受支持 {@link java.nio.charset.Charset </code>charset<code>} 的名称
+
+@exception  UnsupportedEncodingException 如果不支持指定的编码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStreamWriter(OutputStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用默认字符编码的 OutputStreamWriter。
+
+@param  out  OutputStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStreamWriter(OutputStream out, Charset cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用给定字符集的 OutputStreamWriter。 </p>
+
+@param  out  OutputStream
+
+@param  cs 字符集
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStreamWriter(OutputStream out, CharsetEncoder enc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用给定字符集编码器的 OutputStreamWriter。  </p>
+
+@param  out OutputStream
+
+@param  enc 字符集编码器
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.OutputStreamWriter.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此流使用的字符编码的名称。
+
+<p> 如果该编码具有历史名称，则返回该名称；否则返回该编码的规范化名称。
+
+<p> 如果此实例是用 {@link #OutputStreamWriter(OutputStream, String)} 构造方法创建的，则返回的对于编码唯一的名称可能与传递给该构造方法的名称不同。如果流已经关闭，则此方法可能返回 <tt>null</tt>。 </p>
+
+@return 此编码的历史名称；如果流已经关闭，则可能返回 <code>null</code>
+
+@see java.nio.charset.Charset
+
+@revised 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.OutputStreamWriter.write(int c) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入单个字符。
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.OutputStreamWriter.write(char[] cbuf, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符数组的某一部分。
+
+@param  cbuf  字符缓冲区
+@param  off   开始写入字符处的偏移量
+@param  len   要写入的字符数
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.OutputStreamWriter.write(String str, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符串的某一部分。
+
+@param  str  字符串
+@param  off  开始写入字符处的偏移量
+@param  len  要写入的字符数
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.OutputStreamWriter.flush() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新该流的缓冲。
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->

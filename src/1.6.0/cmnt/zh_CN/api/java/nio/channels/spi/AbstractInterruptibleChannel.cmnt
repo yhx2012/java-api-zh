@@ -1,0 +1,86 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.spi.AbstractInterruptibleChannel extends java.lang.Object implements java.nio.channels.Channel, java.nio.channels.InterruptibleChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可中断通道的基本实现类。
+
+<p> 此类封装了实现通道异步关闭和中断所需的低级别机制。在调用可能无限期阻塞的 I/O 操作之前和之后，具体的通道类必须分别调用 {@link #begin begin} 和 {@link #end end} 方法。为了确保始终能够调用 {@link #end end} 方法，应该在 <tt>try</tt>&nbsp;...&nbsp;<tt>finally</tt> 块中使用这些方法：<a name="be">
+
+ <blockquote><pre>
+ boolean completed = false;
+ try {
+     begin();
+     completed = ...;    // Perform blocking I/O operation
+return ...;         // Return result
+ } finally {
+     end(completed);
+ }</pre></blockquote>
+
+<p> {@link #end end} 方法的 <tt>completed</tt> 参数告知 I/O 操作实际是否已完成，也就是说它是否有任何对调用者可见的效果。例如，在读取字节的操作中，当且仅当确实将某些字节传输到调用者的目标缓冲区时此参数才应该为 <tt>true</tt>。
+
+<p> 具体的通道类还必须实现 {@link #implCloseChannel implCloseChannel} 方法，其方式为：如果调用此方法的同时，另一个线程阻塞在该通道上的本机 I/O 操作中，则该操作将立即返回，要么抛出异常，要么正常返回。如果某个线程被中断，或者异步地关闭了阻塞线程所处的通道，则该通道的 {@link #end end} 方法会抛出相应的异常。
+
+<p> 此类执行实现 {@link java.nio.channels.Channel} 规范所需的同步。{@link #implCloseChannel implCloseChannel} 方法的实现不必与其他可能试图关闭通道的线程同步。</p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.15, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.spi.AbstractInterruptibleChannel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.nio.channels.spi.AbstractInterruptibleChannel.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此通道。
+
+<p> 如果已关闭该通道，则此方法立即返回。否则它会将该通道标记为已关闭，然后调用 {@link #implCloseChannel implCloseChannel} 方法以完成关闭操作。  </p>
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.nio.channels.spi.AbstractInterruptibleChannel.implCloseChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此通道。
+
+<p> 为了实际关闭此通道，由 {@link #close close} 方法调用此方法。仅在此通道尚未关闭时才能调用此方法，并且只能调用一次。
+
+<p> 此方法的实现必须安排阻塞于此通道上 I/O 操作中的所有其他线程立即返回，要么抛出异常，要么正常返回。
+ </p>
+
+@throws IOException 如果关闭通道的同时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractInterruptibleChannel.begin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记可能无限期阻塞的 I/O 操作的开始。
+
+<p> 为了实现此通道的异步关闭和中断，应该使用<a href="#be">上面</a>所示的 <tt>try</tt>&nbsp;...&nbsp;<tt>finally</tt> 块先后调用此方法和 {@link #end end} 方法。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractInterruptibleChannel.end(boolean completed) throws java.nio.channels.AsynchronousCloseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记可能无限期阻塞的 I/O 操作的结尾。
+
+<p> 为了实现此通道的异步关闭和中断，应该使用<a href="#be">上面</a>所示的 <tt>try</tt>&#xA0;...&#xA0;<tt>finally</tt> 块先后调用此方法和 {@link #begin begin} 方法。</p>
+
+@param completed 当且仅当 I/O 操作成功完成（也就是说该操作产生对其调用者可见的效果）时才为 <tt>true</tt>
+
+@throws AsynchronousCloseException 如果已经异步地关闭了通道
+
+@throws ClosedByInterruptException 如果已中断了阻塞在 I/O 操作中的线程
+
+<!-- END DATA -->

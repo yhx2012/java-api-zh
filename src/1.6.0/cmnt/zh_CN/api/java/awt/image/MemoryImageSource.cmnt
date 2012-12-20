@@ -1,0 +1,289 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.MemoryImageSource extends java.lang.Object implements java.awt.image.ImageProducer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是 ImageProducer 接口的一个实现，该接口使用一个数组为 Image 生成像素值。下面的示例计算了一幅 100x100 的图像，表示沿 X 轴从黑色渐变到蓝色，沿 Y 轴从黑色渐变到红色：
+ <pre>
+ 
+	int w = 100;
+	int h = 100;
+	int pix[] = new int[w * h];
+	int index = 0;
+	for (int y = 0; y &lt; h; y++) {
+	    int red = (y * 255) / (h - 1);
+	    for (int x = 0; x &lt; w; x++) {
+		int blue = (x * 255) / (w - 1);
+		pix[index++] = (255 &lt;&lt; 24) | (red &lt;&lt; 16) | blue;
+	    }
+	}
+	Image img = createImage(new MemoryImageSource(w, h, pix, 0, w));
+ 
+ </pre>
+MemoryImageSource 还能够管理随时间的推移而变化的内存图像，以实现动画或自定义呈现。下面的示例显示了如何设置动画源并通知数据的改变（改编自 Garth Dickie 的 MemoryAnimationSourceDemo）：
+ <pre>
+
+	int pixels[];
+	MemoryImageSource source;
+
+	public void init() {
+	    int width = 50;
+	    int height = 50;
+	    int size = width * height;
+	    pixels = new int[size];
+
+	    int value = getBackground().getRGB();
+	    for (int i = 0; i &lt; size; i++) {
+		pixels[i] = value;
+	    }
+
+	    source = new MemoryImageSource(width, height, pixels, 0, width);
+	    source.setAnimated(true);
+	    image = createImage(source);
+	}
+
+	public void run() {
+	    Thread me = Thread.currentThread( );
+	    me.setPriority(Thread.MIN_PRIORITY);
+
+	    while (true) {
+		try {
+		    thread.sleep(10);
+		} catch( InterruptedException e ) {
+		    return;
+		}
+
+		// Modify the values in the pixels array at (x, y, w, h)
+
+		// Send the new data to the interested ImageConsumers
+		source.newPixels(x, y, w, h);
+	    }
+	}
+
+ </pre>
+
+@see ImageProducer
+
+@version	1.33 07/16/04
+@author 	Jim Graham
+@author	受 Garth Dickie 所编写的 MemoryAnimationSource 类所启发的动画功能
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, ColorModel cm, byte[] pix, int off, int scan)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用 byte 数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度
+@param cm 指定的 <code>ColorModel</code>
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@see java.awt.Component#createImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, ColorModel cm, byte[] pix, int off, int scan, java.util.Hashtable<?, ?> props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用 byte 数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度
+@param cm 指定的 <code>ColorModel</code>
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@param props <code>ImageProducer</code> 用于处理图像的属性列表
+@see java.awt.Component#createImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, ColorModel cm, int[] pix, int off, int scan)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用整数数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度
+@param cm 指定的 <code>ColorModel</code>
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@see java.awt.Component#createImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, ColorModel cm, int[] pix, int off, int scan, java.util.Hashtable<?, ?> props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用整数数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度
+@param cm 指定的 <code>ColorModel</code>
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@param props <code>ImageProducer</code> 用于处理图像的属性列表
+@see java.awt.Component#createImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, int[] pix, int off, int scan)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用默认 RGB ColorModel 中的整数数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度 
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@see java.awt.Component#createImage
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MemoryImageSource(int w, int h, int[] pix, int off, int scan, java.util.Hashtable<?, ?> props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个使用默认 RGB ColorModel 中的整数数组为 Image 对象生成数据的 ImageProducer 对象。
+@param w 像素矩形的宽度
+@param h 像素矩形的高度
+@param pix 一个像素数组
+@param off 数组中存储首个像素的偏移量
+@param scan 数组中一行像素到下一行像素之间的距离
+@param props <code>ImageProducer</code> 用于处理图像的属性列表
+@see java.awt.Component#createImage
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.addConsumer(ImageConsumer ic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 ImageConsumer 添加到对此图像数据感兴趣的使用者列表。
+@param ic 指定的 <code>ImageConsumer</code>
+@throws NullPointerException 如果指定的 <code>ImageConsumer</code> 为 null
+@see ImageConsumer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.awt.image.MemoryImageSource.isConsumer(ImageConsumer ic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定某个 ImageConsumer 目前是否处于对此图像数据感兴趣的使用者列表中。
+@param ic 指定的 <code>ImageConsumer</code>
+@return 如果该 <code>ImageConsumer</code> 处于列表中，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see ImageConsumer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.removeConsumer(ImageConsumer ic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从对此图像数据感兴趣的使用者列表中移除 ImageConsumer。
+@param ic 指定的 <code>ImageConsumer</code>
+@see ImageConsumer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MemoryImageSource.startProduction(ImageConsumer ic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 ImageConsumer 添加到对此图像数据感兴趣的使用者列表中，并立即开始通过 ImageConsumer 接口传递图像数据。
+@param ic 通过 ImageConsumer 接口的指定 <code>ImageConsumer</code> 图像数据。
+@see ImageConsumer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MemoryImageSource.requestTopDownLeftRightResend(ImageConsumer ic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求给定的 ImageConsumer 再次按从上到下、从左到右的顺序传递图像数据。
+@param ic 指定的 <code>ImageConsumer</code>
+@see ImageConsumer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.setAnimated(boolean animated)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 animated 参数将此内存图像更改为多帧动画或单帧静态图像。
+<p>应该在构造 MemoryImageSource 后和使用它创建图像前立即调用此方法，以确保所有的 ImageConsumer 都将接收正确的多帧数据。如果在设置此标志前将一个 ImageConsumer 添加到此 ImageProducer 中，则该 ImageConsumer 将只能看到在它连接时可用的一个像素数据快照。
+@param animated 如果该图像是一个多帧动画，则为 <code>true</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.setFullBufferUpdates(boolean fullbuffers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定在像素缓冲区发生变化时，是否总是通过发送像素的完整缓冲区来更新此动画内存图像。如果未通过 setAnimated() 方法打开 animation 标志，则忽略此标志。
+<p>应该在构造 MemoryImageSource 后和使用它创建图像前立即调用此方法，以确保所有的 ImageConsumer 都将接收正确的像素传递提示。
+@param fullbuffers 如果总是应该发送完整的像素缓冲区，则为 <code>true</code> 
+@see #setAnimated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MemoryImageSource.newPixels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将全部的新像素缓冲区发送到所有目前对此图像数据感兴趣的 ImageConsumer，并通知这些 ImageConsumer 一个动画帧已完成。仅在通过 setAnimated() 方法打开 animation 标志时，此方法才有效。
+@see #newPixels(int, int, int, int, boolean)
+@see ImageConsumer
+@see #setAnimated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.newPixels(int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将像素缓冲区的矩形区域发送到所有目前对此图像数据感兴趣的 ImageConsumer，并通知这些 ImageConsumer 一个动画帧已完成。仅在通过 setAnimated() 方法打开 animation 标志时，此方法才有效。如果已使用 setFullBufferUpdates() 方法打开了全部缓冲区更新标志，则将忽略矩形参数并且始终发送整个缓冲区。
+@param x 要发送的像素矩形左上角的 x 坐标
+@param y 要发送的像素矩形左上角的 y 坐标
+@param w 要发送的像素矩形的宽度
+@param h 要发送的像素矩形的高度
+@see #newPixels(int, int, int, int, boolean)
+@see ImageConsumer
+@see #setAnimated
+@see #setFullBufferUpdates
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.newPixels(int x, int y, int w, int h, boolean framenotify)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将像素缓冲区的矩形区域发送到所有目前对此图像数据感兴趣的 ImageConsumer。如果 framenotify 参数为 true，则通知使用者一幅动画帧已完成。仅在通过 setAnimated() 方法打开 animation 标志时，此方法才有效。如果已使用 setFullBufferUpdates() 方法打开了全部缓冲区更新标志，则将忽略矩形参数并且始终发送整个缓冲区。
+@param x 要发送的像素矩形左上角的 x 坐标
+@param y 要发送的像素矩形左上角的 y 坐标
+@param w 要发送的像素矩形的宽度
+@param h 要发送的像素矩形的高度
+@param framenotify 如果应该向使用者发送 {@link ImageConsumer#SINGLEFRAMEDONE SINGLEFRAMEDONE} 通知，则为 <code>true</code>
+@see ImageConsumer
+@see #setAnimated
+@see #setFullBufferUpdates
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.newPixels(byte[] newpix, ColorModel newmodel, int offset, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+改用一个新的 byte 数组以保存此图像的像素。如果已通过 setAnimated() 方法打开了 animation 标志，则立即将新的像素传递到所有目前对此图像数据感兴趣的 ImageConsumer。
+@param newpix 新的像素数组
+@param newmodel 指定的 <code>ColorModel</code>
+@param offset 数组中的偏移量
+@param scansize 数组中一行像素到下一行像素之间的距离
+@see #newPixels(int, int, int, int, boolean)
+@see #setAnimated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.MemoryImageSource.newPixels(int[] newpix, ColorModel newmodel, int offset, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+改用一个新的 int 数组以保存此图像的像素。如果已通过 setAnimated() 方法打开了 animation 标志，则立即将新的像素传递到所有目前对此图像数据感兴趣的 ImageConsumer。
+@param newpix 新的像素数组
+@param newmodel 指定的 <code>ColorModel</code>
+@param offset 数组中的偏移量
+@param scansize 数组中一行像素到下一行像素之间的距离
+@see #newPixels(int, int, int, int, boolean)
+@see #setAnimated
+
+<!-- END DATA -->

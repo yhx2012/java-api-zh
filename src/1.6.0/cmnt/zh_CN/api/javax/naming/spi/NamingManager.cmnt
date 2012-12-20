@@ -1,0 +1,199 @@
+<!-- BEGIN KEY -->
+public class javax.naming.spi.NamingManager extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类包含一些方法来创建上下文对象以及通过命名或目录服务中的信息引用的对象。
+<p>
+此类无法被实例化。它只有静态方法。
+<p>
+用于此类文档中的 URL 是指通过 RFC 1738 及其相关的 RFC 定义的 URL 字符串。它是符合其中所述语法的任何字符串，在 java.net.URL 类或 Web 浏览器中未必总能获得相应的支持。 
+<p>
+将 NamingManager 用于多个线程的并发访问是安全的。
+<p>
+除非另有说明，否则传递给任何方法的 <tt>Name</tt> 或环境参数都归调用者所有。该实现不会修改对象或保持对该对象的引用，尽管可能保持对其副本的引用。
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.22 05/11/17
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.spi.NamingManager.CPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保存环境属性名称的常量，<tt>getContinuationContext()</tt> 将其 <tt>CannotProceedException</tt> 参数的值保存在该环境属性中。此属性由连续上下文继承，并且该上下文的服务提供者可以使用它来检查异常的字段。
+<p>
+此常量的值是 &quot;java.naming.spi.CannotProceedException&quot;。
+
+@see #getContinuationContext
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void javax.naming.spi.NamingManager.setObjectFactoryBuilder(ObjectFactoryBuilder builder) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ObjectFactoryBuilder 确定尝试加载对象工厂时使用的策略。有关默认策略的描述，请参见 getObjectInstance() 和类 ObjectFactory。setObjectFactoryBuilder() 通过安装 ObjectFactoryBuilder 重写此默认策略。后续对象工厂将使用安装的生成器加载和创建。
+<p>
+生成器只有在允许执行线程这样做（通过安全管理器的 checkSetFactory() 方法）时才能被安装。一旦安装了生成器，就不能再替换它。
+<p> 
+@param builder 要安装的工厂生成器。如果为 null，则不安装任何生成器。
+@exception SecurityException 由于安全原因而无法安装生成器。
+@exception NamingException 由于与安全无关的原因而无法安装生成器。
+@exception  IllegalStateException  如果已经安装了一个工厂。
+@see #getObjectInstance
+@see ObjectFactory
+@see ObjectFactoryBuilder
+@see java.lang.SecurityManager#checkSetFactory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.naming.spi.NamingManager.getObjectInstance(Object refInfo, Name name, Context nameCtx, java.util.Hashtable<?, ?> environment) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定对象和环境创建一个对象实例。
+ <p>
+如果已经安装了一个对象工厂生成器，则使用它来创建用于创建对象的工厂。否则使用以下规则来创建该对象：
+<ol>
+<li>如果 <code>refInfo</code> 是一个包含工厂类名称的 <code>Reference</code> 或 <code>Referenceable</code>，则使用指定的工厂来创建该对象。如果无法创建工厂，则返回 <code>refInfo</code>。从 JDK 1.1 开始，如果必须从引用中指定的位置加载工厂类，则必须已经安装 <tt>SecurityManager</tt>，否则工厂创建将失败。如果在创建工厂时遇到异常，则将该异常传递到调用者。
+<li>如果 <tt>refInfo</tt> 是一个不带工厂类名称的 <tt>Reference</tt> 或 <tt>Referenceable</tt>，并且该地址或这些地址是地址类型为 &quot;URL&quot; 的 <tt>StringRefAddr</tt>，则尝试使用对应于每个 URL 方案 id 的 URL 上下文工厂来创建该对象（参见 <tt>getURLContext()</tt>）。如果失败，则继续下一个步骤。
+<li> 使用环境的 <tt>Context.OBJECT_FACTORIES</tt> 属性和与 <tt>nameCtx</tt> 关联的提供者资源文件的 <tt>Context.OBJECT_FACTORIES</tt> 属性中指定的对象工厂，并使用原来的顺序。此属性的值是按顺序尝试的以冒号分隔的工厂类名称列表，使用的名称是第一个成功创建对象的名称。如果没有加载任何工厂，则返回 <code>refInfo</code>。如果在创建对象时遇到异常，则将该异常传递到调用者。
+</ol>
+<p>
+实现 <tt>DirContext</tt> 接口的服务提供者应该使用 <tt>DirectoryManager.getObjectInstance()</tt> 而不是此方法。只实现 <tt>Context</tt> 接口的服务提供者应该使用此方法。
+ <p>
+注意，对象工厂（实现 ObjectFactory 接口的对象）必须是公共的，并且必须有一个不接受任何参数的公共构造方法。
+ <p>
+可以有选择地使用 <code>name</code> 和 <code>nameCtx</code> 参数来指定将创建的对象的名称。<code>name</code> 是该对象相对于上下文 <code>nameCtx</code> 的名称。此信息对于对象工厂或对象实现可能很有用。如果有几个可以从中指定对象的可能上下文（通常会是这种情况），则由调用者决定选择哪一个。根据经验，应选择&ldquo;最深的&rdquo;可用上下文。如果 <code>nameCtx</code> 为 null，则 <code>name</code> 相对于默认初始上下文。如果没有名称将被指定，则 <code>name</code> 参数应该为 null。
+
+@param refInfo 将为之创建对象的对象（可能为 null）。
+@param name 此对象的相对于 <code>nameCtx</code> 的名称。指定名称是可选操作；如果忽略名称，则 <code>name</code> 应该为 null。
+@param nameCtx 一个上下文，<code>name</code> 参数是相对于该上下文指定的。如果为 null，则 <code>name</code> 相对于默认初始上下文。
+@param environment 将在创建对象和对象工厂时使用的环境（可能为 null）。
+@return 使用 <code>refInfo</code> 创建的对象；如果无法使用上述算法创建对象，则返回 <code>refInfo</code>。
+@exception NamingException 如果在试图获得 URL 上下文时遇到命名异常，或者受访问的工厂之一抛出 NamingException。
+@exception Exception 如果受访问的工厂之一抛出异常，或者加载和实例化工厂和对象类时遇到错误。工厂只有在不希望试图使用其他工厂创建对象时才抛出异常。请参见 ObjectFactory.getObjectInstance()。
+@see #getURLContext
+@see ObjectFactory
+@see ObjectFactory#getObjectInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.naming.Context javax.naming.spi.NamingManager.getURLContext(String scheme, java.util.Hashtable<?, ?> environment) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定的 URL 方案 id 创建一个上下文。
+ <p>
+得到的上下文用于解析 <code>scheme</code> 方案的 URL。得到的上下文没有绑定到特定 URL。它能够使用指定方案处理任意 URL。  
+<p>
+创建所得上下文的工厂的类名称包含命名约定<i>方案 id</i> URLContextFactory（例如，用于 &quot;ftp&quot; 方案 id 的 &quot;ftpURLContextFactory&quot;），所在的包指定如下。<tt>Context.URL_PKG_PREFIXES</tt> 环境属性（可能包含从 applet 参数、系统属性或应用程序资源文件中获得的值）包含以冒号分隔的包前缀列表。按指定的顺序尝试该属性中的每个包前缀来加载工厂类。默认包前缀是 &quot;com.sun.jndi.url&quot;（如果指定的包前缀都无效，则尝试使用此默认前缀）。完整的包名称是使用包前缀构造的，并与方案 id 连接在一起。
+<p>
+例如，如果方案 id 为 &quot;ldap&quot;，而 <tt>Context.URL_PKG_PREFIXES</tt> 属性包含 &quot;com.widget:com.wiz.jndi&quot;，则命名管理器将尝试加载以下类，直到成功实例化其中的一个：
+<ul>
+ <li>com.widget.ldap.ldapURLContextFactory
+	<li>com.wiz.jndi.ldap.ldapURLContextFactory
+	<li>com.sun.jndi.url.ldap.ldapURLContextFactory
+</ul>
+如果没有包前缀有效，则返回 null。
+<p>
+如果某一工厂被实例化，则使用以下参数调用该工厂来产生结果上下文。
+ <p>
+ <code>factory.getObjectInstance(null, environment);</code>
+ <p>
+例如，按上述方式对 LDAP URL 上下文工厂调用 getObjectInstance() 将返回一个可以解析 LDAP url（例如 &quot;ldap://ldap.wiz.com/o=wiz,c=us&quot;、&quot;ldap://ldap.umich.edu/o=umich,c=us&quot; 等等）的上下文。
+<p>
+注意，对象工厂（实现 ObjectFactory 接口的对象）必须是公共的，并且必须有一个不接受任何参数的公共构造方法。
+
+@param scheme	上下文支持的 URL 的非 null 方案 id。
+@param environment 将在创建对象和对象工厂时使用的环境属性（可能为 null）。
+@return 使用方案 id <code>scheme</code> 解析 URL 的上下文；如果没有找到用于创建该上下文的工厂，则返回 <code>null</code>。
+@exception NamingException 如果在创建上下文时发生命名异常。
+@see #getObjectInstance
+@see ObjectFactory#getObjectInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.naming.Context javax.naming.spi.NamingManager.getInitialContext(java.util.Hashtable<?, ?> env) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定环境属性创建一个初始上下文工厂。 
+<p>
+如果已经安装 InitialContextFactoryBuilder，则使用它来创建用于创建该初始上下文的工厂。否则使用 <tt>Context.INITIAL_CONTEXT_FACTORY</tt> 环境属性中指定的类。注意，初始上下文工厂（实现 InitialContextFactory 接口的对象）必须是公共的，并且必须有一个不接受任何参数的公共构造方法。
+
+@param env 创建上下文时要使用的环境属性（可能为 null）。
+@return 非 null 的初始上下文。
+@exception NoInitialContextException 如果没有找到 <tt>Context.INITIAL_CONTEXT_FACTORY</tt> 属性，或者指定了一个不存在的类或无法实例化的类，抑或因为其他一些原因而无法创建初始上下文。
+@exception NamingException 如果遇到其他命名异常。
+@see javax.naming.InitialContext
+@see javax.naming.directory.InitialDirContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void javax.naming.spi.NamingManager.setInitialContextFactoryBuilder(InitialContextFactoryBuilder builder) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 InitialContextFactory 生成器设置为生成器。
+
+<p>
+生成器只有在安全管理器允许执行线程这样做时才能被安装。一旦安装了生成器，就不能再替换它。
+@param builder 要安装的初始上下文工厂生成器。如果为 null，则不设置任何生成器。
+@exception SecurityException 由于安全原因而无法安装生成器。
+@exception NamingException 由于与安全无关的原因而无法安装生成器。
+@exception IllegalStateException 如果以前已经安装了生成器。
+@see #hasInitialContextFactoryBuilder
+@see java.lang.SecurityManager#checkSetFactory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.naming.spi.NamingManager.hasInitialContextFactoryBuilder()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否已经设置了初始上下文工厂生成器。
+@return 如果已经设置了初始上下文工厂生成器，则返回 true；否则返回 false。
+@see #setInitialContextFactoryBuilder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.naming.Context javax.naming.spi.NamingManager.getContinuationContext(CannotProceedException cpe) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个将继续上下文操作的上下文。
+<p>
+当对跨多个名称空间的名称执行某一操作时，取自某个命名系统的上下文可能需要将该操作传递给下一个命名系统。为做到这一点，上下文实现首先构造一个包含指出该操作已进行程度的信息的 <code>CannotProceedException</code>。然后通过调用 <code>getContinuationContext</code> 从 JNDI 中获取连续上下文。然后，该上下文实现应该通过对连续上下文调用相同的操作，使用尚未解析的剩余名称重新开始该上下文操作。
+<p>
+在使用 <tt>cpe</tt> 参数前，此方法通过将 <a href="#CPE"><tt>CPE</tt></a> 属性的值设置为 <tt>cpe</tt> 来更新与该对象关联的环境。此属性将由连续上下文继承，并且该上下文的服务提供者可以使用它来检查此异常的字段。
+
+@param cpe 触发此连续的非 null 异常。
+@return 用于继续该操作的非 null Context 对象。
+@exception NamingException 如果发生命名异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.naming.spi.NamingManager.getStateToBind(Object obj, Name name, Context nameCtx, java.util.Hashtable<?, ?> environment) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索用于绑定的对象的状态。
+ <p>
+实现 <tt>DirContext</tt> 接口的服务提供者应该使用 <tt>DirectoryManager.getStateToBind()</tt> 而不是此方法。只实现 <tt>Context</tt> 接口的服务提供者应该使用此方法。
+<p>
+此方法使用取自环境属性的 <tt>Context.STATE_FACTORIES</tt> 属性和与 <tt>nameCtx</tt> 有关的提供者资源文件的 <tt>Context.STATE_FACTORIES</tt> 属性中的指定状态工厂，并使用原来的顺序。此属性的值是按顺序尝试的以冒号分隔的工厂类名称列表，使用的名称是第一个成功返回对象状态的名称。如果以这种方式没有检索到对象状态，则返回该对象本身。如果在检索状态时遇到异常，则将该异常传递到调用者。
+ <p>
+注意，状态工厂（实现 StateFactory 接口的对象）必须是公共的，并且必须有一个不接受任何参数的公共构造方法。
+ <p>
+可以有选择地使用 <code>name</code> 和 <code>nameCtx</code> 参数来指定要创建的对象的名称。有关详细信息，请参阅 {@link ObjectFactory#getObjectInstance ObjectFactory.getObjectInstance()} 中&ldquo;名称和上下文参数&rdquo;的描述。
+ <p>
+此方法可以返回一个 <tt>Referenceable</tt> 对象。获得此对象的服务提供者可以选择直接存储该对象，或者提取（使用 <tt>Referenceable.getReference()</tt>）并存储其引用。
+
+@param obj 将为其获得要绑定的状态的非 null 对象。
+@param name 此对象相对于 <code>nameCtx</code> 的名称，如果没有指定名称，则该参数为 null。
+@param nameCtx 一个上下文，<code>name</code> 参数是相对于该上下文指定的，如果 <code>name</code> 相对于默认初始上下文，则该参数为 null。
+@param environment 将在创建状态工厂和对象状态时使用的环境（可能为 null）。
+@return 表示用于绑定的 <tt>obj</tt> 状态的非 null 对象。它可以是该对象 (<tt>obj</tt>) 本身。
+@exception NamingException 如果受访问的工厂之一抛出异常，或者加载和实例化工厂和对象类时遇到错误。工厂只有在不希望试图使用其他工厂创建对象时才抛出异常。请参见 <tt>StateFactory.getStateToBind()</tt>。
+@see StateFactory
+@see StateFactory#getStateToBind
+@see DirectoryManager#getStateToBind
+@since 1.3
+
+<!-- END DATA -->

@@ -1,0 +1,173 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.soap.SOAPHeader extends javax.xml.soap.SOAPElement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+SOAP 头元素的表示形式。SOAP 头元素由能影响消息提供者处理特定于应用程序内容的方式的 XML 数据组成。例如，事务语义、验证信息等，都可以被指定为 <code>SOAPHeader</code> 对象的内容。
+ <P>
+<code>SOAPEnvelope</code> 对象默认包含一个空 <code>SOAPHeader</code> 对象。如果不需要 <code>SOAPHeader</code> 对象（可选），则可以使用以下代码行检索和删除该对象。变量 <i>se</i> 是一个 <code>SOAPEnvelope</code> 对象。
+ <PRE>
+se.getHeader().detachNode();
+ </PRE>
+
+<code>SOAPHeader</code> 对象是使用 <code>SOAPEnvelope</code> 的 <code>addHeader</code> 方法创建的。只有在移除现有的头之后，才能调用此方法创建新头并将其添加到信封中。
+
+ <PRE>
+se.getHeader().detachNode();
+SOAPHeader sh = se.addHeader();
+ </PRE>
+ <P>
+<code>SOAPHeader</code> 对象只能将 <code>SOAPHeaderElement</code> 对象作为其直接子级。方法 <code>addHeaderElement</code> 创建一个新 <code>HeaderElement</code> 对象并将其添加到 <code>SOAPHeader</code> 对象。在以下代码行中，方法 <code>addHeaderElement</code> 的参数是一个 <code>Name</code> 对象，该对象是新 <code>HeaderElement</code> 对象的名称。
+ <PRE>
+SOAPHeaderElement shElement = sh.addHeaderElement(name);
+ </PRE>
+
+@see SOAPHeaderElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addHeaderElement(Name name) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定名称初始化的新的 <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。
+
+@param name 带有新 <code>SOAPHeaderElement</code> 对象名称的 <code>Name</code> 对象
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误
+@see SOAPHeader#addHeaderElement(javax.xml.namespace.QName)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addHeaderElement(QName qname) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定 qname 初始化的新的 <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。
+
+@param qname 带有新 <code>SOAPHeaderElement</code> 对象 qname 的 <code>QName</code> 对象
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误
+@see SOAPHeader#addHeaderElement(Name)
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPHeader.examineMustUnderstandHeaderElements(String actor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可在此 <code>SOAPHeader</code> 对象中所有符合以下条件的 <code>SOAPHeaderElement</code> 对象上进行迭代的 <code>Iterator</code>：具有指定的 <i>actor</i> 以及一个值等于 <code>true</code> 的 MustUnderstand 属性。
+ <p>
+在 SOAP 1.2 中，<i>env:actor</i> 属性应替换为 <i>env:role</i> 属性，但实质上语义是相同的。
+
+@param actor 一个 <code>String</code>，给出要搜索的 <code>actor</code>/<code>role</code> 的 URI
+@return 一个 <code>Iterator</code> 对象，可在所有符合以下条件的 <code>SOAPHeaderElement</code> 对象上进行迭代：包含指定的 <code>actor</code> / <code>role</code> 并标记为 MustUnderstand
+@see #examineHeaderElements
+@see #extractHeaderElements
+@see SOAPConstants#URI_SOAP_ACTOR_NEXT
+
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPHeader.examineHeaderElements(String actor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可在此 <code>SOAPHeader</code> 对象中具有指定的 <i>actor</i> 的 <code>SOAPHeaderElement</code> 对象上进行迭代的 <code>Iterator</code>。<i>actor</i> 是一个全局属性，指示消息到达其最终接收者之前应对该消息进行处理的中间参与方。actor 接收并处理消息，然后将该消息发送到下一个 actor。默认 actor 是消息的最终预定接收方，所以如果 <code>SOAPHeader</code> 对象中没有包括 actor 属性，那么 message 将与消息正文一起发送到最终接收者。
+ <p>
+在 SOAP 1.2 中，<i>env:actor</i> 属性应替换为 <i>env:role</i> 属性，但实质上语义是相同的。
+
+@param actor 一个 <code>String</code>，给出要搜索的 <code>actor</code> / <code>role</code> 的 URI
+@return 一个 <code>Iterator</code> 对象，可在所有包含指定的 <code>actor</code> / <code>role</code> 的 <code>SOAPHeaderElement</code> 对象上进行迭代
+@see #extractHeaderElements
+@see SOAPConstants#URI_SOAP_ACTOR_NEXT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPHeader.extractHeaderElements(String actor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可在此 <code>SOAPHeader</code> 对象中所有具有指定 <i>actor</i> 的 <code>SOAPHeaderElement</code> 对象上进行迭代的 <code>Iterator</code>，并将这些 SOAPHeaderElement 对象从此 <code>SOAPHeader</code> 对象中分离出来。
+ <P>
+此方法允许 actor 处理并移除适用于它的 <code>SOAPHeader</code> 对象部分，然后将该消息发送到下一个 actor。
+ <p>
+在 SOAP 1.2 中，<i>env:actor</i> 属性应替换为 <i>env:role</i> 属性，但实质上语义是相同的。
+
+@param actor 一个 <code>String</code>，给出要搜索的 <code>actor</code> / <code>role</code> 的 URI
+@return 一个 <code>Iterator</code> 对象，可在所有包含指定 <code>actor</code> / <code>role</code> 的 <code>SOAPHeaderElement</code> 对象上进行迭代
+
+@see #examineHeaderElements
+@see SOAPConstants#URI_SOAP_ACTOR_NEXT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addNotUnderstoodHeaderElement(QName name) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定名称初始化的新的 NotUnderstood <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。只有 SOAP 1.2 支持此操作。
+
+@param name 带有不可理解的 <code>SOAPHeaderElement</code> 对象名称的 <code>QName</code> 对象。
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误。
+@exception UnsupportedOperationException 如果这是一个 SOAP 1.1 Header。
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addUpgradeHeaderElement(java.util.Iterator supportedSOAPURIs) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定的 SOAP URI 支持列表初始化的新的 Upgrade <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。SOAP 1.1 头和 SOAP 1.2 头上都支持此操作。
+
+@param supportedSOAPURIs 带有受支持 SOAP 版本 URI 的 <code>Iterator</code> 对象。
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误。
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addUpgradeHeaderElement(java.lang.String[] supportedSoapUris) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定 SOAP URI 支持数组初始化的新的 Upgrade <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。SOAP 1.1 头和 SOAP 1.2 头上都支持此操作。
+
+@param  supportedSoapUris 受支持 SOAP 版本的 URI 数组
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误。
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeaderElement javax.xml.soap.SOAPHeader.addUpgradeHeaderElement(String supportedSoapUri) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定受支持 SOAP URI 初始化的新的 Upgrade <code>SOAPHeaderElement</code> 对象，并将其添加到此 <code>SOAPHeader</code> 对象。SOAP 1.1 头和 SOAP 1.2 头上都支持此操作。
+
+@param supportedSoapUri 受支持 SOAP 版本的 URI。
+@return 插入此 <code>SOAPHeader</code> 对象的新的 <code>SOAPHeaderElement</code> 对象
+@exception SOAPException 如果发生 SOAP 错误。
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPHeader.examineAllHeaderElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可在此 <code>SOAPHeader</code> 对象中所有 <code>SOAPHeaderElement</code> 对象上进行迭代的 <code>Iterator</code>。
+
+@return 一个 <code>Iterator</code> 对象，可在此 <code>SOAPHeader</code> 对象包含的所有 <code>SOAPHeaderElement</code> 对象上进行迭代
+@see #extractAllHeaderElements
+
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPHeader.extractAllHeaderElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可在此 <code>SOAPHeader</code> 对象中所有 <code>SOAPHeaderElement</code> 对象上进行迭代的 <code>Iterator</code>，并将这些 SOAPHeaderElement 对象从此 <code>SOAPHeader</code> 对象中分离出来。
+
+@return 一个 <code>Iterator</code> 对象，可在此 <code>SOAPHeader</code> 对象包含的所有 <code>SOAPHeaderElement</code> 对象上进行迭代
+
+@see #examineAllHeaderElements
+
+@since SAAJ 1.2
+
+<!-- END DATA -->

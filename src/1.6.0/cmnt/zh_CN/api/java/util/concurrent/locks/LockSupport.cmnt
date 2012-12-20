@@ -1,0 +1,186 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.locks.LockSupport extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来创建锁和其他同步类的基本线程阻塞原语。
+
+<p>此类以及每个使用它的线程与一个许可关联（从 {@link java.util.concurrent.Semaphore Semaphore} 类的意义上说）。如果该许可可用，并且可在进程中使用，则调用 {@code park} 将立即返回；否则<em>可能</em> 阻塞。如果许可尚不可用，则可以调用 {@code unpark} 使其可用。（但与 Semaphore 不同的是，许可不能累积，并且最多只能有一个许可。）
+
+<p>{@code park} 和 {@code unpark} 方法提供了阻塞和解除阻塞线程的有效方法，并且不会遇到导致过时方法 {@code Thread.suspend} 和 {@code Thread.resume} 因为以下目的变得不可用的问题：由于许可的存在，调用 {@code park} 的线程和另一个试图将其 {@code unpark} 的线程之间的竞争将保持活性。此外，如果调用者线程被中断，并且支持超时，则 {@code park} 将返回。{@code park} 方法还可以在其他任何时间&ldquo;毫无理由&rdquo;地返回，因此通常必须在重新检查返回条件的循环里调用此方法。从这个意义上说，{@code park} 是&ldquo;忙碌等待&rdquo;的一种优化，它不会浪费这么多的时间进行自旋，但是必须将它与 {@code unpark} 配对使用才更高效。
+
+<p>三种形式的 {@code park} 还各自支持一个 {@code blocker} 对象参数。此对象在线程受阻塞时被记录，以允许监视工具和诊断工具确定线程受阻塞的原因。（这样的工具可以使用方法 {@link #getBlocker} 访问 blocker。）建议最好使用这些形式，而不是不带此参数的原始形式。在锁实现中提供的作为 {@code blocker} 的普通参数是 {@code this}。
+
+ <p>这些方法被设计用来作为创建高级同步实用工具的工具，对于大多数并发控制应用程序而言，它们本身并不是很有用。{@code park} 方法仅设计用于以下形式的构造：
+ <pre>while (!canProceed()) { ... LockSupport.park(this); }</pre>
+ 在这里，在调用 {@code park} 之前，{@code canProceed} 和其他任何动作都不会锁定或阻塞。因为每个线程只与一个许可关联，{@code park} 的任何中间使用都可能干扰其预期效果。
+
+<p><b>示例用法。</b> 以下是一个先进先出 (first-in-first-out) 非重入锁类的框架。
+<pre>{@code
+ class FIFOMutex {
+   private final AtomicBoolean locked = new AtomicBoolean(false);
+   private final Queue<Thread> waiters
+     = new ConcurrentLinkedQueue<Thread>();
+
+   public void lock() {
+     boolean wasInterrupted = false;
+     Thread current = Thread.currentThread();
+     waiters.add(current);
+
+     // Block while not first in queue or cannot acquire lock
+     while (waiters.peek() != current ||
+            !locked.compareAndSet(false, true)) {
+        LockSupport.park(this);
+        if (Thread.interrupted()) // ignore interrupts while waiting
+          wasInterrupted = true;
+     }
+
+     waiters.remove();
+     if (wasInterrupted)          // reassert interrupt status on exit
+        current.interrupt();
+   }
+
+   public void unlock() {
+     locked.set(false);
+     LockSupport.unpark(waiters.peek());
+   }
+ }}</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.unpark(Thread thread)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定线程的许可尚不可用，则使其可用。如果线程在 {@code park} 上受阻塞，则它将解除其阻塞状态。否则，保证下一次调用 {@code park} 不会受阻塞。如果给定线程尚未启动，则无法保证此操作有任何效果。
+@param thread 要执行 unpark 操作的线程；该参数为 {@code null} 表示此操作没有任何效果。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.park(Object blocker)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了线程调度，在许可可用之前禁用当前线程。
+
+ <p>如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下三种情况之一前，使其处于休眠状态：
+
+ <ul>
+ <li>其他某个线程调用将当前线程作为目标调用 {@link #unpark unpark}；或者
+
+ <li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+
+ <li>该调用不合逻辑地（即毫无理由地）返回。
+ </ul>
+
+ <p>此方法<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定返回时该线程的中断状态。
+
+ @param blocker 导致此线程暂停的同步对象
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.parkNanos(Object blocker, long nanos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 为了线程调度，在许可可用前禁用当前线程，并最多等待指定的等待时间。
+
+ <p>如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下四种情况之一前，使其处于休眠状态：
+
+ <ul>
+ <li>其他某个线程将当前线程作为目标调用 {@link #unpark unpark}；或者
+
+ <li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+
+ <li>已超过指定的等待时间；或者
+
+ <li>该调用不合逻辑地（即毫无理由地）返回。
+ </ul>
+
+ <p>此方法<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定返回时该线程的中断状态或已过的时间。
+
+ @param blocker 导致此线程暂停的同步对象
+ @param nanos 要等待的最大毫秒数
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.parkUntil(Object blocker, long deadline)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 为了线程调度，在指定的时限前禁用当前线程，除非许可可用。
+
+ <p>如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下四种情况之一前，使其处于休眠状态：
+
+ <ul>
+ <li>其他某个线程将当前线程作为目标调用 {@link #unpark unpark}；或者
+
+ <li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+
+ <li>指定时限已过；或者
+
+ <li>该调用不合逻辑地（即毫无理由地）返回。
+ </ul>
+
+ <p>此方法<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定返回时该线程的中断状态或当前时间。
+
+ @param blocker 导致此线程暂停的同步对象
+ @param deadline 要等待的绝对时间，用相对于历元 (Epoch) 的毫秒数值表示
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object java.util.concurrent.locks.LockSupport.getBlocker(Thread t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回提供给最近一次尚未解除阻塞的 park 方法调用的 blocker 对象，如果该调用不受阻塞，则返回 null。返回的值只是一个瞬间快照，即由于未解除阻塞或者在不同的 blocker 对象上受阻而具有的线程。
+
+ @return  blocker
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.park()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了线程调度，禁用当前线程，除非许可可用。
+<p>如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下三种情况之一以前，使其处于休眠状态：
+ <ul>
+<li>其他某个线程将当前线程作为目标调用 {@link #unpark unpark}；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>该调用不合逻辑地（即毫无理由地）返回。
+ </ul>
+<p>此方法并<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定线程返回时的中断状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.parkNanos(long nanos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了线程调度禁用当前线程，最多等待指定的等待时间，除非许可可用。
+<p>如果许可可用，则使用该许可，并且该调用立即返回；否则，为线程调度禁用当前线程，并在发生以下四种情况之一以前，将其处于休眠状态：
+ <ul>
+<li>其他某个线程将当前线程作为目标调用 {@link #unpark unpark}；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>已超过指定的等待时间；或者
+<li>该调用不合逻辑地（即无缘无故地）返回。
+ </ul>
+<p>此方法并<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定线程返回时的中断状态或所用的时间。
+
+@param nanos 要等待的最大毫秒数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.concurrent.locks.LockSupport.parkUntil(long deadline)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了线程调度，在指定的时限前禁用当前线程，除非许可可用。
+<p>如果许可可用，则使用该许可，并且调用立即返回；否则，为线程调度禁用当前线程，并在发生以下四种情况之一以前，将其处于休眠状态：
+ <ul>
+<li>其他某个线程将当前线程作为目标调用 {@link #unpark unpark}；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>指定的最后期限已过；或者
+<li>该调用不合逻辑地（即毫无理由地）返回。
+ </ul>
+<p>此方法并<em>不</em> 报告是哪个线程导致该方法返回。调用者应该重新检查最先导致线程暂停的条件。调用者还可以确定线程返回时的中断状态或当前时间。
+
+@param deadline 要等待的绝对时间，用相对于历元的毫秒数值表示
+
+<!-- END DATA -->

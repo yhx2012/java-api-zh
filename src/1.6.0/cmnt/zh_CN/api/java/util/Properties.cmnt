@@ -1,0 +1,377 @@
+<!-- BEGIN KEY -->
+public class java.util.Properties extends java.util.Hashtable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Properties</code> 类表示了一个持久的属性集。<code>Properties</code> 可保存在流中或从流中加载。属性列表中每个键及其对应值都是一个字符串。
+ <p>
+一个属性列表可包含另一个属性列表作为它的“默认值”；如果未能在原有的属性列表中搜索到属性键，则搜索第二个属性列表。
+ <p>
+因为 <code>Properties</code> 继承于 <code>Hashtable</code>，所以可对 <code>Properties</code> 对象应用 <code>put</code> 和 <code>putAll</code> 方法。但不建议使用这两个方法，因为它们允许调用者插入其键或值不是 <code>String</code> 的项。相反，应该使用 <code>setProperty</code> 方法。如果在“不安全”的 <code>Properties</code> 对象（即包含非 <code>String</code> 的键或值）上调用 <code>store</code> 或 <code>save</code> 方法，则该调用将失败。类似地，如果在“不安全”的 <code>Properties</code> 对象（即包含非 <code>String</code> 的键）上调用 <code>propertyNames</code> 或 <code>list</code> 方法，则该调用将失败。
+
+ <p>
+{@link #load(java.io.Reader) load(Reader)} <tt>/</tt> {@link #store(java.io.Writer, java.lang.String) store(Writer, String)} 方法按下面所指定的、简单的面向行的格式在基于字符的流中加载和存储属性。除了输入/输出流使用 ISO 8859-1 字符编码外，{@link #load(java.io.InputStream) load(InputStream)} <tt>/</tt> {@link #store(java.io.OutputStream, java.lang.String) store(OutputStream, String)} 方法与 load(Reader)/store(Writer, String) 对的工作方式完全相同。可以使用 <a href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.3">Unicode 转义</a>来编写此编码中无法直接表示的字符；转义序列中只允许单个 'u' 字符。可使用 native2ascii 工具对属性文件和其他字符编码进行相互转换。
+
+<p> {@link #loadFromXML(InputStream)} 和 {@link #storeToXML(OutputStream, String, String)} 方法按简单的 XML 格式加载和存储属性。默认使用 UTF-8 字符编码，但如果需要，可以指定某种特定的编码。XML 属性文档具有以下 DOCTYPE 声明：
+
+ <pre>
+ &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+ </pre>
+注意，导入或导出属性时<i>不</i> 访问系统 URI (http://java.sun.com/dtd/properties.dtd)；该系统 URI 仅作为一个唯一标识 DTD 的字符串：
+ <pre>
+    &lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+    &lt;!-- DTD for properties --&gt;
+
+    &lt;!ELEMENT properties ( comment?, entry* ) &gt;
+
+    &lt;!ATTLIST properties version CDATA #FIXED "1.0"&gt;
+
+    &lt;!ELEMENT comment (#PCDATA) &gt;
+
+    &lt;!ELEMENT entry (#PCDATA) &gt;
+
+    &lt;!ATTLIST entry key CDATA #REQUIRED&gt;
+ </pre>
+ 
+@see <a href="../../../technotes/tools/solaris/native2ascii.html">native2ascii tool for Solaris</a>
+@see <a href="../../../technotes/tools/windows/native2ascii.html">native2ascii tool for Windows</a>
+
+<p>此类是线程安全的：多个线程可以共享单个 <tt>Properties</tt> 对象而无需进行外部同步。
+
+@author  Arthur van Hoff
+@author  Michael McCloskey
+@author  Xueming Shen
+@version 1.96, 08/07/06
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Properties java.util.Properties.defaults
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个属性列表，包含属性列表中所有未找到值的键的默认值。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Properties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个无默认值的空属性列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Properties(Properties defaults)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有指定默认值的空属性列表。
+
+@param   defaults   默认值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.util.Properties.setProperty(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <tt>Hashtable</tt> 的方法 <code>put</code>。使用 <tt>getProperty</tt> 方法提供并行性。强制要求为属性的键和值使用字符串。返回值是 <tt>Hashtable</tt> 调用 <code>put</code> 的结果。
+
+@param key 要置于属性列表中的键。
+@param value 对应于 <tt>key</tt> 的值。
+@return     属性列表中指定键的旧值，如果没有值，则为 <code>null</code>。
+@see #getProperty
+@since    1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.load(Reader reader) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按简单的面向行的格式从输入字符流中读取属性列表（键和元素对）。
+ <p>
+根据行来处理属性。有两种行，即<i>自然行</i> 和<i>逻辑行</i>。自然行定义为通过行结束符字符集（<code>\n</code> 或 <code>\r</code> 或 <code>\r\n</code>），或者通过流的结尾来终止的字符行。一个自然行可能是一个空行、注释行，或者保存了全部或部分键-元素对。逻辑行保存了所有键-元素对的数据，可能分散在多个相邻的自然行中，用反斜杠字符 <code>\</code> 转义行结束符序列。注意，不能以此方式扩展注释行；每个内容为注释的自然行必须有其自己的注释指示符，正如下面所描述的。到达流结尾前，将一直从输入中读取各行。
+
+ <p>
+仅包含空白字符的自然行认为是空行并被忽略。注释行以 ASCII 字符 <code>'#'</code> 或 <code>'!'</code> 作为其首个非空白字符；注释行也被忽略并且不将其编码为键-元素信息。除了行结束符，此格式还将空格字符（<code>' '</code>，<code>'\u0020'</code>）、制表符（<code>'\t'</code>，<code>'\u0009'</code>）和换页符（<code>'\f'</code>，<code>'\u000C'</code>）作为空白。
+
+ <p>
+如果一个逻辑行分散在多个自然行中，则转义行结束符序列的反斜杠、行结束符序列和后续行开始处的任何空白，对键或元素的值都没有影响。后面对键和元素解析的讨论（加载时）将假定移除行继续符后，构成键和元素的所有字符都出现在单个自然行中。注意，仅检查行结束符前面的字符，以便决定行结束符是否已转义是<i>不</i> 够的；对于要转义的行结束符，必须有奇数个相邻的反斜杠。由于是从左到右来处理输入内容的，所以行结束符前（或其他位置）非零、偶数 2<i>n</i> 个相邻的反斜杠在转义处理后会被编码成 <i>n</i> 个反斜杠。
+
+ <p>
+键包含行中下列区间内的所有字符：从首个非空白字符开始，直到（但不包括）首个非转义的 <code>'='</code>、 <code>':'</code> 或非行结束符的空白字符。所有这些键终止字符都可能包含在键中，方法是在其前面用反斜杠字符进行转义，例如：<p>
+
+ <code>\:\=</code><p>
+
+将是两字符的键 <code>":="</code>。可以使用 <code>\r</code> 和 <code>\n</code> 转义序列包括行结束符字符。跳过键后面的所有空白字符；如果键后的首个非空白字符是 <code>'='</code> 或 <code>':'</code>，则忽略该字符并且跳过其后的所有空白字符。行中所有剩余的字符都成为关联元素字符串的一部分；如果没有剩余的字符，则该元素为空字符串 <code>&quot;&quot;</code>。一旦标识了组成键和元素的原始字符序列，则如上所述执行转义处理。
+
+ <p>
+作为一个示例，以下三行都指定了键 <code>"Truth"</code> 和关联元素值 <code>"Beauty"</code>：
+ <p>
+ <pre>
+ Truth = Beauty
+	Truth:Beauty
+ Truth			:Beauty
+ </pre>
+另一个示例，以下三行都指定了单个属性：
+ <p>
+ <pre>
+ fruits                           apple, banana, pear, \
+                                  cantaloupe, watermelon, \
+                                  kiwi, mango
+ </pre>
+键是 <code>"fruits"</code>，关联元素是：
+ <p>
+ <pre>"apple, banana, pear, cantaloupe, watermelon, kiwi, mango"</pre>
+注意，在每个 <code>\</code> 的前面出现了一个空格，这样最后的结果中每个逗号的后面将出现一个空格；会将 <code>\</code>、行结束符和后续行中的前导空白字符简单地丢弃，并且<i>不会</i> 用一个或多个其他字符替换它们。
+ <p>
+第三个示例，此行：
+ <p>
+ <pre>cheeses
+ </pre>
+指定键是 <code>"cheeses"</code> 并且关联元素是空字符串 <code>""</code>。<p>
+ <p>
+
+ <a name="unicodeescapes"></a>
+ 以键和元素的形式表示的字符可以使用与字符和字符串字面值所用的类似转义序列表示。（请参阅 <i>Java Language Specification</i> 的 <a
+ href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.3">&sect;3.3 节</a>
+ 和 <a
+ href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.6">&sect;3.10.6</a> 节）。
+
+ 字符和字符串所用的字符转义序列和 Unicode 转义的差别有：
+
+ <ul>
+ <li> 不识别八进制转义。
+
+ <li> 字符序列 <code>\b</code> <i>不</i>表示退格字符。
+
+ <li> 该方法并不将无效转义字符前的反斜杠字符 <code>\</code> 视为错误；只是将反斜杠丢弃。例如，在 Java 字符串中，序列 <code>"\z"</code> 将导致编译时错误。相反，此方法会丢弃该反斜杠。因此，此方法将两字符序列 <code>"\b"</code> 与单字符 <code>'b'</code> 视为等同。
+
+ <li> 转义对于单引号和双引号而言不是必需的；但是根据上面的规则，前面有反斜杠的单引号和双引号字符仍旧分别生成单引号和双引号字符。
+
+ <li> Uniocde 转义序列中只允许单个 'u' 字符。
+
+ </ul>
+ <p>
+ 此方法返回后，指定的流仍保持打开状态。
+
+ @param   reader   输入字符流。
+ @throws  IOException  如果从输入流读取时发生错误。
+ @throws  IllegalArgumentException 如果输入中出现了错误的 Unicode 转义。
+ @since   1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.load(InputStream inStream) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从输入流中读取属性列表（键和元素对）。输入流按 {@link #load(java.io.Reader) load(Reader)} 中所指定的、简单的面向行的格式，并假定使用 ISO 8859-1 字符编码；即每个字节都是 Latin1 字符。对于非 Latin1 的字符和某些特殊字符，可以使用 <a href="http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.3">Unicode 转义</a>以键和元素的形式来表示它们。 
+ <p>
+此方法返回后，指定的流仍保持打开状态。
+
+@param      inStream   输入流。
+@exception  IOException  如果读取输入流时发生错误。
+@throws     IllegalArgumentException 如果输入流包含错误的 Unicode 转义序列。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.save(OutputStream out, String comments)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>store(OutputStream out, String comments)</code> 方法并取消抛出的 IOExceptions。
+
+@deprecated 如果在保存属性列表时发生 I/O 错误，则此方法不抛出 IOException。保存属性列表的首选方法是通过 <code>store(OutputStream out, String comments)</code> 方法或 <code>storeToXML(OutputStream os, String comment)</code> 方法来进行。
+
+@param   out      输出流。
+@param   comments   属性列表的描述。
+@exception  ClassCastException  如果此 <code>Properties</code> 对象包含任意非 <code>String</code> 的键或值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Properties.store(Writer writer, String comments) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以适合使用 {@link #load(java.io.Reader) load(Reader)} 方法的格式，将此 <code>Properties</code> 表中的属性列表（键和元素对）写入输出字符。
+ <p>
+对于取自此 <code>Properties</code> 表默认表（如果有的话）的属性，此方法<i>不</i> 将其写入 out。
+ <p>
+如果 comments 变量非 null，则首先将 ASCII <code>#</code> 字符、注释字符串和一个行分隔符写入输出流。因此，该 <code>comments</code> 可用作一个标识注释。注释中换行 ('\n')、回车 ('\r') 或回车后直接跟着换行，这些字符中的任意一个都由 <code>Writer</code> 生成的行分隔符替换，如果注释中下一个字符不是 <code>#</code> 字符或 <code>!</code> 字符，则在该行分隔符后写出 ASCII <code>#</code>。 
+ <p>
+接下来总是写入一个注释行，该行包括一个 ASCII <code>#</code> 字符、当前的日期和时间（就好像使用 <code>Date</code> 的 <code>toString</code> 方法获取当前时间一样）和一个由 <code>Writer</code> 生成的行分隔符。
+ <p>
+然后将此 <code>Properties</code> 表中的所有项写入 out，一次一行。对于每个项而言，先写入键字符串，然后是一个 ASCII <code>=</code>，最后是关联元素字符串。对于键，所有写入的空白字符前面都有一个 <code>\</code> 字符。对于元素，所有写入的前导空白字符（但是不嵌入或尾随空白字符）前面都有一个 <code>\</code> 字符。所有写入的键和元素字符 <code>#</code>、<code>!</code>、<code>=</code> 和 <code>:</code> 前面都有反斜杠，确保能正确地加载这些字符。
+ <p>
+写入各个项后，刷新输出流。此方法返回后，输出流仍保持打开状态。
+ <p>
+
+ @param   writer      输出字符流 writer。
+ @param   comments   属性列表的描述。
+ @exception  IOException 如果将此属性列表写入指定的输出流时抛出 <tt>IOException</tt>。
+ @exception  ClassCastException  如果此 <code>Properties</code> 对象包含任何不是 <code>String</code> 的键或值。
+ @exception  NullPointerException  如果 <code>writer</code> 为 null。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Properties.store(OutputStream out, String comments) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以适合使用 {@link #load(InputStream) load(InputStream)} 方法加载到 <code>Properties</code> 表中的格式，将此 <code>Properties</code> 表中的属性列表（键和元素对）写入输出流。
+ <p>
+此方法<i>未</i> 编写此 <code>Properties</code> 表默认表的属性（如果有）。
+ <p>
+此方法以 {@link #store(java.io.Writer, java.lang.String) store(Writer)} 中指定的相同格式输出注释、属性键和值，注意以下几点不同：
+ <ul>
+ <li>使用 ISO 8859-1 字符编码写入该流。
+
+ <li>注释中不是 Latin-1 的字符针对其适当的十六进制值 <i>xxxx</i> 以 <code>&#92;u</code><i>xxxx</i> 的形式写入。
+ 
+ <li>属性键或值中小于 <code>&#92;u0020</code> 的字符和大于 <code>&#92;u007E</code> 的字符针对适当的十六进制值 <i>xxxx</i> 以 <code>&#92;u</code><i>xxxx</i> 的形式写入。
+ </ul>
+ <p>
+写入各个项后，刷新输出流。此方法返回后，输出流仍保持打开状态。
+ <p>
+@param   out      输出流。
+@param   comments   属性列表的描述。
+@exception  IOException 如果将此属性列表写入指定的输出流时，抛出 <tt>IOException</tt>。
+@exception  ClassCastException  如果此 <code>Properties</code> 对象包含任意非 <code>String</code> 的键或值。
+@exception NullPointerException 如果 <code>out</code> 为 null。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.loadFromXML(InputStream in) throws java.io.IOException, java.util.InvalidPropertiesFormatException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定输入流中由 XML 文档所表示的所有属性加载到此属性表中。
+
+<p>该 XML 文档必须具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+ </pre>
+而且该文档还必须满足上述属性 DTD 的要求。
+
+<p>此方法返回后，指定的流已关闭。
+
+@param in 从中读取 XML 文档的输入流。
+@throws IOException 如果读取指定的输入流导致 <tt>IOException</tt>。
+@throws InvalidPropertiesFormatException 输入流中的数据没有按要求的文档类型组成有效的 XML 文档。
+@throws NullPointerException 如果 <code>in</code> 为 null。
+@see    #storeToXML(OutputStream, String, String)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.storeToXML(OutputStream os, String comment) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出一个表示此表中包含的所有属性的 XML 文档。
+
+<p> 以 <tt>props.storeToXML(os, comment)</tt> 的形式调用此方法的行为与调用 <tt>props.storeToXML(os, comment, "UTF-8");</tt> 完全相同。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@param comment 属性列表的描述，如果没有所需的注释，则为 <code>null</code>。
+@throws IOException 如果写入指定的输出流导致一个 <tt>IOException</tt>。
+@throws NullPointerException 如果 <code>os</code> 为 null。
+@throws ClassCastException  如果此 <code>Properties</code> 对象包含任何不是 <code>String</code> 的键或值。
+@see    #loadFromXML(InputStream)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Properties.storeToXML(OutputStream os, String comment, String encoding) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的编码发出一个表示此表中包含的所有属性的 XML 文档。
+
+<p>该 XML 文档要具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd"&gt;
+ </pre>
+
+<p>如果指定的注释为 <code>null</code>，则没有注释存储在该文档中。
+
+<p>此方法返回后，指定的流仍保持打开状态。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@param comment 属性列表的描述，如果没有所需的注释，则为 <code>null</code>。
+@throws IOException 如果写入指定的输出流导致一个 <tt>IOException</tt>。
+@throws NullPointerException 如果 <code>os</code> 为 <code>null</code>，或者 <code>encoding</code> 为 <code>null</code>。
+@throws ClassCastException  如果 <code>Properties</code> 对象包含任何不是 <code>String</code> 的键或值。
+@see    #loadFromXML(InputStream)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Properties.getProperty(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的键在此属性列表中搜索属性。如果在此属性列表中未找到该键，则接着递归检查默认属性列表及其默认值。如果未找到属性，则此方法返回 <code>null</code>。
+
+@param   key   属性键。
+@return  属性列表中具有指定键值的值。
+@see     #setProperty
+@see     #defaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Properties.getProperty(String key, String defaultValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的键在属性列表中搜索属性。如果在属性列表中未找到该键，则接着递归检查默认属性列表及其默认值。如果未找到属性，则此方法返回默认值变量。
+
+@param   key            哈希表键。
+@param   defaultValue   默认值。
+
+@return  属性列表中具有指定键值的值。
+@see     #setProperty
+@see     #defaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<?> java.util.Properties.propertyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回属性列表中所有键的枚举，如果在主属性列表中未找到同名的键，则包括默认属性列表中不同的键。
+
+@return  属性列表中所有键的枚举，包括默认属性列表中的键。
+@throws  ClassCastException 如果此属性列表中的任何键不是一个字符串。
+@see     java.util.Enumeration
+@see     java.util.Properties#defaults
+@see     #stringPropertyNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.String> java.util.Properties.stringPropertyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此属性列表中的键集，其中该键及其对应值是字符串，如果在主属性列表中未找到同名的键，则还包括默认属性列表中不同的键。其键或值不是 <tt>String</tt> 类型的属性被忽略。
+ <p>
+返回的 set 不受 <tt>Properties</tt> 对象支持。对此 <tt>Properties</tt> 的改变不能在该 set 中反映出来，反之亦然。
+
+ @return  此属性列表中的键集，其中该键及其对应值是字符串，包括默认属性列表中的键。
+ @see     java.util.Properties#defaults
+ @since   1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Properties.list(PrintStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性列表输出到指定的输出流。此方法对调试很有用。
+
+@param   out   输出流。
+@throws  ClassCastException 如果此属性列表中的任何键不是字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Properties.list(PrintWriter out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性列表输出到指定的输出流。此方法对调试很有用。
+
+@param   out   输出流。
+@throws  ClassCastException 如果此属性列表中的任何键不是字符串。
+@since   JDK1.1
+
+<!-- END DATA -->

@@ -1,0 +1,319 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.validation.Validator extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>根据 {@link Schema} 检查 XML 文档的处理器。</p>
+ 
+ <p>
+Validator 对象不是线程安全的，也不能重入。换句话说，应用程序负责确保在任意给定时刻不能有多个线程同时使用 {@link Validator} 对象，且当调用 <code>validate</code> 方法时，应用程序不能以递归方式调用 <code>validate</code> 方法。
+ <p>
+
+@author  <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
+@version $Revision: 1.4 $, $Date: 2006-10-23 09:14:17 $
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.validation.Validator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+派生类的构造方法。
+ 
+ <p>
+构造方法不执行任何操作。</p>
+ 
+ <p>
+派生类必须创建具有 <code>null</code> {@link ErrorHandler} 和 <code>null</code> {@link LSResourceResolver} 的 {@link Validator} 对象。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.Validator.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此 <code>Validator</code> 重置为其初始配置。</p>
+ 
+<p><code>Validator</code> 被重置为通过 {@link Schema#newValidator()} 创建它时的状态。<code>reset()</code> 在设目标是允许重用现有的 <code>Validator</code>，从而节省与创建新的 <code>Validator</code> 相关的资源。</p>
+ 
+<p>不保证重置的 <code>Validator</code> 具有相同的 {@link LSResourceResolver} 或 {@link ErrorHandler} <code>Object</code>，例如 {@link Object#equals(Object obj)}。但保证具有功能相等的 <code>LSResourceResolver</code> 和 <code>ErrorHandler</code>。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.validation.Validator.validate(Source source) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+验证指定的输入。
+ 
+ <p>
+这只是 {@link #validate(Source source, Result result)}（<code>result</code> 为 <code>null</code>）的一个便捷方法。</p>
+ 
+ @param source
+      要验证的 XML。该参数必须为 XML 文档或 XML 元素，不可以为 null。为了向后兼容，试图验证文档或元素以外的任何内容的所得结果都由实现决定。实现必须能识别并处理输入，否则将抛出 IllegalArgumentException。
+
+ @throws IllegalArgumentException
+      如果 <code>Source</code> 是实现无法验证的 XML 人为因素（例如，一个处理指令）。
+
+ @throws SAXException
+      如果 {@link ErrorHandler} 抛出 {@link SAXException}，或者发现致命错误且 {@link ErrorHandler} 正常返回。
+
+ @throws IOException
+      如果验证器正在处理 {@link javax.xml.transform.sax.SAXSource} 且底层 {@link org.xml.sax.XMLReader} 抛出了 {@link IOException}。
+
+
+ @throws NullPointerException 如果  <code>source</code> 为 <code>null</code>。
+
+ @see #validate(Source source, Result result)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.Validator.validate(Source source, Result result) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>验证指定输入并将扩充的验证结果发送到指定输出。</p>
+ 
+ <p>
+此方法对所接受的 {@link Source}/{@link Result} 的类型设置了以下限制。
+ 
+<table border=1>
+ <thead>
+  <tr>
+   <th colspan="5">所接受的 <code>Source</code> / <code>Result</code></th>
+  </tr>
+  <tr>
+   <th></th>
+   <th>{@link javax.xml.transform.stream.StreamSource}</th>
+   <th>{@link javax.xml.transform.sax.SAXSource}</th>
+   <th>{@link javax.xml.transform.dom.DOMSource}</th>
+   <th>{@link javax.xml.transform.stax.StAXSource}</th>
+  </tr>
+ </thead>
+ <tbody align="center">
+  <tr>
+   <td><code>null</code></td>
+   <td>OK</td>
+   <td>OK</td>
+   <td>OK</td>
+   <td>OK</td>
+  </tr>
+  <tr>
+   <th>{@link javax.xml.transform.stream.StreamResult}</th>
+   <td>OK</td>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+  </tr>
+  <tr>
+   <th>{@link javax.xml.transform.sax.SAXResult}</th>
+   <td><code>IllegalArgumentException</code></td>
+   <td>OK</td>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+  </tr>
+  <tr>
+   <th>{@link javax.xml.transform.dom.DOMResult}</th>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+   <td>OK</td>
+   <td><code>IllegalArgumentException</code></td>
+  </tr>
+  <tr>
+   <th>{@link javax.xml.transform.stax.StAXResult}</th>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+   <td><code>IllegalArgumentException</code></td>
+   <td>OK</td>
+  </tr>
+ </tbody>
+ </table>
+
+ <p>
+要验证一个 <code>Source</code> 并输出到另一种类型的 <code>Result</code> 中，请使用恒等转换器（参见 {@link javax.xml.transform.TransformerFactory#newTransformer()}）。</p>
+ 
+ <p>
+将验证中发现的错误发送到指定的 {@link ErrorHandler}。</p>
+ 
+ <p>
+如果文档有效，或者文档包含某些错误但无致命错误且 {@link ErrorHandler} 不抛出任何异常，则该方法正常返回。</p>
+ 
+@param source 要验证的 XML。该参数必须为 XML 文档或 XML 元素，不可以为 null。为了向后兼容，试图验证文档或元素以外的任何内容的所得结果都由实现决定。实现必须能识别并处理输入，否则将抛出 IllegalArgumentException。
+ 
+@param result 接收（可能是扩充的）XML 的 <code>Result</code> 对象。如果调用者不需要它，则此参数可以为 null。注意，当使用 <code>DOMResult</code> 时，验证器可以只是将来自 <code>DOMSource</code> 的相同 DOM 节点传递到 <code>DOMResult</code>（在这种情况下，<code>source.getNode()==result.getNode()</code>），它可能复制整个 DOM 树，或者更改源所给定的节点。
+ 
+@throws IllegalArgumentException 如果 <code>Result</code> 类型与 <code>Source</code> 类型不匹配，或者 <code>Source</code> 是实现无法验证的 XML 人为因素（例如，一个处理指令）。 
+ 
+@throws SAXException 如果 <code>ErrorHandler</code> 抛出 <code>SAXException</code>，或者出现致命错误且 <code>ErrorHandler</code> 正常返回。
+ 
+@throws IOException 如果验证器正在处理 <code>SAXSource</code>，且底层 {@link org.xml.sax.XMLReader} 抛出 <code>IOException</code>。
+ 
+@throws NullPointerException 如果 <code>source</code> 参数为 <code>null</code>。
+ 
+@see #validate(Source source)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.Validator.setErrorHandler(ErrorHandler errorHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link ErrorHandler} 以接收在 <code>validate</code> 方法调用期间遇到的错误。
+ 
+ <p>
+错误处理程序可用于自定义验证期间的错误处理过程。当设置 {@link ErrorHandler} 时，验证期间发现的错误将首先发送到 {@link ErrorHandler}。
+ 
+ <p>
+错误处理程序通过抛出来自处理程序的 {@link SAXException} 可以立即中止进一步的验证。例如，它可以将错误打印到屏幕上，并尝试通过从 {@link ErrorHandler} 正常返回来继续该验证。
+ 
+ <p>
+如果从 {@link ErrorHandler} 抛出任何 {@link Throwable}，则 <code>validate</code> 方法的调用者将接收相同的 {@link Throwable} 对象。
+ 
+ <p>
+在 {@link Validator} 没有先向 {@link ErrorHandler} 报告之前，不能抛出 {@link SAXException}。
+ 
+ <p>
+当 {@link ErrorHandler} 为 null 时，实现的行为就好像设置了以下 {@link ErrorHandler} 一样。
+ <pre>
+ class DraconianErrorHandler implements {@link ErrorHandler} {
+     public void fatalError( {@link org.xml.sax.SAXParseException} e ) throws {@link SAXException} {
+         throw e;
+     }
+     public void error( {@link org.xml.sax.SAXParseException} e ) throws {@link SAXException} {
+         throw e;
+     }
+     public void warning( {@link org.xml.sax.SAXParseException} e ) throws {@link SAXException} {
+         // noop
+     }
+ }
+ </pre>
+ 
+ <p>
+当创建新 {@link Validator} 对象时，此字段在初始化时被设置为 null。
+ 
+@param   errorHandler 要设置的新错误处理程序。此参数可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.xml.sax.ErrorHandler javax.xml.validation.Validator.getErrorHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取设置为此 {@link Validator} 的当前 {@link ErrorHandler}。
+ 
+@return 此方法返回通过 {@link #setErrorHandler(ErrorHandler)} 方法设置的最后一个对象，如果自从创建此 {@link Validator} 以来一直未调用该方法，则返回 null。
+
+@see #setErrorHandler(ErrorHandler)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.Validator.setResourceResolver(LSResourceResolver resourceResolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link LSResourceResolver} 以自定义验证期间的资源解析。
+ 
+ <p>
+在验证期间，{@link Validator} 在需要查找外部资源时使用 {@link LSResourceResolver}，虽然&ldquo;查找外部资源&rdquo;的准确含义取决于每种模式语言。
+ 
+ <p>
+当 {@link LSResourceResolver} 为 null 时，实现的行为就好像设置了以下 {@link LSResourceResolver} 一样。
+ <pre>
+ class DumbLSResourceResolver implements {@link LSResourceResolver} {
+     public {@link org.w3c.dom.ls.LSInput} resolveResource(
+         String publicId, String systemId, String baseURI) {
+         
+         return null; // always return null
+     }
+ }
+ </pre>
+ 
+ <p>
+如果 {@link LSResourceResolver} 抛出 {@link RuntimeException}（或其派生类的实例），则 {@link Validator} 将中止解析，且 <code>validate</code> 方法的调用者将接收相同的 {@link RuntimeException}。 
+ 
+ <p>
+当创建新 {@link Validator} 对象时，此字段在初始化时被设置为 null。
+ 
+@param   resourceResolver 要设置的新资源解析器。此参数可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.w3c.dom.ls.LSResourceResolver javax.xml.validation.Validator.getResourceResolver()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取设置为此 {@link Validator} 的当前 {@link LSResourceResolver}。
+ 
+@return 此方法返回通过 {@link #setResourceResolver(LSResourceResolver)} 方法设置的最后一个对象，如果自从创建此 {@link Validator} 以来一直未调用该方法，则返回 null。
+ 
+@see #setErrorHandler(ErrorHandler)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.validation.Validator.getFeature(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找功能标志的值。
+
+<p>功能名称是任何完全限定的 URI。{@link Validator} 有可能识别功能名称，但暂时不能返回其值。某些功能值可能只有在特定上下文中才能使用，例如在验证前、验证中或验证之后。
+
+<p>实现者可随意选择（鼓励）创建自己的功能，方法是使用在它们自己的 URI 上构建的名称。</p>
+
+@param name 功能名称，它是非 null 的完全限定 URI。
+@return 功能的当前值（true 或 false）。
+@throws SAXNotRecognizedException 如果不能分配或检索功能值。
+@throws SAXNotSupportedException 当 {@link Validator}  可以识别功能名称但不能确定它此时的值时。
+@throws NullPointerException 当 name 参数为 null 时。
+@see #setFeature(String, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.validation.Validator.setFeature(String name, boolean value) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置功能标志的值。
+
+ <p>
+功能可用于控制 {@link Validator} 解析模式的方法，虽然 {@link Validator} 无需识别任何指定的特性名称。</p>
+
+<p>功能名称是任何完全限定的 URI。{@link Validator} 有可能公开功能值，但不能更改当前值。某些功能值可能只有在特定上下文中才是不可变的或可变的，例如在验证前、验证中或验证之后。</p>
+
+@param name 功能名称，它是非 null 的完全限定 URI。
+@param value 所请求的功能值（true 或 false）。
+ 
+@throws SAXNotRecognizedException 如果不能分配或检索功能值。
+@throws SAXNotSupportedException 当 {@link Validator} 可以识别功能名称，但不能设置请求的值时。
+@throws NullPointerException 当 name 参数为 null 时。
+ 
+@see #getFeature(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.validation.Validator.setProperty(String name, Object object) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置属性值。
+
+<p>属性名称是任何完全限定的 URI。{@link Validator} 有可能识别属性名称，但不能更改当前值。某些属性值可能只有在特定上下文中才是不可变的或可变的，例如在验证前、验证中或验证之后。</p>
+
+<p>{@link Validator} 无需识别设置任何指定的属性名称。</p>
+
+@param name 属性名称，它是非 null 的完全限定 URI。
+@param object 所请求的属性值。
+@throws SAXNotRecognizedException 如果不能分配或检索属性值。
+@throws SAXNotSupportedException 当 {@link Validator} 可以识别属性名称，但不能设置请求的值时。
+@throws NullPointerException 当 name 参数为 null 时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.validation.Validator.getProperty(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找属性值。
+
+<p>属性名称是任何完全限定的 URI。{@link Validator} 有可能识别属性名称，但暂时不能返回其值。某些属性值可能只有在特定上下文中才能使用，例如在验证前、验证中或验证之后。</p>
+
+<p>{@link Validator} 无需识别任何指定的属性名称。</p>
+
+<p>实现者可随意选择（鼓励）创建自己的属性，方法是使用在它们自己的 URI 上构建的名称。</p>
+
+@param name 属性名称，它是非 null 的完全限定 URI。
+@return 属性的当前值。
+@throws SAXNotRecognizedException 如果不能分配或检索属性值。
+@throws SAXNotSupportedException 当 XMLReader 可以识别属性名称，但不能确定它此时的值时。
+@throws NullPointerException 当 name 参数为 null 时。
+@see #setProperty(String, Object)
+
+<!-- END DATA -->

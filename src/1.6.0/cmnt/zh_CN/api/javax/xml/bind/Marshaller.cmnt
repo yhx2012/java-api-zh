@@ -1,0 +1,521 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.bind.Marshaller
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+<tt>Marshaller</tt> 类负责管理将 Java 内容树序列化回 XML 数据的过程。它提供了基本的编组方法：
+
+ <p>
+<i>假定以下安装代码适用于下列所有代码片段：</i>
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+Object element = u.unmarshal( new File( "foo.xml" ) );
+Marshaller m = jc.createMarshaller();
+    </pre>
+ </blockquote>
+ 
+ <p>
+编组到 File 中：
+ <blockquote>
+    <pre>
+OutputStream os = new FileOutputStream( &quot;nosferatu.xml&quot; );
+m.marshal( element, os );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 SAX ContentHandler 中：
+ <blockquote>
+    <pre>
+// assume MyContentHandler instanceof ContentHandler
+m.marshal( element, new MyContentHandler() );  
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 DOM Node 中：
+ <blockquote>
+    <pre>
+DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+dbf.setNamespaceAware(true);
+DocumentBuilder db = dbf.newDocumentBuilder();
+Document doc = db.newDocument();
+
+m.marshal( element, doc );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 java.io.OutputStream 中：
+ <blockquote>
+    <pre>
+m.marshal( element, System.out );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 java.io.Writer 中：
+ <blockquote>
+    <pre>
+m.marshal( element, new PrintWriter( System.out ) );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 javax.xml.transform.SAXResult 中：
+ <blockquote>
+    <pre>
+// assume MyContentHandler instanceof ContentHandler
+SAXResult result = new SAXResult( new MyContentHandler() );
+
+m.marshal( element, result );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 javax.xml.transform.DOMResult 中：
+ <blockquote>
+    <pre>
+DOMResult result = new DOMResult();
+       
+m.marshal( element, result );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 javax.xml.transform.StreamResult 中：
+ <blockquote>
+    <pre>
+StreamResult result = new StreamResult( System.out );
+ 
+m.marshal( element, result );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 javax.xml.stream.XMLStreamWriter 中：
+ <blockquote>
+    <pre>
+XMLStreamWriter xmlStreamWriter = 
+XMLOutputFactory.newInstance().createXMLStreamWriter( ... );
+ 
+m.marshal( element, xmlStreamWriter );
+    </pre>
+ </blockquote>
+
+ <p>
+编组到 javax.xml.stream.XMLEventWriter 中：
+ <blockquote>
+    <pre>
+XMLEventWriter xmlEventWriter = 
+XMLOutputFactory.newInstance().createXMLEventWriter( ... );
+ 
+m.marshal( element, xmlEventWriter );
+    </pre>
+ </blockquote>
+
+ <p>
+<a name="elementMarshalling"></a>
+ <b>对通过 JAXB 元素确定的内容树进行编组</b><br>
+ <blockquote>
+ 重载的 <tt>Marshaller.marshal(java.lang.Object, ...)</tt> 方法的第一个参数必须是由
+ {@link JAXBIntrospector#isElement(java.lang.Object)} 计算的 JAXB 元素；否则，<tt>Marshaller.marshal</tt> 方法必须抛出 {@link MarshalException}。存在两种能编组非 JAXB 元素实例的机制。一种方法是将该实例包装为 {@link JAXBElement} 值，并将包装器对象作为第一个参数传递给 <tt>Marshaller.marshal</tt> 方法。对于 java 到模式的绑定，还可以简单地使用 &#64;{@link XmlRootElement} 注释该实例的类。</blockquote>
+
+ <p>
+<b>编码</b><br>
+ <blockquote>
+默认情况下，在将 XML 数据生成到 <tt>java.io.OutputStream</tt> 或 <tt>java.io.Writer</tt> 中时，Marshaller 将使用 UTF-8 编码。可以使用 {@link #setProperty(String,Object) setProperty} API 更改执行这些编组操作期间所使用的输出编码。期望客户端应用程序根据 <a href="http://www.w3.org/TR/2000/REC-xml-20001006#charencoding">W3C XML 1.0 Recommendation</a> 中的定义提供 <a href="http://java.sun.com/j2se/1.3/docs/api/java/lang/package-summary.html#charenc">Java 平台</a>支持的有效字符编码名称。
+ </blockquote>
+ 
+ <p>
+<b>验证和格式良好性</b><br>
+ <blockquote>
+ <p>
+客户端应用程序不需要在调用任何编组 API 之前验证 Java 内容树。此外，在将 Java 内容树编组回 XML 数据时，不要求它对于其源模式有效。不同的 JAXB 提供者可支持编组各种级别的无效 Java 内容树，但所有 JAXB 提供者都必须能够将有效的内容树编组回 XML 数据。当因为无效内容导致 JAXB 提供者无法完成编组操作时，JAXB 提供者必须抛出 <tt>MarshalException</tt>。一些 JAXB 提供者完全允许编组无效内容，而另一些 JAXB 提供者将在出现第一个验证错误时失败。
+ <p>
+即使没有为编组操作显式地启用模式验证，但在操作过程中可能要检测某些类型的验证事件。这些验证事件将被报告给已注册的事件处理程序。如果客户端应用程序没有在调用某个编组 API 之前注册事件处理程序，则事件将被转发给默认的事件处理程序，默认处理程序将在遇到第一个错误或遇到致命错误之后终止编组操作。注意，对于 JAXB 2.0 和以后的版本，不再使用 {@link javax.xml.bind.helpers.DefaultValidationEventHandler}。
+ </blockquote>
+
+ <p>
+<a name="supportedProps"></a> <b>支持的属性</b><br>
+ <blockquote>
+ <p>
+所有 JAXB 提供者都要支持以下这组属性。某些提供者还可以支持其他属性。
+ <dl>
+<dt><tt>jaxb.encoding</tt>：值必须是 java.lang.String</dd>
+<dd>编组 XML 数据时使用的输出编码。默认情况下，如果未指定此属性，则 Marshaller 将使用 &quot;UTF-8&quot;。</dd>
+<dt><tt>jaxb.formatted.output</tt>：值必须是 java.lang.Boolean</dd>
+<dd>此属性控制 Marshaller 是否使用换行和缩排对得到的 XML 数据进行格式化。此属性为 true 值表示可读性强的缩排 xml 数据，而属性值为 false 则表示未格式化的 xml 数据。如果未指定此属性，则 Marshaller 将该属性值默认为 false（未格式化）。</dd>
+<dt><tt>jaxb.schemaLocation</tt>：值必须是 java.lang.String</dd>
+<dd>此属性允许客户端应用程序在生成的 XML 数据中指定 xsi:schemaLocation 属性。该 schemaLocation 属性值的格式将以便于理解的、非标准的形式在 <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">W3C XML Schema Part 0:Primer 的第 5.6 节</a>中讨论，并在 <a href="http://www.w3.org/TR/xmlschema-1/#Instance_Document_Constructions">W3C XML Schema Part 1:Structures 的第 2.6 节</a>中指定。</dd>
+<dt><tt>jaxb.noNamespaceSchemaLocation</tt>：值必须是 java.lang.String</dd>
+<dd>此属性允许客户端应用程序在生成的 XML 数据中指定 xsi:noNamespaceSchemaLocation 属性。该 schemaLocation 属性值的格式将以便于理解的、非标准的形式在 <a href="http://www.w3.org/TR/xmlschema-0/#schemaLocation">W3C XML Schema Part 0:Primer</a> 的第 5.6 节中讨论，并在 <a href="http://www.w3.org/TR/xmlschema-1/#Instance_Document_Constructions">W3C XML Schema Part 1:Structures</a> 的第 2.6 节中指定。</dd>
+<dt><tt>jaxb.fragment</tt>：值必须是 java.lang.Boolean</dd>
+<dd>此属性决定 Marshaller 是否将生成文档级事件。如果未指定该属性，则默认为 <tt>false</tt>。将其设置为 true 时，根据所使用的编组 API，此属性具有不同的含义：<br>
+       <ul>
+<li>{@link #marshal(Object,org.xml.sax.ContentHandler) marshal(Object,ContentHandler)}：Marshaller 不会调用 {@link org.xml.sax.ContentHandler#startDocument()} 和 {@link org.xml.sax.ContentHandler#endDocument()}。</li>
+<li>{@link #marshal(Object,org.w3c.dom.Node) marshal(Object,Node)}：该属性对此 API 没有影响。</li>
+<li>{@link #marshal(Object,java.io.OutputStream) marshal(Object,OutputStream)}：Marshaller 不会生成 xml 声明。</li>
+<li>{@link #marshal(Object,java.io.Writer) marshal(Object,Writer)}：Marshaller 不会生成 xml 声明。</li>
+<li>{@link #marshal(Object,javax.xml.transform.Result) marshal(Object,Result)}：取决于 Result 对象的类型，请参见 Node、ContentHandler 和 Stream API 的语义。</li>
+<li>{@link #marshal(Object,javax.xml.stream.XMLEventWriter) marshal(Object,XMLEventWriter)}：Marshaller 不会生成 {@link javax.xml.stream.events.XMLEvent#START_DOCUMENT} 和 {@link javax.xml.stream.events.XMLEvent#END_DOCUMENT} 事件。</li>
+<li>{@link #marshal(Object,javax.xml.stream.XMLStreamWriter) marshal(Object,XMLStreamWriter)}：Marshaller 不会生成 {@link javax.xml.stream.events.XMLEvent#START_DOCUMENT} 和 {@link javax.xml.stream.events.XMLEvent#END_DOCUMENT} 事件。</li>
+       </ul>
+   </dd>
+ </dl>
+ </blockquote>
+ 
+ <p>
+<a name="marshalEventCallback"></a> <b>编组事件回调</b><br>
+ <blockquote>
+{@link Marshaller} 提供了两种风格的回调机制，这些机制允许在解组过程的关键点上进行特定于应用程序的处理。在“类定义的”事件回调中，编组期间会触发位于 JAXB 映射类中的特定于应用程序的代码。“外部侦听器”允许用一个回调方法集中处理编组事件，而不是通过各种类型事件回调处理。
+
+ <p>
+类定义的事件回调方法允许任何 JAXB 映射类通过定义带有以下方法签名的方法指定自己的特定回调方法：
+ <blockquote>
+ <pre>
+// Invoked by Marshaller after it has created an instance of this object.
+boolean beforeMarshal(Marshaller, Object parent);
+ 
+// Invoked by Marshaller after it has marshalled all properties of this object.
+void afterMmarshal(Marshaller, Object parent);
+ </pre>
+ </blockquote>
+类定义的事件回调方法应该在回调方法需要访问该类的非公共方法和/或字段时使用。 
+ <p>
+外部侦听器回调机制支持 {@link Listener} 实例使用 {@link Marshaller#setListener(Listener)} 的注册。外部侦听器接收所有回调事件，从而允许用比逐个类地定义回调方法更为集中的方式处理事件。
+ <p>
+“类定义的”事件回调方法和外部侦听器事件回调方法相互独立，可以对一个事件同时调用。两种侦听器回调方法都存在时，按照 {@link Listener#beforeMarshal(Object)} 和 {@link Listener#afterMarshal(Object)} 中定义的顺序对它们进行调用。
+ <p>
+抛出异常的事件回调方法会终止当前的编组进程。
+ </blockquote>
+ 
+@author<ul><li>Kohsuke Kawaguchi, Sun Microsystems, Inc.</li><li>Ryan Shoemaker, Sun Microsystems, Inc.</li><li>Joe Fialli, Sun Microsystems, Inc.</li></ul>
+@version $Revision: 1.6 $ $Date: 2006-10-23 09:14:10 $
+@see JAXBContext
+@see Validator
+@see Unmarshaller
+@since JAXB 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.bind.Marshaller.JAXB_ENCODING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用来指定已编组 XML 数据中输出编码的属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用来指定是否使用换行和缩排对已编组 XML 数据进行格式化的属性名称。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.bind.Marshaller.JAXB_SCHEMA_LOCATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用来指定将放置在已编组 XML 输出中的 xsi:schemaLocation 属性值的属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.bind.Marshaller.JAXB_NO_NAMESPACE_SCHEMA_LOCATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来指定将放置在已编组 XML 输出中的 xsi:noNamespaceSchemaLocation 属性值的属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.bind.Marshaller.JAXB_FRAGMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来指定 marshaller 是否将生成文档级事件（即调用 startDocument 或 endDocument）的属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, Result result) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 <tt>jaxbElement</tt> 为根的内容树编组到指定的 <tt>javax.xml.transform.Result</tt> 中。
+ 
+ <p>
+所有 JAXB 提供者至少必须支持 {@link javax.xml.transform.dom.DOMResult}、{@link javax.xml.transform.sax.SAXResult} 和 {@link javax.xml.transform.stream.StreamResult}。它也可以支持 <tt>Result</tt> 的其他派生类。
+ 
+@param jaxbElement 要编组的内容树的根。
+@param result XML 将被发送到此 Result
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, OutputStream os) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 <tt>jaxbElement</tt> 为根的内容树编组到输出流中。
+ 
+@param jaxbElement 要编组的内容树的根。
+@param os  XML 将被添加到此流。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, Writer writer) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 jaxbElement 为根的内容树编组到 Writer 中。
+ 
+@param jaxbElement 要编组的内容树的根。
+@param writer XML 将被发送到此编写器。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, ContentHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 jaxbElement 为根的内容树编组到 SAX2 事件中。
+ 
+@param jaxbElement 要编组的内容树的根。
+@param handler XML 将被作为 SAX2 事件发送到此处理程序。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, Node node) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 <tt>jaxbElement</tt> 为根的内容树编组到 DOM 树中。
+ 
+@param jaxbElement 要编组的内容树。
+@param node DOM 节点将作为此节点的子节点添加。此参数必须是一个可接受子节点（{@link org.w3c.dom.Document}、{@link  org.w3c.dom.DocumentFragment} 或 {@link  org.w3c.dom.Element}）的 Node。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>jaxbElement</tt>（或任何可从 <tt>jaxbElement</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, XMLStreamWriter writer) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 <tt>jaxbElement</tt> 为根的内容树编组到 {@link javax.xml.stream.XMLStreamWriter} 中。
+ 
+@param jaxbElement 要编组的内容树。
+@param writer XML 将被发送到此编写器。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.marshal(Object jaxbElement, XMLEventWriter writer) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以 <tt>jaxbElement</tt> 为根的内容树编组到 {@link javax.xml.stream.XMLEventWriter} 中。
+ 
+@param jaxbElement 要编组的以 jaxbElement 为根的内容树。
+@param writer XML 将被发送到此编写器。
+ 
+@throws JAXBException 如果在编组期间发生任何不可预料的问题。
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Marshaller</tt> 不能编组 <tt>obj</tt>（或任何可从 <tt>obj</tt> 获得的对象）。请参阅<a href="#elementMarshalling">编组 JAXB 元素</a>。
+@throws IllegalArgumentException 如果任何方法参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.Node javax.xml.bind.Marshaller.getNode(Object contentTree) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取内容树的 DOM 树视图（可选）。
+ 
+如果更新了返回的 DOM 树，则这些更改也可以在内容树中看见。使用 {@link #marshal(Object, org.w3c.dom.Node)} 强行将内容树的深层复制转换成 DOM 表示形式。
+ 
+@param contentTree XML 内容的 JAXB Java 表示形式
+ 
+@return contentTree 的 DOM 树视图
+ 
+@throws UnsupportedOperationException 如果 JAXB 提供者实现不支持内容树的 DOM 视图
+ 
+@throws IllegalArgumentException 如果任何方法参数为 null
+
+@throws JAXBException 如果发生任何不可预料的问题
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setProperty(String name, Object value) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <tt>Marshaller</tt> 底层实现中的特定属性。此方法只能用于设置上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图设置未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 要设置的属性的名称。此值可以使用一个常量字段来指定，也可以是一个用户提供的字符串。
+@param value 要设置的属性值
+
+@throws PropertyException 如果处理给定属性或值时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Marshaller.getProperty(String name) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <tt>Marshaller</tt> 底层实现中的特定属性。此方法只能用于获取上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图获取未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 将检索的属性的名称
+@return 所请求属性的值
+
+@throws PropertyException 如果检索给定属性或值属性名称时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setEventHandler(ValidationEventHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册一个验证事件处理程序。
+ <p>
+如果在调用任何编组 API 期间遇到任何验证错误，则 JAXB 提供者将调用验证事件处理程序。如果客户端应用程序没有在调用某个 marshal 方法之前注册验证事件处理程序，则将使用默认事件处理程序处理验证事件，默认处理程序将在遇到第一个错误或致命错误之后将终止编组操作。
+ <p>
+调用带有 null 参数的此方法将导致 Marshaller 重新使用默认事件处理程序。
+ 
+@param handler 验证事件处理程序
+@throws JAXBException 如果在设置事件处理程序时遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.ValidationEventHandler javax.xml.bind.Marshaller.getEventHandler() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的事件处理程序，如果没有设置该处理程序，则返回默认的事件处理程序。
+
+@return 当前的 ValidationEventHandler，如果没有设置该处理程序，则返回默认的事件处理程序
+@throws JAXBException 如果获取当前的事件处理程序时遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setAdapter(javax.xml.bind.annotation.adapters.XmlAdapter adapter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将已配置的 {@link XmlAdapter} 实例与此 marshaller 关联。
+
+ <p>
+这是调用 <code>setAdapter(adapter.getClass(),adapter)</code> 的一个便捷方法。
+
+@see #setAdapter(Class,XmlAdapter)
+@throws IllegalArgumentException 如果 adapter 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setAdapter(java.lang.Class<A> type, A adapter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将已配置的 {@link XmlAdapter} 实例与此 marshaller 关联。
+
+ <p>
+每个 marshaller 都可以在内部维护一个 {@link java.util.Map}&lt;{@link Class},{@link XmlAdapter}&gt;，可用来编组使用 {@link javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter} 注释其字段/方法的类。
+
+ <p>
+此方法允许应用程序使用已配置好的 {@link XmlAdapter} 实例。如果没有给出适配器实例，则 marshaller 将调用其默认构造方法创建一个实例。
+
+@param type 适配器的类型。当 {@link javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter#value()} 引用此类型时，将使用指定的实例。
+@param adapter 将要使用的适配器实例。如果为 null，则将注销此类型的当前适配器集合。
+@throws IllegalArgumentException 如果 type 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public A extends javax.xml.bind.annotation.adapters.XmlAdapter javax.xml.bind.Marshaller.getAdapter(java.lang.Class<A> type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与指定类型关联的适配器。
+
+这是 {@link #setAdapter} 方法的反向操作。
+
+@throws IllegalArgumentException 如果 type 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setAttachmentMarshaller(AttachmentMarshaller am)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>与上下文关联，使 XML 文档内的二进制数据能够以优化的 XML 二进制附件的形式传送。可以使用存储在 xml 文档中的内容 id URI (cid) 从 XML 文档内容模式引用附件。
+
+@throws IllegalStateException 如果试图在执行编组操作期间同时调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setSchema(Schema schema)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定应该用作验证后续编组操作依据的 JAXP 1.3 {@link javax.xml.validation.Schema Schema} 对象。向此方法传递 null 将禁用验证。
+
+ <p>
+此方法允许调用者在对已编组的 XML 进行编组时验证它。
+
+ <p>
+最初，此属性被设置为 <tt>null</tt>。
+
+@param schema 作为验证编组操作依据的 Schema 对象；为 null 表示禁用验证
+@throws UnsupportedOperationException 如果对根据引用 JAXB 1.0 映射类的 JAXBContext 而创建的 Marshaller 调用此方法，则抛出该异常 
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.validation.Schema javax.xml.bind.Marshaller.getSchema()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于执行编组时验证的 JAXP 1.3 {@link javax.xml.validation.Schema Schema} 对象。如果未在 marshaller 上设置 Schema，则此方法将返回 null，指示不执行编组时验证。
+
+@return 返回用于执行编组时验证的 Schema 对象；如果该对象不存在，则返回 null。
+@throws UnsupportedOperationException 如果对根据引用 JAXB 1.0 映射类的 JAXBContext 而创建的 Marshaller 调用此方法，则抛出该异常
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Marshaller.setListener(Marshaller.Listener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+向此 {@link Marshaller} 注册编组事件回调 {@link Listener}。
+ 
+ <p>
+每个 Marshaller 只有一个 Listener。设置 Listener 将替换以前设置的 Listener。通过将 listener 设置为 <tt>null</tt> 可注销当前的 Listener。
+
+@param listener 实现 {@link Listener} 的类的实例
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.Marshaller.Listener javax.xml.bind.Marshaller.getListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回向此 {@link Marshaller} 注册的 {@link Listener}。
+ 
+@return 注册的 {@link Listener}；如果未向此 Marshaller 注册任何 Listener，则返回 <code>null</code>。
+@since JAXB 2.0
+
+<!-- END DATA -->

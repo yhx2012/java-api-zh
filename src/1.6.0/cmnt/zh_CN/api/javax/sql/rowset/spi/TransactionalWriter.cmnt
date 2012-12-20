@@ -1,0 +1,37 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.spi.TransactionalWriter extends javax.sql.RowSetWriter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个专用接口，用来方便地扩展标准 <code>SyncProvider</code> 抽象类以便拥有细粒度的事务控制。
+ <p>
+如果一个或多个非连接 <code>RowSet</code> 对象加入全局事务中，则它们可能希望调整自已的同步提交，以保持数据的完整性并减少发生同步异常的次数。如果是这种情况，则应用程序应将 <code>CachedRowSet</code> 常量 <code>COMMIT_ON_ACCEPT_CHANGES</code> 设置为 <code>false</code>，并使用此接口中定义的 <code>commit</code> 和 <code>rollback</code> 方法来管理事务边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.TransactionalWriter.commit() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使最后一次调用 <code>commit</code> 或 <code>rollback</code> 方法以来 <code>acceptChanges</code> 执行的所有更改永久化。此方法应该只在已禁用自动提交模式时使用。
+
+@throws SQLException  如果发生数据库访问错误，或此 <code>CachedRowSet</code> 对象中的 <code>Connection</code> 对象处于自动提交模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.TransactionalWriter.rollback() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+撤消在当前事务中进行的所有更改。此方法应该只在已禁用自动提交模式时使用。
+
+@throws SQLException  如果发生数据库访问错误，或此 <code>CachedRowSet</code> 对象中的 <code>Connection</code> 对象处于自动提交模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.TransactionalWriter.rollback(Savepoint s) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+撤消在给定 <code>Savepoint</code> 对象之前所进行的当前事务中的所有更改。此方法应该只在已禁用自动提交模式时使用。
+
+@param s 在当前事务中标记保存点的 <code>Savepoint</code> 对象。设置 <i>s</i> 之前进行的所有更改都将被撤消。使设置 <i>s</i> 之后进行的所有更改永久化。
+@throws SQLException  如果发生数据库访问错误，或此 <code>CachedRowSet</code> 对象中的 <code>Connection</code> 对象处于自动提交模式。
+
+<!-- END DATA -->

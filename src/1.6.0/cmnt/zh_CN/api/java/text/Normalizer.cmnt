@@ -1,0 +1,66 @@
+<!-- BEGIN KEY -->
+public final class java.text.Normalizer extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 <code>normalize</code> 方法，它把 Unicode 文本转换为等效的组合或分解形式，允许对文本进行更方便地分类和搜索。<code>normalize</code> 方法支持在 <a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Standard Annex #15 &mdash; Unicode Normalization Forms</a> 中描述的标准的标准化形式。
+ <p>
+在 Unicode 中，带有重音或其他装饰的字符可以用几种不同的方式进行编码。例如，字符 A-acute。在 Unicode 中，可以被编码为单个字符（&ldquo;组合&rdquo;形式）：
+
+ <p><pre>
+U+00C1    LATIN CAPITAL LETTER A WITH ACUTE</pre>
+ </p>
+
+或者两个单独的字符（&ldquo;分解&rdquo;形式）：
+
+ <p><pre>
+U+0041    LATIN CAPITAL LETTER A
+U+0301    COMBINING ACUTE ACCENT</pre>
+ </p>
+
+然而，对程序的用户而言，这两个序列都可以被视为同样的&ldquo;用户级&rdquo;字符&ldquo;带有 acute 重音的 A&rdquo;。当您搜索或比较文本时，必须确保这两个序列被视为是等效的。另外，您必须处理带有多个重音的字符。有时候一个字符的组合重音顺序很重要，而在另一些情况下，不同顺序的重音序列则可能完全等效。
+ <p>
+类似地，字符串 &quot;ffi&quot; 可被编码为三个单独的字母。
+
+ <p><pre>
+U+0066    LATIN SMALL LETTER F
+U+0066    LATIN SMALL LETTER F
+U+0069    LATIN SMALL LETTER I</pre>
+ </p>
+
+或者单个字符
+
+ <p><pre>
+U+FB03    LATIN SMALL LIGATURE FFI</pre>
+ </p>
+
+ffi 连字不是明显的语义字符，严格来说，它根本不应该在 Unicode 中，这里包含它是为了与已经提供它的现有字符集兼容。通过&ldquo;相容 (compatibility)&rdquo;分解，Unicode 标准将这类字符标识为相应的语义字符。进行分类和搜索时，您会经常希望使用这些映射。
+ <p>
+<code>normalize</code> 方法通过将文本转换为规范的组合和分解形式来帮助解决这些问题，正如上面第一个例子所示。另外，您可以使它执行相容分解，以便可以将兼容性字符视为与其等价物一样。最后，<code>normalize</code> 方法将重音重新排列为适当的规范顺序，因此不必考虑重音的重新排列问题。
+ <p>
+W3C 通常建议在 NFC 中交换文本。还要注意，大多数遗留字符编码仅使用预组合形式，并且其本身并不对任何合成标记进行编码。对于到此类字符编码的转换，Unicode 文本需要标准化为 NFC。有关更多使用实例，请参见 Unicode Standard Annex。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.text.Normalizer.normalize(CharSequence src, Normalizer.Form form)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标准化 char 值序列。将根据指定标准化形式对序列进行标准化。
+@param src        要标准化的 char 值序列。
+@param form       标准化形式；{@link java.text.Normalizer.Form#NFC}、{@link java.text.Normalizer.Form#NFD}、{@link java.text.Normalizer.Form#NFKC}、{@link java.text.Normalizer.Form#NFKD} 之一
+@return 已标准化的 String
+@throws NullPointerException 如果 <code>src</code> 或 <code>form</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.text.Normalizer.isNormalized(CharSequence src, Normalizer.Form form)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给定的 char 值序列是否被标准化。
+@param src 要检查的 char 值序列。
+@param form       标准化形式；{@link java.text.Normalizer.Form#NFC}、{@link java.text.Normalizer.Form#NFD}、{@link java.text.Normalizer.Form#NFKC}、{@link java.text.Normalizer.Form#NFKD} 之一
+@return 如果 char 值序列已被标准化，则返回 true；否则返回 false 。
+@throws NullPointerException 如果 <code>src</code> 或 <code>form</code> 为 null。
+
+<!-- END DATA -->

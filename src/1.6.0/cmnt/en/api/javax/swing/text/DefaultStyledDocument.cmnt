@@ -1,0 +1,340 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.DefaultStyledDocument extends javax.swing.text.AbstractDocument implements javax.swing.text.StyledDocument
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A document that can be marked up with character and paragraph 
+ styles in a manner similar to the Rich Text Format.  The element
+ structure for this document represents style crossings for
+ style runs.  These style runs are mapped into a paragraph element 
+ structure (which may reside in some other structure).  The 
+ style runs break at paragraph boundaries since logical styles are 
+ assigned to paragraph boundaries.
+ <p>
+ <strong>Warning:</strong>
+ Serialized objects of this class will not be compatible with
+ future Swing releases. The current serialization support is
+ appropriate for short term storage or RMI between applications running
+ the same version of Swing.  As of 1.4, support for long term storage
+ of all JavaBeans<sup><font size="-2">TM</font></sup>
+ has been added to the <code>java.beans</code> package.
+ Please see {@link java.beans.XMLEncoder}.
+
+ @author  Timothy Prinzing
+ @version 1.128 05/04/06
+ @see     Document
+ @see     AbstractDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.DefaultStyledDocument.BUFFER_SIZE_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The default size of the initial content buffer.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument(AbstractDocument.Content c, StyleContext styles)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a styled document.
+
+ @param c  the container for the content
+ @param styles resources and style definitions which may
+  be shared across documents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument(StyleContext styles)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a styled document with the default content
+ storage implementation and a shared set of styles.
+
+ @param styles the styles
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultStyledDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a default styled document.  This buffers
+ input content by a size of <em>BUFFER_SIZE_DEFAULT</em> 
+ and has a style context that is scoped by the lifetime
+ of the document and is not shared with other documents.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getDefaultRootElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the default root element.
+
+ @return the root
+ @see Document#getDefaultRootElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.create(javax.swing.text.DefaultStyledDocument.ElementSpec[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Initialize the document to reflect the given element
+ structure (i.e. the structure reported by the
+ <code>getDefaultRootElement</code> method.  If the
+ document contained any data it will first be removed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.insert(int offset, javax.swing.text.DefaultStyledDocument.ElementSpec[] data) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Inserts new elements in bulk.  This is useful to allow
+ parsing with the document in an unlocked state and
+ prepare an element structure modification.  This method
+ takes an array of tokens that describe how to update an
+ element structure so the time within a write lock can
+ be greatly reduced in an asynchronous update situation.     
+ <p>
+ This method is thread safe, although most Swing methods
+ are not. Please see 
+ <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A> for more information.     
+
+ @param offset the starting offset >= 0
+ @param data the element data
+ @exception BadLocationException for an invalid starting offset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.addStyle(String nm, Style parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adds a new style into the logical style hierarchy.  Style attributes
+ resolve from bottom up so an attribute specified in a child
+ will override an attribute specified in the parent.
+
+ @param nm   the name of the style (must be unique within the
+   collection of named styles).  The name may be null if the style 
+   is unnamed, but the caller is responsible
+   for managing the reference returned as an unnamed style can't
+   be fetched by name.  An unnamed style may be useful for things
+   like character attribute overrides such as found in a style 
+   run.
+ @param parent the parent style.  This may be null if unspecified
+   attributes need not be resolved in some other style.
+ @return the style
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.removeStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes a named style previously added to the document.  
+
+ @param nm  the name of the style to remove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.getStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches a named style previously added.
+
+ @param nm  the name of the style
+ @return the style
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<?> javax.swing.text.DefaultStyledDocument.getStyleNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches the list of of style names.
+
+ @return all the style names
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setLogicalStyle(int pos, Style s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the logical style to use for the paragraph at the
+ given position.  If attributes aren't explicitly set 
+ for character and paragraph attributes they will resolve 
+ through the logical style assigned to the paragraph, which
+ in turn may resolve through some hierarchy completely 
+ independent of the element hierarchy in the document.
+ <p>
+ This method is thread safe, although most Swing methods
+ are not. Please see 
+ <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A> for more information.     
+
+ @param pos the offset from the start of the document >= 0
+ @param s  the logical style to assign to the paragraph, null if none
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.DefaultStyledDocument.getLogicalStyle(int p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Fetches the logical style assigned to the paragraph 
+ represented by the given position.
+
+ @param p the location to translate to a paragraph
+  and determine the logical style assigned >= 0.  This
+  is an offset from the start of the document.
+ @return the style, null if none
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setCharacterAttributes(int offset, int length, AttributeSet s, boolean replace)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets attributes for some part of the document.
+ A write lock is held by this operation while changes
+ are being made, and a DocumentEvent is sent to the listeners 
+ after the change has been successfully completed.
+ <p>
+ This method is thread safe, although most Swing methods
+ are not. Please see 
+ <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A> for more information.     
+
+ @param offset the offset in the document >= 0
+ @param length the length >= 0
+ @param s the attributes
+ @param replace true if the previous attributes should be replaced
+  before setting the new attributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.setParagraphAttributes(int offset, int length, AttributeSet s, boolean replace)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets attributes for a paragraph.
+ <p>
+ This method is thread safe, although most Swing methods
+ are not. Please see 
+ <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A> for more information.     
+
+ @param offset the offset into the paragraph >= 0
+ @param length the number of characters affected >= 0
+ @param s the attributes
+ @param replace whether to replace existing attributes, or merge them
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getParagraphElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the paragraph element at the offset <code>pos</code>.
+ A paragraph consists of at least one child Element, which is usually
+ a leaf.
+
+ @param pos the starting offset >= 0
+ @return the element
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.DefaultStyledDocument.getCharacterElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets a character element based on a position.
+
+ @param pos the position in the document >= 0
+ @return the element
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.insertUpdate(AbstractDocument.DefaultDocumentEvent chng, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Updates document structure as a result of text insertion.  This
+ will happen within a write lock.  This implementation simply
+ parses the inserted content for line breaks and builds up a set
+ of instructions for the element buffer.
+
+ @param chng a description of the document change
+ @param attr the attributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.removeUpdate(AbstractDocument.DefaultDocumentEvent chng)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Updates document structure as a result of text removal.
+
+ @param chng a description of the document change
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AbstractDocument.AbstractElement javax.swing.text.DefaultStyledDocument.createDefaultRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates the root element to be used to represent the
+ default document structure.
+
+ @return the element base
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.DefaultStyledDocument.getForeground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the foreground color from an attribute set.
+
+ @param attr the attribute set
+ @return the color
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.DefaultStyledDocument.getBackground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the background color from an attribute set.
+
+ @param attr the attribute set
+ @return the color
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.text.DefaultStyledDocument.getFont(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the font from an attribute set.
+
+ @param attr the attribute set
+ @return the font
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultStyledDocument.styleChanged(Style style)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Called when any of this document's styles have changed.
+ Subclasses may wish to be intelligent about what gets damaged.
+
+ @param style The Style that has changed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.addDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adds a document listener for notification of any changes.
+
+ @param listener the listener
+ @see Document#addDocumentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultStyledDocument.removeDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes a document listener.
+
+ @param listener the listener
+ @see Document#removeDocumentListener
+
+<!-- END DATA -->

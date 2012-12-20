@@ -1,0 +1,226 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.RescaleOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This class performs a pixel-by-pixel rescaling of the data in the
+ source image by multiplying the sample values for each pixel by a scale
+ factor and then adding an offset. The scaled sample values are clipped
+ to the minimum/maximum representable in the destination image.
+ <p>
+ The pseudo code for the rescaling operation is as follows:
+ <pre>
+for each pixel from Source object {
+    for each band/component of the pixel {
+        dstElement = (srcElement*scaleFactor) + offset
+    }
+}
+ </pre>
+ <p>
+ For Rasters, rescaling operates on bands.  The number of
+ sets of scaling constants may be one, in which case the same constants
+ are applied to all bands, or it must equal the number of Source
+ Raster bands.
+ <p>
+ For BufferedImages, rescaling operates on color and alpha components.
+ The number of sets of scaling constants may be one, in which case the
+ same constants are applied to all color (but not alpha) components.
+ Otherwise, the  number of sets of scaling constants may
+ equal the number of Source color components, in which case no
+ rescaling of the alpha component (if present) is performed.
+ If neither of these cases apply, the number of sets of scaling constants
+ must equal the number of Source color components plus alpha components,
+ in which case all color and alpha components are rescaled.
+ <p>
+ BufferedImage sources with premultiplied alpha data are treated in the same
+ manner as non-premultiplied images for purposes of rescaling.  That is,
+ the rescaling is done per band on the raw data of the BufferedImage source
+ without regard to whether the data is premultiplied.  If a color conversion
+ is required to the destination ColorModel, the premultiplied state of
+ both source and destination will be taken into account for this step.
+ <p>
+ Images with an IndexColorModel cannot be rescaled.
+ <p>
+ If a RenderingHints object is specified in the constructor, the
+ color rendering hint and the dithering hint may be used when color
+ conversion is required.
+ <p>
+ Note that in-place operation is allowed (i.e. the source and destination can
+ be the same object).
+ @version 10 Feb 1997
+ @see java.awt.RenderingHints#KEY_COLOR_RENDERING
+ @see java.awt.RenderingHints#KEY_DITHERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RescaleOp(float[] scaleFactors, float[] offsets, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new RescaleOp with the desired scale factors
+ and offsets.  The length of the scaleFactor and offset arrays
+ must meet the restrictions stated in the class comments above.
+ The RenderingHints argument may be null.
+ @param scaleFactors the specified scale factors
+ @param offsets the specified offsets
+ @param hints the specified <code>RenderingHints</code>, or
+        <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RescaleOp(float scaleFactor, float offset, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new RescaleOp with the desired scale factor
+ and offset.  The scaleFactor and offset will be applied to
+ all bands in a source Raster and to all color (but not alpha)
+ components in a BufferedImage.
+ The RenderingHints argument may be null.
+ @param scaleFactor the specified scale factor
+ @param offset the specified offset
+ @param hints the specified <code>RenderingHints</code>, or
+        <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float[] java.awt.image.RescaleOp.getScaleFactors(float[] scaleFactors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Returns the scale factors in the given array. The array is also
+ returned for convenience.  If scaleFactors is null, a new array
+ will be allocated.
+ @param scaleFactors the array to contain the scale factors of 
+        this <code>RescaleOp</code>
+ @return the scale factors of this <code>RescaleOp</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float[] java.awt.image.RescaleOp.getOffsets(float[] offsets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the offsets in the given array. The array is also returned
+ for convenience.  If offsets is null, a new array
+ will be allocated.
+ @param offsets the array to contain the offsets of 
+        this <code>RescaleOp</code>
+ @return the offsets of this <code>RescaleOp</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.RescaleOp.getNumFactors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the number of scaling factors and offsets used in this
+ RescaleOp.
+ @return the number of scaling factors and offsets of this 
+         <code>RescaleOp</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.RescaleOp.filter(BufferedImage src, BufferedImage dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Rescales the source BufferedImage.  
+ If the color model in the source image is not the same as that
+ in the destination image, the pixels will be converted
+ in the destination.  If the destination image is null,
+ a BufferedImage will be created with the source ColorModel.
+ An IllegalArgumentException may be thrown if the number of
+ scaling factors/offsets in this object does not meet the
+ restrictions stated in the class comments above, or if the
+ source image has an IndexColorModel.
+ @param src the <code>BufferedImage</code> to be filtered
+ @param dst the destination for the filtering operation 
+            or <code>null</code>
+ @return the filtered <code>BufferedImage</code>.
+ @throws IllegalArgumentException if the <code>ColorModel</code>
+         of <code>src</code> is an <code>IndexColorModel</code>,  
+         or if the number of scaling factors and offsets in this
+         <code>RescaleOp</code> do not meet the requirements 
+         stated in the class comments.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.RescaleOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Rescales the pixel data in the source Raster.
+ If the destination Raster is null, a new Raster will be created.
+ The source and destination must have the same number of bands.
+ Otherwise, an IllegalArgumentException is thrown.
+ Note that the number of scaling factors/offsets in this object must
+ meet the restrictions stated in the class comments above.
+ Otherwise, an IllegalArgumentException is thrown.
+ @param src the <code>Raster</code> to be filtered
+ @param dst the destination for the filtering operation 
+            or <code>null</code>
+ @return the filtered <code>WritableRaster</code>.
+ @throws IllegalArgumentException if <code>src</code> and
+         <code>dst</code> do not have the same number of bands,  
+         or if the number of scaling factors and offsets in this
+         <code>RescaleOp</code> do not meet the requirements 
+         stated in the class comments.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.RescaleOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the bounding box of the rescaled destination image.  Since
+ this is not a geometric operation, the bounding box does not
+ change.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.RescaleOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the bounding box of the rescaled destination Raster.  Since
+ this is not a geometric operation, the bounding box does not
+ change.
+ @param src the rescaled destination <code>Raster</code>
+ @return the bounds of the specified <code>Raster</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.RescaleOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a zeroed destination image with the correct size and number of
+ bands.
+ @param src       Source image for the filter operation.
+ @param destCM    ColorModel of the destination.  If null, the
+                  ColorModel of the source will be used.
+ @return the zeroed-destination image.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.RescaleOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a zeroed-destination <code>Raster</code> with the correct 
+ size and number of bands, given this source.
+ @param src       the source <code>Raster</code>
+ @return the zeroed-destination <code>Raster</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.RescaleOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the location of the destination point given a
+ point in the source.  If dstPt is non-null, it will
+ be used to hold the return value.  Since this is not a geometric
+ operation, the srcPt will equal the dstPt.
+ @param srcPt a point in the source image
+ @param dstPt the destination point or <code>null</code>
+ @return the location of the destination point.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.RescaleOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the rendering hints for this op.
+ @return the rendering hints of this <code>RescaleOp</code>.
+
+<!-- END DATA -->

@@ -1,0 +1,152 @@
+<!-- BEGIN KEY -->
+public final class java.text.CollationElementIterator extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>CollationElementIterator</code> 类用作一个迭代器，以遍历国际化字符串的每个字符。使用该迭代器返回所定位字符的排序优先级。我们所指的字符排序优先级，是指在给定 collation 对象中定义字符排序方式的一个键。
+
+ <p>
+例如，在西班牙语中考虑以下字符串：
+ <blockquote>
+ <pre>
+&quot;ca&quot; -&gt; 第一个键是键 ('c')，而第二个键是键 ('a')。
+&quot;cha&quot; -&gt; 第一个键是键 ('ch')，而第二个键是键 ('a')。
+ </pre>
+ </blockquote>
+在德语中，考虑以下字符串：
+ <blockquote>
+ <pre>
+&quot;?b&quot; -&gt; 第一个键是键 ('a')，第二个键是键 ('e')，
+第三个键是键 ('b')。
+ </pre>
+ </blockquote>
+字符的键是由主顺序（short）、第二顺序（byte）和第三顺序（byte）组成的一个整数。Java 严格定义了其基本数据类型的大小和符号。因此，static 函数 <code>primaryOrder</code>、<code>secondaryOrder</code> 和 <code>tertiaryOrder</code> 分别返回 <code>int</code>、<code>short</code> 和 <code>short</code>，以确保键值的正确性。
+
+ <p>
+以下是使用迭代器的例子：
+ <blockquote>
+ <pre>
+
+  String testString = &quot;This is a test&quot;;
+  RuleBasedCollator ruleBasedCollator = (RuleBasedCollator)Collator.getInstance();
+  CollationElementIterator collationElementIterator = ruleBasedCollator.getCollationElementIterator(testString);
+  int primaryOrder = CollationElementIterator.primaryOrder(collationElementIterator.next());
+ </pre>
+ </blockquote>
+
+ <p>
+<code>CollationElementIterator.next</code> 返回下一个字符的 collation 顺序。collation 顺序由主顺序、第二顺序和第三顺序组成。collation 顺序的数据类型是 <strong>int</strong>。collation 顺序的前 16 位是它的主顺序，接下来 8 位是第二顺序，最后 8 位是第三顺序。
+
+@see                Collator
+@see                RuleBasedCollator
+@version            1.24 07/27/98
+@author             Helena Shih, Laura Werner, Richard Gillam
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.CollationElementIterator.NULLORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Null 顺序指示光标到达字符串末尾。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.CollationElementIterator.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标重置于字符串开始处。下一次调用 next() 将返回字符串中的第一个 collation 元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.CollationElementIterator.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取字符串中的下一个 collation 元素。<p>此迭代器对构建于字符串的 collation 元素序列进行迭代。因为从字符到 collation 元素不一定存在一一映射关系，因此这与&ldquo;返回字符串中下一个字符的 collation 元素（或排序优先级）&rdquo;意义不同。</p>
+<p>此函数返回迭代器当前指向的 collation 元素，然后将内部指针更新为指向下一个元素。previous() 则首先更新指针，然后再返回元素。这意味着，如果您在进行迭代时改变方向（例如，调用 next()，然后调用 previous()，或者调用 previous()，然后调用 next()），将两次获取同一个元素。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.CollationElementIterator.previous()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取字符串中前一个 collation 元素。<p>此迭代器对构建于字符串的 collation 元素序列进行迭代。因为从字符到 collation 元素不一定存在一一映射关系，因此这与&ldquo;返回字符串中前一个字符的 collation 元素（或排序优先级）&rdquo;意义不同。</p>
+<p>此函数将迭代器的内部指针更新为指向它当前指向的 collation 元素的前一个元素，然后返回该元素；而 next() 则先返回当前元素，然后更新指针。这意味着，如果您在进行迭代时改变方向（例如，调用 next()，然后调用 previous()，或者调用 previous()，然后调用 next()），将两次获取同一个元素。</p>
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.CollationElementIterator.primaryOrder(int order)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 collation 元素的主顺序。
+@param order collation 元素
+@return 该元素的主顺序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final short java.text.CollationElementIterator.secondaryOrder(int order)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 collation 元素的第二顺序。
+@param order collation 元素
+@return 该元素的第二顺序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final short java.text.CollationElementIterator.tertiaryOrder(int order)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 collation 元素的第三顺序。
+@param order collation 元素
+@return 该元素的第二顺序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.CollationElementIterator.setOffset(int newOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将迭代器设置为指向对应于指定字符的 collation 元素（参数是源字符串中的一个 CHARACTER 偏移量，而不是其对应 collation 元素序列的偏移量）。下一次调用 next() 返回的值将是对应于文本中指定位置的 collation 元素。如果该位置在 contracting 字符序列的中间，则下一次调用 next() 的结果是该序列的 collation 元素。这意味着 getOffset() 返回的值不一定是前一次调用 setOffset() 所传入的值。
+
+@param newOffset 源文本中新的字符偏移量。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.CollationElementIterator.getOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回源文本中对应于下一个 collation 元素的字符偏移量。（也就是说，getOffset() 返回的文本中的位置对应于下一次调用 next() 所返回的 collation 元素。）此值始终是对应于 collation 元素的 FIRST 字符的索引（contracting 字符序列是指两个或更多个字符都对应于同一个 collation 元素）。这意味着，如果调用 setOffset(x)后紧接着调用 getOffset()，getOffset() 不一定返回 x。
+
+@return 源文本中对应于下一次调用 next() 所返回的 collation 元素的字符偏移量。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.CollationElementIterator.getMaxExpansion(int order)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以指定比较顺序结束的所有扩展序列的最大长度。
+@param order 由 previous 或 next 返回的 collation 顺序。
+@return 以指定比较顺序结束的所有扩展序列的最大长度。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.CollationElementIterator.setText(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个要迭代的新字符串。
+
+@param source  新的源文本
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.CollationElementIterator.setText(CharacterIterator source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个要迭代的新字符串。
+
+@param source  新的源文本。
+@since 1.2
+
+<!-- END DATA -->

@@ -1,0 +1,190 @@
+<!-- BEGIN KEY -->
+public class java.awt.event.InputMethodEvent extends java.awt.AWTEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+输入方法事件包含有关使用输入方法进行撰写的文本的信息。只要文本发生变化，输入方法就会发送一个事件。如果当前正在使用输入方法的文本组件是活动的客户端，则将事件指派给该组件。否则，将事件指派给单独的组合窗口。
+
+ <p>
+涉及输入方法事件的文本由两部分组成：已提交文本和撰写文本。任何一个部分都可以为空。两部分一起替代了前一事件中发送的未提交的撰写文本，或当前选定的已提交文本。已提交文本应该整合到文本组件的持久数据中，它将不会再次发送。撰写的文本可能会反复修改和发送，以反映用户的编辑操作。已提交文本始终在撰写文本之前。
+
+@author JavaSoft Asia/Pacific
+@version 1.22 12/19/03
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InputMethodEvent.INPUT_METHOD_FIRST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记输入方法事件 id 范围内的第一个整数 id。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InputMethodEvent.INPUT_METHOD_TEXT_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事件类型，它指示修改的输入方法文本。此事件由输入方法在处理输入时生成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InputMethodEvent.CARET_POSITION_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事件类型，它指示输入方法文本中修改的插入点。此事件由输入方法在处理仅有插入符修改的输入时生成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InputMethodEvent.INPUT_METHOD_LAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记输入方法事件 id 范围内最后一个整数 id。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ long java.awt.event.InputMethodEvent.when
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示事件创建时间的时间戳。
+
+@serial
+@see #getWhen
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InputMethodEvent(Component source, int id, long when, AttributedCharacterIterator text, int committedCharacterCount, TextHitInfo caret, TextHitInfo visiblePosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过指定源组件、类型、时间、文本、插入符和 visiblePosition 来构造 <code>InputMethodEvent</code>。
+ <p>
+插入符和 visiblePosition 的偏移量与当前撰写的文本有关；也就是说，如果是 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件，则为 <code>text</code> 中的撰写文本；否则为前面 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件的 <code>text</code> 中的撰写文本。
+<p>注意，传递无效的 <code>id</code> 会导致不明确的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。 
+
+@param source 产生事件的对象
+@param id 事件类型
+@param when 指定事件发生时间的 long 整数
+@param text 已提交文本和撰写文本的组合，已提交文本在前；如果事件类型为 <code>CARET_POSITION_CHANGED</code>，则必须为 <code>null</code>；对于 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件来说，如果无任何已提交文本或撰写文本，则可能为 <code>null</code>
+@param committedCharacterCount 文本中已提交的字符数
+@param caret 插入符（也叫插入点）；如果当前撰写文本中无任何插入符，则为 <code>null</code>
+@param visiblePosition 对于可见性至关重要的位置；如果当前撰写文本中对于可见位置无任何建议，则为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>id</code> 不在 <code>INPUT_METHOD_FIRST</code> 到 <code>INPUT_METHOD_LAST</code> 范围内；或者 id 为 <code>CARET_POSITION_CHANGED</code> 而 <code>text</code> 不为 <code>null</code>；或者 <code>committedCharacterCount</code> 不在 <code>0</code> 到 <code>(text.getEndIndex() - text.getBeginIndex())</code> 范围内
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InputMethodEvent(Component source, int id, AttributedCharacterIterator text, int committedCharacterCount, TextHitInfo caret, TextHitInfo visiblePosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过指定源组件、类型、文本、插入符和 visiblePosition 来构造 <code>InputMethodEvent</code>。
+ <p>
+插入符和 visiblePosition 的偏移量与当前撰写的文本有关；也就是说，如果是 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件，则为 <code>text</code> 中的撰写文本；否则为前面 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件的 <code>text</code> 中的撰写文本。通过调用 {@link java.awt.EventQueue#getMostRecentEventTime()} 初始化此事件的时间戳。
+<p>注意，传递无效的 <code>id</code> 会导致不明确的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source 产生事件的对象
+@param id 事件类型
+@param text 已提交文本和撰写文本的组合，已提交文本在前；如果事件类型为 <code>CARET_POSITION_CHANGED</code>，则必须为 <code>null</code>；对于 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件来说，如果无任何已提交文本或撰写文本，则可能为 <code>null</code>
+@param committedCharacterCount 文本中已提交的字符数
+@param caret 插入符（也叫插入点）；如果当前撰写文本中无任何插入符，则为 <code>null</code>
+@param visiblePosition 对于可见性至关重要的位置；如果当前撰写文本中对于可见位置无任何建议，则为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>id</code> 不在 <code>INPUT_METHOD_FIRST</code> 到 <code>INPUT_METHOD_LAST</code> 范围内；或者 id 为 <code>CARET_POSITION_CHANGED</code> 而 <code>text</code> 不为 <code>null</code>；或者 <code>committedCharacterCount</code> 不在 <code>0</code> 到 <code>(text.getEndIndex() - text.getBeginIndex())</code> 范围内
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InputMethodEvent(Component source, int id, TextHitInfo caret, TextHitInfo visiblePosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过指定源组件、类型、插入符和 visiblePosition 来构造 <code>InputMethodEvent</code>。文本设置为 <code>null</code>，<code>committedCharacterCount</code> 设置为 0。
+ <p>
+<code>Caret</code> 和 <code>visiblePosition</code> 的偏移量与当前撰写文本有关；也就是说，如果将事件构造为 <code>CARET_POSITION_CHANGED</code> 事件，则为前面 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件的 <code>text</code> 中的撰写文本。对于没有文本的 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件，<code>caret</code> 和 <code>visiblePosition</code> 必须为 <code>null</code>。通过调用 {@link java.awt.EventQueue#getMostRecentEventTime()} 初始化此事件的时间戳。
+<p>注意，传递无效的 <code>id</code> 会导致不明确的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source 产生事件的对象
+@param id 事件类型
+@param caret 插入符（也叫插入点）；如果当前撰写文本中无任何插入符，则为 <code>null</code>
+@param visiblePosition 对于可见性至关重要的位置；如果当前撰写文本中对于可见位置无任何建议，则为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>id</code> 不在 <code>INPUT_METHOD_FIRST</code> 到 <code>INPUT_METHOD_LAST</code> 范围内
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.awt.event.InputMethodEvent.getText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取已提交文本和撰写文本的组合。从索引 0 到索引 <code>getCommittedCharacterCount() - 1</code> 的字符为已提交文本，其余字符为撰写文本。
+
+@return 文本。对于 CARET_POSITION_CHANGED 始终为 null；如果没有任何撰写文本或已提交文本，则对于 INPUT_METHOD_TEXT_CHANGED 可能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.InputMethodEvent.getCommittedCharacterCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本中已提交字符的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.event.InputMethodEvent.getCaret()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取插入符。
+ <p>
+插入符的偏移量与当前撰写文本有关；也就是说，如果是 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件，则为 getText() 中的撰写文本；否则为前面 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件的 getText() 中的撰写文本。
+
+@return 插入符（也叫插入点）。如果当前撰写文本中没有任何插入符，则为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.event.InputMethodEvent.getVisiblePosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取对于可见性至关重要的位置。
+ <p>
+可见位置的偏移量与当前撰写文本有关；也就是说，如果是 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件，则为 getText() 中的撰写文本；否则为前面 <code>INPUT_METHOD_TEXT_CHANGED</code> 事件的 getText() 中的撰写文本。
+
+@return 对于可见性至关重要的位置。如果当前撰写文本中对于可见位置没有任何建议，则为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.event.InputMethodEvent.consume()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此事件，以便不会按默认方式由产生此事件的源代码来处理此事件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.event.InputMethodEvent.isConsumed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已经使用此事件。
+@see #consume
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.awt.event.InputMethodEvent.getWhen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此事件发生时的时间戳。
+
+@return 此事件的时间戳
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.event.InputMethodEvent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此事件的参数字符串。此方法对于事件记录和调试很有用。它包含文本形式的事件 ID、用 "+" 分隔的已提交文本和撰写文本的字符、已提交字符的数量、插入符和可见位置。
+
+@return 标识事件及其属性的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.event.InputMethodEvent.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>when</code> 字段未出现在对象输入流中，则初始化它。在这种情况下，将通过调用 {@link java.awt.EventQueue#getMostRecentEventTime()} 来初始化该字段。
+
+<!-- END DATA -->

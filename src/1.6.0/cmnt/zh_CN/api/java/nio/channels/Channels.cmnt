@@ -1,0 +1,157 @@
+<!-- BEGIN KEY -->
+public final class java.nio.channels.Channels extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对信道和流的实用工具方法。
+
+<p> 此类定义了支持 <tt>{@link java.io}</tt> 包中的流类与此包中的信道类之间进行互操作的静态方法。  </p>
+
+@author Mark Reinhold
+@author Mike McCloskey
+@author JSR-51 Expert Group
+@version 1.23, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.InputStream java.nio.channels.Channels.newInputStream(ReadableByteChannel ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造从给定信道读取字节的流。
+
+<p>如果在底层信道处于非阻塞模式的同时调用所得流的 <tt>read</tt> 方法，则会抛出 {@link IllegalBlockingModeException}。不对该流进行缓冲，并且它不支持 {@link InputStream#mark mark} 或 {@link InputStream#reset reset} 方法。多个并发线程访问该流是安全的。关闭流依次会导致信道被关闭。</p>
+
+@param  ch 将从中读取字节的信道
+
+@return 新的输入流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.OutputStream java.nio.channels.Channels.newOutputStream(WritableByteChannel ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造向给定信道写入字节的流。
+
+<p>如果在底层信道处于非阻塞模式的同时调用所得流的 <tt>write</tt> 方法，则会抛出 {@link IllegalBlockingModeException}。不对该流进行缓冲。多个并发线程访问该流是安全的。关闭流依次会导致信道被关闭。</p>
+
+@param  ch 将向其写入字节的信道
+
+@return 新的输出流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.nio.channels.ReadableByteChannel java.nio.channels.Channels.newChannel(InputStream in)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造从给定流读取字节的信道。
+
+<p>不对所得的信道进行缓冲；只是将其 I/O 操作重定向到给定的流。关闭流会依次导致信道被关闭。 </p>
+
+@param  in  从中读取字节的流
+
+@return  新的可读字节信道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.nio.channels.WritableByteChannel java.nio.channels.Channels.newChannel(OutputStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造向给定流写入字节的信道。
+
+<p>不对所得的信道进行缓冲；只是将其 I/O 操作重定向到给定的流。关闭流会依次导致信道被关闭。  </p>
+
+@param  out 将向其写入字节的流
+
+@return  新的可写字节信道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.Reader java.nio.channels.Channels.newReader(ReadableByteChannel ch, CharsetDecoder dec, int minBufferCap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 reader，它用给定的解码器对取自给定信道的字节进行解码。
+
+<p>所得的流将包含一个内部输入缓冲区，其大小至少为 <tt>minBufferCap</tt> 个字节。该流的 <tt>read</tt> 方法会根据需要填充该缓冲区，方法是从底层信道读取字节；如果要读取字节时该信道处于非阻塞模式，则抛出 {@link IllegalBlockingModeException}。否则不对所得的流进行缓冲，并且也不支持 {@link Reader#mark mark} 或 {@link Reader#reset reset} 方法。关闭流依次会导致信道被关闭。  </p>
+
+@param  ch 将从中读取字节的信道
+
+@param  dec 要使用的 charset 解码器
+
+@param  minBufferCap 内部字节缓冲区的最小容量，如果使用取决于实现的默认容量，则为 <tt>-1</tt>
+
+@return 新的 reader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.Reader java.nio.channels.Channels.newReader(ReadableByteChannel ch, String csName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 reader，它根据命名的 charset 对取自给定信道的字节进行解码。
+
+<p> 调用该方法的形式为：
+
+ <blockquote><pre>
+ Channels.newReader(ch, csname)</pre></blockquote>
+
+与下列表达式的作用完全相同 
+
+ <blockquote><pre>
+ Channels.newReader(ch,
+                    Charset.forName(csName)
+                        .newDecoder(),
+                    -1);</pre></blockquote>
+
+@param  ch 将从中读取字节的信道
+
+@param  csName 要使用的 charset 的名称
+
+@return 新的 reader
+
+@throws  UnsupportedCharsetException 如果在此 Java 虚拟机的实例中不提供对指定 charset 的支持
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.Writer java.nio.channels.Channels.newWriter(WritableByteChannel ch, CharsetEncoder enc, int minBufferCap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 writer，它使用给定的编码器对字符进行编码，并将所得的字节写入给定的信道。
+
+<p> 所得的流将包含一个内部输出缓冲区，其大小至少为 <tt>minBufferCap</tt> 字节。该流的 <tt>write</tt> 方法会根据需要刷新该缓冲区，方法是向底层信道写入字节；如果要写入字节时该信道处于非阻塞模式，则抛出 {@link IllegalBlockingModeException}。不另外对所得的流进行缓冲。关闭流依次会导致信道被关闭。  </p>
+
+@param  ch 将向其写入字节的信道
+
+@param  enc 要使用的 charset 编码器
+
+@param  minBufferCap 内部字节缓冲区的最小容量，如果使用取决于实现的默认容量，则为 <tt>-1</tt>
+
+@return 新的 writer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.Writer java.nio.channels.Channels.newWriter(WritableByteChannel ch, String csName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 writer，它根据指定的 charset 对字符进行编码，并将所得的字节写入给定的信道。
+
+<p> 调用该方法的形式为：
+
+ <blockquote><pre>
+ Channels.newWriter(ch, csname)</pre></blockquote>
+
+与下列表达式的作用完全相同
+
+ <blockquote><pre>
+ Channels.newWriter(ch,
+                    Charset.forName(csName)
+                        .newEncoder(),
+                    -1);</pre></blockquote>
+
+@param  ch 将向其写入字节的信道
+
+@param  csName 所使用的 charset 的名称
+
+@return 新的 writer
+
+@throws  UnsupportedCharsetException 如果在此 Java 虚拟机的实例中不提供对指定 charset 的支持
+
+<!-- END DATA -->

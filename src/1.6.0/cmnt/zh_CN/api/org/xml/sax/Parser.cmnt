@@ -1,0 +1,146 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.Parser
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 SAX （XML 的简单 API） 解析器的基本接口。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>这是一个 SAX1 的主要事件提供者接口；在 SAX2 中它已经被 {@link org.xml.sax.XMLReader XMLReader} 所取代，后者包括名称空间支持、复杂的可配置性及可扩展性。</p>
+
+<p>所有的 SAX1 解析器都必须实现这一基本接口：它允许应用程序为不同类型的事件注册处理程序并且从 URI 或字符流开始解析。</p>
+
+<p>所有的 SAX1 解析器还必须实现零参数的构造方法（尽管也允许实现其他的构造方法）。</p>
+
+<p>SAX1 解析器可以重新使用，但不可重入：一旦成功完成了第一次解析，应用程序就可以重新使用一个解析器对象（可能具有不同的输入源），但它不可以在解析中以递归的方式调用 parse() 方法，</p>
+
+@deprecated 此接口已经被 SAX2 {@link org.xml.sax.XMLReader XMLReader} 接口取代，后者包括名称空间支持。
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.EntityResolver
+@see org.xml.sax.DTDHandler
+@see org.xml.sax.DocumentHandler
+@see org.xml.sax.ErrorHandler
+@see org.xml.sax.HandlerBase
+@see org.xml.sax.InputSource
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.setLocale(Locale locale) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序请求错误和警告的环境。
+
+<p>不需要 SAX 解析器提供对错误和警告的本地化；但是，如果它们无法支持所请求的环境，则必须抛出 SAX 异常。在解析过程中应用程序不能请求环境改变。</p>
+
+@param locale Java Locale 对象。
+@exception org.xml.sax.SAXException 如果不支持请求的环境，则抛出异常（使用原来的或默认的环境）。
+@see org.xml.sax.SAXException
+@see org.xml.sax.SAXParseException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.setEntityResolver(EntityResolver resolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册自定义的实体解析器。
+
+<p>如果应用程序不注册实体解析器，则 SAX 解析器自身将解析系统标识符并打开到实体的连接（这是在 HandlerBase 中实现的默认行为）。</p>
+
+<p>应用程序还可以在解析期间注册新的或不同的实体解析器，并且 SAX 解析器必须立即开始使用新的解析器。</p>
+
+@param resolver 用来解析实体的对象。
+@see EntityResolver
+@see HandlerBase
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.setDTDHandler(DTDHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册 DTD 事件处理程序。
+
+<p>如果应用程序不注册 DTD 处理程序，则将忽略由 SAX 解析器报告的所有 DTD 事件（这是由 HandlerBase 实现的默认行为）。</p>
+
+<p>应用程序还可以在解析期间注册新的或不同的处理程序，并且 SAX 解析器必须立即开始使用新的处理程序。</p>
+
+@param handler DTD 处理程序。
+@see DTDHandler
+@see HandlerBase
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.setDocumentHandler(DocumentHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册文档事件处理程序。
+
+<p>如果应用程序不注册文档处理程序，则将忽略由 SAX 解析器报告的所有文档事件（这是由 HandlerBase 实现的默认行为）。</p>
+
+<p>应用程序还可以在解析过程中注册新的或不同的处理程序，并且 SAX 解析器必须立即开始使用新的处理程序。</p>
+
+@param handler 文档处理程序。
+@see DocumentHandler
+@see HandlerBase
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.setErrorHandler(ErrorHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册错误事件处理程序。
+
+<p>如果应用程序不注册错误事件处理程序，则将忽略由 SAX 解析器报告的所有错误事件，但不包括 fatalError，它将抛出 SAXException（这是由 HandlerBase 实现的默认行为）。</p>
+
+<p>应用程序还可以在解析过程中注册新的或不同的处理程序，并且 SAX 解析器必须立即开始使用新的处理程序。</p>
+
+@param handler 错误处理程序。
+@see ErrorHandler
+@see SAXException
+@see HandlerBase
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.parse(InputSource source) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析 XML 文档。
+
+<p>应用程序可以使用此方法指导 SAX 解析器开始解析来自任何有效输入源（字符流、字节流或 URI）的 XML 文档。</p>
+
+<p>在解析正在进行时，应用程序可能不能调用此方法（它们必须为每个另外的 XML 文档创建新的 Parser）。一旦完成了解析，应用程序就可以重新使用可能具有另外一个输入源的同一个 Parser 对象。</p>
+
+@param source XML 文档的顶层的输入源。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@exception java.io.IOException 解析器发出的 IO 异常，可能来自应用程序提供的字节流或字符流。
+@see org.xml.sax.InputSource
+@see #parse(java.lang.String)
+@see #setEntityResolver
+@see #setDTDHandler
+@see #setDocumentHandler
+@see #setErrorHandler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.Parser.parse(String systemId) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从系统标识符 (URI) 解析 XML 文档。
+
+<p>此方法是从系统标识符读取文档这一常见情形的捷径。它完全等效于以下方法：</p>
+
+ <pre>
+ parse(new InputSource(systemId));
+ </pre>
+
+<p>如果系统标识符是一个 URL，则在将它传递到解析器之前必须由应用程序对它进行完整的解析。</p>
+
+@param systemId 系统标识符 (URI)。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@exception java.io.IOException 解析器发出的 IO 异常，可能来自应用程序提供的字节流或字符流。
+@see #parse(org.xml.sax.InputSource)
+
+<!-- END DATA -->

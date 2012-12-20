@@ -1,0 +1,238 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.filechooser.FileSystemView extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+FileSystemView 是 JFileChooser 的文件系统网关。由于 JDK1.1 File API 不允许对诸如根分区、文件类型信息或隐藏文件位之类的信息进行访问，此类被设计成能够直接获得尽可能多的特定于 OS 的文件系统信息。
+
+ <p>
+Java Licensees 可能想要提供 FileSystemView 的不同实现来更好地处理给定操作系统。
+
+@version 1.46 04/27/04
+@author Jeff Dinkins
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isRoot(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给定文件是否是导航树中的根。示例：Windows 98 有一个根，即 Desktop 文件夹。DOS 中的每个驱动器名都有一个根：<code>C:\</code>、<code>D:\</code> 等等。Unix 有一个根，即 <code>&quot;/&quot;</code> 目录。
+
+默认实现从 <code>ShellFolder</code> 类中获取信息。
+
+@param f 表示目录的 <code>File</code> 对象
+@return 如果 <code>f</code> 是导航树中的根，则返回 <code>true</code>。
+@see #isFileSystemRoot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Boolean javax.swing.filechooser.FileSystemView.isTraversable(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果可以访问文件（目录），则返回 true。如果无法遍历目录，则返回 false。
+
+@param f <code>File</code>
+@return 如果可以遍历文件/目录，则返回 <code>true</code>，否则返回 <code>false</code>
+@see JFileChooser#isTraversable
+@see FileView#isTraversable
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.filechooser.FileSystemView.getSystemDisplayName(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在系统文件浏览器中显示的文件、目录或文件夹名。以 Windows 为例：&quot;M:\&quot; 目录显示为 &quot;CD-ROM (M:)&quot;。
+
+默认实现从 ShellFolder 类获取信息。
+
+@param f <code>File</code> 对象
+@return 本机文件选择器显示的文件名
+@see JFileChooser#getName
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.filechooser.FileSystemView.getSystemTypeDescription(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在系统文件浏览器中显示的文件、目录或文件夹类型描述。以 Windows 为例：&quot;Desktop&quot; 文件夹被描述为 &quot;Desktop&quot;。
+
+为本机 ShellFolder 实现中的平台重写此方法。
+
+@param f <code>File</code> 对象
+@return 本机文件选择器显示的文件类型描述；如果没有可用的本机信息，则返回 null。
+@see JFileChooser#getTypeDescription
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.filechooser.FileSystemView.getSystemIcon(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在系统文件浏览器中显示的文件、目录或文件夹的图标。以 Windows 为例：&quot;M:\&quot; 目录显示 CD-ROM 图标。
+
+默认实现从 ShellFolder 类获取信息。
+
+@param f <code>File</code> 对象
+@return 本机文件选择器显示的图标
+@see JFileChooser#getIcon
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isParent(File folder, File file)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Windows 中，一个文件可以出现在多个文件夹，但在文件系统中的父目录中除外。例如，该文件夹可以是不同于 file.getParentFile() 的 &quot;Desktop&quot; 文件夹。
+
+@param folder 表示一个目录或特殊文件夹的 <code>File</code> 对象
+@param file <code>File</code> 对象
+@return 如果 <code>folder</code> 是一个目录或特殊文件夹，并且包括 <code>file</code>，则返回 <code>true</code>。
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File javax.swing.filechooser.FileSystemView.getChild(File parent, String fileName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+@param parent 表示一个目录或特殊文件夹的 <code>File</code> 对象
+@param fileName 存在于 <code>parent</code> 中的文件或文件夹的名称
+@return File 对象。它通常使用 <code>new File(parent, fileName)</code> 构造，父级和子级都是特殊文件夹时除外，在这种情况下，<code>File</code> 是包含 <code>ShellFolder</code> 对象的包装器。
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isFileSystem(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查 <code>f</code> 是否表示一个相对于特殊文件夹（如 <code>&quot;Desktop&quot;</code>）的实际目录或文件。UI 类使用此方法来决定在选择目录时某个文件夹是否可选择。
+
+@param f <code>File</code> 对象
+@return 如果 <code>f</code> 是实际文件或目录，则返回 <code>true</code>。
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.io.File javax.swing.filechooser.FileSystemView.createNewFolder(File containingDir) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有默认文件夹名称的新文件夹。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isHiddenFile(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回某个文件是否被隐藏。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isFileSystemRoot(File dir)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断 dir 是否是文件系统（如驱动器或分区）中的树的根。示例：在 Windows 98 中，对于 &quot;C:\&quot; 返回 true。
+ 
+@param dir 表示目录的 <code>File</code> 对象
+@return 如果 <code>f</code> 是文件系统的根，则返回 <code>true</code>
+@see #isRoot
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isDrive(File dir)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UI 类使用此方法来决定是否为驱动器或分区显示特殊图标，例如，&ldquo;硬盘&rdquo;图标。
+
+默认实现无法知道，因此总是返回 false。
+
+@param dir 目录
+@return 总是返回 <code>false</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isFloppyDrive(File dir)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UI 类使用此方法来决定是否为软盘显示特殊图标。隐含了 isDrive(dir)。
+
+默认实现无法知道，因此总是返回 false。
+
+@param dir 目录
+@return 总是返回 <code>false</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.filechooser.FileSystemView.isComputerNode(File dir)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UI 类使用此方法来决定是否为计算机节点显示特殊图标，例如，&ldquo;我的电脑&rdquo;或网络服务器。
+
+默认实现无法知道，因此总是返回 false。
+
+@param dir 目录
+@return 总是返回 <code>false</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File[] javax.swing.filechooser.FileSystemView.getRoots()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此系统的所有根分区。例如，在 Windows 中，这将是&ldquo;桌面&rdquo;文件夹，而在 DOS 中将是从 A：到 Z：的驱动器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File javax.swing.filechooser.FileSystemView.getDefaultDirectory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文件选择器的用户默认起始目录。
+
+@return 表示默认起始文件夹的 <code>File</code> 对象
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File javax.swing.filechooser.FileSystemView.createFileObject(File dir, String filename)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回根据给定的 filename 在 dir 中构造的 File 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File javax.swing.filechooser.FileSystemView.createFileObject(String path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回根据给定路径字符串构造的 File 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File[] javax.swing.filechooser.FileSystemView.getFiles(File dir, boolean useFileHiding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取显示的（即未隐藏）文件的列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File javax.swing.filechooser.FileSystemView.getParentDirectory(File dir)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>dir</code> 的父目录。
+@param dir 要查询的 <code>File</code>
+@return <code>dir</code> 的父目录；如果 <code>dir</code> 为 <code>null</code>，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.File javax.swing.filechooser.FileSystemView.createFileSystemRoot(File f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建针对 <code>f</code> 的新 <code>File</code> 对象，使其对于文件系统根目录而言具有正确的行为。
+
+@param f 表示文件系统根目录的 <code>File</code> 对象，例如 Unix 上的 &quot;/&quot; 或 Windows 上的 &quot;C:\&quot;。
+@return 新的 <code>File</code> 对象
+@since 1.4
+
+<!-- END DATA -->

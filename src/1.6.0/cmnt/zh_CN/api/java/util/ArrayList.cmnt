@@ -1,0 +1,287 @@
+<!-- BEGIN KEY -->
+public class java.util.ArrayList extends java.util.AbstractList implements java.util.List, java.util.RandomAccess, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>List</tt> 接口的大小可变数组的实现。实现了所有可选列表操作，并允许包括 <tt>null</tt> 在内的所有元素。除了实现 <tt>List</tt> 接口外，此类还提供一些方法来操作内部用来存储列表的数组的大小。（此类大致上等同于 <tt>Vector</tt> 类，除了此类是不同步的。）<p>
+
+<tt>size</tt>、<tt>isEmpty</tt>、<tt>get</tt>、<tt>set</tt>、<tt>iterator</tt> 和 <tt>listIterator</tt> 操作都以固定时间运行。<tt>add</tt> 操作以<i>分摊的固定时间</i> 运行，也就是说，添加 n 个元素需要 O(n) 时间。其他所有操作都以线性时间运行（大体上讲）。与用于 <tt>LinkedList</tt> 实现的常数因子相比，此实现的常数因子较低。<p>
+
+每个 <tt>ArrayList</tt> 实例都有一个<i>容量</i>。该容量是指用来存储列表元素的数组的大小。它总是至少等于列表的大小。随着向 ArrayList 中不断添加元素，其容量也自动增长。并未指定增长策略的细节，因为这不只是添加元素会带来分摊固定时间开销那样简单。<p> 
+
+在添加大量元素前，应用程序可以使用 <tt>ensureCapacity</tt> 操作来增加 <tt>ArrayList</tt> 实例的容量。这可以减少递增式再分配的数量。<p>
+
+<strong>注意，此实现不是同步的。</strong>如果多个线程同时访问一个 <tt>ArrayList</tt> 实例，而其中至少一个线程从结构上修改了列表，那么它<i>必须</i> 保持外部同步。（结构上的修改是指任何添加或删除一个或多个元素的操作，或者显式调整底层数组的大小；仅仅设置元素的值不是结构上的修改。）这一般通过对自然封装该列表的对象进行同步操作来完成。如果不存在这样的对象，则应该使用 {@link Collections#synchronizedList Collections.synchronizedList} 方法将该列表&ldquo;包装&rdquo;起来。这最好在创建时完成，以防止意外对列表进行不同步的访问：<pre>
+	List list = Collections.synchronizedList(new ArrayList(...)); </pre><p>
+
+此类的 <tt>iterator</tt> 和 <tt>listIterator</tt> 方法返回的迭代器是<i>快速失败的</i>：在创建迭代器之后，除非通过迭代器自身的 <tt>remove</tt> 或 <tt>add</tt> 方法从结构上对列表进行修改，否则在任何时间以任何方式对列表进行修改，迭代器都会抛出 {@link ConcurrentModificationException}。因此，面对并发的修改，迭代器很快就会完全失败，而不是冒着在将来某个不确定时间发生任意不确定行为的风险。<p>
+
+注意，迭代器的快速失败行为无法得到保证，因为一般来说，不可能对是否出现不同步并发修改做出任何硬性保证。快速失败迭代器会尽最大努力抛出 <tt>ConcurrentModificationException</tt>。因此，为提高这类迭代器的正确性而编写一个依赖于此异常的程序是错误的做法：<i>迭代器的快速失败行为应该仅用于检测 bug。</i><p>
+
+此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.47, 12/19/03
+@see	   Collection
+@see	   List
+@see	   LinkedList
+@see	   Vector
+@see	   Collections#synchronizedList(List)
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.ArrayList.size
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ArrayList 的大小（它包含的元素数）。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ArrayList(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定初始容量的空列表。
+
+@param   initialCapacity   列表的初始容量
+@exception IllegalArgumentException 如果指定的初始容量为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ArrayList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个初始容量为 10 的空列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ArrayList(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包含指定 collection 的元素的列表，这些元素是按照该 collection 的迭代器返回它们的顺序排列的。
+
+@param c 其元素将放置在此列表中的 collection 
+@throws NullPointerException  如果指定的 collection 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ArrayList.trimToSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <tt>ArrayList</tt> 实例的容量调整为列表的当前大小。应用程序可以使用此操作来最小化 <tt>ArrayList</tt> 实例的存储量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ArrayList.ensureCapacity(int minCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如有必要，增加此 <tt>ArrayList</tt> 实例的容量，以确保它至少能够容纳最小容量参数所指定的元素数。 
+
+@param   minCapacity   所需的最小容量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.ArrayList.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中的元素数。
+
+@return 此列表中的元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此列表中没有元素，则返回 <tt>true</tt>
+
+@return 如果此列表中没有元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此列表中包含指定的元素，则返回 <tt>true</tt>。更确切地讲，当且仅当此列表包含至少一个满足 <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt> 的元素 <tt>e</tt> 时，则返回 <tt>true</tt>。
+
+@param o 测试此列表中是否存在的元素
+@return 如果此列表包含特定的元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.ArrayList.indexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中首次出现的指定元素的索引，或如果此列表不包含元素，则返回 -1。更确切地讲，返回满足 <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> 的最低索引 <tt>i</tt> ，如果不存在此类索引，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.ArrayList.lastIndexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中最后一次出现的指定元素的索引，或如果此列表不包含索引，则返回 -1。更确切地讲，返回满足 <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> 的最高索引 <tt>i</tt>，如果不存在此类索引，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.util.ArrayList.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>ArrayList</tt> 实例的浅表副本。（不复制这些元素本身。）
+
+@return  此 <tt>ArrayList</tt> 实例的一个副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.ArrayList.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按适当顺序（从第一个到最后一个元素）返回包含此列表中所有元素的数组。
+
+<p>由于此列表不维护对返回数组的任何引用，，因而它将是“安全的”。（换句话说，此方法必须分配一个新的数组）。因此，调用者可以自由地修改返回的数组。
+
+<p>此方法担当基于数组的 API 和基于 collection 的 API 之间的桥梁。
+
+@return 包含此列表中所有元素的数组（按适当顺序）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.util.ArrayList.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按适当顺序（从第一个到最后一个元素）返回包含此列表中所有元素的数组；返回数组的运行时类型是指定数组的运行时类型。如果指定的数组能容纳列表，则将该列表返回此处。否则，将分配一个具有指定数组的运行时类型和此列表大小的新数组。
+
+
+<p>如果指定的数组能容纳队列，并有剩余的空间（即数组的元素比队列多），那么会将数组中紧接 collection 尾部的元素设置为 <tt>null</tt>。（<i>仅</i> 在调用者知道列表中不包含任何 null 元素时才能用此方法确定列表长度）。
+
+@param a 要在其中存储列表元素的数组（如果它足够大）；否则，为此分配一个具有相同运行时类型的新数组。
+@return  包含列表元素的数组
+@throws ArrayStoreException 如果指定数组的运行时类型不是此列表每个元素的运行时类型的超类型
+@throws NullPointerException 如果指定数组为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.ArrayList.get(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中指定位置上的元素。
+
+@param  index 要返回元素的索引
+@return  此列表中指定位置上的元素
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.ArrayList.set(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的元素替代此列表中指定位置上的元素。
+
+@param index 要替代的元素的索引
+@param element 存储在指定位置上的元素
+@return  以前位于该指定位置上的元素
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素添加到此列表的尾部。
+
+@param e 要添加到此列表中的元素
+@return <tt>true</tt>（按照 {@link Collection#add} 的指定）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ArrayList.add(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素插入此列表中的指定位置。向右移动当前位于该位置的元素（如果有）以及所有后续元素（将其索引加 1）。
+
+@param index 指定元素所插入位置的索引
+@param element 要插入的元素
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.ArrayList.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此列表中指定位置上的元素。向左移动所有后续元素（将其索引减 1）。
+
+@param index 要移除的元素的索引
+@return  从列表中移除的元素
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此列表中首次出现的指定元素（如果存在）。如果列表不包含此元素，则列表不做改动。更确切地讲，移除满足 <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> 的最低索引的元素（如果存在此类元素）。如果列表中包含指定的元素，则返回 <tt>true</tt>（或者等同于这种情况：如果列表由于调用而发生更改，则返回 <tt>true</tt>）。<p>
+
+@param o 要从此列表中移除的元素（如果存在）
+@return 如果此列表包含指定的元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ArrayList.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此列表中的所有元素。此调用返回后，列表将为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.addAll(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照指定 collection 的迭代器所返回的元素顺序，将该 collection 中的所有元素添加到此列表的尾部。如果正在进行此操作时修改指定的 collection ，那么此操作的行为是不确定的。（这意味着如果指定的 collection 是此列表且此列表是非空的，那么此调用的行为是不确定的）。
+
+@param c 包含要添加到此列表中的元素的 collection 
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws NullPointerException  如果指定的 collection 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ArrayList.addAll(int index, java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的位置开始，将指定 collection 中的所有元素插入到此列表中。向右移动当前位于该位置的元素（如果有）以及所有后续元素（增加其索引）。新元素将按照指定 collection 的迭代器所返回的元素顺序出现在列表中。
+
+@param index 插入指定 collection 中的首个元素的位置索引
+@param c 包含要添加到此列表中元素的 collection 
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws IndexOutOfBoundsException {@inheritDoc}
+@throws NullPointerException  如果指定的 collection 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.ArrayList.removeRange(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除列表中索引在 <tt>fromIndex</tt>（包括）和 <tt>toIndex</tt>（不包括）之间的所有元素。向左移动所有后续元素（减小其索引）。此调用将列表缩短了 <tt>(toIndex - fromIndex)</tt> 个元素。（如果 <tt>toIndex==fromIndex</tt>，则此操作无效。）
+
+@param fromIndex 要移除的首个元素的索引
+@param toIndex 最后一个要移除的元素后面那个元素的索引
+@throws IndexOutOfBoundsException 如果 fromIndex 或 toIndex 超出范围 (fromIndex &lt; 0 || fromIndex &gt;= size() || toIndex
+              &gt; size() || toIndex &lt; fromIndex)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.ArrayList.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构 <tt>ArrayList</tt> 实例（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.ArrayList.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <tt>ArrayList</tt> 实例的状态保存到流中（也就是将其序列化）。
+
+@serialData 支持发出 <tt>ArrayList</tt> 实例的数组的长度 (int)，后面是按适当顺序排列的所有元素（每个元素都是一个 <tt>Object</tt>）。
+
+<!-- END DATA -->

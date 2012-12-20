@@ -1,0 +1,468 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.ComponentColorModel extends java.awt.image.ColorModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用像素值将颜色和 alpha 信息表示为独立样本的 <CODE>ColorModel</CODE> 类，该类以独立的数据元素存储每个样本。此类可以与任意 <CODE>ColorSpace</CODE> 一起使用。像素值中的颜色样本数必须与 <CODE>ColorSpace</CODE> 中的颜色分量数相同。可以有单个 alpha 样本。  
+ <p>
+对于那些使用 <CODE>transferType</CODE> 类型的基本数组像素表示形式的方法，数组的长度与颜色和 alpha 样本数相同。颜色样本存储在后跟 alpha 样本（如果存在）的数组的前面。颜色样本的顺序由 <CODE>ColorSpace</CODE> 指定。通常，此顺序反映颜色空间类型的名称。例如，对于 <CODE>TYPE_RGB</CODE>，索引 0 对应于红色，索引 1 对应于绿色，索引 2 对应于蓝色。  
+ <p>
+出于显示或处理目的而执行的像素值到颜色/alpha 分量的转换是基于从样本到分量的一一对应关系进行的。由实例表示的像素样本值可以是有符号的或无符号的，也可以是整型或者 float 或 double 类型（有关细节请参见以下内容），具体取决于用来创建 <code>ComponentColorModel</code> 实例的传输类型。从样本值到标准化颜色/alpha 分量的转换必须遵循一定的规则。对于 float 和 double 样本，转换为一种标识，即标准化分量值等于相应的样本值。对于整数样本，转换应该只是简单缩放和偏移，其中每个分量的缩放和偏移常量可以有所不同。应用缩放和偏移常量的结果是形成一组颜色/alpha 分量值，这样可以保证这些值落到一定范围内。通常，颜色分量的范围将为由 <code>ColorSpace</code> 类的 <code>getMinValue</code> 和 <code>getMaxValue</code> 方法定义的范围。alpha 分量的范围应为从 0.0 到 1.0。
+ <p>
+用传输类型 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE> 和 <CODE>DataBuffer.TYPE_INT</CODE> 创建的 <code>ComponentColorModel</code> 的实例具有被视为无符号整数值的像素样本值。像素值的颜色或 alpha 样本中的位数可能不同于传递到 <code>ComponentColorModel(ColorSpace, int[], boolean, boolean, int, int)</code> 构造方法的相应颜色或 alpha 样本的位数。在这种情况下，此类假定样本值的 n 位最低有效位保存分量值，其中 n 为传递到构造方法的分量的有效位数。它还假定样本值中所有较高位都为零。因此，样本值的范围为 0 到 2<sup>n</sup> - 1。此类将这些样本值映射到标准化颜色分量值，以使 0 映射到从每个分量的 <code>ColorSpace</code> 的 <code>getMinValue</code> 方法得到的值，2<sup>n</sup> - 1 映射到从 <code>getMaxValue</code> 得到的值。创建具有不同颜色样本映射的 <code>ComponentColorModel</code> 需要子类化此类，并重写 <code>getNormalizedComponents(Object, float[], int)</code> 方法。alpha 样本的映射始终将 0 映射到 0.0，将 2<sup>n</sup> - 1 映射到 1.0。
+ <p>
+对于带有无符号样本值的实例，仅当两个条件都具备时，非标准化的颜色/alpha 分量表示形式才受支持。首先，样本值 0 必须映射到标准化分量值 0.0，样本值 2<sup>n</sup> - 1 映射到 1.0。其次，<code>ColorSpace</code> 的所有颜色分量的最小值/最大取值范围必须为 0.0 到 1.0 之间。在这种情况下，分量表示形式为相应样本的 n 位最低有效位。因此，每个分量都为介于 0 和 2<sup>n</sup> - 1 之间的无符号整数值，其中 n 为特定分量的有效位数。如果未满足这些条件，则采用非标准化分量参数的任何方法都将抛出 <code>IllegalArgumentException</code>。
+ <p>
+用传输类型 <CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 和 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 创建的 <code>ComponentColorModel</code> 的实例具有被视为有符号的 short、float 或 double 值的像素样本值。此类实例不支持非标准化的颜色/alpha 分量表示形式，因此将此类表示形式用作参数在这些实例的其中之一上调用任何方法都将抛出 <code>IllegalArgumentException</code>。此类实例的标准化分量的取值范围取决于传输类型，如下所示：对于 float 样本，则为 float 数据类型的完整范围；对于 double 样本，则为 float 数据类型（通过将 double 强制转换为 float 得到）的完整范围；对于 short 样本，大致为 -maxVal 到 +maxVal，其中 maxVal 为 <code>ColorSpace</code> 的每分量最大值（-32767 映射到 -maxVal，0 映射到 0.0，32767 映射到 +maxVal）。通过重写 <code>getNormalizedComponents(Object, float[], int)</code> 方法，子类可以重写 short 样本值到标准化分量值的缩放。对于 float 和 double 样本，标准化分量值被视为等于相应的样本值，子类不应试图添加这些传输类型的任何非标识缩放。
+ <p>
+用传输类型 <CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 和 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 创建的 <code>ComponentColorModel</code> 的实例使用所有样本值的所有位。因此，使用 <CODE>DataBuffer.TYPE_SHORT</CODE> 时所有颜色/alpha 分量都有 16 位，使用 <CODE>DataBuffer.TYPE_FLOAT</CODE> 时都有 32，使用 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 时都有 64 位。当构造方法的 <code>ComponentColorModel(ColorSpace, int[], boolean, boolean, int, int)</code> 形式与这些传输类型之一一起使用时，位数组参数将被忽略。
+ <p>
+可能将不能合理解释的颜色/alpha 样本值视为用于呈现的分量值。当子类化 <code>ComponentColorModel</code> 以重写无符号样本值到标准化颜色分量值的映射时，或当使用某一范围之外的有符号样本值时，此现象可能发生。（例如，将 alpha 分量指定为范围 0 到 32767（即标准化范围 0.0 到 1.0）之外的有符号 short 值可能导致不可预料的结果）。应用程序负责在呈现之前适当缩放像素数据，以使颜色分量落在 <code>ColorSpace</code>（使用 <code>ColorSpace</code> 类的 <code>getMinValue</code> 和 <code>getMaxValue</code> 方法得到）的标准化范围内，并使 alpha 分量位于 0.0 和 1.0 之间。如果颜色或 alpha 分量值超出这些范围，则呈现结果是不确定的。
+ <p>
+使用单个 int 像素表示形式的方法抛出 <CODE>IllegalArgumentException</CODE>，除非 <CODE>ComponentColorModel</CODE> 的分量数为 1 且分量值无符号，即使用 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE> 或 <CODE>DataBuffer.TYPE_INT</CODE> 的传输类型的单个颜色分量，没有 alpha 分量。
+ <p>
+<CODE>ComponentColorModel</CODE> 可以与 <CODE>ComponentSampleModel</CODE>、<CODE>BandedSampleModel</CODE> 或 <CODE>PixelInterleavedSampleModel</CODE> 一起使用，以构造 <CODE>BufferedImage</CODE>。
+
+@see ColorModel
+@see ColorSpace
+@see ComponentSampleModel
+@see BandedSampleModel
+@see PixelInterleavedSampleModel
+@see BufferedImage
+
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ComponentColorModel(ColorSpace colorSpace, int[] bits, boolean hasAlpha, boolean isAlphaPremultiplied, int transparency, int transferType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定参数构造 <CODE>ComponentColorModel</CODE>。颜色分量将在指定的 <CODE>ColorSpace</CODE> 中。受支持的传输类型为 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 和 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。如果不为 null，则 <CODE>bits</CODE> 数组指定每个颜色和 alpha 分量的有效位数，并且如果像素值中不存在 alpha 信息，则其长度至少应该是 <CODE>ColorSpace</CODE> 中分量数，如果存在 alpha 信息，则其长度大于此数。当 <CODE>transferType</CODE> 为 <CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 时，忽略 <CODE>bits</CODE> 数组参数。<CODE>hasAlpha</CODE> 指示是否存在 alpha 信息。如果 <CODE>hasAlpha</CODE> 为 true，则布尔值 <CODE>isAlphaPremultiplied</CODE> 指定如何解释像素值中的颜色和 alpha 样本。如果布尔值为 true，则假定颜色样本已与 alpha 样本相乘。<CODE>transparency</CODE> 指定可以由此颜色模型表示的 alpha 值。可以接受的 <code>transparency</code> 值为 <CODE>OPAQUE</CODE>、<CODE>BITMASK</CODE> 或 <CODE>TRANSLUCENT</CODE>。<CODE>transferType</CODE> 是用于表示像素值的基本数组的类型。
+
+@param colorSpace       与此颜色模型关联的 <CODE>ColorSpace</CODE>。
+@param bits             每个分量的有效位数。可以为 null，在这种情况下，所有分量样本的所有位都将有效。如果 transferType 为 <CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 之一，则忽略，在这种情况下，所有分量样本的所有位都将有效。
+@param hasAlpha         如果为 true，则此颜色模型支持 alpha。
+@param isAlphaPremultiplied 如果为 true，则 alpha 预乘的。
+@param transparency     指定可以由此颜色模型表示的 alpha 值。
+@param transferType     指定用于表示像素值的基本数组的类型。
+
+@throws IllegalArgumentException  如果 <CODE>bits</CODE> 数组参数不为 null，则其长度小于颜色和 alpha 分量数，且 transferType 为 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE> 或 <CODE>DataBuffer.TYPE_INT</CODE> 之一。
+@throws IllegalArgumentException 如果 transferType 不为 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 之一。
+
+@see ColorSpace
+@see java.awt.Transparency
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ComponentColorModel(ColorSpace colorSpace, boolean hasAlpha, boolean isAlphaPremultiplied, int transparency, int transferType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定参数构造 <CODE>ComponentColorModel</CODE>。颜色分量将在指定的 <CODE>ColorSpace</CODE> 中。受支持的传输类型为 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 和 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。每个颜色和 alpha 分量的有效位数都分别为 8、16、32、16、32 或 64。颜色分量数为 <CODE>ColorSpace</CODE> 中的分量数。如果 <CODE>hasAlpha</CODE> 为 <CODE>true</CODE>，则存在 alpha 分量。如果 <CODE>hasAlpha</CODE> 为 true，则布尔值 <CODE>isAlphaPremultiplied</CODE> 指定如何解释像素值中的颜色和 alpha 样本。如果布尔值为 true，则假定颜色样本已与 alpha 样本相乘。<CODE>transparency</CODE> 指定可以由此颜色模型表示的 alpha 值。可以接受的 <code>transparency</code> 值为 <CODE>OPAQUE</CODE>、<CODE>BITMASK</CODE> 或 <CODE>TRANSLUCENT</CODE>。<CODE>transferType</CODE> 是用于表示像素值的基本数组的类型。
+
+@param colorSpace       与此颜色模型关联的 <CODE>ColorSpace</CODE>。
+@param hasAlpha         如果为 true，则此颜色模型支持 alpha。
+@param isAlphaPremultiplied 如果为 true，则 alpha 预乘的。
+@param transparency     指定可以由此颜色模型表示的 alpha 值。
+@param transferType     指定用于表示像素值的基本数组的类型。
+
+@throws IllegalArgumentException 如果 transferType 不为 <CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE> 之一。
+
+@see ColorSpace
+@see java.awt.Transparency
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getRed(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的红色分量，指定像素在默认的 RGB ColorSpace（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。将像素值指定为 int。返回的值为非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则红色值将为 0）之前将其除出来。
+
+@param pixel 要从中获取红色分量的像素。
+
+@return 指定像素（int 类型）的红色分量。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 的分量值为有符号的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getGreen(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的绿色分量，指定像素在默认的 RGB ColorSpace（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。将像素值指定为 int。返回的值为非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则绿色值将为 0）之前将其除出来。
+
+@param pixel 要从中获取绿色分量的像素。
+
+@return 指定像素（int 类型）的绿色分量。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 的分量值为有符号的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getBlue(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的蓝色分量，指定像素在默认的 RGB ColorSpace（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。将像素值指定为 int。返回的值为非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则蓝色值将为 0）之前将其除出来。
+
+@param pixel 要从中获取蓝色分量的像素。
+
+@return 指定像素（int 类型）的蓝色分量。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 的分量值为有符号的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getAlpha(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素（缩放范围从 0 到 255）的 alpha 分量。像素值指定为 int。
+
+@param pixel 要从中获取 alpha 分量的像素。
+
+@return 指定像素（int 类型）的 alpha 分量。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 的分量值为有符号的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getRGB(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认的 RGB 颜色模型格式中像素的颜色/alpha 分量。如有必要，可进行颜色转换。返回的值是非预乘格式。如果与 alpha 预先相乘，此方法会将其从颜色分量（如果 alpha 值为 0，则颜色值为 0）中除出来。
+
+@param pixel 要从中获取颜色/alpha 分量的像素。
+
+@return 指定像素（int 类型）的颜色/alpha 分量。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 的分量值为有符号的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getRed(Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的红色分量，指定像素在默认的 RGB ColorSpace（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。<CODE>pixel</CODE> 值由作为对象引用而传入的类型 <CODE>transferType</CODE> 的数据元素的数组指定。返回的值为非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则红色值将为 0）之前将其除出来。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+ 
+@param inData 要从中获取红色分量（由类型 <CODE>transferType</CODE> 的数据元素的数组指定）的像素。
+
+@return 指定像素（int 类型）的红色分量。
+
+@throws ClassCastException 如果 <CODE>inData</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>inData</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getGreen(Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的绿色分量，指定像素在默认的 RGB <CODE>ColorSpace</CODE>（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。<CODE>pixel</CODE> 值由作为对象引用而传入的类型 <CODE>transferType</CODE> 的数据元素的数组指定。返回的值是一个非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则绿色值将为 0）之前将其除出来。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@param inData 要从中获取绿色分量（由类型 <CODE>transferType</CODE> 的数据元素的数组指定）的像素。
+
+@return 指定像素（int 类型）的绿色分量。
+
+@throws ClassCastException 如果 <CODE>inData</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>inData</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getBlue(Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的蓝颜色分量，指定像素在默认的 RGB <CODE>ColorSpace</CODE>（即 sRGB）中缩放范围是 0 到 255。如有必要，可进行颜色转换。<CODE>pixel</CODE> 值由作为对象引用而传入的类型 <CODE>transferType</CODE> 的数据元素的数组指定。返回的值是一个非预先乘得的值。如果与 alpha 预先相乘，此方法将在返回值（如果 alpha 值为 0，则蓝色值将为 0）之前将其除出来。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@param inData 要从中获取蓝色分量（由类型 <CODE>transferType</CODE> 的数据元素的数组指定）的像素。
+
+@return 指定像素（int 类型）的蓝色分量。
+
+@throws ClassCastException 如果 <CODE>inData</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>inData</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getAlpha(Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素（在 0 到 255 之间缩放）的 alpha 分量。像素值由作为对象引用传入的类型 <CODE>transferType</CODE> 的数据元素的数组指定。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@param inData 要从中获取 alpha 分量（由类型 <CODE>transferType</CODE> 的数据元素的数组指定）的像素。
+
+@return 指定像素（int 类型）的 alpha 分量。
+
+@throws ClassCastException 如果 <CODE>inData</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>inData</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getRGB(Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认的 RGB 颜色模型格式中的像素的颜色/alpha 分量。如有必要，可进行颜色转换。像素值由作为一个对象引用而传入的 <CODE>transferType</CODE> 类型的数据元素数组指定。返回的值是非预乘格式。如果与 alpha 预先相乘，此方法会将其从颜色分量（如果 alpha 值为 0，则颜色值为 0）中除出来。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@param inData 要从中获取颜色/alpha 分量（由类型 <CODE>transferType</CODE> 的数据元素的数组指定）的像素。
+
+@return 指定像素（int 类型）的颜色/alpha 分量。
+
+@throws ClassCastException 如果 <CODE>inData</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>inData</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.ComponentColorModel.getDataElements(int rgb, Object pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在默认 RGB 颜色模型中给定整数像素的表示形式的情况下，返回此 <CODE>ColorModel</CODE> 中像素的数据元素数组的表示形式。然后可以将此数组传递给 <CODE>WritableRaster</CODE> 对象的 <CODE>setDataElements</CODE> 方法。如果 <CODE>pixel</CODE> 参数为 null，则分配新数组。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@param rgb RGB 颜色模型中像素的整数表示形式
+@param pixel 指定像素
+@return 此 <CODE>ColorModel</CODE> 中像素的数据元素数组表示形式。
+@throws ClassCastException 如果 <CODE>pixel</CODE> 不为 null 且不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>pixel</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+
+@see WritableRaster#setDataElements
+@see SampleModel#setDataElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.ComponentColorModel.getComponents(int pixel, int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 <CODE>ColorModel</CODE> 中已给定像素的非标准化颜色/alpha 分量。如果此 <CODE>ColorModel</CODE> 的分量值不便于以非标准化形式表示，则返回 IllegalArgumentException。将颜色/alpha 分量存储在以 <CODE>offset</CODE> 开头的 <CODE>components</CODE> 数组中，即便此方法已分配了数组也是如此。   
+
+@param pixel 指定为整数的像素值。
+@param components 在其中存储非标准化颜色/alpha 分量的整数数组。如果 <CODE>components</CODE> 数组为 null，则分配新数组。
+@param offset <CODE>components</CODE> 数组的偏移量。
+
+@return 分量数组。  
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 不支持非标准化形式
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>components</CODE> 数组不为 null 且不是特别大，不能保存所有颜色和 alpha 分量（以偏移量开头）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.ComponentColorModel.getComponents(Object pixel, int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此 <CODE>ColorModel</CODE> 中已给定像素的非标准化颜色/alpha 分量的数组。像素值由作为一个对象引用而传入的 <CODE>transferType</CODE> 类型的数据元素数组指定。如果此 <CODE>ColorModel</CODE> 的分量值不便于以非标准化形式表示，则返回 IllegalArgumentException。将颜色/alpha 分量存储在以 <CODE>offset</CODE> 开头的 <CODE>components</CODE> 数组中，即便此方法已分配了数组也是如此。因为 <code>ComponentColorModel</code>可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则在其使用不受支持的 <code>transferType</code> 时此方法可能抛出异常。
+
+@param pixel 由类型 <CODE>transferType</CODE> 的数据元素的数组指定的像素值。
+@param components 在其中存储非标准化颜色/alpha 分量的整数数组。如果 <CODE>components</CODE> 数组为 null，则分配新数组。
+@param offset <CODE>components</CODE> 数组的偏移量。
+
+@return <CODE>components</CODE> 数组。
+
+@throws IllegalArgumentException 如果此 <CODE>ComponentColorModel</CODE> 不支持非标准化形式
+@throws UnsupportedOperationException 在某些情况下，如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE> 或 <CODE>DataBuffer.TYPE_INT</CODE>。
+@throws ClassCastException 如果 <CODE>pixel</CODE> 不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws IllegalArgumentException 如果 <CODE>components</CODE> 数组不为 null 且不是特别大，不能保存所有颜色或 alpha 分量（以偏移量开头），或者 <CODE>pixel</CODE> 不是特别大，不能保存此 ColorModel 的像素值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.ComponentColorModel.getUnnormalizedComponents(float[] normComponents, int normOffset, int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在已给定标准化分量数组的情况下，返回以非标准化形式存在的所有颜色/alpha 分量的数组。非标准化分量为 0 和 2<sup>n</sup> - 1 之间的无符号整数值，其中 n 为特定分量的位数。标准化分量为 float 值，这些值介于此 <code>ColorModel</code> 的 <code>ColorSpace</code> 对象指定的每个分量的最小值和最大值之间。如果此 <code>ColorModel</code> 的颜色分量值不便于用非标准化形式表示，则抛出 <code>IllegalArgumentException</code>。如果 <code>components</code> 数组为 <code>null</code>，则分配一个新数组。<code>components</code> 数组将返回。将颜色/alpha 分量存储在以 <code>offset</code> 开头的 <code>components</code> 数组中，即便此方法已分配了数组也是如此。如果 <code>components</code> 数组不为 <code>null</code> 且不是特别大，不能以 <code>offset</code> 开头保存所有颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。如果 <code>normComponents</code> 数组不是特别大，不能保存以 <code>normOffset</code> 开头的所有颜色和 alpha 分量，则抛出 <code>IllegalArgumentException</code>。
+@param normComponents 包含标准化分量的数组
+@param normOffset 开始检索标准化分量的 <code>normComponents</code> 数组的偏移量
+@param components 从 <code>normComponents</code> 检索分量的数组
+@param offset 在其处开始存储 <code>normComponents</code> 的 <code>components</code> 的索引
+@return 包含非标准化颜色和 alpha 分量的数组。
+@throws IllegalArgumentException 如果此 <CODE>ComponentColorModel</CODE> 不支持非标准化形式
+@throws IllegalArgumentException 如果 <code>normComponents</code> 的长度减去 <code>normOffset</code> 小于 <code>numComponents</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.image.ComponentColorModel.getNormalizedComponents(int[] components, int offset, float[] normComponents, int normOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定标准化分量数组的情况下，返回以标准化形式存在的所有颜色/alpha 分量的数组。非标准化分量为 0 和 2<sup>n</sup> - 1 之间的无符号整数值，其中 n 为特定分量的位数。标准化分量为 float 值，这些值介于此 <code>ColorModel</code> 的 <code>ColorSpace</code> 对象指定的每个分量的最小值和最大值之间。如果此 <code>ColorModel</code> 的颜色分量值不便于用非标准化形式表示，则抛出 <code>IllegalArgumentException</code>。如果 <code>normComponents</code> 数组为 <code>null</code>，则分配一个新数组。<code>normComponents</code> 数组将返回。颜色/alpha 分量存储在以 <code>normOffset</code> 开头的 <code>normComponents</code> 数组中，即使此方法已分配了数组也如此。如果 <code>normComponents</code> 数组不为 <code>null</code>，且不是特别大，不能保存所有颜色和 alpha 分量（以 <code>normOffset</code> 开头），则抛出 <code>ArrayIndexOutOfBoundsException</code>。如果 <code>components</code> 数组不是特别大，不能保存以 <code>offset</code> 开头的所有颜色和 alpha 分量，则抛出 <code>IllegalArgumentException</code>。
+@param components 包含非标准化分量的数组
+@param offset 开始检索非标准化分量的 <code>components</code> 数组的偏移量
+@param normComponents 收到标准化分量的数组
+@param normOffset 在其处开始存储标准化分量的 <code>normComponents</code> 的索引
+@return 包含标准化颜色和 alpha 分量的数组。
+@throws IllegalArgumentException 如果此 <CODE>ComponentColorModel</CODE> 不支持非标准化形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getDataElement(int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 <CODE>ColorModel</CODE> 中表示为 int 的像素值（已给定非标准化颜色/alpha 分量的数组）。  
+ 
+@param components 非标准化颜色/alpha 分量的数组。
+@param offset <CODE>components</CODE> 数组的偏移量。
+
+@return 表示为 int 的像素值。
+
+@throws IllegalArgumentException 如果此 <CODE>ColorModel</CODE> 中有一个以上的分量。
+@throws IllegalArgumentException 如果此 <CODE>ComponentColorModel</CODE> 不支持非标准化形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.ComponentColorModel.getDataElements(int[] components, int offset, Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在已给定非标准化颜色/alpha 分量的情况下，返回此 <CODE>ColorModel</CODE> 中像素的数据元素数组表示形式。然后可以将此数组传递给 <CODE>WritableRaster</CODE> 对象的 <CODE>setDataElements</CODE> 方法。
+ 
+@param components 非标准化颜色/alpha 分量的数组。
+@param offset <CODE>components</CODE> 数组的整数偏移量。
+@param obj 在其中存储像素的数据元素数组表示形式的对象。如果 <CODE>obj</CODE> 变量为 null，则分配新数组。如果 <CODE>obj</CODE> 不为 null，则其必须为类型 <CODE>transferType</CODE> 的基本数组。如果 <CODE>obj</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值，则抛出 <CODE>ArrayIndexOutOfBoundsException</CODE>。因为 <code>ComponentColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@return 此 <CODE>ColorModel</CODE> 中像素的数据元素数组表示形式。
+
+@throws IllegalArgumentException 如果分量数组不是特别大，不能保存所有以偏移量开头的颜色和 alpha 分量。
+@throws ClassCastException 如果 <CODE>obj</CODE> 不为 null 且不为类型 <CODE>transferType</CODE> 的基本数组。
+@throws ArrayIndexOutOfBoundsException 如果 <CODE>obj</CODE> 不是特别大，不能保存此 <CODE>ColorModel</CODE> 的像素值。
+@throws IllegalArgumentException 如果此 <CODE>ComponentColorModel</CODE> 不支持非标准化形式
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE> 或 <CODE>DataBuffer.TYPE_INT</CODE>。
+    
+@see WritableRaster#setDataElements
+@see SampleModel#setDataElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ComponentColorModel.getDataElement(float[] normComponents, int normOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在已给定标准化颜色/alpha 分量的数组的情况下，返回以 <code>int</code> 类型表示在此 <code>ColorModel</code> 中的像素值。如果此 <code>ColorModel</code> 的像素值不便于用单个 <code>int</code>，则此方法将抛出 <code>IllegalArgumentException</code>。如果 <code>normComponents</code> 数组不是特别大，不能保存所有以 <code>normOffset</code> 开头的颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param normComponents 标准化颜色和 alpha 分量的数组
+@param normOffset 开始检索颜色和 alpha 分量的 <code>normComponents</code> 的索引
+@return 此 <code>ColorModel</code> 中对应于指定分量的 <code>int</code> 像素值。
+@throws IllegalArgumentException 如果此 <code>ColorModel</code> 的像素值不便于用单个 <code>int</code> 表示
+@throws ArrayIndexOutOfBoundsException 如果 <code>normComponents</code> 数组不是特别大，不能保存以 <code>normOffset</code> 开头的所有颜色和 alpha 分量
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.ComponentColorModel.getDataElements(float[] normComponents, int normOffset, Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在已给定标准化颜色/alpha 分量的数组的情况下，返回此 <code>ColorModel</code> 中像素的数据元素数组表示形式。然后可以将此数组传递给 <code>WritableRaster</code> 对象的 <code>setDataElements</code> 方法。如果 <code>normComponents</code> 数组不是特别大，不能保存所有以 <code>normOffset</code> 开头的颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。如果 <code>obj</code> 变量为 <code>null</code>，则分配一个新数组。如果 <code>obj</code> 不为 <code>null</code>，则它必须为类型 transferType 的基本数组；否则将抛出 <code>ClassCastException</code>。如果 <code>obj</code> 不是特别大，不能保存此 <code>ColorModel</code> 的像素值，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param normComponents 标准化颜色和 alpha 分量的数组
+@param normOffset 开始检索颜色和 alpha 分量的 <code>normComponents</code> 的索引
+@param obj 保存返回的像素的基本数据数组
+@return 为像素的基本数据数组表示形式的 <code>Object</code>
+@throws ClassCastException 如果 <code>obj</code> 不为类型 <code>transferType</code> 的基本数组
+@throws ArrayIndexOutOfBoundsException 如果 <code>obj</code> 不是特别大，不能保存此 <code>ColorModel</code> 的像素值，或者 <code>normComponents</code> 数组不是特别大，不能保存以 <code>normOffset</code> 开头的所有颜色和 alpha 分量
+@see WritableRaster#setDataElements
+@see SampleModel#setDataElements
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.image.ComponentColorModel.getNormalizedComponents(Object pixel, float[] normComponents, int normOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已在 <code>ColorModel</code> 中给定了像素的标准化形式颜色/alpha 分量的数组。像素值由作为对象引用传入的类型 transferType 的数据元素的数组指定。如果像素不为类型 transferType 的基本数组，则抛出 <code>ClassCastException</code>。如果 <code>pixel</code> 不是特别大，不能保存此 <code>ColorModel</code> 的像素值，则抛出 <code>ArrayIndexOutOfBoundsException</code>。标准化分量为 float 值，这些值介于此 <code>ColorModel</code> 的 <code>ColorSpace</code> 对象指定的每个分量的最小值和最大值之间。如果 <code>normComponents</code> 数组为 <code>null</code>，则分配一个新数组。<code>normComponents</code> 数组将返回。颜色/alpha 分量存储在以 <code>normOffset</code> 开头的 <code>normComponents</code> 数组中，即使此方法已分配了数组也如此。如果 <code>normComponents</code> 数组不为 <code>null</code>，且不是特别大，不能保存所有颜色和 alpha 分量（以 <code>normOffset</code> 开头），则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+ <p>
+如果某子类旨在以非默认方式将像素样本值转换为颜色分量值，则该子类必须重写此方法。此类实现的默认转换在类的注释中描述。实现非默认转换的任何子类都必须遵循对此处定义的允许转换的限制。
+@param pixel 指定像素
+@param normComponents 检索标准化分量的数组
+@param normOffset 在其处开始存储标准化分量的 <code>normComponents</code> 数组的偏移量
+@return 包含标准化颜色和 alpha 分量的数组。
+@throws ClassCastException 如果 <code>pixel</code> 不为类型 transferType 的基本数组
+@throws ArrayIndexOutOfBoundsException 如果 <code>normComponents</code> 不是特别大，不能保存以 <code>normOffset</code> 开头的所有颜色和 alpha 分量
+@throws ArrayIndexOutOfBoundsException 如果 <code>pixel</code> 不是特别大，不能保存此 <code>ColorModel</code> 的像素值。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorModel java.awt.image.ComponentColorModel.coerceData(WritableRaster raster, boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制使光栅数据与在 <CODE>isAlphaPremultiplied</CODE> 变量中指定的状态匹配，假定当前该数据已由此 <CODE>ColorModel</CODE> 正确描述。可以将颜色 raster 数据乘以或除以 alpha，如果该数据处于正确状态，则不执行任何操作。如果需要对该数据强制匹配，则此方法还将相应地返回一个带有 <CODE>isAlphaPremultiplied</CODE> 标志集的 <CODE>ColorModel</CODE> 的实例。因为 <code>ColorModel</code> 可以子类化，所以子类可以继承此方法的实现，并且如果不重写此方法，则当它们使用不受支持的 <code>transferType</code> 时，将抛出异常。
+
+@throws NullPointerException 如果 <code>raster</code> 为 <code>null</code> 且需要数据强制。
+@throws UnsupportedOperationException 如果此 <CODE>ComponentColorModel</CODE> 的传输类型不为以下受支持的传输类型之一：<CODE>DataBuffer.TYPE_BYTE</CODE>、<CODE>DataBuffer.TYPE_USHORT</CODE>、<CODE>DataBuffer.TYPE_INT</CODE>、<CODE>DataBuffer.TYPE_SHORT</CODE>、<CODE>DataBuffer.TYPE_FLOAT</CODE> 或 <CODE>DataBuffer.TYPE_DOUBLE</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.ComponentColorModel.isCompatibleRaster(Raster raster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <CODE>raster</CODE> 与此 <CODE>ColorModel</CODE> 兼容，则返回 true；如果不兼容，则返回 false。
+
+@param raster 用于测试兼容性的 <CODE>Raster</CODE>。
+
+@return 如果 <CODE>raster</CODE> 与此 <CODE>ColorModel</CODE> 兼容，则返回 <CODE>true</CODE>；如果不兼容，则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.ComponentColorModel.createCompatibleWritableRaster(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定宽度和高度创建的 <CODE>WritableRaster</CODE>，具有与此 <CODE>ColorModel</CODE> 兼容的数据布局 (<CODE>SampleModel</CODE>)。  
+
+@param w 要创建的 <CODE>WritableRaster</CODE> 的宽度。
+@param h 要创建的 <CODE>WritableRaster</CODE> 的高度。
+
+@return 与此 <CODE>ColorModel</CODE> 兼容的 <CODE>WritableRaster</CODE>。
+@see WritableRaster
+@see SampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.ComponentColorModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定宽度和高度创建的 <CODE>SampleModel</CODE>，具有与此 <CODE>ColorModel</CODE> 兼容的数据布局。  
+
+@param w 要创建的 <CODE>SampleModel</CODE> 的宽度。
+@param h 要创建的 <CODE>SampleModel</CODE> 的高度。
+
+@return 与此 <CODE>ColorModel</CODE> 兼容的 <CODE>SampleModel</CODE>。
+
+
+@see SampleModel	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.ComponentColorModel.isCompatibleSampleModel(SampleModel sm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+检查指定 <CODE>SampleModel</CODE> 是否与此 <CODE>ColorModel</CODE> 兼容。
+
+@param sm 用于测试兼容性的 <CODE>SampleModel</CODE>。
+
+@return 如果 <CODE>SampleModel</CODE> 与此 <CODE>ColorModel</CODE> 兼容，则返回 <CODE>true</CODE>；如果不兼容，则返回 <CODE>false</CODE>。
+
+
+@see SampleModel 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.ComponentColorModel.getAlphaRaster(WritableRaster raster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示某图像（从输入 <CODE>Raster</CODE> 提取）的 alpha 通道的 <CODE>Raster</CODE>。此方法假定与此 <CODE>ColorModel</CODE> 关联的 <CODE>Raster</CODE> 对象将 alpha band（如果有）存储为图像数据的最后一个 band。如果不存在与此 <CODE>ColorModel</code> 相关的独立空间 alpha 通道，则返回 null。此方法创建一个新的 <CODE>Raster</CODE>，但是共享原来的数据数组。
+
+@param raster 从中提取 alpha 通道的 <CODE>WritableRaster</CODE>。
+
+@return 包含图像的 alpha 通道的 <CODE>WritableRaster</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.ComponentColorModel.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此颜色模型与其他模型进行相等性比较。  
+
+@param obj 要与此颜色模型比较的对象。
+@return 如果颜色模型对象相等，则返回 <CODE>true</CODE>；如果不相等，则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->

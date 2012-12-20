@@ -1,0 +1,438 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.ConcurrentSkipListMap extends java.util.AbstractMap implements java.util.concurrent.ConcurrentNavigableMap, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可缩放的并发 {@link ConcurrentNavigableMap} 实现。映射可以根据键的{@linkplain Comparable 自然顺序}进行排序，也可以根据创建映射时所提供的 {@link Comparator} 进行排序，具体取决于使用的构造方法。
+
+<p>此类实现 <a
+ href="http://www.cs.umd.edu/~pugh/">SkipLists</a> 的并发变体，为 <tt>containsKey</tt>、<tt>get</tt>、<tt>put</tt>、<tt>remove</tt> 操作及其变体提供预期平均 <i>log(n)</i> 时间开销。多个线程可以安全地并发执行插入、移除、更新和访问操作。迭代器是<i>弱一致</i> 的，返回的元素将反映迭代器创建时或创建后某一时刻的映射状态。它们<em>不</em> 抛出 {@link ConcurrentModificationException}，可以并发处理其他操作。升序键排序视图及其迭代器比降序键排序视图及其迭代器更快。
+
+<p>此类及此类视图中的方法返回的所有 <tt>Map.Entry</tt> 对，表示他们产生时的映射关系快照。它们<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。（注意，根据所需效果，可以使用 <tt>put</tt>、<tt>putIfAbsent</tt> 或 <tt>replace</tt> 更改关联映射中的映射关系。）
+
+<p>请注意，与在大多数 collection 中不同，这里的 <tt>size</tt> 方法<em>不是</em> 一个固定时间 (constant-time) 操作。因为这些映射的异步特性，确定元素的当前数目需要遍历元素。此外，批量操作 <tt>putAll</tt>、<tt>equals</tt> 和 <tt>clear</tt> <em>并不</em> 保证能以原子方式 (atomically) 执行。例如，与 <tt>putAll</tt> 操作一起并发操作的迭代器只能查看某些附加元素。
+
+<p>此类及其视图和迭代器实现 {@link Map} 和 {@link Iterator} 接口的所有<em>可选</em> 方法。与大多数其他并发 collection 一样，此类<em>不</em> 允许使用 <tt>null</tt> 键或值，因为无法可靠地区分 null 返回值与不存在的元素值。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author Doug Lea
+@param <K> 此映射维护的键类型
+@param <V> 映射值的类型
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.util.Comparator<? super K> java.util.concurrent.ConcurrentSkipListMap.comparator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于维护此映射中顺序的比较器；如果使用自然顺序，则为 null。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的空映射，该映射按照键的{@linkplain Comparable 自然顺序}进行排序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListMap(java.util.Comparator<? super K> comparator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的空映射，该映射按照指定的比较器进行排序。
+
+@param comparator 用于对此映射进行排序的比较器。如果此参数为 <tt>null</tt>，则使用键的{@linkplain Comparable 自然顺序}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListMap(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新映射，该映射所包含的映射关系与给定映射包含的映射关系相同，并按照键的{@linkplain Comparable 自然顺序}进行排序。
+
+@param  m 映射关系将被存放在此映射中的映射
+@throws ClassCastException 如果 <tt>m</tt> 中的键不是 {@link Comparable}，或者无法相互比较
+@throws NullPointerException 如果指定的映射或者它的任何键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListMap(java.util.SortedMap<K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新映射，该映射所包含的映射关系与指定的有序映射包含的映射关系相同，使用的顺序也相同。
+
+@param m 映射关系将被存放在此映射中的有序映射，其比较器用于对此映射进行排序
+@throws NullPointerException 如果指定的有序映射或者它的任何键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListMap<K, V> java.util.concurrent.ConcurrentSkipListMap.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>ConcurrentSkipListMap</tt> 实例的浅表副本。（不复制键和值本身。）
+
+@return 此映射的浅表副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射包含指定键的映射关系，则返回 <tt>true</tt>。
+
+@param key 测试是否存在于此映射中的键
+@return 如果此映射包含指定键的映射关系，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定键无法与映射中的当前键进行比较
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentSkipListMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定键所映射到的值；如果此映射不包含该键的映射关系，则返回 {@code null}。
+
+<p>更确切地讲，如果此映射包含从键 {@code k} 到值 {@code v} 的映射关系，根据映射的顺序，{@code key} 与 {@code k} 比较起来相等，那么此方法返回 {@code v}；否则返回 {@code null}。（最多只能有一个这样的映射关系）。
+
+@throws ClassCastException 如果指定键无法与映射中的当前键进行比较
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentSkipListMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定值与此映射中的指定键关联。如果映射以前包含了一个该键的映射关系，那么将替换旧值。
+
+@param key 与指定值关联的键
+@param value 与指定键关联的值
+@return 以前与指定键关联的值；如果该键没有映射关系，则返回 <tt>null</tt>
+@throws ClassCastException 如果指定键无法与映射中的当前值进行比较
+@throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentSkipListMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除指定键的映射关系（如果存在）。
+
+@param  key 映射关系应该被移除的键
+@return 以前与指定键关联的值；如果该键没有映射关系，则返回 <tt>null</tt> 
+@throws ClassCastException 如果指定键无法与映射中的当前值进行比较
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射为指定值映射一个或多个键，则返回 <tt>true</tt>。此操作所需的时间与映射的大小呈线性关系。
+
+@param value 测试是否存在于此映射中的值
+@return 如果存在对 <tt>value</tt> 的映射关系，则返回 <tt>true</tt>；否则返回 <tt>false</tt>
+@throws NullPointerException 如果指定的值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.ConcurrentSkipListMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中的键-值映射关系数。如果此映射包含的元素数大于 <tt>Integer.MAX_VALUE</tt>，则返回 <tt>Integer.MAX_VALUE</tt>。
+
+<p>请注意，与在大多数 collection 中不同，此方法在这<em>不是</em> 一个固定时间操作。因为这些映射的异步特性，确定元素的当前数目需要遍历元素以计算其数目。此外，在执行此方法期间可以更改大小，在这种情况下，返回的结果将不准确。因此，此方法在并发应用程序中通常不是很有用。
+
+@return 此映射中的元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射未包含键-值映射关系，则返回 <tt>true</tt>。
+@return 如果此映射未包含键-值映射关系，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ConcurrentSkipListMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除所有映射关系。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<K> java.util.concurrent.ConcurrentSkipListMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含键的 {@link NavigableSet} 视图。set 的迭代器按升序返回键。set 受映射支持，因此对映射的更改可在 set 中反映出来，反之亦然。set 支持元素移除，即通过 {@code Iterator.remove}、{@code Set.remove}、{@code removeAll}、{@code retainAll} 和 {@code clear} 操作从映射中移除相应的映射关系。它不支持 {@code add} 或 {@code addAll} 操作。
+
+<p>视图的 {@code iterator} 是一个不会抛出 {@link ConcurrentModificationException} 的&ldquo;弱一致&rdquo;迭代器，能确保遍历构造迭代器后存在的所有元素，并且可以（但并不保证）反映构造后的所有修改。
+
+<p>此方法等效于方法 {@code navigableKeySet}。
+
+@return 此映射中键的可导航 set 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.concurrent.ConcurrentSkipListMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含值的 {@link Collection} 视图。collection 的迭代器将按相应键的升序返回值。collection 受映射支持，所以对映射的更改可在此 collection 中反映出来，反之亦然。collection 支持元素移除，通过 <tt>Iterator.remove</tt>、<tt>Collection.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<p>视图的 <tt>iterator</tt> 是一个不会抛出 {@link ConcurrentModificationException} 的&ldquo;弱一致&rdquo;迭代器，能确保遍历构造迭代器后存在的所有元素，并且可以（但并不保证）反映构造后的所有修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.concurrent.ConcurrentSkipListMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含的映射关系的 {@link Set} 视图。set 的迭代器按键的升序返回条目。set 受映射支持，因此对映射的更改可在 set 中反映出来，反之亦然。set 支持元素移除，通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<p>视图的 <tt>iterator</tt> 是一个不会抛出 {@link ConcurrentModificationException} 的&ldquo;弱一致&rdquo;迭代器，能确保遍历构造迭代器后存在的所有元素，并且可以（但并不保证）反映构造后的所有修改。
+
+<p>由 <tt>iterator.next()</tt> 返回的 <tt>Map.Entry</tt> 元素 <em>不</em> 支持 <tt>setValue</tt> 操作。
+
+@return 包含在此映射中的映射关系的 set 视图，它按键的升序排序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此映射的相等性。如果给定对象也是一个映射并且两个映射表示相同的映射关系，则返回 <tt>true</tt>。更确切地讲，如果 <tt>m1.entrySet().equals(m2.entrySet())</tt>，那么这两个映射 <tt>m1</tt> 和 <tt>m2</tt> 表示相同的映射关系。如果在执行该此方法期间并发地修改了某一个映射，则此操作返回的结果可能不符合实际。
+
+@param o 要与此映射进行相等性比较的对象
+@return <tt>true</tt> 如果指定对象等于此映射
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentSkipListMap.putIfAbsent(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@return 以前与指定键关联的值；如果没有该键的映射关系，则返回 <tt>null</tt>
+@throws ClassCastException 如果指定键无法与映射中的当前值进行比较
+@throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.remove(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws ClassCastException 如果指定键无法与映射中的当前键进行比较
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListMap.replace(K key, V oldValue, V newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws ClassCastException 如果指定键无法与映射中的当前键进行比较
+@throws NullPointerException 如果任何参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentSkipListMap.replace(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@return 以前与指定键关联的值；如果没有该键的映射关系，则返回 <tt>null</tt>
+@throws ClassCastException 如果指定键无法与映射中的当前值进行比较
+@throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.firstKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.lastKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromKey} 或 {@code toKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.headMap(K toKey, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code toKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.tailMap(K fromKey, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.subMap(K fromKey, K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromKey} 或 {@code toKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.headMap(K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code toKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentNavigableMap<K, V> java.util.concurrent.ConcurrentSkipListMap.tailMap(K fromKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromKey} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.lowerEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与严格小于给定键的最大键关联的键-值映射关系；如果不存在这样的键，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.lowerKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.floorEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与小于等于给定键的最大键关联的键-值映射关系；如果不存在这样的键，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+@param key 键
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.floorKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@param key 键
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.ceilingEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与大于等于给定键的最小键关联的键-值映射关系；如果不存在这样的条目，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.ceilingKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.higherEntry(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与严格大于给定键的最小键关联的键-值映射关系；如果不存在这样的键，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+@param key 键
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.concurrent.ConcurrentSkipListMap.higherKey(K key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@param key 键
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.firstEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此映射中的最小键关联的键-值映射关系；如果该映射为空，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.lastEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此映射中的最大键关联的键-值映射关系；如果该映射为空，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.pollFirstEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除并返回与此映射中的最小键关联的键-值映射关系；如果该映射为空，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map.Entry<K, V> java.util.concurrent.ConcurrentSkipListMap.pollLastEntry()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除并返回与此映射中的最大键关联的键-值映射关系；如果该映射为空，则返回 <tt>null</tt>。返回的条目<em>不</em> 支持 <tt>Entry.setValue</tt> 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.ConcurrentSkipListMap.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构映射。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.ConcurrentSkipListMap.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此映射的状态保存到流中。
+
+@serialData 映射表示的每个键-值映射关系的键 (Object) 和值 (Object)，后跟 <tt>null</tt>。按照键顺序（由 Comparator 确定，如果没有 Comparator，则由键的自然顺序确定）发出键-值映射关系。
+
+<!-- END DATA -->

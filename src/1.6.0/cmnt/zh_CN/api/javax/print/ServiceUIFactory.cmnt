@@ -1,0 +1,109 @@
+<!-- BEGIN KEY -->
+public abstract class javax.print.ServiceUIFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+服务可以可选地提供 UI，这些 UI 允许以不同的角色进行不同风格的交互。一种角色可以是浏览并设置打印选项的终端用户。另一种角色可以是管理 PrintService。 
+ <p>
+虽然 PrintService API 目前不提供对管理 PrintService 的标准化支持，但是可以监视 PrintService 并且可以为专用的更新机制提供 UI。
+ <p>
+基本的设计目的是允许应用程序仅在需要时以延迟方式查找并初始化服务，而不依赖任何 API（但使用 API 的环境除外）。
+ <p>
+首选使用 Swing UI，因为它提供了更为一致的 L&amp;F 并且可支持可访问性 API。
+ <p>
+用例：
+ <pre>
+  ServiceUIFactory factory = printService.getServiceUIFactory();
+  if (factory != null) {
+      JComponent swingui = (JComponent)factory.getUI(
+                                         ServiceUIFactory.MAIN_UIROLE,
+                                         ServiceUIFactory.JCOMPONENT_UI);
+      if (swingui != null) {
+          tabbedpane.add(&quot;Custom UI&quot;, swingui);
+      }
+  }
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.print.ServiceUIFactory.JCOMPONENT_UI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示一个作为 Swing 组件实现的 UI。String 的值是完全限定类名：&quot;javax.swing.JComponent&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.print.ServiceUIFactory.PANEL_UI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示一个作为 AWT 面板实现的 UI。String 的值是完全限定类名：&quot;java.awt.Panel&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.print.ServiceUIFactory.DIALOG_UI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示一个作为 AWT 对话框实现的 UI。String 的值是完全限定类名：&quot;java.awt.Dialog&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.print.ServiceUIFactory.JDIALOG_UI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+表示一个作为 Swing 对话框实现的 UI。String 的值是完全限定类名：&quot;javax.swing.JDialog&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.ServiceUIFactory.ABOUT_UIROLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个充当提供 &quot;About&quot; 信息角色的 UI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.ServiceUIFactory.ADMIN_UIROLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个充当管理角色的 UI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.ServiceUIFactory.MAIN_UIROLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个充当普通终端用户角色的 UI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.ServiceUIFactory.RESERVED_UIROLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不是有效的角色，但是可将大于此的角色 ID 用于服务支持的专用角色。要正确使用它，需要知道此角色所执行的功能。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.print.ServiceUIFactory.getUI(int role, String ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个 UI 对象，它可能被应用程序强制转换为所请求的 UI 类型并在该应用程序的用户界面中使用。
+ <P>
+@param role 所请求的角色。必须是此工厂支持的标准角色或某个专用角色。
+@param ui 所请求的角色的类型。
+@return UI 角色，如果此工厂不提供所请求的 UI 角色，则返回 null
+@throws IllegalArgumentException 如果 role 或 ui 既不是标准的角色或 UI，也不是该工厂支持的专用角色或 UI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.print.ServiceUIFactory.getUIClassNamesForRole(int role)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+给定从此工厂获取的 UI 角色，获取实现此角色的此工厂可提供的 UI 类型。返回的 String 应该引用此类中定义的静态变量，这样应用程序可以使用引用相等性 (&quot;==&quot;)。
+@param role 要被查找的角色。
+@return 此类为指定角色所支持的 UI 类型，如果没有用于此角色的 UI，则返回 null。
+@throws IllegalArgumentException 如果该 role 是非标准的角色，或者此工厂不支持该 role。
+
+<!-- END DATA -->

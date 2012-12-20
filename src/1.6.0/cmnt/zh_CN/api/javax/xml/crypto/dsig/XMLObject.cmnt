@@ -1,0 +1,80 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.XMLObject extends javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>Object</code> 元素的表示形式。<code>XMLObject</code> 可以包含任何数据，也可以包含可选的 MIME 类型、ID 和编码属性。XML Schema Definition 的定义如下：
+
+ <pre><code>
+&lt;element name=&quot;Object&quot; type=&quot;ds:ObjectType&quot;/&gt; 
+&lt;complexType name=&quot;ObjectType&quot; mixed=&quot;true&quot;&gt;
+&lt;sequence minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;&gt;
+&lt;any namespace=&quot;##any&quot; processContents=&quot;lax&quot;/&gt;
+&lt;/sequence&gt;
+&lt;attribute name=&quot;Id&quot; type=&quot;ID&quot; use=&quot;optional&quot;/&gt; 
+&lt;attribute name=&quot;MimeType&quot; type=&quot;string&quot; use=&quot;optional&quot;/&gt;
+&lt;attribute name=&quot;Encoding&quot; type=&quot;anyURI&quot; use=&quot;optional&quot;/&gt; 
+&lt;/complexType&gt;
+ </code></pre>
+
+通过调用 {@link XMLSignatureFactory} 类的 {@link XMLSignatureFactory#newXMLObject newXMLObject}  方法，可以创建 <code>XMLObject</code> 实例，例如：
+
+ <pre>
+XMLSignatureFactory fac = XMLSignatureFactory.getInstance(&quot;DOM&quot;);
+List content = Collections.singletonList(fac.newManifest(references)));
+XMLObject object = factory.newXMLObject(content, &quot;object-1&quot;, null, null);
+ </pre>
+
+<p>注意，为避免与现有 {@link java.lang.Object java.lang.Object} 类存在命名冲突，此类被命名为 <code>XMLObject</code>，而不是 <code>Object</code>。
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@author Joyce L. Leung
+@since 1.6
+@see XMLSignatureFactory#newXMLObject(List, String, String, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.XMLObject.TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识 <code>Object</code> 元素的 URI（可以将其指定为 {@link Reference} 类的 <code>type</code> 参数值，以标识引用的类型）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.XMLObject.getContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个{@link java.util.Collections#unmodifiableList 可修改列表}，由包含在此 <code>XMLObject</code> 中的 {@link XMLStructure} 组成，其中 XMLObject 表示来自任何命名空间的元素。 
+
+<p>如果有一个表示 <code>XMLStructure</code> 类型的公共子类，那么它将作为该类的实例返回（比如：<code>SignatureProperties</code> 元素将作为 {@link javax.xml.crypto.dsig.SignatureProperties} 的实例返回）。
+
+@return 不可修改的 <code>XMLStructure</code> 列表（可以为空，但不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.XMLObject.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLObject</code> 的 Id。
+ 
+@return Id（如果未指定此 Id，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.XMLObject.getMimeType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLObject</code> 的 MIME 类型。MIME 类型是一个可选属性，它描述了此 <code>XMLObject</code> 中的数据）（与其编码无关）。
+
+@return MIME 类型（如果未指定类型，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.XMLObject.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLObject</code> 的编码 URI。编码 URI 标识编码该对象的方法。
+ 
+@return 编码 URI（如果未指定该 URI，则返回 <code>null</code>）
+
+<!-- END DATA -->

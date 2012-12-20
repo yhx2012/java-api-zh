@@ -1,0 +1,575 @@
+<!-- BEGIN KEY -->
+public class java.io.RandomAccessFile extends java.lang.Object implements java.io.DataOutput, java.io.DataInput, java.io.Closeable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类的实例支持对随机访问文件的读取和写入。随机访问文件的行为类似存储在文件系统中的一个大型 byte 数组。存在指向该隐含数组的光标或索引，称为<em>文件指针</em>；输入操作从文件指针开始读取字节，并随着对字节的读取而前移此文件指针。如果随机访问文件以读取/写入模式创建，则输出操作也可用；输出操作从文件指针开始写入字节，并随着对字节的写入而前移此文件指针。写入隐含数组的当前末尾之后的输出操作导致该数组扩展。该文件指针可以通过 <code>getFilePointer</code> 方法读取，并通过 <code>seek</code> 方法设置。 
+ <p>
+通常，如果此类中的所有读取例程在读取所需数量的字节之前已到达文件末尾，则抛出 <code>EOFException</code>（是一种 <code>IOException</code>）。如果由于某些原因无法读取任何字节，而不是在读取所需数量的字节之前已到达文件末尾，则抛出 <code>IOException</code>，而不是 <code>EOFException</code>。需要特别指出的是，如果流已被关闭，则可能抛出 <code>IOException</code>。
+
+@author  unascribed
+@version 1.81, 04/10/06
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.RandomAccessFile(String name, String mode) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建从中读取和向其中写入（可选）的随机访问文件流，该文件具有指定名称。将创建一个新的 {@link FileDescriptor} 对象来表示到文件的连接。
+ 
+<p> <tt>mode</tt> 参数指定用以打开文件的访问模式。允许的值及其含意如 <a
+ href="#mode"><tt>RandomAccessFile(File,String)</tt></a> 构造方法所指定的那样。
+
+ <p>
+如果存在安全管理器，则使用 <code>name</code> 作为其参数调用其 <code>checkRead</code> 方法，以查看是否允许对该文件进行读取访问。如果该模式允许写入，那么还使用 <code>name</code> 作为安全管理器的参数来调用其 <code>checkWrite</code> 方法，以查看是否允许对该文件进行写入访问。
+
+@param      name   取决于系统的文件名
+@param      mode   此访问 <a href="#mode">mode</a>
+@exception  IllegalArgumentException  如果此模式参数与 <tt>&quot;r&quot;</tt>、<tt>&quot;rw&quot;</tt>、<tt>&quot;rws&quot;</tt> 或 <tt>&quot;rwd&quot;</tt> 的其中一个不相等
+@exception FileNotFoundException 如果该模式为 <tt>&quot;r&quot;</tt>，但给定的字符串表示一个现有的常规文件，或者该模式以 <tt>&quot;rw&quot;</tt> 开头，但给定的字符串不表示一个现有的可写常规文件，而且无法创建具有该名称的新常规文件，或者在打开或创建该文件时发生一些其他错误
+@exception  SecurityException 如果存在安全管理器，并且其 <code>checkRead</code> 方法拒绝对该文件的读取访问，或者该模式为 &quot;rw&quot;，并且该安全管理器的 <code>checkWrite</code> 方法拒绝对该文件的写入访问
+@see        java.lang.SecurityException
+@see        java.lang.SecurityManager#checkRead(java.lang.String)
+@see        java.lang.SecurityManager#checkWrite(java.lang.String)
+@revised 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.RandomAccessFile(File file, String mode) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建从中读取和向其中写入（可选）的随机访问文件流，该文件由 {@link File} 参数指定。将创建一个新的 {@link FileDescriptor} 对象来表示此文件的连接。
+
+<a name="mode"><p> <tt>mode</tt> 参数指定用以打开文件的访问模式。允许的值及其含意为：
+
+<blockquote><table summary="Access mode permitted values and meanings">
+<tr><th><p align="left">值</p></th><th><p align="left">含意</p></th></tr>
+<tr><td valign="top"><tt>&quot;r&quot;</tt></td>
+<td> 以只读方式打开。调用结果对象的任何 <tt>write</tt> 方法都将导致抛出 {@link java.io.IOException}。 </td></tr>
+<tr><td valign="top"><tt>&quot;rw&quot;</tt></td>
+<td> 打开以便读取和写入。如果该文件尚不存在，则尝试创建该文件。 </td></tr>
+<tr><td valign="top"><tt>&quot;rws&quot;</tt></td>
+<td> 打开以便读取和写入，对于 <tt>&quot;rw&quot;</tt>，还要求对文件的内容或元数据的每个更新都同步写入到底层存储设备。  </td></tr>
+<tr><td valign="top"><tt>&quot;rwd&quot;&nbsp;&nbsp;</tt></td>
+<td> 打开以便读取和写入，对于 <tt>&quot;rw&quot;</tt>，还要求对文件内容的每个更新都同步写入到底层存储设备。 </td></tr>
+ </table></blockquote>
+
+<tt>&quot;rws&quot;</tt> 和 <tt>&quot;rwd&quot;</tt> 模式的工作方式极其类似 {@link java.nio.channels.FileChannel} 类的 {@link java.nio.channels.FileChannel#force(boolean) force(boolean)} 方法，分别传递 <tt>true</tt> 和 <tt>false</tt> 参数，除非它们始终应用于每个 I/O 操作，并因此通常更为高效。如果该文件位于本地存储设备上，那么当返回此类的一个方法的调用时，可以保证由该调用对此文件所做的所有更改均被写入该设备。这对确保在系统崩溃时不会丢失重要信息特别有用。如果该文件不在本地设备上，则无法提供这样的保证。
+
+<p> <tt>&quot;rwd&quot;</tt> 模式可用于减少执行的 I/O 操作数量。使用 <tt>&quot;rwd&quot;</tt> 仅要求更新要写入存储的文件的内容；使用 <tt>&quot;rws&quot;</tt> 要求更新要写入的文件内容及其元数据，这通常要求至少一个以上的低级别 I/O 操作。
+
+<p> 如果存在安全管理器，则使用 <code>file</code> 参数的路径名作为其参数调用它的 <code>checkRead</code> 方法，以查看是否允许对该文件进行读取访问。如果该模式允许写入，那么还使用该路径参数调用该安全管理器的 <code>checkWrite</code> 方法，以查看是否允许对该文件进行写入访问。
+
+@param      file   该文件对象
+@param      mode   访问模式，如<a href="#mode">上</a>所述
+@exception  IllegalArgumentException  如果此模式参数与 <tt>&quot;r&quot;</tt>、<tt>&quot;rw&quot;</tt>、<tt>&quot;rws&quot;</tt> 或 <tt>&quot;rwd&quot;</tt> 的其中一个不相等
+@exception FileNotFoundException 如果该模式为 <tt>&quot;r&quot;</tt>，但给定的文件对象不表示一个现有的常规文件，或者该模式以 <tt>&quot;rw&quot;</tt> 开头，但给定的文件对象不表示一个现有的可写常规文件，而且无法创建具有该名称的新常规文件，或者在打开或创建该文件时发生一些其他错误
+@exception  SecurityException         如果存在安全管理器，并且其 <code>checkRead</code> 方法拒绝对该文件的读取访问，或者该模式为 &quot;rw&quot;，并且该安全管理器的 <code>checkWrite</code> 方法拒绝对该文件的写入访问
+@see        java.lang.SecurityManager#checkRead(java.lang.String)
+@see        java.lang.SecurityManager#checkWrite(java.lang.String)
+@see        java.nio.channels.FileChannel#force(boolean)
+@revised 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.io.FileDescriptor java.io.RandomAccessFile.getFD() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此流关联的不透明文件描述符对象。 </p>
+
+@return     与此流关联的不透明文件描述符对象。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.io.FileDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.FileChannel java.io.RandomAccessFile.getChannel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此文件关联的唯一 {@link java.nio.channels.FileChannel FileChannel} 对象。
+
+<p> 返回通道的 {@link java.nio.channels.FileChannel#position()</code>position<code>} 将始终等于 {@link #getFilePointer getFilePointer} 方法返回的此对象的文件指针偏移量。显式或者通过读取或写入字节来更改此对象的文件指针偏移量将更改通道的位置，反之亦然。通过此对象更改此文件的长度将更改通过文件通道看到的长度，反之亦然。
+
+@return  与此文件关联的文件通道
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native int java.io.RandomAccessFile.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件中读取一个数据字节。以整数形式返回此字节，范围在 0 到 255 (<code>0x00-0x0ff</code>)。如果尚无输入可用，将阻塞此方法。 
+ <p>
+尽管 <code>RandomAccessFile</code> 不是 <code>InputStream</code> 的子类，但此方法的行为与 <code>InputStream</code> 的 {@link InputStream#read()} 方法完全一样。
+
+@return     下一个数据字节，如果已到达文件的末尾，则返回 <code>-1</code>。
+@exception  IOException  如果发生 I/O 错误。如果已到达文件的末尾，则不抛出此异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.RandomAccessFile.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将最多 <code>len</code> 个数据字节从此文件读入 byte 数组。在至少一个输入字节可用前，此方法一直阻塞。 
+ <p>
+尽管 <code>RandomAccessFile</code> 不是 <code>InputStream</code> 的子类，但此方法的行为与 <code>InputStream</code> 的 {@link InputStream#read(byte[], int, int)} 方法完全一样。
+
+@param      b     读入数据的缓冲区。
+@param      off   写入数据的数组 <code>b</code> 中的初始偏移量。
+@param      len   读取的最多字节数。
+@return     读入缓冲区的总字节数，如果由于已到达文件的末尾而不再有数据，则返回 <code>-1</code>。
+@exception  IOException 如果由于文件结束之外的某种原因不能读取第一个字节，或者随机访问文件已关闭，或者发生其他 I/O 错误。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+@exception  IndexOutOfBoundsException 如果 <code>off</code>为负，<code>len</code> 为负，或者 <code>len</code> 大于 <code>b.length - off</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.RandomAccessFile.read(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将最多 <code>b.length</code> 个数据字节从此文件读入 byte 数组。在至少一个输入字节可用前，此方法一直阻塞。
+ <p>
+尽管 <code>RandomAccessFile</code> 不是 <code>InputStream</code> 的子类，但此方法的行为与 <code>InputStream</code> 的 {@link InputStream#read(byte[])} 方法完全一样。
+
+@param      b  将数据读入的缓冲区。
+@return     读入缓冲区的总字节数，如果由于已到达此文件的末尾而不再有数据，则返回 <code>-1</code>。
+@exception  IOException 如果由于文件结束之外的某种原因不能读取第一个字节，或者随机访问文件已关闭，或者发生其他 I/O 错误。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.readFully(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>b.length</code> 个字节从此文件读入 byte 数组，并从当前文件指针开始。在读取到请求数量的字节之前，此方法将从该文件重复读取。在读取了请求数量的字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@param      b     将数据读入的缓冲区。
+@exception  EOFException  如果在读取所有字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。       
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.readFully(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将正好 <code>len</code> 个字节从此文件读入 byte 数组，并从当前文件指针开始。在读取到请求数量的字节之前，此方法将从该文件重复读取。在读取了请求数量的字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@param      b     读入数据的缓冲区。
+@param      off   数据的初始偏移量。
+@param      len   要读取的字节数。
+@exception  EOFException  如果在读取所有字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.RandomAccessFile.skipBytes(int n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试跳过输入的 <code>n</code> 个字节以丢弃跳过的字节。 
+ <p>
+ 
+此方法可能跳过一些较少数量的字节（可能包括零）。这可能由任意数量的条件引起；在跳过 <code>n</code> 个字节之前已到达文件的末尾只是其中的一种可能。此方法从不抛出 <code>EOFException</code>。返回跳过的实际字节数。如果 <code>n</code> 为负数，则不跳过任何字节。
+
+@param      n   要跳过的字节数。
+@return     跳过的实际字节数。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.io.RandomAccessFile.write(int b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此文件写入指定的字节。从当前文件指针开始写入。
+
+@param      b   要写入的 <code>byte</code>。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.RandomAccessFile.write(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>b.length</code> 个字节从指定 byte 数组写入到此文件，并从当前文件指针开始。 
+
+@param      b   数据。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.RandomAccessFile.write(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>len</code> 个字节从指定 byte 数组写入到此文件，并从偏移量 <code>off</code> 处开始。 
+
+@param      b   数据。
+@param      off   数据的初始偏移量。
+@param      len   要写入的字节数。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native long java.io.RandomAccessFile.getFilePointer() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此文件中的当前偏移量。
+
+@return     到此文件开头的偏移量（以字节为单位），在该位置发生下一个读取或写入操作。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.io.RandomAccessFile.seek(long pos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置到此文件开头测量到的文件指针偏移量，在该位置发生下一个读取或写入操作。偏移量的设置可能会超出文件末尾。偏移量的设置超出文件末尾不会改变文件的长度。只有在偏移量的设置超出文件末尾的情况下对文件进行写入才会更改其长度。
+
+@param      pos   从文件开头以字节为单位测量的偏移量位置，在该位置设置文件指针。
+@exception  IOException  如果 <code>pos</code> 小于 <code>0</code> 或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native long java.io.RandomAccessFile.length() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此文件的长度。
+
+@return     按字节测量的此文件的长度。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.io.RandomAccessFile.setLength(long newLength) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此文件的长度。
+
+<p> 如果 <code>length</code> 方法返回的文件的现有长度大于 <code>newLength</code> 参数，则该文件将被截短。在此情况下，如果 <code>getFilePointer</code> 方法返回的文件偏移量大于 <code>newLength</code>，那么在返回此方法后，该偏移量将等于 <code>newLength</code>。
+
+<p> 如果 <code>length</code> 方法返回的文件的现有长度小于 <code>newLength</code> 参数，则该文件将被扩展。在此情况下，未定义文件扩展部分的内容。
+
+@param      newLength    文件的所需长度
+@exception  IOException  如果发生 I/O 错误
+@since      1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.RandomAccessFile.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此随机访问文件流并释放与该流关联的所有系统资源。关闭的随机访问文件不能执行输入或输出操作，而且不能重新打开。
+
+<p> 如果此文件具有一个关联的通道，那么该通道也会被关闭。
+
+@exception  IOException  如果发生 I/O 错误。
+
+@revised 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.io.RandomAccessFile.readBoolean() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个 <code>boolean</code>。此方法从该文件的当前文件指针开始读取单个字节。值 <code>0</code> 表示 <code>false</code>。其他任何值表示 <code>true</code>。在读取了该字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@return     读取的 <code>boolean</code> 值。
+@exception  EOFException  如果此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte java.io.RandomAccessFile.readByte() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个有符号的八位值。此方法从该文件的当前文件指针开始读取一个字节。如果读取的字节为 <code>b</code>，其中 <code>0&nbsp;&lt;=&nbsp;b&nbsp;&lt;=&nbsp;255</code>，则结果将是：
+ <blockquote><pre>
+(byte)(b)
+ </pre></blockquote>
+ <p>
+在读取了该字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@return     以有符号的八位 <code>byte</code> 形式返回此文件的下一个字节。
+@exception  EOFException  如果此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.io.RandomAccessFile.readUnsignedByte() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个无符号的八位数。此方法从此文件的当前文件指针开始读取一个字节，并返回该字节。 
+ <p>
+在读取了该字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@return     此文件的下一个字节，解释为一个无符号的八位数。
+@exception  EOFException  如果此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final short java.io.RandomAccessFile.readShort() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个有符号的 16 位数。此方法从此文件的当前文件指针开始读取两个字节。如果按顺序读取的两个字节为 <code>b1</code> 和 <code>b2</code>，其中两个值都在 <code>0</code> 和 <code>255</code>之间（包含），则此结果等于：
+ <blockquote><pre>
+(short)((b1 &lt;&lt; 8) | b2)
+ </pre></blockquote>
+ <p>
+在读取了这两个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@return     此文件的下两个字节，解释为一个有符号的 16 位数。
+@exception  EOFException  如果在读取两个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.io.RandomAccessFile.readUnsignedShort() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个无符号的 16 位数。此方法从该文件的当前文件指针开始读取两个字节。如果按顺序读取的字节为 <code>b1</code> 和 <code>b2</code>，其中 <code>0&nbsp;&lt;=&nbsp;b1, b2&nbsp;&lt;=&nbsp;255</code>，则结果将等于：
+ <blockquote><pre>
+(b1 &lt;&lt; 8) | b2
+ </pre></blockquote>
+ <p>
+在读取了这两个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     此文件的下两个字节，解释为一个无符号的 16 位整数。
+@exception  EOFException  如果在读取两个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final char java.io.RandomAccessFile.readChar() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个字符。此方法从该文件的当前文件指针开始读取两个字节。如果按顺序读取的字节为 <code>b1</code> 和 <code>b2</code>，其中 <code>0&#xA0;&lt;=&#xA0;b1, b2&#xA0;&lt;=&#xA0;255</code>，则结果将等于：
+ <blockquote><pre>
+(char)((b1 &lt;&lt; 8) | b2)
+ </pre></blockquote>
+ <p>
+在读取了这两个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。 
+
+@return     此文件的下两个字节，解释为 <code>char</code>。
+@exception  EOFException  如果在读取两个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.io.RandomAccessFile.readInt() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个有符号的 32 位整数。此方法从该文件的当前文件指针开始读取 4 个字节。如果按顺序读取的字节为 <code>b1</code>、<code>b2</code>、<code>b3</code> 和 <code>b4</code>，其中 <code>0&nbsp;&lt;=&nbsp;b1, b2, b3, b4&nbsp;&lt;=&nbsp;255</code>，则结果将等于：
+ <blockquote><pre>
+(b1 &lt;&lt; 24) | (b2 &lt;&lt; 16) + (b3 &lt;&lt; 8) + b4
+ </pre></blockquote>
+ <p>
+在读取了这四个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+@return     此文件的下四个字节，解释为一个 <code>int</code>。
+@exception  EOFException  如果在读取四个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.io.RandomAccessFile.readLong() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个有符号的 64 位整数。此方法从该文件的当前文件指针开始读取八个字节。如果按顺序读取的字节为 <code>b1</code>、<code>b2</code>、<code>b3</code>、<code>b4</code>、<code>b5</code>、<code>b6</code>、<code>b7</code> 和 <code>b8</code>，其中：
+ <blockquote><pre>
+0 &lt;= b1, b2, b3, b4, b5, b6, b7, b8 &lt;=255,
+ </pre></blockquote>
+ <p>
+则结果将等于：
+ <p><blockquote><pre>
+((long)b1 &lt;&lt; 56) + ((long)b2 &lt;&lt; 48)
++ ((long)b3 &lt;&lt; 40) + ((long)b4 &lt;&lt; 32)
+     + ((long)b5 &lt;&lt; 24) + ((long)b6 &lt;&lt; 16)
+     + ((long)b7 &lt;&lt; 8) + b8
+ </pre></blockquote>
+ <p>
+在读取了这八个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     此文件的下八个字节，解释为一个 <code>long</code>。
+@exception  EOFException  如果在读取八个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float java.io.RandomAccessFile.readFloat() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个 <code>float</code>。此方法从当前文件指针开始读取一个 <code>int</code> 值，类似于使用 <code>readInt</code> 方法，然后使用 <code>Float</code> 类中的 <code>intBitsToFloat</code> 方法将该 <code>int</code> 转换为一个 <code>float</code>。 
+ <p>
+在读取了这四个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     此文件的下四个字节，解释为一个 <code>float</code>。
+@exception  EOFException  如果在读取四个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.io.RandomAccessFile#readInt()
+@see        java.lang.Float#intBitsToFloat(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final double java.io.RandomAccessFile.readDouble() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个 <code>double</code>。此方法从当前文件指针开始读取一个 <code>long</code> 值，类似于使用 <code>readLong</code> 方法，然后使用 <code>Double</code> 类中的 <code>longBitsToDouble</code> 方法将该 <code>long</code> 转换为一个 <code>double</code>。
+ <p>
+在读取了这八个字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     此文件的下八个字节，解释为一个 <code>double</code>。
+@exception  EOFException  如果在读取八个字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.io.RandomAccessFile#readLong()
+@see        java.lang.Double#longBitsToDouble(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.io.RandomAccessFile.readLine() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取文本的下一行。此方法可以从该文件的当前文件指针处成功地读取字节，直到到达行结束符或文件的末尾。每个字节都转换为一个字符，方法是采用该字符的低八位字节值，并将该字符的高八位设置为零。因此，此方法不支持完整的 Unicode 字符集。
+
+<p> 文本行由回车符 (<code>'\r'</code>) 和一个换行符 (<code>'\n'</code>) 结束，回车符后面紧跟一个换行符，或者是文件的末尾。不使用行结束符，并且在返回的字符串中不包括结束符。
+
+<p> 在读取了一个换行符、读取了一个回车符和它后面的字节（查看是否为一个新行），到达文件的末尾或者抛出异常之前，此方法一直阻塞。
+
+@return     此文件文本的下一行，如果连一个字节也没有读取就已到达文件的末尾，则返回 null。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.io.RandomAccessFile.readUTF() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此文件读取一个字符串。该字符串已使用 <a href="DataInput.html#modified-utf-8">UTF-8 修改版</a>格式进行编码。 
+ <p>
+从当前文件指针开始读取前两个字节，类似于使用 <code>readUnsignedShort</code>。此值给出已编码字符串中随后的字节数，而不是结果字符串的长度。随后的字节然后解释为 UTF-8 修改版格式的字节编码字符，并转换为字符。 
+ <p>
+在读取了所有字节、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     一个 Unicode 字符串。
+@exception  EOFException  如果在读取所有字节之前此文件已到达末尾。
+@exception  IOException  如果发生 I/O 错误。
+@exception  UTFDataFormatException  如果这些字节不表示 Unicode 字符串的有效 UTF-8 修改版编码。
+@see        java.io.RandomAccessFile#readUnsignedShort()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeBoolean(boolean v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按单字节值将 <code>boolean</code> 写入该文件。值 <code>true</code> 写出为值 <code>(byte)1</code>；值 <code>false</code> 写出为值 <code>(byte)0</code>。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>boolean</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeByte(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按单字节值将 <code>byte</code> 写入该文件。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>byte</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeShort(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按两个字节将 <code>short</code> 写入该文件，先写高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>short</code>。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeChar(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按双字节值将 <code>char</code> 写入该文件，先写高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>char</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeInt(int v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按四个字节将 <code>int</code> 写入该文件，先写高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>int</code>。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeLong(long v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按八个字节将 <code>long</code> 写入该文件，先写高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>long</code>。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeFloat(float v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>Float</code> 类中的 <code>floatToIntBits</code> 方法将浮点参数转换为一个 <code>int</code>，然后按四字节数量将该 <code>int</code> 值写入该文件，先写高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>float</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.lang.Float#floatToIntBits(float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeDouble(double v) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>Double</code> 类中的 <code>doubleToLongBits</code> 方法将双精度参数转换为一个 <code>long</code>，然后按八字节数量将该 <code>long</code> 值写入该文件，先定高字节。写入从文件指针的当前位置开始。
+
+@param      v   要写入的 <code>double</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.lang.Double#doubleToLongBits(double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeBytes(String s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按字节序列将该字符串写入该文件。该字符串中的每个字符均按顺序写出，并丢弃其高八位。写入从文件指针的当前位置开始。
+
+@param      s   要写入的字节的字符串。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeChars(String s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按字符序列将一个字符串写入该文件。每个字符均写入数据输出流，类似于使用 <code>writeChar</code> 方法。写入从文件指针的当前位置开始。
+
+@param      s   要写入的 <code>boolean</code> 值。
+@exception  IOException  如果发生 I/O 错误。
+@see        java.io.RandomAccessFile#writeChar(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.io.RandomAccessFile.writeUTF(String str) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <a href="DataInput.html#modified-utf-8">modified UTF-8</a> 编码以与机器无关的方式将一个字符串写入该文件。 
+ <p>
+首先，把两个字节从文件的当前文件指针写入到此文件，类似于使用 <code>writeShort</code> 方法并给定要跟随的字节数。此值是实际写出的字节数，而不是该字符串的长度。在该长度之后，按顺序输出该字符串的每个字符，并对每个字符使用 UTF-8 修改版编码。 
+
+@param      str   要写入的字符串。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->

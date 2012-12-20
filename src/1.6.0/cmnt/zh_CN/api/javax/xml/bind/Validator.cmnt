@@ -1,0 +1,166 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.bind.Validator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+自 JAXB 2.0 开始，此类已过时，成为一个可选项。
+ <p>
+该 <tt>Validator</tt> 类负责控制运行时期间对内容树的验证。
+
+ <p>
+<a name="validationtypes"></a> <b>三种形式的验证</b><br>
+ <blockquote>
+    <dl>
+<dt><b>解组时验证</b></dt>
+<dd>这种形式的验证使客户端应用程序能够接收关于将 XML 数据解组到 Java 内容树中时检测到的验证错误和警告的信息，并且与其他类型的验证完全没有关系。要启用或禁用它，请参阅 {@link Unmarshaller#setValidating(boolean) Unmarshaller.setValidating} 的 javadoc。所有 JAXB 1.0 提供者都必须支持此操作。
+        </dd>
+
+<dt><b>按需验证</b></dt>
+<dd> 这种形式的验证使客户端应用程序能够接收关于在 Java 内容树中检测到的验证错误和警告的信息。客户端应用程序在任何点上都可以在 Java 内容树（或其任意子树）上调用 {@link Validator#validate(Object) Validator.validate} 方法。所有 JAXB 1.0 提供这都必须支持此操作。
+        </dd>
+
+<dt><b>快速失败验证</b></dt>
+<dd> 当对 Java 内容树所做的修改违反规范中定义的 Java 属性的类型约束时，这种形式的验证使客户端应用程序能够接收关于这些修改的即时反馈。JAXB 提供者不需要支持这种类型的验证。在不支持这种类型的验证的 JAXB 提供者中，一些提供者可能要求在模式编译时确定是否允许客户端应用程序在运行时请求进行快速失败验证。
+        </dd>
+    </dl>
+ </blockquote>
+
+ <p>
+<tt>Validator</tt> 类负责管理按需验证。<tt>Unmarshaller</tt> 类负责管理解组操作期间的解组时验证。虽然没有在编组操作期间启用验证的正式方法，但 <tt>Marshaller</tt> 可以检测错误，并将这些错误报告给已在它自身上注册的 <tt>ValidationEventHandler</tt>。
+
+ <p>
+<a name="defaulthandler"></a> <b>使用默认事件处理程序</b><br>
+ <blockquote>
+如果客户端应用程序没有在调用 validate、unmarshal 或 marshal 方法之前在其 <tt>Validator</tt>、<tt>Unmarshaller</tt> 或 <tt>Marshaller</tt> 上设置事件处理程序，则默认事件处理程序将接收遇到的所有错误或警告的通知。默认事件处理程序将使当前操作在遇到第一个错误或致命错误之后暂停（但将在接收警告后尝试继续完成操作）。
+ </blockquote>
+
+ <p>
+<a name="handlingevents"></a> <b>处理验证事件</b><br>
+ <blockquote>
+有三种处理解组、验证和编组期间遇到的事件的方式：
+    <dl>
+<dt>使用默认事件处理程序</dt>
+<dd>如果没有通过 <tt>setEventHandler</tt> API 在 <tt>Validator</tt>、<tt>Unmarshaller</tt> 或 <tt>Marshaller</tt> 上指定事件处理程序，则将使用默认事件处理程序。
+        </dd>
+ 
+<dt>实现和注册一个自定义事件处理程序</dt>
+<dd>复杂事件处理的客户端应用程序可以实现 <tt>ValidationEventHandler</tt> 接口，并向 <tt>Unmarshaller</tt> 和/或 <tt>Validator</tt> 注册它。
+        </dd>
+
+<dt>使用 {@link javax.xml.bind.util.ValidationEventCollector ValidationEventCollector} 实用工具</dt>
+<dd>为了方便起见，可以提供特殊的事件处理程序，只收集执行解组、验证和编组操作期间创建的任何 <tt>ValidationEvent</tt> 对象，并将它们作为 <tt>java.util.Collection</tt> 返回给客户端应用程序。
+        </dd>
+    </dl>
+ </blockquote>
+
+ <p>
+<b>验证和格式良好</b><br>
+ <blockquote>
+ <p>
+验证事件的处理因为客户端应用程序配置方式的不同而各有不同，以便能够按前一节中描述的方式处理它们。但是，在某些情况下，JAXB 提供者指示无法再以可靠的方式检测和报告错误。在这些情况下，JAXB 提供者会将 ValidationEvent 的严重性设置为 FATAL_ERROR，以指示应该终止解组、验证或编组操作。默认事件处理程序和 <tt>ValidationEventCollector</tt> 实用工具类必须在收到致命错误通知后终止处理。提供自己的 <tt>ValidationEventHandler</tt> 的客户端应用程序也应该在收到致命错误通知后终止处理。如果不终止处理，则可能发生不可预料的行为。
+ </blockquote>
+
+ <p>
+<a name="supportedProps"></a> <b>支持的属性</b><br>
+ <blockquote>
+ <p>
+当前没有任何需要 Validator 上的所有 JAXB 提供者都支持的属性。但是，一些提供者可能支持它们自己的特定于提供者的属性集。
+ </blockquote>
+ 
+ 
+@author<ul><li>Ryan Shoemaker, Sun Microsystems, Inc.</li><li>Kohsuke Kawaguchi, Sun Microsystems, Inc.</li><li>Joe Fialli, Sun Microsystems, Inc.</li></ul> 
+@version $Revision: 1.6 $ $Date: 2006-10-23 09:14:11 $
+@see JAXBContext
+@see Unmarshaller
+@see ValidationEventHandler
+@see ValidationEvent
+@see javax.xml.bind.util.ValidationEventCollector
+@since JAXB1.0
+@deprecated 从 JAXB 2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Validator.setEventHandler(ValidationEventHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册一个验证事件处理程序。
+ <p>
+如果调用 {@link #validate(Object) validate} 期间遇到任何验证错误，则 JAXB 提供者将调用验证事件处理程序。如果客户端应用程序没有在调用验证方法之前注册验证事件处理程序，那么验证事件将由默认事件处理程序处理，默认事件处理程序将在遇到第一个错误或致命错误之后终止验证操作。
+ <p>
+调用带有 null 参数的此方法将导致 Validator 重新使用默认事件处理程序。
+
+@param handler 验证事件处理程序
+@throws JAXBException 如果在设置事件处理程序期间遇到错误
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.ValidationEventHandler javax.xml.bind.Validator.getEventHandler() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的事件处理程序，如果没有设置事件处理程序，则返回默认事件处理程序。
+
+@return 当前的 ValidationEventHandler，如果没有设置该处理程序，则返回默认事件处理程序
+@throws JAXBException 如果在设置当前事件处理程序时遇到错误
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.Validator.validate(Object subrootObj) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <tt>subrootObj</tt> 开始验证 Java 内容树。
+ <p>
+客户端应用程序可以使用此方法在运行时根据需要来验证 Java 内容树。此方法可用于验证 Java 内容树的任意子树。全局约束检查<b>不会</b>作为此操作的一部分执行（即 ID/IDREF 约束）。
+
+@param subrootObj 将从其所在位置开始执行验证的对象
+@throws JAXBException 如果验证期间发生任何预料不到的问题
+@throws ValidationException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Validator</tt> 无法验证以 <tt>subrootObj</tt> 为根的内容树
+@throws IllegalArgumentException 如果 subrootObj 参数为 null
+@return 如果以 <tt>subrootObj</tt> 为根的子树有效，则返回 true；否则返回 false
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.Validator.validateRoot(Object rootObj) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+验证以 <tt>rootObj</tt> 为根的 Java 内容树。
+ <p>
+客户端应用程序可以使用此方法在运行时根据需要来验证 Java 内容树。此方法用于验证整个 Java 内容树。全局约束检查<b>将</b>作为此操作的一部分执行（即 ID/IDREF 约束）。
+
+@param rootObj 将从其所在位置开始执行验证的根对象
+@throws JAXBException 如果验证期间发生任何不可预料的问题
+@throws ValidationException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Validator</tt> 无法验证以 <tt>rootObj</tt> 为根的内容树
+@throws IllegalArgumentException 如果 rootObj 参数为 null
+@return 如果以 <tt>rootObj</tt> 为根的树有效，则返回 true；否则返回 false
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Validator.setProperty(String name, Object value) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <tt>Validator</tt> 底层实现中的特定属性。此方法只能用于设置上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图设置未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 要设置的属性的名称。此值可以使用一个常量字段来指定，也可以是用户提供的字符串。
+@param value 要设置的属性值
+
+@throws PropertyException 如果处理给定属性或值时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Validator.getProperty(String name) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <tt>Validator</tt> 底层实现中的特定属性。此方法只可用于获取上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图获取未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 将检索的属性的名称
+@return 所请求属性的值
+
+@throws PropertyException 如果检索给定属性或值属性名称时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+@deprecated 从 JAXB2.0 开始
+
+<!-- END DATA -->

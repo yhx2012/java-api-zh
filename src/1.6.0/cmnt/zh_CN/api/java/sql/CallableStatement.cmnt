@@ -1,0 +1,1599 @@
+<!-- BEGIN KEY -->
+public interface java.sql.CallableStatement extends java.sql.PreparedStatement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于执行 SQL 存储过程的接口。JDBC API 提供了一个存储过程 SQL 转义语法，该语法允许对所有 RDBMS 使用标准方式调用存储过程。此转义语法有一个包含结果参数的形式和一个不包含结果参数的形式。如果使用结果参数，则必须将其注册为 OUT 参数。其他参数可用于输入、输出或同时用于二者。参数是根据编号按顺序引用的，第一个参数的编号是 1。
+ <PRE>
+   {?= call &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]}
+   {call &lt;procedure-name&gt;[(&lt;arg1&gt;,&lt;arg2&gt;, ...)]}
+ </PRE>
+ <P>
+IN 参数值是使用继承自 {@link PreparedStatement} 的 <code>set</code> 方法设置的。在执行存储过程之前，必须注册所有 OUT 参数的类型；它们的值是在执行后通过此类提供的 <code>get</code> 方法获取的。
+ <P>
+<code>CallableStatement</code> 可以返回一个 {@link ResultSet} 对象或多个 <code>ResultSet</code> 对象。多个 <code>ResultSet</code> 对象是使用继承自 {@link Statement} 的操作处理的。
+ <P>
+为了获得最大的可移植性，某一调用的 <code>ResultSet</code> 对象和更新计数应该在获得输出参数的值之前处理。
+ <P>
+
+@see Connection#prepareCall
+@see ResultSet 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(int parameterIndex, int sqlType) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序位置 <code>parameterIndex</code> 将 OUT 参数注册为 JDBC 类型 <code>sqlType</code>。所有 OUT 参数都必须在执行存储过程前注册。
+ <p>
+<code>sqlType</code> 为 OUT 参数指定的 JDBC 类型确定必须用于 <code>get</code> 方法，以读取该参数值的 Java 类型。
+ <p>
+如果预期返回给此输出参数的 JDBC 类型是取决于此特定数据库的，则 <code>sqlType</code> 应该是 <code>java.sql.Types.OTHER</code>。方法 {@link #getObject} 获取该值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param sqlType <code>java.sql.Types</code> 定义的 JDBC 类型代码。如果参数是 JDBC 类型 <code>NUMERIC</code> 或 <code>DECIMAL</code>，则应使用接受标度值的那种 <code>registerOutParameter</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型
+@see Types  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(int parameterIndex, int sqlType, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序位置 <code>parameterIndex</code> 将参数注册为 JDBC 类型 <code>sqlType</code>。所有 OUT 参数都必须在执行存储过程前注册。
+ <p>
+<code>sqlType</code> 为 OUT 参数指定的 JDBC 类型确定必须用于 <code>get</code> 方法，以读取该参数值的 Java 类型。
+ <p>
+这种形式的 <code>registerOutParameter</code> 应该在参数是 JDBC 类型 <code>NUMERIC</code> 或 <code>DECIMAL</code> 时使用。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param sqlType 由 <code>java.sql.Types</code> 定义的 SQL 类型代码。
+@param scale 小数点右边所需的位数。该参数必须大于等于 0。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型
+@see Types 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.CallableStatement.wasNull() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询最后一个读取的 OUT 参数是否为 SQL <code>NULL</code>。注意，此方法只应该在调用获取方法之后调用；否则没有用来确定它是否为 <code>null</code> 的值。
+
+@return 如果最后一个读取的参数为 SQL <code>NULL</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.CallableStatement.getString(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取指定的 JDBC <code>CHAR</code>、<code>VARCHAR</code> 或 <code>LONGVARCHAR</code> 参数的值。
+ <p>
+对于固定长度类型 SQL <code>CHAR</code>，返回的 <code>String</code> 对象与数据库中的 JDBC <code>CHAR</code> 值完全相同，包括数据库添加的任何填充数据。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setString 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.CallableStatement.getBoolean(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>boolean</code> 值的形式获取指定的 JDBC <code>BIT</code> 或 <code>BOOLEAN</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>false</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setBoolean
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.sql.CallableStatement.getByte(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 的形式获取指定的 JDBC <code>TINYINT</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setByte
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.sql.CallableStatement.getShort(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>short</code> 值的形式获取指定的 JDBC <code>SMALLINT</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setShort
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.CallableStatement.getInt(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>int</code> 值的形式获取指定的 JDBC <code>INTEGER</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setInt 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.sql.CallableStatement.getLong(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>long</code> 值的形式获取指定的 JDBC <code>BIGINT</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setLong 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.sql.CallableStatement.getFloat(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>float</code> 值的形式获取指定的 JDBC <code>FLOAT</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setFloat 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.sql.CallableStatement.getDouble(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>double</code> 值的形式获取指定的 JDBC <code>DOUBLE</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setDouble 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.CallableStatement.getBigDecimal(int parameterIndex, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以 <code>java.math.BigDecimal</code> 对象的形式获取指定 JDBC <code>NUMERIC</code> 参数的值，小数点右边有 <i>scale</i> 个位数。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param scale 小数点右边的位数
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@deprecated 使用 <code>getBigDecimal(int parameterIndex)</code> 或 <code>getBigDecimal(String parameterName)</code>
+@see #setBigDecimal
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.sql.CallableStatement.getBytes(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 数组值的形式获取指定的 JDBC <code>BINARY</code> 或 <code>VARBINARY</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setBytes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.CallableStatement.getDate(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Date</code> 对象的形式获取指定 JDBC <code>DATE</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setDate 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.CallableStatement.getTime(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Time</code> 对象的形式获取指定 JDBC <code>TIME</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setTime 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.CallableStatement.getTimestamp(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Timestamp</code> 对象的形式获取指定 JDBC <code>TIMESTAMP</code> 参数的值。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setTimestamp 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.CallableStatement.getObject(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Object</code> 的形式获取指定参数的值。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。
+ <p>
+此方法返回一个 Java 对象，其类型对应于使用 <code>registerOutParameter</code> 方法为此参数注册的 JDBC 类型。通过将目标 JDBC 类型注册为 <code>java.sql.Types.OTHER</code>，可以使用此方法来读取特定于数据库的抽象数据类型。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 保存 OUT 参数值的 <code>java.lang.Object</code>
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see Types
+@see #setObject
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.CallableStatement.getBigDecimal(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.math.BigDecimal</code> 对象的形式获取指定 JDBC <code>NUMERIC</code> 参数的值，小数点右边的位数与该参数值所包含的位数相同。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return 全精度参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setBigDecimal
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.CallableStatement.getObject(int parameterIndex, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示 OUT 参数 <code>parameterIndex</code> 值的对象，并将 <code>map</code> 用于该参数值的自定义映射关系。
+ <p>
+此方法返回一个 Java 对象，其类型对应于使用 <code>registerOutParameter</code> 方法为此参数注册的 JDBC 类型。通过将目标 JDBC 类型注册为 <code>java.sql.Types.OTHER</code>，可以使用此方法来读取特定于数据库的抽象数据类型。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param map SQL 类型名称到 Java 类的映射关系
+@return 保存 OUT 参数值的 <code>java.lang.Object</code>
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setObject
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Ref java.sql.CallableStatement.getRef(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 {@link java.sql.Ref} 对象的形式获取指定的 JDBC <code>REF(&lt;structured-type&gt;)</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return Java 编程语言中 <code>Ref</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Blob java.sql.CallableStatement.getBlob(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Clob</code> 对象的形式获取指定的 JDBC <code>CLOB</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return Java 编程语言中 <code>Blob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Clob java.sql.CallableStatement.getClob(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Clob</code> 对象的形式获取指定的 JDBC <code>CLOB</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return Java 编程语言中 <code>Clob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Array java.sql.CallableStatement.getArray(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以 Java 编程语言中 {@link java.sql.Array} 对象的形式获取指定的 JDBC <code>ARRAY</code> 参数的值。
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@return Java 编程语言中 <code>Array</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.CallableStatement.getDate(int parameterIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Date</code> 对象的形式获取指定 JDBC <code>DATE</code> 参数的值，使用给定 <code>Calendar</code> 对象构造日期。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算日期。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param cal 供驱动程序用来构造日期的 <code>Calendar</code> 对象
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setDate
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.CallableStatement.getTime(int parameterIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Time</code> 对象的形式获取指定 JDBC <code>TIME</code> 参数的值，使用给定 <code>Calendar</code> 对象构造时间。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算时间。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param cal 供驱动程序用来构造时间的 <code>Calendar</code> 对象
+@return 参数值；如果该值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setTime
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.CallableStatement.getTimestamp(int parameterIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Timestamp</code> 对象的形式获取指定 JDBC <code>TIMESTAMP</code> 参数的值，使用给定 <code>Calendar</code> 对象构造 <code>Timestamp</code> 对象。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算时间戳。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param cal 供驱动程序用来构造时间戳的 <code>Calendar</code> 对象
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #setTimestamp
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(int parameterIndex, int sqlType, String typeName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定的输出参数。这种形式的 <code>registerOutParameter</code> 方法应该用于用户定义的输出参数或 <code>REF</code> 输出参数。用户定义类型的示例有：<code>STRUCT</code>、<code>DISTINCT</code>、<code>JAVA_OBJECT</code> 和指定的数组类型。
+<p>
+ 所有 OUT 参数都必须在执行存储过程前注册。
+ <p>对于用户定义的参数，还应该提供该参数的完全限定 SQL 类型名称，而 <code>REF</code> 参数则要求提供引用类型的完全限定类型名称。不需要类型代码和类型名称信息的 JDBC 驱动程序可以忽略它。不过，为了便于移植，应用程序应该为用户定义的参数和 <code>REF</code> 参数提供这些值。
+
+尽管此方法是供用户定义的参数和 <code>REF</code> 参数使用的，但也可以将其用于注册任何 JDBC 类型的参数。如果参数没有用户定义的类型或 <code>REF</code> 类型，则忽略 <i>typeName</i> 参数。
+
+<P><B>注：</B>在读取 out 参数的值时，必须使用某个获取方法，该方法的 Java 类型对应于参数的已注册 SQL 类型。
+
+@param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+@param sqlType 取自 {@link java.sql.Types} 的一个值
+@param typeName SQL 结构类型的完全限定名称
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型
+@see Types
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(String parameterName, int sqlType) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名为 <code>parameterName</code> 的 OUT 参数注册为 JDBC 类型 <code>sqlType</code>。所有 OUT 参数都必须在执行存储过程前注册。
+ <p>
+<code>sqlType</code> 为 OUT 参数指定的 JDBC 类型确定必须用于 <code>get</code> 方法，以读取该参数值的 Java 类型。
+ <p>
+如果预期返回给此输出参数的 JDBC 类型是特定于此特定数据库的，则 <code>sqlType</code> 应该是 <code>java.sql.Types.OTHER</code>。方法 {@link #getObject} 获取该值。
+@param parameterName 参数名
+@param sqlType 由 <code>java.sql.Types</code> 定义的 JDBC 类型代码。如果参数是 JDBC 类型 <code>NUMERIC</code> 或 <code>DECIMAL</code>，则应使用接受标度值的那种 <code>registerOutParameter</code>。
+@exception SQLException 如果 parameterName 不对应指定的参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型，或者 JDBC 驱动程序不支持此方法
+@since 1.4
+@see Types
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(String parameterName, int sqlType, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名为 <code>parameterName</code> 的参数注册为 JDBC 类型 <code>sqlType</code>。所有 OUT 参数都必须在执行存储过程前注册。
+ <p>
+<code>sqlType</code> 为 OUT 参数指定的 JDBC 类型确定必须用于 <code>get</code> 方法，以读取该参数值的 Java 类型。
+ <p>
+这种形式的 <code>registerOutParameter</code> 应该在参数是 JDBC 类型 <code>NUMERIC</code> 或 <code>DECIMAL</code> 时使用。
+@param parameterName 参数名
+@param sqlType 由 <code>java.sql.Types</code> 定义的 SQL 类型代码。
+@param scale 小数点右边所需的位数。该参数必须大于等于 0。
+@exception SQLException 如果 parameterName 不对应指定的参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型，或者 JDBC 驱动程序不支持此方法
+@since 1.4
+@see Types
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.registerOutParameter(String parameterName, int sqlType, String typeName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定的输出参数。这种形式的 <code>registerOutParameter</code> 方法应该用于用户命名的输出参数或 REF 输出参数。用户命名类型的示例有：STRUCT、DISTINCT、JAVA_OBJECT 和指定的数组类型。
+<p>
+ 所有 OUT 参数都必须在执行存储过程前注册。
+ <p>对于用户命名的参数，还应该提供参数的完全限定 SQL 类型名称，而 REF 参数则要求提供所引用类型的完全限定类型名称。不需要类型代码和类型名称信息的 JDBC 驱动程序可以忽略它。不过，为了便于移植，应用程序应该为用户命名的参数和 REF 参数提供这些值。尽管此方法是供用户命名的参数和 REF 参数使用的，但也可以将其用于注册任何 JDBC 类型的参数。如果参数没有用户命名的类型或 REF 类型，则忽略 typeName 参数。
+
+<P><B>注：</B>在读取 out 参数的值时，必须使用 <code>getXXX</code> 方法，其 Java 类型 XXX 对应于参数的已注册 SQL 类型。
+
+@param parameterName 参数名
+@param sqlType 取自 {@link java.sql.Types} 的一个值
+@param typeName SQL 结构类型的完全限定名称
+@exception SQLException 如果 parameterName 不对应指定的参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>sqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型，或者 JDBC 驱动程序不支持此方法
+@see Types
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.sql.CallableStatement.getURL(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.URL</code> 对象的形式获取指定 JDBC <code>DATALINK</code> 参数的值。
+ 
+@param parameterIndex 第一个参数是 1，第二个参数是 2，……
+@return 表示用作指定参数的 JDBC <code>DATALINK</code> 值的 <code>java.net.URL</code> 对象
+@exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法，或者将返回的 URL 在 Java 平台上是一个无效 URL
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setURL
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setURL(String parameterName, URL val) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 <code>java.net.URL</code> 对象。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>DATALINK</code> 值。
+
+@param parameterName 参数名
+@param val 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法，或者 URL 是错误的
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getURL
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNull(String parameterName, int sqlType) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为 SQL <code>NULL</code>。
+
+<P><B>注：</B>必须指定参数的 SQL 类型。
+
+@param parameterName 参数名
+@param sqlType <code>java.sql.Types</code> 中定义的 SQL 类型代码
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBoolean(String parameterName, boolean x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>boolean</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>BIT</code> 或 <code>BOOLEAN</code> 值。
+
+@param parameterName 参数名
+@param x 参数值 
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@see #getBoolean
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setByte(String parameterName, byte x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>byte</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>TINYINT</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getByte
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setShort(String parameterName, short x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>short</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>SMALLINT</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getShort
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setInt(String parameterName, int x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>int</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>INTEGER</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getInt
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setLong(String parameterName, long x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>long</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>BIGINT</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getLong
+@since 1.4
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setFloat(String parameterName, float x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>float</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>FLOAT</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getFloat
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setDouble(String parameterName, double x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>double</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>DOUBLE</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getDouble
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBigDecimal(String parameterName, BigDecimal x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 <code>java.math.BigDecimal</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>NUMERIC</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getBigDecimal
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setString(String parameterName, String x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java <code>String</code> 值。在将此值发送给数据库时，驱动程序将它转换成一个 SQL <code>VARCHAR</code> 或 <code>LONGVARCHAR</code> 值（取决于该参数相对于驱动程序在 <code>VARCHAR</code> 值上的限制的大小）。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getString
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBytes(String parameterName, byte[] x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 Java byte 数组。在将此值发送给数据库时，驱动程序将它转换成一个 SQL <code>VARBINARY</code> 或 <code>LONGVARBINARY</code> 值（取决于该参数相对于驱动程序在 <code>VARBINARY</code> 值上的限制的大小）。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getBytes
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setDate(String parameterName, Date x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用运行应用程序的虚拟机默认时区将指定参数设置为给定 <code>java.sql.Date</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>DATE</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getDate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setTime(String parameterName, Time x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 <code>java.sql.Time</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>TIME</code> 值。
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getTime
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setTimestamp(String parameterName, Timestamp x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 <code>java.sql.Timestamp</code> 值。在将该值发送到数据库时，驱动程序将它转换成一个 SQL <code>TIMESTAMP</code> 值。
+
+@param parameterName 参数名
+@param x 参数值
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getTimestamp
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setAsciiStream(String parameterName, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定输入流，该输入流将拥有指定的字节数。在将一个非常大的 ASCII 值输入给 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.InputStream</code> 发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。JDBC 驱动程序将执行从 ASCII 到数据库 char 格式的任何必要转换。
+ 
+<P><B>注：</B>此流对象可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+@param parameterName 参数名
+@param x 包含 ASCII 参数值的 Java 输入流
+@param length 流中的字节数 
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBinaryStream(String parameterName, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定输入流，该输入流将拥有指定的字节数。在将一个非常大的二进制值输入给 <code>LONGVARBINARY</code> 参数时，通过 <code>java.io.InputStream</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。
+ 
+<P><B>注：</B>此流对象可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+@param parameterName 参数名
+@param x 包含二进制参数值的 java 输入流
+@param length 流中的字节数
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setObject(String parameterName, Object x, int targetSqlType, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定对象设置指定参数的值。第二个参数必须是一个对象类型；对于整数值，应该使用 <code>java.lang</code> 的等效对象。
+
+<p>在被发送到数据库之前，给定 Java 对象将被转换为给定 targetSqlType。
+
+如果对象具有自定义映射关系（是实现 <code>SQLData</code> 接口的类），则 JDBC 驱动程序应该调用 <code>SQLData.writeSQL</code> 方法将它写入 SQL 数据流中。另一方面，如果该对象是实现 <code>Ref</code>、<code>Blob</code>、<code>Clob</code>、<code>NClob</code>、<code>Struct</code>、<code>java.net.URL</code> 或 <code>Array</code> 的类，则驱动程序应该将它作为相应 SQL 类型的值传递给数据库。
+ <P>
+注意，此方法可用于传递特定于数据库的抽象数据类型。 
+
+@param parameterName 参数名
+@param x 包含输入参数值的对象
+@param targetSqlType 将发送到数据库的 SQL 类型（在 java.sql.Types 中定义）。scale 参数可以进一步限定此类型。
+@param scale 对于 java.sql.Types.DECIMAL 或 java.sql.Types.NUMERIC 类型，该参数是小数点后的位数。对于其他所有类型，将忽略此值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 <code>targetSqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型
+@see Types
+@see #getObject
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setObject(String parameterName, Object x, int targetSqlType) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定对象设置指定参数的值。除了假定 scale 为 0 外，此方法类似于上面的 <code>setObject</code> 方法。
+
+@param parameterName 参数名
+@param x 包含输入参数值的对象
+@param targetSqlType 要发送到数据库的 SQL 类型（在 java.sql.Types 中定义）
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 <code>targetSqlType</code> 是 <code>ARRAY</code>、<code>BLOB</code>、<code>CLOB</code>、<code>DATALINK</code>、<code>JAVA_OBJECT</code>、<code>NCHAR</code>、<code>NCLOB</code>、<code>NVARCHAR</code>、<code>LONGNVARCHAR</code>、<code>REF</code>、<code>ROWID</code>、<code>SQLXML</code> 或 <code>STRUCT</code> 数据类型之一并且 JDBC 驱动程序不支持此数据类型
+@see #getObject
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setObject(String parameterName, Object x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定对象设置指定参数的值。第二个参数必须是类型 <code>Object</code>；所以，应该对内置类型使用 <code>java.lang</code> 的等效对象。
+
+<p>JDBC 规范指定了一个从 Java <code>Object</code> 类型到 SQL 类型的标准映射关系。在被发送到数据库之前，给定参数将被转换为相应 SQL 类型。
+
+<p>注意，通过使用特定于驱动程序的 Java 类型，此方法可用于传递特定于数据库的抽象数据类型。
+
+如果对象是实现 <code>SQLData</code> 接口的类，则 JDBC 驱动程序应该调用 <code>SQLData.writeSQL</code> 方法将它写入 SQL 数据流中。另一方面，如果该对象是实现 <code>Ref</code>、<code>Blob</code>、<code>Clob</code>、<code>NClob</code>、<code>Struct</code>、<code>java.net.URL</code> 或 <code>Array</code> 的类，则驱动程序应该将它作为相应 SQL 类型的值传递给数据库。
+ <P>
+如果出现混淆，例如，如果该对象是实现不止一个上述指定接口的类，则此方法抛出异常。
+<p>
+<b>注：</b> 并非所有允许非类型 Null 的数据库都被发送到后端。为了获得最大的可移植性，应该使用 <code>setNull</code> 或 <code>setObject(String parameterName, Object x, int sqlType)</code> 方法替代 <code>setObject(String parameterName, Object x)</code>。
+<p>
+
+@param parameterName 参数名
+@param x 包含输入参数值的对象
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法，或者给定的 <code>Object</code> 参数不明确
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getObject
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setCharacterStream(String parameterName, Reader reader, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为给定 <code>Reader</code> 对象，该对象是给定的字符长度数。在将一个非常大的 UNICODE 值输入给 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+<P><B>注：</B>此流对象可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+@param parameterName 参数名
+@param reader 包含用作指定参数的 UNICODE 数据的 <code>java.io.Reader </code> 对象
+@param length 流中的字节数
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setDate(String parameterName, Date x, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Calendar</code> 对象将指定参数设置为给定 <code>java.sql.Date</code> 值。驱动程序使用 <code>Calendar</code> 对象构造一个 SQL <code>DATE</code> 值，该值随后被驱动程序发送给数据库。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区的情况下计算日期。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区，该时区是运行应用程序的虚拟机所在的时区。
+
+@param parameterName 参数名
+@param x 参数值
+@param cal 供驱动程序用来构造日期的 <code>Calendar</code> 对象
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getDate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setTime(String parameterName, Time x, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Calendar</code> 对象将指定参数设置为给定 <code>java.sql.Time</code> 值。驱动程序使用 <code>Calendar</code> 对象构造一个 SQL <code>TIME</code> 值，该值随后被驱动程序发送给数据库。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区的情况下计算时间。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区，该时区是运行应用程序的虚拟机所在的时区。
+
+@param parameterName 参数名
+@param x 参数值
+@param cal 供驱动程序用来构造时间的 <code>Calendar</code> 对象
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getTime
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setTimestamp(String parameterName, Timestamp x, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Calendar</code> 对象将指定参数设置为给定 <code>java.sql.Timestamp</code> 值。驱动程序使用 <code>Calendar</code> 对象构造一个 SQL <code>TIMESTAMP</code> 值，该值随后被驱动程序发送给数据库。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区的情况下计算时间戳。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区，该时区是运行应用程序的虚拟机所在的时区。
+
+@param parameterName 参数名
+@param x 参数值
+@param cal 供驱动程序用来构造时间戳的 <code>Calendar</code> 对象
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #getTimestamp
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNull(String parameterName, int sqlType, String typeName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定参数设置为 SQL <code>NULL</code>。这种形式的 <code>setNull</code> 方法应该用于用户定义类型的参数或 REF 类型的参数。用户定义类型的示例有：STRUCT、DISTINCT、JAVA_OBJECT 和指定的数组类型。
+
+<P><B>注：</B>为了便于移植，在指定 NULL 用户定义参数或 REF 参数时，应用程序必须提供 SQL 类型代码和完全限定的 SQL 类型名称。对于用户定义的类型，该名称是参数本身的类型名称。对于 REF 参数，该名称是所引用类型的类型名称。 
+<p>
+尽管此方法是供用户定义的参数和 Ref 参数使用的，但也可以将其用于设置任何 JDBC 类型的 null 参数。如果参数没有用户定义的类型或 REF 类型，则忽略 typeName。
+
+
+@param parameterName 参数名
+@param sqlType 取自 <code>java.sql.Types</code> 的一个值
+@param typeName SQL 用户定义类型的完全限定名；如果该参数不是用户定义的类型或 SQL <code>REF</code> 值，则忽略它
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.CallableStatement.getString(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取 JDBC <code>CHAR</code>、<code>VARCHAR</code> 或 <code>LONGVARCHAR</code> 参数的值。
+ <p>
+对于固定长度类型 JDBC <code>CHAR</code>，返回的 <code>String</code> 对象与数据库拥有的 SQL <code>CHAR</code> 值完全相同，包括数据库添加的任何填充数据。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setString
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.CallableStatement.getBoolean(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>boolean</code> 值的形式获取 JDBC <code>BIT</code> 或 <code>BOOLEAN</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>false</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setBoolean
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.sql.CallableStatement.getByte(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 值的形式获取 JDBC <code>TINYINT</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setByte
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.sql.CallableStatement.getShort(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>short</code> 值的形式获取 JDBC <code>SMALLINT</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setShort
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.CallableStatement.getInt(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>int</code> 值的形式获取 JDBC <code>INTEGER</code> 参数的值。
+
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setInt
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.sql.CallableStatement.getLong(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>long</code> 值的形式获取 JDBC <code>BIGINT</code> 参数的值。
+
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setLong
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.sql.CallableStatement.getFloat(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>float</code> 值的形式获取 JDBC <code>FLOAT</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setFloat
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.sql.CallableStatement.getDouble(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>double</code> 值的形式获取 JDBC <code>DOUBLE</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>0</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setDouble
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.sql.CallableStatement.getBytes(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 数组值的形式获取 JDBC <code>BINARY</code> 或 <code>VARBINARY</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setBytes
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.CallableStatement.getDate(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Date</code> 对象的形式获取 JDBC <code>DATE</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setDate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.CallableStatement.getTime(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Time</code> 对象的形式获取 JDBC <code>TIME</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setTime
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.CallableStatement.getTimestamp(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Timestamp</code> 对象的形式获取 JDBC <code>TIMESTAMP</code> 参数的值。
+@param parameterName 参数名
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setTimestamp
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.CallableStatement.getObject(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Object</code> 的形式获取参数的值。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。
+ <p>
+此方法返回一个 Java 对象，其类型对应于使用 <code>registerOutParameter</code> 方法为此参数注册的 JDBC 类型。通过将目标 JDBC 类型注册为 <code>java.sql.Types.OTHER</code>，可以使用此方法来读取特定于数据库的抽象数据类型。
+@param parameterName 参数名
+@return 保存 OUT 参数值的 <code>java.lang.Object</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see Types
+@see #setObject
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.CallableStatement.getBigDecimal(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.math.BigDecimal</code> 对象的形式获取 JDBC <code>NUMERIC</code> 参数的值，小数点右边的位数与该参数值所包含的位数相同。
+@param parameterName 参数名
+@return 全精度参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setBigDecimal
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.CallableStatement.getObject(String parameterName, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示 OUT 参数 <code>parameterName</code> 值的对象，并将 <code>map</code> 用于该参数值的自定义映射关系。
+ <p>
+此方法返回一个 Java 对象，其类型对应于使用 <code>registerOutParameter</code> 方法为此参数注册的 JDBC 类型。通过将目标 JDBC 类型注册为 <code>java.sql.Types.OTHER</code>，可以使用此方法来读取特定于数据库的抽象数据类型。
+@param parameterName 参数名
+@param map SQL 类型名称到 Java 类的映射关系
+@return 保存 OUT 参数值的 <code>java.lang.Object</code>
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setObject
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Ref java.sql.CallableStatement.getRef(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 {@link java.sql.Ref} 对象的形式获取 JDBC <code>REF(&lt;structured-type&gt;)</code> 参数的值。
+
+@param parameterName 参数名
+@return Java 编程语言中 <code>Ref</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Blob java.sql.CallableStatement.getBlob(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 {@link java.sql.Blob} 对象的形式获取 JDBC <code>BLOB</code> 参数的值。
+
+@param parameterName 参数名
+@return Java 编程语言中 <code>Blob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Clob java.sql.CallableStatement.getClob(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.CLOB</code> 对象的形式获取 JDBC <code>CLOB</code> 参数的值。
+@param parameterName 参数名
+@return Java 编程语言中 <code>Clob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Array java.sql.CallableStatement.getArray(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 {@link java.sql.ARRAY} 对象的形式获取 JDBC <code>ARRAY</code> 参数的值。
+
+@param parameterName 参数名
+@return Java 编程语言中 <code>ARRAY</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.CallableStatement.getDate(String parameterName, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Date</code> 对象的形式获取 JDBC <code>DATE</code> 参数的值，使用给定 <code>Calendar</code> 对象构造日期。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算日期。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterName 参数名
+@param cal 供驱动程序用来构造日期的 <code>Calendar</code> 对象
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 并不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setDate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.CallableStatement.getTime(String parameterName, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Time</code> 对象的形式获取 JDBC <code>TIME</code> 参数的值，使用给定 <code>Calendar</code> 对象构造时间。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算时间。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterName 参数名
+@param cal 供驱动程序用来构造时间的 <code>Calendar</code> 对象
+@return 参数值；如果该值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setTime
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.CallableStatement.getTimestamp(String parameterName, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.sql.Timestamp</code> 对象的形式获取 JDBC <code>TIMESTAMP</code> 参数的值，使用给定 <code>Calendar</code> 对象构造 <code>Timestamp</code> 对象。利用 <code>Calendar</code> 对象，驱动程序可以在考虑自定义时区和语言环境的情况下计算时间戳。如果没有指定任何 <code>Calendar</code> 对象，那么驱动程序将使用默认时区和语言环境。
+
+@param parameterName 参数名
+@param cal 供驱动程序用来构造时间戳的 <code>Calendar</code> 对象
+@return 参数值。如果值为 SQL <code>NULL</code>，则结果为 <code>null</code>。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setTimestamp
+@since 1.4 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.sql.CallableStatement.getURL(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.net.URL</code> 对象的形式获取 JDBC <code>DATALINK</code> 参数的值。
+
+@param parameterName 参数名
+@return Java 编程语言中 <code>java.net.URL</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+@exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法，或者 URL 有问题
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see #setURL
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.RowId java.sql.CallableStatement.getRowId(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 <code>java.sql.RowId</code> 对象的形式获取指定 JDBC <code>ROWID</code> 参数的值。  
+
+ @param parameterIndex 第一个参数是 1，第二个参数是 2，……
+ @return 表示被用作指定参数的 JDBC <code>ROWID</code> 值的 <code>RowId</code> 对象。如果该参数包含一个 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+ @throws SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.RowId java.sql.CallableStatement.getRowId(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 <code>java.sql.RowId</code> 对象的形式获取指定 JDBC <code>ROWID</code> 参数的值。
+
+ @param parameterName 参数名
+ @return 表示被用作指定参数的 JDBC <code>ROWID</code> 值的 <code>RowId</code> 对象。如果该参数包含一个 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setRowId(String parameterName, RowId x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定 <code>java.sql.RowId</code> 对象。在将该对象发送到数据库时，驱动程序将它转换成一个 SQL <code>ROWID</code>。
+
+ @param parameterName 参数名
+ @param x 参数值
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNString(String parameterName, String value) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定 <code>String</code> 对象。驱动程序将此对象转换成一个 SQL <code>NCHAR</code>、<code>NVARCHAR</code> 或 <code>LONGNVARCHAR</code>。
+ @param parameterName 要设置的参数的名称
+ @param value 参数值
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果驱动程序不支持国家字符 (national character) 集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNCharacterStream(String parameterName, Reader value, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。<code>Reader</code> 将读取数据，直到到达文件末尾。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。
+ @param parameterName 要设置的参数名
+ @param 参数值
+ @param length 该参数数据中的字符数。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNClob(String parameterName, NClob value) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>java.sql.NClob</code> 对象。该对象实现 <code>java.sql.NClob</code> 接口。此 <code>NClob</code> 对象映射到 SQL <code>NCLOB</code>。
+ @param parameterName 要设置的参数名
+ @param value 参数值
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setClob(String parameterName, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。<code>reader</code> 必须包含 length 指定的字符数，否则在执行 <code>CallableStatement</code> 时将生成一个 <code>SQLException</code>。此方法不同于 <code>setCharacterStream (int, Reader, int)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>CLOB</code> 发送给服务器。在使用 <code>setCharacterStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGVARCHAR</code> 还是 <code>CLOB</code> 发送给服务器
+ @param parameterName 要设置的参数名
+ @param reader 包含用来设置参数值的数据的对象。
+ @param length 参数数据中的字符数。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果指定的 length 小于 0；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBlob(String parameterName, InputStream inputStream, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>InputStream</code> 对象。<code>inputstream</code> 必须包含 length 指定的字符数，否则在执行 <code>CallableStatement</code> 时将生成一个 <code>SQLException</code>。此方法不同于 <code>setBinaryStream (int, InputStream, int)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>BLOB</code> 发送给服务器。在使用 <code>setBinaryStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGVARBINARY</code> 还是 <code>BLOB</code> 发送给服务器
+
+ @param parameterName 要设置的参数名
+ 
+ @param inputStream 包含用来设置参数值的数据的对象。
+ @param length 参数数据中的字节数。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果指定的 length 小于 0；如果输入流中的字节数与指定 length 不匹配；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNClob(String parameterName, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。<code>reader</code> 必须包含 length 指定的字符数，否则在执行 <code>CallableStatement</code> 时将生成一个 <code>SQLException</code>。此方法不同于 <code>setCharacterStream (int, Reader, int)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>NCLOB</code> 发送给服务器。在使用 <code>setCharacterStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGNVARCHAR</code> 还是 <code>NCLOB</code> 发送给服务器
+ 
+ @param parameterName 要设置的参数名
+ @param reader 包含用于设置参数值的数据的对象。
+ @param length 参数数据中的字符数。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果指定 length 小于 0；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.NClob java.sql.CallableStatement.getNClob(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.sql.NClob</code> 对象的形式获取指定的 JDBC <code>NCLOB</code> 参数的值。
+ 
+ @param parameterIndex 第一个参数是 1，第二个参数是 2，依此类推
+ @return Java 编程语言中 <code>NClob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+ @throws SQLException 如果 parameterIndex 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.NClob java.sql.CallableStatement.getNClob(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.sql.NClob</code> 对象的形式获取 JDBC <code>NCLOB</code> 参数的值。
+ @param parameterName 参数名
+ @return Java 编程语言中 <code>NClob</code> 对象形式的参数值。如果值为 SQL <code>NULL</code>，则返回 <code>null</code> 值。
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setSQLXML(String parameterName, SQLXML xmlObject) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定 <code>java.sql.SQLXML</code> 对象。在将该对象发送到数据库时，驱动程序将它转换成一个 <code>SQL XML</code> 值。
+
+ @param parameterName 参数名
+ @param xmlObject 映射 <code>SQL XML</code> 值的 <code>SQLXML</code> 对象
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误；在关闭的 <code>CallableStatement</code> 上调用此方法，或者 <code>java.xml.transform.Result</code>、<code>Writer</code> 或 <code>OutputStream</code> 没有关闭（对于 <code>SQLXML</code> 对象而言）
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLXML java.sql.CallableStatement.getSQLXML(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.sql.SQLXML</code> 对象的形式获取指定的 <code>SQL XML</code> 参数的值。
+ @param parameterIndex 第一个参数的索引是 1，第二个参数的索引是 2，……
+ @return 映射 <code>SQL XML</code> 值的 <code>SQLXML</code> 对象
+ @throws SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLXML java.sql.CallableStatement.getSQLXML(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.SQLXML</code> 对象的形式获取指定的 <code>SQL XML</code> 参数的值。
+ @param parameterName 参数名
+ @return 映射 <code>SQL XML</code> 值的 <code>SQLXML</code> 对象
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.CallableStatement.getNString(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>String</code> 的形式获取指定的 <code>NCHAR</code>、<code>NVARCHAR</code> 或 <code>LONGNVARCHAR</code> 参数的值。
+  <p>
+ 对于固定长度类型 JDBC <code>NCHAR</code>，返回的 <code>String</code> 对象与数据库拥有的 SQL <code>NCHAR</code> 值完全相同，包括数据库添加的任何填充数据。
+
+ @param parameterIndex 第一个参数的索引是 1，第二个参数的索引是 2，……
+ @return 映射 <code>NCHAR</code>、<code>NVARCHAR</code> 或 <code>LONGNVARCHAR</code> 值的 <code>String</code> 对象
+ @exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+ @see #setNString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.CallableStatement.getNString(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+  以 Java 编程语言中 <code>String</code> 的形式获取指定的 <code>NCHAR</code>、<code>NVARCHAR</code> 或 <code>LONGNVARCHAR</code> 参数的值。
+ <p>
+ 对于固定长度类型 JDBC <code>NCHAR</code>，返回的 <code>String</code> 对象与数据库中所拥有的 SQL <code>NCHAR</code> 值完全相同，包括数据库添加的任何填充数据。
+
+ @param parameterName 参数名
+ @return 映射 <code>NCHAR</code>、<code>NVARCHAR</code> 或 <code>LONGNVARCHAR</code> 值的 <code>String</code> 对象
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+ @see #setNString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.CallableStatement.getNCharacterStream(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.io.Reader</code> 对象的形式获取指定参数的值。此方法用于访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 参数时。
+
+ @return 包含参数值的 <code>java.io.Reader</code> 对象；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>。
+ @param parameterIndex 第一个参数是 1，第二个参数是 2，……
+ @exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.CallableStatement.getNCharacterStream(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.io.Reader</code> 对象的形式获取指定参数的值。此方法用于访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 参数时。
+ 
+ @param parameterName 参数名
+ @return 包含参数值的 <code>java.io.Reader</code> 对象；如果该值为 SQL <code>NULL</code>，则返回值是 Java 编程语言中的 <code>null</code>
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.CallableStatement.getCharacterStream(int parameterIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.io.Reader</code> 对象的形式获取指定参数的值。
+
+ @return 包含参数值的 <code>java.io.Reader</code> 对象；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>。
+ @param parameterIndex 第一个参数是 1，第二个参数是 2，……
+ @exception SQLException 如果 parameterIndex 无效；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.CallableStatement.getCharacterStream(String parameterName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.io.Reader</code> 对象的形式获取指定参数的值。
+ 
+ @param parameterName 参数名
+ @return 包含参数值的 <code>java.io.Reader</code> 对象；如果该值为 SQL <code>NULL</code>，则返回值是 Java 编程语言中的 <code>null</code>
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBlob(String parameterName, Blob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定的 <code>java.sql.Blob</code> 对象。在将该对象发送到数据库时，驱动程序将它转换成一个 SQL <code>BLOB</code> 值。
+
+ @param parameterName 参数名
+ @param x 映射 SQL <code>BLOB</code> 值的 <code>Blob</code> 对象
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setClob(String parameterName, Clob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定的 <code>java.sql.Clob</code> 对象。在将该对象发送到数据库时，驱动程序将它转换成一个 SQL <code>CLOB</code> 值。
+
+ @param parameterName 参数名
+ @param x 映射 SQL <code>CLOB</code> 值的 <code>Clob</code> 对象
+ @exception SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setAsciiStream(String parameterName, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定输入流，该输入流将拥有指定的字节数。在将一个非常大的 ASCII 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.InputStream</code> 发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。驱动程序将执行从 ASCII 到数据库 char 格式的任何必要转换。
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+ @param parameterName 参数名
+ @param x 包含 ASCII 参数值的 Java 输入流
+ @param length 流中的字节数
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBinaryStream(String parameterName, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定输入流，该输入流将拥有指定字节数。在将一个非常大的二进制值输入到 <code>LONGVARBINARY</code> 参数时，通过 <code>java.io.InputStream</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。
+ 
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+ @param parameterName 参数名
+ @param x 包含二进制参数值的 java 输入流
+ @param length 流中的字节数
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setCharacterStream(String parameterName, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定 <code>Reader</code> 对象，该对象具有给定字符数长度。在将一个非常大的 UNICODE 值输入给 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+
+ @param parameterName 参数名
+ @param reader 包含用作指定参数的 UNICODE 数据的 <code>java.io.Reader </code> 对象
+ @param length 流中的字节数
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setAsciiStream(String parameterName, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定输入流。在将一个非常大的 ASCII 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.InputStream</code> 发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。JDBC 驱动程序将执行从 ASCII 到数据库 char 格式的任何必要转换。
+ 
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setAsciiStream</code> 是否更有效。
+
+ @param parameterName 参数名
+ @param x 包含 ASCII 参数值的 Java 输入流
+ @param x 参数值
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBinaryStream(String parameterName, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定输入流。在将一个非常大的二进制值输入到 <code>LONGVARBINARY</code> 参数时，通过 <code>java.io.InputStream</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。
+ 
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setBinaryStream</code> 是否更有效。
+
+ @param parameterName 参数名
+ @param x 包含二进制参数值的 java 输入流
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setCharacterStream(String parameterName, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为给定 <code>Reader</code> 对象。在将一个非常大的 UNICODE 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。将根据需要从流中读取数据，一直读取到文件末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setCharacterStream</code> 是否更有效。 
+
+ @param parameterName 参数名
+ @param reader 包含 Unicode 数据的 <code>java.io.Reader</code> 对象
+ @exception SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNCharacterStream(String parameterName, Reader value) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。<code>Reader</code> 将读取数据，直到到达文件末尾。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。
+
+ <P><B>注：</B>此流对象既可以是一个标准 Java 流对象，也可以是实现标准接口的用户自己的子类。
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setNCharacterStream</code> 是否更有效。
+      
+ @param parameterName 要设置的参数名
+ @param value 参数值
+ @throws SQLException 如果 parameterName 不对应于给定参数；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setClob(String parameterName, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。此方法不同于 <code>setCharacterStream (int, Reader)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>CLOB</code> 发送给服务器。在使用 <code>setCharacterStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGVARCHAR</code> 还是 <code>CLOB</code> 发送给服务器。
+ 
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setClob</code> 是否更有效。
+
+ @param parameterName 参数名
+ @param reader 包含用来设置参数值的数据的对象。
+ @throws SQLException 如果 parameterName 不对应于指定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setBlob(String parameterName, InputStream inputStream) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>InputStream</code> 对象。此方法不同于 <code>setBinaryStream (int, InputStream)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>BLOB</code> 发送给服务器。在使用 <code>setBinaryStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGVARBINARY</code> 还是 <code>BLOB</code> 发送给服务器。
+
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setBlob</code> 是否更有效。
+
+ @param parameterName 参数名
+ @param inputStream 包含用来设置参数值的数据的对象。
+ @throws SQLException 如果 parameterName 不对应于给定参数；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.CallableStatement.setNClob(String parameterName, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定参数设置为 <code>Reader</code> 对象。此方法不同于 <code>setCharacterStream (int, Reader)</code> 方法，因为它会通知驱动程序应该将参数值作为 <code>NCLOB</code> 发送给服务器。在使用 <code>setCharacterStream</code> 方法时，驱动程序可能必须做一些额外的工作，以确定应该将参数数据作为 <code>LONGNVARCHAR</code> 还是 <code>NCLOB</code> 发送给服务器。
+
+ <P><B>注：</B>查询 JDBC 驱动程序文档，以确定使用带 length 参数的 <code>setNClob</code> 是否更有效。
+
+ @param parameterName 参数名
+ @param reader 包含用来设置参数值的数据的对象。
+ @throws SQLException 如果 parameterName 不对应于给定参数；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；如果发生数据库访问错误，或者在关闭的 <code>CallableStatement</code> 上调用此方法
+ @throws SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+
+ @since 1.6
+
+<!-- END DATA -->

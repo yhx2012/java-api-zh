@@ -1,0 +1,311 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.image.DataBuffer extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于包装一个或多个数据数组。DataBuffer 中的每个数据数组都可称作存储单元。获取或设置 DataBuffer 的存储单元中元素的存取方法可以有也可以没有存储单元标识符。没有存储单元标识符的方法使用默认的 0 号存储单元。DataBuffer 可以采用可选的每存储单元偏移量，以便现有数组中的数据即使所需数据不是从数组位置 0 开始也可以使用。要获取或设置存储单元的 0 号元素，请使用数组的 (0+offset) 号元素。size 字段指定数据数组中有多少元素可供使用。给定存储单元的 size + offset 永远不应该大于相关数据数组的长度。数据缓冲区的数据类型指示数据数组的类型，还可以指示其他语义，例如，在字节数组的元素中存储无符号 8 位数据。数据类型可以是 TYPE_UNDEFINED，也可以是下面定义的类型之一。其他类型可以在将来添加。通常，类 DataBuffer 的对象将强制转换为其数据类型的特定子类之一来访问数据类型的特定方法以便改善性能。当前，Java 2D(tm) API 图像类使用 TYPE_BYTE、TYPE_USHORT、TYPE_INT、TYPE_SHORT、TYPE_FLOAT 和 TYPE_DOUBLE DataBuffer 存储图像数据。
+@see java.awt.image.Raster
+@see java.awt.image.SampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_BYTE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+无符号 byte 数据的标记
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_USHORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+无符号 short 数据的标记
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_SHORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+有符号 short 数据的标记。供将来使用的占位符。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_INT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+int 数据的标记。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_FLOAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+float 数据的标记。供将来使用的占位符。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_DOUBLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+double 数据的标记。供将来使用的占位符。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.DataBuffer.TYPE_UNDEFINED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+未定义数据的标记。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.DataBuffer.dataType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 DataBuffer 的数据类型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.DataBuffer.banks
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 DataBuffer 中存储单元的数量。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.DataBuffer.offset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认（第一个）存储单元的偏移量，从中可获得第一个元素。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.DataBuffer.size
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有存储单元的可用大小。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int[] java.awt.image.DataBuffer.offsets
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有存储单元的偏移量。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.DataBuffer(int dataType, int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造包含一个指定数据类型和大小的存储单元的 DataBuffer。
+@param dataType 此 <code>DataBuffer</code> 的数据类型
+@param size 存储单元的大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.DataBuffer(int dataType, int size, int numBanks)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造包含了指定数量的存储单元的 DataBuffer。每个存储单元都有指定的大小和 0 偏移量。
+@param dataType 此 <code>DataBuffer</code> 的数据类型
+@param size 存储单元的大小
+@param numBanks 此 <code>DataBuffer</code> 中存储单元的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.DataBuffer(int dataType, int size, int numBanks, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造包含指定存储单元数量的 DataBuffer。每个存储单元都有指定的数据类型、大小和偏移量。
+@param dataType 此 <code>DataBuffer</code> 的数据类型
+@param size 存储单元的大小
+@param numBanks 此 <code>DataBuffer</code> 中存储单元的数量
+@param offset 每个存储单元的偏移量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.DataBuffer(int dataType, int size, int numBanks, int[] offsets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造包含指定存储单元数量的 DataBuffer。每个存储单元都有指定的数据类型和大小。每个存储单元的偏移量由其各自在偏移量数组中的项指定。
+@param dataType 此 <code>DataBuffer</code> 的数据类型
+@param size 存储单元的大小
+@param numBanks 此 <code>DataBuffer</code> 中的存储单元数
+@param offsets 包含每个存储单元的偏移量的数组。
+@throws ArrayIndexOutOfBoundsException 如果 <code>numBanks</code> 不等于 <code>offsets</code> 的长度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.awt.image.DataBuffer.getDataTypeSize(int type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由给定 datatype 标记所代表的数据类型的大小（以位为单位）。
+@param type 已定义的 datatype 标记之一的值
+@return 数据类型的大小
+@throws IllegalArgumentException 如果 <code>type</code> 小于零或大于 {@link #TYPE_DOUBLE}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.DataBuffer.getDataType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 DataBuffer 的数据类型。
+@return 此 <code>DataBuffer</code> 的数据类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.DataBuffer.getSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有存储单元的大小（按数组元素）。
+@return 所有存储单元的大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.DataBuffer.getOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数组元素中默认存储单元的偏移量。
+@return 默认存储单元的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.DataBuffer.getOffsets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有存储单元的偏移量（按数组元素）。
+@return 所有存储单元的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.DataBuffer.getNumBanks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 DataBuffer 中存储单元的数量。
+@return 存储单元的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.DataBuffer.getElem(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以整数类型返回第一个（默认）存储单元中所请求的数据数组元素。
+@param i 所请求的数据数组元素的索引
+@return 指定索引处的数据数组元素。
+@see #setElem(int, int)
+@see #setElem(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.DataBuffer.getElem(int bank, int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以整数类型返回指定存储单元中所请求的数据数组元素。
+@param bank 指定的存储单元
+@param i 所请求的数据数组元素的索引
+@return 在指定索引处的指定存储单元中指定索引处的数据数组元素。
+@see #setElem(int, int)
+@see #setElem(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.DataBuffer.setElem(int i, int val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的整数设置第一个（默认）存储单元中所请求的数据数组元素。
+@param i 数据数组中的指定索引
+@param val 用来在数据数组中指定索引处设置元素的数据
+@see #getElem(int)
+@see #getElem(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.image.DataBuffer.setElem(int bank, int i, int val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的整数设置指定存储单元中所请求的数据数组元素。
+@param bank 指定的存储单元
+@param i 数据数组中的指定索引
+@param val 用来在数据数组中指定索引处的指定存储单元中设置元素的数据
+@see #getElem(int)
+@see #getElem(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.DataBuffer.getElemFloat(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 float 类型返回第一个（默认）存储单元中所请求的数据数组元素。此类中的实现是将 getElem(i) 强制转换为 float。如果需要其他实现，则子类可以重写此方法。
+@param i 所请求的数据数组元素的索引
+@return 表示指定索引处数据数组元素的 float 值。
+@see #setElemFloat(int, float)
+@see #setElemFloat(int, int, float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.DataBuffer.getElemFloat(int bank, int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 float 类型返回指定存储单元中所请求的数据数组元素。此类中的实现是将 {@link #getElem(int, int)} 强制转换为 float。如果需要其他实现，则子类可以重写此方法。
+@param bank 指定的存储单元
+@param i 所请求的数据数组元素的索引
+@return 表示指定索引处指定存储单元中的数据数组元素的 float 值。
+@see #setElemFloat(int, float)
+@see #setElemFloat(int, int, float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.DataBuffer.setElemFloat(int i, float val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的 float 设置第一个（默认）存储单元中所请求的数据数组元素。此类中的实现是将 val 强制转换为 int 并调用 {@link #setElem(int, int)}。如果需要其他实现，则子类可以重写此方法。
+@param i 指定的索引
+@param val 用来在数据数组中指定索引处设置元素的值
+@see #getElemFloat(int)
+@see #getElemFloat(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.DataBuffer.setElemFloat(int bank, int i, float val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的 float 设置指定存储单元中所请求的数据数组元素。此类中的实现是将 val 强制转换为 int 并调用 {@link #setElem(int, int)}。如果需要其他实现，则子类可以重写此方法。
+@param bank 指定的存储单元
+@param i 指定的索引
+@param val 用来在数据数组中指定索引处的指定存储单元中设置元素的值
+@see #getElemFloat(int)
+@see #getElemFloat(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.image.DataBuffer.getElemDouble(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 double 类型返回第一个（默认）存储单元中所请求的数据数组元素。此类中的实现是将 {@link #getElem(int)} 强制转换为 double。如果需要其他实现，则子类可以重写此方法。
+@param i 指定的索引
+@return 代表数据数组中指定索引处的元素的 double。
+@see #setElemDouble(int, double)
+@see #setElemDouble(int, int, double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.image.DataBuffer.getElemDouble(int bank, int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 double 类型返回指定存储单元所请求的数据数组元素。此类中的实现是将 getElem(bank, i) 强制转换为 double。如果需要其他实现，则子类可以重写此方法。
+@param bank 指定的存储单元
+@param i 指定的索引
+@return 表示数据数组中指定索引处的指定存储单元中元素的 double 值。
+@see #setElemDouble(int, double)
+@see #setElemDouble(int, int, double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.DataBuffer.setElemDouble(int i, double val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的 double 设置第一个（默认）存储单元中所请求的数据数组元素。此类中的实现是将 val 强制转换为 int 并调用 {@link #setElem(int, int)}。如果需要其他实现，则子类可以重写此方法。
+@param i 指定的索引
+@param val 用来在数据数组中的指定索引处设置元素的值
+@see #getElemDouble(int)
+@see #getElemDouble(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.DataBuffer.setElemDouble(int bank, int i, double val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的 double 设置指定存储单元中所请求的数据数组元素。此类中的实现是将 val 强制转换为 int 并调用 {@link #setElem(int, int)}。如果需要其他实现，则子类可以重写此方法。
+@param bank 指定的存储单元
+@param i 指定的索引
+@param val 用来在数据数组的指定存储单元中的指定索引处进行设置的数值
+@see #getElemDouble(int)
+@see #getElemDouble(int, int)
+
+<!-- END DATA -->

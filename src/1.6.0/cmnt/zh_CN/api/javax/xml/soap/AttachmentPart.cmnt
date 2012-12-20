@@ -1,0 +1,364 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.soap.AttachmentPart extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SOAPMessage</code> 对象的一个附件。<code>SOAPMessage</code> 对象可以包含 0 个、1 个或多个 <code>AttachmentPart</code> 对象。每个 <code>AttachmentPart</code> 对象由两部分组成：特定于应用程序的内容和关联的 MIME 头。MIME 头由可用于标识和描述内容的名称/值对组成。
+ <p>
+<code>AttachmentPart</code> 对象必须符合某些标准。
+ <OL>
+<LI>它必须符合 <a href="http://www.ietf.org/rfc/rfc2045.txt">MIME [RFC2045] 标准</a>
+<LI>它必须包含内容
+<LI>头部分必须包含以下头内容：
+  <UL>
+<LI><code>Content-Type</code><br> 此头标识 <code>AttachmentPart</code> 对象内容中的数据类型，必须符合 [RFC2045]。以下是一个 Content-Type 头的示例：
+       <PRE>
+Content-Type:application/xml
+       </PRE>
+以下代码行（其中 <code>ap</code> 是一个 <code>AttachmentPart</code> 对象）设置前一示例中显示的头。
+       <PRE>
+ap.setMimeHeader(&quot;Content-Type&quot;, &quot;application/xml&quot;);
+       </PRE>
+ <p>
+  </UL>
+ </OL>
+ <p>
+<code>AttachmentPart</code> 对象的内容部分没有任何限制。内容可以是简单的纯文本对象、复杂的 XML 文档或图像文件。
+
+ <p>
+<code>AttachmentPart</code> 对象是使用方法 <code>SOAPMessage.createAttachmentPart</code> 创建的。设置 MIME 头之后，使用方法 <code>SOAPMessage.addAttachmentPart</code> 将 <code>AttachmentPart</code> 对象添加到创建它的消息中。
+
+ <p>
+以下代码片段（其中 <code>m</code> 是一个 <code>SOAPMessage</code> 对象，<code>contentStringl</code> 是一个 <code>String</code>）创建 <code>AttachmentPart</code> 的实例，使用一些内容和头信息设置 <code>AttachmentPart</code> 对象，并将 <code>AttachmentPart</code> 对象添加到 <code>SOAPMessage</code> 对象。 
+ <PRE>
+AttachmentPart ap1 = m.createAttachmentPart();
+ap1.setContent(contentString1, &quot;text/plain&quot;);
+m.addAttachmentPart(ap1);
+ </PRE>
+
+
+ <p>
+以下代码片段创建第二个 <code>AttachmentPart</code> 实例并将其添加到同一消息中。<code>jpegData</code> 是表示 jpeg 文件的一个二进制字节缓冲区。
+ <PRE>
+AttachmentPart ap2 = m.createAttachmentPart();
+byte[] jpegData =  ...;
+ap2.setContent(new ByteArrayInputStream(jpegData), &quot;image/jpeg&quot;);
+m.addAttachmentPart(ap2);
+ </PRE>
+ <p>
+<code>getContent</code> 方法检索 <code>AttachmentPart</code> 对象的内容和头。根据存在 <code>DataContentHandler</code> 对象的不同，返回的 <code>Object</code> 可能是与 MIME 类型相对应的类型化的 Java 对象，也可能是以字节形式包含内容的 <code>InputStream</code> 对象。
+ <PRE>
+String content1 = ap1.getContent();
+java.io.InputStream content2 = ap2.getContent();
+ </PRE>
+
+方法 <code>clearContent</code> 从 <code>AttachmentPart</code> 对象中移除所有内容，但不影响其头信息。
+ <PRE>
+ap1.clearContent();
+ </PRE>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.soap.AttachmentPart.getSize() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>AttachmentPart</code> 对象中的字节数。
+
+@return 此 <code>AttachmentPart</code> 对象的大小，以字节为单位；如果无法确定其大小，则返回 -1
+@exception SOAPException 如果此附件的内容已损坏，或者尝试确定其大小时引发异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.clearContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除此 <code>AttachmentPart</code> 对象的内容。MIME 头部分保持不变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.soap.AttachmentPart.getContent() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 对象的形式获取此 <code>AttachmentPart</code> 对象的内容。返回的 Java 对象的类型取决于：(1) 用来解释字节的 <code>DataContentHandler</code> 对象；(2) 头中给定的 <code>Content-Type</code>。
+ <p>
+对于 MIME 内容类型 &quot;text/plain&quot;、&quot;text/html&quot; 和 &quot;text/xml&quot;，<code>DataContentHandler</code> 对象执行与对应于 MIME 类型的 Java 类型之间的转换。对于其他 MIME 类型，<code>DataContentHandler</code> 对象可以返回以原始字节形式包含内容的 <code>InputStream</code> 对象。
+ <p>
+符合 SAAJ 的实现至少必须返回一个 <code>java.lang.String</code> 对象（与 <code>Content-Type</code> 值为 <code>text/plain</code> 的任何内容流相对应）、一个 <code>javax.xml.transform.stream.StreamSource</code> 对象（与 <code>Content-Type</code> 值为 <code>text/xml</code> 的内容流相对应）、以及一个 <code>java.awt.Image</code> 对象（与 <code>Content-Type</code> 值为 <code>image/gif</code> 或 <code>image/jpeg</code> 的内容流相对应）。对于已安装的 <code>DataContentHandler</code> 对象不理解的内容类型，<code>DataContentHandler</code> 对象要返回带有原始字节的 <code>java.io.InputStream</code> 对象。 
+
+@return 带有此 <code>AttachmentPart</code> 对象内容的 Java 对象
+
+@exception SOAPException 如果此 <code>AttachmentPart</code> 对象中没有设置任何内容，或者出现数据转换错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.io.InputStream javax.xml.soap.AttachmentPart.getRawContent() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 InputStream 的形式获取此 <code>AttachmentPart</code> 对象的内容，等效于调用了 <code>getContent</code> 但没有为此 <code>AttachmentPart</code> 的 <code>content-type</code> 注册 <code>DataContentHandler</code>。
+<p>
+注意，读取返回的 InputStream 可能导致消耗流中的数据。调用者负责在调用 Subsequent API 之前适当地重置 InputStream。如果需要附件原始内容的一个副本，则应改用 {@link #getRawContentBytes} API。
+  
+@return 一个 <code>InputStream</code> 对象，从中可以访问 <code>AttachmentPart</code> 包含的原始数据。
+ 
+@throws SOAPException 如果此 <code>AttachmentPart</code> 对象中没有设置任何内容，或者出现数据转换错误。
+ 
+@since SAAJ 1.3
+@see #getRawContentBytes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] javax.xml.soap.AttachmentPart.getRawContentBytes() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 byte[] 数组形式获取此 <code>AttachmentPart</code> 对象的内容，等效于调用了 <code>getContent</code> 但没有为此 <code>AttachmentPart</code> 的 <code>content-type</code> 注册 <code>DataContentHandler</code>。
+  
+@return 包含 <code>AttachmentPart</code> 原始数据的 <code>byte[]</code> 数组。
+ 
+@throws SOAPException 如果此 <code>AttachmentPart</code> 对象中没有设置任何内容，或者出现数据转换错误。
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.io.InputStream javax.xml.soap.AttachmentPart.getBase64Content() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Base64 编码字符数据的形式返回可用于获取 <code>AttachmentPart</code> 内容的 <code>InputStream</code>，此方法将对附件的原始字节进行 Base64 编码，然后返回该内容。
+  
+@return 一个 <code>InputStream</code> 对象，从中可以读取 Base64 编码的 <code>AttachmentPart</code>。
+ 
+@throws SOAPException 如果此 <code>AttachmentPart</code> 对象中没有设置任何内容，或者出现数据转换错误。
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setContent(Object object, String contentType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此附件部分的内容设置为给定 <code>Object</code> 的内容，并将 <code>Content-Type</code> 头的值设置为给定类型。<code>Object</code> 的类型应该对应于指定给 <code>Content-Type</code> 的值。这取决于所使用的特定 <code>DataContentHandler</code> 对象集合。 
+
+
+@param object 组成此附件部分内容的 Java 对象
+@param contentType 指定内容类型的 MIME 字符串 
+
+@exception IllegalArgumentException 如果 contentType 不匹配内容对象的类型，或者没有针对此内容对象的 <code>DataContentHandler</code> 对象
+
+@see #getContent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setRawContent(InputStream content, String contentType) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此附件部分的内容设置为 <code>InputStream</code> <code>content</code> 所包含的内容，并将 <code>Content-Type</code> 头的值设置为 <code>contentType</code> 中包含的值。
+ <P>
+后续调用 getSize() 可能无法准确度量内容的大小。
+ 
+@param content 要添加到附件部分的原始数据
+@param contentType 将在 <code>Content-Type</code> 头中设置的值
+ 
+@exception SOAPException 如果设置内容时发生错误
+@exception NullPointerException 如果 <code>content</code> 为 null
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setRawContentBytes(byte[] content, int offset, int len, String contentType) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此附件部分的内容设置为 <code>byte[]</code> 数组 <code>content</code> 所包含的内容，并将 <code>Content-Type</code> 头的值设置为 <code>contentType</code> 中包含的值。
+ 
+@param content 要添加到附件部分的原始数据
+@param contentType 要在 <code>Content-Type</code> 头中设置的值
+@param offset 内容字节数组中的偏移量
+@param len 组成内容的字节数
+ 
+@exception SOAPException 如果设置内容时发生错误，或者内容为 null
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setBase64Content(InputStream content, String contentType) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 Base64 源 <code>InputStream</code> 设置此附件部分的内容，并将 <code>Content-Type</code> 头的值设置为 <code>contentType</code> 中包含的值，此方法将首先对 base64 输入流进行解码，然后将得到的原始字节写入附件。 
+ <P>
+后续调用 getSize() 可能无法准确度量内容的大小。
+ 
+@param content 要添加到附件部分的 Base64 解码数据
+@param contentType 要在 <code>Content-Type</code> 头中设置的值
+ 
+@exception SOAPException 如果设置内容时发生错误
+@exception NullPointerException 如果 <code>content</code> 为 null
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.activation.DataHandler javax.xml.soap.AttachmentPart.getDataHandler() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取针对此 <code>AttachmentPart</code> 对象的 <code>DataHandler</code> 对象。
+
+@return 与此 <code>AttachmentPart</code> 对象关联的 <code>DataHandler</code> 对象 
+
+@exception SOAPException 如果此 <code>AttachmentPart</code> 对象中没有数据
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setDataHandler(DataHandler dataHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>DataHandler</code> 对象设置为此 <code>AttachmentPart</code> 对象的数据处理程序。通常，对于传入的消息，数据处理程序是自动设置的。创建消息并填充内容之后，可以使用 <code>setDataHandler</code> 方法从各种数据源获取数据并转入该消息中。
+
+@param dataHandler 要设置的 <code>DataHandler</code> 对象
+
+@exception IllegalArgumentException 如果指定的 <code>DataHandler</code> 对象存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.AttachmentPart.getContentId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取名为 &quot;Content-ID&quot; 的 MIME 头的值。 
+
+@return 给出 &quot;Content-ID&quot; 头值的 <code>String</code>；如果不存在此类字符串，则返回 <code>null</code>
+@see #setContentId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.AttachmentPart.getContentLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取名为 &quot;Content-Location&quot; 的 MIME 头的值。 
+
+@return 给出 &quot;Content-Location&quot; 头值的 <code>String</code>；如果不存在此类字符串，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.AttachmentPart.getContentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取名为 &quot;Content-Type&quot; 的 MIME 头的值。 
+
+@return 给出 &quot;Content-Type&quot; 头值的 <code>String</code>；如果不存在此类字符串，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.AttachmentPart.setContentId(String contentId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定值设置名为 &quot;Content-ID&quot; 的 MIME 头。
+
+@param contentId 给出 &quot;Content-ID&quot; 头值的 <code>String</code> 
+
+@exception IllegalArgumentException 如果指定的 <code>contentId</code> 值存在问题
+@see #getContentId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.AttachmentPart.setContentLocation(String contentLocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定值设置名为 &quot;Content-Location&quot; 的 MIME 头。
+
+
+@param contentLocation 给出 &quot;Content-Location&quot; 头值的 <code>String</code>
+@exception IllegalArgumentException 如果指定的内容位置存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.AttachmentPart.setContentType(String contentType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定值设置名为 &quot;Content-Type&quot; 的 MIME 头。
+
+@param contentType 给出 &quot;Content-Type&quot; 头值的 <code>String</code> 
+
+@exception IllegalArgumentException 如果指定的内容类型存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.removeMimeHeader(String header)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除匹配给定名称的所有 MIME 头。
+
+@param header 要移除的 MIME 头的字符串名  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.removeAllMimeHeaders()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有 MIME 头条目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.xml.soap.AttachmentPart.getMimeHeader(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定 <code>String</code> 所标识的头的所有值。
+
+@param name 头的名称；示例：&quot;Content-Type&quot;
+@return 给出指定头值的 <code>String</code> 数组
+@see #setMimeHeader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.setMimeHeader(String name, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将匹配给定名称的第一个头条目的值更改为给定值，如果现有的头都不匹配，则添加一个新的头。此方法还将移除第一个匹配头以外的所有匹配的头。 <p>
+
+注意，RFC822 头只能包含 US-ASCII 字符。
+
+@param	name	一个 <code>String</code>，用于提供要搜索的头的名称
+@param	value	一个 <code>String</code>，用于提供将用来设置名称匹配给定名称的头的值
+
+@exception IllegalArgumentException 如果指定的 MIME 头名称或值存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.soap.AttachmentPart.addMimeHeader(String name, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将带有指定名称和值的 MIME 头添加到此 <code>AttachmentPart</code> 对象。
+ <p>
+注意，RFC822 头只能包含 US-ASCII 字符。
+
+@param	name	一个 <code>String</code>，用于提供要添加的头的名称
+@param	value	一个 <code>String</code>，用于提供要添加的头的值
+
+@exception IllegalArgumentException 如果指定的 MIME 头名称或值存在问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Iterator javax.xml.soap.AttachmentPart.getAllMimeHeaders()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>MimeHeader</code> 对象上的迭代器形式，检索此 <code>AttachmentPart</code> 对象的所有头。
+
+@return	带有此 <code>AttachmentPart</code> 对象所有 MIME 头的 <code>Iterator</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Iterator javax.xml.soap.AttachmentPart.getMatchingMimeHeaders(java.lang.String[] names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索匹配给定数组中名称的所有 <code>MimeHeader</code> 对象。
+
+@param names 一个 <code>String</code> 数组，带有要返回的 MIME 头的名称
+@return	所有匹配给定数组中任一名称的 MIME 头（<code>Iterator</code> 对象的形式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Iterator javax.xml.soap.AttachmentPart.getNonMatchingMimeHeaders(java.lang.String[] names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索所有名称不匹配给定数组中任一名称的 <code>MimeHeader</code> 对象。
+
+@param names 一个 <code>String</code> 数组，带有无需返回的 MIME 头的名称
+@return	此 <code>AttachmentPart</code> 对象中的所有 MIME 头，但匹配给定数组中任一名称的 MIME 头除外。以 <code>Iterator</code> 对象的形式返回不匹配的 MIME 头。
+
+<!-- END DATA -->

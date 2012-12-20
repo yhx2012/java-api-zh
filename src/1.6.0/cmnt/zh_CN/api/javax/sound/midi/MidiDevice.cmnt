@@ -1,0 +1,159 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.midi.MidiDevice
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MidiDevice</code> 是用于所有 MIDI 设备的基接口。常见的设备包括合成器、sequencer、MIDI 输入端口和 MIDI 输出端口。  
+
+<p><code>MidiDevice</code> 可以是 MIDI 事件的传输器或接收器，或同时为二者。因此，它可以提供 {@link Transmitter} 或 {@link Receiver} 实例（或二者都提供）。通常情况下，MIDI IN 端口提供传输器，MIDI OUT 端口和合成器提供接收器。Sequencer 通常提供用于回放的传输器和用于录音的接收器。
+
+<p><code>MidiDevice</code> 可显式打开和关闭，也可隐式打开和关闭。显式打开通过在 <code>MidiDevice</code> 实例上调用 {@link #open} 来实现，显式关闭通过在 <code>MidiDevice</code> 实例上调用 {@link #close} 来实现。如果应用程序显式打开了 <code>MidiDevice</code>，则也必须显式地将其关闭，以释放系统资源和允许应用程序完全退出。隐式打开通过调用 {@link javax.sound.midi.MidiSystem#getReceiver MidiSystem.getReceiver} 和 {@link javax.sound.midi.MidiSystem#getTransmitter MidiSystem.getTransmitter} 实现。由 <code>MidiSystem.getReceiver</code> 和 <code>MidiSystem.getTransmitter</code> 使用的 <code>MidiDevice</code> 与实现相关，除非使用了属性 <code>javax.sound.midi.Receiver</code> 和 <code>javax.sound.midi.Transmitter</code>（请参见 {@link javax.sound.midi.MidiSystem} 中对用于选择默认提供者的属性的描述）。对隐式打开的 <code>MidiDevice</code> 可隐式关闭它，方法是关闭打开它所得到的 <code>Receiver</code> 或 <code>Transmitter</code>。如果应用程序获得了多个隐式打开的 <code>Receiver</code> 或 <code>Transmitter</code>，则在关闭最后一个 <code>Receiver</code> 或 <code>Transmitter</code> 后才关闭设备。另一方面，直接在设备实例上调用 <code>getReceiver</code> 或 <code>getTransmitter</code> 并不会隐式打开此设备。关闭这些 <code>Transmitter</code> 和 <code>Receiver</code> 并不隐式关闭设备。要使用其 <code>Receiver</code> 或 <code>Transmitter</code> 以这样的方式获得的设备，必须显式打开和关闭此设备。
+
+<p>如果在同一 <code>MidiDevice</code> 实例上混用隐式和显式的打开和关闭，则应用以下规则：
+
+ <ul>
+<li>显式打开（在隐式打开之前或之后）后，设备将无法使用隐式关闭方式关闭。关闭显式打开设备的唯一方式是显式关闭。</li>
+
+<li>显式关闭总会关闭设备，即使设备曾经隐式打开也是如此。后续的隐式关闭没有任何效果。</li>
+ </ul>
+
+要检测一个 MidiDevice 是否代表一个硬件 MIDI 端口，可使用以下编程技巧：
+
+ <pre>
+ MidiDevice device = ...;
+ if ( ! (device instanceof Sequencer) &amp;&amp; ! (device instanceof Synthesizer)) {
+   // we're now sure that device represents a MIDI port
+   // ...
+ }
+ </pre>
+
+ <p>
+<code>MidiDevice</code> 包括一个提供制造商信息和其他信息的 <code>{@link MidiDevice.Info}</code> 对象。
+
+@see Synthesizer
+@see Sequencer
+@see Receiver
+@see Transmitter
+
+@version 1.39, 05/11/17
+@author Kara Kytle
+@author Florian Bomers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.MidiDevice.Info javax.sound.midi.MidiDevice.getDeviceInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得有关设备的信息，其中包括包含了其名称、供应商和描述的 Java 类和 <code>Strings</code>。
+
+@return 设备信息
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiDevice.open() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开设备，指示它现在应获取任何所需的系统资源然后开始运行。
+
+<p>使用此调用显式打开设备的应用程序必须通过调用 {@link #close} 开关闭该设备。这样做对于释放系统资源和让应用程序完全退出很有必要。
+
+ <p>
+注意，有些设备一旦关闭就无法重新打开。尝试重新打开这样的设备将始终返回一个 MidiUnavailableException。
+
+@throws MidiUnavailableException 如果由于资源限制而无法打开该设备。
+@throws SecurityException 如果由于安全限制而无法打开该设备。
+
+@see #close
+@see #isOpen
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiDevice.close()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭设备，指示设备现在应释放任何正在使用的系统资源。
+
+<p>从此设备打开的所有 <code>Receiver</code> 和 <code>Transmitter</code> 实例都将关闭。这包括通过 <code>MidiSystem</code> 获取的实例。
+ 
+@see #open
+@see #isOpen
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiDevice.isOpen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告设备是否为打开状态。
+
+@return 如果设备为打开状态，则返回 <code>true</code>，否则返回 <code>false</code>
+@see #open
+@see #close
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.MidiDevice.getMicrosecondPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得设备的当前时间戳，以微秒为单位。如果设备支持时间戳，它应从设备一打开就从 0 开始计数，并以微秒为单位继续递增该时间戳，直到设备关闭为止。如果设备不支持时间戳，它应始终返回 -1。
+@return 设备的当前时间戳，以微秒为单位，如果设备不支持时间戳，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiDevice.getMaxReceivers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 MIDI 设备上用于接收 MIDI 数据的最大可用 MIDI IN 连接数。
+@return 最大 MIDI IN 连接数，如果有无限个连接可用，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiDevice.getMaxTransmitters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 MIDI 设备用于传输 MIDI 数据的最大可用 MIDI OUT 连接数。
+@return 最大 MIDI OUT 连接数，如果有无限个连接可用，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Receiver javax.sound.midi.MidiDevice.getReceiver() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 MIDI 设备可通过其接收 MIDI 数据的 MIDI IN 接收器。返回的接收器必须在应用程序结束使用后关闭。
+
+<p>使用此方法获得 <code>Receiver</code> 并不打开设备。要想能够使用该设备，必须通过调用 {@link #open} 将其显式打开。同理，关闭 <code>Receiver</code> 并不关闭设备。必须通过调用 {@link #close} 将其显式关闭。
+
+@return 供设备使用的接收器。
+@throws MidiUnavailableException 如果由于资源限制使接收器不可用
+@see Receiver#close()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<javax.sound.midi.Receiver> javax.sound.midi.MidiDevice.getReceivers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与该 MidiDevice 连接的所有当前活动的、非关闭的接收器。通过关闭接收器可将它从设备中移除。
+@return 已打开接收器的不可修改列表
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Transmitter javax.sound.midi.MidiDevice.getTransmitter() throws javax.sound.midi.MidiUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 MIDI 设备将从其传输 MIDI 数据的 MIDI OUT 连接。返回的传输器必须在应用程序结束使用后关闭。
+
+<p>使用此方法获得 <code>Transmitter</code> 并不打开设备。要想能够使用该设备，必须通过调用 {@link #open} 将其显式打开。同理，关闭 <code>Transmitter</code> 并不关闭设备。必须通过调用 {@link #close} 将其显式关闭。
+
+@return 供设备使用的一个 MIDI OUT 传输器。
+@throws MidiUnavailableException 如果由于资源限制使传输器不可用
+@see Transmitter#close()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<javax.sound.midi.Transmitter> javax.sound.midi.MidiDevice.getTransmitters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与该 MidiDevice 连接的所有当前活动的、非关闭的传输器。通过关闭传输器可将它从设备中移除。
+@return 已打开传输器的不可修改列表
+@since 1.5
+
+<!-- END DATA -->

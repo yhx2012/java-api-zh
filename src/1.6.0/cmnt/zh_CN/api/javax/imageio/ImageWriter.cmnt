@@ -1,0 +1,1011 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.ImageWriter extends java.lang.Object implements javax.imageio.ImageTranscoder
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来编码和写入图像的抽象超类。此类必须由在 Java Image I/O 框架的上下文中写出图像的类为其创建子类。
+
+<p> 通常由特定格式的服务提供者类对 <code>ImageWriter</code> 对象进行实例化。服务提供者类在 <code>IIORegistry</code> 中注册，后者使用前者进行格式识别和表示可用格式 reader 和 writer。
+
+ <p> 
+
+@see ImageReader
+@see ImageWriteParam
+@see javax.imageio.spi.IIORegistry
+@see javax.imageio.spi.ImageWriterSpi
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.spi.ImageWriterSpi javax.imageio.ImageWriter.originatingProvider
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实例化此对象的 <code>ImageWriterSpi</code>，如果 ImageWriterSpi 的标识是未知的或不存在，则将此对象实例化为 <code>null</code>。默认情况下，将此对象实例化为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object javax.imageio.ImageWriter.output
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>setOutput</code> 设置并由 <code>getOutput</code> 获取的 <code>ImageOutputStream</code> 或其他 <code>Object</code>。默认情况下，将此对象实例化为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Locale[] javax.imageio.ImageWriter.availableLocales
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可以用来本地化警告消息和压缩设置值的 <code>Locale</code> 组成的数组，如果本地化不受支持，则将它们初始化为 <code>null</code>。默认情况下，将它们初始化为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Locale javax.imageio.ImageWriter.locale
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于本地化的当前 <code>Locale</code>，如果没有设置 Locale，则将它初始化为 <code>null</code>。默认情况下，将 Locale 初始化为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.List<javax.imageio.event.IIOWriteWarningListener> javax.imageio.ImageWriter.warningListeners
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前已注册 <code>IIOWriteWarningListener</code> 的 <code>List</code>，默认情况下将它初始化为 <code>null</code>，它与空 <code>List</code> 同义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.List<java.util.Locale> javax.imageio.ImageWriter.warningLocales
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Locale</code> 的 <code>List</code>，<code>warningListeners</code> 的每个元素都有一个 Locale 列表，默认情况下该列表被初始化为 <code>null</code>，它与空 <code>List</code> 同义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.List<javax.imageio.event.IIOWriteProgressListener> javax.imageio.ImageWriter.progressListeners
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前已注册 <code>IIOWriteProgressListener</code> 的 <code>List</code>，默认情况下将它初始化为 <code>null</code>，它与空 <code>List</code> 同义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.ImageWriter(ImageWriterSpi originatingProvider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>ImageWriter</code>，并将其 <code>originatingProvider</code> 实例变量设置为所提供的值。
+
+<p> 为了获取扩展对象，利用扩展的子类应该为构造方法提供签名 <code>(ImageWriterSpi, Object)</code>。如果扩展对象不合适，则将抛出 <code>IllegalArgumentException</code>。
+
+@param originatingProvider 构造此对象的 <code>ImageWriterSpi</code>，或者为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.spi.ImageWriterSpi javax.imageio.ImageWriter.getOriginatingProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建此 <code>ImageWriter</code> 的 <code>ImageWriterSpi</code> 对象，如果此对象不是通过 <code>IIORegistry</code> 创建的，则返回 <code>null</code>。
+
+<p> 默认的实现返回 <code>originatingProvider</code> 实例变量的值。
+
+@return 一个 <code>ImageWriterSpi</code> 或 <code>null</code>。
+
+@see ImageWriterSpi
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.setOutput(Object output)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将目标设置为给定 <code>ImageOutputStream</code> 或其他 <code>Object</code>。假定目标已准备接受数据，并将在结束每次写入时关闭。这允许受干扰的图像处理应用程序通过单独的网络连接传输一系列图像。如果 <code>output</code> 为 <code>null</code>，则将移除所有当前已设置的输出。
+
+<p> 如果 <code>output</code> 是一个 <code>ImageOutputStream</code>，则调用 <code>write</code>、<code>writeToSequence</code> 和 <code>prepareWriteEmpty</code>/<code>endWriteEmpty</code> 方法将保留流的现有内容。其他写入方法，比如 <code>writeInsert</code>、<code>replaceStreamMetadata</code>、<code>replaceImageMetadata</code>、<code>replacePixels</code>、<code>prepareInsertEmpty</code>/<code>endInsertEmpty</code> 和 <code>endWriteSequence</code>，要求可读取和写入该流的全部内容，并且可以更改该流的任何部分。
+
+<p> 对于直接与输出设备或图像协议交互的 writer，打算使用一般的 <code>Object</code>，而不是使用 <code>ImageOutputStream</code>。合法类集是由 writer 的服务提供者的 <code>getOutputTypes</code> 方法公开的。大多数 writer 将返回一个单个元素组成的数组，该数组只包含指示它们只接受 <code>ImageOutputStream</code> 的 <code>ImageOutputStream.class</code>。
+
+<p> 在根据原始提供者（如果有）公开的类集合检查 <code>output</code> 之后，默认实现将 <code>output</code> 实例变量设置为 <code>output</code> 的值。
+
+@param output 用于以后的写入的 <code>ImageOutputStream</code> 或其他 <code>Object</code>。
+
+@exception IllegalArgumentException 如果 <code>output</code> 不是原始服务提供者的 <code>getOutputTypes</code> 方法返回的某个类的实例。
+
+@see #getOutput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.imageio.ImageWriter.getOutput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ImageOutputStream</code> 或最近一次调用 <code>setOutput</code> 方法设置的其他 <code>Object</code>如果没有设置目标，则返回 <code>null</code>。
+
+<p> 默认实现返回 <code>output</code> 实例变量的值。
+
+@return 使用 <code>setOutput</code> 指定的 <code>Object</code>，或者返回 <code>null</code>。
+
+@see #setOutput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale[] javax.imageio.ImageWriter.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可用来初始化警告侦听器和压缩设置的 <code>Locale</code> 组成的数组。返回 <code>null</code> 值指示初始化不受支持。
+
+<p> 如果 <code>availableLocales</code> 实例变量是非 <code>null</code> 的，则默认实现返回该变量的副本，否则返回 <code>null</code>。
+
+@return 可能用作 <code>setLocale</code> 的参数的 <code>Locale</code> 组成的数组，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.setLocale(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>ImageWriter</code> 的当前 <code>Locale</code> 设置为给定值。值为 <code>null</code> 则移除所有以前的设置，并指示 writer 应该根据需要对其进行初始化。
+
+<p> 默认实现根据 <code>getAvailableLocales</code> 返回的值检查 <code>locale</code>，并设置 <code>locale</code> 实例变量（如果查找到的话）。如果 <code>locale</code> 为 <code>null</code>，则将该实例变量设置为 <code>null</code>，不必执行任何检查。
+
+@param locale 所需的 <code>Locale</code>，或者为 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>locale</code> 为非 <code>null</code>，但它不是 <code>getAvailableLocales</code> 返回的值之一。
+
+@see #getLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale javax.imageio.ImageWriter.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前设置的 <code>Locale</code>，如果没有设置 Locale，则返回 <code>null</code>。
+
+<p> 默认实现返回 <code>locale</code> 实例变量的值。
+
+@return 当前 <code>Locale</code> 或 <code>null</code>。
+
+@see #setLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageWriteParam javax.imageio.ImageWriter.getDefaultWriteParam()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回适用于此文件格式的适当类型的新 <code>ImageWriteParam</code> 对象，该对象包含默认值，即那些将在没有指定 <code>ImageWriteParam</code> 对象时使用的值。将此作为只调整少数几个参数并不管默认设置的起点很有用。
+
+<p> 默认设置构造并返回一个新的 <code>ImageWriteParam</code> 对象，该对象不允许平铺、逐步编码或压缩，并且将针对当前 <code>Locale</code>（<i>即</i> 通过调用 <code>new ImageWriteParam(getLocale())</code> 获得的 Locale）对该对象进行本地化。
+
+<p> 个别插件可能在启用额外可选特性的情况下返回 <code>ImageWriteParam</code> 的实例，或者它们可以返回 <code>ImageWriteParam</code> 的特定于插件的子类的实例。
+
+@return 包含默认值的新的 <code>ImageWriteParam</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.imageio.metadata.IIOMetadata javax.imageio.ImageWriter.getDefaultStreamMetadata(ImageWriteParam param)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含用来对图像流进行编码的默认值的 <code>IIOMetadata</code> 对象。该对象的内容可以使用由 <code>IIOMetadata.getAsTree</code> 方法返回的 XML 树型结构（一个 <code>IIOMetadataController</code> 对象）来操作，或者通过特定于插件的接口以及提供给某一带有流元数据参数的 <code>write</code> 方法的所得数据来操作。
+ 
+<p> 可以对可能影响流元数据结构的情况提供一个可选的 <code>ImageWriteParam</code>。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+ 
+<p> 不使用流元数据的 writer（<i>例如</i> 用于单一图像格式的 writer）应该返回 <code>null</code>。
+
+@param param 将用于对图像进行编码的 <code>ImageWriteParam</code>，或者为 <code>null</code>。
+
+@return <code>IIOMetadata</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.imageio.metadata.IIOMetadata javax.imageio.ImageWriter.getDefaultImageMetadata(ImageTypeSpecifier imageType, ImageWriteParam param)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含用来编码给定类型图像的默认值的 <code>IIOMetadata</code> 对象。该对象的内容可以使用由 <code>IIOMetadata.getAsTree</code> 方法返回的 XML 树型结构（一个 <code>IIOMetadataController</code> 对象）来操作，或者通过特定于插件的接口以及提供给某一带有流元数据参数的 <code>write</code> 方法的所得数据来操作。
+
+<p> 可以对可能影响图像元数据结构的情况提供一个可选的 <code>ImageWriteParam</code>。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+@param imageType 指示稍后将写入的图像格式的 <code>ImageTypeSpecifier</code>。
+@param param 将用于对图像进行编码的 <code>ImageWriteParam</code>，或者为 <code>null</code>。
+
+@return <code>IIOMetadata</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageWriter.getNumThumbnailsSupported(ImageTypeSpecifier imageType, ImageWriteParam param, IIOMetadata streamMetadata, IIOMetadata imageMetadata)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回受将写入的格式、给定图像类型和任何其他 write 参数支持的缩略图，以及将在编码期间使用的元数据对象。返回 <code>-1</code> 值指示可用信息不足。
+
+<p> 可以对可能影响缩略图处理的情况有选择地提供 <code>ImageWriteParam</code>。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 默认实现返回 0。
+
+@param imageType 指示将写入的图像类型的 <code>ImageTypeSpecifier</code>，或者该参数为 <code>null</code>。
+@param param 将用于写入操作的 <code>ImageWriteParam</code>，或者为 <code>null</code>。
+@param streamMetadata 将用于写入操作的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+@param imageMetadata 将用于写入操作的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+
+@return 可能在已知所提供参数的情况下写入的缩略图数，如果可用信息不足，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension[] javax.imageio.ImageWriter.getPreferredThumbnailSizes(ImageTypeSpecifier imageType, ImageWriteParam param, IIOMetadata streamMetadata, IIOMetadata imageMetadata)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Dimension</code> 数组，指示在输出文件或流中进行编码时合法的缩略图大小范围。此信息只是建议性的；writer 将根据需要重新调整所提供缩略图的大小。
+
+<p> 信息是作为 pair 的集合返回的；pair 的第一个元素包含最小宽度和高度，第二个元素包含最大宽度和高度。同时，每个 pair 定义一个有效大小范围。要定义固定大小，将对两个元素显示相同的宽度和高度。返回值为 <code>null</code> 指示大小是任意的或未知的。
+
+<p> 可以对可能影响缩略图处理的情况有选择地提供 <code>ImageWriteParam</code>。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 默认实现返回 <code>null</code>。
+
+@param imageType 指示将写入的图像类型的 <code>ImageTypeSpecifier</code>，或者该参数为 <code>null</code>。
+@param param 将用于写入操作的 <code>ImageWriteParam</code>，或者为 <code>null</code>。
+@param streamMetadata 将用于写入操作的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+@param imageMetadata 将用于写入操作的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+
+@return 平均长度至少为 2 的 <code>Dimension</code> 组成的数组，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canWriteRasters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果采用 <code>IIOImage</code> 参数的方法能够处理 <code>Raster</code>（相对于 <code>RenderedImage</code>）源图像，则返回 <code>true</code>。如果此方法返回 <code>false</code>，则这些方法将在包含 <code>Raster</code> 的 <code>IIOImage</code> 中抛出一个 <code>UnsupportedOperationException</code>（如果提供）。
+
+<p> 默认实现返回 <code>false</code>。
+
+@return 如果 <code>Raster</code> 源受支持，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.imageio.ImageWriter.write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个完整的图像流，该图像流包含一幅图像、相关的流、图像元数据和要输出的缩略图。还包括任何必要的头信息。如果输出是一个 <code>ImageOutputStream</code>，则位于当前寻找位置之前的现有内容不受影响，并且这些内容不必是可读或可写的。
+
+<p> 必须使用 <code>setOutput</code> 方法提前设置输出。
+
+<p> 流元数据可以有选择地提供；如果它为 <code>null</code>，则使用默认元数据。
+
+<p> 如果 <code>canWriteRasters</code> 返回 <code>true</code>，则 <code>IIOImage</code> 可以包含一个 <code>Raster</code> 源。否则，它必须包含一个 <code>RenderedImage</code> 源。
+
+<p> 所提供的缩略图将被重新调整大小（如果需要），并且超过所支持数量的所有缩略图都将被忽略。如果该格式需要没有提供的额外缩略图，则 writer 应该在内部生成这些缩略图。
+
+<p>  可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+@param streamMetadata 表示流元数据的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>，表示使用默认值。
+@param image 包含要写入的图像、缩略图和元数据的 <code>IIOImage</code> 对象。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>image</code> 包含一个 <code>Raster</code>，并且 <code>canWriteRasters</code> 返回 <code>false</code>。
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.write(IIOImage image) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将包含带有默认元数据和缩略图的单个图像的完整图像流添加到输出中。此方法是 <code>write(null, image, null)</code> 的简略表达方式。
+
+@param image 包含要写入的图像、缩略图和元数据的 <code>IIOImage</code> 对象。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+@exception UnsupportedOperationException 如果 <code>image</code> 包含一个 <code>Raster</code>，并且 <code>canWriteRasters</code> 返回 <code>false</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.write(RenderedImage image) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将由带有默认元数据和缩略图的单个图像组成的完整图像流添加到输出中。此方法是 <code>write(null, new IIOImage(image, null, null), null)</code> 的简略表达方式。
+
+@param      image   要写入的 <code>RenderedImage</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canWriteSequence()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 能够将图像添加到已经包含头信息和可能的以前图像的图像流中，则返回 <code>true</code>。
+
+<p> 如果 <code>canWriteSequence</code> 返回 <code>false</code>，<code>writeToSequence</code> 和 <code>endWriteSequence</code> 将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 默认实现返回 <code>false</code>。
+
+@return 如果可以按顺序添加图像，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.prepareWriteSequence(IIOMetadata streamMetadata) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的流元数据对象准备一个流，以接受一系列的后续 <code>writeToSequence</code> 调用。如果应该先于图像数据，则应该将元数据写入流中。如果该参数为 <code>null</code>，则使用默认流元数据。
+
+<p> 如果输出是一个 <code>ImageOutputStream</code>，则不刷新位于当前寻找位置之前的输出的现有内容，并且这些内容不必是可读或可写的。如果该格式要求 <code>endWriteSequence</code> 能够重新修补头信息，比如用于单个 TIFF 文件中的一系列图像的头信息，则此方法写入的元数据必须仍然位于流的可写部分中。其他格式可以在此方法之后和每幅图像之后刷新流。
+
+<p> 如果 <code>canWriteSequence</code> 返回 <code>false</code>，则此方法将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 必须使用 <code>setOutput</code> 方法提前设置输出。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param streamMetadata 一个流元数据对象，或者为 <code>null</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canWriteSequence</code> 返回 <code>false</code>。
+@exception IOException  如果在写入流元数据过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.writeToSequence(IIOImage image, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单幅图像、可能相关的元数据和缩略图添加到输出中。如果输出是 <code>ImageOutputStream</code>，则可能刷新当前寻找位置之前的输出的现有内容，并且这些内容不必是可读的或可写的，除非插件必须能够在调用 <code>endWriteSequence</code> 时修补头信息（<italic>例如</italic> TIFF）。
+
+<p> 如果 <code>canWriteSequence</code> 返回 <code>false</code>，则此方法将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 必须使用 <code>setOutput</code> 方法提前设置输出。
+
+<p> <code>prepareWriteSequence</code> 必须提前调用，否则将抛出 <code>IllegalStateException</code>。
+
+<p> 如果 <code>canWriteRasters</code> 返回 <code>true</code>，则 <code>IIOImage</code> 可以包含一个 <code>Raster</code> 源。否则，它必须包含一个 <code>RenderedImage</code> 源。
+
+<p> 所提供的缩略图将被重新调整大小（如果需要），并且超过所支持数量的所有缩略图都将被忽略。如果该格式需要没有提供的其他缩略图，则 writer 将在内部生成这些缩略图。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+ 
+@param image 包含要写入的图像、缩略图和元数据的 <code>IIOImage</code> 对象。
+@param param 一个 <code>ImageWriteParam</code>；或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException 如果没有设置输出，或者没有调用 <code>prepareWriteSequence</code>。
+@exception UnsupportedOperationException 如果 <code>canWriteSequence</code> 返回 <code>false</code>。
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+@exception UnsupportedOperationException 如果 <code>image</code> 包含一个 <code>Raster</code>，并且 <code>canWriteRasters</code> 返回 <code>false</code>。
+@exception IOException  如果写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.endWriteSequence() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+完成以 <code>prepareWriteSequence</code> 开头的一系列图像的写入。应该出现在这一系列图像的末尾的所有流元数据都被写出，如果需要，可修补位于该序列的开始处的任何头信息。如果输出是 <code>ImageOutputStream</code>，则一直到序列末尾处的流元数据的那些数据将被刷新，它们不必是可读的或可写的。
+
+<p> 如果 <code>canWriteSequence</code> 返回 <code>false</code>，则此方法将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+ 
+@exception IllegalStateException 如果没有设置输出，或者没有调用 <code>prepareWriteSequence</code>。
+@exception UnsupportedOperationException 如果 <code>canWriteSequence</code> 返回 <code>false</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canReplaceStreamMetadata() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果有可能替换已存在于输出中的流元数据，则返回 <code>true</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>。
+
+@return 如果允许替换流元数据，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.replaceStreamMetadata(IIOMetadata streamMetadata) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用新信息替换输出中的流元数据。如果输出为 <code>ImageOutputStream</code>，则检查该流以前的内容，并且可能对它们进行编辑，为新的数据腾出空间。该输出以前的所有内容必须可用于读取和写入。
+
+<p> 如果 <code>canReplaceStreamMetadata</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param streamMetadata 表示流元数据的 <code>IIOMetadata</code> 对象；或者为 <code>null</code>，表示使用默认值。
+ 
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplaceStreamMetadata</code> 返回 <code>false</code>。模式不包括在内
+@exception IOException 如果写入期间发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canReplaceImageMetadata(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果有可能使用索引 <code>imageIndex</code> 替换与现有图像有关的图像元数据，则返回 <code>true</code>。如果此方法返回 <code>false</code>，那么调用 <code>replaceImageMetadata(imageIndex)</code> 将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 不支持任何图像元数据替换的 writer 可以返回 <code>false</code>，而不必对索引执行范围检查。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>，而不必检查 <code>imageIndex</code> 的值。
+ 
+@param imageIndex 其元数据将被替换的图像的索引。
+
+@return 如果可以替换给定图像的图像元数据，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IndexOutOfBoundsException 如果 writer 在一般情况下支持图像元数据替换，但 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.replaceImageMetadata(int imageIndex, IIOMetadata imageMetadata) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替换与现有图像有关的图像元数据。
+
+<p> 如果 <code>canReplaceImageMetadata(imageIndex)</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+ 
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param imageIndex 其元数据将被替换的图像的索引。
+@param imageMetadata 表示图像元数据的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplaceImageMetadata</code> 返回 <code>false</code>。
+@exception IndexOutOfBoundsException 如果 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canInsertImage(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 支持在给定索引处插入新图像，则返回 <code>true</code>。索引等于或大于插入索引的现有图像会将其索引加 1。值为 <code>-1</code> 的 <code>imageIndex</code> 可用于表示大于当前最大索引的索引。
+
+<p> 不支持任何图像插入的 writer 可以返回 <code>false</code>，而不必对索引执行范围检查。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>，而不必检查 <code>imageIndex</code> 的值。
+
+@param  imageIndex 将在其所在位置处插入图像的索引。
+
+@return 如果可以在给定索引处插入图像，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IndexOutOfBoundsException 如果 writer 在一般情况下支持图像插入，但 <code>imageIndex</code> 小于 -1 或大于最大可用索引。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.writeInsert(int imageIndex, IIOImage image, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将新的图像插入现有图像流。索引大于 <code>imageIndex</code> 的现有图像被保留，其索引均被加 1。为 -1 的 <code>imageIndex</code> 值可用于表示大于以前最大索引的索引；也就是说，它将导致图像按逻辑添加到序列的末尾。如果输出是一个 <code>ImageOutputStream</code>，则整个流都必须是可读并且可写的。
+
+<p> 如果 <code>canInsertImage(imageIndex)</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param imageIndex 将在其所在位置处写入图像的索引。
+@param image 包含要写入的图像、缩略图和元数据的 <code>IIOImage</code> 对象。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+ 
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canInsertImage(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+@exception IndexOutOfBoundsException 如果 <code>imageIndex</code> 小于 -1 或大于最大可用索引。
+@exception UnsupportedOperationException 如果 <code>image</code> 包含一个 <code>Raster</code>，并且 <code>canWriteRasters</code> 返回 <code>false</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canRemoveImage(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 支持在给定索引处移除现有图像，则返回 <code>true</code>。对于索引大于插入索引的图像，其索引将增加 1。
+
+<p> 不支持任何图像移除的 writer 可以返回 <code>false</code>，而不必对索引执行范围检查。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>，而不必检查 <code>imageIndex</code> 的值。
+
+@param imageIndex 要移除的图像的索引。
+
+@return 如果能够移除给定图像，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IndexOutOfBoundsException 如果 writer 在一般情况下支持图像移除，但 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.removeImage(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中移除图像。
+
+<p> 如果 <code>canRemoveImage(imageIndex)</code> 返回 false，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 移除可能导致实际文件大小减小，也可能不会。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param imageIndex 要移除的图像的索引。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canRemoveImage(imageIndex)</code> 返回 <code>false</code>。
+@exception IndexOutOfBoundsException 如果 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception  IOException 如果在移除期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canWriteEmpty() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 支持写入由单个图像组成的完整图像流，则返回 <code>true</code>，这些对象带有要输出的不确定像素值、有关元数据和缩略图。像素值可通过以后调用 <code>replacePixels</code> 方法来确定。如果输出是一个 <code>ImageOutputStream</code>，则位于当前寻找位置之前的现有内容不受影响，并且这些内容不必是可读或可写的。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>。
+ 
+@return  如果写入内容以后再定义的完整图像流是受支持的，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.prepareWriteEmpty(IIOMetadata streamMetadata, ImageTypeSpecifier imageType, int width, int height, IIOMetadata imageMetadata, java.util.List<? extends java.awt.image.BufferedImage> thumbnails, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从写入完整图像流开始，该图像流由带有要输出的不确定像素值、有关元数据和缩略图的单个图像组成。像素值可通过以后调用 <code>replacePixels</code> 方法来确定。如果输出是一个 <code>ImageOutputStream</code>，则位于当前寻找位置之前的现有内容不受影响，并且这些内容不必是可读或可写的。
+
+<p> 直到调用 <code>endWriteEmpty</code> 才完成写入操作。调用 <code>prepareReplacePixels</code>、<code>replacePixels</code> 和 <code>endReplacePixels</code> 可能发生在调用 <code>prepareWriteEmpty</code> 和 <code>endWriteEmpty</code> 之间。不过，调用 <code>prepareWriteEmpty</code> 是不可嵌套的，调用 <code>prepareWriteEmpty</code> 和 <code>prepareInsertEmpty</code> 不能被散置。
+
+<p> 如果 <code>canWriteEmpty</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param streamMetadata 表示流元数据的 <code>IIOMetadata</code> 对象；或者为 <code>null</code>，表示使用默认值。
+@param imageType 描述图像布局的 <code>ImageTypeSpecifier</code>。
+@param    width     图像的宽度。
+@param    height    图像的高度。
+@param imageMetadata 表示图像元数据的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+@param thumbnails 此图像的 <code>BufferedImage</code> 缩略图的 <code>List</code>，或者为 <code>null</code>。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canWriteEmpty</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareWriteEmpty</code>，但没有相应地调用 <code>endWriteEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareInsertEmpty</code>，但没有相应地调用 <code>endInsertEmpty</code>。
+@exception IllegalArgumentException 如果 <code>imageType</code> 为 <code>null</code>，或者 <code>thumbnails</code> 包含 <code>null</code> 引用或对象，而不是 <code>BufferedImage</code>。
+@exception IllegalArgumentException 如果宽度或高度小于 1。
+@exception IOException 如果在写期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.endWriteEmpty() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+完成对新图像的写入，该操作是从优先调用 <code>prepareWriteEmpty</code> 开始的。
+
+<p> 如果 <code>canWriteEmpty()</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canWriteEmpty(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareWriteEmpty</code>，但没有相应地调用 <code>endWriteEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareInsertEmpty</code>，但没有相应地调用 <code>endInsertEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareReiplacePixels</code>，但没有相应地调用 <code>endReplacePixels</code>。
+@exception  IOException 如果在写入期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canInsertEmpty(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 支持在给定索引处插入新的空图像，则返回 <code>true</code>。图像的像素值是不确定的，并且可以使用 <code>replacePixels</code> 方法各个部分地指定它们。索引等于或大于插入索引的现有图像会将其索引加 1。值为 <code>-1</code> 的 <code>imageIndex</code> 可用于表示大于当前最大索引的索引。
+
+<p> 不支持插入空图像的 writer 可以返回 <code>false</code>，而不必对索引执行范围检查。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>，而不必检查 <code>imageIndex</code> 的值。
+ 
+@param  imageIndex 将在其所在位置处插入图像的索引。
+
+@return 如果可以在给定索引处插入空图像，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IndexOutOfBoundsException 如果 writer 在一般情况下支持插入空图像，但 <code>imageIndex</code> 小于 -1 或大于最大可用索引。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.prepareInsertEmpty(int imageIndex, ImageTypeSpecifier imageType, int width, int height, IIOMetadata imageMetadata, java.util.List<? extends java.awt.image.BufferedImage> thumbnails, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从将带有不确定像素值的新图像插入现有图像流中开始。索引大于 <code>imageIndex</code> 的现有图像被保留，其索引均被加 1。为 -1 的 <code>imageIndex</code> 值可用于表示大于以前最大索引的索引；也就是说，它将导致图像按逻辑添加到序列的末尾。如果输出是一个 <code>ImageOutputStream</code>，则整个流都必须是可读并且可写的。
+
+<p> 图像内容可由稍后使用的 <code>replacePixels</code> 方法提供。直到调用 <code>endInsertEmpty</code> 才完成插入操作。调用 <code>prepareReplacePixels</code>、<code>replacePixels</code> 和 <code>endReplacePixels</code> 可能发生在调用 <code>prepareInsertEmpty</code> 和 <code>endInsertEmpty</code> 之间。不过，调用 <code>prepareInsertEmpty</code> 是不可嵌套的，调用 <code>prepareWriteEmpty</code> 和 <code>prepareInsertEmpty</code> 不能被散置。
+
+<p> 如果 <code>canInsertEmpty(imageIndex)</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param imageIndex 将在其所在位置处写入图像的索引。
+@param imageType 描述图像布局的 <code>ImageTypeSpecifier</code>。
+@param    width     图像的宽度。
+@param    height    图像的高度。
+@param imageMetadata 表示图像元数据的 <code>IIOMetadata</code> 对象，或者为 <code>null</code>。
+@param thumbnails 此图像的 <code>BufferedImage</code> 缩略图的 <code>List</code>，或者为 <code>null</code>。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canInsertEmpty(imageIndex)</code> 返回 <code>false</code>。
+@exception IndexOutOfBoundsException 如果 <code>imageIndex</code> 小于 -1 或大于最大可用索引。
+@exception IllegalStateException 如果以前已经调用 <code>prepareInsertEmpty</code>，但没有相应地调用 <code>endInsertEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareWriteEmpty</code>，但没有相应地调用 <code>endWriteEmpty</code>。
+@exception IllegalArgumentException 如果 <code>imageType</code> 为 <code>null</code>，或者 <code>thumbnails</code> 包含 <code>null</code> 引用或对象，而不是 <code>BufferedImage</code>。
+@exception IllegalArgumentException 如果宽度或高度小于 1。
+@exception IOException 如果在写期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.endInsertEmpty() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+完成对新图像的插入，该操作是从以前调用 <code>prepareInsertEmpty</code> 开始的。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canInsertEmpty(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareInsertEmpty</code>，但没有相应地调用 <code>endInsertEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareWriteEmpty</code>，但没有相应地调用 <code>endWriteEmpty</code>。
+@exception IllegalStateException 如果以前已经调用 <code>prepareReplacePixels</code>，但没有相应地调用 <code>endReplacePixels</code>。
+@exception  IOException 如果在写入期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageWriter.canReplacePixels(int imageIndex) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 writer 允许使用 <code>replacePixels</code> 方法替换给定图像的索引，则返回 <code>true</code>。
+
+<p> 不支持任何像素替换的 writer 可以返回 <code>false</code>，而不必对索引执行范围检查。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则返回 <code>false</code>，而不必检查 <code>imageIndex</code> 的值。
+
+@param imageIndex 其像素将被替换的图像的索引。
+
+@return 如果可以替换给定图像的像素，则返回 <code>true</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception IndexOutOfBoundsException 如果 writer 在一般情况下支持像素替换，但 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception  IOException 如果在查询期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.prepareReplacePixels(int imageIndex, Rectangle region) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+准备好 writer，处理一系列对 <code>replacePixels</code> 方法的调用。将根据所提供的数据来剪切受影响的像素区域。
+
+<p> 如果 <code>canReplacePixels</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param imageIndex 其像素将被替换的图像的索引。
+@param region 将用来剪切将来的像素区域的 <code>Rectangle</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplacePixels(imageIndex)</code> 返回 <code>false</code>。
+@exception IndexOutOfBoundsException 如果 <code>imageIndex</code> 小于 0 或大于最大可用索引。
+@exception IllegalStateException 如果以前调用了 <code>prepareReplacePixels</code> 但没有相应地调用 <code>endReplacePixels</code>（<i>也就是说</i> 不允许进行嵌套）。
+@exception IllegalArgumentException 如果 <code>region</code> 为 <code>null</code> 或者宽度或高度小于 1。
+@exception IOException 如果在准备期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.replacePixels(RenderedImage image, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定图像部分替换已出现在输出中的图像部分。图像数据必须匹配，或者可转化为现有图像布局。
+
+<p> 目标区域是在 <code>param</code> 参数中指定的，并且将被剪切成图像边界和提供给 <code>prepareReplacePixels</code> 的区域。至少有一个源像素不能剪切，否则抛出一个异常。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 此方法只能在调用 <code>prepareReplacePixels</code> 之后调用，否则将抛出 <code>IllegalStateException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param image 一个包含源像素的 <code>RenderedImage</code>。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplacePixels(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果在以前调用 <code>prepareReplacePixels</code> 时没有相应地调用 <code>endReplacePixels</code>。
+@exception IllegalArgumentException 如果以下任意一项为 true：
+<ul>
+<li> <code>image</code> 为 <code>null</code>。
+<li> <code>param</code> 为 <code>null</code>。
+<li> 相交区域并没有包含至少一个像素。
+<li> <code>image</code> 的布局与现有图像布局不匹配，或者此 writer 无法将它转换成现有图像布局。
+ </ul>
+@exception  IOException 如果在写入期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.replacePixels(Raster raster, ImageWriteParam param) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定 <code>Raster</code> 部分替换已出现在输出中的图像部分。图像数据必须匹配，或者可转化为现有图像布局。
+
+<p> 可以有选择地提供 <code>ImageWriteParam</code> 来控制写入过程。如果 <code>param</code> 为 <code>null</code>，则将使用默认 write 参数。
+
+<p> 目标区域是在 <code>param</code> 参数中指定的，并且将被剪切成图像边界和提供给 <code>prepareReplacePixels</code> 的区域。至少有一个源像素不能剪切，否则抛出一个异常。
+
+<p> 如果所提供的 <code>ImageWriteParam</code> 包含不受此 writer 支持的可选设置值（<i>例如</i> 逐步编码或任何特定于格式的设置），则将忽略这些设置。
+
+<p> 此方法只能在调用 <code>prepareReplacePixels</code> 之后调用，否则将抛出 <code>IllegalStateException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@param raster 一个包含源像素的 <code>Raster</code>。
+@param param 一个 <code>ImageWriteParam</code>，或者为 <code>null</code>，表示使用默认 <code>ImageWriteParam</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplacePixels(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果在以前调用 <code>prepareReplacePixels</code> 时没有相应地调用 <code>endReplacePixels</code>。
+@exception UnsupportedOperationException 如果 <code>canWriteRasters</code> 返回 <code>false</code>。
+@exception IllegalArgumentException 如果以下任意一项为 true：
+<ul>
+<li> <code>raster</code> 为 <code>null</code>。
+<li> <code>param</code> 为 <code>null</code>。
+<li> 相交区域并没有包含至少一个像素。
+<li> <code>raster</code> 的布局与现有图像布局不匹配，或者此 writer 无法将它转换成现有图像布局。
+ </ul>
+@exception  IOException 如果在写入期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.endReplacePixels() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+终止调用 <code>replacePixels</code> 的序列。
+
+<p> 如果 <code>canReplacePixels</code> 返回 <code>false</code>，则将抛出 <code>UnsupportedOperationException</code>。
+
+<p> 如果输出为 <code>null</code>，则默认实现抛出 <code>IllegalStateException</code>，否则抛出 <code>UnsupportedOperationException</code>。
+
+@exception IllegalStateException  如果尚未设置输出。
+@exception UnsupportedOperationException 如果 <code>canReplacePixels(imageIndex)</code> 返回 <code>false</code>。
+@exception IllegalStateException 如果在以前调用 <code>prepareReplacePixels</code> 时没有相应地调用 <code>endReplacePixels</code>。
+@exception  IOException 如果在写入期间发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.imageio.ImageWriter.abort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求中止任何当前写入操作。将中止的输出的内容是不确定的。
+
+<p> weader 应该在开始每个写入操作时调用 <code>clearAbortRequest</code>，并在写入期间定期轮询 <code>abortRequested</code> 的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized boolean javax.imageio.ImageWriter.abortRequested()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果自从 writer 被实例化或 <code>clearAbortRequest</code> 被调用开始，已经发出中止当前写入操作的请求，则返回 <code>true</code>。
+
+@return 如果应该中止当前写入操作，则返回 <code>true</code>。
+
+
+@see #abort
+@see #clearAbortRequest
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void javax.imageio.ImageWriter.clearAbortRequest()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除任何以前的中止请求。在已调用此方法之后，<code>abortRequested</code> 将返回 <code>false</code>。
+
+
+@see #abort
+@see #abortRequested
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.addIIOWriteWarningListener(IIOWriteWarningListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>IIOWriteWarningListener</code> 添加到已注册的警告侦听器的列表中。如果 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。发送到给定侦听器的消息将被初始化，如果有可能，会将该消息与当前 <code>Locale</code> 匹配。如果没有设置 <code>Locale</code>，则可将警告消息初始化为 writer 认为合适的形式。
+
+@param      listener   要注册的 <code>IIOWriteWarningListener</code>。
+
+
+@see #removeIIOWriteWarningListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.removeIIOWriteWarningListener(IIOWriteWarningListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从已注册的警告侦听器列表中移除 <code>IIOWriteWarningListener</code>。如果以前没有注册侦听器，或者 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。
+
+@param      listener   要取消注册的 <code>IIOWriteWarningListener</code>。
+
+
+@see #addIIOWriteWarningListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.removeAllIIOWriteWarningListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有当前已注册的 <code>IIOWriteWarningListener</code> 对象。
+
+<p> 默认实现将 <code>warningListeners</code> 和 <code>warningLocales</code> 实例变量设置为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.addIIOWriteProgressListener(IIOWriteProgressListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>IIOWriteProgressListener</code> 添加到已注册的进度侦听器列表中。如果 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。
+
+@param      listener   要注册的 <code>IIOWriteProgressListener</code>。
+
+
+@see #removeIIOWriteProgressListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.removeIIOWriteProgressListener(IIOWriteProgressListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从已注册的进度侦听器列表中移除 <code>IIOWriteProgressListener</code>。如果以前没有注册侦听器，或者 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。
+
+@param      listener   要取消注册的 <code>IIOWriteProgressListener</code>。
+
+
+@see #addIIOWriteProgressListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.removeAllIIOWriteProgressListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有当前已注册的 <code>IIOWriteProgressListener</code> 对象。
+
+<p> 默认实现将 <code>progressListeners</code> 实例变量设置为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processImageStarted(int imageIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>imageStarted</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播开始写入图像的起始处。子类可以将此方法用作一个便捷方法。
+
+@param imageIndex 即将写入的图像的索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processImageProgress(float percentageDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>imageProgress</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播图像完成的当前百分比。子类可以将此方法用作一个便捷方法。
+
+@param percentageDone <code>float</code> 值形式的当前完整的百分比。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processImageComplete()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>imageComplete</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播图像写入的完成。子类可以将此方法用作一个便捷方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processThumbnailStarted(int imageIndex, int thumbnailIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>thumbnailStarted</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播缩略图写入的起始处。子类可以将此方法用作一个便捷方法。
+
+@param imageIndex 与该缩略图有关的图像的索引。
+@param thumbnailIndex 缩略图的索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processThumbnailProgress(float percentageDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>thumbnailProgress</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播缩略图完成的当前百分比。子类可以将此方法用作一个便捷方法。
+
+@param percentageDone <code>float</code> 值形式的当前完整的百分比。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processThumbnailComplete()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>thumbnailComplete</code> 方法向所有已注册 <code>IIOWriteProgressListener</code> 广播缩略图写入的完成。子类可以将此方法用作一个便捷方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processWriteAborted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>readAborted</code> 方法向对所有已注册 <code>IIOWriteProgressListener</code> 广播写入已经中止。子类可以将此方法用作一个便捷方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processWarningOccurred(int imageIndex, String warning)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>warningOccurred</code> 方法向所有已注册 <code>IIOWriteWarningListener</code> 广播一条警告消息。子类可以将此方法用作一个便捷方法。
+
+@param imageIndex 与发生的警告有关的图像的索引。
+@param warning 警告消息。
+
+@exception IllegalArgumentException 如果 <code>warning</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.ImageWriter.processWarningOccurred(int imageIndex, String baseName, String keyword)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用取自 <code>ResourceBundle</code> 的字符串调用 <code>warningOccurred</code> 方法来向所有已注册 <code>IIOWriteWarningListener</code> 广播一条本地化警告消息。子类可以将此方法用作一个便捷方法。
+
+@param imageIndex 与发生的警告有关的图像的索引。
+@param baseName 一组包含本地化警告消息的 <code>ResourceBundle</code> 的基本名称。
+@param keyword 用来为 <code>ResourceBundle</code> 集合中的警告消息建立索引的关键字。
+
+@exception IllegalArgumentException 如果 <code>baseName</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>keyword</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果无法找到合适的 <code>ResourceBundle</code>。
+@exception IllegalArgumentException 如果在定位的 <code>ResourceBundle</code> 中无法找到指定的资源。
+@exception IllegalArgumentException 如果从 <code>ResourceBundle</code> 中获取的对象不是一个 <code>String</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>ImageWriter</code> 恢复到其初始状态。
+
+<p> 默认实现调用 <code>setOutput(null)</code>、<code>setLocale(null)</code>、<code>removeAllIIOWriteWarningListeners()</code>、<code>removeAllIIOWriteProgressListeners()</code> 和 <code>clearAbortRequest</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageWriter.dispose()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许释放此对象保存的所有资源。调用其他任何方法（而不是 <code>finalize</code>）以及对此方法的后续调用的结果都是不确定的。
+
+<p>对应用程序而言，在知道它们不再使用此 <code>ImageWriter</code> 时，调用此方法非常重要。否则，writer 可能继续无限期地保存这些资源。
+
+<p>在超类中，此方法的默认实现不执行任何操作。子类实现应该确保所有资源（特别是本机资源）被释放。
+
+<!-- END DATA -->

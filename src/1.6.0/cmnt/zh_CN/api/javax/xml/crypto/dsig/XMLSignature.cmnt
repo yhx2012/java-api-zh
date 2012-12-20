@@ -1,0 +1,124 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.XMLSignature extends javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>Signature</code> 元素的表示形式。此类包含一些方法使用 W3C 规范定义的行为对 XML 签名进行签名或验证。XML Schema Definition 的定义如下：
+ <pre><code>
+&lt;element name=&quot;Signature&quot; type=&quot;ds:SignatureType&quot;/&gt;
+&lt;complexType name=&quot;SignatureType&quot;&gt;
+&lt;sequence&gt; 
+&lt;element ref=&quot;ds:SignedInfo&quot;/&gt; 
+&lt;element ref=&quot;ds:SignatureValue&quot;/&gt; 
+&lt;element ref=&quot;ds:KeyInfo&quot; minOccurs=&quot;0&quot;/&gt; 
+&lt;element ref=&quot;ds:Object&quot; minOccurs=&quot;0&quot; maxOccurs=&quot;unbounded&quot;/&gt; 
+&lt;/sequence&gt;  
+&lt;attribute name=&quot;Id&quot; type=&quot;ID&quot; use=&quot;optional&quot;/&gt;
+&lt;/complexType&gt;
+ </code></pre>
+ <p>
+通过调用 {@link XMLSignatureFactory} 类的一个 {@link XMLSignatureFactory#newXMLSignature newXMLSignature} 方法，可以创建 <code>XMLSignature</code> 实例。
+
+<p>如果随后修改了包含 <code>XMLSignature</code> 的底层文档的内容，则行为是不确定的。
+
+<p>注意，为避免与现有 {@link Signature java.security.Signature} 类发生命名冲突，此类被命名为 <code>XMLSignature</code>，而不是 <code>Signature</code>。
+
+@see XMLSignatureFactory#newXMLSignature(SignedInfo, KeyInfo)
+@see XMLSignatureFactory#newXMLSignature(SignedInfo, KeyInfo, List, String, String)
+@author Joyce L. Leung
+@author Sean Mullan
+@author Erwin van der Koogh
+@author JSR 105 Expert Group
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.XMLSignature.XMLNS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+W3C Recommendation for XML-Signature Syntax and Processing 的 XML 名称空间 URI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.crypto.dsig.XMLSignature.validate(XMLValidateContext validateContext) throws javax.xml.crypto.dsig.XMLSignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据<a href="http://www.w3.org/TR/xmldsig-core/#sec-CoreValidation">核心验证处理规则</a>来验证签名。此方法使用现有状态验证签名，它并没有使用在上下文中指定的位置信息来解组和重新初始化 <code>XMLSignature</code> 的内容。  
+
+<p>此方法只在第一次调用时验证签名。在后续调用时，它将返回一个缓存的结果。
+
+@param validateContext 验证的上下文
+@return 如果签名传递了核心验证，则返回 <code>true</code>，否则返回 <code>false</code>
+@throws ClassCastException 如果 <code>validateContext</code> 类型与此 <code>XMLSignature</code> 不兼容
+@throws NullPointerException 如果 <code>validateContext</code> 为 <code>null</code>
+@throws XMLSignatureException 如果验证期间出现不可预料的错误，从而阻止完成验证操作
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.dsig.keyinfo.KeyInfo javax.xml.crypto.dsig.XMLSignature.getKeyInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignature</code> 的密钥信息。
+
+@return 密钥信息（如果未指定该信息，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.dsig.SignedInfo javax.xml.crypto.dsig.XMLSignature.getSignedInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignature</code> 的签名信息。
+
+@return 签名信息（永远不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.XMLSignature.getObjects()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个{@link java.util.Collections#unmodifiableList 可修改的列表}，由包含在此 <code>XMLSignature</code> 中的 {@link XMLObject} 组成。 
+
+@return 一个不可修改的 <code>XMLObject</code> 列表（可以为空，但不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.XMLSignature.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignature</code> 的可选 Id。
+
+@return Id（如果未指定此 Id，则可能返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.dsig.XMLSignature.SignatureValue javax.xml.crypto.dsig.XMLSignature.getSignatureValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignature</code> 的签名值。
+
+@return 签名值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.crypto.dsig.XMLSignature.sign(XMLSignContext signContext) throws javax.xml.crypto.MarshalException, javax.xml.crypto.dsig.XMLSignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 <code>XMLSignature</code> 签名。
+
+<p>如果此方法抛出异常，则此 <code>XMLSignature</code> 和 <code>signContext</code> 参数将保持其调用前的状态。
+
+@param signContext 签名的上下文
+@throws ClassCastException 如果 <code>signContext</code> 类型与此 <code>XMLSignature</code> 不兼容
+@throws NullPointerException 如果 <code>signContext</code> 为 <code>null</code>
+@throws MarshalException 如果编组时出现异常
+@throws XMLSignatureException 如果生成签名时出现不可预料的异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.KeySelectorResult javax.xml.crypto.dsig.XMLSignature.getKeySelectorResult()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在对此 <code>XMLSignature</code> 进行签名或验证后，返回密钥选择器 {@link KeySelector}（如果已指定）的结果。
+
+@return 密钥选择器的结果；如果尚未指定密钥选择器，或尚未对此 <code>XMLSignature</code> 进行签名或验证，则返回 <code>null</code>
+
+<!-- END DATA -->

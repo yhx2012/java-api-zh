@@ -1,0 +1,117 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.Reference extends javax.xml.crypto.URIReference, javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>Reference</code> 元素的表示形式。XML Schema 的定义如下： <code><pre>
+&lt;element name=&quot;Reference&quot; type=&quot;ds:ReferenceType&quot;/&gt;
+&lt;complexType name=&quot;ReferenceType&quot;&gt;
+&lt;sequence&gt;
+&lt;element ref=&quot;ds:Transforms&quot; minOccurs=&quot;0&quot;/&gt;
+&lt;element ref=&quot;ds:DigestMethod&quot;/&gt;
+&lt;element ref=&quot;ds:DigestValue&quot;/&gt;
+&lt;/sequence&gt;
+&lt;attribute name=&quot;Id&quot; type=&quot;ID&quot; use=&quot;optional&quot;/&gt;
+&lt;attribute name=&quot;URI&quot; type=&quot;anyURI&quot; use=&quot;optional&quot;/&gt;
+&lt;attribute name=&quot;Type&quot; type=&quot;anyURI&quot; use=&quot;optional&quot;/&gt;
+&lt;/complexType&gt;
+
+&lt;element name=&quot;DigestValue&quot; type=&quot;ds:DigestValueType&quot;/&gt;
+&lt;simpleType name=&quot;DigestValueType&quot;&gt;
+&lt;restriction base=&quot;base64Binary&quot;/&gt;
+&lt;/simpleType&gt;
+ </pre></code>
+
+<p>调用 {@link XMLSignatureFactory} 类的一个 {@link XMLSignatureFactory#newReference newReference} 方法可以创建 <code>Reference</code> 实例，例如：
+
+ <pre>
+XMLSignatureFactory factory = XMLSignatureFactory.getInstance(&quot;DOM&quot;);
+Reference ref = factory.newReference
+(&quot;http://www.ietf.org/rfc/rfc3275.txt&quot;, 
+	factory.newDigestMethod(DigestMethod.SHA1, null));
+ </pre>
+
+@author Sean Mullan
+@author Erwin van der Koogh
+@author JSR 105 Expert Group
+@since 1.6
+@see XMLSignatureFactory#newReference(String, DigestMethod)
+@see XMLSignatureFactory#newReference(String, DigestMethod, List, String, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.Reference.getTransforms()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 {@link java.util.Collections#unmodifiableList 不可修改的列表}，由包含在此 <code>Reference</code> 中的 {@link Transform} 组成。 
+
+@return 一个不可修改的 <code>Transform</code> 列表（可以为空，但不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.dsig.DigestMethod javax.xml.crypto.dsig.Reference.getDigestMethod()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Reference</code> 的摘要方法。
+
+@return 摘要方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.Reference.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Reference</code> 的可选 <code>Id</code> 属性，该属性允许从其他地方引用此 Reference。
+
+@return <code>Id</code> 属性（如果未指定，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.xml.crypto.dsig.Reference.getDigestValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Reference</code> 的摘要值。
+ 
+@return 原始摘要值，如果此引用没有摘要，则返回 <code>null</code>。每次调用此方法都将返回一个新的副本，以防止随后被修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.xml.crypto.dsig.Reference.getCalculatedDigestValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回执行验证操作后计算的此 <code>Reference</code> 的摘要值。如果验证引用失败，则此方法对于调试很有用。
+ 
+@return 计算的摘要值；如果尚未验证此引用，则返回 <code>null</code>。每次调用此方法都将返回一个新的副本，以防止随后被修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.crypto.dsig.Reference.validate(XMLValidateContext validateContext) throws javax.xml.crypto.dsig.XMLSignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+验证此引用。此方法将验证此引用的摘要。
+
+<p>此方法只在首次调用时验证引用。在进行后续调用时，它将返回一个缓存的结果。
+
+@return 如果成功验证此引用，则返回 <code>true</code>；否则返回 <code>false</code>
+@param validateContext 验证的上下文
+@throws NullPointerException 如果 <code>validateContext</code> 为 <code>null</code>
+@throws XMLSignatureException 如果在验证引用时发生不可预料的异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.Data javax.xml.crypto.dsig.Reference.getDereferencedData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已启用<a href="XMLSignContext.html#Supported Properties">引用缓存</a>，则返回被取消引用的数据。在执行验证或生成操作期间取消引用此引用的 URI 时，会产生上述结果。 
+
+@return 被取消引用的数据；如果未启用引用缓存或者没有生成或验证此引用，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream javax.xml.crypto.dsig.Reference.getDigestInputStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已启用<a href="XMLSignContext.html#Supported Properties">引用缓存</a>，则返回预整理的输入流。这是执行验证或签名操作期间摘要操作的输入。 
+
+@return 包含预整理输入的输入流；如果没有启用引用缓存，或者没有生成或验证此引用，则返回 <code>null</code>
+
+<!-- END DATA -->

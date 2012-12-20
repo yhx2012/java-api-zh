@@ -1,0 +1,280 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.CertificateFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类定义了用于从相关的编码中生成证书、证书路径 (<code>CertPath</code>) 和证书撤消列表 (CRL) 对象的 CertificateFactory 功能。
+
+<p>为了实现多个证书组成的编码，如果要解析一个可能由多个不相关证书组成的集合时，应使用 <code>generateCertificates</code>。否则，如果要生成 <code>CertPath</code>（证书链）并随后使用 <code>CertPathValidator</code> 验证它，则应使用 <code>generateCertPath</code>。
+
+<p>X.509 的 CertificateFactory 返回的证书必须是 <code>java.security.cert.X509Certificate</code> 的实例，CRL 的 CertificateFactory 返回的证书则必须是 <code>java.security.cert.X509CRL</code> 的实例。
+
+<p>以下示例代码读取一个具有 Base64 编码证书的文件，该证书由 -----BEGIN CERTIFICATE----- 语句开始，由 -----END CERTIFICATE----- 语句结束。我们将 <code>FileInputStream</code>（它不支持 <code>mark</code> 和 <code>reset</code>）转换成 <code>BufferedInputStream</code>（它支持这些方法），这样每次调用 <code>generateCertificate</code> 只需要一个证书，并将输入流的读取位置定位在文件中的下一个证书处：<p>
+
+ <pre>
+ FileInputStream fis = new FileInputStream(filename);
+ BufferedInputStream bis = new BufferedInputStream(fis);
+
+ CertificateFactory cf = CertificateFactory.getInstance(&quot;X.509&quot;);
+
+ while (bis.available() &gt; 0) {
+    Certificate cert = cf.generateCertificate(bis);
+    System.out.println(cert.toString());
+ }
+ </pre>
+
+<p>以下示例代码将解析存储在文件中的 PKCS#7 格式的证书答复，并从中提取所有的证书：<p>
+
+ <pre>
+ FileInputStream fis = new FileInputStream(filename);
+ CertificateFactory cf = CertificateFactory.getInstance(&quot;X.509&quot;);
+ Collection c = cf.generateCertificates(fis);
+ Iterator i = c.iterator();
+ while (i.hasNext()) {
+    Certificate cert = (Certificate)i.next();
+    System.out.println(cert);
+ }
+ </pre>
+
+
+@author Hemma Prafullchandra
+@author Jan Luehe
+@author Sean Mullan
+
+@version 1.32, 04/21/06
+
+@see Certificate
+@see X509Certificate
+@see CertPath
+@see CRL
+@see X509CRL
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.CertificateFactory(CertificateFactorySpi certFacSpi, Provider provider, String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建给定类型的 CertificateFactory 对象，并在其中封装给定的提供者实现（SPI 对象）。
+
+@param certFacSpi 提供者实现。
+@param provider 提供者。
+@param type 证书类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.security.cert.CertificateFactory java.security.cert.CertificateFactory.getInstance(String type) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回实现指定证书类型的 CertificateFactory 对象。
+
+ <p> 此方法从首选提供者开始遍历已注册安全提供者列表。返回封装 CertificateFactorySpi 实现的新 CertificateFactory 对象，该实现取自第一个支持指定类型的 Provider。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param type 所请求的证书类型的名称。有关标准证书类型的信息，请参阅 <a href=
+ "../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @return 指定类型的 CertificateFactory 对象。
+
+ @exception CertificateException 如果没有 Provider 支持指定类型的 CertificateFactorySpi 实现。
+
+ @see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.security.cert.CertificateFactory java.security.cert.CertificateFactory.getInstance(String type, String provider) throws java.security.cert.CertificateException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定证书类型的 CertificateFactory 对象。
+
+ <p> 返回封装 CertificateFactorySpi 实现的新 CertificateFactory 对象，该实现取自指定提供者。指定提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param type 证书类型。有关标准证书类型的信息，请参阅 <a href=
+ "../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者的名称。
+
+ @return 指定类型的 CertificateFactory 对象。
+
+ @exception CertificateException 如果指定算法的 CertificateFactorySpi 实现不能从指定提供者获得。
+
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception IllegalArgumentException 如果提供者的名称为 null 或空。
+
+ @see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.security.cert.CertificateFactory java.security.cert.CertificateFactory.getInstance(String type, Provider provider) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定证书类型的 CertificateFactory 对象。
+
+ <p> 返回封装 CertificateFactorySpi 实现的新 CertificateFactory 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象并不一定要在提供者列表中注册。
+
+ @param type 证书类型。有关标准证书类型的信息，请参阅 <a href=
+ "../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者。
+
+ @return 指定类型的 CertificateFactory 对象。
+
+ @exception CertificateException 如果指定算法的 CertificateFactorySpi 实现不能从指定提供者对象获得。
+
+ @exception IllegalArgumentException 如果 <code>provider</code> 为 null。
+
+ @see java.security.Provider
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.cert.CertificateFactory.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CertificateFactory 的提供者。
+
+@return 此 CertificateFactory 的提供者。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.cert.CertificateFactory.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 CertificateFactory 关联的证书类型的名称。
+
+@return 与此 CertificateFactory 关联的证书类型的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.Certificate java.security.cert.CertificateFactory.generateCertificate(InputStream inStream) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个证书对象，并使用从输入流 <code>inStream</code> 中读取的数据对它进行初始化。
+
+<p>为了利用受此 CertificateFactory 支持的专门的证书格式，可将返回的证书对象的类型强制转换为相应的证书类。例如，如果此 CertificateFactory 实现 X.509 证书，则可将返回的证书对象的类型强制转换为 <code>X509Certificate</code> 类。
+
+<p>在用于 X.509 证书的 CertificateFactory 情况中，<code>inStream</code> 中提供的证书必须是 DER 编码的，并且可以用二进制或可打印的 (Base64) 编码形式提供。如果以 Base64 编码的形式提供该证书，则该证书必须由 -----BEGIN CERTIFICATE----- 语句开始，由 -----END CERTIFICATE----- 语句结束。
+
+<p>注意，如果给定的输入流不支持 {@link java.io.InputStream#mark(int) mark} 和 {@link java.io.InputStream#reset() reset}，则此方法将使用整个输入流。否则，每次调用此方法都需要一个证书，并且将输入流的读取位置定位在固有的证书结尾标记后的下一个可用字节处。如果输入流中的数据不包含固有的证书结尾标记（不同于 EOF），并且在解析该证书后有一个尾随数据，则将抛出 <code>CertificateException</code>。
+
+@param inStream 带有证书数据的输入流。
+
+@return 已使用输入流中的数据初始化的证书对象。
+
+@exception CertificateException 如果发生解析错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Iterator<java.lang.String> java.security.cert.CertificateFactory.getCertPathEncodings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CertificateFactory 支持的 <code>CertPath</code> 编码的迭代器，默认编码方式优先。有关标准编码名称及其格式的信息，请参见 <a href="../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">Java Certification Path API Programmer's Guide</a> 中的附录 A。 
+ <p>
+试图修改返回的 <code>Iterator</code>（通过其 <code>remove</code> 方法）会导致抛出 <code>UnsupportedOperationException</code>。
+
+@return 在受支持的 <code>CertPath</code> 编码名称（以 <code>String</code> 的形式）上进行迭代的 <code>Iterator</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CertPath java.security.cert.CertificateFactory.generateCertPath(InputStream inStream) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个 <code>CertPath</code> 对象，并使用从 <code>InputStream</code> inStream 中读取的数据对它进行初始化。假定数据是以默认编码方式进行编码的。默认编码名称是 {@link #getCertPathEncodings getCertPathEncodings} 方法返回的 <code>Iterator</code> 的第一个元素。
+
+@param inStream 包含数据的 <code>InputStream</code>
+@return 已使用 <code>InputStream</code> 中的数据初始化的 <code>CertPath</code>
+@exception CertificateException 如果解码时出现异常
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CertPath java.security.cert.CertificateFactory.generateCertPath(InputStream inStream, String encoding) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个 <code>CertPath</code> 对象，并使用从 <code>InputStream</code> inStream 中读取的数据对它进行初始化。假定数据是以指定的编码方式进行编码的。有关标准编码名称及其格式的信息，请参见 <a href="../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">Java Certification Path API Programmer's Guide</a> 中的附录 A。
+
+@param inStream 包含数据的 <code>InputStream</code>
+@param encoding 数据使用的编码
+@return 已使用 <code>InputStream</code> 中的数据初始化的 <code>CertPath</code>
+@exception CertificateException 如果解码时出现异常或者不支持所请求的编码
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CertPath java.security.cert.CertificateFactory.generateCertPath(java.util.List<? extends java.security.cert.Certificate> certificates) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个 <code>CertPath</code> 对象，并使用一个 <code>Certificate</code> 的 <code>List</code> 对它进行初始化。
+ <p>
+所提供的证书必须是该 <code>CertificateFactory</code> 支持的类型。将从提供的 <code>List</code> 对象中复制出这些证书。
+
+@param certificates <code>Certificate</code> 的 <code>List</code>
+@return 已使用所提供的证书列表初始化的 <code>CertPath</code>
+@exception CertificateException 如果出现异常
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<? extends java.security.cert.Certificate> java.security.cert.CertificateFactory.generateCertificates(InputStream inStream) throws java.security.cert.CertificateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从给定输入流 <code>inStream</code> 中读取的证书的集合视图（可能为空）。
+
+<p>为了利用此 CertificateFactory 所支持的特殊证书格式，可将返回的集合视图中的每个元素的类型强制转换为相应的证书类。例如，如果此 CertificateFactory 实现 X.509 证书，则可将返回集合中的元素的类型强制转换为 <code>X509Certificate</code> 类。
+
+<p>在用于 X.509 证书的 CertificateFactory 的情况中，<code>inStream</code> 可能包含一个 DER 编码的证书序列，这些证书使用 {@link #generateCertificate(java.io.InputStream) generateCertificate} 所描述的格式。另外，<code>inStream</code> 可能包含一个 PKCS#7 证书链。这是一个 PKCS#7 <i>SignedData</i> 对象，具有唯一<i>认可</i> 的有效字段。需要特别指出的是，签名和内容会被忽略。此格式允许同时下载多个证书。如果没有证书，则返回一个空集合。
+
+<p>注意，如果给定的输入流不支持 {@link java.io.InputStream#mark(int) mark} 和 {@link java.io.InputStream#reset() reset}，则此方法将使用整个输入流。
+
+@param inStream 带有证书的输入流。
+
+@return  java.security.cert.Certificate 对象的集合视图（可能为空），用输入流中的数据对该对象进行初始化。
+
+@exception CertificateException 如果发生解析错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CRL java.security.cert.CertificateFactory.generateCRL(InputStream inStream) throws java.security.cert.CRLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个证书撤消列表 (CRL) 对象，并使用从输入流 <code>inStream</code> 中读取的数据对它进行初始化。
+
+<p>为了利用此受 CertificateFactory 支持的专门的 CRL 格式，可将返回的 CRL 对象的类型强制转换为相应的 CRL 类。例如，如果此 CertificateFactory 实现 X.509 CRL，则可将返回的 CRL 对象的类型强制转换为 <code>X509CRL</code> 类。
+
+<p>注意，如果给定的输入流不支持 {@link java.io.InputStream#mark(int) mark} 和 {@link java.io.InputStream#reset() reset}，则此方法将使用整个输入流。否则，每次调用此方法都需要一个 CRL，并且将输入流的读取位置定位在固有 CRL 结尾标记后的下一个可用字节处。如果输入流中的数据不包含固有的 CRL 结尾标记（不同于 EOF），并且在解析该 CRL 后有一个尾随数据，则将抛出 <code>CRLException</code>。
+
+@param inStream 带有 CRL 数据的输入流。
+
+@return 已使用输入流中的数据初始化的 CRL 对象。
+
+@exception CRLException 如果发生解析错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<? extends java.security.cert.CRL> java.security.cert.CertificateFactory.generateCRLs(InputStream inStream) throws java.security.cert.CRLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从给定输入流 <code>inStream</code> 中读取的 CRL 的集合视图（可能为空）。
+
+<p>为了利用受此 CertificateFactory 支持的专门的 CRL 格式，可将返回的集合视图中的每个元素的类型强制转换为相应的 CRL 类。例如，如果此 CertificateFactory 实现 X.509 CRL，则可将返回集合中的元素类型强制转换为 <code>X509CRL</code> 类。
+
+<p>在用于 X.509 CRL 的 CertificateFactory 情况中，<code>inStream</code> 可能包含一个 DER 编码的 CRL 序列。另外，<code>inStream</code> 可能包含一个 PKCS#7 CRL 集合。这是一个 PKCS#7 <i>SignedData</i> 对象，具有唯一被 <i>crl</i> 的有效字段。需要特别指出的是，签名和内容会被忽略。此格式允许同时下载多个 CRL。如果没有 CRL，则返回一个空集合。
+
+<p>注意，如果给定的输入流不支持 {@link java.io.InputStream#mark(int) mark} 和 {@link java.io.InputStream#reset() reset}，则此方法将使用整个输入流。
+
+@param inStream 带有 CRL 的输入流。
+
+@return java.security.cert.CRL 对象的集合视图（可能为空），用输入流中的数据对该对象进行初始化。
+
+@exception CRLException 如果发生解析错误。
+
+<!-- END DATA -->

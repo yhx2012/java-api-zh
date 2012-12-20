@@ -1,0 +1,466 @@
+<!-- BEGIN KEY -->
+public class javax.swing.GroupLayout extends java.lang.Object implements java.awt.LayoutManager2
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code GroupLayout} 是一个 {@code LayoutManager}，它将组件按层次分组，以决定它们在 {@code Container} 中的位置。{@code GroupLayout} 主要供生成器使用，但也可以手工编码。分组由 {@link Group Group} 类的实例来完成。{@code GroupLayout} 支持两种组。串行组 (sequential group) 按顺序一个接一个地放置其子元素。并行组 (parallel group) 能够以四种方式对齐其子元素。
+ <p>
+每个组可以包含任意数量的元素，其中元素有 {@code Group}、{@code Component} 或间隙 (gap)。间隙可被视为一个具有最小大小、首选大小和最大大小的不可见组件。此外，{@code GroupLayout} 还支持其值取自 {@code LayoutStyle} 的首选间隙。
+ <p>
+元素类似于一个弹簧。每个元素都有一个范围，由最小大小、首选大小和最大大小指定。间隙的范围由开发人员指定，或者由 {@code LayoutStyle} 确定。{@code Component} 的范围通过 {@code Component} 的 {@code getMinimumSize}、{@code getPreferredSize} 和 {@code getMaximumSize} 方法确定。此外，添加 {@code Component} 时，可以指定使用一个特定范围，而不使用该组件的范围。{@code Group} 的范围由组的类型确定。{@code ParallelGroup} 的范围是其元素范围的最大值。{@code SequentialGroup} 的范围是其元素范围的总和。
+ <p>
+{@code GroupLayout} 将每个轴 (axis) 单独对待。也就是说，存在一个表示水平轴的组和一个表示垂直轴的组。水平组负责确定沿水平轴的最小大小、首选大小和最大大小，并设置所包含组件的 x 和宽度。垂直组负责确定沿垂直轴的最小大小、首选大小和最大大小，并设置所包含组件的 y 和高度。每个 {@code Component} 都必须同时存在于水平组和垂直组中，否则，在布局过程中或者在请求最小大小、首选大小或最大大小时，将抛出 {@code IllegalStateException}。
+ <p>
+下图显示了一个沿水平轴的串行组。该串行组包含三个组件。沿垂直轴使用了一个并行组。 
+ <p align="center">
+ <img src="doc-files/groupLayout.1.gif">
+ <p>
+为了强调要单独对待每个轴，该图显示了沿每个轴的每个组和元素的范围。每个组件的范围已被投射到轴上，两个组分别呈现为蓝色（水平）和红色（垂直）。为了便于理解，串行组中的每个元素之间都有一个间隙。
+ <p>
+沿水平轴的串行组呈现为蓝色实线。注意，串行组是它所包含的子元素的总和。
+ <p>
+沿垂直轴，并行组是每个组件高度的最大值。由于三个组件的高度都相同，所以并行组具有相同的高度。
+ <p>
+下图显示了与上图中相同的三个组件，但并行组沿水平轴，串行组沿垂直轴。
+ <p>
+ <p align="center">
+ <img src="doc-files/groupLayout.2.gif">
+ <p>
+由于 {@code c1} 在三个组件中最大，所以并行组的大小被确定为 {@code c1}。由于 {@code c2} 和 {@code c3} 小于 {@code c1}，所以将根据为组件指定的对齐方式（如果已指定）或并行组的默认对齐方式将它们对齐。在该图中，{@code c2} 和 {@code c3} 是使用 {@code LEADING} 的对齐方式创建的。如果组件的方向是从右到左，那么 {@code c2} 和 {@code c3} 的位置将在相反的一侧对齐（沿右侧对齐）。
+ <p>
+下图显示了沿水平和垂直两个轴的串行组。
+ <p align="center">
+ <img src="doc-files/groupLayout.3.gif">
+ <p>
+{@code GroupLayout} 提供在 {@code Component} 之间插入间隙的能力。间隙的大小由 {@code LayoutStyle} 的实例确定。可以使用 {@code setAutoCreateGaps} 方法进行此操作。类似地，可以使用 {@code setAutoCreateContainerGaps} 方法在触到父容器边缘的组件和容器之间插入间隙。
+ <p>
+以下代码构建了一个面板，该面板由两列构成，第一列中有两个标签，第二列中有两个文本字段：
+ <pre>
+JComponent panel = ...;
+GroupLayout layout = new GroupLayout(panel);
+panel.setLayout(layout);
+ 
+// Turn on automatically adding gaps between components
+layout.setAutoCreateGaps(true);
+ 
+// Turn on automatically creating gaps between components that touch
+// the edge of the container and the container.
+layout.setAutoCreateContainerGaps(true);
+ 
+// Create a sequential group for the horizontal axis.
+ 
+GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
+ 
+// The sequential group in turn contains two parallel groups.
+// One parallel group contains the labels, the other the text fields.
+// Putting the labels in a parallel group along the horizontal axis
+// positions them at the same x location.
+   //
+// Variable indentation is used to reinforce the level of grouping.
+hGroup.addGroup(layout.createParallelGroup().
+addComponent(label1).addComponent(label2));
+hGroup.addGroup(layout.createParallelGroup().
+addComponent(tf1).addComponent(tf2));
+layout.setHorizontalGroup(hGroup);
+   
+// Create a sequential group for the vertical axis.
+GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
+ 
+// The sequential group contains two parallel groups that align
+// the contents along the baseline.The first parallel group contains
+// the first label and text field, and the second parallel group contains
+// the second label and text field.By using a sequential group
+// the labels and text fields are positioned vertically after one another.
+vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
+addComponent(label1).addComponent(tf1));
+vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
+addComponent(label2).addComponent(tf2));
+layout.setVerticalGroup(vGroup);
+ </pre>
+ <p>
+运行代码时，将出现下面的窗口。
+ <p align="center">
+ <img src="doc-files/groupLayout.example.png">
+ <p>
+此布局由以下部分组成。
+<ul><li>水平轴由一个包含两个并行组的串行组组成。第一个并行组包含标签，第二个并行组包含文本字段。
+<li>垂直轴由一个包含两个并行组的串行组组成。并行组被配置为沿基线对齐其组件。第一个并行组包含第一个标签和第一个文本字段，第二个并行组包含第二个标签和第二个文本字段。
+ </ul>
+在这段代码中，要注意几个问题：
+ <ul>
+<li>不需要显式地将组件添加到容器；通过使用 {@code Group} 的一个 {@code add} 方法间接完成此操作。
+<li>各种 {@code add} 方法返回调用者。这使得调用能很方便地进行链接。例如，{@code group.addComponent(label1).addComponent(label2);} 等效于 {@code group.addComponent(label1); group.addComponent(label2);}。
+<li>{@code Group} 没有公共构造方法；请使用 {@code GroupLayout} 的创建方法替代。
+ </ul>
+ 
+@author Tomas Pavek
+@author Jan Stola
+@author Scott Violet
+@version 1.2, 04/07/06
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.GroupLayout.DEFAULT_SIZE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示组件或间隙的大小应该用于特定的范围值。
+
+@see Group
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.GroupLayout.PREFERRED_SIZE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示组件或间隙的首选大小应该用于特定的范围值。
+
+@see Group
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout(Container host)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定的 {@code Container} 创建 {@code GroupLayout}。
+
+@param host {@code Container}，创建的 {@code GroupLayout} 将作为其 {@code LayoutManager}
+@throws IllegalArgumentException 如果 host 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setHonorsVisibility(boolean honorsVisibility)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置确定组件的大小和位置时是否要考虑组件的可见性。{@code true} 值指示非可见组件不应该被视为布局的一部分。{@code false} 值指示组件应该被确定位置和大小，而不管其可见性如何。
+ <p>
+当组件的可见性是动态调整的并且不想更改周围的组件及其大小时，{@code false} 值很有用。
+ <p>
+指定的值用于没有指定明确可见性的组件。
+ <p>
+默认值为 {@code true}。
+
+@param honorsVisibility 确定组件的大小和位置时是否要考虑组件的可见性
+@see #setHonorsVisibility(Component,Boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.GroupLayout.getHonorsVisibility()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回确定组件的大小和位置时是否要考虑组件的可见性。
+
+@return 确定组件的大小和位置时是否要考虑组件的可见性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setHonorsVisibility(Component component, Boolean honorsVisibility)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置确定组件的大小和位置时是否要考虑组件的可见性。{@code Boolean.TRUE} 值指示如果 {@code component} 不可见，则它不应该被视为布局的一部分。{@code false} 值指示 {@code component} 应该被确定位置和大小，而不管其可见性如何。{@code null} 值指示应该使用由单参数方法 {@code setHonorsVisibility} 指定的值。
+ <p>
+如果 {@code component} 不是此 {@code GroupLayout} 管理的 {@code Container} 的子组件，则它将被添加到 {@code Container}。
+
+@param component 组件
+@param honorsVisibility 确定大小和位置时是否要考虑 {@code component} 的可见性
+@throws IllegalArgumentException 如果 {@code component} 为 {@code null}
+@see #setHonorsVisibility(Component,Boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setAutoCreateGaps(boolean autoCreatePadding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否将自动创建组件之间的间隙。例如，如果设为 {@code true} 并且向 {@code SequentialGroup} 添加了两个组件，则将自动创建这两个组件之间的间隙。默认值为 {@code false}。
+
+@param autoCreatePadding 是否自动创建组件之间的间隙
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.GroupLayout.getAutoCreateGaps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果自动创建组件之间的间隙，则返回 {@code true}。
+
+@return 如果自动创建组件之间的间隙，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setAutoCreateContainerGaps(boolean autoCreateContainerPadding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否应该自动创建容器与触到容器边框的组件之间的间隙。默认值为 {@code false}。
+
+@param autoCreateContainerPadding 是否应该自动创建容器与触到容器边框的组件之间的间隙
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.GroupLayout.getAutoCreateContainerGaps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果自动创建容器与触到容器边框的组件之间的间隙，则返回 {@code true}。
+
+@return 如果自动创建容器与触到容器边框的组件之间的间隙，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setHorizontalGroup(GroupLayout.Group group)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置沿水平轴确定组件位置和大小的 {@code Group}。
+
+@param group 沿水平轴确定组件位置和大小的 {@code Group}
+@throws IllegalArgumentException 如果 group 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setVerticalGroup(GroupLayout.Group group)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置沿垂直轴确定组件位置和大小的 {@code Group}。
+
+@param group 沿垂直轴确定组件位置和大小的 {@code Group}
+@throws IllegalArgumentException 如果 group 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout.SequentialGroup javax.swing.GroupLayout.createSequentialGroup()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个 {@code SequentialGroup}。
+
+@return 一个新的 {@code SequentialGroup}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout.ParallelGroup javax.swing.GroupLayout.createParallelGroup()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 {@code Alignment.LEADING} 的对齐方式创建并返回一个 {@code ParallelGroup}。此方法是更常用的 {@code createParallelGroup(Alignment)} 方法的覆盖方法。
+
+@return 一个新的 {@code ParallelGroup}
+@see #createParallelGroup(Alignment)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout.ParallelGroup javax.swing.GroupLayout.createParallelGroup(GroupLayout.Alignment alignment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的对齐方式创建并返回一个 {@code ParallelGroup}。此方法是更常用的 {@code createParallelGroup(Alignment,boolean)} 方法（其中第二个参数为 {@code true}）的覆盖方法。
+
+@param alignment 组元素的对齐方式
+@throws IllegalArgumentException 如果 {@code alignment} 为 {@code null}
+@return 一个新的 {@code ParallelGroup}
+@see #createBaselineGroup
+@see ParallelGroup
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout.ParallelGroup javax.swing.GroupLayout.createParallelGroup(GroupLayout.Alignment alignment, boolean resizable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的对齐方式和调整大小行为创建并返回一个 {@code ParallelGroup}。{@code alignment} 参数指定如何确定没有将组填满的子元素的位置。例如，如果对齐方式为 {@code TRAILING} 的 {@code ParallelGroup} 被给定为 100，而一个子元素只需要 50，则将该子元素放置在位置 50（组件方向从左到右）。
+ <p>
+只有在沿垂直轴使用时基线对齐方式才有用。使用沿水平轴的基线对齐方式创建的 {@code ParallelGroup} 被视为 {@code LEADING}。
+ <p>
+有关基线组行为的详细信息，请参阅 {@link GroupLayout.ParallelGroup ParallelGroup}。
+
+@param alignment 组元素的对齐方式
+@param resizable 如果组是可调整大小的，则返回 {@code true}；如果组是不可调整大小的，则首选大小用于组的最小大小和最大大小。
+@throws IllegalArgumentException 如果 {@code alignment} 为 {@code null}
+@return 一个新的 {@code ParallelGroup}
+@see #createBaselineGroup
+@see GroupLayout.ParallelGroup
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.GroupLayout.ParallelGroup javax.swing.GroupLayout.createBaselineGroup(boolean resizable, boolean anchorBaselineToTop)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个沿基线对齐其元素的 {@code ParallelGroup}。 
+
+@param resizable 组是否是可调整大小的
+@param anchorBaselineToTop 基线是固定在组的顶部还是底部
+@see #createBaselineGroup
+@see ParallelGroup
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.linkSize(java.awt.Component[] components)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定组件强制调整为具有相同的大小，而不管其首选大小、最小大小或最大大小如何。将所有链接组件首选大小中的最大值赋予链接的组件。例如，如果将首选宽度分别为 10 和 20 的两个组件链接起来，则两个组件的宽度都将变为 20。
+ <p>
+可以多次使用此方法来将任意数量的组件强制调整为具有相同的大小。
+ <p>
+链接的 Component 是不可调整大小的。
+
+@param components 要具有相同大小的 {@code Component}
+@throws IllegalArgumentException 如果 {@code components} 为 {@code null} 或包含 {@code null}
+@see #linkSize(int,Component[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.linkSize(int axis, java.awt.Component[] components)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定组件强制调整为沿指定轴具有相同的大小，而不管其首选大小、最小大小或最大大小如何。将所有链接组件首选大小中的最大值赋予链接的组件。例如，如果沿水平轴将首选宽度分别为 10 和 20 的两个组件链接起来，则两个组件的宽度都将变为 20。
+ <p>
+可以多次使用此方法来将任意数量的组件强制调整为具有相同的大小。
+ <p>
+链接的 {@code Component} 是不可调整大小的。
+
+@param components 要具有相同大小的 {@code Component}
+@param axis 沿其链接大小的轴；{@code SwingConstants.HORIZONTAL} 或 {@code SwingConstans.VERTICAL} 之一
+@throws IllegalArgumentException 如果 {@code components} 为 {@code null} 或包含 {@code null}；或者 {@code axis} 不是 {@code SwingConstants.HORIZONTAL} 或 {@code SwingConstants.VERTICAL}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.replace(Component existingComponent, Component newComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用新的组件替代现有组件。
+
+@param existingComponent 应该被移除并用 {@code newComponent} 来替代的组件
+@param newComponent 要放入 {@code existingComponent} 的位置的组件
+@throws IllegalArgumentException 如果任一组件为 {@code null} 或者 {@code existingComponent} 不受此布局管理器管理
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.setLayoutStyle(LayoutStyle layoutStyle)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于计算组件之间首选间隙的 {@code LayoutStyle}。{@code null} 值指示应该使用 {@code LayoutStyle} 的共享实例。
+
+@param layoutStyle 要使用的 {@code LayoutStyle}
+@see LayoutStyle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.LayoutStyle javax.swing.GroupLayout.getLayoutStyle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code LayoutStyle}，用于计算组件之间的首选间隙。此方法返回指定给 {@code setLayoutStyle} 的值，可以为 {@code null}。
+
+@return 用于计算组件之间首选间隙的 {@code LayoutStyle}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.addLayoutComponent(String name, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已将 {@code Component} 添加到父容器的通知。不应该直接调用此方法，而应该使用一个 {@code Group} 方法来添加 {@code Component}。
+
+@param name 要与组件关联的字符串
+@param component 要添加的 {@code Component}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.removeLayoutComponent(Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已从父容器中移除 {@code Component} 的通知。不应该直接调用此方法，而应该调用父 {@code Container} 上的 {@code remove}。
+
+@param component 要移除的组件
+@see java.awt.Component#remove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.GroupLayout.preferredLayoutSize(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定容器的首选大小。
+
+@param parent 要返回其首选大小的容器
+@return {@code parent} 的首选大小
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+@throws IllegalStateException 如果添加到此布局的任意组件不同时位于水平组和垂直组中
+@see java.awt.Container#getPreferredSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.GroupLayout.minimumLayoutSize(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定容器的最小大小。
+
+@param parent 要返回其大小的容器
+@return {@code parent} 的最小大小
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+@throws IllegalStateException 如果添加到此布局的任意组件不同时位于水平组和垂直组中
+@see java.awt.Container#getMinimumSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.layoutContainer(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+布置指定的容器。
+
+@param parent 要布置的容器
+@throws IllegalStateException 如果添加到此布局的任意组件不同时位于水平组和垂直组中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.addLayoutComponent(Component component, Object constraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已将 {@code Component} 添加到父容器的通知。不应该直接调用此方法，而应该使用一个 {@code Group} 方法来添加 {@code Component}。
+
+@param component 要添加的组件
+@param constraints 组件放置位置的描述
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.GroupLayout.maximumLayoutSize(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定容器的最大大小。
+
+@param parent 要返回其大小的容器
+@return {@code parent} 的最大大小
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+@throws IllegalStateException 如果添加到此布局的任意组件不同时位于水平组和垂直组中
+@see java.awt.Container#getMaximumSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.GroupLayout.getLayoutAlignmentX(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回沿 x 轴的对齐方式。此方法指出如何相对于其他组件对齐该组件。该值应该是 0 到 1 之间的一个数，其中 0 表示沿原点对齐，1 表示在距原点最远的地方对齐，0.5 表示居中等等。
+
+@param parent 应用此 {@code LayoutManager} 的 {@code Container}
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+@return 对齐方式；此实现返回 {@code 0.5}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.GroupLayout.getLayoutAlignmentY(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回沿 y 轴的对齐方式。此方法指出如何相对于其他组件对齐该组件。该值应该是 0 到 1 之间的一个数，其中 0 表示沿原点对齐，1 表示在距原点最远的地方对齐，0.5 表示居中等等。
+
+@param parent 应用此 {@code LayoutManager} 的 {@code Container}
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+@return 对齐方式；此实现返回 {@code 0.5}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.GroupLayout.invalidateLayout(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使布局失效，指示如果布局管理器缓存了信息，则应该将其丢弃。
+
+@param parent 应用此 LayoutManager 的 {@code Container}
+@throws IllegalArgumentException 如果 {@code parent} 不是创建此 GroupLayout 的相同 {@code Container}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.GroupLayout.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 {@code GroupLayout} 的字符串表示形式。此方法仅用于调试，对于各个实现，所返回字符串的内容和格式可能有所不同。
+
+@return 此 {@code GroupLayout} 的字符串表示形式
+
+<!-- END DATA -->

@@ -1,0 +1,153 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.TimeUnit extends java.lang.Enum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>TimeUnit</tt> 表示给定单元粒度的时间段，它提供在这些单元中进行跨单元转换和执行计时及延迟操作的实用工具方法。<tt>TimeUnit</tt> 不维护时间信息，但是有助于组织和使用可能跨各种上下文单独维护的时间表示形式。毫微秒定义为千分之一微秒，微秒为千分之一毫秒，毫秒为千分之一秒，一分钟为六十秒，一小时为六十分钟，一天为二十四小时。 
+
+<p><tt>TimeUnit</tt> 主要用于通知基于时间的方法如何解释给定的计时参数。例如，如果 {@link java.util.concurrent.locks.Lock lock} 不可用，则以下代码将在 50 毫秒后超时：
+
+ <pre>  Lock lock = ...;
+  if ( lock.tryLock(50L, TimeUnit.MILLISECONDS) ) ...
+ </pre>
+而以下代码将在 50 秒后超时：
+ <pre>
+  Lock lock = ...;
+  if ( lock.tryLock(50L, TimeUnit.SECONDS) ) ...
+ </pre>
+
+但是注意，不保证特定超时实现能够以与给定 <tt>TimeUnit</tt> 相同的粒度通知
+
+段。
+
+@since 1.5
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.convert(long sourceDuration, TimeUnit sourceUnit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定单元的时间段转换到此单元。从较细粒度到较粗粒度的舍位转换，这样会失去精确性。例如，将 <tt>999</tt> 毫秒转换为秒的结果为 <tt>0</tt>。使用参数从较粗粒度到较细粒度转换，如果参数为负，则在数字上溢出至 <tt>Long.MIN_VALUE</tt>，如果为正，则为 <tt>Long.MAX_VALUE</tt>。
+
+<p>例如，要将 10 分钟转换为毫秒，请使用：<tt>TimeUnit.MILLISECONDS.convert(10L, TimeUnit.MINUTES)</tt>
+
+@param sourceDuration 给定 <tt>sourceUnit</tt> 中的时间段
+@param sourceUnit <tt>sourceDuration</tt> 参数的单元
+@return 此单元中的转换时间段；如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toNanos(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <tt>NANOSECONDS.convert(duration, this)</tt>。
+@param duration 时间段
+@return 转换时间段，如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+@see #convert
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toMicros(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <tt>MICROSECONDS.convert(duration, this)</tt>。
+@param duration 时间段
+@return 转换时间段，如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+@see #convert
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toMillis(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <tt>MILLISECONDS.convert(duration, this)</tt>。
+@param duration 时间段
+@return 转换时间段，如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+@see #convert
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toSeconds(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <tt>SECONDS.convert(duration, this)</tt>。
+@param duration 时间段
+@return 转换时间段；如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+@see #convert
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toMinutes(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 等效于 <tt>MINUTES.convert(duration, this)</tt>。
+ @param duration 时间段
+ @return 转换时间段；如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+ @see #convert
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toHours(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 等效于 <tt>HOURS.convert(duration, this)</tt>。
+ @param duration 时间段
+ @return 转换时间段；如果转换将负溢出，则返回 <tt>Long.MIN_VALUE</tt>；如果转换将正溢出，则返回 <tt>Long.MAX_VALUE</tt>。
+ @see #convert
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.concurrent.TimeUnit.toDays(long duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 等效于 <tt>DAYS.convert(duration, this)</tt>。
+ @param duration 时间段
+ @return 转换时间段
+ @see #convert
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.TimeUnit.timedWait(Object obj, long timeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此时间单元执行计时的 <tt>Object.wait</tt>。这是将超时参数转换为 <tt>Object.wait</tt> 方法所需格式的便捷方法。
+
+<p>例如，可以使用以下代码实现阻塞 <tt>poll</tt> 方法（参见 {@link BlockingQueue#poll BlockingQueue.poll}）：
+
+ <pre>  public synchronized  Object poll(long timeout, TimeUnit unit) throws InterruptedException {
+    while (empty) {
+      unit.timedWait(this, timeout);
+      ...
+    }
+  }</pre>
+
+@param obj 要等待的对象
+@param timeout 要等待的最长时间。如果小于等于 0，则根本不会等待。
+@throws InterruptedException 如果等待时中断。
+@see Object#wait(long, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.TimeUnit.timedJoin(Thread thread, long timeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此时间单元执行计时的 <tt>Thread.join</tt>。这是将时间参数转换为 <tt>Thread.join</tt> 方法所需格式的便捷方法。
+@param thread 要等待的线程
+@param timeout 要等待的最长时间。如果小于等于 0，则根本不会等待。
+@throws InterruptedException 如果等待时中断。
+@see Thread#join(long, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.TimeUnit.sleep(long timeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此单元执行 <tt>Thread.sleep</tt>.这是将时间参数转换为 <tt>Thread.sleep</tt> 方法所需格式的便捷方法。
+@param timeout 休眠的最短时间。如果小于等于 0，则根本不会休眠。
+@throws InterruptedException 如果休眠时中断。
+@see Thread#sleep
+
+<!-- END DATA -->

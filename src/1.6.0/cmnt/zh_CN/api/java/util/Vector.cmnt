@@ -1,0 +1,574 @@
+<!-- BEGIN KEY -->
+public class java.util.Vector extends java.util.AbstractList implements java.util.List, java.util.RandomAccess, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code Vector} 类可以实现可增长的对象数组。与数组一样，它包含可以使用整数索引进行访问的组件。但是，{@code Vector} 的大小可以根据需要增大或缩小，以适应创建 {@code Vector} 后进行添加或移除项的操作。
+
+<p>每个向量会试图通过维护 {@code capacity} 和 {@code capacityIncrement} 来优化存储管理。{@code capacity} 始终至少应与向量的大小相等；这个值通常比后者大些，因为随着将组件添加到向量中，其存储将按 {@code capacityIncrement} 的大小增加存储块。应用程序可以在插入大量组件前增加向量的容量；这样就减少了增加的重分配的量。
+
+<p>由 Vector 的 iterator 和 listIterator 方法所返回的迭代器是<em>快速失败的</em>：如果在迭代器创建后的任意时间从结构上修改了向量（通过迭代器自身的 remove 或 add 方法之外的任何其他方式），则迭代器将抛出 ConcurrentModificationException。因此，面对并发的修改，迭代器很快就完全失败，而不是冒着在将来不确定的时间任意发生不确定行为的风险。Vector 的 elements 方法返回的 Enumeration <em>不是</em> 快速失败的。
+
+<p>注意，迭代器的快速失败行为不能得到保证，一般来说，存在不同步的并发修改时，不可能作出任何坚决的保证。快速失败迭代器尽最大努力抛出 {@code ConcurrentModificationException}。因此，编写依赖于此异常的程序的方式是错误的，正确做法是：<i>迭代器的快速失败行为应该仅用于检测 bug。</i>
+
+<p>从 Java 2 平台 v1.2 开始，此类改进为可以实现 {@link List} 接口，使它成为 <a href="{@docRoot}/../technotes/guides/collections/index.html"> Java
+ Collections Framework</a> 的成员。与新 collection 实现不同，{@code Vector} 是同步的。
+
+@author  Lee Boynton
+@author  Jonathan Payne
+@version 1.106, 06/16/06
+@see Collection
+@see List
+@see ArrayList
+@see LinkedList
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object[] java.util.Vector.elementData
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存储向量组件的数组缓冲区。vector 的容量就是此数据缓冲区的长度，该长度至少要足以包含向量的所有元素。
+
+<p>Vector 中的最后一个元素后的任何数组元素都为 null。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.util.Vector.elementCount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code Vector} 对象中的有效组件数。从 {@code elementData[0]} 到 {@code elementData[elementCount-1]} 的组件均为实际项。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.util.Vector.capacityIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向量的大小大于其容量时，容量自动增加的量。如果容量的增量小于等于零，则每次需要增大容量时，向量的容量将增大一倍。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector(int initialCapacity, int capacityIncrement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的初始容量和容量增量构造一个空的向量。 
+
+@param   initialCapacity     向量的初始容量
+@param   capacityIncrement   当向量溢出时容量增加的量
+@throws IllegalArgumentException 如果指定的初始容量为负数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的初始容量和等于零的容量增量构造一个空向量。
+
+@param   initialCapacity     向量的初始容量
+@throws IllegalArgumentException 如果指定的初始容量为负数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个空向量，使其内部数据数组的大小为 {@code 10}，其标准容量增量为零。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包含指定 collection 中的元素的向量，这些元素按其 collection 的迭代器返回元素的顺序排列。
+
+@param c 其元素要放入此向量中的 collection
+@throws NullPointerException 如果指定的 collection 为 null
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.copyInto(java.lang.Object[] anArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此向量的组件复制到指定的数组中。此向量中索引 {@code k} 处的项将复制到 {@code anArray} 的组件 {@code k} 中。
+
+@param  anArray   要将组件复制到其中的数组
+@throws NullPointerException 如果给定的数组为 null
+@throws IndexOutOfBoundsException 如果指定数组不够大，不能够保存此向量中的所有组件
+@throws ArrayStoreException 如果此向量的组件不属于可在指定数组中存储的运行时类型
+@see #toArray(Object[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.trimToSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对此向量的容量进行微调，使其等于向量的当前大小。如果此向量的容量大于其当前大小，则通过将其内部数据数组（保存在字段 {@code elementData} 中）替换为一个较小的数组，从而将容量更改为等于当前大小。应用程序可以使用此操作最小化向量的存储。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.ensureCapacity(int minCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+增加此向量的容量（如有必要），以确保其至少能够保存最小容量参数指定的组件数。
+
+<p>如果此向量的当前容量小于 {@code minCapacity}，则通过将其内部数据数组（保存在字段 {@code elementData} 中）替换为一个较大的数组来增加其容量。新数据数组的大小将为原来的大小加上 {@code capacityIncrement}，除非 {@code capacityIncrement} 的值小于等于零，在后一种情况下，新的容量将为原来容量的两倍，不过，如果此大小仍然小于 {@code minCapacity}，则新容量将为 {@code minCapacity}。
+
+@param minCapacity 需要的最小容量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.setSize(int newSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此向量的大小。如果新大小大于当前大小，则会在向量的末尾添加相应数量的 {@code null} 项。如果新大小小于当前大小，则丢弃索引 {@code newSize} 处及其之后的所有项。
+
+@param   newSize   此向量的新大小
+@throws  ArrayIndexOutOfBoundsException 如果新大小为负数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.capacity()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的当前容量。
+
+@return  当前容量（保存在此向量的 {@code elementData} 字段中的内部数据数组的长度）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量中的组件数。
+
+@return  此向量中的组件数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此向量是否不包含组件。
+
+@return  当且仅当此向量没有组件（也就是说其大小为零）时返回 {@code true}；否则返回 {@code false}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<E> java.util.Vector.elements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的组件的枚举。返回的 {@code Enumeration} 对象将生成此向量中的所有项。生成的第一项为索引 {@code 0} 处的项，然后是索引 {@code 1} 处的项，依此类推。 
+
+@return  此向量的组件的枚举
+@see     Iterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Vector.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此向量包含指定的元素，则返回 {@code true}。更确切地讲，当且仅当此向量至少包含一个满足 <tt>(o==null&nbsp;?&nbsp;e==null&nbsp;:&nbsp;o.equals(e))</tt> 的元素  {@code e} 时，返回 {@code true}。
+
+ @param o 测试在此向量中是否存在的元素
+ @return 如果此向量包含指定的元素，则返回 {@code true} 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Vector.indexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量中第一次出现的指定元素的索引，如果此向量不包含该元素，则返回 -1。更确切地讲，返回满足 <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> 的最低索引 {@code i}；如果没有这样的索引，则返回 -1。
+
+ @param o 要搜索的元素
+ @return 此向量中第一次出现的指定元素的索引；如果此向量不包含该元素，则返回 -1 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.indexOf(Object o, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量中第一次出现的指定元素的索引，从 {@code index} 处正向搜索，如果未找到该元素，则返回 -1。更确切地讲，返回满足 <tt>(i&nbsp;&gt;=&nbsp;index&nbsp;&amp;&amp;&nbsp;(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i))))</tt> 的最低索引 {@code i}；如果没有这样的索引，则返回 -1。
+
+ @param o 要搜索的元素
+ @param index 搜索开始处的索引
+ @return 此向量中 {@code index} 位置或之后位置处第一次出现的指定元素的索引；如果未找到该元素，则返回 {@code -1}。
+ @throws IndexOutOfBoundsException 如果指定索引为负数
+ @see     Object#equals(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.lastIndexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量中最后一次出现的指定元素的索引；如果此向量不包含该元素，则返回 -1。更确切地讲，返回满足 <tt>(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i)))</tt> 的最高索引 {@code i}；如果没有这样的索引，则返回 -1。
+
+ @param o 要搜索的元素
+ @return 此向量中最后一次出现的指定元素的索引；如果此向量不包含该元素，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.lastIndexOf(Object o, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量中最后一次出现的指定元素的索引，从 {@code index} 处逆向搜索，如果未找到该元素，则返回 -1。更确切地讲，返回满足 <tt>(i&nbsp;&lt;=&nbsp;index&nbsp;&amp;&amp;&nbsp;(o==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;o.equals(get(i))))</tt> 的最高索引 {@code i}；如果没有这样的索引，则返回 -1。
+
+ @param o 要搜索的元素
+ @param index 逆向搜索开始处的索引
+ @return 此向量中小于等于 {@code index} 位置处最后一次出现的指定元素的索引；如果未找到该元素，则返回 -1。   
+ @throws IndexOutOfBoundsException 如果指定索引大于等于此向量的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.elementAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定索引处的组件。
+
+<p>此方法的功能与 {@link #get(int)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。
+
+@param      index   此向量的一个索引
+@return     指定索引处的组件
+@throws  ArrayIndexOutOfBoundsException  如果该索引超出范围 ({@code index < 0 || index >= size()}) 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.firstElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的第一个组件（位于索引 {@code 0}) 处的项）。
+
+@return     此向量的第一个组件
+@throws  NoSuchElementException 如果此向量没有组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.lastElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的最后一个组件。
+
+@return  向量的最后一个组件，即索引 <code>size()&nbsp;-&nbsp;1</code> 处的组件。
+@throws  NoSuchElementException  如果此向量为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.setElementAt(E obj, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此向量指定 {@code index} 处的组件设置为指定的对象。丢弃该位置以前的组件。
+
+<p>索引必须为一个大于等于 {@code 0} 且小于向量当前大小的值。
+
+<p>此方法的功能与 {@link #set(int, Object) set(int, E)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。注意，{@code set} 方法将反转参数的顺序，与数组用法更为匹配。另外还要注意，{@code set} 方法将返回以前存储在指定位置的旧值。
+
+@param      obj     将用来设置组件的内容
+@param   index   指定的索引
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index >= size()})
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.removeElementAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+删除指定索引处的组件。此向量中的每个索引大于等于指定 {@code index} 的组件都将下移，使其索引值变成比以前小 1 的值。此向量的大小将减 {@code 1}。
+
+<p>索引必须为一个大于等于 {@code 0} 且小于向量当前大小的值。
+
+<p>此方法的功能与 {@link #remove(int)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。注意，{@code remove} 方法将返回存储在指定位置的旧值。
+
+@param      index   要移除对象的索引
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index >= size()})
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.insertElementAt(E obj, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定对象作为此向量中的组件插入到指定的 {@code index} 处。此向量中的每个索引大于等于指定 {@code index} 的组件都将向上移位，使其索引值变成比以前大 1 的值。
+
+<p>索引必须为一个大于等于 {@code 0} 且小于等于向量当前大小的值（如果索引等于向量的当前大小，则将新元素添加到向量）。
+
+<p>此方法的功能与 {@link #add(int, Object) add(int, E)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。注意，{@code add} 方法将反转参数的顺序，与数组用法更为匹配。
+
+@param      obj     要插入的组件
+@param      index   新组件的插入位置
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index > size()})
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.addElement(E obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的组件添加到此向量的末尾，将其大小增加 1。如果向量的大小比容量大，则增大其容量。
+
+<p>此方法的功能与 {@link #add(Object) add(E)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。
+
+@param   obj   要添加的组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.removeElement(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此向量中移除变量的第一个（索引最小的）匹配项。如果在此向量中找到该对象，那么向量中索引大于等于该对象索引的每个组件都会下移，使其索引值变成比以前小 1 的值。
+
+<p>此方法的功能与 {@link #remove(Object)} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。
+
+@param   obj   要移除的组件
+@return 如果变量值是此向量的一个组件，则返回 {@code true}；否则返回 {@code false}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Vector.removeAllElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此向量中移除全部组件，并将其大小设置为零。
+
+<p>此方法的功能与 {@link #clear} 方法的功能完全相同（后者是 {@link List} 接口的一部分）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.util.Vector.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回向量的一个副本。副本中将包含一个对内部数据数组副本的引用，而非对此 {@code Vector} 对象的原始内部数据数组的引用。 
+
+@return     向量的一个副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object[] java.util.Vector.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，包含此向量中以恰当顺序存放的所有元素。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized T[] java.util.Vector.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，包含此向量中以恰当顺序存放的所有元素；返回数组的运行时类型为指定数组的类型。如果向量能够适应指定的数组，则返回该数组。否则使用此数组的运行时类型和此向量的大小分配一个新数组。
+
+<p>如果向量能够适应指定的数组，而且还有多余空间（即数组的元素比向量的元素多），则将紧跟向量末尾的数组元素设置为 null。（<em>仅</em> 在调用者知道向量不包含任何 null 元素的情况下，这对确定向量的长度才有用）。
+
+@param a 要在其中存储向量元素的数组（如果该数组足够大）；否则，将为此分配一个具有相同运行时类型的新数组。
+@return 包含向量元素的数组
+@throws ArrayStoreException 如果 a 的运行时类型不是此向量中每个元素的运行时类型的超类型
+@throws NullPointerException 如果给定的数组为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.get(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回向量中指定位置的元素。
+
+@param index 要返回元素的索引
+@return 指定索引处的对象
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index >= size()})
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.set(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的元素替换此向量中指定位置处的元素。
+
+@param index 要替换元素的索引
+@param element 要存储在指定位置的元素
+@return 以前位于指定位置处的元素
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index >= size()})
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素添加到此向量的末尾。
+
+@param e 要添加到此向量的元素
+@return {@code true}（根据 {@link Collection#add} 的规定）
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Vector.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此向量中指定元素的第一个匹配项，如果向量不包含该元素，则元素保持不变。更确切地讲，移除其索引 i 满足 {@code (o==null ? get(i)==null : o.equals(get(i)))} 的元素（如果存在这样的元素）。
+
+@param o 要从向量中移除的元素（如果存在）
+@return 如果向量包含指定元素，则返回 true
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Vector.add(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此向量的指定位置插入指定的元素。将当前位于该位置的元素（如果有）及所有后续元素右移（将其索引加 1）。
+
+@param index 要在其位置插入指定元素的索引
+@param element 要插入的元素
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index > size()})
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized E java.util.Vector.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此向量中指定位置的元素。将所有后续元素左移（将其索引减 1）。返回此向量中移除的元素。
+
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index >= size()})
+@param index 要移除元素的索引
+@return 移除的元素
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Vector.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此向量中移除所有元素。此调用返回后，向量将为空（除非抛出了异常）。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.containsAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此向量包含指定 Collection 中的所有元素，则返回 true。
+
+@param   c 要在此向量中测试是否包含其元素的 collection
+@return 如果此向量包含指定 collection 中的所有元素，则返回 true
+@throws NullPointerException 如果指定 collection 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.addAll(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 Collection 中的所有元素添加到此向量的末尾，按照指定 collection 的迭代器所返回的顺序添加这些元素。如果指定的 Collection 在操作过程中被修改，则此操作的行为是不确定的（这意味着如果指定的 Collection 是此向量，而此向量不为空，则此调用的行为是不确定的）。
+
+@param c 要插入到此向量的元素
+@return 如果此向量由于调用而更改，则返回 {@code true}
+@throws NullPointerException 如果指定 collection 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此向量中移除包含在指定 Collection 中的所有元素。
+
+@param c 要从向量中移除的元素的 collection
+@return 如果此向量由于调用而更改，则返回 true
+@throws ClassCastException 如果此向量中的一个或多个元素的类型与指定 collection 不兼容（可选）
+@throws NullPointerException 如果此向量包含一个或多个 null 元素并且指定 collection 不支持 null 元素（可选），或者指定 collection 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.retainAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此向量中仅保留包含在指定 Collection 中的元素。换句话说，从此向量中移除所有未包含在指定 Collection 中的元素。
+
+@param c 要在此向量中保留的元素的 collection（移除其他所有元素）
+@return 如果此向量由于调用而更改，则返回 true
+@throws ClassCastException 如果此向量中的一个或多个元素的类型与指定 collection 不兼容（可选）
+@throws NullPointerException 如果此向量包含一个或多个 null 元素并且指定 collection 不支持 null 元素（可选），或者指定 collection 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.addAll(int index, java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定位置将指定 Collection 中的所有元素插入到此向量中。将当前位于该位置的元素（如果有）及所有后续元素右移（增大其索引值）。新元素在向量中按照其由指定 collection 的迭代器所返回的顺序出现。
+
+@param index 要插入指定 collection 的第一个元素的索引
+@param c 要插入到此向量的元素
+@return 如果此向量由于调用而更改，则返回 {@code true}
+@throws ArrayIndexOutOfBoundsException 如果索引超出范围 ({@code index < 0 || index > size()})
+@throws NullPointerException 如果指定的 collection 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Vector.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此向量的相等性。当且仅当指定的对象也是一个 List、两个 List 大小相同，并且其中所有对应的元素对都<em>相等</em> 时才返回 true。（如果 {@code (e1==null ? e2==null :
+ e1.equals(e2))}，则两个元素 {@code e1} 和 {@code e2} <em>相等</em>）。换句话说，如果两个 List 包含相同顺序的相同元素，则这两个 List 就定义为相等。
+
+@param o 要与此向量进行相等性比较的对象
+@return 如果指定的 Object 与此向量相等，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Vector.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String java.util.Vector.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此向量的字符串表示形式，其中包含每个元素的 String 表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.List<E> java.util.Vector.subList(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 List 的部分视图，元素范围为从 fromIndex（包括）到 toIndex（不包括）。（如果 fromIndex 和 toIndex 相等，则返回的 List 将为空）。返回的 List 由此 List 支持，因此返回 List 中的更改将反映在此 List 中，反之亦然。返回的列表支持此列表支持的所有可选列表操作。
+
+<p>此方法消除了显式范围操作的需要（此操作通常针对数组存在）。通过操作 subList 视图而非整个 List，期望 List 的任何操作可用作范围操作。例如，下面的语句从 List 中移除了元素的范围：
+ <pre>
+	    list.subList(from, to).clear();
+ </pre>
+可以对 indexOf 和 lastIndexOf 构造类似的语句，而且 Collections 类中的所有算法都可以应用于 subList。
+
+<p>如果通过任何其他方式（而不是通过返回的列表）<i>从结构上修改</i> 内部 List（即此 List），则此方法返回的 List 的语义将变为不确定的（从结构上修改是指更改 List 的大小，或者以其他方式打乱 List，使正在进行的迭代产生错误的结果）。
+
+@param fromIndex subList的低端点（包括）
+@param toIndex subList 的高端点（不包括）
+@return List 中指定范围的视图
+@throws IndexOutOfBoundsException 如果端点索引值超出范围 {@code (fromIndex < 0 || toIndex > size)}
+@throws IllegalArgumentException 如果端点索引顺序错误 {@code (fromIndex > toIndex)}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.util.Vector.removeRange(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 List 中移除其索引位于 fromIndex（包括）与 toIndex（不包括）之间的所有元素。将所有后续元素左移（减小其索引值）。此调用会将 ArrayList 缩小 (toIndex - fromIndex) 个元素（如果 toIndex==fromIndex，则此操作没有任何效果）。
+
+@param fromIndex 要移除的第一个元素的索引
+@param toIndex 要移除的最后一个元素之后的索引
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.util.Vector.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 {@code Vector} 实例的状态保存到流中（也就是将其序列化）。此方法只在同步时使用。它仅调用默认的 writeObject 方法。
+
+<!-- END DATA -->

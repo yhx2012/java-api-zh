@@ -1,0 +1,110 @@
+<!-- BEGIN KEY -->
+public interface java.rmi.registry.Registry extends java.rmi.Remote
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Registry</code> 是简单远程对象注册表的一个远程接口，它提供存储和获取绑定了任意字符串名称的远程对象引用的方法。<code>bind</code>、<code>unbind</code> 和 <code>rebind</code> 方法用于改变注册表中的名称绑定，<code>lookup</code> 和 <code>list</code> 方法用于查询当前的名称绑定。
+
+<p>在其典型用法中，<code>Registry</code> 启用 RMI 客户机引导：它为客户机提供获得对远程对象的初始引用的简单方式。因此，导出的注册表的远程对象实现通常具有已知的地址，如具有已知的 {@link java.rmi.server.ObjID#REGISTRY_ID ObjID} 和 TCP 端口号（默认为 {@link #REGISTRY_PORT 1099}）。
+
+<p>{@link LocateRegistry} 类提供的一个可编程的 API，以便构造对远程地址上的 <code>Registry</code> 的引导引用（请参阅静态 <code>getRegistry</code> 方法），以及在当前 VM 所在的特定本地地址创建和导出 <code>Registry</code>（请参阅静态 <code>createRegistry</code> 方法）。
+
+<p><code>Registry</code> 实现可以选择限制对其中的某些或全部方法的访问（例如，可以限制改变注册表绑定的方法来限制对本地主机发起的调用）。如果 <code>Registry</code> 方法选择拒绝对给定调用的访问，则其实现可能抛出 {@link java.rmi.AccessException}，抛出的这一异常（因为它扩展 {@link java.rmi.RemoteException}）可能会在远程客户端捕获它时包装在 {@link java.rmi.ServerException} 中。
+
+<p>在 <code>Registry</code> 中用于绑定的名称是纯字符串，不是经过分析的。在 <code>Registry</code> 中存储其远程引用的服务可能希望将包名称用作名称绑定中的前缀，以减少注册表中可能的名称冲突。
+
+@author	Ann Wollrath
+@author	Peter Jones
+@version	1.18, 03/12/19
+@since	JDK1.1
+@see		LocateRegistry
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.rmi.registry.Registry.REGISTRY_PORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已知的注册表端口。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.Remote java.rmi.registry.Registry.lookup(String name) throws java.rmi.RemoteException, java.rmi.NotBoundException, java.rmi.AccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回注册表中绑定到指定 <code>name</code> 的远程引用。
+
+@param	name 要查找的远程引用的名称
+
+@return	对远程对象的引用
+
+@throws	NotBoundException 如果当前未绑定 <code>name</code>
+
+@throws	RemoteException 如果与注册表的远程通信失败；如果异常是包含 <code>AccessException</code> 的 <code>ServerException</code>，则注册表拒绝调用方对执行此操作的访问。
+
+@throws	AccessException 如果此注册表是本地的，并且它拒绝调用方对执行此操作的访问
+
+@throws	NullPointerException 如果 <code>name</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.registry.Registry.bind(String name, Remote obj) throws java.rmi.RemoteException, java.rmi.AlreadyBoundException, java.rmi.AccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绑定对此注册表中指定 <code>name</code> 的远程引用。
+
+@param	name 与该远程引用相关的名称
+@param	obj 对远程对象（通常是一个 stub）的引用
+
+@throws	AlreadyBoundException 如果已经绑定了 <code>name</code>
+
+@throws	RemoteException 如果与注册表的远程通信失败；如果异常是包含 <code>AccessException</code> 的 <code>ServerException</code>，则注册表拒绝调用方对执行此操作的访问（例如，发起的操作来自非本地主机）
+
+@throws	AccessException 如果此注册表是本地的，并且它拒绝调用方对执行此操作的访问
+
+@throws	NullPointerException 如果 <code>name</code> 为 <code>null</code>，或者如果 <code>obj</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.registry.Registry.unbind(String name) throws java.rmi.RemoteException, java.rmi.NotBoundException, java.rmi.AccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此注册表中指定的 <code>name</code> 绑定。
+
+@param	name 要移除的绑定名称
+
+@throws	NotBoundException 如果当前未绑定 <code>name</code>
+
+@throws	RemoteException 如果与注册表的远程通信失败；如果异常是包含 <code>AccessException</code> 的 <code>ServerException</code>，则注册表拒绝调用方对执行此操作的访问（例如，发起的操作来自非本地主机）
+
+@throws	AccessException 如果此注册表是本地的，并且它拒绝调用方对执行此操作的访问
+
+@throws	NullPointerException 如果 <code>name</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.registry.Registry.rebind(String name, Remote obj) throws java.rmi.RemoteException, java.rmi.AccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用提供的远程引用替换此注册表中指定的 <code>name</code> 绑定。如果存在指定 <code>name</code> 的现有绑定，则会丢弃此现有的绑定。
+
+@param	name 与该远程引用相关的名称
+@param	obj 对远程对象（通常是一个 stub）的引用
+
+@throws	RemoteException 如果与注册表的远程通信失败；如果异常是包含 <code>AccessException</code> 的 <code>ServerException</code>，则注册表拒绝调用方对执行此操作的访问（例如，发起的操作来自非本地主机）
+
+@throws	AccessException 如果此注册表是本地的，并且它拒绝调用方对执行此操作的访问
+
+@throws	NullPointerException 如果 <code>name</code> 为 <code>null</code>，或者如果 <code>obj</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.rmi.registry.Registry.list() throws java.rmi.RemoteException, java.rmi.AccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此注册表中绑定的名称的数组。该数组将包含一个此注册表中调用此方法时绑定的名称快照。
+
+@return	此注册表中绑定名称的数组
+
+@throws	RemoteException 如果与注册表的远程通信失败；如果异常是包含 <code>AccessException</code> 的 <code>ServerException</code>，则注册表拒绝调用方对执行此操作的访问。
+
+@throws	AccessException 如果此注册表是本地的，并且它拒绝调用方对执行此操作的访问
+
+<!-- END DATA -->

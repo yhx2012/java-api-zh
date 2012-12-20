@@ -1,0 +1,197 @@
+<!-- BEGIN KEY -->
+public class javax.crypto.SealedObject extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类使程序员能够用加密算法创建对象并保护其机密性。
+
+<p> 在给定任何 Serializable 对象的情况下，程序员可以序列化格式（即&ldquo;深层复制&rdquo;）封装原始对象的 SealedObject，并使用 DES 一类的加密算法密封（加密）其序列化的内容，以保护其机密性。加密的内容以后可以解密（使用相应的算法和正确的解密密钥）和反序列化，并生成原始对象。
+
+<p> 注意，该 Cipher 对象在应用于 SealedObject 之前必须使用正确的算法、密钥、填充方案等进行完全初始化。
+
+<p> 已密封的原始对象可以用以下两种不同的方式恢复： <p>
+
+ <ul>
+
+<li>使用采用 <code>Cipher</code> 对象的 {@link #getObject(javax.crypto.Cipher) getObject} 方法。
+ 
+<p> 此方法需要一个完全初始化的 <code>Cipher</code> 对象，用极其相同、用来密封对象的算法、密钥、填充方案等进行初始化。
+
+<p> 这样做的好处是解封密封对象的一方不需要知道解密密钥。例如，一方用所需的解密密钥初始化 cipher 对象之后，它就会将 cipher 对象移交给以后要解封密封对象的另一方。
+
+ <p>
+ 
+<li>使用采用 <code>Key</code> 对象的 {@link #getObject(java.security.Key) getObject} 方法。
+
+<p> 在此方法中，<code>getObject</code> 方法创建一个用于适当解密算法的 cipher 对象，并用给定的解密密钥和存储在密封对象中的算法参数（如果有）对其进行初始化。
+
+<p> 这样做的好处是解封此对象的一方不需要跟踪用来密封该对象的参数（如 IV）。
+
+ </ul>
+
+@author Li Gong
+@author Jan Luehe
+@version 	1.30, 10/29/03
+@see Cipher
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected byte[] javax.crypto.SealedObject.encodedParams
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+由密封 Cipher 使用的加密参数，以默认格式进行编码。
+<p>
+即 <code>cipher.getParameters().getEncoded()</code>。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] javax.crypto.SealedObject.encryptedContent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以加密格式存在的序列化对象内容。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String javax.crypto.SealedObject.sealAlg
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于密封此对象的算法。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String javax.crypto.SealedObject.paramsAlg
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+所用的参数算法。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.crypto.SealedObject(Serializable object, Cipher c) throws java.io.IOException, javax.crypto.IllegalBlockSizeException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从任何 Serializable 对象构造一个 SealedObject。
+
+<p>序列化给定的对象，并使用给定的 Cipher 加密其序列化的内容，其必须完全序列化。
+
+<p>在加密操作中可能使用到的所有算法参数都存储在新的 <code>SealedObject</code> 内。
+
+@param  object  要密封的对象；可以为 null。
+@param  c  用于密封对象的密码。
+
+@exception NullPointerException  如果给定的密码为 null。
+@exception IOException  如果在序列化过程中发生错误
+@exception IllegalBlockSizeException  如果给定的密码是块密码、或者该块密码不需要填充，或者总输入长度（即序列化对象内容的长度）不是该密码的块大小的倍数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.crypto.SealedObject(SealedObject so)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据传入的 SealedObject 构造一个 SealedObject 对象。
+
+@param  so  SealedObject 对象
+@exception NullPointerException  如果给定的密封对象为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.crypto.SealedObject.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回用于密封此对象的算法。
+
+@return  用于密封此对象的算法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object javax.crypto.SealedObject.getObject(Key key) throws java.io.IOException, java.lang.ClassNotFoundException, java.security.NoSuchAlgorithmException, java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取原始（封装的）对象。
+
+<p>此方法为密封操作中已使用的算法创建一个密码。如果默认提供者包提供该算法的一个实现，则使用一个包含该实现的 Cipher 实例。如果在默认的包中未提供该算法，则将搜索其他的包。使用给定的 <code>key</code> 和密封操作中已使用的参数（如果有）初始化用于解密的 Cipher 对象。
+
+<p>在返回已封装的对象之前将其解封和反序列化。
+
+@param  key  用于解封对象的密钥。
+
+@return  原始对象。
+
+@exception IOException  如果在反序列化过程中发生错误。
+@exception ClassNotFoundException  如果在反序列化过程中发生错误。
+@exception NoSuchAlgorithmException  如果解封对象的算法不可用。
+@exception InvalidKeyException  如果无法使用给定密钥解封对象（例如其算法错误）。
+@exception NullPointerException 如果 <code>key</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object javax.crypto.SealedObject.getObject(Cipher c) throws java.io.IOException, java.lang.ClassNotFoundException, javax.crypto.IllegalBlockSizeException, javax.crypto.BadPaddingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取原始（封装的）对象。
+
+<p>在返回已封装的对象之前将其解封（使用给定的 Cipher，假定该 Cipher 已正确初始化）和反序列化。
+
+@param  c  用于解封该对象的密码
+
+@return  原始对象。
+
+@exception NullPointerException  如果给定的密码为 null。
+@exception IOException  如果反序列化过程中发生错误
+@exception ClassNotFoundException  如果在反序列化过程中发生错误
+@exception IllegalBlockSizeException  如果给定密码是块密码、或者不需要填充该块密码，或者总输入长度不是该密码块大小的倍数
+@exception BadPaddingException  如果已初始化用于解密的给定密码，并且指定了填充，但输入数据没有适当的所需填充字节
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object javax.crypto.SealedObject.getObject(Key key, String provider) throws java.io.IOException, java.lang.ClassNotFoundException, java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException, java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取原始（封装的）对象。
+
+<p>此方法使用给定 <code>provider</code> 中的算法的实现，为密封操作中已使用的此算法创建一个密码。使用给定的 <code>key</code> 和密封操作中已使用的参数（如果有）初始化用于解密的 Cipher 对象。
+
+<p>返回已封装的对象之前将其解封和反序列化。
+
+@param  key  用于解封对象的密钥。
+@param  provider  要解封对象的算法的提供者名称。
+
+@return  原始对象。
+
+@exception IllegalArgumentException  如果给定提供者为 null 或空。
+@exception IOException  如果在反序列化过程中发生错误。
+@exception ClassNotFoundException  如果在反序列化过程中发生错误。
+@exception NoSuchAlgorithmException  如果解封对象的算法不可用。
+@exception NoSuchProviderException  如果未配置给定提供者。
+@exception InvalidKeyException  如果无法使用给定密钥解封对象（例如其算法错误）。
+@exception NullPointerException 如果 <code>key</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.crypto.SealedObject.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从流中还原 SealedObject 的状态。
+@param  s  对象输入流。
+@exception NullPointerException  如果 s 为 null。
+
+<!-- END DATA -->

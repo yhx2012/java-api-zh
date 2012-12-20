@@ -1,0 +1,112 @@
+<!-- BEGIN KEY -->
+public class java.security.KeyRep extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已序列化的 Key 对象的标准表示形式。
+
+ <p>
+
+注意，序列化的 Key 可能包含不应该在不可信任的环境中显示的敏感信息。有关更多信息，请参见序列化规范的<a href="../../../platform/serialization/spec/security.html">安全附录</a>。
+
+@see Key
+@see KeyFactory
+@see javax.crypto.spec.SecretKeySpec
+@see java.security.spec.X509EncodedKeySpec
+@see java.security.spec.PKCS8EncodedKeySpec
+
+@version 1.7, 04/04/20
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.security.KeyRep.Type java.security.KeyRep.type
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Type.SECRET、Type.PUBLIC 或 Type.PRIVATE 之一。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.KeyRep.algorithm
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Key 算法
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.KeyRep.format
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Key 编码格式
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] java.security.KeyRep.encoded
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+编码的 Key 的字节
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.KeyRep(KeyRep.Type type, String algorithm, String format, byte[] encoded)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造替换的 Key 类。
+
+ <p>
+
+@param type Type.SECRET、Type.PUBLIC 或 Type.PRIVATE 之一
+@param algorithm 从 <code>Key.getAlgorithm()</code> 返回的算法
+@param format 从 <code>Key.getFormat()</code> 返回的编码格式
+@param encoded 从 <code>Key.getEncoded()</code> 返回的编码字节
+
+@exception NullPointerException 如果 type 为 <code>null</code>、algorithm 为 <code>null</code>、format 为 <code>null</code> 或 encoded 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.security.KeyRep.readResolve() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析 Key 对象。
+
+<p> 此方法支持三种 Type/format 组合：
+ <ul>
+<li> Type.SECRET/&quot;RAW&quot; - 返回使用编码的密钥字节和算法构建的 SecretKeySpec 对象
+<li> Type.PUBLIC/&quot;X.509&quot; - 获取该密钥算法的 KeyFactory 实例，用编码的密钥字节构造 X509EncodedKeySpec，根据 spec 生成公钥
+<li> Type.PRIVATE/&quot;PKCS#8&quot; - 获取该密钥算法的 KeyFactory 实例，用编码的密钥字节构造 PKCS8EncodedKeySpec，根据 spec 生成私钥
+ </ul>
+
+ <p>
+
+@return 解析的 Key 对象
+
+@exception ObjectStreamException 如果 Type/format 组合是不能识别的；如果算法、密钥格式或编码的密钥字节是不能识别的/无效的；如果由于任何原因密钥解析失败。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.security.KeyRep.readResolve() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析 Key 对象。
+
+<p> 此方法支持三种 Type/format 组合：
+ <ul>
+<li> Type.SECRET/&quot;RAW&quot; - 返回使用编码的密钥字节和算法构建的 SecretKeySpec 对象
+<li> Type.PUBLIC/&quot;X.509&quot; - 获取该密钥算法的 KeyFactory 实例，用编码的密钥字节构建 X509EncodedKeySpec，根据 spec 生成公钥
+<li> Type.PRIVATE/&quot;PKCS#8&quot; - 获取该密钥算法的 KeyFactory 实例，用编码的密钥字节构造 PKCS8EncodedKeySpec，根据 spec 生成私钥
+ </ul>
+
+ <p>
+
+@return 解析的 Key 对象
+
+@exception ObjectStreamException 如果 Type/format 组合是不能识别的；如果算法、密钥格式或编码的密钥字节是不能识别的/无效的；如果由于任何原因密钥解析失败。
+
+<!-- END DATA -->

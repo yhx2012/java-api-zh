@@ -1,0 +1,88 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.FutureTask extends java.lang.Object implements java.util.concurrent.RunnableFuture
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可取消的异步计算。利用开始和取消计算的方法、查询计算是否完成的方法和获取计算结果的方法，此类提供了对 {@link Future} 的基本实现。仅在计算完成时才能获取结果；如果计算尚未完成，则阻塞 <tt>get</tt> 方法。一旦计算完成，就不能再重新开始或取消计算。
+
+<p>可使用 <tt>FutureTask</tt> 包装 {@link Callable} 或 {@link java.lang.Runnable} 对象。因为 <tt>FutureTask</tt> 实现了 <tt>Runnable</tt>，所以可将 <tt>FutureTask</tt> 提交给 {@link Executor} 执行。
+
+<p>除了作为一个独立的类外，此类还提供了 <tt>protected</tt> 功能，这在创建自定义任务类时可能很有用。
+
+@since 1.5
+@author Doug Lea
+@param <V> 此 FutureTask 的 <tt>get</tt> 方法所返回的结果类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.FutureTask(java.util.concurrent.Callable<V> callable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <tt>FutureTask</tt>，一旦运行就执行给定的 <tt>Callable</tt>。
+
+@param  callable 可调用的任务。
+@throws NullPointerException 如果 callable 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.FutureTask(Runnable runnable, V result)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <tt>FutureTask</tt>，一旦运行就执行给定的 <tt>Runnable</tt>，并安排成功完成时 <tt>get</tt> 返回给定的结果 。
+
+@param runnable 可运行的任务。
+@param result 成功完成时要返回的结果。如果不需要特定的结果，则考虑使用下列形式的构造：<tt>Future&lt;?&gt; f = new FutureTask&lt;Object&gt;(runnable, null)</tt>
+@throws NullPointerException 如果 runnable 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.FutureTask.get() throws java.lang.InterruptedException, java.util.concurrent.ExecutionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws CancellationException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.FutureTask.get(long timeout, TimeUnit unit) throws java.lang.InterruptedException, java.util.concurrent.ExecutionException, java.util.concurrent.TimeoutException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws CancellationException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.concurrent.FutureTask.done()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当此任务转换到状态 <tt>isDone</tt>（不管是正常地还是通过取消）时，调用受保护的方法。默认实现不执行任何操作。子类可以重写此方法，以调用完成回调或执行簿记。注意，可以查询此方法的实现内的状态，从而确定是否已取消了此任务。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.concurrent.FutureTask.set(V v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除非已经设置了此 Future 或已将其取消，否则将其结果设置为给定的值。在计算成功完成时通过 <tt>run</tt> 方法内部调用此方法。 
+@param v 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.concurrent.FutureTask.setException(Throwable t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除非已经设置了此 Future 或已将其取消，否则它将报告一个 <tt>ExecutionException</tt>，并将给定的 throwable 作为其原因。在计算失败时通过 <tt>run</tt> 方法内部调用此方法。 
+@param t 失败的原因
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.FutureTask.run()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除非已将此 Future 取消，否则将其设置为其计算的结果。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.concurrent.FutureTask.runAndReset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行计算而不设置其结果，然后将此 Future 重置为初始状态，如果计算遇到异常或已取消，则该操作失败。本操作被设计用于那些本质上要执行多次的任务。
+@return 如果成功运行并重置，则返回 true。
+
+<!-- END DATA -->

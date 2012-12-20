@@ -1,0 +1,372 @@
+<!-- BEGIN KEY -->
+public interface java.sql.DataSet extends java.util.List
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ A <code>DataSet</code> provides a type safe view of the data returned from the
+ execution of a SQL Query.  It is a subinterface of <code>java.util.List</code>.
+ A <code>DataSet</code> is also a parameterized type.  The parameter type is a <i>data 
+ class</i> describing the columns for the rows returned by invoking a method on
+ a <code>Query</code> interface decorated by a <code>Select</code> annotation.  The 
+ <i>data class</i> must have an access modifier of <code>public</code>.
+<p>
+ A <code>DataSet</code> may operate in a connected or disconnected mode.  When
+ used in a connected mode, the <code>DataSet</code> functions in a manner similar  
+ to <a href="ResultSet.html">ResultSet</a>. A disconnected <code>DataSet</code>
+ functions in a manner similar to a <a href="../../javax/sql/rowset/CachedRowSet.html">CachedRowSet</a>.
+ <p>
+ A <code>DataSet</code> objects allows for the iteration through the rows that
+ were returned using the <a href="../../java/util/Iterator.html">Iterator</a>
+ API.
+ <p>
+ <h3>Navigating a DataSet</h3>
+
+ A <code>DataSet</code> is a subinterface of the  <code>List</code> allowing 
+ for an application to navigate through a <code>DataSet</code> object:
+<p>
+ <pre>
+ public class Mammal {
+    public String name;
+    public String description;
+    public int age;
+ }
+
+ interface MyQueries extends BaseQuery {    
+    <code>@Select</code>("select name, description, age from mammal")
+    DataSet&lt;Mammal&gt; getAllMammals();
+ }
+
+ MyQueries mq = con.createQueryObject(MyQueries.class);
+ DataSet<Mammal> rows = mq.getAllMammals();
+ 
+ for (Mammal m: rows) {
+     System.out.println("Name = " + m.name);
+     System.out.println("Description =  " + m.description);
+ }
+ </pre>
+
+
+ <h3>Modifying a Row within a DataSet</h3>
+
+ You may update rows within a <code>DataSet</code> instance by positioning to the
+ row to be modified, making the required modifications and then calling the
+ <code>modify</code> method on the <code>DataSet</code>.  If the <code>DataSet</code>
+ is disconnected, the  <code>tableName</code> annotation element  must be 
+ specified in the <code>Select</code> annotation.
+ <p>
+ <pre>
+ DataSet<Mammal> rows = mq.getAllMammals();
+ 
+ for (Mammal m: rows) {
+     if (m.description.equals("")) {
+         m.description="a mammal";
+         rows.modify();
+     }
+ }
+ </pre>
+ 
+ <h3>Deleting a Row within a DataSet</h3>
+
+ You may delete rows within a <code>DataSet</code> instance by positioning to the
+ row to be deleted, and then calling the
+ <code>delete</code> method on the <code>DataSet</code>.  If the <code>DataSet</code>
+ is disconnected,  the  <code>tableName</code> annotation element  must be 
+ specified in the <code>Select</code> annotation.
+ <p>
+ <pre>
+ DataSet<Mammal> rows = mq.getAllMammals();
+ 
+ for (Mammal m: rows) {
+     if (m.description.equals("tbd")) {
+         rows.delete();
+     }
+ }
+ </pre>
+ 
+ <h3>Inserting a Row into a DataSet</h3>
+
+ You may insert rows into an existing <code>DataSet</code> instance.  If the <code>DataSet</code>
+ is disconnected, the  <code>tableName</code> annotation element  must be 
+ specified in the <code>Select</code> annotation. 
+  To insert a row, create an instance of the <i>data class</i> for the
+ given <code>DataSet</code> and populate it.  The method <code>DataSet.insert</code>
+ is called to add the row to the <code>DataSet</code>.
+ <p>
+ <pre>
+ DataSet<Mammal> rows = mq.getAllMammals();
+ Mammal newMammal = new Mammal();
+ newMammal.name="Jane Doe";
+ newMammal.description = "a real dear";
+ rows.insert(newMammal);
+ </pre>
+ <p>
+
+ <h3>Syncronizing a DataSet</h3>
+
+ A <code>DataSet</code> can be configured to operate in a disconnected manner
+ by setting the <code>Select</code> annotation element <code>connected</code>
+ to <code>false</code>.  This requires any changes made to the <code>DataSet</code> to be
+ explicitly syncronized to the underlying data store.  The <code>DataSet.sync</code>
+ method must be called to propagate the <code>DatasSet</code> modifications to
+ the data store. The modifications are done as an atomic operation. 
+ <p>
+
+ The <i>data class</i> for a disconnected <code>DataSet</code> must specify
+ at least one column to uniquely identify the row using the 
+ <code>ResultColumn</code> annotation's  <code>uniqueIdentifier</code> 
+ annotation element.  If there is no column specified to uniquely identify 
+ the row, a <code>SQLRuntimeException</code> will be thrown.
+ <p>
+
+ If an invocation of  <code>DataSet.sync</code> fails, a 
+ <code>SQLDataSetSyncException</code> will be thrown.  The
+<code>SQLDataSetSyncException.getDataSetResolver</code> method can be 
+called to navigate the rows that could not be updated in the data store along
+with the cause of the  failure.
+<p>
+ @since 1.6
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T java.sql.DataSet.getRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Return an object representing the currently positioned row within the 
+ <code>DataSet</code>.
+
+ @return a row of type T
+ @throws SQLRuntimeException if an error occurs retrieving the current row
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.insert(T row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Inserts the specified row into this <code>DataSet</code>. If the <code>DataSet</code>
+ is connected and is not marked as read-only, the insert is applied directly
+ to the underlying data store.  If the <code>DataSet</code>
+ is marked as disconnected, the <code>DataSet.sync</code> method must be called
+ in order to apply the changes to the data store.
+ <p>
+ 
+ @param row A row of type T
+ @return <code>true</code> if the insert of the row to this <code>DataSet</code> is 
+ successful; <code>false</code> otherwise
+ @throws SQLRuntimeException if an error occurs inserting the a new row;
+        or if this <code>DataSet</code> is read-only
+ @see java.util.List#add
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.modify(T row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Modifies the currently positioned row with the specified row in this
+ <code>DataSet</code>. If the <code>DataSet</code>
+ is connected and is not marked as read-only, the update is applied directly
+ to the underlying data store.  If the <code>DataSet</code>
+ is marked as disconnected, the <code>DataSet.sync</code> method must be called
+ in order to apply the changes to the data store.
+ <p>
+ @param row the row  of type T that that replaces the current row
+ @return <code>true</code> if the <code>DataSet</code> is modified 
+ successfully; <code>false</code> otherwise 
+ @throws SQLRuntimeException if an error occurs modifying the row;
+     or if this <code>DataSet</code> is read-only
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.modify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Modify the currently positioned row within a <code>DataSet</code>.
+
+ @return true if this <code>DataSet</code> is modified succesfully; 
+ <code>false</code> otherwise
+ @throws SQLRuntimeException if an error occurs modifying the current row; an attempt
+ to invoke <code>modify</code> without positioning to a row;
+ or the <code>DataSet</code> is read-only
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.delete()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Delete the currently positioned row within a <code>DataSet</code>
+
+ @return true if this <code>DataSet</code> is modified successfully;
+ <code>false</code> otherwise
+ @throws SQLRuntimeException if an error occurs deleting the current row; an attempt
+ to invoke <code>delete</code> without positioning to a row;
+ or the <code>DataSet</code> is read-only
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.DataSet.close()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Releases this <code>DataSet</code> object's database and JDBC 
+ resources immediately instead of waiting for this to happen when it is automatically
+ closed.
+
+ @throws SQLRuntimeException if an error occurs closing this <code>DataSet</code>
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.isReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Indicates whether this <code>DataSet</code> is read-only or not. Developers
+ may configure a <code>DataSet</code> instance as read-only by setting the
+ <code>readOnly</code> annotation element to <code>true</code> for the
+ <a href="Query.html"><code>Query</code></a> annotation whose method 
+ returned this <code>DataSet</code>.  
+ <p>
+ A value of <code>true</code> must be returned if the 
+ <code>readOnly</code> annotation element is set to <code>true</code>.  Some
+ JDBC drivers may also return a value of <code>true</code> if the query is
+ characterized to be read-only which can occur when a query involves the
+ use of DISTINCT, UNION, GROUP BY, is a JOIN or the driver determined 
+ that the returned results are not updatable.
+     
+ @return true if this <code>DataSet</code> is read-only;
+ <code>false</code> otherwise
+ @throws SQLRuntimeException if an error occurs accessing the <code>DataSet</code> 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.DataSet.sync()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Propagates modifications made to a disconnected <code>DataSet</code>
+ to the underlying data store. This method works in the same manner
+ as the <a href="../../javax/sql/rowset/CachedRowSet.html"><code>CachedRowSet</code></a>
+ method <code>acceptChanges</code>.
+ <p>
+ <b>Note:</b> The <code>sync()</code> can only be used by a <code>DataSet</code>
+ that is disconnected and whose Query Object instance was created by calling
+ <code>DataSource.createQueryObject</code>.
+
+ @throws SQLDataSetSyncException if an error occurs writing the changes back to the
+ data source; the <code>DataSet</code> is connected to the underlying data
+ store; or the Query Object instance from which this <code>DataSet</code>
+ was derived from, was not created from a <code>DataSource</code>
+ @see javax.sql.rowset.CachedRowSet#acceptChanges 
+ @see javax.sql.DataSource#createQueryObject
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.DataSet.sync(Connection con)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Propagates modifications made to a disconnected <code>DataSet</code>
+ to the underlying data store using the specified <code>Connection</code>
+ object. This method works in the same manner
+ as the <a href="../../javax/sql/rowset/CachedRowSet.html"><code>CachedRowSet</code></a>
+ method <code>acceptChanges(Connection)</code>.
+ <p>
+ <b>Note:</b> The <code>sync()</code> can only be used by a <code>DataSet</code>
+ that is disconnected.
+    
+ @param con The connection object to use to synchronize the changes back to the
+ underlying data store.
+ @throws SQLDataSetSyncException if an error occurs writing the changes back to the
+ data source; or the <code>DataSet</code> is connected to the underlying data
+ store
+
+ @since 1.6
+ @see javax.sql.rowset.CachedRowSet#acceptChanges(Connection)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.isConnected()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Indicates whether this <code>DataSet</code> is connected to the
+ underlying data store . Developers
+ may configure a <code>DataSet</code> instance as connected by setting the
+ <code>connected</code> annotation element to <code>true</code> for the
+ <a href="Query.html"><code>Query</code></a> annotation whose method 
+ returned this <code>DataSet</code>.
+     
+ @return true if this <code>DataSet</code> is connected to the underly
+ data source; <code>false</code> otherwise
+ @throws SQLRuntimeException if an error occurs accessing the <code>DataSet</code> 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.isScrollable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Indicates whether a  <code>DataSet</code> is scrollable.
+ If the <code>DataSet</code> is  connected and is scrollable, 
+ it has a <code>ResultSet</code>
+ type of <code>TYPE_SCROLL_INSENSITVE</code>.  If the <code>DataSet</code> is
+ not scrollable, the <code>ResultSet</code> type is specified to be
+ <code>TYPE_FORWARD_ONLY</code>.  A disconnected <code>DataSet</code>
+ is considered scrollable as it is implemented as a 
+ <code>CachedRowSet</code>.
+ <p>
+ 
+ @return <code>true</code> if the connected <code>DataSet</code> is scrollable; 
+  <code>false</code> otherwise.      
+ @throws SQLRuntimeException if an error occurs accessing the <code>DataSet</code> 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.DataSet.isClosed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves whether this <code>DataSet</code> object has been closed. A <code>DataSet</code> is closed if the
+ method close has been called on it, or if it is automatically closed.
+
+ @return true if this <code>DataSet</code> object is closed; false if it is still open
+ @throws SQLRuntimeException if a database access error occurs
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLWarning java.sql.DataSet.getWarnings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves the first warning reported by  invoking methods on this 
+ <code>DataSet</code> object. Subsequent <code>DataSet</code> object warnings will be chained to this
+ <code>SQLWarning</code> object.
+
+ <p>The warning chain is automatically cleared each time a new
+ row is read. This method may not be called on a closed
+ <code>DataSet</code> object; doing so will cause an <code>SQLRuntimeException</code>
+ to be thrown.
+
+ @return the first <code>SQLWarning</code> object or <code>null</code> 
+         if there are no warnings
+ @exception SQLRuntimeException if a database access error occurs or this 
+            method is called on a closed <code>DataSet</code> Object
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.DataSet.clearWarnings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Clears all warnings reported on this <code>DataSet</code> object.
+ After this method is called, the method <code>getWarnings</code>
+ returns <code>null</code> until a new warning is
+ reported for this <code>DataSet</code> object.  
+
+ @exception SQLRuntimeException if a database access error occurs
+ @since 1.6
+
+<!-- END DATA -->

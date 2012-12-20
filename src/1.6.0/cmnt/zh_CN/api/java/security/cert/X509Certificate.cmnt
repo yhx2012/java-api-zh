@@ -1,0 +1,443 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.cert.X509Certificate extends java.security.cert.Certificate implements java.security.cert.X509Extension
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+X.509 证书的抽象类。此类提供了一种访问 X.509 证书所有属性的标准方式。
+ <p>
+1996 年 6 月，ISO/IEC 和 ANSI X9 完成了基本的 X.509 v3 格式，在 ASN.1 中描述如下：
+ <pre>
+ Certificate  ::=  SEQUENCE  {
+     tbsCertificate       TBSCertificate,
+     signatureAlgorithm   AlgorithmIdentifier,
+     signature            BIT STRING  }
+ </pre>
+ <p>
+这些证书被广泛使用以支持 Internet 安全系统中的身份验证和其他功能。常见的应用包括增强保密邮件 (PEM)、传输层安全 (SSL)、用于受信任软件发布的代码签名和安全电子交易 (SET)。
+ <p>
+由<em>证书颁发机构</em> (CA) 来管理和担保这些证书。CA 的工作是创建证书，方法是将数据置于 X.509 标准格式，然后以数字方式签署该数据。CA 充当受信任的第三方，在不能直接通信的主体之间传递信息。CA 证书可由其自身签名，也可由其他 CA 签名，如&ldquo;根&rdquo;CA。
+ <p>
+在 RFC 2459，即 &quot;Internet X.509 Public Key Infrastructure Certificate and CRL Profile&quot;（位于 <A HREF="http://www.ietf.org/rfc/rfc2459.txt">http://www.ietf.org/rfc/rfc2459.txt </A>）中可找到更多信息。
+ <p>
+<code>tbsCertificate</code> 的 ASN.1 定义是：
+ <pre>
+ TBSCertificate  ::=  SEQUENCE  {
+     version         [0]  EXPLICIT Version DEFAULT v1,
+     serialNumber         CertificateSerialNumber,
+     signature            AlgorithmIdentifier,
+     issuer               Name,
+     validity             Validity,
+     subject              Name,
+     subjectPublicKeyInfo SubjectPublicKeyInfo,
+     issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL,
+                          -- If present, version must be v2 or v3
+     subjectUniqueID [2]  IMPLICIT UniqueIdentifier OPTIONAL,
+                          -- If present, version must be v2 or v3
+     extensions      [3]  EXPLICIT Extensions OPTIONAL
+                          -- If present, version must be v3
+     }
+ </pre>
+ <p>
+使用证书工厂来实例化证书。下面的示例演示了如何实例化一个 X.509 证书。
+ <pre> 
+ InputStream inStream = new FileInputStream(&quot;fileName-of-cert&quot;);
+ CertificateFactory cf = CertificateFactory.getInstance(&quot;X.509&quot;);
+ X509Certificate cert = (X509Certificate)cf.generateCertificate(inStream);
+ inStream.close();
+ </pre>
+
+@author Hemma Prafullchandra
+
+@version 1.39
+
+@see Certificate
+@see CertificateFactory
+@see X509Extension
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.X509Certificate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+X.509 证书的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.cert.X509Certificate.checkValidity() throws java.security.cert.CertificateExpiredException, java.security.cert.CertificateNotYetValidException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查证书目前是否有效。即当前的日期和时间是否仍在证书中所给定的有效期内。
+ <p>
+有效期由两个日期/时间值组成：证书有效的起始和终止日期（和时间）。在 ASN.1 中定义如下：
+ <pre>
+ validity             Validity<p>
+ Validity ::= SEQUENCE {
+     notBefore      CertificateValidityDate,
+     notAfter       CertificateValidityDate }<p>
+ CertificateValidityDate ::= CHOICE {
+     utcTime        UTCTime,
+     generalTime    GeneralizedTime }
+ </pre>
+ 
+@exception CertificateExpiredException 如果证书已过期。
+@exception CertificateNotYetValidException 如果证书不再有效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.cert.X509Certificate.checkValidity(Date date) throws java.security.cert.CertificateExpiredException, java.security.cert.CertificateNotYetValidException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查给定的日期是否处于证书的有效期内。换句话说，这确定该证书在给定的日期/时间是否有效。
+
+@param date 要检查的 Date，以确定此证书在该日期/时间是否有效。
+
+@exception CertificateExpiredException 如果对于所提供的 <code>date</code> 而言该证书已过期。
+@exception CertificateNotYetValidException 如果对于所提供的 <code>date</code> 而言该证书不再有效。
+ 
+@see #checkValidity()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.security.cert.X509Certificate.getVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的 <code>version</code>（版本号）值。此内容的 ASN.1 定义如下：
+ <pre>
+ version  [0] EXPLICIT Version DEFAULT v1<p>
+ Version ::=  INTEGER  {  v1(0), v2(1), v3(2)  }
+ </pre>
+@return 版本号，比如 1、2 或 3。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.math.BigInteger java.security.cert.X509Certificate.getSerialNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的 <code>serialNumber</code> 值。序列号是证书颁发机构为每个证书所分配的一个整数。给定的 CA 所发布的每个证书的序列号必须是唯一的（即发布方名称和序列号标识一个唯一的证书）。此内容的 ASN.1 定义如下：
+ <pre>
+ serialNumber     CertificateSerialNumber<p>
+ 
+ CertificateSerialNumber  ::=  INTEGER
+ </pre>
+
+@return 序列号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.Principal java.security.cert.X509Certificate.getIssuerDN()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，由 {@linkplain #getIssuerX500Principal()} 替代。此方法返回作为特定 Principal 对象实现的 <code>issuer</code>，可移植的代码不应依靠该对象。
+
+ <p>
+获取证书的 <code>issuer</code>（发布方的标识名）值。发布方名称标识了签署（并发布）该证书的实体。 
+ 
+<p>发布方名称字段包含一个 X.500 标识名 (DN)。此内容的 ASN.1 定义如下：
+ <pre>
+ issuer    Name<p>
+
+ Name ::= CHOICE { RDNSequence }
+ RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+ RelativeDistinguishedName ::=
+     SET OF AttributeValueAssertion
+
+ AttributeValueAssertion ::= SEQUENCE {
+                               AttributeType,
+                               AttributeValue }
+ AttributeType ::= OBJECT IDENTIFIER
+ AttributeValue ::= ANY
+ </pre>
+<code>Name</code> 描述了一个层次结构名，由属性（如国家/地区名）和相应值（如 US）组成。<code>AttributeValue</code> 组件的类型由 <code>AttributeType</code> 来确定；一般是 <code>directoryString</code>。<code>directoryString</code> 通常是 <code>PrintableString</code>、<code>TeletexString</code> 或 <code>UniversalString</code> 之一。
+ 
+@return 一个 Principal，其名称是发布方的标识名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal java.security.cert.X509Certificate.getIssuerX500Principal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>X500Principal</code> 的形式返回证书的发布方（发布方标识名）值。 
+ <p>
+建议子类重写此方法。
+
+@return 一个表示发布方标识名的 <code>X500Principal</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.Principal java.security.cert.X509Certificate.getSubjectDN()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<strong>已过时</strong>，由 {@linkplain #getSubjectX500Principal()} 替代。此方法返回作为特定 Principal 对象实现的 <code>subject</code>，可移植的代码不应依靠该对象。
+
+ <p>
+获取证书的 <code>subject</code>（主体的标识名）值。如果 <code>subject</code> 值为空，则返回的 <code>Principal</code> 对象的 <code>getName()</code> 方法将返回一个空字符串 (&quot;&quot;)。
+
+<p> 此内容的 ASN.1 定义如下：
+ <pre>
+ subject    Name
+ </pre>
+ 
+<p>有关 <code>Name</code> 和其他相关定义的信息，请参见 {@link #getIssuerDN() getIssuerDN}。
+ 
+@return 一个 Principal，其名称是主体名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal java.security.cert.X509Certificate.getSubjectX500Principal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>X500Principal</code> 的形式返回证书的主体（主体标识名）值。如果 subject 值为空，则返回的 <code>X500Principal</code> 对象的 <code>getName()</code> 方法将返回一个空字符串 (&quot;&quot;)。
+ <p>
+建议子类重写此方法。
+
+@return 一个表示主体标识名的 <code>X500Principal</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Date java.security.cert.X509Certificate.getNotBefore()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书有效期的 <code>notBefore</code> 日期。相关的 ASN.1 定义如下：
+ <pre>
+ validity             Validity<p>
+ 
+ Validity ::= SEQUENCE {
+     notBefore      CertificateValidityDate,
+     notAfter       CertificateValidityDate }<p>
+ CertificateValidityDate ::= CHOICE {
+     utcTime        UTCTime,
+     generalTime    GeneralizedTime }
+ </pre>
+
+@return 有效期的起始日期。
+@see #checkValidity
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Date java.security.cert.X509Certificate.getNotAfter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书有效期的 <code>notAfter</code> 日期。有关相关的 ASN.1 定义，请参见 {@link #getNotBefore() getNotBefore}。
+
+@return 有效期的终止日期。
+@see #checkValidity
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.X509Certificate.getTBSCertificate() throws java.security.cert.CertificateEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此证书中获取以 DER 编码的证书信息，即 <code>tbsCertificate</code>。这可用于独立验证签名。
+
+@return 以 DER 编码的证书信息。
+@exception CertificateEncodingException 如果发生编码错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.X509Certificate.getSignature()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的 <code>signature</code> 值（原始签名位）。此内容的 ASN.1 定义如下：
+ <pre>
+ signature     BIT STRING  
+ </pre>
+
+@return 签名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.security.cert.X509Certificate.getSigAlgName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书签名算法的签名算法名。例如字符串 &quot;SHA-1/DSA&quot;。此内容的 ASN.1 定义如下：
+ <pre>
+ signatureAlgorithm   AlgorithmIdentifier<p>
+ AlgorithmIdentifier  ::=  SEQUENCE  {
+     algorithm               OBJECT IDENTIFIER,
+     parameters              ANY DEFINED BY algorithm OPTIONAL  }
+                             -- contains a value of the type
+                             -- registered for use with the
+                             -- algorithm object identifier value
+ </pre>
+ 
+<p>根据 <code>algorithm</code> OID 字符串确定该算法名。
+
+@return 签名算法名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.security.cert.X509Certificate.getSigAlgOID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的签名算法 OID 字符串。OID 由一组句点分隔的非负整数集来表示。例如，按照 RFC 2459 中的规定，字符串 &quot;1.2.840.10040.4.3&quot; 标识使用 DSA 签名算法的 SHA-1。
+ 
+<p>有关相关的 ASN.1 定义，请参见 {@link #getSigAlgName() getSigAlgName}。
+
+@return 签名算法 OID 字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.X509Certificate.getSigAlgParams()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此证书的签名算法中获取 DER 编码形式的签名算法参数。在大多数情况下，该签名算法参数为 null；该参数通常提供证书的公钥。如果需要访问个别参数值，则使用 {@link java.security.AlgorithmParameters AlgorithmParameters}，并使用 {@link #getSigAlgName() getSigAlgName} 所返回的名称进行实例化。
+ 
+<p>有关相关的 ASN.1 定义，请参见 {@link #getSigAlgName() getSigAlgName}。
+
+@return DER 编码形式的签名算法参数，如果没有该参数，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean[] java.security.cert.X509Certificate.getIssuerUniqueID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的 <code>issuerUniqueID</code> 值。证书中发布方的唯一标识符用于处理以后可能出现的发布方名称重用的情况。RFC 2459 建议不重用该名称，并建议合格的证书不要使用唯一标识符。遵守该配置文件的应用程序应该能够解析唯一标识符并进行比较。
+ 
+<p>此内容的 ASN.1 定义如下：
+ <pre>
+ issuerUniqueID  [1]  IMPLICIT UniqueIdentifier OPTIONAL<p>
+ UniqueIdentifier  ::=  BIT STRING
+ </pre>
+
+@return 发布方的唯一标识符，如果证书中没有该标识符，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean[] java.security.cert.X509Certificate.getSubjectUniqueID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取证书的 <code>subjectUniqueID</code> 值。
+ 
+<p>此内容的 ASN.1 定义如下：
+ <pre>
+ subjectUniqueID  [2]  IMPLICIT UniqueIdentifier OPTIONAL<p>
+ UniqueIdentifier  ::=  BIT STRING
+ </pre>
+
+@return 主体唯一标识符，如果证书中没有该标识符，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean[] java.security.cert.X509Certificate.getKeyUsage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个表示 <code>KeyUsage</code> 扩展 (OID = 2.5.29.15) 的各个位的 boolean 数组。KeyUsage 扩展定义证书中所含密钥的目的（如编码、签名、证书签署）。此内容的 ASN.1 定义如下：
+ <pre>
+ KeyUsage ::= BIT STRING {
+     digitalSignature        (0),
+     nonRepudiation          (1),
+     keyEncipherment         (2),
+     dataEncipherment        (3),
+     keyAgreement            (4),
+     keyCertSign             (5),
+     cRLSign                 (6),
+     encipherOnly            (7),
+     decipherOnly            (8) }
+ </pre>
+RFC 2459 建议，使用该扩展时将其标记为关键扩展。
+
+@return 此证书的 KeyUsage 扩展，以 boolean 数组的形式表示。该数组中 KeyUsage 值的顺序与上面 ASN.1 定义中的顺序相同。该数组将包含上面定义的每个 KeyUsage 的值。如果证书中编码的 KeyUsage 列表要比上面的列表长，则不会截取它。如果此证书不包含 KeyUsage 扩展，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> java.security.cert.X509Certificate.getExtendedKeyUsage() throws java.security.cert.CertificateParsingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个不可修改的 String 列表，表示已扩展的密钥使用扩展 (OID = 2.5.29.37) 中 <code>ExtKeyUsageSyntax</code> 字段的对象标识符（OBJECT IDENTIFIER）。除了或代替 KeyUsage 扩展字段中所指示的基本目的，它还指示了一个或多个使用已认证公钥的目的。此内容的 ASN.1 定义如下：
+ <pre>
+ ExtKeyUsageSyntax ::= SEQUENCE SIZE (1..MAX) OF KeyPurposeId<p>
+
+ KeyPurposeId ::= OBJECT IDENTIFIER<p>
+ </pre>
+
+任何有需要的组织都可定义 KeyPurpose。依照 IANA 或 ITU-T Rec X.660 | ISO/IEC/ITU 9834-1 的规定分配用于标识 KeyPurpose 的对象标识符
+ <p>
+Java 2 Platform Standard Edition 的 1.4 版本中添加了此方法。为了维持与现有服务提供者的后向兼容性，没有 <code>abstract</code> 此方法，并且它提供了一个默认实现。子类应该通过正确的实现重写此方法。
+
+@return 以 String 表示的、对象标识符不可修改的列表形式返回此证书的 ExtendedKeyUsage 扩展。如果此证书不包含 ExtendedKeyUsage 扩展，则返回 null。
+@throws CertificateParsingException 如果无法对该扩展进行解码
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.security.cert.X509Certificate.getBasicConstraints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从关键 <code>BasicConstraints</code> 扩展 (OID = 2.5.29.19) 中获取证书的限制路径长度。
+ <p>
+BasicConstraints 扩展标识证书的主体是否为一个证书颁发机构 (CA)，以及通过该 CA 的证书路径的深度。仅在将 <code>cA</code> 设置为 TRUE 时，<code>pathLenConstraint</code> 字段（参见以下内容）才有意义。在这种情况下，它给出证书路径中此证书后面的最大 CA 证书数。值为零指示路径中只有一个终端实体证书。
+ <p>
+注意，对于 RFC 2459，如果 <code>cA</code> 为 TRUE（意味着此证书属于证书颁发机构），则始终将此扩展标记为关键的。
+ <p>
+此内容的 ASN.1 定义如下：
+ <pre>
+ BasicConstraints ::= SEQUENCE {
+     cA                  BOOLEAN DEFAULT FALSE,
+     pathLenConstraint   INTEGER (0..MAX) OPTIONAL }
+ </pre>
+
+@return 如果证书中有 BasicConstraints 扩展并且该证书的主体是 CA，则返回 <code>pathLenConstraint</code> 的值；否则返回 -1。如果该证书的主体是 CA 并且未出现 <code>pathLenConstraint</code>，则返回 <code>Integer.MAX_VALUE</code>，指示对于该证书路径的长度没有限制。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.util.List<?>> java.security.cert.X509Certificate.getSubjectAlternativeNames() throws java.security.cert.CertificateParsingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>SubjectAltName</code> 扩展 (OID = 2.5.29.17) 中获取一个主体替换名称的不可变集合。
+ <p>
+<code>SubjectAltName</code> 扩展的 ASN.1 定义如下：
+ <pre>
+ SubjectAltName ::= GeneralNames
+
+ GeneralNames :: = SEQUENCE SIZE (1..MAX) OF GeneralName
+
+ GeneralName ::= CHOICE {
+      otherName                       [0]     OtherName,
+      rfc822Name                      [1]     IA5String,
+      dNSName                         [2]     IA5String,
+      x400Address                     [3]     ORAddress,
+      directoryName                   [4]     Name,
+      ediPartyName                    [5]     EDIPartyName,
+      uniformResourceIdentifier       [6]     IA5String,
+      iPAddress                       [7]     OCTET STRING,
+      registeredID                    [8]     OBJECT IDENTIFIER}
+ </pre>
+ <p>
+如果此证书不包含 <code>SubjectAltName</code> 扩展，则返回 <code>null</code>。否则返回一个 <code>Collection</code>，其中的项表示该扩展中所包括的每个 <code>GeneralName</code>。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。
+ <p>
+RFC 822、DNS 和 URI 名称是使用这些类型已定义的 string 格式（受 RFC 2459 中所包括的限制的影响）以 <code>String</code> 的形式返回的。使用四点表示法（dotted quad notation）返回 IPv4 地址名。以 &quot;a1:a2:...:a8&quot; 的形式返回 IPv6 地址名，其中 a1-a8 是十六进制值，表示该地址的 8 个 16 位部分。以 <code>String</code> 形式返回 OID 名称，该字符串用一系列句点分隔的非负整数来表示。以 RFC 2253 string 格式返回目录名（标识名）。没有为 otherNames、X.400 名、EDI 方名或其他所有类型的名称定义标准的 string 格式。它们是以 byte 数组的形式返回的，其中包含 ASN.1 DER 编码形式的名称。
+ <p>
+注意，返回的 <code>Collection</code> 可能包含多个相同类型的名称。另外还要注意，返回的 <code>Collection</code> 是不可变的，并且将复制 byte 数组中所包含的所有项，以防止后续的修改。
+ <p>
+Java 2 Platform Standard Edition 的 1.4 版本中添加了此方法。为了维持与现有服务提供者的后向兼容性，没有 <code>abstract</code> 此方法，并且它提供了一个默认实现。子类应该通过正确的实现重写此方法。
+
+@return 主体替换名称的不可变 <code>Collection</code>（或者为 <code>null</code>）
+@throws CertificateParsingException 如果无法对该扩展进行解码
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.util.List<?>> java.security.cert.X509Certificate.getIssuerAlternativeNames() throws java.security.cert.CertificateParsingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>IssuerAltName</code> 扩展 (OID = 2.5.29.18) 中获取一个发布方替换名称的不可变集合。
+ <p>
+<code>IssuerAltName</code> 扩展的 ASN.1 定义如下：
+ <pre>
+ IssuerAltName ::= GeneralNames
+ </pre>
+在 {@link #getSubjectAlternativeNames getSubjectAlternativeNames} 中定义了 <code>GeneralNames</code> 的 ASN.1 定义。
+ <p>
+如果此证书不包含 <code>IssuerAltName</code> 扩展，则返回 <code>null</code>。否则返回一个 <code>Collection</code>，其中的项表示该扩展中所包括的每个 <code>GeneralName</code>。每一项都是一个 <code>List</code>，该 List 的第一项是一个 <code>Integer</code>（0-8，表示名称类型），第二项是一个 <code>String</code> 或 byte 数组（分别为 string 或 ASN.1 DER 编码形式，表示名称）。有关每种名称类型所用格式的更多细节，请参见 <code>getSubjectAlternativeNames</code> 方法。
+ <p>
+注意，返回的 <code>Collection</code> 可能包含多个相同类型的名称。另外还要注意，返回的 <code>Collection</code> 是不可变的，并且将复制 byte 数组中所包含的所有项，以防止后续的修改。
+ <p>
+Java 2 Platform Standard Edition 的 1.4 版本中添加了此方法。为了维持与现有服务提供者的后向兼容性，没有 <code>abstract</code> 此方法，并且它提供了一个默认实现。子类应该通过正确的实现重写此方法。
+
+@return 发布方替换名称的不可变 <code>Collection</code>（或者为 <code>null</code>）
+@throws CertificateParsingException 如果无法对该扩展进行解码
+@since 1.4
+
+<!-- END DATA -->

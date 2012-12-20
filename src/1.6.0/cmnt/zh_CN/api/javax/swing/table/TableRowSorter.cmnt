@@ -1,0 +1,122 @@
+<!-- BEGIN KEY -->
+public class javax.swing.table.TableRowSorter extends javax.swing.DefaultRowSorter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RowSorter</code> 的一个实现，它使用 <code>TableModel</code> 提供排序和过滤操作。下面的例子显示了向 <code>JTable</code> 添加排序操作：
+ <pre>
+TableModel myModel = createMyTableModel();
+JTable table = new JTable(myModel);
+table.setRowSorter(new TableRowSorter(myModel));
+ </pre>
+此类将完成所有连线操作（wiring），从而当用户做出适当的行为（比如单击列标题）时，表将进行直观的排序。
+ <p>
+<code>JTable</code> 的基于行的方法和 <code>JTable</code> 的选择模型引用视图而不是底层模型。因此，有必要在两者之前进行转换。例如，要获取基于 <code>myModel</code> 的选择，需要转换索引：
+ <pre>
+int[] selection = table.getSelectedRows();
+for (int i = 0; i &lt; selection.length; i++) {
+selection[i] = table.convertRowIndexToModel(selection[i]);
+   }
+ </pre>
+类似地，要在基于底层模型坐标的 <code>JTable</code> 中选择一行，执行以下相反的操作：
+ <pre>
+table.setRowSelectionInterval(table.convertRowIndexToView(row),
+table.convertRowIndexToView(row));
+ </pre>
+ <p>
+前一个例子假定不能进行过滤操作。如果能够进行过滤,则对于在视图中不可见的位置，<code>convertRowIndexToView</code> 将返回 -1。
+ <p>
+<code>TableRowSorter</code> 使用 <code>Comparator</code> 进行比较。下文定义了如何为列选择 <code>Comparator</code>：
+ <ol>
+<li>如果已经通过 <code>setComparator</code> 方法为列指定了 <code>Comparator</code>，则使用它。
+<li>如果 <code>getColumnClass</code> 返回的列类是 <code>String</code>，则使用 <code>Collator.getInstance()</code> 返回的 <code>Comparator</code>。
+<li>如果列类实现 <code>Comparable</code>，则使用调用 <code>compareTo</code> 方法的 <code>Comparator</code>。
+<li>如果已经指定了 <code>TableStringConverter</code>，则使用它将值转换为 <code>String</code>，然后使用 <code>Collator.getInstance()</code> 返回的 <code>Comparator</code>。
+<li>否则，先在对象上调用 <code>toString</code>，再对结果调用 <code>Collator.getInstance()</code>，使用所返回的 <code>Comparator</code>。 
+ </ol>
+ <p>
+除了排序操作，<code>TableRowSorter</code> 还提供过滤操作。使用 <code>setFilter</code> 方法指定过滤器。下例将只显示包含字符串&ldquo;foo&rdquo;的行：
+ <pre>
+TableModel myModel = createMyTableModel();
+TableRowSorter sorter = new TableRowSorter(myModel);
+sorter.setRowFilter(RowFilter.regexFilter(&quot;.*foo.*&quot;));
+JTable table = new JTable(myModel);
+table.setRowSorter(sorter);
+ </pre>
+ <p>
+如果底层模型结构发生了更改（调用了 <code>modelStructureChanged</code> 方法），则以下值将被重置为其默认值：列的 <code>Comparator</code>，当前排序顺序以及每一列是否可排序。默认的排序顺序是自然排序（与模型相同），并且默认情况下列是可排序的。
+ <p>
+<code>TableRowSorter</code> 有一个形式类型参数：模型的类型。传入完全对应于模型的类型允许基于模型进行过滤，而无需强制转换。有关此情况的例子，请参阅 <code>RowFilter</code> 文档。
+ <p>
+<b>警告：</b> <code>DefaultTableModel</code> 返回 <code>Object</code> 的列类。这种情况下将使用 <code>toString</code> 完成所有比较。这将产生不必要的昂贵开销。如果列只包含一种值类型，比如 <code>Integer</code>，则应该重写 <code>getColumnClass</code> 并返回适当的 <code>Class</code>。这将明显增强此类的性能。
+
+@param <M> 模型的类型，必须为 <code>TableModel</code> 的一个实现
+@version 1.8 03/31/06
+@see javax.swing.JTable
+@see javax.swing.RowFilter
+@see javax.swing.table.DefaultTableModel
+@see java.text.Collator
+@see java.util.Comparator
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.TableRowSorter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用空模型创建一个 <code>TableRowSorter</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.TableRowSorter(M model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>model</code> 作为底层 <code>TableModel</code> 创建一个 <code>TableRowSorter</code>。
+
+@param model 要使用的底层 <code>TableModel</code>，<code>null</code> 被视为空模型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.TableRowSorter.setModel(M model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>TableModel</code> 设置为此 <code>TableRowSorter</code> 要使用的底层模型。可以用 <code>null</code> 值设置空模型。
+
+@param model 要使用的底层模型，或者 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.TableRowSorter.setStringConverter(TableStringConverter stringConverter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置负责将值从模型转换为字符串的对象。如果为非 <code>null</code>，则此方法用于将所有不具有已注册 <code>Comparator</code> 的对象值转换为字符串。
+
+@param stringConverter 负责将值从模型转换为字符串的对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.TableStringConverter javax.swing.table.TableRowSorter.getStringConverter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回负责将值从模型转换为字符串的对象。
+
+@return 负责将值转换为字符串的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Comparator<?> javax.swing.table.TableRowSorter.getComparator(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定列的 <code>Comparator</code>。如果没有使用 <code>setComparator</code> 方法指定 <code>Comparator</code>，那么将基于指定列的列类（<code>TableModel.getColumnClass</code>）返回 <code>Comparator</code>。如果列类为 <code>String</code>，则返回 <code>Collator.getInstance</code>。如果列类实现 <code>Comparable</code>，则返回调用 <code>compareTo</code> 方法的私有 <code>Comparator</code>。否则，返回 <code>Collator.getInstance</code>。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.table.TableRowSorter.useToString(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->

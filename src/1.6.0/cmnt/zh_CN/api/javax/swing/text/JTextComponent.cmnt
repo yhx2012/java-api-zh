@@ -1,0 +1,1105 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.text.JTextComponent extends javax.swing.JComponent implements javax.swing.Scrollable, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JTextComponent</code> 是 swing 文本组件的基类。它会试着与 <code>java.awt.TextComponent</code> 类兼容，并且在此理应如此。还提供其他额外灵活性（不包括可插入 UI 和 bean 支持）服务。有关如何使用此类提供的功能的信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/generaltext.html">General Rules for Using Text Components</a> 一节。
+
+ <p>
+ <dl>
+<dt><b><font size=+1>插入符更改</font></b>
+ <dd>
+插入符是 swing 文本组件中的可插入对象。将插入符位置和选择的更改通知发送到已向文本组件注册的 <code>CaretListener</code> 接口的实现。如果尚未设置定制插入符，则该 UI 将安装默认插入符。<br>默认情况下，该插入符会跟踪在事件指派线程上执行的所有更改，并且如果插入发生在插入符位置或之前，或者移除发生在插入符位置之前，则相应地更新其位置。<code>DefaultCaret</code> 尝试使自己可见，这将导致 <code>JScrollPane</code> 内的文本组件发生滚动。{@link DefaultCaret#setUpdatePolicy} 方法可以更改默认的插入符行为。<br><b>注</b>：不可编辑的文本组件也有插入符，尽管可能不绘制它。 
+
+ <p>
+<dt><b><font size=+1>命令</font></b>
+ <dd>
+文本组件提供许多可能用于操作组件的命令。这实质上是组件表示其功能的方式。这些都将根据 swing <code>Action</code> 接口使用 <code>TextAction</code> 实现来表示。文本组件支持的命令集合可以使用 {@link #getActions} 方法查找。这些操作可以绑定到由按键等触发的键事件上。
+
+ <p>
+<dt><b><font size=+1>文本输入</font></b>
+ <dd>
+文本组件支持灵活而且国际化的文本输入，在使用 keymap 和输入法框架的同时维护与 AWT 侦听器模型的兼容性。
+ <p>
+{@link javax.swing.text.Keymap} 让应用程序将击键绑定到操作上。为了允许 keymap 在整个多文本组件上共享，它们可以使用扩展 <code>TextAction</code> 的操作。<code>TextAction</code> 可以确定哪个 <code>JTextComponent</code> 最近有或以前有过焦点，并因此成为该操作的执行者（在此情况下，发送到该操作的 <code>ActionEvent</code> 不包含作为其源的目标文本组件）。 
+ <p>
+<a href="../../../../technotes/guides/imf/spec.html">input method framework</a> 让文本组件与输入法交互，分隔预处理事件的软件组件，来让用户使用非常有限的几个键盘键输入成千上万个不同的字符。<code>JTextComponent</code> 是该框架的一个<em>活动客户端</em>，因此它可实现与输入法交互的首选用户界面。因此，有些键事件因为受输入法处理而无法到达文本组件，而有些文本输入不是作为键事件而是作为在 {@link java.awt.event.InputMethodEvent} 内的提交文本到达文本组件的。完整的文本输入是 <code>keyTyped</code> 键事件中的字符和输入法事件中的提交文本的结合。
+ <p>
+AWT 侦听器模型让应用程序将事件侦听器附加到组件，以便将事件绑定到操作。Swing 鼓励使用 keymap 替代侦听器，但要通过使用它为侦听器提供获得事件的机会来维护与侦听器的兼容性。
+ <p>
+键盘事件和输入法事件通过以下几个阶段进行处理，每个阶段都能使用该事件：
+
+ <table border=1 summary="Stages of keyboard and input method event handling">
+ <tr>
+<th id="stage"><p align="left">Stage</p></th>
+<th id="ke"><p align="left">KeyEvent</p></th>
+<th id="ime"><p align="left">InputMethodEvent</p></th></tr>
+ <tr><td headers="stage">1.   </td>
+<td headers="ke">输入法 </td>
+<td headers="ime">（在此处生成）</td></tr>
+ <tr><td headers="stage">2.   </td>
+<td headers="ke">焦点管理器 </td>
+     <td headers="ime"></td>
+ </tr>
+ <tr>
+     <td headers="stage">3.   </td>
+<td headers="ke">注册的键侦听器</td>
+<td headers="ime">注册的输入法侦听器</tr>
+ <tr>
+     <td headers="stage">4.   </td>
+     <td headers="ke"></td>
+<td headers="ime">在 JTextComponent 中的输入法处理</tr>
+ <tr>
+<td headers="stage">5.   </td><td headers="ke ime" colspan=2>使用当前 keymap 进行 keymap 处理</td></tr>
+<tr><td headers="stage">6.   </td><td headers="ke">在 JComponent 中进行键盘处理（如加速键、组件导航等）</td>
+     <td headers="ime"></td></tr>
+ </table>
+
+ <p>
+要维护与侦听键事件但不知道输入法事件的应用程序的兼容性，在阶段 4 中的输入法处理会提供不处理输入法事件的组件的兼容性模式。对于这些组件，可将提交文本转换为 keyTyped 键事件，并在阶段 3 开始的键事件管线中进行处理，而不是在输入法事件管线中处理。
+ <p>
+默认情况下，组件将创建一个作为默认 keymap 由所有 JTextComponent 实例共享的 keymap（名为 <b>DEFAULT_KEYMAP</b>）。通常，外观实现将安装一个不同的 keymap，以便把另一个 keymap 中找不到的绑定解析为默认 keymap。该绑定最少包括：
+ <ul>
+<li>将内容插入打印键编辑器。
+<li>使用 backspace 和 del 键移除内容。
+<li>前后移动的插入符
+ </ul>
+
+ <p>
+<dt><b><font size=+1>模型/视图拆分</font></b>
+ <dd>
+文本组件具有模型/视图拆分功能。文本组件会将用于表示模型、视图和控制器的对象拉在一起。文本文档模型可以由充当该模型观察者的其他视图共享（如，多个组件可以共享一个文档）。
+
+<p align=center><img src="doc-files/editor.gif" alt="该图表显示控制器、文档、事件和 ViewFactory 之间的交互" 
+                  HEIGHT=358 WIDTH=587></p>
+
+ <p>
+该模型由 {@link Document} 接口定义。此模型应提供灵活的文本存储机制，以在编辑过程中跟踪更改，并且可以扩展为更复杂的模型。该模型接口旨在捕获 SGML（用于表示多种内容的系统）提供的表达式功能。每次修改文档都会以 {@link DocumentEvent} 形式将更改的详细信息通知给所有观察者，允许视图与模型保持最新。将此事件发送给实现了 {@link DocumentListener} 接口且注册为需要正在接受观察的模型的观察者。
+
+ <p>
+<dt><b><font size=+1>位置信息</font></b>
+ <dd>
+提供确定视图中文本位置的功能。确定此信息有两个方法，{@link #modelToView} 和 {@link #viewToModel}。
+
+ <p>
+<dt><b><font size=+1>撤消/恢复支持</font></b>
+ <dd>
+提供对编辑历史机制的支持，以允许进行撤消/恢复操作。默认情况下文本组件本身不提供历史缓冲区，但确实提供可以与历史缓冲区一起使用的 <code>UndoableEdit</code> 记录以提供撤消/恢复支持。该支持由 Document 模型提供，该模型允许用户附加 UndoableEditListener 实现。
+
+ <p>
+<dt><b><font size=+1>线程安全</font></b>
+ <dd>
+swing 文本组件对线程安全操作提供一定程度的支持。因为文本组件的可配置性级别高，所以可以回避所提供的保护。该保护主要来自模型，因此 <code>AbstractDocument</code> 的文档会描述提供的假定保护。异步调用的安全方法标记为注释。
+
+ <p>
+<dt><b><font size=+1>换行</font></b>
+ <dd>
+有关如果处理换行的讨论，请参阅 <a href="DefaultEditorKit.html">DefaultEditorKit</a>。
+
+ <p>
+ <dt><b><font size=+1>打印支持</font></b>
+ <dd> 
+ 提供了几个 {@link #print print} 方法进行基本文档打印。如果需要更高级的打印，请使用 {@link #getPrintable} 方法。
+ </dl>
+
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute: isContainer false
+ 
+@author  Timothy Prinzing
+@author Igor Kushnirskiy (printing support)
+@version 1.229 08/03/06
+@see Document
+@see DocumentEvent
+@see DocumentListener
+@see Caret
+@see CaretEvent
+@see CaretListener
+@see TextUI
+@see View
+@see ViewFactory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.JTextComponent.FOCUS_ACCELERATOR_KEY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+焦点加速键的绑定 (bound) 属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.JTextComponent.DEFAULT_KEYMAP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将由所有 <code>JTextComponent</code> 实例共享的默认 keymap，除非这些实例已有另一个 keymap 集合。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.Document javax.swing.text.JTextComponent.model
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+文档模型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.NavigationFilter javax.swing.text.JTextComponent.navigationFilter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+负责限制光标导航的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.DropMode javax.swing.text.JTextComponent.dropMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此组件的放置模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.text.JTextComponent.checkedInputOverride
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在检查了对 processInputMethodEvent 的重写检查之后设置为 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.JTextComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <code>JTextComponent</code>。建立插入符事件的侦听器，并安装可插入的 UI。将组件标记为可编辑状态。不使用任何布局管理器，因为布局受文本的视图子系统管理。文档模型被设置为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.TextUI javax.swing.text.JTextComponent.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此面向文本的编辑器的用户界面工厂。
+
+@return   工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setUI(TextUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此面向文本的编辑器的用户界面工厂。
+
+@param ui  工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新加载可插入的 UI。用于获取新界面的键是 <code>getUIClassID()</code>。该 UI 的类型是 <code>TextUI</code>。设置该 UI 之后调用 <code>invalidate</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.addCaretListener(CaretListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加插入符侦听器，以便侦听任何插入符的更改通知。
+
+@param listener  要添加的侦听器
+@see javax.swing.event.CaretEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.removeCaretListener(CaretListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除插入符侦听器。
+
+@param listener  要移除的侦听器
+@see javax.swing.event.CaretEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.CaretListener[] javax.swing.text.JTextComponent.getCaretListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此文本组件上已注册的所有插入符侦听器的数组。
+
+@return 组件的所有 <code>CaretListener</code>；如果当前没有注册任何插入符侦听器，则返回一个空数组
+
+@see #addCaretListener
+@see #removeCaretListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.JTextComponent.fireCaretUpdate(CaretEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有已注册需要此事件类型的通知的侦听器。使用传入此触发方法的参数延后创建事件实例。侦听器列表按从后往前的方式处理。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setDocument(Document doc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将编辑器与文本文档关联。使用当前已注册的工厂构建一个文档视图，重新确认后由编辑器显示该文档。PropertyChange 事件 (&quot;document&quot;) 被传播到每个侦听器。
+
+@param doc  要显示/编辑的文档
+@see #getDocument
+@beaninfo description: 文本文档模型边界：true expert: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Document javax.swing.text.JTextComponent.getDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与编辑器关联的模型。此方法主要是让 UI 以最少的要求成为文本编辑器的声明次数获取。子类将返回通常将用于扩展 Document 的实际模型类型。
+
+@return  模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Action[] javax.swing.text.JTextComponent.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器的命令列表。这是嵌入的 UI 所支持的命令列表，该 UI 通过编辑器本身支持的命令集进行扩充。这些命令对于绑定到事件是很有用的，例如在 keymap 中。
+
+@return  命令列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setMargin(Insets m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置组件的边框和它的文本之间的空白。文本组件的默认 <code>Border</code> 对象将使用此值创建适当的空白。不过，如果在文本组件上设置非默认边框，则由 <code>Border</code> 对象负责创建适当的空白（其他情况下实际上忽略此属性）。这会导致重绘该组件。PropertyChange 事件 (&quot;margin&quot;) 被发送到所有侦听器。
+
+@param m  边框和文本之间的空间
+@beaninfo description: desired space between the border and text area bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Insets javax.swing.text.JTextComponent.getMargin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文本组件的边框和它的文本之间的空白。  
+
+@return  空白
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setNavigationFilter(NavigationFilter filter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>NavigationFilter</code>。<code>NavigationFilter</code> 作为一种限制光标移动的方式由 <code>DefaultCaret</code> 和默认光标移动操作使用。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.NavigationFilter javax.swing.text.JTextComponent.getNavigationFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>NavigationFilter</code>。<code>NavigationFilter</code> 作为一种限制光标移动的方式由 <code>DefaultCaret</code> 和默认光标移动操作使用。null 返回值意味着光标移动和选择不受限制。
+
+@since 1.4
+@return NavigationFilter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Caret javax.swing.text.JTextComponent.getCaret()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取允许在视图上进行面向文本导航的插入符。  
+
+@return  插入符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setCaret(Caret c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要使用的插入符。默认情况下，这将由安装的 UI 设置。如果需要，还可以更改为定制插入符。设置插入符会导致触发一个 PropertyChange 事件 (&quot;caret&quot;)。
+
+@param c  插入符
+@see #getCaret
+@beaninfo description： the caret used to select/navigate bound: true expert:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Highlighter javax.swing.text.JTextComponent.getHighlighter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取负责进行高亮显示的对象。
+
+@return   highlighter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setHighlighter(Highlighter h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要使用的 highlighter。默认情况下，这将由安装的 UI 设置。如果需要，还可以更改为自定义 highlighter。可以将 highlighter 设置为 <code>null</code>，以禁用它。安装新 highlighter 时，将触发一个 PropertyChange 事件 (&quot;highlighter&quot;)。
+
+@param h   highlighter
+@see #getHighlighter
+@beaninfo description: object responsible for background highlights bound: true expert: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setKeymap(Keymap map)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于将事件绑定到操作的 keymap。设置为 <code>null</code> 可有效地禁用键盘输入。安装新 keymap 时将触发一个 PropertyChange 事件 (&quot;keymap&quot;)。
+
+@param map   keymap
+@see #getKeymap
+@beaninfo description: set of key event to action bindings to use bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setDragEnabled(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+开启或关闭自动拖动处理。要启用自动拖动处理，应该将此属性设置为 {@code true}，并且组件的 {@code TransferHandler} 必须为{@code 非 null}。{@code dragEnabled} 属性的默认值为 {@code false}。
+ <p>
+遵守此属性并识别用户拖动动作的作业取决于外观实现，特别是组件的 {@code TextUI}。启用自动拖动处理时，只要用户在选择上按下鼠标按钮并将鼠标移动几个像素，多数外观（包括那些子类化 {@code BasicLookAndFeel} 的外观）就会开始拖放操作。因此将此属性设置为 {@code true} 可以对选择行为产生微妙的影响。
+ <p>
+ 如果在忽略此属性的情况下使用外观，仍然可以通过在组件的 {@code TransferHandler} 上调用 {@code exportAsDrag} 开始拖放操作。
+
+@param b 是否启用自动拖动处理
+@exception HeadlessException 如果 <code>b</code> 为 <code>true</code>，并且 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+@see #getDragEnabled
+@see #setTransferHandler
+@see TransferHandler
+@since 1.4
+
+@beaninfo description: determines whether automatic drag handling is enabled bound: false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.getDragEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否启用自动拖动处理。
+
+@return {@code dragEnabled} 属性的值
+@see #setDragEnabled
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.text.JTextComponent.setDropMode(DropMode dropMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的放置模式，为了向后兼容性，此属性的默认值为 <code>DropMode.USE_SELECTION</code>。但是，为了便于用户使用，建议使用 <code>DropMode.INSERT</code>。它还提供类似于在文本位置之间的放置操作行为，但这样做时不影响实际文本选择和插入符位置。
+ <p>
+ <code>JTextComponents</code> 支持以下放置模式：
+ <ul>
+    <li><code>DropMode.USE_SELECTION</code></li>
+    <li><code>DropMode.INSERT</code></li>
+ </ul>
+ <p>
+ 放置模式只在此组件具有接受放置的 <code>TransferHandler</code> 时才有意义。
+
+ @param dropMode 要使用的放置模式
+ @throws IllegalArgumentException 如果不支持该放置模式或放置模式为 <code>null</code>
+ @see #getDropMode
+ @see #getDropLocation
+ @see #setTransferHandler
+ @see javax.swing.TransferHandler
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.DropMode javax.swing.text.JTextComponent.getDropMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的放置模式。
+
+ @return 此组件的放置模式
+ @see #setDropMode
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.text.JTextComponent.DropLocation javax.swing.text.JTextComponent.getDropLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在组件上进行 DnD 操作过程中此组件在视觉上指示为放置位置的位置；如果当前没有显示任何位置，则返回 {@code null}。
+ <p>
+此方法不用于从 {@code TransferHandler} 查询放置位置，因为只有在返回 {@code TransferHandler} 的 <code>canImport</code> 并允许显示位置后才设置放置位置。
+ <p>
+此属性更改时，组件将触发名为 "dropLocation" 的属性更改事件。
+
+ @return 放置位置
+ @see #setDropMode
+ @see TransferHandler#canImport(TransferHandler.TransferSupport)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Keymap javax.swing.text.JTextComponent.getKeymap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前在此文本组件中活动的 keymap。
+
+@return   keymap
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.text.Keymap javax.swing.text.JTextComponent.addKeymap(String nm, Keymap parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个新 keymap 添加到 keymap 层次结构。Keymap 绑定自下向上进行解析，所以在子级中指定的属性将重写父级中指定的属性。
+
+@param nm   keymap 的名称（必须为文档中命名的 keymap 集合中唯一的一个）；如果 keymap 是未命名的，则该名称可以为 <code>null</code>，但调用者负责管理返回的引用，因为未命名的 keymap 无法按名称获取
+@param parent  父级 keymap；如果未指定的绑定不需要在其他某个 keymap 中解析，则此 keymap 可以为 <code>null</code>
+@return   keymap
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.text.Keymap javax.swing.text.JTextComponent.removeKeymap(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前添加到文档中的已命名 keymap。具有 <code>null</code> 名称的 Keymap 可以不以此方式移除。
+
+@param nm  要移除的 keymap 的名称
+@return  已移除的 keymap
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.text.Keymap javax.swing.text.JTextComponent.getKeymap(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取以前添加到文档中的已命名 keymap。此 keymap 不与以 <code>null</code> 命名的 keymap 一起使用。
+
+@param nm   keymap 的名称
+@return   keymap
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.text.JTextComponent.loadKeymap(Keymap map, javax.swing.text.JTextComponent.KeyBinding[] bindings, javax.swing.Action[] actions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+加载带有一组绑定的 keymap。这可用于取得一个静态定义表，并将它们加载到某个 keymap 中。以下示例说明了将一些键绑定到与 JTextComponent 关联的剪切、复制和粘贴操作。完成此操作的代码片段可能与以下形式一样：
+ <pre><code>
+
+   static final JTextComponent.KeyBinding[] defaultBindings = {
+     new JTextComponent.KeyBinding(
+       KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK),
+       DefaultEditorKit.copyAction),
+     new JTextComponent.KeyBinding(
+       KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK),
+       DefaultEditorKit.pasteAction),
+     new JTextComponent.KeyBinding(
+       KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_MASK),
+       DefaultEditorKit.cutAction),
+   };
+
+   JTextComponent c = new JTextPane();
+   Keymap k = c.getKeymap();
+   JTextComponent.loadKeymap(k, defaultBindings, c.getActions());
+ 
+ </code></pre>
+绑定和操作的集合可以为空，但必须为非 <code>null</code>。
+
+@param map  keymap
+@param bindings  绑定
+@param actions  操作集合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.JTextComponent.getCaretColor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于呈现插入符的当前颜色。
+
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setCaretColor(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于呈现插入符的当前颜色。设置为 <code>null</code> 可有效地还原默认颜色。设置颜色会导致触发一个 PropertyChange 事件 (&quot;caretColor&quot;)。
+
+@param c  颜色
+@see #getCaretColor
+@beaninfo description: the color used to render the caret bound: true preferred:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.JTextComponent.getSelectionColor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于呈现选定的当前颜色。
+
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setSelectionColor(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于呈现选定的当前颜色。将颜色设置为 <code>null</code> 的方法与设置 <code>Color.white</code> 的方法相同。设置颜色会导致一个 PropertyChange 事件 (&quot;selectionColor&quot;)。
+
+@param c  颜色
+@see #getSelectionColor
+@beaninfo description: color used to render selection background bound: true preferred: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.JTextComponent.getSelectedTextColor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于呈现选定文本的当前颜色。
+
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setSelectedTextColor(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于呈现选定文本的当前颜色。将颜色设置为 <code>null</code> 的方法与设置 <code>Color.black</code> 的方法相同。设置颜色会导致触发一个 PropertyChange 事件 (&quot;selectedTextColor&quot;)。
+
+@param c  颜色
+@see #getSelectedTextColor
+@beaninfo description: color used to render selected text bound: true preferred:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.JTextComponent.getDisabledTextColor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于呈现禁用文本的当前颜色。
+
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setDisabledTextColor(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于呈现禁用文本的当前颜色。设置颜色会触发一个 PropertyChange 事件 (&quot;disabledTextColor&quot;)。
+
+@param c  颜色
+@see #getDisabledTextColor
+@beaninfo description: color used to render disabled text bound: true preferred:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.replaceSelection(String content)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定字符串所表示的新内容替换当前选定的内容。如果没有选择的内容，则该操作插入给定的文本。如果没有替换文本，则该操作移除当前选择的内容。  
+ <p>
+这是插入内容操作的默认实现使用的一种方法，该操作绑定了 keymap 操作。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</A>。     
+
+@param content  要替换选定内容的内容
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.JTextComponent.getText(int offs, int len) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取由组件表示的文本部分。如果长度为 0，则返回空字符串。
+
+@param offs 偏移量，该值 &gt;= 0
+@param len 长度，该值 &gt;= 0
+@return 文本
+@exception BadLocationException 如果偏移量或长度无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.text.JTextComponent.modelToView(int pos) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型中给定位置转换为视图坐标系统中的位置。组件大小必须为一个正值才能用于计算此转换（即在确定组件大小之前不能计算布局）。该组件未必是可见或已绘制的。
+
+@param pos  位置，该值 &gt;= 0
+@return 直角坐标，其在坐标系中的位置为 (r.x, r.y)；如果组件尚不具有正值大小，则返回 null。
+@exception BadLocationException 如果给定位置不表示关联文档中的有效位置
+@see TextUI#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.viewToModel(Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将视图坐标系统中的给定位置转换为模型中最具代表性的位置。组件大小必须为一个正值才能用于计算此转换（即在确定组件大小之前不能计算布局）。该组件不必是可见或已绘制的。
+
+@param pt 视图中要转换的位置
+@return 文档起始部分的偏移量，该值 &gt;= 0；如果组件尚不具有正值大小，则返回 -1。
+@see TextUI#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.cut()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将关联文本模型中当前选定的范围传输到系统剪贴板，并从模型中移除内容。重新设置当前选定。对于 <code>null</code> 选定不执行任何操作。
+
+@see java.awt.Toolkit#getSystemClipboard
+@see java.awt.datatransfer.Clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.copy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将关联文本模型中当前选定的范围传输到系统剪贴板，并在文本模型中保留内容。当前选定保持原样。对于 <code>null</code> 选定不执行任何操作。
+
+@see java.awt.Toolkit#getSystemClipboard
+@see java.awt.datatransfer.Clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.paste()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将系统剪贴板的内容传输到关联的文本模型中。如果在关联视图中有选定的内容，则使用剪贴板的内容替换它。如果没有选定的内容，则将剪贴板插入关联视图中当前插入位置的前面。如果剪贴板为空，则不执行任何操作。
+
+@see #replaceSelection
+@see java.awt.Toolkit#getSystemClipboard
+@see java.awt.datatransfer.Clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.moveCaretPosition(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符移动到新的位置，同时保留最后一次调用 <code>setCaretPosition</code> 之前定义的标记。这就构成了一个选定。如果文档为 <code>null</code>，则不执行任何操作。位置必须在 0 和组件的文本长度之间，否则将抛出异常。
+
+@param pos  位置
+@exception    IllegalArgumentException 如果 <code>position</code> 提供的值小于 0 或大于组件的文本长度
+@see #setCaretPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setFocusAccelerator(char aKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将导致接收的文本组件获取焦点的加速键。加速键将是 <em>alt</em> 键和给定字符（已转换为大写）的修改键。默认情况下，不存在焦点加速键。以前的任何加速键设置都将被取代。'\0' 键设置将被注册，并具有关闭焦点加速键的效果。设置新键时，将触发一个 PropertyChange 事件 (FOCUS_ACCELERATOR_KEY)。
+
+@param aKey  键
+@see #getFocusAccelerator
+@beaninfo description: accelerator character used to grab focus bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char javax.swing.text.JTextComponent.getFocusAccelerator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将导致接收文本组件获取焦点的加速键。如果没有设置焦点加速键，则返回 '\0'。
+
+@return  键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.read(Reader in, Object desc) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据流进行初始化。此方法创建一个适合于组件类型的模型，并根据流初始化该模型。默认情况下，此方法将以纯文本的方式加载该模型。该模型以前的内容将被丢弃。
+
+@param in  从中读取的流
+@param desc  描述流的对象；此对象可以是一个字符串、一个 File、一个 URL 等。有些种类的文档（如 html）或许能够使用此信息；如果为非 <code>null</code>，则将其作为文档的属性添加
+@exception IOException 如果使用该流初始化
+@see EditorKit#createDefaultDocument
+@see #setDocument
+@see PlainDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.write(Writer out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型的内容存储到给定的流中。默认情况下，此方法将以纯文本的方式存储该模型。
+
+@param out 输出流
+@exception IOException 如果发生任何 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setCaretPosition(int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>TextComponent</code> 的文本插入符的位置。注意，插入符可跟踪更改，所以如果组件的底层文本被更改，则此位置可能会移动。如果文档为 <code>null</code>，则不执行任何操作。位置必须在 0 和组件的文本长度之间，否则将抛出异常。
+
+@param position  位置
+@exception    IllegalArgumentException 如果 <code>position</code> 提供的值小于 0 或大于组件的文本长度
+@beaninfo description: the caret position
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.getCaretPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文本组件的文本插入符的位置。
+
+@return  文本组件的文本插入符的位置，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setText(String t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>TextComponent</code> 文本设置为指定文本。如果该文本为 <code>null</code> 或空，则具有只删除旧文本的效果。插入文本时，得到的插入符的位置由该插入符类的实现确定。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</A>。     
+
+注意，文本不是绑定属性，所以更改时不触发 <code>PropertyChangeEvent</code>。要侦听文本的更改，请使用 <code>DocumentListener</code>。
+
+@param t  要设置的新文本
+@see #getText
+@see DefaultCaret
+@beaninfo description: the text of this component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.JTextComponent.getText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextComponent</code> 中包含的文本。如果底层文档为 <code>null</code>，则将给出 <code>NullPointerException</code>。注意，文本不是绑定属性，所以更改时不触发 <code>PropertyChangeEvent</code>。要侦听文本的更改，请使用 <code>DocumentListener</code>。
+
+@return  文本
+@exception NullPointerException 如果文档为 <code>null</code>
+@see #setText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.JTextComponent.getSelectedText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextComponent</code> 中包含的选定文本。如果选定为 <code>null</code> 或文档为空，则返回 <code>null</code>。
+
+@return  文本
+@exception IllegalArgumentException 如果由于某种原因选定没有到文档的有效映射
+@see #setText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.isEditable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指示此 <code>TextComponent</code> 是否可编辑的 boolean。
+
+@return  boolean 值
+@see #setEditable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setEditable(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定的 boolean 变量，以指示此 <code>TextComponent</code> 是否应该为可编辑的。当状态更改时，将触发 PropertyChange 事件（&quot;editable&quot;）。
+
+@param b 要设置的 boolean
+@see #isEditable
+@beaninfo description: specifies if the text can be edited bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.getSelectionStart()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选定文本的起始位置。如果是空文档，则返回 0；如果没有选定，则返回点值。
+
+@return  起始位置，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setSelectionStart(int selectionStart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将选定起始点设置为指定的位置。新的起始点将限制在当前选定的结束点或之前。
+ <p>
+这可用于在 <code>java.awt.TextComponent</code> 上调用此方法的代码向后兼容。实现此方法以转发给 <code>Caret</code> 实现，后者是维护实际选定的位置。
+
+@param selectionStart 文本的起始位置，该值 &gt;= 0
+@beaninfo description: starting location of the selection.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.getSelectionEnd()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选定文本的结束位置。如果文本为空，则返回 0；如果没有选择，则返回点值。
+
+@return  结束位置，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.setSelectionEnd(int selectionEnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将选择结束点设置为指定的位置。新的结束点限制在当前选定开始位置处或之后。
+ <p>
+这可用于在 <code>java.awt.TextComponent</code> 上调用此方法的代码向后兼容。实现此方法以转发 <code>Caret</code> 实现，后者是维护实际选定的位置。
+
+@param selectionEnd  文本的结束位置，该值 &gt;= 0
+@beaninfo description: ending location of the selection.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.select(int selectionStart, int selectionEnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选定指定的开始和结束位置之间的文本。
+ <p>
+此方法设置选定文本的开始位置和结束位置，并强行限制开始位置必须大于等于零。结束位置必须大于等于开始位置，并大于等于文本组件的文本长度。
+ <p>
+如果调用者提供不一致或超出限度的值，则该方法静默地实施这些限制，并且不会失败。要特别指出的是，如果开始位置或结束位置大于文本长度，则将它重置为等于文本长度。如果开始位置小于零，则将它重置为零，如果结束位置小于开始位置，则将它重置为开始位置。
+ <p>
+此调用是为向后兼容性提供的。将其作为调用 <code>setCaretPosition</code> 的途径，接着再调用 <code>moveCaretPosition</code>。管理选定的首选方法是直接调用这些方法。
+
+@param selectionStart 文本的起始位置
+@param selectionEnd 文本的结束位置
+@see #setCaretPosition
+@see #moveCaretPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.JTextComponent.selectAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择 <code>TextComponent</code> 中的所有文本。在 <code>null</code> 或空文档上不执行任何操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.JTextComponent.getToolTipText(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用作 <code>event</code> 的工具提示的字符串。这将返回以下内容之一：
+ <ol>
+<li>如果 <code>setToolTipText</code> 已使用非 <code>null</code> 值调用，则它将被返回；否则
+<li>在 UI 上调用 <code>getToolTipText</code> 的值将被返回。
+ </ol>
+默认情况下，<code>JTextComponent</code> 不使用 <code>ToolTipManager</code> 注册它本身。这意味着只有已在 <code>ToolTipManager</code> 上调用了 <code>registerComponent</code> 工具提示才在 <code>TextUI</code> 上显示。
+
+@param event 关联事件
+@return 用作 <code>event</code> 的工具提示的字符串
+@see javax.swing.JComponent#setToolTipText
+@see javax.swing.plaf.TextUI#getToolTipText
+@see javax.swing.ToolTipManager#registerComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.text.JTextComponent.getPreferredScrollableViewportSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视图组件视口的首选大小。实现此方法以执行返回组件的首选大小的默认行为。
+ 
+@return  其视图为此 <code>Scrollable</code> 的 <code>JViewport</code> 的 <code>preferredSize</code>
+@see JViewport#getPreferredSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示逻辑行或列的组件应计算滚动增量，它将根据方向的值完全公开一个新的行或列。理想情况下，组件应通过返回需要的距离来处理一个部分公开的行或列，以便完全公开此项。
+ <p>
+此操作的默认实现是只返回可视区域的 10%。子类或许能够提供一个更加合理的值。
+ 
+@param visibleRect  视口中可见的视图区域
+@param orientation <code>SwingConstants.VERTICAL</code> 或 <code>SwingConstants.HORIZONTAL</code>
+@param direction 小于零向上/左滚动，大于零向下/右滚动
+@return 在指定方向滚动的&ldquo;单位&rdquo;增量
+@exception IllegalArgumentException 如果方向无效 
+@see JScrollBar#setUnitIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.JTextComponent.getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示逻辑行或列的组件应计算滚动增量，它将根据方向的值完全公开一个行块或列块。 
+ <p>
+此操作的默认实现是只返回可视区域。子类将或许能够提供一个更加合理的值。
+ 
+@param visibleRect  视口中可见的视图区域
+@param orientation <code>SwingConstants.VERTICAL</code> 或 <code>SwingConstants.HORIZONTAL</code>
+@param direction 小于零向上/左滚动，大于零向下/右滚动
+@return 在指定方向滚动的&ldquo;块&rdquo;增量
+@see JScrollBar#setBlockIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.getScrollableTracksViewportWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果视口总是强制此 <code>Scrollable</code> 的宽度与视口宽度匹配，则返回 true。例如，支持换行的正常文本视图在这里将返回 true，因为不希望让换行内容超出视口右边界而无法显示。注意，其祖先为 <code>JScrollPane</code> 的 <code>Scrollable</code> 返回 true 可有效地禁用水平滚动。
+ <p>
+类似于 <code>JViewport</code> 的滚动容器在每次进行验证时都将使用此方法。  
+ 
+@return  如果视口应该强制 <code>Scrollable</code> 宽度与其自身宽度相匹配，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.getScrollableTracksViewportHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果视口总是强制此 <code>Scrollable</code> 的高度与视口高度匹配，则返回 true。例如，纵行文本视图（按列从左向右流入文本）通过在此处返回 true 可有效地禁用垂直滚动。
+ <p>
+类似于 <code>JViewport</code> 的滚动容器在每次进行验证时都将使用此方法。  
+ 
+@return 如果视口强制 Scrollable 高度与其自身高度匹配，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.print() throws java.awt.print.PrinterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个便捷打印方法，它显示打印对话框，然后在<i>交互</i> 模式下打印此 {@code JTextComponent}，不打印标题和脚注文本。注：打印完成前此方法将阻塞。
+ <p>
+ 注：在 <i>headless</i> 模式下，不显示对话框。
+ 
+ <p> 此方法调用功能完备的 {@link #print(MessageFormat, MessageFormat, boolean, PrintService, PrintRequestAttributeSet, boolean) print} 方法执行打印。
+ 
+ @return 除非用户取消了打印，否则返回 {@code true}
+ @throws PrinterException 如果打印系统中发生导致打印中断的错误
+ @throws SecurityException 如果不允许此线程初始化打印作业请求         
+ @see #print(MessageFormat, MessageFormat, boolean, PrintService, PrintRequestAttributeSet, boolean)
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.print(MessageFormat headerFormat, MessageFormat footerFormat) throws java.awt.print.PrinterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个便捷打印方法，它显示打印对话框，然后在<i>交互</i> 模式下打印此 {@code JTextComponent}，打印指定的标题和脚注文本。注:打印完成前此方法将阻塞。  
+ <p>
+ 注：在 <i>headless</i> 模式下，不显示对话框。
+ 
+ <p> 此方法调用功能完备的 {@link #print(MessageFormat, MessageFormat, boolean, PrintService, PrintRequestAttributeSet, boolean) print} 方法执行打印。
+
+ @param headerFormat 在 {@code MessageFormat} 中用作标题的文本，或者为 {@code null}，表示没有标题
+ @param footerFormat 在 {@code MessageFormat} 中用作脚注的文本，或者为 {@code null}，表示没有脚注
+ @return 除非用户取消了打印，否则返回 {@code true}
+ @throws PrinterException 如果打印系统中发生导致作业中断的错误
+ @throws SecurityException 如果不允许此线程初始化打印作业请求         
+ @see #print(MessageFormat, MessageFormat, boolean, PrintService, PrintRequestAttributeSet, boolean)
+ @see java.text.MessageFormat     
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.JTextComponent.print(MessageFormat headerFormat, MessageFormat footerFormat, boolean showPrintDialog, PrintService service, PrintRequestAttributeSet attributes, boolean interactive) throws java.awt.print.PrinterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 打印此 {@code JTextComponent} 的内容。注：打印完成前此方法将阻塞。
+ 
+ <p>
+ 通过提供 {@code MessageFormat} 参数可以将页面标题和脚注文本添加到输出。打印代码从格式中请求 {@code String}，提供可能包含于格式化字符串中的单个项：表示当前页数的 {@code Integer}。 
+ <p>
+ {@code showPrintDialog boolean} 参数允许指定是否向用户显示打印对话框。当向用户显示对话框时，用户可以使用该对话框更改打印属性甚至取消打印。 
+
+ <p>
+ {@code service} 允许为打印对话框提供初始 {@code PrintService}；不显示对话框时，允许指定要打印到的 {@code PrintService}。
+ <p> 
+ {@code attributes} 可用于为打印对话框提供初始值；不显示对话框时，用于提供所有需要的属性。{@code attributes} 可用于控制如何打印作业，例如<i>双面</i> 或<i>单面</i>。
+
+ <p> 
+ {@code interactive boolean} 参数允许指定是否在<i>交互</i> 模式下执行打印。如果为 {@code true}，则在打印期间显示进度对话框（带有中止选项）。在<i>事件指派线程</i> 上调用 {@code print} 时，此对话框为<i>有模式的</i>，否则为<i>无模式的</i>。<b>警告</b>：打印完成前在<i>事件指派线程</i> 上调用此方法（其中 {@code interactive false}）将阻塞<i>所有</i> 事件（包括重绘）的处理。建议只有在不具有可见 GUI 的应用程序进行打印时才这样做。
+
+ <p> 
+ 注：在 <i>headless</i> 模式下，忽略 {@code showPrintDialog} 和 {@code interactive} 参数且不显示对话框。
+ <p>
+ 此方法确保在打印期间不改变 {@code document}。要直观地指示它，则在打印期间设置 {@code setEnabled(false)}。 
+ <p>
+ 此方法使用 {@link #getPrintable} 呈现文档内容。
+ <p>
+ 虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</A>。 
+ <p>
+ <b>示例用法</b>。此代码片断显示了一个跨平台的打印对话框，除非用户取消该对话框，否则在<i>交互</i> 模式下打印 {@code JTextComponent}：
+ 
+ <pre>
+ textComponent.print(new MessageFormat(&quot;My text component header&quot;),
+     new MessageFormat(&quot;Footer. Page - {0}&quot;), true, null, null, true);
+ </pre>
+ <p>
+ 在<i>事件指派线程</i> 之外执行此代码将在<i>后台</i> 执行打印。以下模式可用于<i>后台</i> 打印：
+ <pre>
+     FutureTask&lt;Boolean&gt; future =
+         new FutureTask&lt;Boolean&gt;(
+             new Callable&lt;Boolean&gt;() {
+                 public Boolean call() {
+                     return textComponent.print(.....);
+                 }  
+             });
+     executor.execute(future);
+ </pre> 
+ 
+ @param headerFormat 在 {@code MessageFormat} 中用作标题的文本，或者为 {@code null}，表示没有标题
+ @param footerFormat 在 {@code MessageFormat} 中用作脚注的文本，或者为 {@code null}，表示没有脚注
+ @param showPrintDialog 如果显示打印对话框，则为 {@code true}，否则为 {@code false} 
+ @param service 初始 {@code PrintService}，或者为 {@code null}，表示使用默认值
+ @param attributes 应用于打印作业的作业属性，或者为 {@code null}，表示没有作业属性
+ @param interactive 是否在交互模式下进行打印
+ @return 除非用户取消了打印，否则返回 {@code true}
+ @throws PrinterException 如果打印系统中发生了导致作业中断的错误
+ @throws SecurityException 如果不允许此线程初始化打印作业请求 
+ @see #getPrintable
+ @see java.text.MessageFormat
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see java.util.concurrent.FutureTask
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.print.Printable javax.swing.text.JTextComponent.getPrintable(MessageFormat headerFormat, MessageFormat footerFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 {@code Printable}，用于打印此 {@code JTextComponent} 的内容。返回的 {@code Printable} 以文档在屏幕上呈现的外形对该文档进行打印，为了符合纸张标准重新格式化时除外。返回的 {@code Printable} 可包装于另一个 {@code Printable} 内，以便创建复杂的报告和文档。
+
+ <p>
+ 返回的 {@code Printable} 与此 {@code JTextComponent} 共享 {@code document}。开发人员确保使用此 {@code Printable} 时不改变 {@code document}。打印期间改变 {@code document} 将导致不确定的打印行为。 
+ <p>
+ 通过提供 {@code MessageFormat} 参数可以将页面标题和脚注文本添加到输出。打印代码从格式中请求 {@code String}，提供可能包含于格式化字符串中的单个项：表示当前页数的 {@code Integer}。
+ <p> 
+ 打印时，返回的 {@code Printable} 对文档内容进行适当地格式化以适合页面大小。为了能正确的自动换行，所有页面的 {@code imageable width} 必须相同。请参阅 {@link java.awt.print.PageFormat#getImageableWidth}。
+
+ <p>
+ 虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</A>。
+ <p>
+ 可以在任意线程上打印返回的 {@code Printable}。
+ <p>
+ 返回 {@code Printable} 的此实现在<i>事件指派线程</i> 上执行所有打印，而不管是在什么线程上使用它。
+ 
+ @param headerFormat 在 {@code MessageFormat} 中用作标题的文本，或者为 {@code null}，表示没有标题
+ @param footerFormat 在 {@code MessageFormat} 中用作脚注的文本，或者为 {@code null}，表示没有脚注
+ @return 打印此 {@code JTextComponent} 内容时使用的 {@code Printable}  
+ @see java.awt.print.Printable
+ @see java.awt.print.PageFormat
+ @see javax.swing.text.Document#render(java.lang.Runnable)
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.text.JTextComponent.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>JTextComponent</code> 关联的 <code>AccessibleContext</code>。对于文本组件，<code>AccessibleContext</code> 采用 <code>AccessibleJTextComponent</code> 的形式。如有必要，可以创建一个新的 <code>AccessibleJTextComponent</code> 实例。
+
+@return 充当此 <code>JTextComponent</code> 的 <code>AccessibleContext</code> 的 <code>AccessibleJTextComponent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.text.JTextComponent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JTextComponent</code> 的字符串表示形式。此方法仅在进行调试的时候使用，返回的字符串的内容和格式在各种实现间可能有所不同。返回的字符串可以为空，但不可以为 <code>null</code>。
+ <P>
+重写 <code>paramString</code> 来提供有关 JFC 组件的一些特定新方面的信息。
+ 
+@return  此 <code>JTextComponent</code> 的字符串表示形式
+
+<!-- END DATA -->

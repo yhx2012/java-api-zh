@@ -1,0 +1,323 @@
+<!-- BEGIN KEY -->
+public interface javax.net.ssl.SSLSession
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在 SSL 中，会话用来描述两个实体间正在发生的关系。每个 SSL 连接在某一时刻都会涉及一个会话，但是该会话可以同时地或相继地用在这些实体的多个连接上。还可以用不同的会话代替某一连接上使用的会话。会话是作为 SSL 握手协议的一部分创建或重新加入的。影响安全或资源使用的策略或由应用程序显式调用 <code>invalidate</code> 可能使会话无效。会话管理策略通常用来调优性能。
+
+ <P> 除了标准会话属性之外，SSL 会话还会公开以下这些只读属性：  <UL>
+
+	<LI> <em>同级身份。</em> 会话是在特定客户端和特定服务器之间进行的。同级身份可能已作为会话设置的一部分建立。同位体通常是用 X.509 证书链标识。
+
+	<LI> <em>密码套件的名称。</em>密码套件描述在特定会话中的连接使用的加密保护的种类。
+
+	<LI> <em>同级主机。</em>一次会话的所有连接都是在相同的两个主机之间进行的。连接的另一端的主机的地址是可用的。
+
+	</UL>
+
+ <P> 可以显式地使会话无效。当遇到某种错误时，也可以隐式地使会话无效。
+
+@since 1.4
+@version 1.31
+@author David Brownell
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.net.ssl.SSLSession.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回分配给此会话的标识符。
+
+@return 会话的标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.net.ssl.SSLSessionContext javax.net.ssl.SSLSession.getSessionContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此会话所在的上下文。
+ <P>
+ 此上下文在一些环境中可能不可用，在这种情况下，此方法返回 null。
+ <P>
+ 如果存在上下文并且已安装了一个安全管理器，则调用者可能需要相应的权限才能访问上下文，否则可能抛出安全异常。在 Java 环境中，使用 <code>SSLPermission(&quot;getSSLSessionContext&quot;)</code> 权限调用安全管理器的 <code>checkPermission</code> 方法。
+
+@throws SecurityException 如果调用线程没有获取 SSL 会话上下文的权限。
+@return 用于此会话的会话上下文；如果上下文不可用，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.net.ssl.SSLSession.getCreationTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回创建此会话表示的时间，该时间是自协调世界时 1970 年 1 月 1 日午夜起经过的毫秒数。
+
+
+@return 创建此会话的时间
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.net.ssl.SSLSession.getLastAccessedTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此会话表示上一次被会话层应用访问的时间，该时间是自协调世界时 1970 年 1 月 1 日午夜起经过的毫秒数。
+ <P>
+ 访问将指示使用会话数据建立一个新的连接。访问期间并不反映应用级操作，例如获取或设置与会话相关的值。
+
+ <P> 此信息在会话管理策略中特别有用。例如，会话管理器线程可以将所有会话放在一个很长时间未被使用的给定上下文中；或者可能根据生存时间对会话进行排序，以优化一些任务。
+
+@return 上一次访问此会话的时间
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.SSLSession.invalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使会话失效。
+ <P>
+ 将来的连接无法恢复或加入此会话。但是，任何使用此会话的现有连接可以继续使用此会话，直到该连接关闭。
+
+@see #isValid()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.net.ssl.SSLSession.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此会话对于恢复和加入是否是有效的和可用的。
+
+@return 如果可以重新加入此会话，则返回 true。
+@see #invalidate()
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.SSLSession.putValue(String name, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 使用给定的 <code>name</code> 将指定的 <code>value</code> 对象绑定到会话的应用层数据中。
+ <P>
+ 替换任何使用相同 <code>name</code> 的现有绑定。如果新的（或现有）<code>value</code> 实现了 <code>SSLSessionBindingListener</code> 接口，则会相应地通知 <code>value</code> 表示的对象。
+ <p>
+ 出于安全原因，具有相同名称的值在不同的访问控制上下文之间是不可见的。
+
+@param name 数据对象将要绑定到的名称。此参数不可以为 null。
+@param value 将要绑定的数据对象。此参数不可以为 null。
+@throws IllegalArgumentException 如果任何一个参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.net.ssl.SSLSession.getValue(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回会话的应用层数据中的绑定到给定名称的对象。如果不存在这种绑定，则返回 null。
+ <p>
+ 出于安全原因，具有相同名称的值在不同的访问控制上下文之间是不可见的。
+
+@param name 要查找的绑定的名称。
+@return 绑定到该名称的值；如果不存在绑定，则返回 null。
+@throws IllegalArgumentException 如果参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.SSLSession.removeValue(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 移除会话的应用层数据中绑定到给定名称的对象。如果没有对象绑定到给定名称，则什么都不做。如果绑定的现有对象实现了 <code>SessionBindingListener</code> 接口，则以适当的方式通知它。
+ <p>
+ 出于安全原因，具有相同名称的值在不同的访问控制上下文之间是不可见的。
+
+@param name 将移除的在不同访问控制上下文之间可见的对象名称
+@throws IllegalArgumentException 如果参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.net.ssl.SSLSession.getValueNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回绑定到会话中的所有应用层数据对象的名称组成的数组。
+ <p>
+ 出于安全原因，具有相同名称的值在不同的访问控制上下文之间是不可见的。
+
+@return 绑定到此会话的对象的名称组成的非 null（可能为空）数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.Certificate[] javax.net.ssl.SSLSession.getPeerCertificates() throws javax.net.ssl.SSLPeerUnverifiedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回同级身份，该同级身份是作为定义会话的一部分而建立的。
+ <P>
+注：仅当使用基于证书的密码套件时才可以使用此方法；将它与非基于证书的密码套件（如 Kerberos）一起使用将抛出 SSLPeerUnverifiedException。
+
+@return 同级证书的有序数组，同位体自己的证书紧跟在任何证书授权之后。
+@exception SSLPeerUnverifiedException 如果同级身份未被验证
+@see #getPeerPrincipal()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.Certificate[] javax.net.ssl.SSLSession.getLocalCertificates()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回握手期间发送给同位体的证书。
+ <P>
+注：仅当使用基于证书的密码套件时此方法才有用。
+ <P>
+ 当在一次握手中有多个证书可供使用时，具体实现可以选择使用它认为&ldquo;最好的&rdquo;证书链，并将该证书链传输给另一端。此方法允许调用者知道实际使用了哪些证书链。
+
+@return 证书的有序数组，本地证书紧跟在任何证书授权之后。如果没有发送任何证书，则返回 null。
+
+@see #getLocalPrincipal()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.cert.X509Certificate[] javax.net.ssl.SSLSession.getPeerCertificateChain() throws javax.net.ssl.SSLPeerUnverifiedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回同级身份，该同级身份被标识作为定义会话的一部分。
+ <P>
+注：仅当使用基于证书的密码套件时才可以使用此方法；将它与非基于证书的密码套件（如 Kerberos）一起使用将抛出 SSLPeerUnverifiedException。
+
+<p><em>注：此方法存在是为了与以前的版本兼容。新的应用程序应该使用 {@link #getPeerCertificates}。</em></p>
+
+@return 同级 X.509 证书的有序数组，同位体自己的证书紧跟在任何证书授权之后。（证书格式采用原来的 JSSE 证书 {@link javax.security.cert.X509Certificate} 格式。）
+@exception SSLPeerUnverifiedException 如果同级身份未被验证
+@see #getPeerPrincipal()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal javax.net.ssl.SSLSession.getPeerPrincipal() throws javax.net.ssl.SSLPeerUnverifiedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回同级身份，该同级身份是作为定义会话的一部分而建立的。
+
+@return 同位体的主体。对于基于 X509 的密码套件，返回最终实体证书的 X500Principal；对于 Kerberos 密码套件，返回 KerberosPrincipal。
+
+@throws SSLPeerUnverifiedException 如果同级身份未被验证
+
+@see #getPeerCertificates()
+@see #getLocalPrincipal()
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal javax.net.ssl.SSLSession.getLocalPrincipal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回握手期间发送给同位体的主体。
+
+@return 发送给同位体的主体。返回基于 X509 的密码套件的最终实体证书的 X500Principal，以及 Kerberos 的密码套件的 KerberosPrincipal。如果没有发送任何主体，则返回 null。
+
+@see #getLocalCertificates()
+@see #getPeerPrincipal()
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.net.ssl.SSLSession.getCipherSuite()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回会话中的所有连接所使用的 SSL 密码套件的名称。
+
+ <P> 此密码套件定义了针对连接上发送的数据所提供的保护级别，包括所使用的加密类型和如何进行验证的大多数方面。
+
+@return 会话的密码套件的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.net.ssl.SSLSession.getProtocol()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回会话中的所有连接使用的协议的标准名称。
+
+ <P> 此方法定义了连接中使用的协议。
+
+@return  会话中的所有连接使用的协议的标准名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.net.ssl.SSLSession.getPeerHost()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此会话中同位体的主机名称。
+ <P>
+ 对于服务器来说，该主机是客户端的主机；对于客户端来说，它是服务器的主机。此名称可以不是一个完全限定的主机名或根本不是主机名，因为它可以表示同级网络地址的字符串编码。如果需要这样的名称，可以根据此方法返回的值通过名称服务来解析该名称。
+ <P>
+ 此值并没有经过验证，因此不应依赖它。它主要被用作 <code>SSLSession</code> 缓存策略的提示。
+
+@return	同级主机的主机名称；如果没有信息可用，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.net.ssl.SSLSession.getPeerPort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此会话中同位体的端口号。
+ <P>
+ 对于服务器来说，该端口号是客户端的端口号；对于客户端来说，它是服务器的端口号。
+ <P>
+ 此值并没有经过验证，因此不应依赖它。它主要被用作 <code>SSLSession</code> 缓存策略的提示。
+
+@return	同位体的端口号；如果没有信息可用，则返回 -1。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.net.ssl.SSLSession.getPacketBufferSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 获取使用此会话时期望的最大 SSL/TLS 包的当前大小。
+ <P>
+ 使用此会话的 <code>SSLEngine</code> 可以生成任意大小并包括此方法返回的值的 SSL/TLS 包。所有 <code>SSLEngine</code> 网络缓冲区的大小最少应该是这么大，以防止执行 <code>wrap</code> 和 <code>unwrap</code> 时出现空间不足问题。
+
+@return  期望网络包大小的当前最大值
+
+@see SSLEngine#wrap(ByteBuffer, ByteBuffer)
+
+@see SSLEngine#unwrap(ByteBuffer, ByteBuffer)
+
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.net.ssl.SSLSession.getApplicationBufferSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取使用此会话时期望的最大应用程序数据的当前大小。
+ <P>
+ <code>SSLEngine</code> 应用数据缓冲区必须足够大以容纳所接收的取自任何入站网络应用数据包的应用数据。通常，出站应用数据缓冲区可以为任意大小。
+
+
+@return  期望应用程序包大小的当前最大值
+
+@see SSLEngine#wrap(ByteBuffer, ByteBuffer)
+@see SSLEngine#unwrap(ByteBuffer, ByteBuffer)
+
+@since 1.5
+
+<!-- END DATA -->

@@ -1,0 +1,264 @@
+<!-- BEGIN KEY -->
+public class javax.print.attribute.standard.JobStateReason extends javax.print.attribute.EnumSyntax implements javax.print.attribute.Attribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+JobStateReason 类是打印属性类，它是一个枚举值，提供了有关作业当前状态的额外信息，例如，扩充作业的 {@link JobState JobState} 属性值的信息。JobStateReason 类定义了标准的作业状态原因值。Print Service 实现只需报告适合于特定实现的作业状态原因；它不必报告每个定义的作业状态原因。
+ <P>
+JobStateReason 的实例不直接出现在 Print Job 的属性集中。但是，{@link JobStateReasons JobStateReasons} 属性出现在 Print Job 的属性集中。{@link JobStateReasons JobStateReasons} 属性包含零个、一个或多个 JobStateReason 对象，它们属于 Print Job 的状态。当 Print Job 的对应条件变为 true 时，打印机将 JobStateReason 对象添加到 Print Job 的 {@link JobStateReasons JobStateReasons} 属性，且当对应条件变为 false 时，再移除 JobStateReason 对象，而不管 Print Job 的总体 {@link JobState JobState} 是否也更改。 
+ <P>
+ <B>IPP Compatibility:</B> <CODE>getName()</CODE> 所返回的类别名称为 IPP 属性名称。枚举的整数值为 IPP 枚举值。<code>toString()</code> 方法返回属性值的 IPP 字符串表示形式。
+ <P>
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_INCOMING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机已创建 Print Job，但打印机尚未完成访问或接收所有打印数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_DATA_INSUFFICIENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机已创建 Print Job，但打印机在可以将作业转为 PROCESSING 状态之前还需要额外的打印数据。如果打印机尚未接收所有数据就开始处理，则打印机移除 JOB_DATA_INSUFFICIENT 原因，但保持 JOB_INCOMING 原因。如果打印机在已接收所有数据之后才开始处理，则打印机同时移除 JOB_DATA_INSUFFICIENT 和 JOB_INCOMING 原因。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.DOCUMENT_ACCESS_ERROR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机不能访问由引用传递的一个或多个文档（即打印数据表示形式对象为 URL）。此原因应覆盖任何文件访问问题，包括文件不存在和由于访问控制问题产生的拒绝访问。打印机是否中止作业并将作业转为 ABORTED 作业状态，或者打印所有可访问的文档并将作业转为 COMPLETED 作业状态，并将 COMPLETED_WITH_ERRORS 原因添加到作业的 {@link JobStateReasons JobStateReasons} 属性，取决于实现和/或位置策略。如果打印机支持带有 URL 打印数据表示形式对象的文档 格式，则此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.SUBMISSION_INTERRUPTED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于某些不可预见的原因，作业未完成提交。可能的原因包括 (1) 客户机完全提交作业之前打印机已崩溃，(2) 文档数据完全传输到打印机之前，打印机或文档传输方法已以某种不可逆形式崩溃，(3) 完全提交作业之前客户机已崩溃。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_OUTGOING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机正将作业传输到输出设备。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_HOLD_UNTIL_SPECIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为作业的 {@link JobHoldUntil JobHoldUntil} 属性值指定一个将来的日期-时间。移除此原因且没有保持作业的其他原因之前，作业不能成为处理的侯选作业。如果 {@link JobHoldUntil JobHoldUntil} 作业模板属性受支持，则此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.RESOURCES_ARE_NOT_READY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在候选作业的任何物理打印机上，至少有一个该作业所需的资源（例如介质、字体、资源对象等）未就绪。此条件可以在接收作业时检测，或者当作业正挂起或处理时检测，这取决于实现。作业可以保持其当前状态，或者转为 PENDING_HELD 状态，这取决于实现和/或作业安排策略。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.PRINTER_STOPPED_PARTLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机的 {@link PrinterStateReasons PrinterStateReasons} 属性值包含 STOPPED_PARTLY 的 {@link PrinterStateReason PrinterStateReason} 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.PRINTER_STOPPED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机的 {@link PrinterState PrinterState} 属性值为 STOPPED。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_INTERPRETING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业处于 PROCESSING 状态，更明确地讲，打印机正解释文档数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_QUEUED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机处于 PROCESSING 状态，更明确地讲，打印机已对文档数据排队。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_TRANSFORMING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业处于 PROCESSING 状态，更明确地讲，打印机正解释文档数据并生成另一个电子表示形式。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_QUEUED_FOR_MARKER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机处于 PENDING_HELD、PENDING 或 PROCESSING 状态，更明确地讲，打印机已完成足够的文档处理，能够开始标记且作业正在等待标记。需要人为干涉以释放作业的系统将作业置于 PENDING_HELD 作业状态。自动选择作业以使用标记的系统将作业置于 PENDING 作业状态，或当等待标记的同时保持作业处于 PROCESSING 作业状态，这取决于实现。当开始标记时，所有实现将作业置于（或回退到）PROCESSING 状态。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_PRINTING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+输出设备为标记介质。此值适用于花费大量时间处理以下情况的打印机：(1) 当未发生标记并希望显示标记现在正在发生时，或者 (2)当作业正处于被取消或中止的进程中，同时作业保持在 PROCESSING 状态，但标记尚未停止，因此作业的印张或纸张计数仍在增加。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_CANCELED_BY_USER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业所有者取消了作业，作业所有者即用户，通过验证的该用户身份与创建 Print Job 的初始用户的值相同，或某位其他授权终端用户，例如作业所有者安全组成员。此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_CANCELED_BY_OPERATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+操作员取消了作业，操作员即用户，其已被授权为具有操作员权限（无论是本地还是远程）。如果安全策略允许任何人取消任何人的作业，则当非作业所有者取消该作业时可以使用此值。对于这样的安全策略，就取消作业而言，在效果上每位人员都是操作员。如果实现允许由非作业所有者取消作业，则此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_CANCELED_AT_DEVICE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+非标识本地用户取消了作业，即在设备控制台的用户取消了作业。如果实现支持在控制台取消作业，则此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.ABORTED_BY_SYSTEM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+系统中止了作业。作业分以下情况 (1) 在正被取消的进程中，(2) 已被系统取消并置于 ABORTED 状态，或者 (3) 已被系统取消并置于 PENDING_HELD 状态，因此用户或操作员可以手动尝试该作业。此值应受支持。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.UNSUPPORTED_COMPRESSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+系统取消了作业，这是因为打印机尝试解压缩文档数据时确定该压缩实际上不在打印机所支持的文档数据中。此值必须受支持，因为 {@link Compression Compression} 是必需的文档描述属性。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.COMPRESSION_ERROR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+系统中止了作业，因为打印机在解压缩文档数据中遇到错误。如果打印机发送此原因，则文档数据已通过任何已导致 UNSUPPORTED_COMPRESSION 作业状态原因的测试。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.UNSUPPORTED_DOCUMENT_FORMAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+系统中止了作业，因为文档数据的文档格式（doc flavor）不在打印机所支持的格式中。如果客户机指定了具有 <CODE>&quot;application/octet-stream&quot;</CODE> 的 MIME 类型的 doc flavor，则如果打印机不能通过自动感知确定文档数据的实际格式，则打印机可能中止该作业（即使打印机支持显式指定的文档格式）。此值必须受支持，因为每个文档都需要指定 doc flavor。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.DOCUMENT_FORMAT_ERROR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+系统中止了作业，因为打印机在处理文档数据时遇到错误。如果打印机发送此原因，则文档数据已通过任何已导致 UNSUPPORTED_DOCUMENT_FORMAT 作业状态原因的测试。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.PROCESSING_TO_STOP_POINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求者已取消作业，或打印机已中止作业，但打印机仍在执行该作业的某些操作，直到遇到指定的停止点，或已完成作业终止/清除操作。 
+ <P>
+如果实现需要一段可度量的时间来取消处于 PROCESSING 或 PROCESSING_STOPPED 作业状态中的作业，则打印机必须使用此原因来指示打印机仍在执行作业的某些操作，同时该作业保持 PROCESSING 或 PROCESSING_STOPPED 状态。当所有作业的作业描述属性已停止增加时，打印机将作业从 PROCESSING 状态更改为 CANCELED 或 ABORTED 作业状态。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.SERVICE_OFF_LINE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印机离线，不接受作业。所有 PENDING 状态的作业进入 PENDING_HELD 状态。如果服务或文档 转换的输入被破坏或崩溃，则可能发生此情况。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_COMPLETED_SUCCESSFULLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业成功完成。此值应受支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_COMPLETED_WITH_WARNINGS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业以警告结束。如果实现检测到警告，则此值应受支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_COMPLETED_WITH_ERRORS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业以错误结束（也可能是警告）。如果实现检测到错误，则此值应受支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.JOB_RESTARTABLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此作业被保留，且当前可以重新开始。如果作业的 {@link JobStateReasons JobStateReasons} 属性中包含 JOB_RESTARTABLE，则打印机必须接受请求以重新开始该作业。如果支持重新开始作业，则此值应受支持。<I>[目前 Java Print Service API 中没有重新开始作业的功能。]</I> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobStateReason javax.print.attribute.standard.JobStateReason.QUEUED_IN_DEVICE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业已被转发到某个不能发送回状态的设备或打印系统。打印机将作业的 {@link JobState JobState} 属性设置为 COMPLETED，并将 QUEUED_IN_DEVICE 原因添加到作业的 {@link JobStateReasons JobStateReasons} 属性，以指示打印机没有有关作业的额外信息，并且将永远没有任何更多信息。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.standard.JobStateReason(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 JobStateReason 枚举值。 
+
+@param  value  整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.print.attribute.standard.JobStateReason.getStringTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 JobStateReason 类的字符串表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.EnumSyntax[] javax.print.attribute.standard.JobStateReason.getEnumValueTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 JobStateReason 类的枚举值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.JobStateReason.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将被用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于 JobStateReason 类和任何供应商定义的子类，类别为 JobStateReason 类本身。 
+
+@return  打印属性类（类别），它是 {@link java.lang.Class java.lang.Class} 类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.JobStateReason.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别名称，此属性值为该类别的实例。 
+ <P>
+对于 JobStateReason 类和任何供应商定义的子类，类别名称为 <CODE>&quot;job-state-reason&quot;</CODE>。 
+
+@return  属性类别名称。
+
+<!-- END DATA -->

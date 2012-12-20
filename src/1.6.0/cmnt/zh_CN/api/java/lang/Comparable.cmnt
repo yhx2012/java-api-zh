@@ -1,0 +1,57 @@
+<!-- BEGIN KEY -->
+public interface java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口强行对实现它的每个类的对象进行整体排序。这种排序被称为类的<i>自然排序</i>，类的 <tt>compareTo</tt> 方法被称为它的<i>自然比较方法</i>。<p>
+
+实现此接口的对象列表（和数组）可以通过 {@link Collections#sort(List) Collections.sort}（和 {@link Arrays#sort(Object[]) Arrays.sort}）进行自动排序。实现此接口的对象可以用作{@linkplain SortedMap 有序映射}中的键或{@linkplain SortedSet 有序集合}中的元素，无需指定{@linkplain Comparator 比较器}。<p>
+
+对于类 <tt>C</tt> 的每一个 <tt>e1</tt> 和 <tt>e2</tt> 来说，当且仅当 <tt>e1.compareTo(e2) == 0</tt> 与 <tt>e1.equals(e2)</tt> 具有相同的 boolean 值时，类 <tt>C</tt> 的自然排序才叫做<i>与 equals 一致</i>。注意，<tt>null</tt> 不是任何类的实例，即使 <tt>e.equals(null)</tt> 返回 <tt>false</tt>，<tt>e.compareTo(null)</tt> 也将抛出 <tt>NullPointerException</tt>。<p>
+
+建议（虽然不是必需的）最好使自然排序与 equals 一致。这是因为在使用自然排序与 equals 不一致的元素（或键）时，没有显式比较器的有序集合（和有序映射表）行为表现“怪异”。尤其是，这样的有序集合（或有序映射表）违背了根据 <tt>equals</tt> 方法定义的集合（或映射表）的常规协定。<p>
+
+例如，如果将两个键 <tt>a</tt> 和 <tt>b</tt> 添加到没有使用显式比较器的有序集合中，使 <tt>(!a.equals(b) && a.compareTo(b) == 0)</tt>，那么第二个 <tt>add</tt> 操作将返回 false（有序集合的大小没有增加），因为从有序集合的角度来看，<tt>a</tt> 和 <tt>b</tt> 是相等的。<p>
+
+实际上，所有实现 <tt>Comparable</tt> 的 Java 核心类都具有与 equals 一致的自然排序。<tt>java.math.BigDecimal</tt> 是个例外，它的自然排序将值相等但精确度不同的 <tt>BigDecimal</tt> 对象（比如 4.0 和 4.00）视为相等。<p>
+
+从数学上讲，定义给定类 C 上自然排序的<i>关系式</i> 如下：<pre>
+      {(x, y)|x.compareTo(y) &lt;= 0}。
+</pre> 整体排序的<i>商</i> 是：<pre>
+      {(x, y)|x.compareTo(y) == 0}。
+</pre>
+
+它直接遵循 <tt>compareTo</tt> 的协定，商是 <tt>C</tt> 的<i>等价关系</i>，自然排序是 <tt>C</tt> 的<i>整体排序</i>。当说到类的自然排序<i>与 equals 一致</i> 时，是指自然排序的商是由类的 {@link Object#equals(Object) equals(Object)} 方法定义的等价关系。<pre>
+    {(x, y)|x.equals(y)}。</pre><p>
+
+此接口是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@param <T> 可以与此对象进行比较的那些对象的类型
+
+@author  Josh Bloch
+@version 1.26, 04/21/06
+@see java.util.Comparator
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.Comparable.compareTo(T o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此对象与指定对象的顺序。如果该对象小于、等于或大于指定对象，则分别返回负整数、零或正整数。
+
+<p>实现类必须确保对于所有的 <tt>x</tt> 和 <tt>y</tt> 都存在 <tt>sgn(x.compareTo(y)) == -sgn(y.compareTo(x))</tt> 的关系。（这意味着如果 <tt>y.compareTo(x)</tt> 抛出一个异常，则 <tt>x.compareTo(y)</tt> 也要抛出一个异常。）
+
+<p>实现类还必须确保关系是可传递的：<tt>(x.compareTo(y)&gt;0 &amp;&amp; y.compareTo(z)&gt;0)</tt> 意味着 <tt>x.compareTo(z)&gt;0</tt>。
+
+<p>最后，实现者必须确保 <tt>x.compareTo(y)==0</tt> 意味着对于所有的 <tt>z</tt>，都存在 <tt>sgn(x.compareTo(z)) == sgn(y.compareTo(z))</tt>。
+
+强烈推荐 <tt>(x.compareTo(y)==0) == (x.equals(y))</tt> 这种做法，但并<i>不是</i> 严格要求这样做。一般来说，任何实现 <tt>Comparable</tt> 接口和违背此条件的类都应该清楚地指出这一事实。推荐如此阐述：“注意：此类具有与 equals 不一致的自然排序。”
+
+<p>在前面的描述中，符号 <tt>sgn(</tt><i>expression</i><tt>)</tt> 指定 <i>signum</i> 数学函数，该函数根据 <i>expression</i> 的值是负数、零还是正数，分别返回 <tt>-1</tt>、<tt>0</tt> 或 <tt>1</tt> 中的一个值。
+ 
+@param   o 要比较的对象。
+@return  负整数、零或正整数，根据此对象是小于、等于还是大于指定对象。
+ 
+@throws ClassCastException 如果指定对象的类型不允许它与此对象进行比较。 
+
+<!-- END DATA -->

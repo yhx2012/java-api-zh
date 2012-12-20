@@ -1,0 +1,373 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.geom.Path2D extends java.lang.Object implements java.awt.Shape, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code Path2D} 类提供一个表示任意几何形状路径的简单而又灵活的形状。它可以完整地表示可通过 {@link PathIterator} 接口进行迭代的任何路径（包括其所有线段类型和旋绕规则），并实现 {@link Shape} 接口的所有基本目标测试方法。
+ <p>
+在处理能够表示且能使用浮点精度的数据时，可以使用 {@link Path2D.Float}。对于要求双精度的准确性或范围的数据，可以使用 {@link Path2D.Double}。
+ <p>
+{@code Path2D} 为基本构造、几何路径管理以及几乎没有附加解释的上述接口的实现精确地提供其所需的设施。如果除简单目标测试以外，它对操作封闭几何形状的内部有用，则 {@link Area} 类提供专用于封闭图形的附加容量。虽然两个类名义上都可以实现 {@code Shape} 接口，但它们的目的各不一样，并且它们一起提供了两个有用的几何形状视图，在该视图上，{@code Path2D} 主要处理由路径段形成的轨迹，而 {@code Area} 主要处理解释和操作 2D 几何空间的封闭区域。
+ <p>
+{@link PathIterator} 接口有更多关于组成路径的线段类型、控制如何确定哪些区域位于路径之内或之外的旋绕规则的详细描述。
+ 
+@version 1.4, 04/19/06
+@author Jim Graham
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.Path2D.WIND_EVEN_ODD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定路径内部的奇偶旋绕规则。  
+
+@see PathIterator#WIND_EVEN_ODD
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.Path2D.WIND_NON_ZERO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定路径内部的非零旋绕规则。  
+
+@see PathIterator#WIND_NON_ZERO
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.moveTo(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过移动到指定坐标（以双精度指定），将一个点添加到路径中。
+
+@param x 指定的 X 坐标
+@param y 指定的 Y 坐标
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.lineTo(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过绘制一条从当前坐标到新指定坐标（以双精度指定）的直线，将一个点添加到路径中。
+
+@param x 指定的 X 坐标
+@param y 指定的 Y 坐标
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.quadTo(double x1, double y1, double x2, double y2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过绘制与当前坐标和指定坐标 {@code (x2,y2)} 都相交的二次曲线，并将指定点 {@code (x1,y1)} 用作二次曲线参数控制点，可以将由两个新点定义的曲线段添加到路径中。所有坐标都以双精度指定。
+
+@param x1 二次曲线控制点的 X 坐标
+@param y1 二次曲线控制点的 Y 坐标
+@param x2 终端点的 X 坐标
+@param y2 终端点的 Y 坐标
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.curveTo(double x1, double y1, double x2, double y2, double x3, double y3)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过绘制与当前坐标和指定坐标 {@code (x3,y3)} 都相交的 B&eacute;zier 曲线，并将指定点 {@code (x1,y1)} 和 {@code (x2,y2)} 用作 B&eacute;zier 曲线的控制点，可以将由三个新点定义的曲线段添加到路径中。所有坐标都以双精度指定。
+
+@param x1 第一个 B&eacute;zier 控制点的 X 坐标
+@param y1 第一个 B&eacute;zier 控制点的 Y 坐标
+@param x2 第二个 B&eacute;zier 控制点的 X 坐标
+@param y2 第二个 B&eacute;zier 控制点的 Y 坐标
+@param x3 终端点的 X 坐标
+@param y3 终端点的 Y 坐标
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void java.awt.geom.Path2D.closePath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过绘制一条向后延伸到最后一个 {@code moveTo} 的坐标的直线，封闭当前子路径。如果该路径已封闭，则此方法无效。
+
+@since 1.6
+	
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.geom.Path2D.append(Shape s, boolean connect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 {@code Shape} 对象的几何形状添加到路径中，可能要使用一条线段将新几何形状连接到现有路径段。如果 {@code connect} 参数为 {@code true} 且路径是非空的，则添加的 {@code Shape} 几何形状的所有初始 {@code moveTo} 将被转换为 {@code lineTo} 段。如果这种连接 {@code lineTo} 段的目标坐标与当前开放子路径的结束坐标匹配，那么该线段将被作为多余线段忽略。指定 {@code Shape} 的旋绕规则将被忽略，添加的几何形状由为此路径指定的旋绕规则来管理。
+
+@param s 其几何形状将被添加到此路径的 {@code Shape}
+@param connect 一个 boolean 值，用于控制是否将初始 {@code moveTo} 段转换为 {@code lineTo} 段，从而将新几何形状连接到现有路径
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.append(PathIterator pi, boolean connect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 {@link PathIterator} 对象的几何形状添加到路径中，可能要使用一条线段将新几何形状连接到现有路径段。如果 {@code connect} 参数为 {@code true} 且路径是非空的，则添加的 {@code Shape} 几何形状的所有初始 {@code moveTo} 将被转换为 {@code lineTo} 段。如果这种连接 {@code lineTo} 段的目标坐标与当前开放子路径的结束坐标匹配，那么该线段将被作为多余线段忽略。指定 {@code Shape} 的旋绕规则将被忽略，添加的几何形状由为此路径指定的旋绕规则来管理。
+
+@param pi 其几何形状将被添加到此路径的 {@code PathIterator}
+@param connect 一个 boolean 值，用于控制是否将初始 {@code moveTo} 段转换为 {@code lineTo} 段，从而将新几何形状连接到现有路径
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized int java.awt.geom.Path2D.getWindingRule()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回填充风格旋绕规则。
+
+@return 表示当前旋绕规则的整数。
+@see #WIND_EVEN_ODD
+@see #WIND_NON_ZERO
+@see #setWindingRule
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.geom.Path2D.setWindingRule(int rule)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此路径的旋绕规则设置为指定值。
+
+@param rule 表示指定旋绕规则的整数
+@exception IllegalArgumentException 如果 {@code rule} 既不是 {@link #WIND_EVEN_ODD} 也不是 {@link #WIND_NON_ZERO}
+@see #getWindingRule
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized java.awt.geom.Point2D java.awt.geom.Path2D.getCurrentPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近添加到路径尾部的坐标（以 {@link Point2D} 对象形式）。
+
+@return 包含路径结束坐标的 {@code Point2D} 对象；如果路径中没有任何点，则返回 {@code null}。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void java.awt.geom.Path2D.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将路径重置为空。将添加位置设置回路径的开头并遗弃所有坐标和点类型。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.geom.Path2D.transform(AffineTransform at)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 {@link AffineTransform} 变换此路径的几何形状。原地变换几何形状，它将永久更改由此对象定义的边界。
+
+@param at 用于变换区域的 {@code AffineTransform}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized java.awt.Shape java.awt.geom.Path2D.createTransformedShape(AffineTransform at)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示此 {@code Path2D} 变换形式的新 {@code Shape}。注意，没有为此方法指定返回值的确切类型和坐标精度。该方法将返回一个 Shape，它所包含的变换的几何形状精度不小于此 {@code Path2D} 当前维持的精度，但它也不可能大于该精度。如果精度与结果中存储量大小的权衡很重要，那么应该使用 {@link Path2D.Float#Path2D.Float(Shape, AffineTransform) Path2D.Float} 和 {@link Path2D.Double#Path2D.Double(Shape, AffineTransform) Path2D.Double} 子类中的一些便捷构造方法，使选择更明确。
+
+@param at 用于变换新 {@code Shape} 的 {@code AffineTransform}。
+@return 新的 {@code Shape}，它使用指定的 {@code AffineTransform} 变换而来。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.Rectangle java.awt.geom.Path2D.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.contains(PathIterator pi, double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定的坐标是否在指定 {@link PathIterator} 的封闭边界内。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供了基本设施，以实现对 {@link Shape#contains(double, double)} 方法的支持。
+
+@param pi 指定的 {@code PathIterator}
+@param x 指定的 X 坐标
+@param y 指定的 Y 坐标
+@return 如果指定的坐标在指定的 {@code PathIterator} 内部，则返回 {@code true}；否则返回 {@code false}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.contains(PathIterator pi, Point2D p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定的 {@link Point2D} 是否在指定 {@link PathIterator} 的封闭边界内。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供了基本设施，以实现对 {@link Shape#contains(Point2D)} 方法的支持。
+
+@param pi 指定的 {@code PathIterator}
+@param p 指定的 {@code Point2D}
+@return 如果指定的坐标在指定 {@code PathIterator} 内，则返回 {@code true}；否则返回 {@code false}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.contains(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.contains(Point2D p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.contains(PathIterator pi, double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定矩形区域是否完全在指定 {@link PathIterator} 的封闭边界内。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供了基本设施，以实现对 {@link Shape#contains(double, double, double, double)} 方法的支持。
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 false。如果这些线段是遵守 {@link #WIND_NON_ZERO} 旋绕规则的路径的一部分，或者这些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，那么这些线段可能完全位于路径内部。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@param pi 指定的 {@code PathIterator}
+@param x 指定的 X 坐标
+@param y 指定的 Y 坐标
+@param w 指定矩形区域的宽度
+@param h 指定矩形区域的高度
+@return 如果指定的 {@code PathIterator} 包含指定矩形区域，则返回 {@code true}；否则返回 {@code false}。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.contains(PathIterator pi, Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定的 {@link Rectangle2D} 是否完全在指定 {@link PathIterator} 的封闭区域内。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供了基本设施，以实现对 {@link Shape#contains(Rectangle2D)} 方法的支持。
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 false。如果这些线段是遵守 {@link #WIND_NON_ZERO} 旋绕规则的路径的一部分，或者这些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，那么这些线段可能完全位于路径内部。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@param pi 指定的 {@code PathIterator}
+@param r 指定的 {@code Rectangle2D}
+@return 如果指定的 {@code PathIterator} 包含指定的 {@code Rectangle2D}，则返回 {@code true}；否则返回 {@code false}。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.contains(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 false。如果这些线段是遵守 {@link #WIND_NON_ZERO} 旋绕规则的路径的一部分，或者这些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，那么这些线段可能完全位于路径内部。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.contains(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 false。如果这些线段是遵守 {@link #WIND_NON_ZERO} 旋绕规则的路径的一部分，或者这些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，那么这些线段可能完全位于路径内部。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.intersects(PathIterator pi, double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定 {@link PathIterator} 的内部是否与指定直角坐标集的内部相交。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供了基本设施，以实现对 {@link Shape#intersects(double, double, double, double)} 方法的支持。
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 true。如果路径的一些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，则可能发生这种情况。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@param pi 指定的 {@code PathIterator}
+@param x 指定的 X 坐标
+@param y 指定的 Y 坐标
+@param w 指定直角坐标的宽度
+@param h 指定直角坐标的高度
+@return 如果指定 {@code PathIterator} 和指定直角坐标集的内部相交，则返回 {@code true}；否则返回 {@code false}。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.geom.Path2D.intersects(PathIterator pi, Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定 {@link PathIterator} 的内部是否与指定 {@link Rectangle2D} 的内部相交。
+ <p>
+此方法为 {@link Shape} 接口的实现程序提供基本设施，以实现对 {@link Shape#intersects(Rectangle2D)} 方法的支持。
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 true。如果路径的一些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，则可能发生这种情况。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@param pi 指定的 {@code PathIterator}
+@param r 指定的 {@code Rectangle2D}
+@return 如果指定 {@code PathIterator} 和指定 {@code Rectangle2D} 的内部相交，则返回 {@code true}；否则返回 {@code false}。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.intersects(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 true。如果路径的一些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，则可能发生这种情况。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.geom.Path2D.intersects(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+在指定矩形区域与路径段相交，但该路径段不表示路径内部和外部之间的边界的情况下，此方法对象可能会谨慎地返回 true。如果路径的一些线段反方向折回，从而两组线段互相抵消且两组线段间没有任何外部区域，则可能发生这种情况。要确定线段是否表示路径内部的真实边界需要大量的计算，这些计算涉及所有路径段和旋绕规则，因此超出此实现的范围。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.PathIterator java.awt.geom.Path2D.getPathIterator(AffineTransform at, double flatness)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+此类的迭代器不是多线程安全的，这意味着此 {@code Path2D} 类不保证对此 {@code Path2D} 对象几何形状所作的修改不会影响该几何形状已在处理中的迭代。 
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.awt.geom.Path2D.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个与此对象具有相同类的新对象。
+
+@return 此实例的一个副本。
+@exception  OutOfMemoryError            如果没有足够的内存。
+@see        java.lang.Cloneable
+@since      1.6
+
+<!-- END DATA -->

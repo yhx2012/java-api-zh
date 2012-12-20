@@ -1,0 +1,89 @@
+<!-- BEGIN KEY -->
+public class java.security.SecureClassLoader extends java.lang.ClassLoader
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类扩展了 ClassLoader，使它另外还支持使用相关的代码源和权限定义类，这些代码源和权限默认情况下可根据系统策略获取到。
+
+@version 1.85, 05/05/04
+@author  Li Gong
+@author  Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.SecureClassLoader(ClassLoader parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的父类加载器为委托创建新 SecureClassLoader。
+
+<p>如果有安全管理器，此方法会首先调用安全管理器的 <code>checkCreateClassLoader</code> 方法，以确保允许创建类加载器。
+ <p>
+@param parent 父 ClassLoader
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkCreateClassLoader</code> 方法不允许创建类加载器。
+@see SecurityManager#checkCreateClassLoader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.SecureClassLoader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认的父类加载器为委托创建新 SecureClassLoader。
+
+<p>如果有安全管理器，此方法会首先调用安全管理器的 <code>checkCreateClassLoader</code> 方法，以确保允许创建类加载器。
+
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkCreateClassLoader</code> 方法不允许创建类加载器。
+@see SecurityManager#checkCreateClassLoader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Class<?> java.security.SecureClassLoader.defineClass(String name, byte[] b, int off, int len, CodeSource cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用可选的 CodeSource 将 byte 数组转换为 Class 类的实例。类必须解析后才能使用。
+ <p>
+如果提供了非 null CodeSource，将构造 ProtectionDomain 并将其与要定义的类关联起来。
+ <p>
+@param name 期望的类名称，如果未知，则为 <code>null</code>，使用 '.'（而不是 '/'）作为分隔符，并且末尾没有 &quot;.class&quot; 后缀。
+@param b 组成类数据的字节。从 <code>off</code> 到 <code>off+len-1</code> 的字节应该具有由 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的有效类文件的格式。
+@param      off  类数据的 <code>b</code> 的起始偏移量
+@param      len  类数据的长度
+@param      cs   相关的 CodeSource，如果没有，则为 <code>null</code>
+@return 通过该数据创建的 <code>Class</code> 对象和可选的 CodeSource。
+@exception  ClassFormatError 如果数据未包含有效的类
+@exception  IndexOutOfBoundsException 如果 <code>off</code> 或 <code>len</code> 为负数，或者 <code>off+len</code> 大于 <code>b.length</code>。
+
+@exception  SecurityException 如果试图将该类添加到包含用与该类不同的证书集签名的类的包中，或者类名以 &quot;java.&quot; 开头。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Class<?> java.security.SecureClassLoader.defineClass(String name, ByteBuffer b, CodeSource cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用可选的 CodeSource 将 {@link java.nio.ByteBuffer <tt>ByteBuffer</tt>} 转换为 <tt>Class</tt> 类的实例。类必须解析后才能使用。
+ <p>
+如果提供了非 null CodeSource，将构造 ProtectionDomain 并将其与要定义的类关联起来。
+ <p>
+@param      name 期望的类名称，如果未知，则为 <code>null</code>，使用 '.'（而不是 '/'）作为分隔符，并且末尾没有 &quot;.class&quot; 后缀。
+@param      b    组成类数据的字节。从 <tt>b.position()</tt> 到 <tt>b.position() + b.limit() -1 </tt> 的字节应该具有由 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的有效类文件的格式。
+@param      cs   相关的 CodeSource，如果没有，则为 <code>null</code>
+@return 通过该数据创建的 <code>Class</code> 对象和可选的 CodeSource。
+@exception  ClassFormatError 如果数据未包含一个有效类
+@exception  SecurityException 如果试图将该类添加到包含使用与该类不同的证书集签名的类的包中，或者类名以 &quot;java.&quot; 开头。
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.PermissionCollection java.security.SecureClassLoader.getPermissions(CodeSource codesource)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定的 CodeSource 对象的权限。
+ <p>
+此方法将由 defineClass 方法调用，后者在构造 ProtectionDomain 时将 CodeSource 作为要定义的类的参数。
+ <p>
+@param codesource  codesource。
+
+@return 授予 codesource 的权限。
+
+
+<!-- END DATA -->

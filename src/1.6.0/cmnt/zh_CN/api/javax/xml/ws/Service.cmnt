@@ -1,0 +1,208 @@
+<!-- BEGIN KEY -->
+public class javax.xml.ws.Service extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Service</code> 对象提供 Web 服务的客户端视图。
+<p><code>Service</code> 作为以下内容的工厂：
+  <ul>
+<li>目标服务端点的代理。
+<li>用于远程操作的动态面向消息调用的 <code>javax.xml.ws.Dispatch</code> 实例。 
+  </li>
+
+<p>使用 <code>getPorts</code> 方法可以对服务上可用的端口进行枚举。此外，还可以将一个服务端点接口传递给一元的 <code>getPort</code> 方法，并允许运行时选择兼容的端口。
+
+<p>可以通过 <code>HandlerResolver</code> 设置由 <code>Service</code> 创建的所有对象的处理程序链。
+
+<p>可以在服务上设置 <code>Executor</code> 以便更好地控制用来指派异步回调的线程。例如，通过创建 <code>ThreadPoolExecutor</code> 并向服务注册它可以启用带有特定参数的线程池。
+
+@since JAX-WS 2.0
+
+@see javax.xml.ws.spi.Provider
+@see javax.xml.ws.handler.HandlerResolver
+@see java.util.concurrent.Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T javax.xml.ws.Service.getPort(QName portName, java.lang.Class<T> serviceEndpointInterface)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+getPort 方法返回 stub。服务客户端使用此 stub 调用目标服务端点上的操作。<code>serviceEndpointInterface</code> 指定创建的动态代理或 stub 实例所支持的服务端点接口。 
+
+@param portName  WSDL 服务描述中服务端点的限定名称
+@param serviceEndpointInterface 动态代理或 stub 实例所支持的服务端点接口
+@return 支持指定服务端点接口的对象代理实例
+@throws WebServiceException 在以下情况下抛出此异常：
+                   <UL>
+<LI>如果创建代理的过程中出现错误
+<LI>如果缺少此方法所需的任何 WSDL 元数据
+<LI>如果指定了非法的 <code>serviceEndpointInterface</code> 或 <code>portName</code>
+                   </UL>  
+@see java.lang.reflect.Proxy
+@see java.lang.reflect.InvocationHandler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T javax.xml.ws.Service.getPort(java.lang.Class<T> serviceEndpointInterface)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+getPort 返回 stub。参数 <code>serviceEndpointInterface</code> 指定返回的代理所支持的服务端点接口。在此方法的实现中，JAX-WS 运行时系统承担选择协议绑定（和端口）以及配置相应代理的责任。返回的代理不应该由客户端进行配置。
+
+@param serviceEndpointInterface 服务端点接口
+@return 支持指定服务端点接口的对象实例
+@throws WebServiceException
+                   <UL>
+<LI>如果创建代理的过程中出现错误
+<LI>如果缺少此方法所需的任何 WSDL 元数据
+<LI>如果指定了非法的 <code>serviceEndpointInterface</code>
+                   </UL>  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.ws.Service.addPort(QName portName, String bindingId, String endpointAddress)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为服务创建新的端口。以这种方法创建的端口不包含 WSDL 端口类型信息，并且只能用于创建 <code>Dispatch</code> 实例。
+
+@param portName  目标服务端点的限定名称
+@param bindingId 绑定的 String 标识符。
+@param endpointAddress URI 形式的目标服务端点地址
+@throws WebServiceException 如果创建端口的过程中出现错误
+
+@see javax.xml.ws.soap.SOAPBinding#SOAP11HTTP_BINDING
+@see javax.xml.ws.soap.SOAPBinding#SOAP12HTTP_BINDING
+@see javax.xml.ws.http.HTTPBinding#HTTP_BINDING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.ws.Dispatch<T> javax.xml.ws.Service.createDispatch(QName portName, java.lang.Class<T> type, Service.Mode mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建与用户选择的对象一起使用的 <code>Dispatch</code> 实例。
+
+@param portName  目标服务端点的限定名称
+@param type 用于消息或消息负载的对象类。要求实现支持 <code>javax.xml.transform.Source</code>、<code>javax.xml.soap.SOAPMessage</code> 和 <code>javax.activation.DataSource</code>，具体取决于使用的绑定。
+@param mode 控制创建的 Dispatch 实例是消息还是所面向的净荷，即用户使用完整的协议消息还是消息负载。例如，当使用 SOAP 协议时，此参数控制用户将使用 SOAP 消息还是使用 SOAP 正文的内容。当类型为 SOAPMessage 时，模式必须为 MESSAGE。
+
+@return Dispatch 实例
+@throws WebServiceException 如果创建 <code>Dispatch</code> 对象的过程中出现错误
+@see javax.xml.transform.Source
+@see javax.xml.soap.SOAPMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.ws.Dispatch<java.lang.Object> javax.xml.ws.Service.createDispatch(QName portName, JAXBContext context, Service.Mode mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建与生成的 JAXB 对象一起使用的 <code>Dispatch</code> 实例。
+
+@param portName  目标服务端点的限定名称
+@param context 用来对消息或消息负载进行编组和解组的 JAXB 上下文。
+@param mode 控制创建的 Dispatch 实例是消息还是所面向的净荷，即用户使用完整的协议消息还是消息负载。例如，当使用 SOAP 协议时，此参数控制用户将使用 SOAP 消息还是使用 SOAP 正文的内容。
+
+@return Dispatch 实例
+@throws ServiceException 如果创建 <code>Dispatch</code> 对象的过程中出现错误
+
+@see javax.xml.bind.JAXBContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.ws.Service.getServiceName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此服务的名称。
+@return 此服务的限定名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<javax.xml.namespace.QName> javax.xml.ws.Service.getPorts()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Iterator</code>，它用于此服务所组合的服务端点的 <code>QName</code> 列表。
+
+@return 返回元素类型为 <code>javax.xml.namespace.QName</code> 的 <code>java.util.Iterator</code>
+@throws WebServiceException 如果此 Service 类没有对所需 WSDL 元数据的访问权限
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL javax.xml.ws.Service.getWSDLDocumentLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 Service 的 WSDL 文档的位置。
+
+@return 此服务 WSDL 文档位置的 URL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.ws.handler.HandlerResolver javax.xml.ws.Service.getHandlerResolver()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回已配置的处理程序解析器。
+
+@return HandlerResolver，此 <code>Service</code> 实例所使用的 <code>HandlerResolver</code>，如果不存在，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.ws.Service.setHandlerResolver(HandlerResolver handlerResolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Service</code> 实例的 <code>HandlerResolver</code>。
+  <p>
+如果存在处理程序解析器，则创建每个代理或 Dispatch 实例时将调用一次该解析器，并且将在实例上设置解析器所返回的处理程序链。
+
+@param handlerResolver 用于随后创建的代理/指派对象的 <code>HandlerResolver</code>。
+
+@see javax.xml.ws.handler.HandlerResolver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Executor javax.xml.ws.Service.getExecutor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Service</code> 实例的执行程序。
+
+执行程序用于所有需要回调的异步调用。
+
+@return 将用来调用回调的 <code>java.util.concurrent.Executor</code>。
+ 
+@see java.util.concurrent.Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.ws.Service.setExecutor(Executor executor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Service</code> 实例的执行程序。
+
+执行程序用于所有需要回调的异步调用。
+
+@param executor 将用来调用回调的 <code>java.util.concurrent.Executor</code>。
+
+@throws SecurityException 如果出于安全的原因（例如，缺少必要的权限），实例不支持设置执行程序。
+ 
+@see java.util.concurrent.Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.ws.Service javax.xml.ws.Service.create(URL wsdlDocumentLocation, QName serviceName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>Service</code> 实例。
+
+指定的 WSDL 文档位置和服务限定名称必须唯一标识 <code>wsdl:service</code> 元素。
+
+@param wsdlDocumentLocation 服务 WSDL 文档位置的 URL
+@param serviceName 服务的 QName
+@throws WebServiceException 如果在创建指定服务的过程中发生任何错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.ws.Service javax.xml.ws.Service.create(QName serviceName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>Service</code> 实例。
+
+@param serviceName 服务的 QName
+@throws WebServiceException 如果在创建指定服务的过程中发生任何错误
+
+<!-- END DATA -->

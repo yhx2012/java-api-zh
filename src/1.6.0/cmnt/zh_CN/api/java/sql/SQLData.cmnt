@@ -1,0 +1,60 @@
+<!-- BEGIN KEY -->
+public interface java.sql.SQLData
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该接口用于 SQL 用户定义类型 (UDT) 到 Java 编程语言中类的自定义映射关系。实现 <code>SQLData</code> 接口的类的类对象将以适当的 <code>Connection</code> 对象类型映射连同 UDT（此对象是它的自定义映射关系）的 SQL 名称一起进行输入。
+ <P>
+通常，<code>SQLData</code> 实现将为 SQL 结构类型的每个属性定义一个字段，或者为 SQL <code>DISTINCT</code> 类型定义单个字段。用 <code>ResultSet.getObject</code> 方法从数据源获取 UDT 时，会将其映射为此类的实例。程序员可以像对待 Java 编程语言中的其他对象那样在此类实例上执行操作，然后通过调用 <code>PreparedStatement.setObject</code> 方法（此方法将其映射回 SQL 类型）存储对它所作的更改。
+ <p>
+预期自定义映射关系的类的实现可以通过工具完成。在典型的实现中，程序员将仅提供 SQL UDT 的名称、要将该名称映射到的类的名称和要将 UDT 的每个属性映射到的字段名称。工具将使用此信息实现 <code>SQLData.readSQL</code> 和 <code>SQLData.writeSQL</code> 方法。<code>readSQL</code> 方法调用适当的 <code>SQLInput</code> 方法从 <code>SQLInput</code> 对象读取每个属性，<code>writeSQL</code> 方法调用 <code>SQLOutput</code> 方法通过 <code>SQLOutput</code> 对象将每个属性写回数据源。
+ <P>
+应用程序员通常不直接调用 <code>SQLData</code> 方法，而 <code>SQLInput</code> 和 <code>SQLOutput</code> 方法由 <code>SQLData</code> 方法而不是应用程序代码在内部调用。
+ 
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.SQLData.getSQLTypeName() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此对象表示的 SQL 用户定义类型的完全限定名。JDBC 驱动程序调用此方法来获取 UDT 实例的名称，该名称将被映射到 <code>SQLData</code> 的这一实例。
+
+@return 构造和填充此对象时传递到方法 <code>readSQL</code> 的类型名称
+@exception SQLException 如果发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.SQLData.readSQL(SQLInput stream, String typeName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用从数据库读取的数据填充此对象。该方法的实现必须遵守此协议：
+<UL> 
+<LI>必须从给定输入流读取 SQL 类型的每个属性或元素。此操作通过调用输入流的某个方法读取每个项（按照它们在类型的 SQL 定义中显示的顺序）。
+<LI>然后，<code>readSQL</code> 方法将数据分配给（此对象或其他对象的）适当字段或元素。明确地说，它必须调用适当的 <i>reader</i> 方法（<code>SQLInput.readString</code>、<code>SQLInput.readBigDecimal</code> 等）来执行以下操作：对于不同类型，读取其单个数据元素；对于结构类型，读取 SQL 类型的每个属性的值。
+ </UL>  
+JDBC 驱动程序在调用此方法之前用类型映射初始化输入流，此方法由流上适当的 <code>SQLInput</code> reader 方法使用。
+
+@param stream <code>SQLInput</code> 对象，从中读取要自定义映射的值的数据
+@param typeName 数据流上的值的 SQL 类型名称
+@exception SQLException 如果发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 不支持此方法
+@see SQLInput
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.SQLData.writeSQL(SQLOutput stream) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象写入给定的 SQL 数据流，同时将其转换回数据源中它的 SQL 值。方法的实现必须遵守此协议：<BR>必须将 SQL 类型的每个属性写入给定的输出流。此操作通过调用输出流的某个方法写入每个项（按照它们在类型的 SQL 定义中显示的顺序）。明确地说，它必须调用适当的 <code>SQLOutput</code> writer 方法（<code>writeInt</code>、<code>writeString</code> 等）来执行以下操作：对于不同类型，写入其单个数据元素；对于结构类型，写入 SQL 类型的每个属性的值。
+
+@param stream <code>SQLOutput</code> 对象，要在其中写入自定义映射的值的数据
+@exception SQLException 如果发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 不支持此方法
+@see SQLOutput
+@since 1.2
+
+<!-- END DATA -->

@@ -1,0 +1,85 @@
+<!-- BEGIN KEY -->
+public class java.beans.DefaultPersistenceDelegate extends java.beans.PersistenceDelegate
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DefaultPersistenceDelegate</code> 是 <code>PersistenceDelegate</code> 抽象类的具体实现，是没有关于其可用信息的类在默认情况下使用的委托。<code>DefaultPersistenceDelegate</code> 为遵从 JavaBeans 惯例的类提供可恢复的、基于公共 API 的持久性，而无需任何特定于类的配置。
+ <p>
+关键假定是：该类有一个 null 构造方法，并通过按照 Introspector 返回的顺序匹配 &quot;setter&quot; 和 &quot;getter&quot; 方法对来精确地表示其状态。除了为 JavaBeans 提供无需编写代码的持久性，对于那些构造方法为非 null 时只需要将一些属性值作为参数的类，<code>DefaultPersistenceDelegate</code> 提供了一个实现持久存储的便捷方法。
+
+@see #DefaultPersistenceDelegate(String[])
+@see java.beans.Introspector
+
+@since 1.4
+
+@version 1.20 05/23/06
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.DefaultPersistenceDelegate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为具有 null 构造方法的类创建持久委托。
+
+@see #DefaultPersistenceDelegate(java.lang.String[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.DefaultPersistenceDelegate(java.lang.String[] constructorPropertyNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为其构造方法的参数是属性名称值（由 <code>constructorPropertyNames</code> 指定）的类创建默认持久委托。构造方法参数是通过按提供顺序对属性名称求值来创建的。要使用此类指定特定类型序列化中使用的单个首选构造方法，需要声明组成构造方法参数的属性的名称。例如，没有定义 null 构造方法的 <code>Font</code> 类可以使用以下持久委托来处理：
+
+ <pre>
+     new DefaultPersistenceDelegate(new String[]{&quot;name&quot;, &quot;style&quot;, &quot;size&quot;});
+ </pre>
+
+@param  constructorPropertyNames 此构造方法参数的属性名称。
+
+@see #instantiate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.DefaultPersistenceDelegate.mutatesTo(Object oldInstance, Object newInstance)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定构造方法中的参数数量不为零，且 <code>oldInstance</code> 的类显式声明了一个 &quot;equals&quot; 方法，则此方法返回 <code>oldInstance.equals(newInstance)</code> 的值。否则，此方法使用超类的定义，即在两个实例的类相等情况下返回 true。
+
+@param oldInstance 要复制的实例。
+@param   newInstance   要修改的实例。
+@return 如果通过对 <code>oldInstance</code> 施加一系列变换可以创建 <code>newInstance</code> 的等效副本，则返回 true。
+
+@see #DefaultPersistenceDelegate(String[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.beans.Expression java.beans.DefaultPersistenceDelegate.instantiate(Object oldInstance, Encoder out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>instantiate</code> 方法的此默认实现返回一个表达式，该表达式包含预先定义的方法名称 &quot;new&quot;，该名称表示调用带有参数（在 <code>DefaultPersistenceDelegate</code> 的构造方法中指定）的构造方法。
+
+@param oldInstance 要实例化的实例。
+@param out 代码输出流。
+@return 值为 <code>oldInstance</code> 的一个表达式。
+
+@see #DefaultPersistenceDelegate(String[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.DefaultPersistenceDelegate.initialize(java.lang.Class<?> type, Object oldInstance, Object newInstance, Encoder out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>initialize</code> 方法的此默认实现假设保存在此类型对象中的所有状态都是通过匹配 &quot;setter&quot; 和 &quot;getter&quot; 方法对来公开的，公开的顺序是 Introspector 返回它们的顺序。如果属性描述符使用等于 <code>Boolean.TRUE</code> 的值来定义一个 &quot;transient&quot;属性，则此默认实现将忽略该属性。注意，单词 &quot;transient&quot; 的使用完全独立于 <code>ObjectOutputStream</code> 使用的字段修饰符。
+ <p>
+对于每个非瞬态属性，创建一个表达式，在其中将非 null &quot;getter&quot; 方法应用于 <code>oldInstance</code>。此表达式的值是将被序列化实例中的属性值。如果在复制环境中此表达式的值 (<code>mutatesTo</code> 目标值)，则将初始化新值，使其等于旧值。在这种情况下，因为属性值没有发生更改，所以不需要调用相应的 &quot;setter&quot; 方法，也不需要发出声明。不然的话此值的表达式就会被另一个表达式（通常是一个构造方法）替代，并且要调用相应的 &quot;setter&quot; 方法，在对象中安装新属性值。此方案使用此代理从流生成的输出中移除默认信息。
+ <p>
+在将这些语句传递到输出流（这些语句将在其中执行）时，<code>newInstance</code> 将产生副作用。在大多数情况下，这允许其值相互依赖的属性的问题通过减少需要写入到输出的语句量来实际帮助序列化进程。通常，处理相互依赖的属性问题被归结为这样一个问题：找出类中属性的某种顺序，从而没有任何属性依赖后续属性的值。
+
+@param oldInstance 要复制的实例。
+@param newInstance   需修改的实例。
+@param out 所有的初始化语句都应该写入其中的流。
+
+@see java.beans.Introspector#getBeanInfo
+@see java.beans.PropertyDescriptor
+
+<!-- END DATA -->

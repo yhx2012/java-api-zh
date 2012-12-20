@@ -1,0 +1,53 @@
+<!-- BEGIN KEY -->
+java.awt.im.spi
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<P>提供启用可以与 Java 运行时环境一起使用的输入方法开发的接口。输入方法是一些软件组件，允许用户以其他方式输入文本，而不仅仅局限于简单的键盘输入。使用它们，通常可用非常有限的几个键盘键即可完成日语、汉语或韩语的输入&mdash;&mdash;这些语言都使用了数千个不同的字符。不过，此包还允许开发其他语言的输入方法和使用完全不同的输入机制，如手写识别。</P>
+
+<H2><A NAME="package_specification"></A>包规范</H2>
+
+<UL>
+   <LI><B><A HREF="../../../../../technotes/guides/imf/spec.html">Input Method
+Framework Specification</A></B>
+   
+   <LI><B><A HREF="../../../../../technotes/guides/imf/spi-reference.html">Input
+ Method Engine SPI Reference</A></B>
+</UL>
+
+<H4><A NAME="Packaging"></A>打包输入方法</H4>
+
+<P>输入方法被打包为已安装的扩展，这由 <A HREF="../../../../../technotes/guides/extensions/index.html">Extension Mechanism</A> 指定。输入方法的主要 JAR 文件必须包含文件：</P>
+
+<PRE>    META-INF/services/java.awt.im.spi.InputMethodDescriptor</PRE>
+
+<P>该文件应该包含一个实现 <CODE>java.awt.im.spi.InputMethodDescriptor</CODE> 接口的类的完全限定类名称的列表（每行一个名称）。忽略各名称周围的空格字符和制表符以及空行。注释字符为 <CODE>'#'</CODE> (<CODE>\u0023</CODE>)；将忽略每行的第一个注释字符后面的所有字符。文件必须使用 UTF-8 编码。</P>
+
+<P>例如，如果实现 <EM>Foo</EM> 输入方法的 <CODE>java.awt.im.spi.InputMethodDesciptor</CODE> 的类的完全限定名称为 <CODE>com.sun.ime.FooInputMethodDescriptor</CODE>，则文件 <CODE>META-INF/services/java.awt.im.spi.InputMethodDescriptor</CODE> 包含这样一行：</P>
+
+<PRE>    com.sun.ime.FooInputMethodDescriptor</PRE>
+
+<P>输入方法还必须提供至少两个类：一个实现 <CODE>java.awt.im.spi.InputMethodDescriptor</CODE> 接口的类，一个实现 <CODE>java.awt.im.spi.InputMethod</CODE> 接口的类。输入方法必须分别实现这些接口，以便推迟到实际需要时才加载实现 <CODE>InputMethod</CODE> 的类。</P>
+
+<H4><A NAME="Loading"></A>加载输入方法</H4>
+
+<P>输入方法框架通常会推迟到绝对需要时才加载输入方法类。它在 AWT 初始化期间只加载 <CODE>InputMethodDescriptor</CODE> 实现。在已选定输入方法时加载 <CODE>InputMethod</CODE> 实现。</P>
+
+<H4><A NAME="PeeredComponents"></A>Java 输入方法和同级文本组件</H4>
+
+<P>Java 输入方法框架意在支持所有输入方法（主机输入方法和 Java 输入方法）和组件（同级或轻量级）的撰写。不过，因为基础平台的限制，它不会总是能够启用 Java 输入方法和同级 AWT 组件之间的通信。因此，对具体撰写的支持与平台有关。在 Sun 的 Java SE 运行时环境中，此撰写在 Windows 上受支持，但在 Solaris 上不受支持。</P>
+
+<H2>相关文档</H2>
+
+<P>有关概述、教程、示例、指南和工具文档的信息，请参阅：</P>
+
+<UL>
+   <LI><B><A HREF="../../../../../technotes/guides/imf/overview.html">Input
+Method Framework Overview</A></B>
+   
+   <LI><B><A HREF="../../../../../technotes/guides/imf/spi-tutorial.html">Input
+Method Engine SPI Tutorial</A></B>
+
+@since JDK1.3
+
+<!-- END DATA -->

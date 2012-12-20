@@ -1,0 +1,131 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.spi.SelectorProvider extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于选择器和可选择通道的服务提供者类。
+
+<p> 选择器提供者是此类的一个具体子类，它具有零参数的构造方法，并实现了以下指定的抽象方法。给定的对 Java 虚拟机的调用维护了单个系统级的默认提供者实例，它由 {@link #provider() provider} 方法返回。第一次调用该方法将查找以下指定的默认提供者。
+
+<p> 系统级的默认提供者由 {@link java.nio.channels.DatagramChannel#open DatagramChannel}、{@link java.nio.channels.Pipe#open Pipe}、{@link java.nio.channels.Selector#open Selector}、{@link java.nio.channels.ServerSocketChannel#open ServerSocketChannel} 和 {@link java.nio.channels.SocketChannel#open SocketChannel} 类的静态 <tt>open</tt> 方法使用。{@link java.lang.System#inheritedChannel System.inheritedChannel()} 方法也使用它。除了默认提供者之外，程序还可以使用其他提供者，方法是通过实例化一个提供者，然后直接调用此类中定义的 <tt>open</tt> 方法。
+
+<p> 多个并发线程可安全地使用此类中的所有方法。  </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.26, 04/06/15
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.spi.SelectorProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。  </p>
+
+@throws SecurityException 如果已安装安全管理器并且它拒绝 {@link RuntimePermission}<tt>(&quot;selectorProvider&quot;)</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.nio.channels.spi.SelectorProvider java.nio.channels.spi.SelectorProvider.provider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此次调用 Java 虚拟机的系统级默认选择器提供者。
+
+<p> 首次调用此方法会按如下方式查找默认的提供者对象： </p>
+
+ <ol>
+
+<li><p> 如果定义了系统属性 <tt>java.nio.channels.spi.SelectorProvider</tt>，则将该属性名看作具体提供者类的完全限定名。加载并实例化该类；如果此进程失败，则抛出未指定的错误。  </p></li>
+
+<li><p> 如果在对系统类加载器可见的 jar 文件中安装了提供者类，并且该 jar 文件包含资源目录 <tt>META-INF/services</tt> 中名为 <tt>java.nio.channels.spi.SelectorProvider</tt> 的提供者配置文件，则采用在该文件中指定的第一个类名称。加载并实例化该类；如果此进程失败，则抛出未指定的错误。  </p></li>
+
+<li><p> 最后，如果未通过上述任意方式指定任何提供者，则实例化系统默认的提供者类并返回该结果。  </p></li>
+
+ </ol>
+
+<p> 后续调用此方法会返回首次调用此方法时所返回的提供者。  </p>
+
+@return 系统级默认选择器提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.DatagramChannel java.nio.channels.spi.SelectorProvider.openDatagramChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开数据报通道。  </p>
+
+@return 新的通道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.Pipe java.nio.channels.spi.SelectorProvider.openPipe() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开一个管道。  </p>
+
+@return 新管道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.spi.AbstractSelector java.nio.channels.spi.SelectorProvider.openSelector() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开一个选择器。  </p>
+
+@return 新的选择器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.ServerSocketChannel java.nio.channels.spi.SelectorProvider.openServerSocketChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开服务器套接字通道。  </p>
+
+@return 新的通道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.SocketChannel java.nio.channels.spi.SelectorProvider.openSocketChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开套接字通道。 </p>
+
+@return 新的通道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.nio.channels.Channel java.nio.channels.spi.SelectorProvider.inheritedChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从创建此 Java 虚拟机的实体中继承的通道。
+
+<p> 在很多操作系统上可以通过下列方式启动某个进程（如 Java 虚拟机）：即允许该进程从创建该进程的实体上继承一个通道。正如连接到通道的可能实体一样，完成此继承的方式与系统相关。例如，在 UNIX 系统上，当请求到达关联的网络端口时，使用 Internet 服务守护程序 (<i>inetd</i>) 启动程序来服务该请求。在本例中，所启动的进程继承了一个表示网络套接字的通道。 
+
+<p> 在所继承的通道表示网络套接字的情况下，以如下方式确定此方法所返回的 {@link java.nio.channels.Channel Channel} 类型：
+     
+ <ul>
+
+<li><p> 如果继承的通道表示一个面向流的已连接套接字，则返回 {@link java.nio.channels.SocketChannel SocketChannel}。该套接字通道是处于（至少最初是）阻塞模式的、已绑定到套接字地址，并且已连接到同位体。
+  </p></li>
+
+<li><p> 如果继承的通道表示一个面向流的侦听套接字，则返回 {@link java.nio.channels.ServerSocketChannel ServerSocketChannel}。该服务器套接字通道处于（至少最初是）阻塞模式，并且已绑定到套接字地址，
+  </p></li>     
+
+<li><p> 如果继承的通道表示一个面向数据报的套接字，则返回 {@link java.nio.channels.DatagramChannel DatagramChannel}。该数据报通道处于（至少最初是）阻塞模式，并且已绑定到套接字地址， 
+  </p></li>
+ 
+ </ul>
+
+<p> 除了已描述的面向网络的通道之外，此方法以后还可能返回其他类型的通道。
+
+<p> 首次调用此方法会创建所返回的通道。后续调用此方法会返回相同的通道。 </p>
+
+@return 继承的通道（如果有），否则返回 <tt>null</tt>。
+ 
+@throws IOException 如果发生 I/O 错误
+
+@throws SecurityException 如果已安装安全管理器并且它拒绝 {@link RuntimePermission}<tt>(&quot;inheritedChannel&quot;)</tt>
+
+@since 1.5
+
+<!-- END DATA -->

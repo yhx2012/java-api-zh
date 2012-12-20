@@ -1,0 +1,114 @@
+<!-- BEGIN KEY -->
+public final class javax.print.attribute.standard.SheetCollate extends javax.print.attribute.EnumSyntax implements javax.print.attribute.DocAttribute, javax.print.attribute.PrintRequestAttribute, javax.print.attribute.PrintJobAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+SheetCollate 类是打印属性类，它是一种枚举，当由 {@link Copies Copies} 属性指定了文档的多个副本时，它可以指定作业中每个打印文档的每个副本的介质纸张是否排列有序。当 SheetCollate 为 COLLATED 时，将使用排列有序的打印流纸张打印每个文档的每个副本。当 SheetCollate 为 UNCOLLATED 时，每个打印流纸张将被连续多次打印，其次数等于 {@link Copies Copies} 属性的值。例如，假设一个文档需要打印出两种输出介质纸张，{@link Copies Copies} 为 6，SheetCollate 为 UNCOLLATED；则在此情况下，将首先打印出六份第一种介质纸张，然后再打印出六份第二种介质纸张。 
+ <P>
+无论纸张整理的效果是通过将文档的副本放在多个输出箱中达到的，还是放在同一个输出箱中使用已定义的实现达到的，文档区分都与实现相关。另外，无论是通过多种方式传递作业，还是使用一种输出来存档，分类器都与实现相关。 
+ <P>
+如果打印机不支持 SheetCollate 属性（是指客户端无法指定任何特定的纸张整理），则打印机的行为都必须表现为似乎 SheetCollate 始终被设置为 COLLATED。 
+ <P>
+SheetCollate 属性可与 {@link MultipleDocumentHandling MultipleDocumentHandling} 属性交互。{@link MultipleDocumentHandling MultipleDocumentHandling} 属性描述了对整个文档的整理，而 SheetCollate 属性描述了整理文档中具体页的语义。
+ <P>
+多文档打印（一个作业带有多个文档）作业的 SheetCollate 属性的效果取决于是为所有的文档指定了相同的纸张整理，还是为不同的文档指定了不同的纸张整理，以及 {@link MultipleDocumentHandling MultipleDocumentHandling} 属性的值（可能是默认值）。 
+ <UL>
+ <LI>
+如果为所有的文档指定了相同的纸张整理，则允许进行 SheetCollate 和 {@link MultipleDocumentHandling MultipleDocumentHandling} 的以下组合，并且在指定了其他任何组合的情况下提交作业时，打印机都将报告一个错误： 
+ <UL>
+ <LI>
+SheetCollate = COLLATED，{@link MultipleDocumentHandling MultipleDocumentHandling} = SINGLE_DOCUMENT -- 所有的输入文档都将合并到一个输出文档中。生成输出文档的多个副本，按整理后的顺序打印各页，即页 1，2，3，……，1，2，3 等。
+ <P>
+ <LI>
+SheetCollate = COLLATED，{@link MultipleDocumentHandling MultipleDocumentHandling} = SINGLE_DOCUMENT_NEW_SHEET -- 所有的输入文档都将合并到一个输出文档中，并且始终在新的介质纸张上开始每个输入文档的第一个印张。生成输出文档的多个副本，按整理后的顺序打印各页，即页 1，2，3，……，1，2，3 等。
+ <P>
+ <LI>
+SheetCollate = COLLATED，{@link MultipleDocumentHandling MultipleDocumentHandling} = SEPARATE_DOCUMENTS_UNCOLLATED_COPIES -- 每个输入文档都保持为一个单独的输出文档。生成输出文档的多个副本（称它们为 A，B……），按整理后的顺序打印每个文档的各页，但这些文档本身却是按非整理顺序，即页 A1，A2，A3，……，A1，A2，A3，……，B1，B2，B3，……，B1，B2，B3 等。 
+ <P>
+ <LI>
+SheetCollate = COLLATED, {@link MultipleDocumentHandling MultipleDocumentHandling} = SEPARATE_DOCUMENTS_COLLATED_COPIES -- 每个输入文档都保持为一个单独的输出文档。生成输出文档的多个副本（称它们为 A，B……），按整理后的顺序打印每个文档的各页，这些文档本身也按整理顺序打印，即页 A1，A2，A3，……，B1，B2，B3，……，A1，A2，A3，……，B1，B2，B3 等。
+ <P>
+ <LI>
+SheetCollate = UNCOLLATED, {@link MultipleDocumentHandling MultipleDocumentHandling} = SINGLE_DOCUMENT -- 所有的输入文档都将合并到一个输出文档中。生成输出文档的多个副本，按非整理顺序打印各页，即页 1，1，……，2，2，……，3，3 等。
+ <P>
+ <LI>
+SheetCollate = UNCOLLATED, {@link MultipleDocumentHandling MultipleDocumentHandling} = SINGLE_DOCUMENT_NEW_SHEET -- 所有的输入文档都将合并到一个输出文档中，并且始终在新的介质纸张上开始每个输入文档的第一个印张。生成输出文档的多个副本，按非整理顺序打印各页，即页 1，1，……，2，2，……，3，3 等。
+ <P>
+ <LI>
+SheetCollate = UNCOLLATED, {@link MultipleDocumentHandling MultipleDocumentHandling} = SEPARATE_DOCUMENTS_UNCOLLATED_COPIES -- 每个输入文档都保持为一个单独的输出文档。生成输出文档的多个副本（称它们为 A、B……），按非整理顺序打印每个文档的各页，这些文档本身也按非整理顺序打印，即页 A1，A1，……，A2，A2，……，A3，A3，……，B1，B1，……，B2，B2，……，B3，B3 等。
+ </UL> 
+ <P>
+ <LI>
+如果为不同的文档指定了不同的纸张整理，则只允许使用 {@link MultipleDocumentHandling MultipleDocumentHandling} 的一个值，并且在指定了其他任何值的情况下提交作业时，打印机都将报告一个错误： 
+ <UL>
+ <LI>
+{@link MultipleDocumentHandling MultipleDocumentHandling} = SEPARATE_DOCUMENTS_UNCOLLATED_COPIES -- 每个输入文档都保持为一个单独的输出文档。生成输出文档的多个副本（称它们为 A，B……），按照相应输入文档的 SheetCollate 属性指定值以整理后或非整理顺序打印每个文档的各页，同时这些文档本身也按非整理顺序打印。如果文档 A 是 SheetCollate = UNCOLLATED，文档 B 是 SheetCollate = COLLATED，则将打印出以下页：A1，A1，……，A2，A2，……，A3，A3，……，B1，B2，B3，……，B1，B2，B3 等。
+ </UL>
+ </UL>
+ <P>
+<B>IPP 兼容性：</B>SheetCollate 目前不是 IPP 属性。
+ <P>
+
+@see  MultipleDocumentHandling
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.SheetCollate javax.print.attribute.standard.SheetCollate.UNCOLLATED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当打印多个副本时，文档中的纸张以非整理顺序出现。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.SheetCollate javax.print.attribute.standard.SheetCollate.COLLATED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当打印多个副本时，文档中的纸张以整理后的顺序出现。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.standard.SheetCollate(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 SheetCollate 枚举值。 
+
+@param value 整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.print.attribute.standard.SheetCollate.getStringTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类 SheetCollate 的字符串表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.EnumSyntax[] javax.print.attribute.standard.SheetCollate.getEnumValueTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类 SheetCollate 的枚举值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.SheetCollate.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于类 SheetCollate，该类别就是类 SheetCollate 本身。 
+
+@return 打印属性类（类别），这是类 {@link java.lang.Class java.lang.Class} 的一个实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.SheetCollate.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别的名称，此属性值是该类别的一个实例。 
+ <P>
+对于类 SheetCollate，类别名称是 <CODE>&quot;sheet-collate&quot;</CODE>。 
+
+@return 属性类别名称。
+
+<!-- END DATA -->

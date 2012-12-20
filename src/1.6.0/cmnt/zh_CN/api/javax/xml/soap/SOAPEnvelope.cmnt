@@ -1,0 +1,116 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.soap.SOAPEnvelope extends javax.xml.soap.SOAPElement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SOAPPart</code> 对象的 SOAPHeader 和 SOAPBody 部分的容器。默认情况下，使用带有 <code>SOAPEnvelope</code> 对象的 <code>SOAPPart</code> 对象创建 <code>SOAPMessage</code> 对象。<code>SOAPEnvelope</code> 对象默认带有空 <code>SOAPBody</code> 对象和空 <code>SOAPHeader</code> 对象。<code>SOAPBody</code> 对象是必需的，<code>SOAPHeader</code> 对象虽然是可选的，但在大多数情况下都会用到。如果不需要 <code>SOAPHeader</code> 对象，则可以删除该对象（稍后将显示该操作）。
+ <P>
+客户端可以通过调用方法 <code>SOAPEnvelope.getHeader</code> 和 <code>SOAPEnvelope.getBody</code> 来访问 <code>SOAPHeader</code> 和 <code>SOAPBody</code> 对象。以下代码行首先使用 <code>SOAPMessage</code> 对象 <i>message</i> 获取 <code>SOAPPart</code> 对象 <i>sp</i>，然后使用后者获取 <code>SOAPEnvelope</code> 对象 <i>se</i>，最后调用上述的两种方法。
+
+ <PRE>
+SOAPPart sp = message.getSOAPPart();
+SOAPEnvelope se = sp.getEnvelope();
+SOAPHeader sh = se.getHeader();
+SOAPBody sb = se.getBody();
+ </PRE>
+ <P>
+检索 <code>SOAPEnvelope</code> 对象当前的正文或头，然后将其删除并添加一个新正文或头，这样就能更改该对象的正文或头。<code>javax.xml.soap.Node</code> 方法 <code>deleteNode</code> 删除调用它的 XML 元素（节点）。例如，以下代码行删除由方法 <code>getBody</code> 检索的 <code>SOAPBody</code> 对象。
+ <PRE>
+se.getBody().detachNode();
+ </PRE>
+要创建用来替换被移除对象的 <code>SOAPHeader</code> 对象，客户端应使用方法 <code>SOAPEnvelope.addHeader</code>，该方法创建一个新头并将其添加到 <code>SOAPEnvelope</code> 对象。类似地，方法 <code>addBody</code> 创建一个新 <code>SOAPBody</code> 对象并将其添加到 <code>SOAPEnvelope</code> 对象。以下代码片段检索当前的头，然后将其删除并添加一个新头。接下来检索当前的正文，然后将其删除并添加一个新正文。
+
+ <PRE>
+SOAPPart sp = message.getSOAPPart();
+SOAPEnvelope se = sp.getEnvelope();
+se.getHeader().detachNode();
+SOAPHeader sh = se.addHeader();
+se.getBody().detachNode();
+SOAPBody sb = se.addBody();
+ </PRE>
+在已经存在的情况下添加 <code>SOAPBody</code> 或 <code>SOAPHeader</code> 是错误的。
+ <P>
+<code>SOAPEnvelope</code> 接口提供了三种创建 <code>Name</code> 对象的方法。第一种方法使用本地名称、名称空间前缀以及名称空间 URI 创建 <code>Name</code> 对象。第二种方法使用本地名称和名称空间前缀创建 <code>Name</code> 对象，第三种方法只使用本地名称创建 <code>Name</code> 对象。以下代码行（其中 <i>se</i> 是一个 <code>SOAPEnvelope</code> 对象）创建带有所有三个元素的新 <code>Name</code> 对象。
+ <PRE>
+Name name = se.createName(&quot;GetLastTradePrice&quot;, &quot;WOMBAT&quot;,
+&quot;http://www.wombat.org/trader&quot;);
+ </PRE>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.Name javax.xml.soap.SOAPEnvelope.createName(String localName, String prefix, String uri) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用给定本地名称、名称空间前缀和名称空间 URL 初始化的新 <code>Name</code> 对象。
+ <P>
+此工厂方法创建在 SOAP/XML 文档中使用的 <code>Name</code> 对象。
+
+@param localName 给出本地名称的 <code>String</code>
+@param prefix 给出名称空间前缀的 <code>String</code>
+@param uri 给出名称空间 URI 的 <code>String</code>
+@return 使用给定本地名称、名称空间前缀和名称空间 URL 初始化的 <code>Name</code> 对象
+@throws SOAPException 如果存在 SOAP 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.Name javax.xml.soap.SOAPEnvelope.createName(String localName) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用给定本地名称初始化的新 <code>Name</code> 对象。
+ <P>
+此工厂方法创建在 SOAP/XML 文档中使用的 <code>Name</code> 对象。
+
+@param localName 给出本地名称的 <code>String</code>
+@return 使用给定本地名称初始化的 <code>Name</code> 对象
+@throws SOAPException 如果存在 SOAP 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeader javax.xml.soap.SOAPEnvelope.getHeader() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SOAPEnvelope</code> 对象的 <code>SOAPHeader</code> 对象。
+ <P>
+默认情况下，使用包含空 <code>SOAPHeader</code> 对象的 <code>SOAPEnvelope</code> 对象创建新 <code>SOAPMessage</code> 对象。因此，只要没有移除了头且尚未添加新头，方法 <code>getHeader</code> 将总是返回 <code>SOAPHeader</code> 对象。
+
+@return <code>SOAPHeader</code> 对象，如果没有该对象，则返回 <code>null</code>
+@exception SOAPException 如果在获取 <code>SOAPHeader</code> 对象时出现问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPBody javax.xml.soap.SOAPEnvelope.getBody() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>SOAPEnvelope</code> 对象关联的 <code>SOAPBody</code> 对象。
+ <P>
+默认情况下，使用包含空 <code>SOAPBody</code> 对象的 <code>SOAPEnvelope</code> 对象创建 <code>SOAPMessage</code> 对象。因此，只要没有移除了正文且尚未添加新正文，方法 <code>getBody</code> 将总是返回 <code>SOAPBody</code> 对象。
+
+@return 此 <code>SOAPEnvelope</code> 对象的 <code>SOAPBody</code> 的对象，如果没有该对象，则返回 <code>null</code>
+@exception SOAPException 如果在获取 <code>SOAPBody</code> 对象时出现问题
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPHeader javax.xml.soap.SOAPEnvelope.addHeader() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>SOAPHeader</code> 对象，并将其设置为此 <code>SOAPEnvelope</code> 对象的 <code>SOAPHeader</code> 对象。
+ <P>
+当信封已包含头时，添加头是非法的。因此，此方法应该在移除了现有的头之后调用。
+
+@return 新的 <code>SOAPHeader</code> 对象
+
+@exception SOAPException 如果此 <code>SOAPEnvelope</code> 对象已包含一个有效的 <code>SOAPHeader</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.SOAPBody javax.xml.soap.SOAPEnvelope.addBody() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>SOAPBody</code> 对象，并将其设置为此 <code>SOAPEnvelope</code> 对象的 <code>SOAPBody</code> 对象。
+ <P>
+当信封已包含正文时，添加正文是非法的。因此，此方法应该在移除了现有的正文之后调用。
+
+@return 新的 <code>SOAPBody</code> 对象
+
+@exception SOAPException 如果此 <code>SOAPEnvelope</code> 对象已包含一个有效的 <code>SOAPBody</code> 对象
+
+<!-- END DATA -->

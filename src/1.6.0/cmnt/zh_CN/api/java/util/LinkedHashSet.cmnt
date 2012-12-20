@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public class java.util.LinkedHashSet extends java.util.HashSet implements java.util.Set, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>具有可预知迭代顺序的 <tt>Set</tt> 接口的哈希表和链接列表实现。此实现与 <tt>HashSet</tt> 的不同之外在于，后者维护着一个运行于所有条目的双重链接列表。此链接列表定义了迭代顺序，即按照将元素插入到 set 中的顺序（<i>插入顺序</i>）进行迭代。注意，插入顺序<i>不</i> 受在 set 中<i>重新插入的</i> 元素的影响。（如果在 <tt>s.contains(e)</tt> 返回 <tt>true</tt> 后立即调用 <tt>s.add(e)</tt>，则元素 <tt>e</tt> 会被重新插入到 set <tt>s</tt> 中。）
+
+<p>此实现可以让客户免遭未指定的、由 {@link HashSet} 提供的通常杂乱无章的排序工作，而又不致引起与 {@link TreeSet} 关联的成本增加。使用它可以生成一个与原来顺序相同的 set 副本，并且与原 set 的实现无关：
+ <pre>
+     void foo(Set s) {
+         Set copy = new LinkedHashSet(s);
+         ...
+     }
+ </pre>
+如果模块通过输入得到一个 set，复制这个 set，然后返回由此副本决定了顺序的结果，这种情况下这项技术特别有用。（客户通常期望内容返回的顺序与它们出现的顺序相同。）
+
+<p>此类提供所有可选的 <tt>Set</tt> 操作，并且允许 null 元素。与 <tt>HashSet</tt> 一样，它可以为基本操作（<tt>add</tt>、<tt>contains</tt> 和 <tt>remove</tt>）提供稳定的性能，假定哈希函数将元素正确地分布到存储段中。由于增加了维护链接列表的开支，其性能很可能会比 <tt>HashSet</tt> 稍逊一筹，不过，这一点例外：<tt>LinkedHashSet</tt> 迭代所需时间与 set 的<i>大小</i> 成正比，而与容量无关。<tt>HashSet</tt> 迭代很可能支出较大，因为它所需迭代时间与其<i>容量</i> 成正比。
+ 
+<p>链接的哈希 set 有两个影响其性能的参数：<i>初始容量</i> 和<i>加载因子</i>。它们与 <tt>HashSet</tt> 中的定义极其相同。注意，为初始容量选择非常高的值对此类的影响比对 <tt>HashSet</tt> 要小，因为此类的迭代时间不受容量的影响。
+ 
+<p><strong>注意，此实现不是同步的。</strong>如果多个线程同时访问链接的哈希 set，而其中至少一个线程修改了该 set，则它<em>必须</em> 保持外部同步。这一般通过对自然封装该 set 的对象进行同步操作来完成。
+如果不存在这样的对象，则应该使用  {@link Collections#synchronizedSet Collections.synchronizedSet} 方法来&ldquo;包装&rdquo;该 set。最好在创建时完成这一操作，以防止意外的非同步访问：
+ <pre>
+     Set s = Collections.synchronizedSet(new LinkedHashSet(...));
+ </pre>
+
+<p>此类的 <tt>iterator</tt> 方法返回的迭代器是<em>快速失败</em> 的：在迭代器创建之后，如果对 set 进行修改，除非通过迭代器自身的 <tt>remove</tt> 方法，其他任何时间任何方式的修改，迭代器都将抛出 {@link ConcurrentModificationException}。因此，面对并发的修改，迭代器很快就会完全失败，而不冒将来不确定的时间任意发生不确定行为的风险。
+
+<p>注意，迭代器的快速失败行为不能得到保证，一般来说，存在不同步的并发修改时，不可能作出任何强有力的保证。快速失败迭代器尽最大努力抛出 <tt>ConcurrentModificationException</tt>。因此，编写依赖于此异常的程序的方式是错误的，正确做法是：<i>迭代器的快速失败行为应该仅用于检测程序错误。</i>
+
+<p>此类是  <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+ @param <E> 由此 set 维护的元素的类型
+
+@author  Josh Bloch
+@version 1.14 04/02/19
+@see     Object#hashCode()
+@see     Collection
+@see     Set
+@see     HashSet
+@see     TreeSet
+@see     Hashtable
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashSet(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带有指定初始容量和加载因子的新空链接哈希 set。 
+
+@param      initialCapacity 链接哈希 set 的初始容量
+@param      loadFactor      链接哈希 set 的初始加载因子
+@throws     IllegalArgumentException 如果初始容量小于零或者加载因子为非正
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashSet(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带指定初始容量和默认加载因子 (0.75) 的新空链接哈希 set。
+
+@param   initialCapacity   LinkedHashSet 的初始容量
+@throws  IllegalArgumentException 如果初始容量小于零
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带默认初始容量 (16) 和加载因子 (0.75) 的新空链接哈希 set。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashSet(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个与指定 collection 中的元素相同的新链接哈希 set。此链接哈希 set 的创建使用的初始容量足以容纳指定 collection 的元素，使用的加载因子为默认加载因子 (0.75)。
+
+@param c  要将其元素放到此 set 中的 collection
+@throws NullPointerException 如果指定的 collection 为 null
+
+<!-- END DATA -->
+
+

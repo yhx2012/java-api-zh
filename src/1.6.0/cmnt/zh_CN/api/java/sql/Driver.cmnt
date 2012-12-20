@@ -1,0 +1,92 @@
+<!-- BEGIN KEY -->
+public interface java.sql.Driver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个驱动程序类必须实现的接口。
+<P>Java SQL 框架允许多个数据库驱动程序。
+
+<P>每个驱动程序都应该提供一个实现 Driver 接口的类。
+
+<P>DriverManager 会试着加载尽可能多的它可以找到的驱动程序，然后，对于任何给定连接请求，它会让每个驱动程序依次试着连接到目标 URL。
+
+<P>强烈建议每个 Driver 类应该是小型的并且是单独的，这样就可以在不必引入大量支持代码的情况下加载和查询 Driver 类。
+
+<P>在加载某一 Driver 类时，它应该创建自己的实例并向 DriverManager 注册该实例。这意味着用户可以通过调用以下程序加载和注册一个驱动程序
+ <pre>
+   <code>Class.forName(&quot;foo.bah.Driver&quot;)</code>
+ </pre>
+
+@see DriverManager
+@see Connection 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Connection java.sql.Driver.connect(String url, Properties info) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图创建一个到给定 URL 的数据库连接。如果驱动程序识别出它是连接到给定 URL 的错误类型的驱动程序，那么它应该返回 &quot;null&quot;。这会很常见，因为在要求 JDBC 驱动程序管理器连接到给定 URL 时，它会将该 URL 依次传递给每个已加载的驱动程序。
+
+<P>如果要连接到给定 URL 的驱动程序是正确的驱动程序，但却无法连接到数据库，则该驱动程序应该抛出 <code>SQLException</code>。
+
+<P>可以使用 <code>java.util.Properties</code> 参数将任意字符串标记/值对作为连接参数传递。通常 <code>Properties</code> 对象中至少应该包括 &quot;user&quot; 和 &quot;password&quot; 属性。
+
+@param url 要连接到的数据库的 URL
+@param info 做为连接参数的任意字符串标记/值对的列表。通常至少应该包括 &quot;user&quot; 和 &quot;password&quot; 属性。
+@return 表示到 URL 的连接的 <code>Connection</code> 对象
+@exception SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Driver.acceptsURL(String url) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询驱动程序是否认为它可以打开到给定 URL 的连接。通常，如果驱动程序理解该 URL 中指定的子协议，则这些驱动程序将返回 <code>true</code>；否则，返回 <code>false</code>。
+
+@param url 数据库的 URL
+@return 如果此驱动程序理解给定的 URL，则返回 <code>true</code>；否则，返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.DriverPropertyInfo[] java.sql.Driver.getPropertyInfo(String url, Properties info) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此驱动程序的可能属性信息。
+ <P>
+<code>getPropertyInfo</code> 方法允许一般 GUI 工具发现哪些属性它应该提示用户，以便获得连接到数据库的足够信息。注意，根据用户目前为止已经提供的值，额外的值也可能变成必需的，因此可能有必要通过多次调用 <code>getPropertyInfo</code> 方法对它们进行迭代。
+
+@param url 要连接到的数据库的 URL
+@param info 将要在打开的连接上发送的标记/值对的建议列表
+@return 描述可能属性的 <code>DriverPropertyInfo</code> 对象的数组。如果不需要任何属性，该数组可能是一个空数组。
+@exception SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Driver.getMajorVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此驱动程序的主版本号。最初，此版本号应该为 1。
+
+@return 此驱动程序的主版本号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Driver.getMinorVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此驱动程序的次版本号。最初，此版本号应该为 0。
+@return 此驱动程序的次版本号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Driver.jdbcCompliant()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此驱动程序是否是一个真正的 JDBC Compliant<sup><font size=-2>TM</font></sup> 驱动程序。如果通过 JDBC 兼容测试，驱动程序在这里可以只报告 <code>true</code>；否则它需要返回 <code>false</code>。
+ <P>
+JDBC 兼容要求完全支持 JDBC API 和完全支持 SQL 92 Entry Level。期望 JDBC 兼容驱动程序可用于所有主要商业数据库。
+ <P>
+此方法不打算鼓励开发非 JDBC 兼容驱动程序，但要认识到这样一个事实：一些供应商对将 JDBC API 和框架用于不支持完整的数据库功能的轻量级数据库感兴趣，或者对将 JDBC API 和框架用于一些特殊数据库感兴趣，比如文档信息获取，在这些数据库中 SQL 实现是不可行。
+@return 如果此驱动程序是 JDBC 兼容的，则返回 <code>true</code>；否则，返回 <code>false</code>
+
+<!-- END DATA -->

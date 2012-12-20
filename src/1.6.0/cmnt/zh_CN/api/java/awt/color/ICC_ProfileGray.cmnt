@@ -1,0 +1,49 @@
+<!-- BEGIN KEY -->
+public class java.awt.color.ICC_ProfileGray extends java.awt.color.ICC_Profile
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ICC_Profile 类的子类，表示满足以下标准的配置文件：配置文件的颜色空间类型是 TYPE_GRAY，并且配置文件包括 grayTRCTag 和 mediaWhitePointTag 标记。此类配置文件的示例有单色输入配置文件、单色显示配置文件和单色输出配置文件。满足上述条件时，ICC_Profile 类中的 getInstance 方法将返回一个 ICC_ProfileGray 对象。此类的优势在于它提供了一个查找表，Java 或本机方法在某些情况下可以直接使用这些表来优化颜色转换。
+ <p>
+要从 GRAY 设备配置文件颜色空间转换成 CIEXYZ 配置文件连接空间，可使用查找表参考色调再现曲线 (TRC) 来变换设备的灰色分量。变换的结果作为 PCS 的非彩色分量。
+<pre>
+
+&nbsp;               PCSY = grayTRC[deviceGray]
+
+</pre>
+通过反向 grayTRC 将 PCS Y 分量变换为设备的 Gray 即可完成逆向转换。
+ <p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.color.ICC_ProfileGray.getMediaWhitePoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个长度为 3 的 float 数组，在其 ICC 配置文件中包含 mediaWhitePointTag 的 X、Y 和 Z 分量。
+@return 一个在其 ICC 配置文件中包含 mediaWhitePointTag 各分量的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.color.ICC_ProfileGray.getGamma()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示色调再现曲线 (TRC) 的 gamma 值。如果配置文件将 TRC 表示成一个表，而不是一个单个 gamma 值，则抛出异常。在这种情况下，可通过 getTRC() 获得实际的表。使用 gamma 值时，PCS Y 分量按以下方式计算：
+<pre>
+
+&nbsp;                         gamma
+&nbsp;        PCSY = deviceGray
+
+</pre>
+@return 一个 float 类型的 gamma 值。
+@exception ProfileDataException 如果配置文件未将 TRC 指定为单个 gamma 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short[] java.awt.color.ICC_ProfileGray.getTRC()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 short 数组的形式返回 TRC。如果配置文件已将 TRC 指定为线性（gamma＝1.0）或简单 gamma 值，则此方法将抛出异常，应该使用 getGamma() 方法来获取该 gamma 值。否则此处返回的 short 类型数组表示一个查找表，在理论上，其输入 Gray 值范围是 [0.0, 1.0]。值 0.0 对应数组索引 0，值 1.0 则对应数组索引 length-1。对于数组中无确切对应某个索引的输入值，可以使用插值法为其生成输出值。输出值也与范围 [0.0, 1.0] 呈线性对应。值 0.0 由数组值 0x0000 表示，值 1.0 则由数组值 0xFFFF 表示，也就是说尽管这些值是以 short 数组的形式返回的，但它们实际上是无符号的 short 值。
+@return 一个表示 TRC 的 short 数组。
+@exception ProfileDataException 如果配置文件没有将 TRC 指定为一个表。
+
+<!-- END DATA -->

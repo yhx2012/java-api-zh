@@ -1,0 +1,772 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.bind.Unmarshaller
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>Unmarshaller</tt> 类管理将 XML 数据反序列化为新创建的 Java 内容树的过程，并可在解组时有选择地验证 XML 数据。它针对各种不同的输入种类提供各种重载的 unmarshal 方法。
+    
+ <p>
+从 File 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+Object o = u.unmarshal( new File( &quot;nosferatu.xml&quot; ) );
+    </pre>
+ </blockquote>
+
+  
+ <p>
+从 InputStream 解组：
+ <blockquote>
+    <pre>
+InputStream is = new FileInputStream( &quot;nosferatu.xml&quot; );
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+Object o = u.unmarshal( is );
+    </pre>
+ </blockquote>
+
+ <p>
+从 URL 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+URL url = new URL( &quot;http://beaker.east/nosferatu.xml&quot; );
+Object o = u.unmarshal( url );
+    </pre>
+ </blockquote>
+
+ <p>
+使用 <tt>javax.xml.transform.stream.StreamSource</tt> 从 StringBuffer 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+StringBuffer xmlStr = new StringBuffer( "&lt;?xml version=&quot;1.0&quot;?&gt;..." );
+Object o = u.unmarshal( new StreamSource( new StringReader( xmlStr.toString() ) ) );
+    </pre>
+ </blockquote>
+
+ <p>
+从 <tt>org.w3c.dom.Node</tt> 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+ 
+DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+dbf.setNamespaceAware(true);
+DocumentBuilder db = dbf.newDocumentBuilder();
+Document doc = db.parse(new File( &quot;nosferatu.xml&quot;));
+
+Object o = u.unmarshal( doc );
+    </pre>
+ </blockquote>
+ 
+ <p>
+使用客户端指定的验证 SAX2.0 解析器从 <tt>javax.xml.transform.sax.SAXSource</tt> 解组：
+ <blockquote>
+    <pre>
+// configure a validating SAX2.0 parser (Xerces2)
+static final String JAXP_SCHEMA_LANGUAGE =
+&quot;http://java.sun.com/xml/jaxp/properties/schemaLanguage&quot;;
+static final String JAXP_SCHEMA_LOCATION =
+&quot;http://java.sun.com/xml/jaxp/properties/schemaSource&quot;;
+static final String W3C_XML_SCHEMA =
+&quot;http://www.w3.org/2001/XMLSchema&quot;;
+
+System.setProperty( &quot;javax.xml.parsers.SAXParserFactory&quot;,
+&quot;org.apache.xerces.jaxp.SAXParserFactoryImpl&quot; );
+
+SAXParserFactory spf = SAXParserFactory.newInstance();
+spf.setNamespaceAware(true);
+spf.setValidating(true);
+SAXParser saxParser = spf.newSAXParser();
+       
+try {
+saxParser.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
+saxParser.setProperty(JAXP_SCHEMA_LOCATION, &quot;http://....&quot;);
+} catch (SAXNotRecognizedException x) {
+// exception handling omitted
+       }
+
+XMLReader xmlReader = saxParser.getXMLReader();
+SAXSource source = 
+new SAXSource( xmlReader, new InputSource( &quot;http://...&quot; ) );
+
+// Setup JAXB to unmarshal
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+ValidationEventCollector vec = new ValidationEventCollector();
+u.setEventHandler( vec );
+       
+// turn off the JAXB provider's default validation mechanism to 
+// avoid duplicate validation
+u.setValidating( false )
+
+// unmarshal
+Object o = u.unmarshal( source );
+
+// check for events
+if( vec.hasEvents() ) {
+// iterate over events
+       }
+    </pre>
+ </blockquote>
+
+ <p>
+从 StAX XMLStreamReader 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+ 
+javax.xml.stream.XMLStreamReader xmlStreamReader = 
+javax.xml.stream.XMLInputFactory().newInstance().createXMLStreamReader( ... );
+ 
+Object o = u.unmarshal( xmlStreamReader );
+    </pre>
+ </blockquote>
+
+ <p>
+从 StAX XMLEventReader 解组：
+ <blockquote>
+    <pre>
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+ 
+javax.xml.stream.XMLEventReader xmlEventReader = 
+javax.xml.stream.XMLInputFactory().newInstance().createXMLEventReader( ... );
+ 
+Object o = u.unmarshal( xmlEventReader );
+    </pre>
+ </blockquote>
+
+ <p>
+<a name="unmarshalEx"></a> <b>解组 XML 数据</b><br>
+ <blockquote>
+解组可以反序列化表示整个 XML 文档或 XML 文档子树的 XML 数据。通常，使用<a href="#unmarshalGlobal">解组全局声明的根元素</a>所描述的 unmarshal 方法便已足够。通过利用全局元素声明和类型定义到 JAXB 映射类的 {@link JAXBContext} 映射，这些 unmarshal 方法可以启动对 XML 数据的根元素的解组。当 {@link JAXBContext} 映射不足以解组 XML 数据的根元素时，应用程序可以使用<a href="#unmarshalByDeclaredType">借助 declaredType 进行解组的方法</a>帮助解组过程。在 XML 数据的根元素对应于模式中的本地元素声明的情况下，这些方法对于解组很有用。
+ </blockquote>
+
+<blockquote>
+ unmarshal 方法从不返回 null。如果解组过程无法将 XML 内容的根解组到 JAXB 映射对象，则将报告一个致命错误，通过抛出 JAXBException 终止处理过程。
+ </blockquote>
+
+ <p>
+<a name="unmarshalGlobal"></a> <b>解组全局声明的根元素</b><br>
+ <blockquote>
+不带 <tt>declaredType</tt> 参数的 unmarshal 方法使用 {@link JAXBContext} 来解组 XML 数据的根元素。{@link JAXBContext} 实例是用来创建此 <tt>Unmarshaller</tt> 的实例。{@link JAXBContext} 实例维护全局声明的 XML 元素和类型定义名称到 JAXB 映射类的映射。该 unmarshal 方法检查 {@link JAXBContext} 是否存在根元素的 XML 名称和/或 <tt>@xsi:type</tt> 到 JAXB 映射类的映射。如果存在这种映射，则使用适当的 JAXB 映射类来解组 XML 数据。注意，当根元素名称未知且根元素具有 <tt>@xsi:type</tt> 时，将使用该 JAXB 映射类作为 {@link JAXBElement} 值来解组 XML 数据。当 {@link JAXBContext} 对象没有根元素名称的映射，也没有其 <tt>@xsi:type</tt>（如果存在） 的映射时，那么将通过抛出 {@link UnmarshalException UnmarshalException} 立即中止解组操作。通过使用下一节描述的借助 declaredType 的 unmarshal 方法，可以解决这种异常现象。
+ </blockquote>
+ 
+ <p>
+<a name="unmarshalByDeclaredType"></a> <b>借助声明的类型进行解组</b><br>
+ <blockquote>
+带 <code>declaredType</code> 参数的 unmarshal 方法使应用程序即使在根元素 XML 名称的 {@link JAXBContext} 中不存在映射时，也能够反序列化 XML 数据的根元素。该 unmarshaller 使用指定为 <tt>declaredType</tt> 参数的、应用程序提供的映射来解组根元素。注意，即使根元素的元素名称是通过 {@link JAXBContext} 映射的，<code>declaredType</code> 参数也会重写该映射，以便在使用这些 unmarshal 方法时反序列化根元素。此外，当 XML 数据的根元素具有 <tt>xsi:type</tt> 属性，且该属性的值引用一个通过 {@link JAXBContext} 映射到 JAXB 映射类的类型定义时，根元素的 <tt>xsi:type</tt> 属性将优先于 unmarshal 方法的 <tt>declaredType</tt> 参数。这些方法总是返回一个 <tt>JAXBElement&lt;declaredType&gt;</tt> 实例。下表显示了如何设置返回 JAXBElement 实例的属性。
+
+ <a name="unmarshalDeclaredTypeReturn"></a>
+ <p>
+   <table border="2" rules="all" cellpadding="4">
+   <thead>
+     <tr>
+       <th align="center" colspan="2">
+通过声明的类型进行解组所返回的 JAXBElement
+       </tr>
+     <tr>
+<th>JAXBElement 属性</th>
+<th>值</th>
+     </tr>
+     </tr>
+     <tr>
+<td>名称</td>
+<td><code>xml 元素名称</code></td>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>值</td>
+<td><code>declaredType 的实例</code></td>
+     </tr>
+     <tr>
+<td>declaredType</td>
+<td>unmarshal 方法的 <code>declaredType</code> 参数</td>
+     </tr>
+     <tr>
+<td>作用域</td>
+<td><code>null</code> <i>（实际作用域未知）</i></td>
+     </tr>
+   </tbody>
+  </table>
+ </blockquote>
+
+ <p>
+以下是<a href="#unmarshalByDeclaredType">通过 declaredType 进行解组的方法</a>的一个示例。
+ <p>
+借助 declaredType 从 <tt>org.w3c.dom.Node</tt> 解组：
+ <blockquote>
+    <pre>
+Schema fragment for example
+&lt;xs:schema&gt;
+&lt;xs:complexType name=&quot;FooType&quot;&gt;...&lt;\xs:complexType&gt;
+&lt;!-- global element declaration "PurchaseOrder" -->
+&lt;xs:element name=&quot;PurchaseOrder&quot;&gt;
+&lt;xs:complexType&gt;
+&lt;xs:sequence&gt;
+&lt;!-- local element declaration "foo" -->
+&lt;xs:element name=&quot;foo&quot; type=&quot;FooType&quot;/&gt;
+                    ...
+&lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+&lt;/xs:element&gt;
+&lt;/xs:schema&gt;
+
+JAXBContext jc = JAXBContext.newInstance( &quot;com.acme.foo&quot; );
+Unmarshaller u = jc.createUnmarshaller();
+ 
+DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+dbf.setNamespaceAware(true);
+DocumentBuilder db = dbf.newDocumentBuilder();
+Document doc = db.parse(new File( &quot;nosferatu.xml&quot;));
+Element  fooSubtree = ...; // traverse DOM till reach xml element foo, constrained by a 
+// local element declaration in schema.
+ 
+// FooType is the JAXB mapping of the type of local element declaration foo.
+JAXBElement&lt;FooType&gt; foo = u.unmarshal( fooSubtree, FooType.class);
+    </pre>
+ </blockquote>
+ 
+ <p>
+<b>支持兼容 SAX2.0 的解析器</b><br>
+ <blockquote>
+客户端应用程序能够选择自己的兼容 SAX2.0 的解析器。如果没有选择 SAX 解析器，则将使用 JAXB 提供者的默认解析器。尽管 JAXB 提供者的默认解析器不必是与 SAX2.0 兼容的，但所有提供者必须允许客户端应用程序指定它们自己的 SAX2.0 解析器。一些提供者可能要求客户端应用程序在模式编译时指定 SAX2.0 解析器。有关详细信息，请参阅 {@link #unmarshal(javax.xml.transform.Source) unmarshal(Source)}。
+ </blockquote>
+
+ <p>
+<b>验证和格式良好性</b><br>
+ <blockquote>
+ <p>
+客户端应用程序可以通过 <tt>setSchema(javax.xml.validation.Schema)</tt> API 来启用或禁用 JAXP 1.3 验证机制。复杂的客户端可以指定它们自己的兼容 SAX 2.0 的解析器，并使用 {@link #unmarshal(javax.xml.transform.Source) unmarshal(Source)} API 来绕开 JAXP 1.3 验证机制。
+ 
+ <p>
+ 
+由于要解组的无效 XML 内容是在 JAXB 2.0 中定义的，这使 Unmarshaller 默认的验证事件处理程序比在 JAXB 1.0 中更为宽松。当向 {@link JAXBContext} 注册由 JAXB 1.0 绑定解析器所生成的模式派生代码时，默认的解组验证处理程序是 {@link javax.xml.bind.helpers.DefaultValidationEventHandler}，它将在遇到致命错误（或错误）之后终止编组操作。对于 JAXB 2.0 客户端应用程序，不存在显式定义的默认验证处理程序，默认事件处理只在遇到致命错误时终止编组操作。
+ 
+ </blockquote>
+
+ <p>
+<a name="supportedProps"></a> <b>支持的属性</b><br>
+ <blockquote>
+ <p>
+当前没有任何需要 Unmarshaller 上的所有 JAXB 提供者都支持的属性。但是，一些提供者可能支持它们自己的特定于提供者的属性集。
+ </blockquote>
+ 
+ <p>
+<a name="unmarshalEventCallback"></a> <b>解组事件回调</b><br>
+ <blockquote>
+{@link Unmarshaller} 提供了两种风格的回调机制，这些机制允许在解组过程的关键点上进行特定于应用程序的处理。在“类定义的”事件回调中，解组期间会触发放置在 JAXB 映射类中的特定于应用程序的代码。“外部侦听器”允许用一个回调方法集中处理解组事件，而不是通过各种类型事件回调处理。
+ <p>
+“类定义”的事件回调方法允许任何 JAXB 映射类通过定义带有以下方法签名的方法指定自己的特定回调方法：
+ <blockquote>
+ <pre>
+// This method is called immediately after the object is created and before the unmarshalling of this 
+// object begins.The callback provides an opportunity to initialize JavaBean properties prior to unmarshalling.
+   void beforeUnmarshal(Unmarshaller, Object parent);
+ 
+//This method is called after all the properties (except IDREF) are unmarshalled for this object, 
+//but before this object is set to the parent object.
+void afterUnmarshal(Unmarshaller, Object parent);
+ </pre>
+ </blockquote>
+类定义的回调方法应该在回调方法需要访问类的非公共方法和/或字段时使用。 
+ <p>
+外部侦听器回调机制允许 {@link Listener} 实例使用 {@link Unmarshaller#setListener(Listener)} 注册。外部侦听器接收所有回调事件，从而允许用比逐个类地定义回调方法更为集中的方式处理事件。外部侦听器在解组过程将编组到 JAXB 元素或 JAXB 映射类时接收事件。
+ <p>
+“类定义的”事件回调方法和外部侦听器事件回调方法相互独立，可以对一个事件同时调用。两种侦听器回调方法都存在时，按照 {@link Listener#beforeUnmarshal(Object, Object)} 和 {@link Listener#afterUnmarshal(Object, Object)} 中定义的顺序对它们进行调用。 
+ <p>
+抛出异常的事件回调方法会终止当前的解组过程。
+ 
+ </blockquote>
+ 
+@author<ul><li>Ryan Shoemaker, Sun Microsystems, Inc.</li><li>Kohsuke Kawaguchi, Sun Microsystems, Inc.</li><li>Joe Fialli, Sun Microsystems, Inc.</li></ul>
+@version $Revision: 1.6 $ $Date: 2006-10-23 09:14:11 $
+@see JAXBContext
+@see Marshaller
+@see Validator
+@since JAXB 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(File f) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的文件解组 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+ 
+@param f 将从中解组 XML 数据的文件
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或着 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 File 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(InputStream is) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 InputStream 解组 XML 数据并返回得到的内容树。使用这种形式的 unmarshal API 时，验证事件位置信息可能不完整。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+ 
+@param is 将从中解组 XML 数据的 InputStream
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 InputStream 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(Reader reader) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 Reader 解组 XML 数据并返回得到的内容树。使用这种形式的 unmarshal API 时，验证事件位置信息可能不完整，这是因为 Reader 不提供系统 ID。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+ 
+@param reader 将从中解组 XML 数据的 Reader
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 InputStream 参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(URL url) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 URL 解组 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+
+@param url 将从中解组 XML 数据的 URL
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 URL 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(InputSource source) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 SAX InputSource 解组 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+
+@param source 将从中解组 XML 数据的输入源
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 InputSource 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(Node node) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 DOM 树解组全局 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+
+@param node 要从中解组 XML 数据的文档/元素。调用者至少必须支持 Document 和 Element。
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 Node 参数为 nul
+@see #unmarshal(org.w3c.dom.Node, Class)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement<T> javax.xml.bind.Unmarshaller.unmarshal(Node node, java.lang.Class<T> declaredType) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过 JAXB 映射的 <tt>declaredType</tt> 解组 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalByDeclaredType">借助声明的类型进行解组</a>。
+
+@param node 从中解组 XML 数据的文档/元素。调用者至少必须支持 Document 和 Element。
+@param declaredType 用来保存 <tt>node</tt> 的 XML 数据的适当 JAXB 映射类。
+ 
+@return <tt>node</tt> 的 <a href="#unmarshalDeclaredTypeReturn">JAXB Element</a> 表示形式
+ 
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果任何参数为 null
+@since 6.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(Source source) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 XML Source 解组 XML 数据并返回得到的内容树。  
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+
+ <p>
+<a name="saxParserPlugable"></a> <b>SAX 2.0 解析器的可插入性</b>
+ <p>
+客户端应用程序可以选择不使用随 JAXB 提供者一起提供的默认解析器机制。任何兼容 SAX 2.0 的解析器都可以取代 JAXB 提供者的默认机制。要实现这一点，客户端应用程序必须正确配置一个包含 <tt>XMLReader</tt> 的 <tt>SAXSource</tt>，并且该 <tt>XMLReader</tt> 是由 SAX 2.0 解析器提供者实现的。如果 <tt>XMLReader</tt> 有一个向它注册的 <tt>org.xml.sax.ErrorHandler</tt>，则将使用 JAXB 提供者替换它，以便通过 JAXB 的 <tt>ValidationEventHandler</tt> 机制报告验证错误。如果 <tt>SAXSource</tt> 不包含 <tt>XMLReader</tt>，则将使用 JAXB 提供者的默认解析器机制。
+ <p>
+也可以使用此解析器替换机制来替换 JAXB 提供者的解组时验证引擎。客户端应用程序必须正确配置其兼容 SAX 2.0 的解析器来执行验证（如上例所示）。解析器在解组操作期间遇到的任何 <tt>SAXParserExceptions</tt> 都将由 JAXB 提供者处理，并将其转换为 JAXB <tt>ValidationEvent</tt> 对象，这些对象将通过已经向 <tt>Unmarshaller</tt> 注册的 <tt>ValidationEventHandler</tt> 报告给客户端。<i>注：</i> 在为了实现解组而指定一个替换验证 SAX 2.0 解析器时，无需替换 JAXB 提供者使用的验证引擎来执行按需应变的验证。
+ <p>
+客户端应用程序指定将在解组期间使用的替换解析器机制的唯一方法是通过 <tt>unmarshal(SAXSource)</tt> API。所有其他形式的 unmarshal 方法（文件、URL、Node 等等）将使用 JAXB 提供者的默认解析器和验证器机制。
+
+@param source 将从中解组 XML 数据的 XML Source（提供者只需支持 SAXSource、DOMSource 和 StreamSource）
+@return 新创建的 java 内容树的根对象
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 Source 参数为 nul
+@see #unmarshal(javax.xml.transform.Source, Class)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement<T> javax.xml.bind.Unmarshaller.unmarshal(Source source, java.lang.Class<T> declaredType) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <tt>declaredType</tt> 指定的 XML Source 解组 XML 数据并返回得到的内容树。  
+
+ <p>
+实现<a href="#unmarshalByDeclaredType">借助声明的类型进行解组</a>。
+
+ <p>
+请参阅 <a href="#saxParserPlugable">SAX 2.0 解析器的可插入性</a>
+
+@param source 将从中解组 XML 数据的 XML Source（提供者只需支持 SAXSource、DOMSource 和 StreamSource）
+@param declaredType 用来保存 <tt>source</tt> 的 xml 根元素的适当 JAXB 映射类
+@return 通过 <a href="#unmarshalDeclaredTypeReturn">JAXB Element</a> 确定的 Java 内容 
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果任何参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(XMLStreamReader reader) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 pull 解析器解组 XML 数据并返回得到的内容树。
+
+ <p>
+实现<a href="#unmarshalGlobal">解组全局根元素</a>。
+ 
+ <p>
+此方法假定该解析器处于 START_DOCUMENT 或 START_ELEMENT 事件上。解组将从起始事件开始，到相应的终止事件结束。如果此方法成功返回，则 <tt>reader</tt> 将指向终止事件后面的标记。
+ 
+@param reader 要读取的解析器。
+@return 新创建的 java 内容树的根对象。
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 <tt>reader</tt> 参数为 null
+@throws IllegalStateException 如果 <tt>reader</tt> 没有指向 START_DOCUMENT 或 START_ELEMENT 事件。
+@since JAXB 2.0
+@see #unmarshal(javax.xml.stream.XMLStreamReader, Class)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement<T> javax.xml.bind.Unmarshaller.unmarshal(XMLStreamReader reader, java.lang.Class<T> declaredType) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将根元素解组到 JAXB 映射的 <tt>declaredType</tt> 并返回得到的内容树。
+ 
+ <p>
+此方法实现<a href="#unmarshalByDeclaredType">借助 declaredType 进行解组</a>。
+ <p>
+此方法假定该解析器处于 START_DOCUMENT 或 START_ELEMENT 事件上。解组将从起始事件开始，到相应的终止事件结束。如果此方法成功返回，则 <tt>reader</tt> 将指向终止事件后面的标记。
+
+@param reader 要读取的解析器。
+@param declaredType 用来保存 <tt>reader</tt> 的 START_ELEMENT XML 数据的适当 JAXB 映射类。
+ 
+@return   通过 <a href="#unmarshalDeclaredTypeReturn">JAXB Element 表示形式</a>确定的内容树
+ 
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果任何参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.unmarshal(XMLEventReader reader) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 pull 解析器解组 XML 数据并返回得到的内容树。
+
+ <p>
+此方法是一个<a href="#unmarshalGlobal">解组全局根方法</a>。
+
+ <p>
+此方法假定该解析器处于 START_DOCUMENT 或 START_ELEMENT 事件上。解组将从起始事件开始，到相应的终止事件结束。如果此方法成功返回，则 <tt>reader</tt> 将指向终止事件后面的标记。 
+ 
+@param reader 要读取的解析器。
+@return 新创建的 java 内容树的根对象。
+
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果 <tt>reader</tt> 参数为 null
+@throws IllegalStateException 如果 <tt>reader</tt> 没有指向 START_DOCUMENT 或 START_ELEMENT 事件。
+@since JAXB 2.0
+@see #unmarshal(javax.xml.stream.XMLEventReader, Class)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement<T> javax.xml.bind.Unmarshaller.unmarshal(XMLEventReader reader, java.lang.Class<T> declaredType) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将根元素解组到 JAXB 映射的 <tt>declaredType</tt> 并返回得到的内容树。
+ 
+ <p>
+此方法实现<a href="#unmarshalByDeclaredType">借助 declaredType 进行解组</a>。
+
+ <p>
+此方法假定该解析器处于 START_DOCUMENT 或 START_ELEMENT 事件上。解组将从起始事件开始，到相应的终止事件结束。如果此方法成功返回，则 <tt>reader</tt> 将指向终止事件后面的标记。
+
+@param reader 要读取的解析器。
+@param declaredType 用来保存 <tt>reader</tt> 的 START_ELEMENT XML 数据的适当 JAXB 映射类。
+ 
+@return   通过 <a href="#unmarshalDeclaredTypeReturn">JAXB Element 表示形式</a>确定的内容树
+ 
+@throws JAXBException 如果在解组时发生不可预料的错误
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false 或者 <tt>Unmarshaller</tt> 不能执行 XML 到 Java 的绑定。请参阅<a href="#unmarshalEx">解组 XML 数据</a>
+@throws IllegalArgumentException 如果任何参数为 null
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.UnmarshallerHandler javax.xml.bind.Unmarshaller.getUnmarshallerHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取可用作 XML 管线中的组件的 unmarshaller 处理程序对象。
+ 
+ <p>
+JAXB 提供者可以为此方法的多次调用返回相同的处理程序对象。换句话说，此方法不必创建新的 <tt>UnmarshallerHandler</tt> 实例。如果应用程序需要使用多个 <tt>UnmarshallerHandler</tt>，那么它应该创建多个 <tt>Unmarshaller</tt>。
+
+@return 返回 unmarshaller 处理程序对象
+@see UnmarshallerHandler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setValidating(boolean validating) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 <tt>Unmarshaller</tt> 的默认验证机制是否应在解组操作期间执行验证。默认情况下，<tt>Unmarshaller</tt> 不执行验证。
+ <p>
+此方法只能在调用某一 unmarshal 方法之前或之后调用。
+ <p>
+此方法只控制 JAXB 提供者的默认解组时验证机制，不会影响指定自己的验证兼容 SAX 2.0 的解析器的客户端。指定自己的解组时验证机制的客户端可能希望通过此 API 关闭 JAXB 提供者的默认验证机制，以避免&ldquo;双重验证&rdquo;。
+ <p>
+此方法从 JAXB 2.0 开始已经废弃，请使用新的 {@link #setSchema(javax.xml.validation.Schema)} API。
+
+@param validating 如果 Unmarshaller 应该在解组期间执行验证，则该参数为 true；否则为 false
+@throws JAXBException 如果在解组期间启用或禁用验证时发生错误
+@throws UnsupportedOperationException 如果对根据引用 JAXB 2.0 映射类的 JAXBContext 而创建的 Unmarshaller 调用此方法，则抛出该异常
+@deprecated 从 JAXB2.0 开始，请参阅 {@link #setSchema(javax.xml.validation.Schema)}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.Unmarshaller.isValidating() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否将 <tt>Unmarshaller</tt> 配置为在解组操作期间执行验证。
+ <p>
+此 API 返回 JAXB 提供者的默认解组时验证机制的状态。 
+ <p>
+此方法从 JAXB 2.0 开始已经废弃，请使用新的 {@link #getSchema()} API。
+
+@return 如果将 Unmarshaller 配置为在解组操作期间执行验证，则返回 true；否则返回 false
+@throws JAXBException 如果在检索验证标志时发生错误
+@throws UnsupportedOperationException 如果对根据引用 JAXB 映射类的 JAXBContext 而创建的 Unmarshaller 调用此方法，则抛出该异常
+@deprecated 从 JAXB 2.0 开始，请参阅 {@link #getSchema()}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setEventHandler(ValidationEventHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册 <tt>ValidationEventHandler</tt>。
+ <p>
+如果在调用任何 unmarshal 方法期间遇到任何错误，则 <tt>ValidationEventHandler</tt> 将由 JAXB 提供者调用。如果客户端应用程序没有在调用 unmarshal 方法之前注册 <tt>ValidationEventHandler</tt>，则 <tt>ValidationEvents</tt> 将由默认事件处理程序处理，默认事件处理程序将在遇到第一个错误或致命错误时终止解组操作。
+ <p>
+调用带有 null 参数的此方法将导致 Unmarshaller 重新使用默认事件处理程序。
+
+@param handler 验证事件处理程序
+@throws JAXBException 如果在设置事件处理程序期间遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.ValidationEventHandler javax.xml.bind.Unmarshaller.getEventHandler() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的事件处理程序，如果没有设置事件处理程序，则返回默认的事件处理程序。
+
+@return 当前的 ValidationEventHandler，如果没有设置处理程序，则返回默认的事件处理程序
+@throws JAXBException 如果获取当前的事件处理程序时遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setProperty(String name, Object value) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <tt>Unmarshaller</tt> 底层实现中的特定属性。此方法只能用于设置上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图设置未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 要设置的属性的名称。此值可以使用一个常量字段来指定，也可以是一个用户提供的字符串。
+@param value 要设置的属性值
+
+@throws PropertyException 如果处理给定属性或值时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.Unmarshaller.getProperty(String name) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <tt>Unmarshaller</tt> 底层实现中的特定属性。此方法只能用于获取上文中标准 JAXB 定义的属性之一或特定于提供者的属性。试图获取未定义的属性将导致抛出 PropertyException。请参阅<a href="#supportedProps">支持的属性</a>。
+
+@param name 要检索的属性的名称
+@return 所请求属性的值
+
+@throws PropertyException 如果检索给定属性或值属性名称时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setSchema(Schema schema)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定应用作验证后续解组操作依据的 JAXP 1.3 {@link javax.xml.validation.Schema Schema} 对象。向此方法传递 null 将禁用验证。
+ <p>
+此方法将替换已过时的 {@link #setValidating(boolean) setValidating(boolean)} API。
+
+ <p>
+最初，此属性被设置为 <tt>null</tt>。
+
+@param schema 作为验证解组操作依据的 Schema 对象；为 null 表示禁用验证
+@throws UnsupportedOperationException 如果对根据引用 JAXB 1.0 映射类的 JAXBContext 而创建的 Unmarshaller 调用此方法，则抛出该异常
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.validation.Schema javax.xml.bind.Unmarshaller.getSchema()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于执行解组时验证的 JAXP 1.3 {@link javax.xml.validation.Schema Schema} 对象。如果没有在 unmarshaller 上设置 Schema，则此方法将返回 null，指示不会执行解组时验证。
+ <p>
+此方法用于替换已过时的 {@link #isValidating()} API，并可访问 Schema 对象。要确定 Unmarshaller 是否启用了验证，只需测试返回类型是否为 null：
+ <p>
+<code>boolean isValidating = u.getSchema()!=null;</code>
+ 
+@return 返回用于执行解组时验证的 Schema 对象；如果该对象不存在，则返回 null
+@throws UnsupportedOperationException 如果对根据引用 JAXB 1.0 映射类的 JAXBContext 而创建的 Unmarshaller 调用此方法，则抛出该异常
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setAdapter(javax.xml.bind.annotation.adapters.XmlAdapter adapter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将已配置的 {@link XmlAdapter} 实例与此 unmarshaller 关联。
+
+ <p>
+这是调用 <code>setAdapter(adapter.getClass(),adapter);</code> 的一个便捷方法。
+
+@see #setAdapter(Class,XmlAdapter)
+@throws IllegalArgumentException 如果 adapter 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setAdapter(java.lang.Class<A> type, A adapter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将已配置的 {@link XmlAdapter} 实例与此 unmarshaller 关联。
+
+ <p>
+每个 unmarshaller 都可以在内部维护一个 {@link java.util.Map}&lt;{@link Class},{@link XmlAdapter}&gt;，可用来解组使用 {@link javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter} 注释其字段/方法的类。
+
+ <p>
+此方法允许应用程序使用已配置好的 {@link XmlAdapter} 实例。如果没有给出适配器实例，则 unmarshaller 将调用其默认构造方法创建一个实例。
+
+@param type 适配器的类型。当 {@link javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter#value()} 引用此类型时，将使用指定的实例。
+@param adapter 将要使用的适配器实例。如果为 null，则将注销此类型的当前适配器集合。
+@throws IllegalArgumentException 如果 type 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public A extends javax.xml.bind.annotation.adapters.XmlAdapter javax.xml.bind.Unmarshaller.getAdapter(java.lang.Class<A> type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与指定类型关联的适配器。
+
+这是 {@link #setAdapter} 方法的反向操作。
+
+@throws IllegalArgumentException 如果 type 参数为 null。
+@throws UnsupportedOperationException 如果基于 JAXB 1.0 实现调用。
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setAttachmentUnmarshaller(AttachmentUnmarshaller au)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将解析 cid（内容 id URI）的上下文与作为附件传递的二进制数据关联。</p>
+ <p/>
+<p>通过 {@link #setSchema(Schema)} 启用的解组时验证，即使在 unmarshaller 执行 XOP 处理时也必须支持。
+ </p>
+
+@throws IllegalStateException 如果试图在解组操作期间同时调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.Unmarshaller.setListener(Unmarshaller.Listener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+向此 {@link Unmarshaller} 注册解组事件回调 {@link Listener}。
+ 
+ <p>
+每个 Unmarshaller 只有一个 Listener。设置 Listener 将替换以前设置的 Listener。通过将 listener 设置为 <tt>null</tt> 可注销当前的 Listener。
+ 
+@param listener 为此 {@link Unmarshaller} 提供解组事件回调
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.Unmarshaller.Listener javax.xml.bind.Unmarshaller.getListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回向此 {@link Unmarshaller} 注册的 {@link Listener}。
+
+@return 注册的 {@link Listener}；如果未向此 Unmarshaller 注册任何 Listener，则返回 <code>null</code>。
+@since JAXB 2.0
+
+<!-- END DATA -->

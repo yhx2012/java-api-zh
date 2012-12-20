@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public interface java.util.concurrent.Executor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行已提交的 {@link Runnable} 任务的对象。此接口提供一种将任务提交与每个任务将如何运行的机制（包括线程使用的细节、调度等）分离开来的方法。通常使用 <tt>Executor</tt> 而不是显式地创建线程。例如，可能会使用以下方法，而不是为一组任务中的每个任务调用 <tt>new Thread(new(RunnableTask())).start()</tt>：
+
+ <pre>
+ Executor executor = <em>anExecutor</em>;
+ executor.execute(new RunnableTask1());
+ executor.execute(new RunnableTask2());
+ ...
+ </pre>
+ 
+不过，<tt>Executor</tt> 接口并没有严格地要求执行是异步的。在最简单的情况下，执行程序可以在调用者的线程中立即运行已提交的任务：
+
+ <pre>
+ class DirectExecutor implements Executor {
+     public void execute(Runnable r) {
+         r.run();
+     }
+ }</pre>
+
+更常见的是，任务是在某个不是调用者线程的线程中执行的。以下执行程序将为每个任务生成一个新线程。
+
+ <pre>
+ class ThreadPerTaskExecutor implements Executor {
+     public void execute(Runnable r) {
+         new Thread(r).start();
+     }
+ }</pre>
+
+许多 <tt>Executor</tt> 实现都对调度任务的方式和时间强加了某种限制。以下执行程序使任务提交与第二个执行程序保持连续，这说明了一个复合执行程序。
+
+ <pre>
+ class SerialExecutor implements Executor {
+     final Queue&lt;Runnable&gt; tasks = new ArrayDeque&lt;Runnable&gt;();
+     final Executor executor;
+     Runnable active;
+
+     SerialExecutor(Executor executor) {
+         this.executor = executor;
+     }
+
+     public synchronized void execute(final Runnable r) {
+         tasks.offer(new Runnable() {
+             public void run() {
+                 try {
+                     r.run();
+                 } finally {
+                     scheduleNext();
+                 }
+             }
+         });
+         if (active == null) {
+             scheduleNext();
+         }
+     }
+
+     protected synchronized void scheduleNext() {
+         if ((active = tasks.poll()) != null) {
+             executor.execute(active);
+         }
+     }
+ }</pre>
+
+此包中提供的 <tt>Executor</tt> 实现实现了 {@link ExecutorService}，这是一个使用更广泛的接口。{@link ThreadPoolExecutor} 类提供一个可扩展的线程池实现。{@link Executors} 类为这些 Executor 提供了便捷的工厂方法。
+
+<p>内存一致性效果：线程中将 {@code Runnable} 对象提交到 {@code Executor} 之前的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 其执行开始（可能在另一个线程中）。
+
+@since 1.5
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.Executor.execute(Runnable command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在未来某个时间执行给定的命令。该命令可能在新的线程、已入池的线程或者正调用的线程中执行，这由 <tt>Executor</tt> 实现决定。
+
+@param command 可运行的任务
+@throws RejectedExecutionException 如果不能接受执行此任务。
+@throws NullPointerException 如果命令为 null
+
+<!-- END DATA -->

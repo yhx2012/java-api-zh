@@ -1,0 +1,114 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.spi.ImageOutputStreamSpi extends javax.imageio.spi.IIOServiceProvider
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>ImageOutputStream</code> 的服务提供者接口 (SPI)。有关服务提供者接口的更多信息，请参见 <code>IIORegistry</code> 类的注释。
+
+<p> 此接口允许由 <code>ImageOutputStream</code> 的实例&ldquo;包装&rdquo;任意对象。例如，特定的 <code>ImageOutputStreamSpi</code> 可能允许使用一般的 <code>OutputStream</code> 充当目标位置；另一个可能输出到一个 <code>File</code> 或类似串行端口的设备。
+
+<p> 通过将 <code>ImageOutputStream</code> 的创建作为一个可插入的服务，实现了在不更改 API 的情况下对后续的输出目标位置的处理。另外，应用程序可以透明的方式安装和使用 <code>ImageOutputStream</code> 的高性能实现（例如，用于特定平台的本地实现）。
+
+@see IIORegistry
+@see javax.imageio.stream.ImageOutputStream
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Class<?> javax.imageio.spi.ImageOutputStreamSpi.outputClass
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示供 <code>createInputStreamInstance</code> 方法使用的合法对象类型的 <code>Class</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.spi.ImageOutputStreamSpi()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个空的 <code>ImageOutputStreamSpi</code>。为提供所有方法的可用版本，由子类负责初始化实例变量和/或重写方法实现。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.spi.ImageOutputStreamSpi(String vendorName, String version, java.lang.Class<?> outputClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的一组值构造 <code>ImageOutputStreamSpi</code>。
+
+@param vendorName 供应商名称。
+@param version 版本标识符。
+@param outputClass 指示供 <code>createOutputStreamInstance</code> 方法使用的合法对象类型的 <code>Class</code> 对象。
+
+@exception IllegalArgumentException 如果 <code>vendorName</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>version</code> 为 <code>null</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> javax.imageio.spi.ImageOutputStreamSpi.getOutputClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示必须由输出目标位置实现（以便使用 <code>createOutputStreamInstance</code> 方法在 <code>ImageOutputStream</code> 中&ldquo;包装&rdquo;）的类或接口的类型的 <code>Class</code> 对象。
+
+<p> 通常的返回值可能包含 <code>OutputStream.class</code> 或 <code>File.class</code>，但可能使用任何类。
+
+@return 一个 <code>Class</code> 变量。
+
+@see #createOutputStreamInstance(Object, boolean, File)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ImageOutputStreamSpi.canUseCacheFile()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果与此服务提供者关联的 <code>ImageOutputStream</code> 实现可选择利用缓存 <code>File</code> 改善性能和/或内存占用，则返回 <code>true</code>。如果为 <code>false</code>，将忽略 <code>createOutputStreamInstance</code> 的 <code>cacheFile</code> 参数的值。
+
+<p> 默认实现返回 <code>false</code>。
+
+@return  如果此服务提供者创建的输出流有可使用的缓存文件，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ImageOutputStreamSpi.needsCacheFile()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果与此服务提供者关联的 <code>ImageOutputStream</code> 实现要求使用缓存 <code>File</code>，则返回 <code>true</code>。
+
+<p> 默认实现返回 <code>false</code>。
+
+@return  如果此服务提供者创建的输出流需要使用缓存文件，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.imageio.stream.ImageOutputStream javax.imageio.spi.ImageOutputStreamSpi.createOutputStreamInstance(Object output, boolean useCache, File cacheDir) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此服务提供者关联的 <code>ImageOutputStream</code> 实现的实例。如果使用缓存文件为可选项，则将参考 <code>useCache</code> 参数。在要求使用缓存，或缓存不适用时，将忽略 <code>useCache</code> 的值。
+
+@param output 一个由 <code>getOutputClass</code> 返回的类类型的对象。
+@param useCache 在可选的情况下指示是否应使用缓存文件的 <code>boolean</code>。
+@param cacheDir 指示创建缓存文件的位置的 <code>File</code>，或者为 <code>null</code>，以指示使用系统目录。
+
+@return 一个 <code>ImageOutputStream</code> 实例。
+
+@exception IllegalArgumentException 如果 <code>output</code> 不是一个正确的类的实例，或者为 <code>null</code>。
+@exception IllegalArgumentException 如果需要缓存文件，但 <code>cacheDir</code> 为非 <code>null</code> 并且也不是一个目录。
+@exception IOException 如果需要缓存文件但无法创建。
+
+@see #getOutputClass
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.stream.ImageOutputStream javax.imageio.spi.ImageOutputStreamSpi.createOutputStreamInstance(Object output) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此服务提供者关联的 <code>ImageOutputStream</code> 实现的实例。如果需要，将在系统相应的默认临时文件目录中创建缓存文件。
+
+@param output 一个由 <code>getOutputClass</code> 返回的类类型的对象。
+
+@return 一个 <code>ImageOutputStream</code> 实例。
+
+@exception IllegalArgumentException 如果 <code>output</code> 不是一个正确的类的实例，或者为 <code>null</code>。
+@exception IOException 如果需要缓存文件但无法创建。
+
+@see #getOutputClass()
+
+<!-- END DATA -->

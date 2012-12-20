@@ -1,0 +1,809 @@
+<!-- BEGIN KEY -->
+public class java.lang.Thread extends java.lang.Object implements java.lang.Runnable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<i>线程</i> 是程序中的执行线程。Java 虚拟机允许应用程序并发地运行多个执行线程。
+<p>
+每个线程都有一个优先级，高优先级线程的执行优先于低优先级线程。每个线程都可以或不可以标记为一个守护程序。当某个线程中运行的代码创建一个新 <code>Thread</code> 对象时，该新线程的初始优先级被设定为创建线程的优先级，并且当且仅当创建线程是守护线程时，新线程才是守护程序。
+<p>
+当 Java 虚拟机启动时，通常都会有单个非守护线程（它通常会调用某个指定类的 <code>main</code> 方法）。Java 虚拟机会继续执行线程，直到下列任一情况出现时为止：
+<ul>
+<li>调用了 <code>Runtime</code> 类的 <code>exit</code> 方法，并且安全管理器允许退出操作发生。
+<li>非守护线程的所有线程都已停止运行，无论是通过从对 run 方法的调用中返回，还是通过抛出一个传播到 <code>run</code> 方法之外的异常。
+</ul>
+<p>
+创建新执行线程有两种方法。一种方法是将类声明为 <code>Thread</code> 的子类。该子类应重写 <code>Thread</code> 类的 <code>run</code> 方法。接下来可以分配并启动该子类的实例。例如，计算大于某一规定值的质数的线程可以写成：
+ <p><hr><blockquote><pre>
+     class PrimeThread extends Thread {
+         long minPrime;
+         PrimeThread(long minPrime) {
+             this.minPrime = minPrime;
+         }
+ 
+         public void run() {
+             // compute primes larger than minPrime
+             &nbsp;.&nbsp;.&nbsp;.
+         }
+     }
+ </pre></blockquote><hr>
+ <p>
+ 然后，下列代码会创建并启动一个线程：
+ <p><blockquote><pre>
+     PrimeThread p = new PrimeThread(143);
+     p.start();
+ </pre></blockquote>
+ <p>
+ 创建线程的另一种方法是声明实现 <code>Runnable</code> 接口的类。该类然后实现 <code>run</code> 方法。然后可以分配该类的实例，在创建 <code>Thread</code> 时作为一个参数来传递并启动。采用这种风格的同一个例子如下所示：
+ <p><hr><blockquote><pre>
+     class PrimeRun implements Runnable {
+         long minPrime;
+         PrimeRun(long minPrime) {
+             this.minPrime = minPrime;
+         }
+ 
+         public void run() {
+             // compute primes larger than minPrime
+             &nbsp;.&nbsp;.&nbsp;.
+         }
+     }
+ </pre></blockquote><hr>
+ <p>
+ 然后，下列代码会创建并启动一个线程：
+ <p><blockquote><pre>
+     PrimeRun p = new PrimeRun(143);
+     new Thread(p).start();
+ </pre></blockquote>
+ <p>
+ 每个线程都有一个标识名，多个线程可以同名。如果线程创建时没有指定标识名，就会为其生成一个新名称。
+
+ @author  unascribed
+ @version 1.173, 07/13/06
+ @see     Runnable
+ @see     Runtime#exit(int)
+ @see     #run()
+ @see     #stop()
+ @since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Thread.MIN_PRIORITY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 线程可以具有的最低优先级。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Thread.NORM_PRIORITY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 分配给线程的默认优先级。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Thread.MAX_PRIORITY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 线程可以具有的最高优先级。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(null, null,</code> <i>gname</i><code>)</code> 具有相同的作用，其中 <b><i>gname</i></b> 是一个新生成的名称。自动生成的名称的形式为 <code>"Thread-"+</code><i>n</i>，其中的 <i>n</i> 为整数。
+
+ @see     #Thread(ThreadGroup, Runnable, String)
+         
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(Runnable target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(null, target,</code><i>gname</i><code>)</code> 具有相同的作用，其中的 <i>gname</i> 是一个新生成的名称。自动生成的名称的形式为 <code>“Thread-”+</code><i>n</i>，其中的 <i>n</i> 为整数。 
+
+ @param   target   其 <code>run</code> 方法被调用的对象。
+ @see     #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(ThreadGroup group, Runnable target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(group, target,</code> <i>gname</i><code>)</code> 具有相同的作用，其中的 <i>gname</i> 是一个新生成的名称。自动生成的名称的形式为 <code>"Thread-"+</code><i>n</i> ，其中的 <i>n</i> 为整数。
+
+ @param      group    线程组。
+ @param      target   其 <code>run</code> 方法被调用的对象。
+ @exception  SecurityException  如果当前线程无法在指定的线程组中创建线程。
+ @see        #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(null, null, name)</code> 具有相同的作用。
+
+ @param   name  新线程的名称。
+ @see     #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(ThreadGroup group, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(group, null, name)</code> 具有相同的作用。
+
+ @param      group    线程组。
+ @param      name   新线程的名称。
+ @exception  SecurityException  如果当前线程无法在指定的线程组中创建线程。
+ @see        #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(Runnable target, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 分配新的 <code>Thread</code> 对象。这种构造方法与 <code>Thread(null, target, name)</code> 具有相同的作用。
+
+ @param   target   其 <code>run</code> 方法被调用的对象。
+ @param   name    新线程的名称。
+ @see     #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(ThreadGroup group, Runnable target, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配新的 <code>Thread</code> 对象，以便将 <code>target</code> 作为其运行对象，将指定的 <code>name</code> 作为其名称，并作为 <code>group</code> 所引用的线程组的一员。
+<p>
+如果 <code>group</code> 为 <code>null</code>，并且有安全管理器，则该组由安全管理器的 <code>getThreadGroup</code> 方法确定。如果 <code>group</code> 为 <code>null</code>，并且没有安全管理器，或安全管理器的 <code>getThreadGroup</code> 方法返回 <code>null</code>，则该组与创建新线程的线程被设定为相同的 ThreadGroup。
+  
+<p>如果有安全管理器，则其 <code>checkAccess</code> 方法通过 ThreadGroup 作为其参数被调用。
+<p>此外，当被重写 <code>getContextClassLoader</code> 或 <code>setContextClassLoader</code> 方法的子类构造方法直接或间接调用时，其 <code>checkPermission</code> 方法通过 <code>RuntimePermission("enableContextClassLoaderOverride")</code> 权限调用。其结果可能是 SecurityException。
+
+<p>
+如果 <code>target</code> 参数不是 <code>null</code>，则 <code>target</code> 的 <code>run</code> 方法在启动该线程时调用。如果 target 参数为 <code>null</code>，则该线程的 <code>run</code> 方法在该线程启动时调用。
+<p>
+新创建线程的优先级被设定为创建该线程的线程的优先级，即当前正在运行的线程的优先级。方法 <code>setPriority</code> 可用于将优先级更改为一个新值。
+<p>
+当且仅当创建新线程的线程当前被标记为守护线程时，新创建的线程才被标记为守护线程。方法 <code>setDaemon </code> 可用于改变线程是否为守护线程。
+
+@param      group     线程组。
+@param      target   其 <code>run</code> 方法被调用的对象。
+@param      name    新线程的名称。
+@exception  SecurityException  如果当前线程无法在指定的线程组中创建线程，或者无法重写上下文类加载器方法。
+@see        Runnable#run()
+@see        #run()
+@see        #setDaemon(boolean)
+@see        #setPriority(int)
+@see        ThreadGroup#checkAccess()
+@see        SecurityManager#checkAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread(ThreadGroup group, Runnable target, String name, long stackSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配新的 <code>Thread</code> 对象，以便将 <code>target</code> 作为其运行对象，将指定的 <code>name</code> 作为其名称，作为 <code>group</code> 所引用的线程组的一员，并具有指定的<i>堆栈大小</i>。
+
+<p>除了允许指定线程堆栈大小以外，这种构造方法与 {@link #Thread(ThreadGroup,Runnable,String)} 完全一样。堆栈大小是虚拟机要为该线程堆栈分配的地址空间的近似字节数。<b>
+<tt>stackSize</tt> 参数（如果有）的作用具有高度的平台依赖性。</b>
+
+<p>在某些平台上，指定一个较高的 <tt>stackSize</tt> 参数值可能使线程在抛出 {@link StackOverflowError} 之前达到较大的递归深度。同样，指定一个较低的值将允许较多的线程并发地存在，且不会抛出 {@link OutOfMemoryError}（或其他内部错误）。<tt>stackSize</tt> 参数的值与最大递归深度和并发程度之间的关系细节与平台有关。<b>在某些平台上，<tt>stackSize</tt> 参数的值无论如何不会起任何作用。</b>
+ 
+<p>作为建议，可以让虚拟机自由处理 <tt>stackSize</tt> 参数。如果指定值对于平台来说过低，则虚拟机可能使用某些特定于平台的最小值；如果指定值过高，则虚拟机可能使用某些特定于平台的最大值。
+同样，虚拟机还会视情况自由地舍入指定值（或完全忽略它）。
+
+<p>将 <tt>stackSize</tt> 参数值指定为零将使这种构造方法与 <tt>Thread(ThreadGroup, Runnable, String)</tt> 构造方法具有完全相同的作用。
+
+<p><i>由于这种构造方法的行为具有平台依赖性，因此在使用它时要非常小心。执行特定计算所必需的线程堆栈大小可能会因 JRE 实现的不同而不同。鉴于这种不同，仔细调整堆栈大小参数可能是必需的，而且可能要在支持应用程序运行的 JRE 实现上反复调整。</i>
+
+<p>实现注意事项：鼓励 Java 平台实现者文档化其 <tt>stackSize parameter</tt> 的实现行为。
+
+@param      group    线程组。
+@param      target   其 <code>run</code> 方法被调用的对象。
+@param      name     新线程的名称。
+@param      stackSize 新线程的预期堆栈大小，为零时表示忽略该参数。
+@exception  SecurityException  如果当前线程无法在指定的线程组中创建线程。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native java.lang.Thread java.lang.Thread.currentThread()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回对当前正在执行的线程对象的引用。
+
+@return  当前执行的线程。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native void java.lang.Thread.yield()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+暂停当前正在执行的线程对象，并执行其他线程。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native void java.lang.Thread.sleep(long millis) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在指定的毫秒数内让当前正在执行的线程休眠（暂停执行），此操作受到系统计时器和调度程序精度和准确性的影响。该线程不丢失任何监视器的所属权。
+
+@param      millis   以毫秒为单位的休眠时间。
+@exception  InterruptedException 如果任何线程中断了当前线程。当抛出该异常时，当前线程的<i>中断状态</i> 被清除。
+@see        Object#notify()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.lang.Thread.sleep(long millis, int nanos) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 在指定的毫秒数加指定的纳秒数内让当前正在执行的线程休眠（暂停执行），此操作受到系统计时器和调度程序精度和准确性的影响。该线程不丢失任何监视器的所属权。
+
+@param      millis   以毫秒为单位的休眠时间。
+@param      nanos    要休眠的另外 0-999999 纳秒。
+@exception  IllegalArgumentException  如果 millis 值为负或 nanos 值不在 0-999999 范围内。
+@exception  InterruptedException 如果任何线程中断了当前线程。当抛出该异常时，当前线程的<i>中断状态</i> 被清除。
+@see        Object#notify()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.lang.Thread.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 使该线程开始执行；Java 虚拟机调用该线程的 <code>run</code> 方法。
+ <p>
+ 结果是两个线程并发地运行；当前线程（从调用返回给 <code>start</code> 方法）和另一个线程（执行其 <code>run</code> 方法）。
+ <p>
+ 多次启动一个线程是非法的。特别是当线程已经结束执行后，不能再重新启动。
+
+ @exception  IllegalThreadStateException  如果线程已经启动。
+ @see        #run()
+ @see        #stop()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Thread.run()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该线程是使用独立的 <code>Runnable</code> 运行对象构造的，则调用该 <code>Runnable</code> 对象的 <code>run</code> 方法；否则，该方法不执行任何操作并返回。
+<p>
+<code>Thread</code> 的子类应该重写该方法。
+
+ @see     #start()
+ @see     #stop()
+ @see     #Thread(ThreadGroup, Runnable, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+强迫线程停止执行。
+<p>
+如果安装了安全管理器，则以 <code>this</code> 作为其参数调用 <code>checkAccess</code> 方法。这可能引发 <code>SecurityException</code>（在当前线程中）。
+<p>
+如果该线程不同于当前线程（即当前线程试图终止除它本身以外的某一线程），则安全管理器的 <code>checkPermission</code> 方法（带有 <code>RuntimePermission("stopThread")</code> 参数）也会被调用。这会再次抛出 <code>SecurityException</code>（在当前线程中）。
+<p>
+无论该线程在做些什么，它所代表的线程都被迫异常停止，并抛出一个新创建的 <code>ThreadDeath</code> 对象，作为异常。
+<p>
+停止一个尚未启动的线程是允许的。
+如果最后启动了该线程，它会立即终止。
+<p>
+应用程序通常不应试图捕获 <code>ThreadDeath</code>，除非它必须执行某些异常的清除操作（注意，抛出 <code>ThreadDeath</code> 将导致 <code>try</code> 语句的 <code>finally</code> 子句在线程正式终止前执行）。如果 <code>catch</code> 子句捕获了一个 <code>ThreadDeath</code> 对象，则重新抛出该对象很重要，因为这样该线程才会真正终止。
+<p>
+对其他未捕获的异常作出反应的顶级错误处理程序不会打印输出消息，或者另外通知应用程序未捕获到的异常是否为 <code>ThreadDeath</code> 的一个实例。
+
+@exception  SecurityException  如果当前线程不能修改该线程。
+@see        #interrupt()
+@see        #checkAccess()
+@see        #run()
+@see        #start()
+@see        ThreadDeath
+@see        ThreadGroup#uncaughtException(Thread,Throwable)
+@see        SecurityManager#checkAccess(Thread)
+@see        SecurityManager#checkPermission
+@deprecated 该方法具有固有的不安全性。用 Thread.stop 来终止线程将释放它已经锁定的所有监视器（作为沿堆栈向上传播的未检查 <code>ThreadDeath</code> 异常的一个自然后果）。如果以前受这些监视器保护的任何对象都处于一种不一致的状态，则损坏的对象将对其他线程可见，这有可能导致任意的行为。<code>stop</code> 的许多使用都应由只修改某些变量以指示目标线程应该停止运行的代码来取代。目标线程应定期检查该变量，并且如果该变量指示它要停止运行，则从其运行方法依次返回。如果目标线程等待很长时间（例如基于一个条件变量），则应使用 <code>interrupt</code> 方法来中断该等待。有关更多信息，请参阅<a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">为何不赞成使用 Thread.stop、Thread.suspend 和 Thread.resume？</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void java.lang.Thread.stop(Throwable obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强迫线程停止执行。
+<p>
+如果安装了安全管理器，则调用该线程的 <code>checkAccess</code> 方法，这可能引发 <code>SecurityException</code>（在当前线程中）。 
+<p>
+如果该线程不同于当前线程（即当前线程试图终止除它本身以外的某一线程），或者 <code>obj</code> 不是 <code>ThreadDeath</code> 的一个实例，则安全管理器的 <code>checkPermission</code> 方法（带有 <code>RuntimePermission("stopThread")</code> 参数）也会被调用。
+此外，这可能抛出 <code>SecurityException</code>（在当前线程中）。
+<p>
+如果参数 <code>obj</code> 为 null，则抛出 <code>NullPointerException</code>（在当前线程中）。
+<p>
+无论该线程在做些什么，它所代表的线程都被迫异常停止，并抛出 <code>Throwable</code> 对象 <code>obj</code>，作为一个异常。这是一种不正常的操作，通常情况下，应使用不带任何参数的 <code>stop</code> 方法。
+<p>
+停止一个尚未启动的线程是允许的。
+如果最后启动了该线程，它会立即终止。
+
+@param      obj   要抛出的可抛出对象。
+@exception  SecurityException  如果当前线程不能修改该线程。
+@throws     NullPointerException 如果 obj 为 <tt>null</tt>。
+@see        #interrupt()
+@see        #checkAccess()
+@see        #run()
+@see        #start()
+@see        #stop()
+@see        SecurityManager#checkAccess(Thread)
+@see        SecurityManager#checkPermission
+@deprecated 该方法具有固有的不安全性。有关详细信息，请参阅 {@link #stop()}。
+该方法的附加危险是它可用于生成目标线程未准备处理的异常（包括若没有该方法该线程不太可能抛出的已检查的异常）。
+有关更多信息，请参阅<a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">为何不赞成使用 Thread.stop、Thread.suspend 和 Thread.resume？</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Thread.interrupt()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+中断线程。
+ 
+<p> 如果当前线程没有中断它自己（这在任何情况下都是允许的），则该线程的 {@link #checkAccess() checkAccess} 方法就会被调用，这可能抛出 {@link SecurityException}。
+
+<p> 如果线程在调用 {@link Object} 类的 {@link Object#wait() wait()}、{@link Object#wait(long) wait(long)} 或 {@link
+ Object#wait(long, int) wait(long, int)} 方法，或者该类的 {@link #join()}、{@link #join(long)}、{@link #join(long, int)}、{@link #sleep(long)} 或 {@link #sleep(long, int)} 方法过程中受阻，则其中断状态将被清除，它还将收到一个 {@link InterruptedException}。
+
+<p> 如果该线程在{@link java.nio.channels.InterruptibleChannel </code>可中断的通道<code>}上的 I/O 操作中受阻，则该通道将被关闭，该线程的中断状态将被设置并且该线程将收到一个 {@link java.nio.channels.ClosedByInterruptException}。
+
+<p> 如果该线程在一个 {@link java.nio.channels.Selector} 中受阻，则该线程的中断状态将被设置，它将立即从选择操作返回，并可能带有一个非零值，就好像调用了选择器的 {@link java.nio.channels.Selector#wakeup wakeup} 方法一样。
+
+<p> 如果以前的条件都没有保存，则该线程的中断状态将被设置。</p>
+
+<p> 中断一个不处于活动状态的线程不需要任何作用。
+ 
+@throws  SecurityException
+         如果当前线程无法修改该线程
+
+@revised 6.0
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Thread.interrupted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试当前线程是否已经中断。线程的<i>中断状态</i> 由该方法清除。换句话说，如果连续两次调用该方法，则第二次调用将返回 false（在第一次调用已清除了其中断状态之后，且第二次调用检验完中断状态前，当前线程再次中断的情况除外）。
+
+<p>线程中断被忽略，因为在中断时不处于活动状态的线程将由此返回 false 的方法反映出来。
+
+@return  如果当前线程已经中断，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see #isInterrupted()
+@revised 6.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Thread.isInterrupted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试线程是否已经中断。线程的<i>中断状态</i> 不受该方法的影响。
+
+<p>线程中断被忽略，因为在中断时不处于活动状态的线程将由此返回 false 的方法反映出来。
+
+@return  如果该线程已经中断，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     #interrupted()
+@revised 6.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Thread.destroy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 {@link NoSuchMethodError}。
+
+@deprecated 该方法最初用于破坏该线程，但不作任何清除。它所保持的任何监视器都会保持锁定状态。不过，该方法决不会被实现。即使要实现，它也极有可能以 {@link #suspend} 方式被死锁。如果目标线程被破坏时保持一个保护关键系统资源的锁，则任何线程在任何时候都无法再次访问该资源。如果另一个线程曾试图锁定该资源，则会出现死锁。这类死锁通常会证明它们自己是“冻结”的进程。有关更多信息，请参阅<a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">为何不赞成使用 Thread.stop、Thread.suspend 和 Thread.resume？</a>。
+@throws NoSuchMethodError 始终
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final native boolean java.lang.Thread.isAlive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 测试线程是否处于活动状态。如果线程已经启动且尚未终止，则为活动状态。
+
+ @return  如果该线程处于活动状态，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.suspend()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+挂起线程。
+<p>
+首先，调用线程的 <code>checkAccess</code> 方法，且不带任何参数。这可能抛出 <code>SecurityException</code>（在当前线程中）。
+<p>
+如果线程处于活动状态则被挂起，且不再有进一步的活动，除非重新开始。
+
+@exception  SecurityException  如果当前线程不能修改该线程。
+@see #checkAccess
+@deprecated   该方法已经遭到反对，因为它具有固有的死锁倾向。如果目标线程挂起时在保护关键系统资源的监视器上保持有锁，则在目标线程重新开始以前任何线程都不能访问该资源。如果重新开始目标线程的线程想在调用 <code>resume</code> 之前锁定该监视器，则会发生死锁。这类死锁通常会证明自己是“冻结”的进程。有关更多信息，请参阅<a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">为何不赞成使用 Thread.stop、Thread.suspend 和 Thread.resume？</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.resume()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新开始挂起的进程。
+<p>
+首先，调用线程的 <code>checkAccess</code> 方法，且不带任何参数。这可能抛出 <code>SecurityException</code>（在当前线程中）。
+<p>
+如果线程处于活动状态但被挂起，则它会在执行过程中重新开始并允许继续活动。
+
+@exception  SecurityException  如果当前线程不能修改该线程。
+@see        #checkAccess
+@see        #suspend()
+@deprecated 该方法只与 {@link #suspend} 一起使用，但 {@link #suspend} 已经遭到反对，因为它具有死锁倾向。有关更多信息，请参阅<a href="{@docRoot}/../technotes/guides/concurrency/threadPrimitiveDeprecation.html">为何不赞成使用 Thread.stop、Thread.suspend 和 Thread.resume？</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.setPriority(int newPriority)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 更改线程的优先级。
+ <p>
+ 首先调用线程的 <code>checkAccess</code> 方法，且不带任何参数。这可能抛出 <code>SecurityException</code>。
+ <p>
+ 在其他情况下，线程优先级被设定为指定的 <code>newPriority</code> 和该线程的线程组的最大允许优先级相比较小的一个。
+
+ @param newPriority 要为线程设定的优先级
+ @exception  IllegalArgumentException  如果优先级不在 <code>MIN_PRIORITY</code> 到 <code>MAX_PRIORITY</code> 范围内。
+ @exception  SecurityException  如果当前线程无法修改该线程。
+ @see        #getPriority
+ @see        #checkAccess()
+ @see        #getThreadGroup()
+ @see        #MAX_PRIORITY
+ @see        #MIN_PRIORITY
+ @see        ThreadGroup#getMaxPriority()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.lang.Thread.getPriority()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回线程的优先级。
+
+ @return  该线程的优先级。
+ @see     #setPriority
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.setName(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 改变线程名称，使之与参数 <code>name</code> 相同。
+ <p>
+ 首先调用线程的 <code>checkAccess</code> 方法，且不带任何参数。这可能抛出 <code>SecurityException</code>。
+
+ @param      name  该线程的新名称。
+ @exception  SecurityException  如果当前线程不能修改该线程。
+ @see        #getName
+ @see        #checkAccess()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.lang.Thread.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该线程的名称。
+
+ @return  该线程的名称。
+ @see     #setName(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.ThreadGroup java.lang.Thread.getThreadGroup()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该线程所属的线程组。
+ 如果该线程已经终止（停止运行），该方法则返回 null。
+
+ @return 该线程的线程组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Thread.activeCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回当前线程的线程组中活动线程的数目。
+
+ @return  当前线程的线程组中活动线程的数目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Thread.enumerate(java.lang.Thread[] tarray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前线程的线程组及其子组中的每一个活动线程复制到指定的数组中。该方法只调用当前线程的线程组的 <code>enumerate</code> 方法，且带有数组参数。
+<p>
+首先，如果有安全管理器，则 <code>enumerate</code> 方法调用安全管理器的 <code>checkAccess</code> 方法，并将线程组作为其参数。这可能导致抛出 <code>SecurityException</code>。
+
+ @param tarray 要复制到的线程对象数组
+ @return  放入该数组的线程数
+ @exception  SecurityException  如果安全管理器存在，并且其 <code>checkAccess</code> 方法不允许该操作。
+ @see     ThreadGroup#enumerate(Thread[])
+ @see     SecurityManager#checkAccess(ThreadGroup)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native int java.lang.Thread.countStackFrames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 计算该线程中的堆栈帧数。线程必须挂起。
+
+ @return     该线程中的堆栈帧数。
+ @exception  IllegalThreadStateException  如果该线程未挂起。
+ @deprecated 该调用的定义依赖于 {@link #suspend}，但它遭到了反对。此外，该调用的结果从来都不是意义明确的。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void java.lang.Thread.join(long millis) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等待该线程终止的时间最长为 <code>millis</code> 毫秒。超时为 <code>0</code> 意味着要一直等下去。
+
+ @param      millis   以毫秒为单位的等待时间。
+ @exception  InterruptedException 如果任何线程中断了当前线程。当抛出该异常时，当前线程的<i>中断状态</i> 被清除。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void java.lang.Thread.join(long millis, int nanos) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 等待该线程终止的时间最长为 <code>millis</code> 毫秒 + <code>nanos</code> 纳秒。
+
+ @param      millis   以毫秒为单位的等待时间。
+ @param      nanos    要等待的 0-999999 附加纳秒。
+ @exception  IllegalArgumentException  如果 millis 值为负，则 nanos 的值不在 0-999999 范围内。
+ @exception  InterruptedException 如果任何线程中断了当前线程。当抛出该异常时，当前线程的<i>中断状态</i> 被清除。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.join() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 等待该线程终止。
+
+ @exception  InterruptedException 如果任何线程中断了当前线程。当抛出该异常时，当前线程的<i>中断状态</i> 被清除。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.lang.Thread.dumpStack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将当前线程的堆栈跟踪打印至标准错误流。该方法仅用于调试。
+
+ @see     Throwable#printStackTrace()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.setDaemon(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将该线程标记为守护线程或用户线程。当正在运行的线程都是守护线程时，Java 虚拟机退出。
+ <p>
+ 该方法必须在启动线程前调用。
+ <p>
+ 该方法首先调用该线程的 <code>checkAccess</code> 方法，且不带任何参数。这可能抛出 <code>SecurityException</code>（在当前线程中）。
+
+ @param      on   如果为 <code>true</code>，则将该线程标记为守护线程。
+ @exception  IllegalThreadStateException  如果该线程处于活动状态。
+ @exception  SecurityException  如果当前线程无法修改该线程。
+ @see        #isDaemon()
+ @see        #checkAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.lang.Thread.isDaemon()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 测试该线程是否为守护线程。
+
+ @return  如果该线程是守护线程，则返回 <code>true</code>；否则返回 <code>false</code>。
+ @see     #setDaemon(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.lang.Thread.checkAccess()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 判定当前运行的线程是否有权修改该线程。
+ <p>
+ 如果有安全管理器，则调用其 <code>checkAccess</code> 方法，并将该线程作为其参数。这可能导致抛出 <code>SecurityException</code>。
+
+ @exception  SecurityException  如果不允许当前线程访问该线程。
+ @see        SecurityManager#checkAccess(Thread)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Thread.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该线程的字符串表示形式，包括线程名称、优先级和线程组。
+
+ @return  该线程的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ClassLoader java.lang.Thread.getContextClassLoader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回该线程的上下文 ClassLoader。上下文 ClassLoader 由线程创建者提供，供运行于该线程中的代码在加载类和资源时使用。如果未设定，则默认为父线程的 ClassLoader 上下文。原始线程的上下文 ClassLoader 通常设定为用于加载应用程序的类加载器。
+
+<p>首先，如果有安全管理器，并且调用者的类加载器不是 null，也不同于其上下文类加载器正在被请求的线程上下文类加载器的祖先，则通过 <code>RuntimePermission("getClassLoader")</code> 权限调用该安全管理器的 <code>checkPermission</code> 方法，查看是否可以获取上下文 ClassLoader。 
+
+ @return 该线程的上下文 ClassLoader
+
+ @throw SecurityException
+        如果安全管理器存在，并且其 <code>checkPermission</code> 方法不允许获得上下文 ClassLoader。
+ @see #setContextClassLoader
+ @see SecurityManager#checkPermission
+ @see RuntimePermission
+ 
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Thread.setContextClassLoader(ClassLoader cl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置该线程的上下文 ClassLoader。上下文 ClassLoader 可以在创建线程设置，并允许创建者在加载类和资源时向该线程中运行的代码提供适当的类加载器。
+
+<p>首先，如果有安全管理器，则通过 <code>RuntimePermission("setContextClassLoader")</code> 权限调用其 <code>checkPermission</code> 方法，查看是否可以设置上下文 ClassLoader。
+
+ @param cl 该线程的上下文 ClassLoader
+ 
+ @exception  SecurityException  如果当前线程无法设置上下文 ClassLoader。
+ @see #getContextClassLoader
+ @see SecurityManager#checkPermission
+ @see RuntimePermission
+ 
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native boolean java.lang.Thread.holdsLock(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当当前线程在指定的对象上保持监视器锁时，才返回 <tt>true</tt>。
+
+<p>该方法旨在使程序能够断言当前线程已经保持一个指定的锁：
+<pre>
+     assert Thread.holdsLock(obj);
+ </pre>
+
+ @param  obj  用于测试锁所属权的对象
+ @throws NullPointerException 如果 obj 为 <tt>null</tt>
+ @return 如果当前线程在指定的对象上保持监视器锁，则返回 <tt>true</tt>。
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StackTraceElement[] java.lang.Thread.getStackTrace()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示该线程堆栈转储的堆栈跟踪元素数组。如果该线程尚未启动或已经终止，则该方法将返回一个零长度数组。如果返回的数组不是零长度的，则其第一个元素代表堆栈顶，它是该序列中最新的方法调用。最后一个元素代表堆栈底，是该序列中最旧的方法调用。
+
+<p>如果有安全管理器，并且该线程不是当前线程，则通过
+<tt>RuntimePermission("getStackTrace")</tt> 权限调用安全管理器的 <tt>checkPermission</tt> 方法，查看是否可以获取堆栈跟踪。
+
+<p>某些虚拟机在某些情况下可能会从堆栈跟踪中省略一个或多个堆栈帧。在极端情况下，没有该线程堆栈跟踪信息的虚拟机可以从该方法返回一个零长度数组。
+
+ @return <tt>StackTraceElement</tt> 数组，每个数组代表一个堆栈帧。
+
+ @throws SecurityException 如果安全管理器存在，并且其 <tt>checkPermission</tt> 方法不允许获取线程的堆栈跟踪。
+ @see SecurityManager#checkPermission
+ @see RuntimePermission
+ @see Throwable#getStackTrace
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Map<java.lang.Thread, java.lang.StackTraceElement[]> java.lang.Thread.getAllStackTraces()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有活动线程的堆栈跟踪的一个映射。映射键是线程，而每个映射值都是一个 <tt>StackTraceElement</tt> 数组，该数组表示相应 <tt>Thread</tt> 的堆栈转储。
+返回的堆栈跟踪的格式都是针对 {@link #getStackTrace getStackTrace} 方法指定的。
+
+<p>在调用该方法的同时，线程可能也在执行。每个线程的堆栈跟踪仅代表一个快照，并且每个堆栈跟踪都可以在不同时间获得。如果虚拟机没有线程的堆栈跟踪信息，则映射值中将返回一个零长度数组。
+
+<p>如果有安全管理器，则通过 <tt>RuntimePermission("getStackTrace")</tt> 权限和 <tt>RuntimePermission("modifyThreadGroup")</tt> 权限调用其 <tt>checkPermission</tt> 方法，查看是否可以获取所有线程的堆栈跟踪。
+
+ @return 从 <tt>Thread</tt> 到 <tt>StackTraceElement</tt> 数组的一个 <tt>Map</tt>，代表相应线程的堆栈跟踪。
+
+ @throws SecurityException
+        如果安全管理器存在，并且其 <tt>checkPermission</tt> 方法不允许获取线程的堆栈跟踪。
+ @see #getStackTrace
+ @see SecurityManager#checkPermission
+ @see RuntimePermission
+ @see Throwable#getStackTrace
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.Thread.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该线程的标识符。线程 ID 是一个正的 <tt>long</tt> 数，在创建该线程时生成。线程 ID 是唯一的，并终生不变。线程终止时，该线程 ID 可以被重新使用。
+
+ @return 该线程的 ID。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread.State java.lang.Thread.getState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该线程的状态。
+ 该方法用于监视系统状态，不用于同步控制。
+ 
+ @return 该线程的状态。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.lang.Thread.setDefaultUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当线程由于未捕获到异常而突然终止，并且没有为该线程定义其他处理程序时所调用的默认处理程序。
+
+<p>未捕获到的异常处理首先由线程控制，然后由线程的 {@link ThreadGroup} 对象控制，最后由未捕获到的默认异常处理程序控制。如果线程不设置明确的未捕获到的异常处理程序，并且该线程的线程组（包括父线程组）未特别指定其 <tt>uncaughtException</tt> 方法，则将调用默认处理程序的 <tt>uncaughtException</tt> 方法。
+<p>通过设置未捕获到的默认异常处理程序，应用程序可以为那些已经接受系统提供的任何“默认”行为的线程改变未捕获到的异常处理方式（如记录到某一特定设备或文件）。
+
+<p>请注意，未捕获到的默认异常处理程序通常不应顺从该线程的 <tt>ThreadGroup</tt> 对象，因为这可能导致无限递归。
+
+ @param eh  用作未捕获到的默认异常处理程序的对象。
+ 如果为 <tt>null</tt>，则没有默认处理程序。
+
+ @throws SecurityException 如果安全管理器存在并拒绝 <tt>{@link RuntimePermission}
+         (&quot;setDefaultUncaughtExceptionHandler&quot;)</tt>
+
+ @see #setUncaughtExceptionHandler
+ @see #getUncaughtExceptionHandler
+ @see ThreadGroup#uncaughtException
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Thread.UncaughtExceptionHandler java.lang.Thread.getDefaultUncaughtExceptionHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回线程由于未捕获到异常而突然终止时调用的默认处理程序。如果返回值为 <tt>null</tt>，则没有默认处理程序。
+ @since 1.5
+ @see #setDefaultUncaughtExceptionHandler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Thread.UncaughtExceptionHandler java.lang.Thread.getUncaughtExceptionHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该线程由于未捕获到异常而突然终止时调用的处理程序。如果该线程尚未明确设置未捕获到的异常处理程序，则返回该线程的 <tt>ThreadGroup</tt> 对象，除非该线程已经终止，在这种情况下，将返回 <tt>null</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Thread.setUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置该线程由于未捕获到异常而突然终止时调用的处理程序。
+<p>通过明确设置未捕获到的异常处理程序，线程可以完全控制它对未捕获到的异常作出响应的方式。
+如果没有设置这样的处理程序，则该线程的 <tt>ThreadGroup</tt> 对象将充当其处理程序。
+ @param eh 用作该线程未捕获到的异常处理程序的对象。如果为 <tt>null</tt>，则该线程没有明确的处理程序。
+ @throws  SecurityException  如果当前线程无权修改该线程。
+ @see #setDefaultUncaughtExceptionHandler
+ @see ThreadGroup#uncaughtException
+ @since 1.5
+
+<!-- END DATA -->

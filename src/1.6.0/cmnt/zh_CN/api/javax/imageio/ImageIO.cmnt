@@ -1,0 +1,470 @@
+<!-- BEGIN KEY -->
+public final class javax.imageio.ImageIO extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该类包含一些用来查找 <code>ImageReader</code> 和 <code>ImageWriter</code> 以及执行简单编码和解码的静态便捷方法。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.imageio.ImageIO.scanForPlugins()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+扫描应用程序类路径上的插件，加载其服务提供者类，并使用 <code>IIORegistry</code> 为每一个找到的插件注册一个服务提供者实例。
+ 
+<p>需要此方法是因为应用程序类路径在理论上是可以更改的，或者说附加的插件可以变得可用。不需要每次调用 API 时都重新扫描类路径，可以只在第一次调用时自动扫描。客户端可以调用此方法来启动重新扫描。因此，只有在运行时使新插件动态可用的复杂应用程序才需要调用此方法。
+
+<p> 上下文 <code>ClassLoader</code> 的 <code>getResources</code> 方法被用来沿应用程序类路径查找包含名为 <code>META-INF/services/javax.imageio.spi.</code><i>classname</i> 的文件的 JAR 文件，其中 <i>classname</i> 是 <code>ImageReaderSpi</code>、<code>ImageWriterSpi</code>、<code>ImageTranscoderSpi</code>、<code>ImageInputStreamSpi</code> 或 <code>ImageOutputStreamSpi</code> 之一。
+
+<p> 所查找文件的内容表示实际实现类的名称，这些类实现上述服务提供者接口；然后可以使用默认类加载器加载每个类并实例化每个类的实例，然后将其放入注册表中供以后获取。
+
+<p> 确切的搜索位置集合取决于 Java 运行时环境的实现。
+ 
+@see ClassLoader#getResources
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.imageio.ImageIO.setUseCache(boolean useCache)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个标记，指示在创建 <code>ImageInputStream</code> 和 <code>ImageOutputStream</code> 时是否应该使用基于磁盘的缓存文件。
+
+<p> 在从标准 <code>InputStream</code> 中读取数据时，有必要在缓存中保存以前读取的信息，因为底层流不允许重新读取数据。类似地，在将数据写入标准 <code>OutputStream</code> 时，可以使用某一缓存来允许以前写入的值在被刷新并转到最终目标前可以被更改。
+
+<p> 该缓存可以驻留在主存或磁盘上。如果将此标记设置为 <code>false</code>，则不允许将磁盘用于将来的流，这在使用小图像时很有利，因为可以免除创建和销毁文件所带来的开销。
+
+<p> 在启动时，该值被设置为 <code>true</code>。
+
+@param useCache 指示是否应使用缓存文件（在可选的情况下）的 <code>boolean</code>。
+
+@see #getUseCache
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.imageio.ImageIO.getUseCache()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 <code>setUseCache</code> 设置的当前值；如果没有显式设置该值，则返回 <code>true</code>。
+
+@return 如果可以将基于磁盘的缓存用于 <code>ImageInputStream</code> 和 <code>ImageOutputStream</code>，则返回 true。
+
+@see #setUseCache
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.imageio.ImageIO.setCacheDirectory(File cacheDirectory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将在其中创建缓存文件的目录。值为 <code>null</code> 表示将使用与系统有关的默认临时文件目录。如果 <code>getUseCache</code> 返回 false，则忽略此值。
+
+@param cacheDirectory 指定目录的 <code>File</code>。
+
+@see File#createTempFile(String, String, File)
+
+@exception SecurityException 如果安全管理器拒绝对该目录的访问。
+@exception IllegalArgumentException 如果 <code>cacheDir</code> 为非 <code>null</code> 但它不是一个目录。
+
+@see #getCacheDirectory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.io.File javax.imageio.ImageIO.getCacheDirectory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 <code>setCacheDirectory</code> 设置的当前值；如果没有显式设置该值，则返回 <code>null</code>。
+
+@return 一个 <code>File</code>，表示将在其中创建缓存文件的目录；<code>null</code> 指示与系统有关的默认临时文件目录。
+
+@see #setCacheDirectory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.stream.ImageInputStream javax.imageio.ImageIO.createImageInputStream(Object input) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>ImageInputStream</code>，它将从给定 <code>Object</code> 中获取输入。查询使用 <code>IIORegistry</code> 类注册的 <code>ImageInputStreamSpi</code> 集合，能够从所提供的对象中获取输入的第一个 ImageInputStreamSpi 将被用来创建返回的 <code>ImageInputStream</code>。如果没有合适的 <code>ImageInputStreamSpi</code> 存在，则返回 <code>null</code>。
+
+<p> <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置将被用来控制缓存。
+
+@param input 用作输入源的 <code>Object</code>，比如 <code>File</code>、可读取的 <code>RandomAccessFile</code> 或 <code>InputStream</code>。
+
+@return 一个 <code>ImageInputStream</code> 或 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>input</code> 为 <code>null</code>。
+@exception IOException 如果需要缓存文件但无法创建。
+
+@see javax.imageio.spi.ImageInputStreamSpi
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.stream.ImageOutputStream javax.imageio.ImageIO.createImageOutputStream(Object output) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>ImageOutputStream</code>，它将其输出发送到给定 <code>Object</code>。查询使用 <code>IIORegistry</code> 类注册的 <code>ImageOutputStreamSpi</code> 集合，能够从所提供的对象发送输出的第一个 ImageOutputStreamSpi 将被用来创建返回的 <code>ImageOutputStream</code>。如果没有合适的 <code>ImageOutputStreamSpi</code> 存在，则返回 <code>null</code>。
+
+<p> <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置将被用来控制缓存。
+
+@param output 用作输出目标的 <code>Object</code>，比如 <code>File</code>、可写入的 <code>RandomAccessFile</code> 或 <code>OutputStream</code>。
+
+@return 一个 <code>ImageOutputStream</code> 或 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>output</code> 为 <code>null</code>。
+@exception IOException 如果需要缓存文件但无法创建。
+
+@see javax.imageio.spi.ImageOutputStreamSpi
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getReaderFormatNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，该数组列出被当前已注册 reader 集合所理解的所有非正式格式名称。
+
+@return <code>String</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getReaderMIMETypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，该数组列出被当前已注册 reader 集合所理解的所有 MIME 类型。
+
+@return <code>String</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getReaderFileSuffixes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个 <code>String</code> 数组，该数组列出与当前已注册 reader 集合所理解的格式关联的所有文件后缀。
+
+ @return <code>String</code> 数组。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageReader> javax.imageio.ImageIO.getImageReaders(Object input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageReader</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够解码所提供的 <code>Object</code>（通常是一个 <code>ImageInputStream</code>）。
+
+<p> 在从此方法退出时，该流的位置仍然是它以前的位置。
+
+@param input <code>ImageInputStream</code> 或包含解码图像数据的其他 <code>Object</code>。
+
+@return 包含 <code>ImageReader</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>input</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageReaderSpi#canDecodeInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageReader> javax.imageio.ImageIO.getImageReadersByFormatName(String formatName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageReader</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够解码指定格式。
+
+@param formatName 包含非正式格式名称的 <code>String</code>（<i>例如</i> &quot;jpeg&quot; 或 &quot;tiff&quot;）。
+
+@return 包含 <code>ImageReader</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageReaderSpi#getFormatNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageReader> javax.imageio.ImageIO.getImageReadersBySuffix(String fileSuffix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageReader</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够解码具有给定后缀的文件。
+
+@param fileSuffix 包含文件后缀的 <code>String</code>（<i>例如</i> &quot;jpg&quot; 或 &quot;tiff&quot;）。
+
+@return 包含 <code>ImageReader</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>fileSuffix</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageReaderSpi#getFileSuffixes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageReader> javax.imageio.ImageIO.getImageReadersByMIMEType(String MIMEType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageReader</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够解码具有给定 MIME 类型的文件。
+
+@param MIMEType 包含文件后缀的 <code>String</code>（<i>例如</i> &quot;image/jpeg&quot; 或 &quot;image/x-bmp&quot;）。
+
+@return 包含 <code>ImageReader</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>MIMEType</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageReaderSpi#getMIMETypes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getWriterFormatNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，该数组列出当前已注册 writer 集合所理解的所有非正式格式名称。
+
+@return <code>String</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getWriterMIMETypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，该数组列出当前已注册 writer 集合所理解的所有 MIME 类型。
+
+@return <code>String</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] javax.imageio.ImageIO.getWriterFileSuffixes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个 <code>String</code> 数组，该数组列出与当前已注册 writer 集合所理解的格式关联的所有文件后缀。
+
+ @return <code>String</code> 数组。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageWriter> javax.imageio.ImageIO.getImageWritersByFormatName(String formatName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageWriter</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够编码指定格式。
+
+@param formatName 包含非正式格式名称的 <code>String</code>（<i>例如</i> &quot;jpeg&quot; 或 &quot;tiff&quot;）。
+
+@return 包含 <code>ImageWriter</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageWriterSpi#getFormatNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageWriter> javax.imageio.ImageIO.getImageWritersBySuffix(String fileSuffix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageWriter</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够编码具有给定后缀的文件。
+
+@param fileSuffix 包含文件后缀的 <code>String</code>（<i>例如</i> &quot;jpg&quot; 或 &quot;tiff&quot;）。
+
+@return 包含 <code>ImageWriter</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>fileSuffix</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageWriterSpi#getFileSuffixes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageWriter> javax.imageio.ImageIO.getImageWritersByMIMEType(String MIMEType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageWriter</code> 的 <code>Iterator</code>，这些 ImageReader 声称能够编码具有给定 MIME 类型的文件。
+
+@param MIMEType 包含文件后缀的 <code>String</code>（<i>例如</i> &quot;image/jpeg&quot; 或 &quot;image/x-bmp&quot;）。
+
+@return 包含 <code>ImageWriter</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>MIMEType</code> 为 <code>null</code>。
+
+@see javax.imageio.spi.ImageWriterSpi#getMIMETypes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageWriter javax.imageio.ImageIO.getImageWriter(ImageReader reader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于给定 <code>ImageReader</code> 的 <code>ImageWriter</code>（如果有）；如果此 <code>ImageReader</code> 的插件没有指定相应的 <code>ImageWriter</code>，或者给定的 <code>ImageReader</code> 没有注册，则返回 <code>null</code>。可以使用此机制获取一个 <code>ImageWriter</code>，它将理解由 <code>ImageReader</code> 生成的非像素元数据（由 <code>IIOMetadata</code> 对象编码）的内部结构。通过从 <code>ImageReader</code> 获取此数据并将其传给使用此方法获取的 <code>ImageWriter</code>，客户端程序可以读取图像，以某种方式修改图像，然后将其写回，并保留所有的元数据，而不需要理解有关元数据结构甚至图像格式的任何信息。注意，此方法返回&ldquo;首选&rdquo;writer，它是 <code>javax.imageio.spi.ImageReaderSpi.getImageWriterSpiNames()</code> 返回的列表中列出的第一个 writer。
+
+@param reader 已注册 <code>ImageReader</code> 的实例。
+
+@return 一个 <code>ImageWriter</code> 或 null。
+
+@exception IllegalArgumentException 如果 <code>reader</code> 为 <code>null</code>。
+
+@see #getImageReader(ImageWriter)
+@see javax.imageio.spi.ImageReaderSpi#getImageWriterSpiNames()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageReader javax.imageio.ImageIO.getImageReader(ImageWriter writer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于给定 <code>ImageWriter</code> 的 <code>ImageReader</code>（如果有）；如果此 <code>ImageWriter</code> 的插件没有指定相应的 <code>ImageReader</code>，或者给定 <code>ImageWriter</code> 没有注册，则返回 <code>null</code>。提供此方法主要是为了与 <code>getImageWriter(ImageReader)</code> 对称。注意，此方法返回&ldquo;首选&rdquo;reader，它是 javax.imageio.spi.ImageWriterSpi.<code>getImageReaderSpiNames()</code> 返回的列表中列出的第一个 reader。
+
+@param writer 已注册 <code>ImageWriter</code> 的实例。
+
+@return 一个 <code>ImageReader</code> 或 null。
+
+@exception IllegalArgumentException 如果 <code>writer</code> 为 <code>null</code>。
+
+@see #getImageWriter(ImageReader)
+@see javax.imageio.spi.ImageWriterSpi#getImageReaderSpiNames()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageWriter> javax.imageio.ImageIO.getImageWriters(ImageTypeSpecifier type, String formatName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageWriter</code> 的 <code>Iterator</code>，这些 ImageWriter 声称能够编码使用给定格式的、具有给定布局（使用 <code>ImageTypeSpecifier</code> 指定）的图像。
+
+@param type 指示将写入的图像布局的 <code>ImageTypeSpecifier</code>。
+@param formatName <code>format</code> 的非正式名称。
+
+@return 包含 <code>ImageWriter</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException  如果任何参数为 <code>null</code>。
+
+@see javax.imageio.spi.ImageWriterSpi#canEncodeImage(ImageTypeSpecifier)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<javax.imageio.ImageTranscoder> javax.imageio.ImageIO.getImageTranscoders(ImageReader reader, ImageWriter writer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含所有当前已注册 <code>ImageTranscoder</code> 的 <code>Iterator</code>，这些 ImageTranscoder 声称能够在给定 <code>ImageReader</code> 和 <code>ImageWriter</code> 的元数据之间进行代码转换。
+
+@param reader 一个 <code>ImageReader</code>。
+@param writer 一个 <code>ImageWriter</code>。
+
+@return 包含 <code>ImageTranscoder</code> 的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>reader</code> 或 <code>writer</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.image.BufferedImage javax.imageio.ImageIO.read(File input) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>BufferedImage</code>，作为使用 <code>ImageReader</code>（它是从当前已注册 ImageReader 中自动选择的）解码所提供 <code>File</code> 的结果。该 <code>File</code> 被包装在一个 <code>ImageInputStream</code> 中。如果没有已注册的 <code>ImageReader</code> 声称能够读取得到的流，则返回 <code>null</code>。
+
+<p> 使用 <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置控制所创建的 <code>ImageInputStream</code> 中的缓存。
+
+<p> 注意，不存在将 <code>String</code> 形式的文件名作为参数的 <code>read</code> 方法；在根据文件名创建 <code>File</code> 之后使用此方法代替。
+
+<p> 此方法不会试图查找可以直接从 <code>File</code> 中读取的 <code>ImageReader</code>；这可以使用 <code>IIORegistry</code> 和 <code>ImageReaderSpi</code> 来完成。
+
+@param input 将从中读取数据的 <code>File</code>。
+
+@return 包含解码的输入内容的 <code>BufferedImage</code>，或者返回 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>input</code> 为 <code>null</code>。
+@exception IOException  如果在读取过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.image.BufferedImage javax.imageio.ImageIO.read(InputStream input) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>BufferedImage</code>，作为使用 <code>ImageReader</code>（它是从当前已注册 ImageReader 中自动选择的）解码所提供 <code>InputStream</code> 的结果。该 <code>InputStream</code> 被包装在一个 <code>ImageInputStream</code> 中。如果没有已注册的 <code>ImageReader</code> 声称能够读取得到的流，则返回 <code>null</code>。
+
+<p> 使用 <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置控制所创建的 <code>ImageInputStream</code> 中的缓存。
+
+<p> 此方法不会试图查找可以直接从 <code>InputStream</code> 中读取的 <code>ImageReader</code>；这可以使用 <code>IIORegistry</code> 和 <code>ImageReaderSpi</code> 来完成。
+
+<p> 此方法在读取操作完成后<em>不会</em> 关闭提供的 <code>InputStream</code>；如果需要，调用者负责关闭该流。 
+
+@param input 将从中读取数据的 <code>InputStream</code>。
+
+@return 包含解码的输入内容的 <code>BufferedImage</code>，或者返回 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>input</code> 为 <code>null</code>。
+@exception IOException  如果在读取过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.image.BufferedImage javax.imageio.ImageIO.read(URL input) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>BufferedImage</code>，作为使用 <code>ImageReader</code>（它是从当前已注册 ImageReader 中自动选择的）解码所提供 <code>URL</code> 的结果。<code>InputStream</code> 是从 <code>URL</code> 中获得的，它被包装在 <code>ImageInputStream</code> 中。如果没有已注册的 <code>ImageReader</code> 声称能够读取得到的流，则返回 <code>null</code>。
+
+<p> 使用 <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置控制所创建的 <code>ImageInputStream</code> 中的缓存。
+
+<p> 此方法不会试图查找可以直接从 <code>URL</code> 中读取的 <code>ImageReader</code>；这可以使用 <code>IIORegistry</code> 和 <code>ImageReaderSpi</code> 来完成。
+
+@param input 将从中读取数据的 <code>URL</code>。
+
+@return 包含解码的输入内容的 <code>BufferedImage</code>，或者返回 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>input</code> 为 <code>null</code>。
+@exception IOException  如果在读取过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.image.BufferedImage javax.imageio.ImageIO.read(ImageInputStream stream) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>BufferedImage</code>，作为使用 <code>ImageReader</code>（它是从当前已注册 ImageReader 中自动选择的）解码所提供 <code>ImageInputStream</code> 的结果。如果没有已注册的 <code>ImageReader</code> 声称能够读取该流，则返回 <code>null</code>。
+
+ <p> 与此类中大多数其他方法不同，此方法在读取操作完成后<em>会</em> 关闭提供的 <code>ImageInputStream</code>，除非返回 <code>null</code>，在这种情况下，此方法<em>不会</em> 关闭该流。
+
+@param stream 将从中读取数据的 <code>ImageInputStream</code>。
+
+@return 包含解码的输入内容的 <code>BufferedImage</code>，或者返回 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>stream</code> 为 <code>null</code>。
+@exception IOException  如果在读取过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.imageio.ImageIO.write(RenderedImage im, String formatName, ImageOutputStream output) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用支持给定格式的任意 <code>ImageWriter</code> 将一个图像写入 <code>ImageOutputStream</code>。从当前流指针开始将图像写入 <code>ImageOutputStream</code>，并覆盖该点之后的现有流数据（如果有）。
+
+ <p> 此方法在写入操作完成后<em>不会</em> 关闭提供的 <code>ImageOutputStream</code>；如果需要，调用者负责关闭该流。 
+
+@param      im   要写入的 <code>RenderedImage</code>。
+@param formatName 包含格式非正式名称的 <code>String</code>。
+@param      output   将在其中写入数据的 <code>ImageOutputStream</code>。
+
+@return 如果没有找到合适的 writer，则返回 <code>false</code>。
+
+@exception IllegalArgumentException  如果任何参数为 <code>null</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.imageio.ImageIO.write(RenderedImage im, String formatName, File output) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用支持给定格式的任意 <code>ImageWriter</code> 将一个图像写入 <code>File</code>。如果已经有一个 <code>File</code> 存在，则丢弃其内容。
+
+@param      im   要写入的 <code>RenderedImage</code>。
+@param formatName 包含格式非正式名称的 <code>String</code>。
+@param      output   将在其中写入数据的 <code>File</code>。
+
+@return 如果没有找到合适的 writer，则返回 <code>false</code>。
+
+@exception IllegalArgumentException  如果任何参数为 <code>null</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.imageio.ImageIO.write(RenderedImage im, String formatName, OutputStream output) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用支持给定格式的任意 <code>ImageWriter</code> 将一个图像写入 <code>OutputStream</code>。
+ 
+<p> 此方法在写入操作完成后<em>不会</em> 关闭提供的 <code>OutputStream</code>；如果需要，调用者负责关闭该流。 
+
+<p> <code>getUseCache</code> 和 <code>getCacheDirectory</code> 返回的当前缓存设置将被用来控制缓存。
+
+@param      im   要写入的 <code>RenderedImage</code>。
+@param formatName 包含格式非正式名称的 <code>String</code>。
+@param      output   将在其中写入数据的 <code>OutputStream</code>。
+
+@return 如果没有找到合适的 writer，则返回 <code>false</code>。
+
+@exception IllegalArgumentException  如果任何参数为 <code>null</code>。
+@exception IOException  如果在写入过程中发生错误。
+
+<!-- END DATA -->

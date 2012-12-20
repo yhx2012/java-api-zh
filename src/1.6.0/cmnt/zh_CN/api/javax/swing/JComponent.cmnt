@@ -1,0 +1,1822 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.JComponent extends java.awt.Container implements java.io.Serializable, javax.swing.TransferHandler.HasGetTransferHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该类是除顶层容器外所有 Swing 组件的基类。要使用继承自 <code>JComponent</code> 的组件，必须将该组件置于一个根为顶层 Swing 容器的包含层次结构（containment hierarchy）中。顶层 Swing 容器（如 <code>JFrame</code>、<code>JDialog</code> 和 <code>JApplet</code>）是专门为其他 Swing 组件提供绘制自身场所的组件。有关包含层次结构的解释，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/overview/hierarchy.html">Swing Components and the Containment Hierarchy</a> 一节。
+
+ <p>
+<code>JComponent</code> 类提供：
+ <ul>
+<li>使用 Swing 架构的标准组件和自定义组件的基类。
+<li>可由程序员指定，或者由用户在运行时选择（可选）的&ldquo;可插入外观&rdquo;(L&amp;F)。每个组件的外观都由 <em>UI 委托</em> 提供，UI 委托是一个继承自 {@link javax.swing.plaf.ComponentUI} 的对象。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/misc/plaf.html">How to Set the Look and Feel</a>。
+<li>全面的键击处理。有关更多信息，请参阅 <em>The Swing Connection</em> 中的文档 <a
+ href="http://java.sun.com/products/jfc/tsc/special_report/kestrel/keybindings.html">Keyboard Bindings in Swing</a>。
+<li>对工具提示的支持：光标停留在组件时所弹出的简短描述。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的  <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/components/tooltip.html">How to Use Tool Tips</a>。
+<li>可访问性支持。<code>JComponent</code> 包含 <code>Accessible</code> 接口中的所有方法，但是它实际上不实现该接口。由扩展 <code>JComponent</code> 的每个类负责实现该接口。
+<li>对特定于组件属性的支持。通过 {@link #putClientProperty} 和 {@link #getClientProperty} 方法，可以将“名称-对象”对与继承自 <code>JComponent</code> 的任意对象进行关联。
+<li>用于绘制的基础设施，包括双缓冲和对边框的支持。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/overview/draw.html">Painting</a> 和 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/border.html">How to Use Borders</a> 章节。
+ </ul>
+有关这些主题的更多信息，请参阅 <a href="package-summary.html#package_description">Swing 包描述</a>和 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/jcomponent.html">The JComponent Class</a> 一节。
+ <p>
+<code>JComponent</code> 及其子类记录了某些属性的默认值。例如，<code>JTable</code> 记录的默认行高为 16。每个具有 <code>ComponentUI</code> 的 <code>JComponent</code> 子类都将创建该 <code>ComponentUI</code> 作为其构造方法的一部分。为了提供特定的外观，每个 <code>ComponentUI</code> 都可以在创建它的 <code>JComponent</code> 上设置各种属性。例如，自定义的外观可能要求 <code>JTable</code> 的行高为 24。而所记录的默认值是安装 <code>ComponentUI</code> 前的属性值。如果需要为特定的属性使用具体值，则应该显式地设置它。
+ <p>
+在版本 1.4 中，重新设计了焦点子系统。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ <p>
+ <strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see KeyStroke
+@see Action
+@see #setBorder
+@see #registerKeyboardAction
+@see JOptionPane
+@see #setDebugGraphicsOptions
+@see #setToolTipText
+@see #setAutoscrolls
+
+@version 2.130 07/09/99
+@author Hans Muller
+@author Arnaud Weber
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.plaf.ComponentUI javax.swing.JComponent.ui
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此组件的外观委托。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.EventListenerList javax.swing.JComponent.listenerList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此组件的事件侦听器列表。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JComponent.WHEN_FOCUSED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>registerKeyboardAction</code> 的常量，意味着在组件获得焦点时应该调用命令。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>registerKeyboardAction</code> 的常量，意味着当接收组件是获得焦点的组件的祖先或者其本身就是获得焦点的组件时，应该调用命令。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>registerKeyboardAction</code> 的常量，意味着当接收组件处于获得焦点的窗口内或者其本身就是获得焦点的组件时，应该调用命令。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JComponent.UNDEFINED_CONDITION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+某些 API 使用的常量，意味着没有定义任何条件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JComponent.TOOL_TIP_TEXT_KEY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+光标位于组件上方时显示的注释，也称为&ldquo;值提示&rdquo;、&ldquo;相交提示 (flyover help)&rdquo;或&ldquo;相交标签 (flyover label)&rdquo;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.accessibility.AccessibleContext javax.swing.JComponent.accessibleContext
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 <code>JComponent</code> 关联的 <code>AccessibleContext</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JComponent.autoscrolls
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否已启用自动滚动。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.JPopupMenu javax.swing.JComponent.popupMenu
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配给此组件及其所有子组件的 <code>JPopupMenu</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.InputMap javax.swing.JComponent.focusInputMap
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>WHEN_FOCUSED</code> 绑定。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.InputMap javax.swing.JComponent.ancestorInputMap
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>WHEN_ANCESTOR_OF_FOCUSED_COMPONENT</code> 绑定。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.ComponentInputMap javax.swing.JComponent.windowInputMap
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>WHEN_IN_FOCUSED_KEY</code> 绑定。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.ActionMap javax.swing.JComponent.actionMap
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ActionMap。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的 <code>JComponent</code> 构造方法。除调用 <code>Container</code> 构造方法外，此构造方法几乎不进行初始化工作。例如，初始布局管理器为 <code>null</code>。但是，它将组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。
+
+@see #getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setInheritsPopupMenu(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置如果此组件没有分配给它的 <code>JPopupMenu</code>，那么 <code>getComponentPopupMenu</code> 是否应该委托给其父组件。
+ <p>
+此方法的默认值是 false，但是某些作为多个 <code>JComponent</code> 实现的 <code>JComponent</code> 子类可能将其设置为 true。
+ <p>
+这是一个绑定 (bound) 属性。
+
+@param value JPopupMenu 是否是继承的
+@see #setComponentPopupMenu
+@beaninfo bound:true 描述：JPopupMenu 是否是继承的
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.getInheritsPopupMenu()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果应该从父组件继承 JPopupMenu，则返回 true。
+
+@see #setComponentPopupMenu
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setComponentPopupMenu(JPopupMenu popup)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>JComponent</code> 的 <code>JPopupMenu</code>。UI 负责注册绑定并添加必要的侦听器，这样可在恰当的时间显示 <code>JPopupMenu</code>。何时显示 <code>JPopupMenu</code> 取决于外观：有些在鼠标事件中显示它，另一些则启用键绑定。
+ <p>
+如果 <code>popup</code> 为 null，并且 <code>getInheritsPopupMenu</code> 返回 true，则将 <code>getComponentPopupMenu</code> 委托给父级。这将允许所有子组件继承父组件的 popupmenu。
+ <p>
+这是一个绑定属性。
+
+@param popup - 分配给此组件的弹出菜单，可以为 null
+@see #getComponentPopupMenu
+@beaninfo bound:true preferred:true 描述：要显示的弹出菜单（Popup）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JPopupMenu javax.swing.JComponent.getComponentPopupMenu()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为此组件分配的 <code>JPopupMenu</code>。如果尚未给此组件分配 <code>JPopupMenu</code> 并且 <code>getInheritsPopupMenu</code> 为 true，则此方法返回 <code>getParent().getComponentPopupMenu()</code>（假定父组件是有效的）。
+
+@return 分配给此组件的 <code>JPopupMenu</code>；如果未分配弹出菜单，则为 <code>null</code> 
+@see #setComponentPopupMenu
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 UI 属性重置为当前外观的值。<code>JComponent</code> 子类必须用以下方式重写此方法：
+ <pre>
+   public void updateUI() {
+      setUI((SliderUI)UIManager.getUI(this);
+   }
+  </pre>
+
+@see #setUI
+@see UIManager#getLookAndFeel
+@see UIManager#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.setUI(ComponentUI newUI)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的外观委托。<code>JComponent</code> 子类通常重写此方法，以缩小参数类型。例如，在 <code>JSlider</code> 中：
+ <pre>
+ public void setUI(SliderUI newUI) {
+     super.setUI(newUI);
+ }
+  </pre>
+ <p>
+此外，<code>JComponent</code> 子类必须提供一个返回正确类型的 <code>getUI</code> 方法。例如：
+ <pre>
+ public SliderUI getUI() {
+     return (SliderUI)ui;
+ }
+ </pre>
+
+@param newUI 新的 UI 委托
+@see #updateUI
+@see UIManager#getLookAndFeel
+@see UIManager#getUI
+@beaninfo bound:true hidden:true attribute: visualUpdate true description: The component's look and feel delegate.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JComponent.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于查找 <code>wing.plaf.ComponentUI</code> 类（定义了此组件的外观）名的 <code>UIDefaults</code> 键。大多数应用程序无需调用此方法。支持可插入外观的 <code>JComponent</code> 子类应该重写此方法，以返回映射到定义其外观的 <code>ComponentUI</code> 子类的 <code>UIDefaults</code> 键。
+
+@return 用于 <code>ComponentUI</code> 子类的 <code>UIDefaults</code> 键
+@see UIDefaults#getUI
+@beaninfo expert:true description: UIClassID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Graphics javax.swing.JComponent.getComponentGraphics(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于绘制此组件的图形对象。如果开启了 <code>DebugGraphics</code>，则根据需要创建一个新的 <code>DebugGraphics</code> 对象。否则只是配置指定图形对象的前景和字体。
+
+@param g 原 <code>Graphics</code> 对象
+@return 为此组件配置的 <code>Graphics</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.paintComponent(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 UI 委托为非 <code>null</code>，则调用该 UI 委托的 paint 方法。向该委托传递 <code>Graphics</code> 对象的副本，以保护其余的 paint 代码免遭不可取消的更改（例如 <code>Graphics.translate</code>）。
+ <p>
+如果在子类中重写此方法，则不应该对传入的 <code>Graphics</code> 进行永久更改。例如，不应更改剪贴区的 <code>Rectangle</code> 或修改转换。如果需要进行这些操作，您会发现根据传入的 <code>Graphics</code> 创建一个新 <code>Graphics</code> 并进行操作更加方便。另外，如果不调用超类的实现，则必须遵守不透明属性，也就是说，如果此组件是不透明的，则必须以透明的颜色完全填充背景。如果不遵守不透明属性，则很可能看到可视的人为内容。
+ <p>
+传入的 <code>Graphics</code> 对象可能安装了恒等转换以外的转换。在这种情况下，如果多次应用其他转换，则可能得到不可预料的结果。
+
+@param g 要保护的 <code>Graphics</code> 对象
+@see #paint
+@see ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.paintChildren(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制此组件的子组件。如果 <code>shouldUseBuffer</code> 为 true，那么所有的组件祖先都没有缓冲区，且组件的子组件可以使用缓冲区（如果有）。否则，有一个祖先具有当前正在使用的缓冲区，且子组件不应该使用缓冲区进行绘制。
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+@see #paint
+@see java.awt.Container#paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.paintBorder(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制组件的边框。
+ <p>
+如果在子类中重写此方法，则不应该对传入的 <code>Graphics</code> 进行永久更改。例如，不应更改剪贴区的 <code>Rectangle</code> 或修改转换。如果需要进行这些操作，您会发现根据传入的 <code>Graphics</code> 创建一个新 <code>Graphics</code> 并进行操作更加方便。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+
+@see #paint
+@see #setBorder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.update(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>paint</code>。不清除背景，而是查看 <code>ComponentUI.update</code>，它由 <code>paintComponent</code> 调用。
+
+@param g 在其中进行绘制的 <code>Graphics</code> 上下文
+@see #paint
+@see #paintComponent
+@see javax.swing.plaf.ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 Swing 调用，以绘制组件。应用程序不应直接调用 <code>paint</code>，而是应该使用 <code>repaint</code> 方法来安排重绘组件。
+ <p>
+此方法实际上将绘制工作委托给三个受保护的方法：<code>paintComponent</code>、<code>paintBorder</code> 和 <code>paintChildren</code>。按列出的顺序调用这些方法，以确保子组件出现在组件本身的顶部。一般来说，不应在分配给边框的 insets 区域绘制组件及其子组件。子类可以始终重写此方法。只想特殊化 UI（外观）委托的 <code>paint</code> 方法的子类只需重写 <code>paintComponent</code>。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+@see #paintComponent
+@see #paintBorder
+@see #paintChildren
+@see #getComponentGraphics
+@see #repaint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.printAll(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用此方法打印组件。此方法对组件调用 <code>print</code>。
+
+@param g 在其中进行绘制的 <code>Graphics</code> 上下文
+@see #print
+@see #printComponent
+@see #printBorder
+@see #printChildren
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.print(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用此方法打印指定 <code>Graphics</code> 的组件。此方法将导致对 <code>printComponent</code>、<code>printBorder</code> 和 <code>printChildren</code> 的调用。如果目的是定制打印外观的方式，建议重写前面提及的方法之一，而不是此方法。但是，如果想在调用超类行为之前准备好状态，则重写此方法很有用。例如，如果想在打印前更改组件的背景颜色，则可以执行以下操作：
+ <pre>
+     public void print(Graphics g) {
+         Color orig = getBackground();
+         setBackground(Color.WHITE);
+
+         // wrap in try/finally so that we always restore the state
+         try {
+             super.print(g);
+         } finally {
+             setBackground(orig);
+         }
+     }
+ </pre>
+ <p>
+另外，对于将打印委托给其他对象的组件，在绘制期间就可以查询组件是否在打印操作的中间。<code>isPaintingForPrint</code> 方法提供了这种功能并且此方法将改变其返回值：在即将呈现前改为 <code>true</code>，在呈现后立即改为 <code>false</code>。随着每一次更改，在此组件上都会触发一个名为 <code>"paintingForPrint"</code> 的属性更改事件。
+ <p>
+此方法设置组件的状态，使得双缓冲无法使用：绘制将直接在传入的 <code>Graphics</code> 上完成。
+
+@param g 在其中进行绘制的 <code>Graphics</code> 上下文
+@see #printComponent
+@see #printBorder
+@see #printChildren
+@see #isPaintingForPrint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.printComponent(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在打印操作期间调用此方法。实现此方法以对组件调用 <code>paintComponent</code>。如果要在打印时添加特殊的绘制行为，可重写此方法。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+@see #print
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.printChildren(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印此组件的子组件。实现此方法以对组件调用 <code>paintChildren</code>。如果希望以不同于绘制的方式打印子组件，则重写此方法。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+@see #print
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.printBorder(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印组件的边框。实现此方法以对组件调用 <code>paintBorder</code>。如果要以和绘制该边框所不同的方式来打印边框，则重写此方法。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+@see #print
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isPaintingTile()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果组件当前正在绘制 tile，则返回 true。如果此方法返回 true，则会为另一个 tile 再次调用 paint。如果没有绘制 tile，或者已绘制完最后一个 tile，则此方法返回 false。使用此方法可保持 tile 间可能需要的某个状态。
+
+@return  如果组件当前正在绘制 tile，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.swing.JComponent.isPaintingForPrint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果此组件上的当前绘制操作是 <code>print</code> 操作的一部分，则返回 <code>true</code>。当想要定制所打印的内容以及在屏幕上显示的内容时，此方法很有用。
+ <p>
+通过侦听此组件上名为 <code>"paintingForPrint"</code> 的属性更改事件，可以检测此属性值中的更改。
+ <p>
+ 注：此方法也提供其他高级别 Swing 打印 API 所提供的功能。但是，它严格处理绘制操作，不要因为高级别打印进程上提供的信息相混淆。例如，{@link javax.swing.JTable#print()} 操作不一定会连续呈现完整的组件，此方法的返回值在该操作中可多次更改。组件甚至有可能在打印进程正在进行时便绘制到屏幕。在这种情况下，当且仅当该表作为打印进程的一部分进行绘制时，此方法的返回值为 <code>true</code>。 
+
+ @return 如果此组件上的当前绘制操作是打印操作的一部分，则返回 true 
+ @see #print
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isManagingFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在版本 1.4 中，重新设计了焦点子系统。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ <p>
+将此 <code>JComponent</code> 的焦点遍历键更改为 CTRL+TAB 和 CTRL+SHIFT+TAB。在计算焦点遍历循环时，<code>SortingFocusTraversalPolicy</code> 仍然没有将此 JComponent 的子代考虑在内。
+
+@see java.awt.Component#setFocusTraversalKeys
+@see SortingFocusTraversalPolicy
+@deprecated 从 1.4 版本开始，由 <code>Component.setFocusTraversalKeys(int, Set)</code> 和 <code>Container.setFocusCycleRoot(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setNextFocusableComponent(Component aComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在版本 1.4 中，重新设计了焦点子系统。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ <p>
+为此 <code>JComponent</code> 的焦点遍历循环重写默认的 <code>FocusTraversalPolicy</code>：无条件地将指定的 <code>Component</code> 设置为循环中的下一个 <code>Component</code>，并将此 <code>JComponent</code> 设置为循环中指定 <code>Component</code> 的前一个 <code>Component</code>。
+
+@param aComponent 焦点遍历循环中应该跟在此 <code>JComponent</code> 后的 <code>Component</code>
+
+@see #getNextFocusableComponent
+@see java.awt.FocusTraversalPolicy
+@deprecated 从 1.4 版本开始，由 <code>FocusTraversalPolicy</code> 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JComponent.getNextFocusableComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在版本 1.4 中，重新设计了焦点子系统。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ <p>
+返回之前对此 <code>JComponent</code> 调用 <code>setNextFocusableComponent(Component)</code> 所设置的 <code>Component</code>。
+
+@return 焦点遍历循环中应该跟在此 <code>JComponent</code> 后的 <code>Component</code>；如果尚未显式地指定，则为 <code>null</code>
+
+@see #setNextFocusableComponent
+@deprecated 从 1.4 版本开始，由 <code>FocusTraversalPolicy</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setRequestFocusEnabled(boolean requestFocusEnabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个关于此 <code>JComponent</code> 是否应该获得焦点的提示。这只是一个提示，由使用者决定请求焦点是否遵守此属性。鼠标操作通常遵守此属性，而键盘操作则并非如此。例如，在鼠标操作期间，外观可以在请求焦点前验证此属性是否为 true。如果不想在 <code>JComponent</code> 上按下鼠标以获得焦点，而是希望通过键盘遍历 <code>JComponent</code>，则要多次使用此方法。如果不希望此 <code>JComponent</code> 可聚焦，请使用 <code>setFocusable</code> 方法。
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ 
+@param requestFocusEnabled 指示是否希望此 <code>JComponent</code> 可聚焦
+@see <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a>
+@see java.awt.Component#setFocusable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isRequestFocusEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>JComponent</code> 应该获得焦点，则返回 <code>true</code>；否则返回 <code>false</code>。
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ 
+@return 如果此 component 应该获得焦点，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #setRequestFocusEnabled
+@see <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a>
+@see java.awt.Component#isFocusable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.requestFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 <code>Component</code> 获取输入焦点。有关此方法的完整描述，请参阅 {@link java.awt.Component#requestFocus() Component.requestFocus()}。
+ <p>
+注意，不推荐使用此方法，因为其行为与平台有关。建议使用 {@link #requestFocusInWindow() requestFocusInWindow()}。若要了解有关焦点的更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">
+ How to Use the Focus Subsystem</a> 一节。
+
+@see java.awt.Component#requestFocusInWindow()
+@see java.awt.Component#requestFocusInWindow(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.requestFocus(boolean temporary)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 <code>Component</code> 获取输入焦点。有关此方法的完整描述，请参阅 {@link java.awt.Component#requestFocus(boolean) Component.requestFocus(boolean)}。
+ <p>
+注意，不推荐使用此方法，因为其行为与平台有关。建议使用 {@link #requestFocusInWindow(boolean) requestFocusInWindow(boolean)}。若要了解有关焦点的更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+
+@param temporary boolean 值，指示焦点更改是否为临时的
+@return 如果焦点更改请求一定会失败，则返回 <code>false</code>；如果有可能成功，则返回 <code>true</code> 
+@see java.awt.Component#requestFocusInWindow()
+@see java.awt.Component#requestFocusInWindow(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.requestFocusInWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 <code>Component</code> 获取输入焦点。有关此方法的完整描述，请参阅 {@link java.awt.Component#requestFocusInWindow() Component.requestFocusInWindow()}。
+ <p>
+若要了解有关焦点的更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+
+@return 如果焦点更改请求一定会失败，则返回 <code>false</code>；如果有可能成功，则返回 <code>true</code> 
+@see java.awt.Component#requestFocusInWindow()
+@see java.awt.Component#requestFocusInWindow(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JComponent.requestFocusInWindow(boolean temporary)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 <code>Component</code> 获取输入焦点。有关此方法的完整描述，请参阅 {@link java.awt.Component#requestFocusInWindow(boolean) Component.requestFocusInWindow(boolean)}。
+ <p>
+若要了解有关焦点的更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">
+ How to Use the Focus Subsystem</a> 一节。
+
+@param temporary boolean 值，指示焦点更改是否为临时的
+@return 如果焦点更改请求一定会失败，则返回 <code>false</code>；如果有可能成功，则返回 <code>true</code> 
+@see java.awt.Component#requestFocusInWindow()
+@see java.awt.Component#requestFocusInWindow(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.grabFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 Component 获取输入焦点，并请求此 Component 的顶层祖先成为获得焦点的 Window。此组件对于要准许的请求而言必须是可显示的、可见的、可聚焦的。
+ <p>
+此方法用于焦点实现。客户端代码不应使用此方法；相反，它应该使用 <code>requestFocusInWindow()</code>。
+
+@see #requestFocusInWindow()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setVerifyInputWhenFocusTarget(boolean verifyInputWhenFocusTarget)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置该值指示是否在此组件请求焦点前，为当前的焦点所有者调用输入校验器。默认值为 true。对于像 Cancel 按钮或滚动条等组件可将该值设置为 false，这些组件应该是激活的，即使当前焦点所有者的输入没有&ldquo;通过&rdquo;该组件的输入校验器的检验。
+
+@param verifyInputWhenFocusTarget <code>verifyInputWhenFocusTarget</code> 属性的值
+@see InputVerifier
+@see #setInputVerifier
+@see #getInputVerifier
+@see #getVerifyInputWhenFocusTarget
+
+@since 1.3
+@beaninfo bound:true description: Whether the Component verifies input before accepting focus.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.getVerifyInputWhenFocusTarget()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回值指示是否在此组件请求焦点前，为当前的焦点所有者调用输入校验器。
+          
+@return <code>verifyInputWhenFocusTarget</code> 属性的值
+   
+@see InputVerifier
+@see #setInputVerifier
+@see #getInputVerifier
+@see #setVerifyInputWhenFocusTarget
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.FontMetrics javax.swing.JComponent.getFontMetrics(Font font)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取指定 <code>Font</code> 的 <code>FontMetrics</code>。
+
+@param font 要获取其字体规格的字体
+@return  <code>font</code> 的字体规格
+@throws NullPointerException 如果 <code>font</code> 为 null
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setPreferredSize(Dimension preferredSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的首选大小。如果 <code>preferredSize</code> 为 <code>null</code>，则要求 UI 提供首选大小。
+@beaninfo preferred:true bound:true description: The preferred size of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JComponent.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>preferredSize</code> 已设置为一个非 <code>null</code> 值，则返回该值。如果 UI 委托的 <code>getPreferredSize</code> 方法返回一个非 <code>null</code> 值，则返回该值；否则服从组件的布局管理器。
+
+@return  <code>preferredSize</code> 属性的值
+@see #setPreferredSize
+@see ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setMaximumSize(Dimension maximumSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此组件的最大大小设置为一个常量值。对 <code>getMaximumSize</code> 的后续调用将始终返回此值；而不要求组件的 UI 计算它。将最大大小设置为 <code>null</code> 可恢复默认行为。
+
+@param maximumSize 一个包含所需最大允许大小的 <code>Dimension</code>
+@see #getMaximumSize
+@beaninfo bound:true description: The maximum size of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JComponent.getMaximumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已将最大大小设置为一个非 <code>null</code> 值，则返回该值。如果 UI 委托的 <code>getMaximumSize</code> 方法返回一个非 <code>null</code> 值，则返回该值；否则服从组件的布局管理器。
+
+@return  <code>maximumSize</code> 属性的值
+@see #setMaximumSize
+@see ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setMinimumSize(Dimension minimumSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此组件的最小大小设置为一个常量值。对 <code>getMinimumSize</code> 的后续调用将始终返回此值；不会要求组件的 UI 计算它。将最小大小设置为 <code>null</code> 可恢复默认行为。
+
+@param minimumSize 此组件新的最小大小
+@see #getMinimumSize
+@beaninfo bound:true description: The minimum size of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JComponent.getMinimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已将最小大小设置为一个非 <code>null</code> 值，则返回该值。如果 UI 委托的 <code>getMinimumSize</code> 方法返回一个非 <code>null</code> 值，则返回该值；否则服从组件的布局管理器。
+
+@return  <code>minimumSize</code> 属性的值
+@see #setMinimumSize
+@see ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.contains(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了进行鼠标处理，让 UI 委托来定义此组件的精确形状。
+
+@return 如果此组件逻辑上包含 x,y，则返回 true
+@see java.awt.Component#contains(int, int)
+@see ComponentUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setBorder(Border border)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的边框。<code>Border</code> 对象负责定义组件的 insets（直接对组件重写所有 insets 设置），并且可选地呈现这些 insets 范围内的边框装饰。要为 swing 组件创建有装饰的和无装饰的区域（例如边距和填充），应该使用边框（而不是 insets）。在单个组件中可使用复合边框来嵌套多个边框。
+ <p>
+虽然从技术上讲可以在继承自 <code>JComponent</code> 的所有对象上设置边框，但是很多标准 Swing 组件的外观实现无法正常地使用用户设置的边框。通常，如果希望在标准的 Swing 组件而不是 <code>JPanel</code> 或 <code>JLabel</code> 上设置边框时，建议将组件放入 <code>JPanel</code> 中，并在 <code>JPanel</code> 上设置边框。
+ <p>
+这是一个绑定属性。
+
+@param border 要为此组件呈现的边框
+@see Border
+@see CompoundBorder
+@beaninfo bound:true preferred:true attribute: visualUpdate true description: The component's border.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.border.Border javax.swing.JComponent.getBorder()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的边框；如果当前未设置边框，则返回 <code>null</code>。
+
+@return 此组件的边框对象
+@see #setBorder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Insets javax.swing.JComponent.getInsets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已在此组件上设置了边框，则返回该边框的 insets；否则调用 <code>super.getInsets</code>。
+
+@return insets 属性的值
+@see #setBorder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Insets javax.swing.JComponent.getInsets(Insets insets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此组件 inset 值的 <code>Insets</code> 对象。如有可能，将重用传入的 <code>Insets</code> 对象。但是不能假定调用这些方法将返回相同的对象。重写此对象内所有现有值。如果 <code>insets</code> 为 null，则此方法将分配一个新的 insets。
+
+@param insets <code>Insets</code> 对象，它可以被重用 
+@return <code>Insets</code> 对象
+@see #getInsets
+@beaninfo expert:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.JComponent.getAlignmentY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>Container.getAlignmentY</code> 以返回水平对齐方式。
+
+@return  <code>alignmentY</code> 属性的值
+@see #setAlignmentY
+@see java.awt.Component#getAlignmentY
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setAlignmentY(float alignmentY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置水平对齐方式。
+
+@param alignmentY  新的水平对齐方式
+@see #getAlignmentY
+@beaninfo description: The preferred vertical alignment of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.JComponent.getAlignmentX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>Container.getAlignmentX</code> 以返回垂直对齐方式。
+
+@return  <code>alignmentX</code> 属性的值
+@see #setAlignmentX
+@see java.awt.Component#getAlignmentX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setAlignmentX(float alignmentX)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置垂直对齐方式。
+
+@param alignmentX  新的垂直对齐方式
+@see #getAlignmentX
+@beaninfo description: The preferred horizontal alignment of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setInputVerifier(InputVerifier inputVerifier)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的输入校验器。
+
+@param inputVerifier 新的输入校验器
+@since 1.3
+@see InputVerifier
+@beaninfo bound:true description: The component's input verifier.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.InputVerifier javax.swing.JComponent.getInputVerifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的输入校验器。
+
+@return  <code>inputVerifier</code> 属性
+@since 1.3
+@see InputVerifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics javax.swing.JComponent.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的图形上下文，该上下文允许您绘制组件。使用此方法可获取一个 <code>Graphics</code> 对象，然后在该对象上调用操作，以便绘制组件。
+@return 此组件的图形上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setDebugGraphicsOptions(int debugOptions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用或禁用与组件或其某个子组件内执行的每个图形操作有关的诊断信息。
+
+@param debugOptions  确定组件应该如何显示信息；为下列选项之一：
+ <ul>
+<li>DebugGraphics.LOG_OPTION - 打印文本消息。
+<li>DebugGraphics.FLASH_OPTION - 绘制的内容闪烁几次。
+<li>DebugGraphics.BUFFERED_OPTION - 创建一个 <code>ExternalWindow</code>，显示在 View 的脱屏缓冲区上执行的操作。
+<li>DebugGraphics.NONE_OPTION 禁用调试。
+<li>值 0 不会更改该调试选项。
+ </ul>
+当前值是 <code>debugOptions</code> 按位或运算的结果
+
+@beaninfo preferred:true enum: NONE_OPTION DebugGraphics.NONE_OPTION LOG_OPTION DebugGraphics.LOG_OPTION FLASH_OPTION DebugGraphics.FLASH_OPTION BUFFERED_OPTION DebugGraphics.BUFFERED_OPTION description: Diagnostic options for graphics operations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getDebugGraphicsOptions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图形调试的状态。
+
+@return 0 标志或下列选项按位或运算的结果：
+ <ul>
+<li>DebugGraphics.LOG_OPTION - 打印文本消息。
+<li>DebugGraphics.FLASH_OPTION - 绘制的内容闪烁几次。
+<li>DebugGraphics.BUFFERED_OPTION - 创建一个 <code>ExternalWindow</code>，显示在 View 的脱屏缓冲区上执行的操作。
+<li>DebugGraphics.NONE_OPTION 禁用调试。
+<li>值 0 不会更改该调试选项。
+ </ul>
+@see #setDebugGraphicsOptions
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.registerKeyboardAction(ActionListener anAction, String aCommand, KeyStroke aKeyStroke, int aCondition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法现在已过时，对于类似的操作，请结合使用 <code>getActionMap()</code> 和 <code>getInputMap()</code>。例如，要将 <code>KeyStroke</code> <code>aKeyStroke</code> 绑定到 <code>Action</code> <code>anAction</code>，现在使用：
+ <pre>
+   component.getInputMap().put(aKeyStroke, aCommand);
+   component.getActionMap().put(aCommmand, anAction);
+ </pre>
+以上假定您希望绑定适用于 <code>WHEN_FOCUSED</code>。要为其他焦点状态注册绑定，可使带有整数参数的 <code>getInputMap</code> 方法。
+ <p>
+注册一个新的键盘动作。如果出现一个与 <code>aKeyStroke</code> 匹配的键事件并且 <code>aCondition</code> 经过了验证，则调用 <code>anAction</code>。<code>KeyStroke</code> 对象定义了键盘键和一个或多个修改键（alt、shift、ctrl、meta）的特定组合。
+ <p>
+<code>aCommand</code> 将在传递的事件（如果指定）中进行设置。
+ <p>
+<code>aCondition</code> 可以为：
+ <blockquote>
+ <DL>
+ <DT>WHEN_FOCUSED
+<DD>仅在发生键击、同时组件具有焦点时才调用该动作。
+ <DT>WHEN_IN_FOCUSED_WINDOW
+<DD>当发生键击、同时组件具有焦点时，或者组件处于具有焦点的窗口中时调用该动作。注意，该组件无需是该窗口的直接子级，它可以处于窗口包含层次结构中的任意位置。换句话说，只要窗口中的<em>任意</em> 组件具有焦点，就调用向此组件注册的动作。
+ <DT>WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+<DD>当发生键击、同时组件具有焦点时，或者该组件是具有焦点的组件的祖先时调用该动作。
+ </DL>
+ </blockquote>
+ <p>
+这种键击和条件的组合允许您为指定的键击＋修改键组合定义高级别（语义）的动作事件（使用 KeyStroke 类），并导向具有焦点的组件的父组件或子组件，或者该组件本身。换句话说，在任意的组件层次结构中，可将任意的键组合导向层次结构中的适当组件，并调用具体的方法（通常通过适配器对象的方式）。
+ <p>
+如果已经使用相同的 charCode 和修改键为接收容器注册了某个动作，则 <code>anAction</code> 将取代该动作。
+
+@param anAction  要注册的 <code>Action</code> 
+@param aCommand  要在传递的事件中设置的命令
+@param aKeyStroke 与动作绑定的 <code>KeyStroke</code> 
+@param aCondition 要符合的条件，见上文
+@see KeyStroke
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.registerKeyboardAction(ActionListener anAction, KeyStroke aKeyStroke, int aCondition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法现在已过时，对于类似的操作，请结合使用 <code>getActionMap()</code> 和 <code>getInputMap()</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.unregisterKeyboardAction(KeyStroke aKeyStroke)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法现在已过时。要注销现有绑定，可以从 <code>ActionMap/InputMap</code> 中移除该绑定，或者在 <code>InputMap</code> 中放置一个虚拟（dummy）绑定。从 <code>InputMap</code> 中移除绑定允许父 <code>InputMap</code> 中的绑定处于激活状态，而在 <code>InputMap</code> 中放置一个 dummy 绑定则可以有效地禁止绑定发生。
+ <p>
+注销一个键盘动作。此动作将从 <code>ActionMap</code>（如果存在）和 <code>InputMap</code> 中移除绑定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.KeyStroke[] javax.swing.JComponent.getRegisteredKeyStrokes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回启动已注册动作的 <code>KeyStrokes</code>。
+
+@return <code>KeyStroke</code> 对象数组
+@see #registerKeyboardAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getConditionForKeyStroke(KeyStroke aKeyStroke)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回确定是否发生已注册动作以响应指定键击事件的条件。
+ <p>
+对于 Java 2 平台 v1.3，一个 <code>KeyStroke</code> 可与多个条件关联。例如，'a' 可以和两个条件 <code>WHEN_FOCUSED</code> 和 <code>WHEN_IN_FOCUSED_WINDOW</code> 绑定。
+
+@return 动作-键击条件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.ActionListener javax.swing.JComponent.getActionForKeyStroke(KeyStroke aKeyStroke)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回执行针对给定键击而注册的操作的对象。
+
+@return 发生键击时所调用的 <code>ActionListener</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.resetKeyboardActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注销首层 <code>InputMaps</code> 和 <code>ActionMap</code> 中的所有绑定。此操作可以移除所有的本地绑定，并允许保留父 <code>InputMap/ActionMaps</code> 中定义的绑定（通常在第二层定义 UI）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JComponent.setInputMap(int condition, InputMap map)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在 <code>map</code> 的 <code>condition</code> 条件下要使用的 <code>InputMap</code>。<code>null</code> 意味着不想使用任何绑定（包括来自 UI 的绑定）。这不会重新安装 UI <code>InputMap</code>（如果有）。<code>condition</code> 为以下值之一：
+ <ul>
+ <li><code>WHEN_IN_FOCUSED_WINDOW</code>
+ <li><code>WHEN_FOCUSED</code>
+ <li><code>WHEN_ANCESTOR_OF_FOCUSED_COMPONENT</code>
+ </ul>
+如果 <code>condition</code> 是 <code>WHEN_IN_FOCUSED_WINDOW</code> 且 <code>map</code> 不是 <code>ComponentInputMap</code>，则抛出 <code>IllegalArgumentException</code>。类似地，如果 <code>condition</code> 不是上述值之一，则抛出 <code>IllegalArgumentException</code>。
+
+@param condition 上述值之一
+@param map  用于给定条件的 <code>InputMap</code> 
+@exception IllegalArgumentException 如果 <code>condition</code> 是 <code>WHEN_IN_FOCUSED_WINDOW</code> 且 <code>map</code> 不是 <code>ComponentInputMap</code> 的实例；或者 <code>condition</code> 不是上面指定的合法值之一
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.InputMap javax.swing.JComponent.getInputMap(int condition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>condition</code> 中所使用的 <code>InputMap</code>。
+
+@param condition WHEN_IN_FOCUSED_WINDOW、WHEN_FOCUSED、WHEN_ANCESTOR_OF_FOCUSED_COMPONENT 之一
+@return 指定 <code>condition</code> 的 <code>InputMap</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.InputMap javax.swing.JComponent.getInputMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件具有焦点时所使用的 <code>InputMap</code>。这是 <code>getInputMap(WHEN_FOCUSED)</code> 的一个便捷方法。
+
+@return 组件具有焦点时所使用的 <code>InputMap</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JComponent.setActionMap(ActionMap am)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>ActionMap</code> 设置为 <code>am</code>。此方法不会将 <code>am</code> 的父级设置成 UI 的 <code>ActionMap</code>（如果有），由调用者决定是否这样做。
+ 
+@param am  新的 <code>ActionMap</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.ActionMap javax.swing.JComponent.getActionMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于确定为特定 <code>KeyStroke</code> 绑定触发何种 <code>Action</code> 的 <code>ActionMap</code>。除非另行设置，否则返回的 <code>ActionMap</code> 将 UI 的 <code>ActionMap</code> 设置为其父级。
+
+@return 包含键/动作绑定的 <code>ActionMap</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getBaseline(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回基线。基线是从组件顶部开始测量的。此方法主要用于 <code>LayoutManager</code>，以便沿组件的基线对齐组件。返回值小于 0 表示此组件没有合理的基线，并且 <code>LayoutManager</code> 不应该根据该组件的基线来对齐此组件。
+ <p>
+ 此方法调用相同名称的 <code>ComponentUI</code> 方法。如果此组件不具有 <code>ComponentUI</code>，则返回 -1。如果返回大于等于 0 的值，则该组件有一个对于任何大于等于最小大小的大小均有效的基线，并且可以使用 <code>getBaselineResizeBehavior</code> 确定基线如何随大小发生更改。
+
+ @throws IllegalArgumentException {@inheritDoc}
+ @see #getBaselineResizeBehavior
+ @see java.awt.FontMetrics
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component.BaselineResizeBehavior javax.swing.JComponent.getBaselineResizeBehavior()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个枚举，指示组件的基线如何随大小更改而发生更改。此方法主要用于布局管理器和 GUI 生成器。
+ <p>
+ 此方法调用相同名称的 <code>ComponentUI</code> 方法。如果此组件不具有 <code>ComponentUI</code>，则返回 <code>BaselineResizeBehavior.OTHER</code>。子类不应该返回 <code>null</code>；如果无法计算基线，则返回 <code>BaselineResizeBehavior.OTHER</code>。调用者应该首先使用 <code>getBaseline</code> 询问基线，如果返回值大于等于 0，则使用此方法。此方法返回一个 <code>BaselineResizeBehavior.OTHER</code> 以外的值是可以接受的，即使 <code>getBaseline</code> 返回一个小于 0 的值。 
+ @see #getBaseline(int, int)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.requestDefaultFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在版本 1.4 中，重新设计了焦点子系统。有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 一节。
+ <p>
+请求此 <code>JComponent</code> <code>FocusTraversalPolicy</code> 的默认 <code>Component</code> 上的焦点。如果此 <code>JComponent</code> 是焦点循环根，则使用其 <code>FocusTraversalPolicy</code>。否则，使用此 <code>JComponent</code> 的焦点循环根祖先的 <code>FocusTraversalPolicy</code>。
+
+@see java.awt.FocusTraversalPolicy#getDefaultComponent
+@deprecated 从 1.4 版本开始，由 <code>FocusTraversalPolicy.getDefaultComponent(Container).requestFocus()</code> 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setVisible(boolean aFlag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使该组件可见或不可见。重写 <code>Component.setVisible</code>。
+ 
+@param aFlag  true 使该组件可见；false 使其不可见
+
+@beaninfo attribute:visualUpdate true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setEnabled(boolean enabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否启用此组件。已启用的组件可以响应用户输入，而未启用的组件则无法响应用户输入。可以在禁用某些组件时更改其可视化表现形式，以向用户提供反馈，说明其无法接受输入。
+<p>注：禁用某个组件不会禁用其子组件。
+
+<p>注：禁用轻量组件不会阻止其接收 MouseEvent。
+
+@param enabled 如果应该启用此组件，则为 true；否则为 false
+@see java.awt.Component#isEnabled
+@see java.awt.Component#isLightweight
+
+@beaninfo preferred:true bound:true attribute: visualUpdate true description:The enabled state of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setForeground(Color fg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的前景色。由外观来决定是否遵守此属性，某些外观可以选择忽略它。
+
+@param fg  所需的前景 <code>Color</code>
+@see java.awt.Component#getForeground
+
+@beaninfo preferred:true bound:true attribute: visualUpdate true description: The foreground color of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setBackground(Color bg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的背景色。背景色仅在组件是不透明时才使用，并且只能由 <code>JComponent</code> 或 <code>ComponentUI</code> 实现的子类使用。<code>JComponent</code> 的直接子类必须重写 <code>paintComponent</code> 以遵守此属性。
+ <p>
+ 由外观决定是否遵守此属性，某些外观可以选择忽略它。
+
+@param bg 所需的背景 <code>Color</code>
+@see java.awt.Component#getBackground
+@see #setOpaque
+
+@beaninfo preferred:true bound:true attribute: visualUpdate true description: The background color of the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setFont(Font font)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的字体。
+
+@param font 此组件所需的 <code>Font</code> 
+@see java.awt.Component#getFont
+
+@beaninfo preferred:true bound:true attribute: visualUpdate true description: The font for the component.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Locale javax.swing.JComponent.getDefaultLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在创建时，用于初始化每个 JComponent 的语言环境属性的默认语言环境。
+
+默认的语言环境具有 &quot;AppContext&quot; 范围，所以 applet（以及可能在单个 VM 中运行的多个轻量级应用程序）可以有它们自己的设置。applet 可以安全地更改其默认的语言环境，因为它不会影响其他 applet（或浏览器）。
+
+@return 默认的 <code>Locale</code>。
+@see #setDefaultLocale
+@see java.awt.Component#getLocale
+@see #setLocale
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JComponent.setDefaultLocale(Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在创建时，用于初始化每个 JComponent 的语言环境属性的默认语言环境。初始值是 VM 的默认语言环境。
+
+默认的语言环境具有 &quot;AppContext&quot; 范围，所以 applet（以及可能在单个 VM 中运行的多个轻量级应用程序）可以有它们自己的设置。applet 可以安全地更改其默认的语言环境，因为它不会影响其他 applet（或浏览器）。
+
+@param l 所需的默认 <code>Locale</code>，用于新的组件。
+@see #getDefaultLocale
+@see java.awt.Component#getLocale
+@see #setLocale
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.processComponentKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理该组件本身可识别的所有键事件。在焦点管理器和所有相关侦听器可以侦听事件后调用此方法。仅在事件尚未被使用时才调用此方法。在键盘 UI 逻辑之前调用此方法。
+ <p>
+实现此方法不执行任何操作。如果子类本身处理某些键事件，则这些子类通常重写此方法。如果事件已经处理，则使用该事件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.processKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>processKeyEvent</code> 以处理事件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JComponent.processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于发生 <code>KeyEvent</code> <code>e</code> 而调用此方法处理 <code>ks</code> 的键绑定。此方法将获取适当的 <code>InputMap</code>、获取绑定、从 <code>ActionMap</code> 获取动作，然后（如果找到该动作并且已启用该组件）调用 <code>notifyAction</code> 来通知该动作。
+
+@param ks  被查询的 <code>KeyStroke</code>
+@param e <code>KeyEvent</code>
+@param condition 为下列值之一：
+ <ul>
+ <li>JComponent.WHEN_FOCUSED
+ <li>JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT
+ <li>JComponent.WHEN_IN_FOCUSED_WINDOW
+ </ul>
+@param pressed 如果键被按下，则为 true 
+@return 如果有该动作的绑定并且已启用该动作，则返回 true
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setToolTipText(String text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册要在工具提示中显示的文本。光标处于该组件上时显示该文本。
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/tooltip.html">How to Use Tool Tips</a>。
+
+@param text  要显示的字符串；如果 text 为 <code>null</code>，则关闭此组件的工具提示 
+@see #TOOL_TIP_TEXT_KEY
+@beaninfo preferred:true description: The text to display in a tool tip.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JComponent.getToolTipText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 <code>setToolTipText</code> 所设置的工具提示字符串。
+
+@return 工具提示文本
+@see #TOOL_TIP_TEXT_KEY
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JComponent.getToolTipText(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用作 <i>event</i> 工具提示的字符串。默认情况下，此方法返回使用 <code>setToolTipText</code> 设置的任意字符串。如果组件提供了进一步扩展的 API，以支持不同位置的不同工具提示，则应重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JComponent.getToolTipLocation(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回工具提示在此组件坐标系统中的位置。如果返回 <code>null</code>，则 Swing 将选择某个位置。默认实现返回 <code>null</code>。
+
+@param event  导致 <code>ToolTipManager</code> 显示工具提示的 <code>MouseEvent</code>  
+@return 始终返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JComponent.getPopupLocation(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件坐标系统中显示弹出式菜单的首选位置。由外观来决定是否遵守此属性，某些外观可以选择忽略它。如果返回 {@code null}，则外观将选择一个合适的位置。 
+
+@param event  触发显示弹出式菜单的 {@code MouseEvent}；如果不是因鼠标事件而显示弹出式菜单，则为 {@code null}
+@return 显示 {@code JPopupMenu} 的位置，或者返回 {@code null}
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JToolTip javax.swing.JComponent.createToolTip()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于显示工具提示的 <code>JToolTip</code> 实例。组件通常不重写此方法，但是可将其用于以不同的方式显示不同的工具提示。
+
+@return 用于显示此工具提示的 <code>JToolTip</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.scrollRectToVisible(Rectangle aRect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>scrollRectToVisible()</code> 消息转发到 <code>JComponent</code> 的父组件。可执行该请求的组件（如 <code>JViewport</code>）会重写此方法并执行滚动。
+
+@param aRect 可见的 <code>Rectangle</code>
+@see JViewport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setAutoscrolls(boolean autoscrolls)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>autoscrolls</code> 属性。如果为 <code>true</code>，则在将鼠标拖动到组件的边界外并且鼠标移动已暂停（但是继续按下鼠标按键）时，人为地生成鼠标拖动事件。该人为事件使得拖动动作似乎在跨越组件的边界时所建立的方向上得以恢复。支持自动滚动的组件必须处理 <code>mouseDragged</code> 事件，通过调用带有一个包含鼠标事件位置的矩形的 <code>scrollRectToVisible</code> 来完成。所有支持项选择以及通常在 <code>JScrollPane</code>（<code>JTable</code>、<code>JList</code>、<code>JTree</code>、<code>JTextArea</code> 和 <code>JEditorPane</code>）中显示的 Swing 组件都将以这种方式处理鼠标拖动事件。要在任何其他组件中启用自动滚动，可添加一个调用 <code>scrollRectToVisible</code> 的鼠标移动侦听器。例如，给定 <code>JPanel</code>、<code>myPanel</code>：
+ <pre>
+ MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
+     public void mouseDragged(MouseEvent e) {
+        Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
+        ((JPanel)e.getSource()).scrollRectToVisible(r);
+    }
+ };
+ myPanel.addMouseMotionListener(doScrollRectToVisible);
+ </pre>
+<code>autoScrolls</code> 属性的默认值是 <code>false</code>。
+
+@param autoscrolls 如果为 true，则在将鼠标拖动到组件的边界外并且继续按下鼠标按键时，生成人为鼠标拖动事件；否则为 false 
+@see #getAutoscrolls
+@see JViewport
+@see JScrollPane
+
+@beaninfo expert:true description: Determines if this component automatically scrolls its contents when dragged.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.getAutoscrolls()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <code>autoscrolls</code> 属性。
+
+@return  <code>autoscrolls</code> 属性的值
+@see JViewport
+@see #setAutoscrolls
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setTransferHandler(TransferHandler newHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>transferHandler</code> 属性；如果该组件不支持数据传输操作，则为 <code>null</code>。
+ <p>
+如果 <code>newHandler</code> 不为 <code>null</code> 并且系统属性 <code>suppressSwingDropSupport</code> 不为 true，则此方法将在 <code>JComponent</code> 上安装一个 <code>DropTarget</code>。该系统属性的默认值为 false，所以将添加一个 <code>DropTarget</code>。
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">How to Use Drag and Drop and Data Transfer</a> 一节。
+ 
+@param newHandler  在组件之间传输数据的机制
+
+@see TransferHandler
+@see #getTransferHandler
+@since 1.4
+@beaninfo bound:true hidden:true description: Mechanism for transfer of data to and from the component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler javax.swing.JComponent.getTransferHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <code>transferHandler</code> 属性。
+
+@return  <code>transferHandler</code> 属性的值
+
+@see TransferHandler
+@see #setTransferHandler
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.processMouseEvent(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理此组件上发生的鼠标事件，通过将其指派到任意已注册的 <code>MouseListener</code> 对象来完成，有关此方法的完整描述，请参阅 {@link java.awt.Component#processMouseEvent(MouseEvent)}。
+
+@param       e 鼠标事件
+@see         java.awt.Component#processMouseEvent
+@since       1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.processMouseMotionEvent(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理鼠标移动事件，如 MouseEvent.MOUSE_DRAGGED。
+
+@param e the <code>MouseEvent</code>
+@see MouseEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.enable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>java.awt.Component.setEnabled(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.disable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>java.awt.Component.setEnabled(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JComponent.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>JComponent</code> 关联的 <code>AccessibleContext</code>。此基类所实现的方法返回 null。扩展 <code>JComponent</code> 的类应该实现此方法，以返回与子类关联的 <code>AccessibleContext</code>。 
+
+@return 此 <code>JComponent</code> 的 <code>AccessibleContext</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object javax.swing.JComponent.getClientProperty(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有指定键的属性的值。只有通过 <code>putClientProperty</code> 添加的属性才返回非 <code>null</code> 值。  
+ 
+@param key 查询的内容
+@return 此属性的值，或者返回 <code>null</code>
+@see #putClientProperty
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JComponent.putClientProperty(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此组件添加任意的键/值&ldquo;客户端属性&rdquo;。
+ <p>
+<code>get/putClientProperty</code> 方法提供对每个实例小型哈希表的访问。调用者可以使用 get/putClientProperty 为另一个模块所创建的组件添加注释。例如，布局管理器可能以此方式来存储每个子组件的各种约束。例如：
+ <pre>
+ componentA.putClientProperty(&quot;to the left of&quot;, componentB);
+ </pre>
+如果值为 <code>null</code>，则此方法将移除该属性。通过 <code>PropertyChange</code> 事件报告客户端属性的更改。该属性的名称（为了 PropertyChange 事件）是 <code>key.toString()</code>。  
+ <p>
+<code>clientProperty</code> 字典不支持对 JComponent 的大范围扩展，也不适于在设计新组件时用做子类化的替代方法。
+ 
+@param key 新的客户端属性键
+@param value 新的客户端属性值，如果为 <code>null</code>，则此方法将移除该属性 
+@see #getClientProperty
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setFocusTraversalKeys(int id, java.util.Set<? extends java.awt.AWTKeyStroke> keystrokes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置针对此 Component 的给定遍历操作的焦点遍历键。有关此方法的完整描述，请参阅 {@link java.awt.Component#setFocusTraversalKeys}。
+
+@param id KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一
+@param keystrokes 指定操作的 AWTKeyStroke Set
+@see java.awt.KeyboardFocusManager#FORWARD_TRAVERSAL_KEYS
+@see java.awt.KeyboardFocusManager#BACKWARD_TRAVERSAL_KEYS
+@see java.awt.KeyboardFocusManager#UP_CYCLE_TRAVERSAL_KEYS
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一、keystrokes 包含 null、keystroke 中的 Object 不是 AWTKeyStroke、任意 keystroke 表示一个 KEY_TYPED 事件，或者任意 keystroke 已经映射到此 Component 的另一个焦点遍历操作 
+@since 1.5
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.swing.JComponent.isLightweightComponent(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此组件是轻量的，也就是说，如果它没有本机窗口系统同位体，则返回 true。
+
+@return 如果此组件是轻量的，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.reshape(int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK 5 开始，由 <code>Component.setBounds(int, int, int, int)</code> 取代。
+ <p>
+移动此组件并调整其大小。
+
+@param x  新的水平位置
+@param y  新的垂直位置
+@param w  新的宽度
+@param h  新的高度
+@see java.awt.Component#setBounds
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JComponent.getBounds(Rectangle rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此组件的边界存储到&ldquo;返回值&rdquo;<code>rv</code> 中并返回 <code>rv</code>。如果 <code>rv</code> 为 <code>null</code>，则分配一个新的 <code>Rectangle</code>。如果调用者不希望在堆上分配一个新的 <code>Rectangle</code> 对象，则这种 <code>getBounds</code> 是很有用的。
+
+@param rv 返回值，被修改为该组件的边界 
+@return <code>rv</code>；如果 <code>rv</code> 为 <code>null</code>，则返回具有此组件边界的新建 <code>Rectangle</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JComponent.getSize(Dimension rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此组件的宽度/高度存储到&ldquo;返回值&rdquo;<code>rv</code> 中并返回 <code>rv</code>。如果 <code>rv</code> 为 <code>null</code>，则分配一个新的 <code>Dimension</code> 对象。如果调用者不希望在堆上分配一个新的 <code>Dimension</code> 对象，则这种 <code>getSize</code> 是很有用的。
+
+@param rv 返回值，被修改为该组件的大小
+@return <code>rv</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JComponent.getLocation(Point rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此组件的 x，y 原点存储到&ldquo;返回值&rdquo;<code>rv</code> 中并返回 <code>rv</code>。如果 <code>rv</code> 为 <code>null</code>，则分配一个新的 <code>Point</code>。如果调用者不希望在堆上分配一个新的 <code>Point</code> 对象，则这种 <code>getLocation</code> 是很有用的。
+
+@param rv 返回值，被修改为该组件的位置
+@return <code>rv</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件原点的当前 x 坐标。此方法优于 <code>component.getBounds().x</code> 或 <code>component.getLocation().x</code>，因为它不会导致任何堆分配。
+
+@return 组件原点的当前 x 坐标
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件原点的当前 y 坐标。此方法优于 <code>component.getBounds().y</code> 或 <code>component.getLocation().y</code>，因为它不会导致任何堆分配。
+
+@return 组件原点的当前 y 坐标
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的当前宽度。此方法优于 <code>component.getBounds().width</code> 或 <code>component.getSize().width</code>，因为它不会导致任何堆分配。
+
+@return 此组件的当前宽度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JComponent.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的当前高度。此方法优于 <code>component.getBounds().height</code> 或 <code>component.getSize().height</code>，因为它不会导致任何堆分配。
+
+@return 此组件的当前高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isOpaque()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此组件是完全不透明的，则返回 true。
+ <p>
+不透明组件将每个像素绘制在其矩形边界内。透明的组件则仅绘制部分像素或者不绘制任何像素，允许其底层像素&ldquo;透视出来&rdquo;。因此，没有完全绘制其像素的组件则提供了一定程度的透明度。
+ <p>
+保证总是完全绘制其内容的子类应该重写此方法并返回 true。
+
+@return 如果此组件是完全不透明的，则返回 true
+@see #setOpaque
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setOpaque(boolean isOpaque)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则该组件绘制其边界内的所有像素。否则该组件可能不绘制部分或所有像素，从而允许其底层像素透视出来。
+ <p>
+对于 <code>JComponent</code> 而言，此属性的默认值是 false。但是对于大多数标准的 <code>JComponent</code> 子类（如 <code>JButton</code> 和 <code>JTree</code>），此属性的默认值与外观有关。
+
+@param isOpaque  如果此组件应该是不透明的，则为 true 
+@see #isOpaque
+@beaninfo bound: true expert:true description: The component's opacity
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.computeVisibleRect(Rectangle visibleRect)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>Component</code> 的&ldquo;可见 rect 矩形&rdquo;，即此组件及其所有祖先的可见矩形的交集。返回值存储在 <code>visibleRect</code> 中。
+
+@param visibleRect 根据此组件及其所有祖先的所有可见矩形交集而计算出的 <code>Rectangle</code>，这是此方法的返回值
+@see #getVisibleRect
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JComponent.getVisibleRect()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>Component</code> 的&ldquo;可见矩形&rdquo;，即此组件的可见矩形 <code>new Rectangle(0, 0, getWidth(), getHeight())</code> 及其所有祖先的可见矩形的交集。
+
+@return 可见矩形
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.firePropertyChange(String propertyName, boolean oldValue, boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告 boolean 属性的绑定属性更改。当更改了绑定属性，并且向所有已注册的 PropertyChangeListener 发送相应的 PropertyChangeEvent 时可以调用此方法。
+
+@param propertyName 其值已更改的属性
+@param oldValue 该属性以前的值
+@param newValue 该属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.firePropertyChange(String propertyName, int oldValue, int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告整数属性的绑定属性更改。当更改了绑定属性，并且向所有已注册的 PropertyChangeListener 发送相应的 PropertyChangeEvent 时可以调用此方法。
+
+@param propertyName 其值已更改的属性
+@param oldValue 该属性以前的值
+@param newValue 该属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JComponent.fireVetoableChange(String propertyName, Object oldValue, Object newValue) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告约束 (constrained) 属性的更改。当更改了约束属性，并且向所有已注册的 <code>VetoableChangeListener</code> 发送相应的 <code>PropertyChangeEvent</code> 时可以调用此方法。
+
+@param propertyName  对其进行侦听的属性名称
+@param oldValue  该属性的旧值
+@param newValue  该属性的新值
+@exception PropertyVetoException 如果组件禁止设置该属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JComponent.addVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向侦听器列表添加一个 <code>VetoableChangeListener</code>。为所有属性注册该侦听器。
+
+@param listener  要添加的 <code>VetoableChangeListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JComponent.removeVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除一个 <code>VetoableChangeListener</code>。此方法移除了一个为所有属性注册的 <code>VetoableChangeListener</code>。
+
+@param listener  要移除的 <code>VetoableChangeListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.VetoableChangeListener[] javax.swing.JComponent.getVetoableChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上注册的所有可否决更改侦听器所组成的数组。
+
+@return 组件的所有 <code>VetoableChangeListener</code>；如果当前没有注册任何可否决更改侦听器，则返回一个空数组
+
+@see #addVetoableChangeListener
+@see #removeVetoableChangeListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.JComponent.getTopLevelAncestor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的顶层祖先（包含的 <code>Window</code> 或 <code>Applet</code>）；如果尚未将此组件添加到任意容器中，则返回 <code>null</code>。
+
+@return 此组件所在的顶层 <code>Container</code>；如果不在任何容器中，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.addAncestorListener(AncestorListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册 <code>listener</code>，从而当组件或其任意祖先移动，或者变得可见或不可见时该侦听器将收到 <code>AncestorEvent</code>。从包含层次结构中添加或移除组件或其祖先时，也发送这些事件。
+
+@param listener  要注册的 <code>AncestorListener</code> 
+@see AncestorEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.removeAncestorListener(AncestorListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注销 <code>listener</code>，使其不再接收 <code>AncestorEvent</code>。
+
+@param listener  要移除的 <code>AncestorListener</code> 
+@see #addAncestorListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.AncestorListener[] javax.swing.JComponent.getAncestorListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上注册的所有祖先侦听器所组成的数组。
+ 
+@return 组件的所有 <code>AncestorListener</code>；如果当前没有注册任何祖先侦听器，则返回一个空数组
+
+@see #addAncestorListener
+@see #removeAncestorListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] javax.swing.JComponent.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前在此 <code>JComponent</code> 上注册为 <code><em>Foo</em>Listener</code> 的所有对象所组成的数组。<code><em>Foo</em>Listener</code> 是使用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+ 
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以使用以下代码来查询 <code>JComponent</code> <code>c</code> 的鼠标侦听器：
+ <pre>MouseListener[] mls = (MouseListener[])(c.getListeners(MouseListener.class));</pre>
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+ 
+@param listenerType 所请求的侦听器的类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 返回一个在此组件上注册为 <code><em>Foo</em>Listener</code> 的所有对象所组成的数组；如果尚未添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@since 1.3
+ 
+@see #getVetoableChangeListeners
+@see #getAncestorListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此组件它现在已有了一个父组件。调用此方法时，通过 <code>KeyboardAction</code> 事件侦听器设置父组件链。
+
+@see #registerKeyboardAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.removeNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此组件它不再有父组件。调用此方法时，移除父组件链中所有已设置的 <code>KeyboardAction</code>。
+
+@see #registerKeyboardAction
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.repaint(long tm, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果要显示组件，则将指定的区域添加到脏区 (dirty region) 列表。指派完当前所有未完成的事件后重新绘制该组件。
+
+@param tm  不使用此参数
+@param x  脏区的 x 值
+@param y  脏区的 y 值
+@param width  脏区的宽度
+@param height  脏区的高度
+@see java.awt.Component#isShowing
+@see RepaintManager#addDirtyRegion
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.repaint(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果要显示该组件，则将指定的区域添加到脏区列表。指派完当前所有未完成的事件后重新绘制该组件。
+
+@param  r 包含脏区的 <code>Rectangle</code> 
+@see java.awt.Component#isShowing
+@see RepaintManager#addDirtyRegion
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.revalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持推迟的自动布局。  
+ <p> 
+调用 <code>invalidate</code> 并将此组件的 <code>validateRoot</code> 添加到需要验证的组件列表中。指派完当前所有未完成的事件后进行验证。换句话说，调用此方法后，将验证浏览此组件的包含层次结构时找到的第一个 validateRoot（如果有）。默认情况下，对 <code>JRootPane</code>、<code>JScrollPane</code> 和 <code>JTextField</code> 调用 <code>isValidateRoot</code> 返回 true。
+ <p>
+当属性值更改，从而影响此组件的大小、位置或内部布局时，就对此组件自动调用此方法。这种自动更新不同于 AWT，因为通常来说，程序不再需要调用 <code>validate</code> 来获得要更新的 GUI 的内容。 
+ <p>
+
+@see java.awt.Component#invalidate
+@see java.awt.Container#validate
+@see #isValidateRoot
+@see RepaintManager#addInvalidComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isValidateRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此方法返回 true，则此组件的子代调用 <code>revalidate</code> 将导致从此根开始对整棵树进行验证。默认情况下返回 false。<code>JScrollPane</code> 重写此方法并返回 true。
+
+@return 始终返回 false
+@see #revalidate
+@see java.awt.Component#invalidate
+@see java.awt.Container#validate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isOptimizedDrawingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此组件平铺显示其子组件（也就是说，它可以保证子组件不重叠），则返回 true。通常，在此情况下重绘系统的效率非常高。无法作出此保证的 <code>JComponent</code> 子类（如 <code>JLayeredPane</code>）应该重写此方法以返回 false。
+
+@return 始终返回 true 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.paintImmediately(int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+立即绘制此组件及其与该区域重叠的子代中的指定区域。
+ <p>
+极少需要调用此方法。在大多数情况下，调用 repaint 更为高效，repaint 会推迟实际的绘制并将多余的请求压缩为单个 paint 调用。如果需要在指派当前事件的同时更新显示，则此方法很有用。
+
+@param x  要绘制区域的 x 值
+@param y  要绘制区域的 y 值
+@param w  要绘制区域的宽度
+@param h  要绘制区域的高度
+@see #repaint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.paintImmediately(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+立即绘制指定的区域。
+
+@param r 包含要绘制区域的 <code>Rectangle</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JComponent.setDoubleBuffered(boolean aFlag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件是否应该使用缓冲区进行绘制。如果设置为 true，则此组件的所有绘制将在一个离屏绘制缓冲区内完成。然后将该离屏绘制缓冲区复制到屏幕上。如果缓冲了某个 <code>Component</code>，并且还缓冲了它的某个祖先，则将使用该祖先缓冲区。
+
+@param aFlag 如果为 true，则设置此组件使用双缓冲区进行缓冲
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JComponent.isDoubleBuffered()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件是否应该使用缓冲区进行绘制。
+
+@return 如果此组件使用双缓冲区进行缓冲，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JRootPane javax.swing.JComponent.getRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的 <code>JRootPane</code> 祖先。
+
+@return 包含此组件的 <code>JRootPane</code>；如果未找到 <code>JRootPane</code>，则为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JComponent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JComponent</code> 的字符串表示形式。此方法仅在调试时使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可以为空，但不可以为 <code>null</code>。
+ 
+@return  此 <code>JComponent</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JComponent.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>ObjectInputStream</code> 的 &quot;registerValidation&quot; 回调以便在读取整棵组件树后为该树更新 UI。
+ 
+@param s 要读取的 <code>ObjectInputStream</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JComponent.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在将 <code>JComponent</code> 写入 <code>ObjectOutputStream</code> 前，暂时卸载该组件的 UI。此操作很棘手，因为我们希望在写入 <code>JComponent</code> 的任何子组件（或者其 <code>LayoutManager</code> 等）前卸载 UI，同时又希望在存储最近派生的 <code>JComponent</code> 子类之前不恢复该 UI。  
+
+@param s 要通过其写入的 <code>ObjectOutputStream</code>
+
+<!-- END DATA -->

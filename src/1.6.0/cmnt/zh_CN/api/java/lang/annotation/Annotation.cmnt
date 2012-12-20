@@ -1,0 +1,71 @@
+<!-- BEGIN KEY -->
+public interface java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有 annotation 类型都要扩展的公共接口。注意，手动扩展该公共接口的接口<i>不</i> 定义 annotation 类型。还要注意此接口本身不定义 annotation 类型。
+
+@author  Josh Bloch
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.annotation.Annotation.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象表示在逻辑上等效于此接口的注释，则返回 true。换句话说，如果指定对象是一个与此实例相同的 annotation 类型的实例，即其所有成员都与此实例中所对应的成员相等，则返回 true，具体说明如下：
+ <ul>
+<li>如果 <tt>x == y</tt>，则认为值分别为 <tt>x</tt> 和 <tt>y</tt> 的两个对应的基本类型成员相等，除非它们的类型是 <tt>float</tt> 或 <tt>double</tt>。
+
+<li>如果 <tt>Float.valueOf(x).equals(Float.valueOf(y))</tt> 为真，则认为值分别为 <tt>x</tt> 和 <tt>y</tt> 的两个对应的 <tt>float</tt> 成员相等。（与 <tt>==</tt> 运算符不同，NaN 被认为等于其自身，并且 <tt>0.0f</tt> 不等于 <tt>-0.0f</tt>。）
+
+<li>如果 <tt>Double.valueOf(x).equals(Double.valueOf(y))</tt> 为真，则认为值分别为 <tt>x</tt> 和 <tt>y</tt> 的两个对应的 <tt>double</tt> 成员相等。（与 <tt>==</tt> 运算符不同，NaN 被认为等于其自身，并且 <tt>0.0</tt> 不等于 <tt>-0.0</tt>。）
+
+<li>如果 <tt>x.equals(y)</tt> 为真，则认为值分别为 <tt>x</tt> 和 <tt>y</tt> 的两个对应的 <tt>String</tt>、<tt>Class</tt>、enum 或 annotation 类型的成员相等。（注意，此定义对于 annotation 类型的成员是递归的。）
+
+<li>对于适当重载的 {@link java.util.Arrays#equals}，如果 <tt>Arrays.equals(x, y)</tt> 为真, 则认为两个对应的数组类型的成员 <tt>x</tt> 和 <tt>y</tt> 相等。
+ </ul>
+
+@return 如果指定的对象表示在逻辑上等效于该接口的 annotation，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.annotation.Annotation.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 annotation 的哈希码，具体说明如下：
+
+<p>一个 annotation 的哈希码是其成员（包括那些带有默认值的成员）的哈希码的和，具体说明如下：
+
+annotation 成员的哈希码是成员值哈希码的 XOR（它是 {@link String#hashCode()} 计算得到的成员名哈希码的 127 倍），具体说明如下：
+
+<p>成员值的哈希码取决于其类型：
+ <ul>
+<li>基值 <tt><i>v</i></tt> 的哈希码等于 <tt><i>WrapperType</i>.valueOf(<i>v</i>).hashCode()</tt>，其中 <tt><i>WrapperType</i></tt> 是对应 <tt><i>v</i></tt> 的基本类型的包装器类型（{@link Byte}、{@link Character}、{@link Double}、{@link Float}、{@link Integer}、{@link Long}、{@link Short} 或 {@link Boolean}）。
+
+<li>string、enum、class 或 annotation 的成员值 I 的哈希码 <tt><i>v</i></tt> 是通过调用 <tt><i>v</i>.hashCode()</tt> 来计算的。（对于 annotation 成员值，这是一种递归定义。）
+
+<li>数组成员值的哈希码是通过基于该值调用 {@link java.util.Arrays#hashCode(long[]) Arrays.hashCode} 的适当重载来计算的。（各种基本类型和对象引用类型分别对应一个重载。）
+ </ul>
+
+@return 此 annotation 的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.annotation.Annotation.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 annotation 的字符串表示形式。表示形式的细节取决于实现，但下面的情况是最常见的：
+ <pre>
+   &#064;com.acme.util.Name(first=Alfred, middle=E., last=Neuman)
+ </pre>
+
+@return   此 annotation 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<? extends java.lang.annotation.Annotation> java.lang.annotation.Annotation.annotationType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 annotation 的注释类型。
+
+<!-- END DATA -->

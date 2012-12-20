@@ -1,0 +1,520 @@
+<!-- BEGIN KEY -->
+public final class java.awt.AlphaComposite extends java.lang.Object implements java.awt.Composite
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>AlphaComposite</code> 类实现一些基本的 alpha 合成规则，将源色与目标色组合，在图形和图像中实现混合和透明效果。此类实现的特定规则是 T. Porter 和 T. Duff 合著的 &quot;Compositing Digital Images&quot;, SIGGRAPH 84, 253-259 中描述的 12 条基本规则集。本文档的其余部分假定读者熟悉上述论文中概括的定义和概念。
+
+ <p>
+此类扩展了 Porter 和 Duff 定义的方程，包含一个额外的因子。<code>AlphaComposite</code> 类的实例可以包含一个 alpha 值，在将该值用于混合方程之前，可以用它来修改不透明度和每个源像素的覆盖率。
+
+ <p>
+要重点注意的是，Porter 和 Duff 的论文中定义的方程完全是为颜色分量方面的操作定义的，这些颜色分量都要用它们对应的 alpha 分量预乘。因为 <code>ColorModel</code> 和 <code>Raster</code> 类允许以预乘和非预乘的方式存储像素数据，所以在将所有输入数据应用到方程之前，必须将它们标准化为预乘形式，并且在存储像素值之前，可能需要将所有结果都调整回目标所需的形式。
+
+ <p>
+还要注意的是，此类只定义了以纯数学方式组合颜色和 alpha 值的方程。方程的具体应用取决于从数据源中检索数据和将它们存储到其目标中的方式。有关更多信息，请参阅<a href="#caveats">实现警告事项</a>。
+
+ <p>
+Porter 和 Duff 的论文在混合方程的描述中使用了以下因子：
+
+ <blockquote>
+ <table summary="layout">
+<tr><th align=left>因子&nbsp;&nbsp;<th align=left>定义
+ <tr><td><em>A<sub>s</sub></em><td>源像素的 alpha 分量
+ <tr><td><em>C<sub>s</sub></em><td>源像素的预乘形式的颜色分量
+ <tr><td><em>A<sub>d</sub></em><td>目标像素的 alpha 分量
+ <tr><td><em>C<sub>d</sub></em><td>目标像素的预乘形式的颜色分量
+ <tr><td><em>F<sub>s</sub></em><td>用于输出的源像素的分数值
+ <tr><td><em>F<sub>d</sub></em><td>用于输出的目标像素的分数值
+ <tr><td><em>A<sub>r</sub></em><td>结果 alpha 分量
+ <tr><td><em>C<sub>r</sub></em><td>结果预乘形式的颜色分量
+ </table>
+ </blockquote>
+
+ <p>
+使用这些因子，Porter 和 Duff 定义了 12 种选择混合因子 <em>F<sub>s</sub></em> 和 <em>F<sub>d</sub></em> 的方法，从而产生了 12 种令人满意的可视效果。在对 12 个指定可视效果的静态字段的描述中，给出了具有确定 <em>F<sub>s</sub></em> 和 <em>F<sub>d</sub></em> 值的方程。例如，对 <a href="#SRC_OVER"><code>SRC_OVER</code></a> 的描述指定了 <em>F<sub>s</sub></em> = 1 和 <em>F<sub>d</sub></em> = (1-<em>A<sub>s</sub></em>)。一旦已知一组确定混合因子的方程，就可以使用以下方程组将它们应用于每个像素以生成结果：
+
+ <pre>
+ 	<em>F<sub>s</sub></em> = <em>f</em>(<em>A<sub>d</sub></em>)
+ 	<em>F<sub>d</sub></em> = <em>f</em>(<em>A<sub>s</sub></em>)
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*<em>F<sub>s</sub></em> + <em>A<sub>d</sub></em>*<em>F<sub>d</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*<em>F<sub>s</sub></em> + <em>C<sub>d</sub></em>*<em>F<sub>d</sub></em></pre>
+
+ <p>
+在我们对 Porter 和 Duff 论文混合方程的扩展中，用到了以下因子：
+
+ <blockquote>
+ <table summary="layout">
+<tr><th align=left>因子&#xA0;&#xA0;<th align=left>定义
+ <tr><td><em>C<sub>sr</sub></em><td>源像素的原始颜色分量之一
+ <tr><td><em>C<sub>dr</sub></em><td>目标像素的原始颜色分量之一
+ <tr><td><em>A<sub>ac</sub></em><td>取自 AlphaComposite 实例的&ldquo;额外的&rdquo;alpha 分量
+ <tr><td><em>A<sub>sr</sub></em><td>源像素的原始 alpha 分量
+ <tr><td><em>A<sub>dr</sub></em><td>目标像素的原始 alpha 分量
+ <tr><td><em>A<sub>df</sub></em><td>目标中存储的最终 alpha 分量
+ <tr><td><em>C<sub>df</sub></em><td>目标中存储的最终原始颜色分量
+ </table>
+</blockquote>
+
+<h3>准备输入</h3>
+
+ <p>
+<code>AlphaComposite</code> 类定义一个应用于源 alpha 的额外 alpha 值。应用此值就好像首先将隐式的 SRC_IN 规则应用于源像素（通过将原始源 alpha 和原始源色乘以 <code>AlphaComposite</code> 中的 alpha 值获得），而不是应用于具有指定 alpha 值的像素。这产生了以下方程，该方程生成 Porter 和 Duff 的混合方程中使用的 alpha 值：
+
+ <pre>
+ 	<em>A<sub>s</sub></em> = <em>A<sub>sr</sub></em> * <em>A<sub>ac</sub></em> </pre>
+
+所有这些原始源色分量都必须乘以 <code>AlphaComposite</code> 实例中的 alpha 值。此外，如果源色分量不是预乘形式的，那么还需要将颜色分量乘以源 alpha 值。因此，用来生成 Porter 和 Duff 方程源色分量的方程取决于源像素是否已经被预乘：
+
+ <pre>
+	<em>C<sub>s</sub></em> = <em>C<sub>sr</sub></em> * <em>A<sub>sr</sub></em> * <em>A<sub>ac</sub></em>     （如果源像素没有被预乘）
+	<em>C<sub>s</sub></em> = <em>C<sub>sr</sub></em> * <em>A<sub>ac</sub></em>           （如果源像素被预乘） </pre>
+
+无需对目标 alpha 进行调整：
+
+ <pre>
+ 	<em>A<sub>d</sub></em> = <em>A<sub>dr</sub></em> </pre>
+
+ <p>
+仅当目标色分量不是预乘形式时，才需要对它们进行调整：
+
+ <pre>
+	<em>C<sub>d</sub></em> = <em>C<sub>dr</sub></em> * <em>A<sub>d</sub></em>    （如果目标色分量没有被预乘）
+	<em>C<sub>d</sub></em> = <em>C<sub>dr</sub></em>         （如果目标色分量被预乘） </pre>
+
+<h3>应用混合方程</h3>
+
+ <p>
+调整后的 <em>A<sub>s</sub></em>、<em>A<sub>d</sub></em>、<em>C<sub>s</sub></em> 和 <em>C<sub>d</sub></em> 将用于标准的 Porter 和 Duff 方程，以计算混合因子 <em>F<sub>s</sub></em> 和 <em>F<sub>d</sub></em>，然后计算得到的预乘分量 <em>A<sub>r</sub></em> 和 <em>C<sub>r</sub></em>。
+
+ <p>
+<h3>准备结果</h3>
+
+ <p>
+仅当结果要存储回保存未预乘数据的目标缓冲区时，才需要使用以下方程调整结果：
+
+ <pre>
+ 	<em>A<sub>df</sub></em> = <em>A<sub>r</sub></em>
+	<em>C<sub>df</sub></em> = <em>C<sub>r</sub></em>                 （如果目标数据被预乘）
+	<em>C<sub>df</sub></em> = <em>C<sub>r</sub></em> / <em>A<sub>r</sub></em>            （如果目标数据没有被预乘） </pre>
+
+注意，在所得 alpha 为零时除法是不明确的，所以在这种情况下会忽略除法以避免&ldquo;除以零&rdquo;的情况，此时颜色分量都将为零。
+
+ <p>
+<h3>性能考虑事项</h3>
+
+ <p>
+出于性能方面的原因，传递给 {@link CompositeContext} 对象（由 <code>AlphaComposite</code> 类创建） <code>compose</code> 方法的 <code>Raster</code> 对象最好有预乘数据。不过，如果源 <code>Raster</code> 或目标 <code>Raster</code> 没有被预乘，那么可以在合成操作之前或之后执行适当的转换。
+
+<h3><a name="caveats">实现警告事项</a></h3>
+
+ <ul>
+ <li>
+许多源图像，比如 <code>BufferedImage</code> 类中列出的一些不透明图像类型，没有为它们的像素存储 alpha 值。这类源图像为它们所有的像素提供了值为 1.0 的 alpha 值。
+
+ <p>
+ <li>
+许多目标也没有地方存储 alpha 值（这些值是此类执行混合计算的结果）。这类目标会隐式丢弃此类产生的 alpha 值。建议这类目标将它们存储的颜色值作为未预乘的值对待，并在存储颜色值和丢弃 alpha 值之前，将得到的颜色值除以得到的 alpha 值。
+
+ <p>
+ <li>
+结果的精度取决于将像素存储到目标中的方式。对于一连串十二种合成操作中的少数操作，将为每种颜色和 alpha 分量提供至少 8 个存储位的图像格式作为目标无论如何都应该足够了。在舍入误差支配结果之前，为每个分量提供少于 8 个存储位的图像格式仅限用于一或两个合成操作。对于任何半透明混合的类型而言，不单独存储颜色分量的图像格式不是一个好的候选方式。例如，不应将 <code>BufferedImage.TYPE_BYTE_INDEXED</code> 用作混合操作的目标，因为需要从限定的调色板选择像素，以匹配混合方程的结果，所以每个操作都可能引入大量错误。
+
+ <p>
+ <li>
+几乎所有的格式都将像素存储为离散整数，而不是将它们存储为上述方程中使用的浮点值。该实现可以将整数像素值缩放成范围在 0.0 到 1.0 之间的浮点值，或者使用稍作修改的方程，完全在整数域内操作，从而生成与上述方程类似的结果。
+
+ <p>
+通常，整数值与浮点值存在某种相关性：整数 0 等于浮点值 0.0，整数 2^<em>n</em>-1（其中 <em>n</em> 是表示形式中的位数）等于 1.0。对于 8 位的表示形式，这意味着 0x00 表示 0.0，0xff 表示 1.0。
+
+ <p>
+ <li>
+内部实现可能近似于某些方程，它们也可以消除一些步骤，以避免不必要的操作。例如，可以考虑一个离散整数图像，它带有未预乘的 alpha 值，并为存储每个分量使用了 8 个位。接近透明的暗红色存储的值可能是：
+
+ <pre>
+    (A, R, G, B) = (0x01, 0xb0, 0x00, 0x00)</pre>
+
+ <p>
+如果正在使用整数运算，并且此值在 <a href="#SRC"><code>SRC</code></a> 模式下没有与任何 alpha 值合成，则该运算将指示此运算的结果为（整数格式）：
+
+ <pre>
+    (A, R, G, B) = (0x01, 0x01, 0x00, 0x00)</pre>
+
+ <p>
+注意中间的值，它总是以已预乘的形式出现，并且只允许整数 red 分量为 0x00 或 0x01。当试图将此结果存储回未预乘的目标中时，用 alpha 值相除之后，对于未预乘的 red 值，可进行的选择很少。在这种情况下，在整数空间内执行运算（没有快捷方式）的实现最后可能提供以下最终像素值：
+
+ <pre>
+    (A, R, G, B) = (0x01, 0xff, 0x00, 0x00)</pre>
+
+ <p>
+（注意，0x01 除以 0x01 得到的是 1.0，等于 8 位存储格式的值 0xff。）
+
+ <p>
+另一方面，使用浮点运算的实现可以生成更精确的结果，并以返回原始像素值结束，该值有可能带有少量的舍入误差。或者，使用整数运算的实现可能决定是否可以将未涉及的像素传输给目标，完全避免所有运算。因为如果在浮点空间内执行运算，方程可简单归结为颜色值上的一个虚拟 NOP。
+
+ <p>
+这些实现都试图遵守相同的方程，但使用经过权衡的不同整数和浮点运算，并使用部分的或全部的方程。为了说明这些不同之处，可能最好只期望获得已预乘形式的结果，以在实现和图像格式之间进行匹配。在这种情况下，以预乘形式表示的两种答案将等同于：
+
+ <pre>
+    (A, R, G, B) = (0x01, 0x01, 0x00, 0x00)</pre>
+
+ <p>
+并且它们将是完全匹配的。
+
+ <p>
+ <li>
+因为那些通过简化方程使计算更有效的技术，在非预乘的目标上遇到值为 0.0 的结果 alpha 值时，一些实现的执行可能会有所不同。注意，如果分母 (alpha) 为 0，则在 SRC 规则下移除除以 alpha 这一简化操作技术上是不合法的。但是，因为在以预乘形式查看时只期望结果是精确的，所以，结果为 0 的 alpha 值呈现的实质上是所得到的不相关颜色分量，因此，在这种情况下，具体的行为应该是无法预料的。
+ </ul>
+
+@see Composite
+@see CompositeContext
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.CLEAR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标色和目标 alpha 值都被清除（Porter-Duff Clear 规则）。源色和目标色都不被用作输入。
+<p>
+<em>F<sub>s</sub></em> = 0 和 <em>F<sub>d</sub></em> = 0，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = 0
+ 	<em>C<sub>r</sub></em> = 0
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.SRC
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将源色复制到目标色（Porter-Duff Source 规则）。目标色不被用作输入。
+<p>
+<em>F<sub>s</sub></em> = 1 和 <em>F<sub>d</sub></em> = 0，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.DST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标色不变（Porter-Duff Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = 0 和 <em>F<sub>d</sub></em> = 1，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>d</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>d</sub></em>
+</pre>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.SRC_OVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在目标色之上合成源色（Porter-Duff Source Over Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = 1 和 <em>F<sub>d</sub></em> = (1-<em>A<sub>s</sub></em>)，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em> + <em>A<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em> + <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.DST_OVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在源色之上合成目标色，产生的结果将替代目标色（Porter-Duff Destination Over Source 规则）。
+<p>
+<em>F<sub>s</sub></em> = (1-<em>A<sub>d</sub></em>) 和 <em>F<sub>d</sub></em> = 1，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>A<sub>d</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>C<sub>d</sub></em>
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.SRC_IN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标色中的源色部分将替换目标色（Porter-Duff Source In Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = <em>A<sub>d</sub></em> 和 <em>F<sub>d</sub></em> = 0，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*<em>A<sub>d</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*<em>A<sub>d</sub></em>
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.DST_IN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+源色中的目标色部分将替换目标色（Porter-Duff Destination In Source 规则）。
+<p>
+<em>F<sub>s</sub></em> = 0 和 <em>F<sub>d</sub></em> = <em>A<sub>s</sub></em>，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>d</sub></em>*<em>A<sub>s</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>d</sub></em>*<em>A<sub>s</sub></em>
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.SRC_OUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标色以外的源色部分将替换目标色（Porter-Duff Source Held Out By Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = (1-<em>A<sub>d</sub></em>) 和 <em>F<sub>d</sub></em> = 0，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>)
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>)
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.DST_OUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+源色以外的目标色部分将替换目标色（Porter-Duff Destination Held Out By Source 规则）。
+<p>
+<em>F<sub>s</sub></em> = 0 和 <em>F<sub>d</sub></em> = (1-<em>A<sub>s</sub></em>)，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+ 	<em>C<sub>r</sub></em> = <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.SRC_ATOP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标色中的源色部分将被合成到目标色中（Porter-Duff Source Atop Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = <em>A<sub>d</sub></em> 和 <em>F<sub>d</sub></em> = (1-<em>A<sub>s</sub></em>)，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*<em>A<sub>d</sub></em> + <em>A<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>) = <em>A<sub>d</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*<em>A<sub>d</sub></em> + <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+</pre>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.DST_ATOP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在源色之上合成源色中的目标色部分，并将替换目标色（Porter-Duff Destination Atop Source 规则）。
+<p>
+<em>F<sub>s</sub></em> = (1-<em>A<sub>d</sub></em>) 和 <em>F<sub>d</sub></em> = <em>A<sub>s</sub></em>，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>A<sub>d</sub></em>*<em>A<sub>s</sub></em> = <em>A<sub>s</sub></em>
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>C<sub>d</sub></em>*<em>A<sub>s</sub></em>
+</pre>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.AlphaComposite.XOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将目标色之外的源色部分与源色之外的目标色部分结合到一起（Porter-Duff Source Xor Destination 规则）。
+<p>
+<em>F<sub>s</sub></em> = (1-<em>A<sub>d</sub></em>) 和 <em>F<sub>d</sub></em> = (1-<em>A<sub>s</sub></em>)，因此：
+<pre>
+ 	<em>A<sub>r</sub></em> = <em>A<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>A<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+ 	<em>C<sub>r</sub></em> = <em>C<sub>s</sub></em>*(1-<em>A<sub>d</sub></em>) + <em>C<sub>d</sub></em>*(1-<em>A<sub>s</sub></em>)
+</pre>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.Clear
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 CLEAR 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #CLEAR
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.Src
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 SRC 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #SRC
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.Dst
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 DST 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #DST
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.SrcOver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 SRC_OVER 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #SRC_OVER
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.DstOver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 DST_OVER 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #DST_OVER
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.SrcIn
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 SRC_IN 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #SRC_IN
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.DstIn
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 DST_IN 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #DST_IN
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.SrcOut
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 SRC_OUT 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #SRC_OUT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.DstOut
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 DST_OUT 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #DST_OUT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.SrcAtop
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 SRC_ATOP 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #SRC_ATOP
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.DstAtop
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 DST_ATOP 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #DST_ATOP
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.AlphaComposite java.awt.AlphaComposite.Xor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不透明 XOR 规则的 <code>AlphaComposite</code> 对象，具有 1.0f 的 alpha 值。
+@see #XOR
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.AlphaComposite java.awt.AlphaComposite.getInstance(int rule)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定规则的 <code>AlphaComposite</code> 对象。
+@param rule 合成规则
+@throws IllegalArgumentException 如果 <code>rule</code> 不是以下规则之一：{@link #CLEAR}、{@link #SRC}、{@link #DST}、{@link #SRC_OVER}、{@link #DST_OVER}、{@link #SRC_IN}、{@link #DST_IN}、{@link #SRC_OUT}、{@link #DST_OUT}、{@link #SRC_ATOP}、{@link #DST_ATOP} 或 {@link #XOR}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.AlphaComposite java.awt.AlphaComposite.getInstance(int rule, float alpha)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>AlphaComposite</code> 对象，它具有指定的规则和用来乘源色 alpha 值的常量 alpha 值。在将源色与目标色合成前，要将源色乘以指定的 alpha 值。
+@param rule 合成规则
+@param alpha 将乘源色的 alpha 值的常量 alpha 值。<code>alpha</code> 必须是范围 [0.0,&nbsp;1.0] 之内（包含边界值）的一个浮点数字。
+@throws IllegalArgumentException 如果 <code>alpha</code> 小于 0.0 或大于 1.0，或者 <code>rule</code> 是以下规则之一：{@link #CLEAR}、{@link #SRC}、{@link #DST}、{@link #SRC_OVER}、{@link #DST_OVER}、{@link #SRC_IN}、{@link #DST_IN}、{@link #SRC_OUT}、{@link #DST_OUT}、{@link #SRC_ATOP}、{@link #DST_ATOP} 或 {@link #XOR}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.CompositeContext java.awt.AlphaComposite.createContext(ColorModel srcColorModel, ColorModel dstColorModel, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为合成操作创建一个上下文。上下文中包括执行合成操作过程中使用的状态。
+@param srcColorModel  源色的 {@link ColorModel}
+@param dstColorModel  目标色的 <code>ColorModel</code>
+@return 用来执行合成操作的 <code>CompositeContext</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.AlphaComposite.getAlpha()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>AlphaComposite</code> 的 alpha 值。如果此 <code>AlphaComposite</code> 没有 alpha 值，则返回 1.0。
+@return 此 <code>AlphaComposite</code> 的 alpha 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.AlphaComposite.getRule()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>AlphaComposite</code> 的合成规则。
+@return 此 <code>AlphaComposite</code> 的合成规则。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.AlphaComposite java.awt.AlphaComposite.derive(int rule)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个类似的 <code>AlphaComposite</code> 对象，该对象使用指定的复合规则。如果此对象已经使用指定的复合规则，则返回此对象。
+ @return 派生于使用指定复合规则的对象的 <code>AlphaComposite</code> 对象。
+ @param rule 复合规则
+ @throws IllegalArgumentException 如果 <code>rule</code> 不是以下规则之一： 
+       {@link #CLEAR}、{@link #SRC}、{@link #DST}、{@link #SRC_OVER}、{@link #DST_OVER}、{@link #SRC_IN}、{@link #DST_IN}、{@link #SRC_OUT}、{@link #DST_OUT}、{@link #SRC_ATOP}、{@link #DST_ATOP} 或 {@link #XOR}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.AlphaComposite java.awt.AlphaComposite.derive(float alpha)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个类似的 <code>AlphaComposite</code> 对象，该对象使用指定的 alpha 值。如果此对象已经具有指定的 alpha 值，则返回此对象。
+ @return 派生于使用指定 alpha 值的对象的 <code>AlphaComposite</code> 对象。
+ @param alpha 常量 alpha，将乘以源的 alpha 值。<code>alpha</code> 必须是闭区间 [0.0,&#xA0;1.0] 中的一个浮点数字。
+ @throws IllegalArgumentException 如果 <code>alpha</code> 小于 0.0 或大于 1.0
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.AlphaComposite.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此合成的哈希码。
+@return 此合成的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.AlphaComposite.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定的对象是否等于此 <code>AlphaComposite</code>。
+ <p>
+当且仅当参数不为 <code>null</code>，并且是一个与此对象具有相同组合规则和 alpha 值的 <code>AlphaComposite</code> 对象时，结果才为 <code>true</code>。
+
+@param obj 要测试相等性的 <code>Object</code>
+@return 如果 <code>obj</code> 等于此 <code>AlphaComposite</code>，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->

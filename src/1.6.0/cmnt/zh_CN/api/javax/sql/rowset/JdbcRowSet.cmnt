@@ -1,0 +1,146 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.JdbcRowSet extends javax.sql.RowSet, javax.sql.rowset.Joinable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有标准 <code>JdbcRowSet</code> 实现都必须实现的标准接口。
+
+<h3>1.0 概述</h3>
+<code>ResultSet</code> 对象的包装器使得将该结果集用作 JavaBeans<sup><font size=-2>TM</font></sup> 组件成为可能。因此，<code>JdbcRowSet</code> 对象可以是某个 Beans，是可用于组成应用程序的工具。因为 <code>JdbcRowSet</code> 是一个连接的 rowset，也就是说，它使用启用 JDBC 技术的驱动程序来维持它与数据库的连接，所以它也能有效地使驱动程序成为 JavaBeans 组件。
+ <P>
+因为它始终连接到其数据库，所以 <code>JdbcRowSet</code> 的实例可以简单地采用在其上进行调用的方法，并依次对其 <code>ResultSet</code> 对象调用这些方法。因此，结果集可以是（举例来说）Swing 应用程序中的一个组件。
+ <P>
+<code>JdbcRowSet</code> 对象的另一个优点是可使用它让 <code>ResultSet</code> 对象可滚动和可更新。默认情况下，所有 <code>RowSet</code> 对象都是可滚动的和可更新的。如果使用的驱动程序和数据库不支持结果集的滚动和/或更新，则应用程序可以组装一个带 <code>ResultSet</code> 对象数据的 <code>JdbcRowSet</code> 对象，然后在该 <code>JdbcRowSet</code> 对象上操作，就好像它是 <code>ResultSet</code> 对象一样。   
+ <P>
+<h3>2.0 创建 <code>JdbcRowSet</code> 对象</h3>
+<code>JdbcRowSet</code> 接口的参考实现 <code>JdbcRowSetImpl</code> 提供了默认构造方法的实现。使用默认值初始化新的实例，可根据需要使用新值设置这些默认值。在调用新实例的 <code>execute</code> 方法之前，它实际上无法真正发挥作用。通常，此方法执行以下操作：
+ <UL>
+<LI> 建立与数据库的连接
+<LI> 创建一个 <code>PreparedStatement</code> 对象并设置其所有占位符参数
+<LI> 执行语句来创建 <code>ResultSet</code> 对象
+ </UL>
+如果 <code>execute</code> 方法执行成功，则使用以下内容设置适当的私有 <code>JdbcRowSet</code> 字段：
+ <UL>
+<LI> <code>Connection</code> 对象 -- rowset 和数据库之间的连接
+<LI> <code>PreparedStatement</code> 对象 -- 生成结果集的查询
+<LI> <code>ResultSet</code> 对象 -- rowset 的命令所生成的和正在生成的结果集，实际上是一个 JavaBeans 组件       
+ </UL>
+如果尚未设置这些字段，则意味着尚未成功执行 <code>execute</code> 方法，此时除 <code>execute</code> 和 <code>close</code> 以外，不能在该 rowset 上调用任何方法。调用所有其他公共方法都会抛出异常。
+ <P>
+但是在调用 <code>execute</code> 方法之前，必须设置那些建立连接所需的命令和属性。以下代码片断创建了一个 <code>JdbcRowSetImpl</code> 对象、设置命令连接属性、设置占位符参数，然后调用方法 <code>execute</code>。
+ <PRE>
+     JdbcRowSetImpl jrs = new JdbcRowSetImpl();
+     jrs.setCommand(&quot;SELECT * FROM TITLES WHERE TYPE = ?&quot;);
+     jrs.setURL(&quot;jdbc:myDriver:myAttribute&quot;);
+     jrs.setUsername(&quot;cervantes&quot;);
+     jrs.setPassword(&quot;sancho&quot;);
+     jrs.setString(1, &quot;BIOGRAPHY&quot;);
+     jrs.execute();
+ </PRE>
+变量 <code>jrs</code> 现在表示一个 <code>JdbcRowSetImpl</code> 实例，它是 <code>ResultSet</code> 对象的一个瘦包装器，而该对象包含了表 <code>TITLES</code> 中书籍类型为传记的所有行。此时，在 <code>jrs</code> 上调用的操作将影响结果集中的各行，该结果集实际上是一个 JavaBeans 组件。
+ <P>
+<code>JdbcRowSet</code> 参考实现中的 <code>RowSet</code> 方法 <code>execute</code> 的实现与 <code>CachedRowSet</code><sup><font size=-2>TM</font></sup> 参考实现中的不同，从而导致对已连接和非连接 <code>RowSet</code> 对象的不同要求。
+ <p>
+
+@author Jonathan Bruce
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JdbcRowSet.getShowDeleted() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个 <code>boolean</code> 值，该值指示标记为删除的行是否会出现在当前行集合中。如果返回 <code>true</code>，则已删除行与当前行一起可见。如果返回 <code>false</code>，则已删除行与当前行集合一起不可见。默认值为 <code>false</code>。
+ <P>
+出于安全考虑或为了某些部署情况，标准的 rowset 实现可以选择限制此行为。已删除行的可见性是实现定义的，并不表示标准行为。          
+ <P>
+注：允许保持已删除行可见会使某些标准 JDBC <code>RowSet</code> 实现方法的行为变得复杂。但是，多数 rowset 用户可以简单地忽略此额外细节，因为只有极其特殊的应用程序才会利用此功能。
+
+@return 如果已删除行是可见的，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果 rowset 实现无法确定是否使标记为删除的行保持可见
+@see #setShowDeleted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JdbcRowSet.setShowDeleted(boolean b) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性 <code>showDeleted</code> 设置为给定的 <code>boolean</code> 值。此属性确定标记为删除的行是否继续出现在当前行集合中。如果将值设置为 <code>true</code>，则已删除行与当前行集合一起立即可见。如果将值设置为 <code>false</code>，则已删除行与当前行集合一起被设置为不可见。
+ <P>
+出于安全考虑或为了某些部署情况，标准的 rowset 实现可以选择限制此行为。这是由实现定义的，并不表示标准行为。
+
+@param b 如果应该显示已删除行，则为 <code>true</code>；否则为 <code>false</code>
+@exception SQLException 如果 rowset 实现无法重置已删除行是否应该可见
+@see #getShowDeleted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.RowSetWarning javax.sql.rowset.JdbcRowSet.getRowSetWarnings() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>JdbcRowSet</code> 对象上的调用报告的第一个警告。如果此 <code>JdbcRowSet</code> 对象上报告了第二个警告，则将它链接到第一个警告，并可通过在第一个警告上调用方法 <code>RowSetWarning.getNextWarning</code> 来获取该警告。此 <code>JdbcRowSet</code> 对象上的后续警告会被链接到方法 <code>RowSetWarning.getNextWarning</code> 返回的 <code>RowSetWarning</code> 对象。
+
+每次读取新行时，都会自动清除警告链。不可以在已经关闭的 <code>RowSet</code> 对象上调用此方法；这样做将导致抛出 <code>SQLException</code>。
+ <P>
+因为 <code>JdbcRowSet</code> 对象始终连接到其数据源，所以该对象可以依靠现有的活动 <code>Statement</code>、<code>Connection</code> 和 <code>ResultSet</code> 实例。这意味着应用程序可以通过调用 <code>getNextWarning</code> 方法来获得所提供的附加 <code>SQLWarning</code> 通知。非连接 <code>Rowset</code> 对象（如 <code>CachedRowSet</code> 对象）不必访问这些 <code>getNextWarning</code> 方法。 
+ 
+@return 此 <code>JdbcRowSet</code> 对象上报告第一个 <code>RowSetWarning</code> 对象，如果没有则为 <code>null</code>
+@throws SQLException 如果在已关闭的 <code>JdbcRowSet</code> 对象上调用此方法
+@see RowSetWarning
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JdbcRowSet.commit() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>JdbcRowSet</code> 都包含一个取自 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递到其构造方法的 JDBC 属性。此方法包装 <code>Connection</code> 提交方法，以允许灵活的自动提交或非自动提交事务控制支持。
+ <p>
+使自从上一次提交/回滚以来进行的所有更改成为持久更改，并释放此 Connection 对象当前保存的所有数据库锁定。此方法应该只在已禁用自动提交模式时使用。
+
+@throws SQLException 如果发生数据库访问错误或者此 <code>JdbcRowSet</code> 内的 Connection 对象处于自动提交模式下
+@see java.sql.Connection#setAutoCommit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JdbcRowSet.getAutoCommit() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+每个 <code>JdbcRowSet</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。此方法包装 <code>Connection</code> 的 <code>getAutoCommit</code> 方法，以允许应用程序确定 <code>JdbcRowSet</code> 的事务行为。
+ <p>
+将此 connection 的自动提交模式设置为给定的状态。如果 connection 处于自动提交模式下，则将执行其所有 SQL 语句，并将这些语句作为单独的事务提交。否则，其 SQL 语句将成组地进入通过调用 commit 方法或 rollback 方法终止的事务中。默认情况下，新的 connection 处于自动提交模式下。
+
+@throws SQLException 如果发生数据库访问错误
+@see java.sql.Connection#getAutoCommit()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JdbcRowSet.setAutoCommit(boolean autoCommit) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>JdbcRowSet</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。此方法包装 <code>Connection</code> 的 <code>getAutoCommit</code> 方法，以允许应用程序设置 <code>JdbcRowSet</code> 的事务行为。
+ <p>
+设置此 <code>Connection</code> 对象的当前自动提交模式。
+
+@throws SQLException 如果发生数据库访问错误
+@see java.sql.Connection#setAutoCommit(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JdbcRowSet.rollback() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>JdbcRowSet</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。取消在当前事务中进行的所有更改，并释放此 <code>Connection</code> 对象当前保存的所有数据库锁定。此方法应该只在已禁用自动提交模式时使用。
+ 
+@throws SQLException 如果发生数据库访问错误或者此 <code>JdbcRowSet</code> 内的 <code>Connection</code> 对象处于自动提交模式下。
+@see #rollback(Savepoint)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JdbcRowSet.rollback(Savepoint s) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>JdbcRowSet</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。取消在当前事务中进行的所有更改，一直到最后设置的保存点，并释放此 <code>Connection</code> 对象当前保存的所有数据库锁定。此方法应该只在已禁用自动提交模式时使用。
+ 
+@throws SQLException 如果发生数据库访问错误或者此 <code>JdbcRowSet</code> 内的 <code>Connection</code> 对象处于自动提交模式下。
+@see #rollback
+
+<!-- END DATA -->

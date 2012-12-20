@@ -1,0 +1,146 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.ColorConvertOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类对源图像中的数据执行逐像素的颜色转换。得到的颜色值可以扩展到目标图像的精度。颜色转换可以通过 ColorSpace 对象的数组或 ICC_Profile 对象的数组指定。
+ <p>
+如果源是预乘了 alpha 的 BufferedImage，则在颜色转换前要将颜色分量除以 alpha 分量。如果目标是预乘了 alpha 的 BufferedImage，则要在颜色转换后将颜色分量乘以 alpha 分量。Raster 被认为是没有 alpha 通道的，也即所有 band 都是颜色 band。
+ <p>
+如果 RenderingHints 对象是在构造方法中指定的，则可以使用颜色呈现提示和抖动提示来控制颜色转换。
+ <p>
+注意，Source 和 Destination 可以是同一个对象。
+ <p>
+
+@see java.awt.RenderingHints#KEY_COLOR_RENDERING
+@see java.awt.RenderingHints#KEY_DITHERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorConvertOp(RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造从源颜色空间到目标颜色空间转换的新 ColorConvertOp。RenderingHints 参数可以为 null。此操作只能与 BufferedImage 一起使用，并将直接从源图像的 ColorSpace 转换为目标图像的 ColorSpace。过滤器方法的目标参数不能指定为 null。
+@param hints 用来控制颜色转换的 <code>RenderingHints</code> 对象，或 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorConvertOp(ColorSpace cspace, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 ColorSpace 对象构造新的 ColorConvertOp。RenderingHints 参数可以为 null。此操作只能与 BufferedImages 一起使用，并且在目标参数为 null 的情况下调用 {@link #filter(BufferedImage, BufferedImage) filter} 方法时特别有用。在这种情况下，ColorSpace 定义由过滤器方法创建的目标的目标颜色空间。否则，ColorSpace 将定义一个中间空间，源转换为目标空间之前要先转换为这个中间空间。
+@param cspace 定义目标 <code>ColorSpace</code> 或中间 <code>ColorSpace</code>
+@param hints 用来控制颜色转换的 <code>RenderingHints</code> 对象，或 <code>null</code>
+@throws NullPointerException 如果 cspace 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorConvertOp(ColorSpace srcCspace, ColorSpace dstCspace, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据两个 ColorSpace 对象构造新的 ColorConvertOp。RenderingHints 参数可以为 null。此操作在调用 Raster 的过滤方法时特别有用，在这种情况下，这两个 ColorSpace 将定义对 Raster 执行的操作。在这种情况下，源 Raster 中的 band 数量必须与 srcCspace 中分量的数量匹配，并且目标 Raster 中的 band 数量必须与 dstCspace 中分量的数量匹配。对于 BufferedImages，这两个 ColorSpace 将定义一个中间空间，源在转换为目标空间之前要先转换为中间空间。
+@param srcCspace 源 <code>ColorSpace</code>
+@param dstCspace 目标 <code>ColorSpace</code>
+@param hints 用于控制颜色转换的 <code>RenderingHints</code> 对象，或 <code>null</code>
+@throws NullPointerException 如果 srcCspace 或 dstCspace 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorConvertOp(java.awt.color.ICC_Profile[] profiles, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 ICC_Profiles 的数组构造新的 ColorConvertOp。RenderingHints 参数可以为 null。配置文件序列可以包括表示颜色空间的配置文件、表示效果的配置文件等。如果整个序列不表示定义良好的颜色转换，则抛出异常。
+<p>对于 BufferedImages，如果源 BufferedImage 的 ColorSpace 与数组中的第一个配置文件的要求不匹配，则首次转换要转换到适当的 ColorSpace。如果目标 BufferedImage 的 ColorSpace 不能满足数组中的最后一个配置文件的要求，则最后一次转换要转换到目标的 ColorSpace。
+<p>对于 Raster，源 Raster 中的 band 数量必须与数组中第一个配置文件的要求匹配，并且目标 Raster 中的 band 数量必须与数组中最后一个配置文件的要求匹配。该数组至少有两个元素，否则调用 Raster 的过滤方法将抛出 IllegalArgumentException。
+@param profiles <code>ICC_Profile</code> 对象的数组
+@param hints 用于控制颜色转换的 <code>RenderingHints</code> 对象，或 <code>null</code>
+@exception IllegalArgumentException 在配置文件序列未指定定义良好的颜色转换时
+@exception NullPointerException 如果配置文件为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.color.ICC_Profile[] java.awt.image.ColorConvertOp.getICC_Profiles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于构造此 ColorConvertOp 的 ICC_Profiles 的数组。如果 ColorConvertOp 不是通过此类数组构造的，则返回 null。
+@return 此 <code>ColorConvertOp</code> 的 <code>ICC_Profile</code> 对象的数组，或 <code>null</code> 如果此 <code>ColorConvertOp</code> 不是通过 <code>ICC_Profile</code> 对象构造的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.ColorConvertOp.filter(BufferedImage src, BufferedImage dest)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对源 BufferedImage 进行颜色转换。如果目标图像为 null，则根据适当的 ColorModel 创建 BufferedImage。
+@param src 要转换的源 <code>BufferedImage</code>
+@param dest 目标 <code>BufferedImage</code>，或 <code>null</code>
+@return 通过 <code>src</code> 转换的 <code>dest</code> 颜色，或已转换的新 <code>BufferedImage</code>（如果 <code>dest</code> 为 <code>null</code>）
+@exception IllegalArgumentException 如果 dest 为 null，并且此操作是使用因操作定义得不好而只采用 RenderingHints 参数的构造方法构造的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.ColorConvertOp.filter(Raster src, WritableRaster dest)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对源 Raster 中的图像数据进行颜色转换。如果目标 Raster 为 null，则创建新 Raster。源和目标 Raster 中的 band 数量必须满足上述要求。用于创建此 ColorConvertOp 的构造方法必须提供足够的可用来定义源和目标颜色空间的信息。请参阅上文。否则，将抛出异常。
+@param src 要转换的源 <code>Raster</code>
+@param dest 目标 <code>WritableRaster</code>，或 <code>null</code>
+@return 通过 <code>src</code> 转换的 <code>dest</code> 颜色，或已转换的新 <code>WritableRaster</code>（如果 <code>dest</code> 为 <code>null</code>）
+@exception IllegalArgumentException 如果源或目标 band 数量不正确，或未定义源或目标颜色空间，或此操作是通过只应用于 BufferedImages 上的操作的构造方法之一构造的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.ColorConvertOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定源的目标边界框。注意，此框与源的边界框相同。
+@param src 源 <code>BufferedImage</code>
+@return 在指定 <code>src</code> 的情况下返回目标边界框 <code>Rectangle2D</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.ColorConvertOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定源的目标边界框。注意，此框与源的边界框相同。
+@param src 源 <code>Raster</code>
+@return 在指定 <code>src</code> 的情况下返回目标边界框 <code>Rectangle2D</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.ColorConvertOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建给定源的具有正确大小和 band 数量的归零目标图像。
+@param src       进行过滤操作的源图像。
+@param destCM    该目标的 ColorModel。如果为 null，则使用适当的 ColorModel。
+@return 指定 <code>src</code> 中具有正确 band 大小和数量的 <code>BufferedImage</code>。
+@throws IllegalArgumentException 如果 <code>destCM</code> 为 <code>null</code>，并且此 <code>ColorConvertOp</code> 不是通过针对目标定义的任何 <code>ICC_Profile</code> 或 <code>ColorSpace</code> 创建的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.ColorConvertOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建给定源且具有正确 band 大小和数量的归零目标 Raster。
+@param src 指定 <code>Raster</code>
+@return 指定 <code>src</code> 中具有正确 band 大小和数量的 <code>WritableRaster</code>
+@throws IllegalArgumentException 如果此 <code>ColorConvertOp</code> 不是根据足以定义 <code>dst</code> 和 <code>src</code> 颜色空间的信息创建的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.ColorConvertOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回源中给定点的目标点的位置。如果 <code>dstPt</code> 为非 null，则使用它存储返回值。注意，对于此类，目标点将与源点相同。
+@param srcPt 指定源 <code>Point2D</code>
+@param dstPt 目标 <code>Point2D</code>
+@return 将其位置设置为与 <code>srcPt</code> 相同之后返回 <code>dstPt</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.ColorConvertOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此操作使用的呈现提示。
+@return 此 <code>ColorConvertOp</code> 的 <code>RenderingHints</code> 对象
+
+<!-- END DATA -->

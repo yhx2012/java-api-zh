@@ -1,0 +1,502 @@
+<!-- BEGIN KEY -->
+public class java.io.ObjectInputStream extends java.io.InputStream implements java.io.ObjectInput, java.io.ObjectStreamConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ObjectInputStream 对以前使用 ObjectOutputStream 写入的基本数据和对象进行反序列化。
+ 
+<p>ObjectOutputStream 和 ObjectInputStream 分别与 FileOutputStream 和 FileInputStream 一起使用时，可以为应用程序提供对对象图形的持久存储。ObjectInputStream 用于恢复那些以前序列化的对象。其他用途包括使用套接字流在主机之间传递对象，或者用于编组和解组远程通信系统中的实参和形参。
+
+<p>ObjectInputStream 确保从流创建的图形中所有对象的类型与 Java 虚拟机中显示的类相匹配。使用标准机制按需加载类。
+
+<p>只有支持 java.io.Serializable 或 java.io.Externalizable 接口的对象才能从流读取。
+
+<p><code>readObject</code> 方法用于从流读取对象。应该使用 Java 的安全强制转换来获取所需的类型。在 Java 中，字符串和数组都是对象，所以在序列化期间将其视为对象。读取时，需要将其强制转换为期望的类型。
+
+<p>可以使用 DataInput 上的适当方法从流读取基本数据类型。
+ 
+<p>默认情况下，对象的反序列化机制会将每个字段的内容恢复为写入时它所具有的值和类型。反序列化进程将忽略声明为瞬态或静态的字段。对其他对象的引用使得根据需要从流中读取这些对象。使用引用共享机制能够正确地恢复对象的图形。反序列化时始终分配新对象，这样可以避免现有对象被重写。
+
+<p>读取对象类似于运行新对象的构造方法。为对象分配内存并将其初始化为零 (NULL)。为不可序列化类调用无参数构造方法，然后从以最接近 java.lang.object 的可序列化类开始和以对象的最特定类结束的流恢复可序列化类的字段。
+
+<p>例如，要从由 ObjectOutputStream 中的示例写入的流读取：<br>
+ <pre>
+	FileInputStream fis = new FileInputStream(&quot;t.tmp&quot;);
+	ObjectInputStream ois = new ObjectInputStream(fis);
+
+	int i = ois.readInt();
+	String today = (String) ois.readObject();
+	Date date = (Date) ois.readObject();
+
+	ois.close();
+ </pre>
+
+<p>类控制实现 java.io.Serializable 或 java.io.Externalizable 接口时的序列化方式。
+
+<p>实现 Serializable 接口允许对象序列化，以保存和恢复对象的全部状态，并且允许类在写入流时的状态和从流读取时的状态之间变化。它自动遍历对象之间的引用，保存和恢复全部图形。
+
+<p>在序列化和反序列化进程中需要特殊处理的 Serializable 类应该实现以下方法：<p>
+ 
+ <pre>
+ private void writeObject(java.io.ObjectOutputStream stream)
+     throws IOException;
+ private void readObject(java.io.ObjectInputStream stream)
+     throws IOException, ClassNotFoundException; 
+ private void readObjectNoData() 
+     throws ObjectStreamException;
+ </pre>
+
+<p>readObject 方法负责使用通过对应的 writeObject 方法写入流的数据，为特定类读取和恢复对象的状态。该方法本身的状态，不管是属于其超类还是属于其子类，都没有关系。恢复状态的方法是，从个别字段的 ObjectInputStream 读取数据并将其分配给对象的适当字段。DataInput 支持读取基本数据类型。
+
+<p>尝试读取由对应的 writeObject 方法写入的超出自定义数据边界的对象数据将导致抛出 OptionalDataException（eof 字段值为 true）。超出已分配数据末尾的非对象读取以指示流末尾的方式反映数据结束：按位读取与字节读取或字节数读取一样，将返回 -1，基元读取将抛出 EOFException。如果不存在对应的 writeObject 方法，则默认的序列化数据的末尾标记已分配数据的末尾。
+
+<p>从 readExternal 方法发出的基元和对象读取调用的行为方式一样：如果流已经定位在由相应 writeExternal 方法写入的数据末尾，则对象读取将抛出 OptionalDataException（其 eof 设置为 true），按位读取将返回 -1，基元读取将抛出 EOFException。注意，此行为不适用于使用旧 <code>ObjectStreamConstants.PROTOCOL_VERSION_1</code> 协议写入的流，在这些流中，没有划分出由 writeExternal 方法写入的数据末尾，因此无法检测。
+
+<p>如果序列化流没有将给定类列为要反序列化的对象的超类，则 readObjectNoData 方法负责初始化其特定类的对象状态。在接收方使用的反序列化实例类的版本不同于发送方，并且接收者版本扩展的类不是发送者版本扩展的类时，此事可能发生。如果序列化流已经被篡改，也会发生这种情况；因此，不管源流是&ldquo;敌意的&rdquo;还是不完整的，readObjectNoData 方法都可以用来正确地初始化反序列化的对象。
+ 
+<p>对于没有实现 java.io.Serializable 接口的任何对象，序列化不会对其字段进行读取或赋值。非 serializable 的 Object 的子类可以为 serializable。在此情况下，非 serializable 类必须具有无参数的构造方法以允许其字段能被初始化。在此情况下，子类负责保存和恢复非 serializable 类的状态。经常出现的情况是，该类的字段是可访问的（public、package 或 protected），或者存在可用于恢复状态的 get 和 set 方法。
+
+<p>反序列化对象进程中发生的所有异常将由 ObjectInputStream 捕获并将中止读取进程。
+
+<p>实现 Externalizable 接口允许对象假定可以完全控制对象的序列化形式的内容和格式。调用 Externalizable 接口的方法（writeExternal 和 readExternal）来保存和恢复对象状态。当这两种方法被某个类实现时，它们可以使用 ObjectOutput 和 ObjectInput 的所有方法读写其本身的状态。对象负责处理出现的任何版本控制。
+
+<p>Enum 常量的反序列化不同于普通的 serializable 或 externalizable 对象。Enum 常量的序列化形式只包含其名称；不传送常量的字段值。要反序列化 enum 常量，ObjectInputStream 需要从流中读取常量的名称；然后将 enum 常量的基本类型和接收到的常量名称作为参数，调用静态方法 <code>Enum.valueOf(Class, String)</code> 获取反序列化的常量。与其他 serializable 或 externalizable 对象一样，enum 常量可以作为序列化流中随后出现的反向引用的目标。不可以自定义 enum 常量的反序列化进程：在反序列化期间，enum 类型所定义的任何与类有关的 readObject、readObjectNoData 和 readResolve 方法都将被忽略。类似地，任何 serialPersistentFields 或 serialVersionUID 字段声明也将被忽略（所有 enum 类型都有一个固定的 0L 的 serialVersionUID）。
+
+@author	Mike Warres
+@author	Roger Riggs
+@version 1.175, 06/04/21
+@see java.io.DataInput
+@see java.io.ObjectOutputStream
+@see java.io.Serializable
+@see <a href="http://java.sun.com/javase/6/docs/platform/serialization/spec/input.html">对象序列化规范：Object Input Classes 第三节</a>
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ObjectInputStream(InputStream in) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建从指定 InputStream 读取的 ObjectInputStream。从流读取序列化头部并予以验证。在对应的 ObjectOutputStream 写入并刷新头部之前，此构造方法将阻塞。
+
+<p>如果安装了安全管理器，则重写 ObjectInputStream.readFields 或 ObjectInputStream.readUnshared 方法的子类的构造方法直接或间接调用此构造方法时，它将对 &quot;enableSubclassImplementation&quot; SerializablePermission 进行检查。
+
+@param	in 要从中读取的输入流
+@throws	StreamCorruptedException 如果流的头部不正确
+@throws	IOException 如果读取流头部时发生 I/O 错误
+@throws	SecurityException 如果不受信任的子类非法重写安全敏感的方法
+@throws	NullPointerException 如果 <code>in</code> 为 <code>null</code>
+@see	ObjectInputStream#ObjectInputStream()
+@see	ObjectInputStream#readFields()
+@see	ObjectOutputStream#ObjectOutputStream(OutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.ObjectInputStream() throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为完全重新实现 ObjectInputStream 的子类提供一种方式，让它不必分配仅由 ObjectInputStream 的实现使用的私有数据。
+
+<p>如果已经安装了安全管理器，则此方法首先通过 <code>SerializablePermission(&quot;enableSubclassImplementation&quot;)</code> 权限调用安全管理器的 <code>checkPermission</code> 方法，以确保可以启用子类化。
+
+@throws SecurityException  如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许启用子类化。
+@see SecurityManager#checkPermission
+@see java.io.SerializablePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.io.ObjectInputStream.readObject() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 ObjectInputStream 读取对象。对象的类、类的签名和类及所有其超类型的非瞬态和非静态字段的值都将被读取。可以使用 writeObject 和 readObject 方法为类重写默认的反序列化。由此对象引用的对象是可传递读取的，这样 readObject 即可重新构造这些对象的完全等价的图形。
+
+<p>通过完全恢复根对象的所有字段及其引用的对象来完全恢复根对象。此时，对象验证回调的执行顺序基于其注册优先级。回调由对象在其个别恢复时（通过 readObject 特定方法）进行注册。
+
+<p>当 InputStream 中出现问题或者遇到不应反序列化的类时，将抛出异常。所有异常对于 InputStream 而言都是致命的，将使其处于不确定状态；是忽略还是恢复流状态取决于调用者。
+
+@throws	ClassNotFoundException 找不到序列化对象的类。
+@throws	InvalidClassException 序列化使用的类出了问题。
+@throws	StreamCorruptedException 流中的控制信息不一致。
+@throws	OptionalDataException 在流中找到基本类型数据而非对象。
+@throws	IOException 任何常规的输入/输出相关的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.io.ObjectInputStream.readObjectOverride() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法由 ObjectOutputStream 的受信任子类调用，这些子类使用受保护的无参数构造方法构造 ObjectOutputStream。子类需要提供带有修饰符 &quot;final&quot; 的重写方法。
+
+@return	从流读取的 Object。
+@throws	ClassNotFoundException 找不到序列化对象的类定义。
+@throws	OptionalDataException 在流中找到基本类型数据而非对象。
+@throws	IOException 如果从底层流执行读操作时发生 I/O 错误
+@see #ObjectInputStream()
+@see #readObject()
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.io.ObjectInputStream.readUnshared() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 ObjectInputStream 读取&ldquo;非共享&rdquo;对象。此方法与 readObject 类似，不同点在于它可以防止对 readObject 和 readUnshared 的后续调用返回对通过此调用获取的反序列化实例的附加引用。尤其是：
+ <ul>
+<li>如果调用 readUnshared 反序列化反向引用（以前写入流的对象的流表示形式），则抛出 ObjectStreamException。
+
+<li>如果 readUnshared 成功返回，则反序列化对由 readUnshared 反序列化的流句柄的反向引用的任何后续尝试，都将导致抛出 ObjectStreamException。
+ </ul>
+通过 readUnshared 反序列化一个对象使得与返回对象关联的流句柄无效。注意，此操作本身不能始终保证由 readUnshared 返回的引用是唯一的；反序列化对象可能定义一个 readResolve 方法，该方法将返回一个对其他方可见的对象，或者 readUnshared 可能返回一个从流中其他地方或通过外部方法获得的 Class 对象或 enum 常量。如果反序列化对象定义一个 readResolve 方法并且该方法的调用返回一个数组，则 readUnshared 返回该数组的浅表副本；此规则保证返回的数组对象是唯一的，不能通过对 ObjectInputStream 调用 readObject 或 readUnshared 再次获得，即使能操纵底层数据流时也是如此。
+
+<p>重写此方法的 ObjectInputStream 子类只能在处理 &quot;enableSubclassImplementation&quot; SerializablePermission 的安全上下文中构造；在不具有此权限的情况下，任何实例化这种子类的尝试都将导致抛出 SecurityException。
+
+@return  反序列化对象的引用
+@throws  ClassNotFoundException 如果找不到要反序列化的对象的类
+@throws  StreamCorruptedException 如果流中的控制信息不一致
+@throws  ObjectStreamException 如果流中已经出现了要反序列化的对象
+@throws  OptionalDataException 如果基本数据是流中的下一项
+@throws  IOException 如果在反序列化期间发生 I/O 错误
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ObjectInputStream.defaultReadObject() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此流读取当前类的非静态和非瞬态字段。此方法只能从正在反序列化的类的 readObject 方法中调用。如果从其他地方调用该字段，则将抛出 NotActiveException。
+
+@throws	ClassNotFoundException 如果找不到序列化对象的类。
+@throws	IOException 如果发生 I/O 错误。
+@throws	NotActiveException 如果目前流没有正在读取对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ObjectInputStream.GetField java.io.ObjectInputStream.readFields() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按名称从流中读取持久字段并使其可用。
+ 
+@return	表示正在反序列化的对象持久字段的 <code>GetField</code> 对象
+@throws	ClassNotFoundException 如果找不到序列化对象的类。
+@throws	IOException 如果发生 I/O 错误。
+@throws	NotActiveException 如果目前流没有正在读取对象。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ObjectInputStream.registerValidation(ObjectInputValidation obj, int prio) throws java.io.NotActiveException, java.io.InvalidObjectException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在返回图形前注册要验证的对象。与 resolveObject 类似，这些验证是在重构整个图形后调用的。通常，readObject 方法向流注册对象，这样恢复全部对象后，就可以执行最后一组验证了。
+
+@param	obj 接收验证回调的对象。
+@param	prio 控制回调的顺序；零是个好的默认值。使用较大数进行较早的回调，使用较小数进行较晚的回调。在一个优先级中，回调的处理没有特定顺序。
+@throws	NotActiveException 因为目前流没有正在读取对象，所以注册回调无效。
+@throws	InvalidObjectException 验证对象为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Class<?> java.io.ObjectInputStream.resolveClass(ObjectStreamClass desc) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载指定流类描述的本地等价类。子类可以实现此方法，从而允许从替换源获取类。 
+
+<p><code>ObjectOutputStream</code> 中的相应方法是 <code>annotateClass</code>。对于流中的每个唯一类，此方法只调用一次。此方法可以由子类实现，从而使用替换加载机制，但是必须返回 <code>Class</code> 对象。返回后，如果该类不是数组类，则它的 serialVersionUID 将与序列化类的 serialVersionUID 进行比较，如果不匹配，则反序列化失败，并抛出 {@link InvalidClassException}。
+
+<p>在 <code>ObjectInputStream</code> 中此方法的默认实现返回调用 <pre>
+     Class.forName(desc.getName(), false, loader)
+ </pre> 的结果，其中 <code>loader</code> 按以下情形确定：如果当前线程的堆栈上存在一种方法，它的声明类由用户定义的类加载器定义（不是一个为实现反射调用而生成的类），则 <code>loader</code> 是对应于最接近当前执行帧的这些方法的类加载器；否则，<code>loader</code> 为 <code>null</code>。如果此调用导致抛出 <code>ClassNotFoundException</code>，且传递的 <code>ObjectStreamClass</code> 实例的名称是 Java 语言中基本数据类型或 void 关键字，那么将返回表示该基本类型或 void 的 <code>Class</code> 对象（例如，名称为 <code>"int"</code> 的 <code>ObjectStreamClass</code> 将被解析为 <code>Integer.TYPE</code>）。否则，将向此方法的调用者抛出 <code>ClassNotFoundException</code>。
+
+@param	desc <code>ObjectStreamClass</code> 类的实例
+@return	对应于 <code>desc</code> 的 <code>Class</code> 对象
+@throws	IOException 任何常规输入/输出异常
+@throws	ClassNotFoundException 如果找不到序列化对象的类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Class<?> java.io.ObjectInputStream.resolveProxyClass(java.lang.String[] interfaces) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个代理类，该类实现在代理类描述符中命名的接口；子类可以实现此方法，以便从流及动态代理类的描述符中读取自定义数据，允许它们使用接口和代理类的替换加载机制。
+
+<p>对于流中的每个唯一的代理类描述符，此方法只调用一次。
+
+<p><code>ObjectOutputStream</code> 中的相应方法是 <code>annotateProxyClass</code>。对于重写此方法的 <code>ObjectInputStream</code> 的给定子类，<code>ObjectOutputStream</code> 的相应子类中的 <code>annotateProxyClass</code> 方法必须写入由此方法读取的任何数据或对象。
+
+<p><code>ObjectInputStream</code> 中此方法的默认实现返回调用 <code>Proxy.getProxyClass</code> 的结果，同时带有在 <code>interfaces</code> 参数中指定接口的 <code>Class</code> 对象的列表。每个接口名称 <code>i</code> 的 <code>Class</code> 对象都是调用以下语句返回的值
+ <pre>
+     Class.forName(i, false, loader)
+ </pre>
+其中，<code>loader</code> 是执行堆栈上的第一个非 <code>null</code> 类加载器，如果在堆栈上不存在非 <code>null</code> 加载器（类加载器选项与 <code>resolveClass</code> 方法使用的相同），则为 <code>null</code>。如果所有解析的接口都是公共的，则 <code>loader</code> 的这一相同值还是传递给 <code>Proxy.getProxyClass</code> 的类加载器；如果出现非公共接口，则传递他们的类加载器（如果遇到一个以上的非公共接口类加载器，则抛出 <code>IllegalAccessError</code>）。如果 <code>Proxy.getProxyClass</code> 抛出 <code>IllegalArgumentException</code>，则 <code>resolveProxyClass</code> 将抛出包含 <code>IllegalArgumentException</code> 的 <code>ClassNotFoundException</code>。
+
+@param	interfaces 代理类描述符中反序列化的接口名称的列表
+@return  指定接口的代理类
+@throws	IOException 底层 <code>InputStream</code> 抛出任何异常
+@throws	ClassNotFoundException 如果找不到代理类或任何指定接口
+@see ObjectOutputStream#annotateProxyClass(Class)
+@since	1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.io.ObjectInputStream.resolveObject(Object obj) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在反序列化期间，此方法允许 ObjectInputStream 的受信任子类使用一个对象替代另一个。在调用 enableResolveObject 之前，不允许取代对象。enableResolveObject 方法检查请求解析对象的流是否可以信任。将 serializable 对象的每个引用传递给 resolveObject。为了确保不无意暴露对象的私有状态，可以仅让受信任的流使用 resolveObject。
+
+<p>此方法在读取对象之后而在从 readObject 返回之前调用。默认的 resolveObject 方法仅返回相同的对象。
+
+<p>子类在取代对象时，必须确保替代对象与存储引用的每个字段兼容。如果对象的类型不是字段或数组元素类型的子类，则通过引发异常中止序列化并且不存储对象。
+
+<p>此方法仅在首次遇到每个对象时调用一次。对象的所有后续引用都将被重定向到新对象。
+
+@param	obj 要替代的对象
+@return	替代对象
+@throws	IOException 任何常规的输入/输出异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.io.ObjectInputStream.enableResolveObject(boolean enable) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使流允许从该流读取的对象被替代。启用时，将为要反序列化每个对象调用 resolveObject 方法。
+
+<p>如果 <i>enable</i> 为真，并且安装了安全管理器，则此方法首先使用 <code>SerializablePermission(&quot;enableSubstitution&quot;)</code> 权限调用安全管理器的 <code>checkPermission</code> 方法，以确保使流允许从该流读取的对象被替代。
+ 
+@param	enable 如果为 true，则允许为每个要反序列化的对象使用 <code>resolveObject</code>
+@return	调用此方法之前的以前的设置
+@throws	SecurityException 如果安全管理器存在，且其 <code>checkPermission</code> 方法拒绝流允许从要替代的流读取对象。
+@see SecurityManager#checkPermission
+@see java.io.SerializablePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.io.ObjectInputStream.readStreamHeader() throws java.io.IOException, java.io.StreamCorruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供的 readStreamHeader 方法允许子类读取并验证它们自己的流头部。它可以读取并验证幻数和版本号。
+
+@throws	IOException 如果从底层 <code>InputStream</code> 读取时发生 I/O 错误
+@throws	StreamCorruptedException 如果流中的控制信息不一致
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.ObjectStreamClass java.io.ObjectInputStream.readClassDescriptor() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从序列化流读取类描述符。当 ObjectInputStream 期望与序列化流中的下一项具有相同的类描述符时调用此方法。ObjectInputStream 的子类可以重写此方法，以便在以非标准格式编写的类描述符中进行读取（那些类描述符是 ObjectOutputStream 的子类通过重写 <code>writeClassDescriptor</code> 方法编写的）。默认情况下，此方法根据对象序列化规范中定义的格式读取类描述符。
+
+@return	读取的类描述符
+@throws	IOException 如果发生 I/O 错误。
+@throws	ClassNotFoundException 如果找不到类描述符表示形式中使用的序列化对象的 Class
+@see java.io.ObjectOutputStream#writeClassDescriptor(java.io.ObjectStreamClass)
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取数据字节。如果不存在可用的输入，此方法将发生阻塞。
+
+@return	读取的字节；如果已到达流的末尾，则返回 -1。
+@throws	IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.read(byte[] buf, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读入 byte 数组。在某些输入可用之前，此方法将发生阻塞。考虑使用 java.io.DataInputStream.readFully 读取正确&ldquo;长度&rdquo;的字节。
+
+@param	buf 读入数据的缓冲区
+@param	off 数据的初始偏移量
+@param	len 读取的最大字节数
+@return	读取字节的实际数，到达流末尾时返回 -1。
+@throws	IOException 如果发生 I/O 错误。
+@see java.io.DataInputStream#readFully(byte[],int,int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可以不受阻塞地读取的字节数。
+
+@return	可用字节数。
+@throws	IOException 如果从底层 <code>InputStream</code> 读取时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ObjectInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭输入流。必须调用此方法才能释放与流相关的所有资源。
+
+@throws	IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.ObjectInputStream.readBoolean() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 boolean 值。
+ 
+@return	读取的 boolean。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.io.ObjectInputStream.readByte() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 8 位的字节。
+ 
+@return	读取的 8 位字节。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.readUnsignedByte() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 读取一个无符号的 8 位字节。
+
+@return	读取的 8 位字节。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char java.io.ObjectInputStream.readChar() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 16 位的 char 值。
+
+@return	读取的 16 位 char 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.io.ObjectInputStream.readShort() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 16 位的 short 值。
+
+@return	读取的 16 位 short 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.readUnsignedShort() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个无符号的 16 位 short 值。
+
+@return	读取的 16 位 short 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.readInt() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 32 位的 int 值。
+
+@return	读取的 32 位整数。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.io.ObjectInputStream.readLong() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 64 位的 long 值。
+
+@return	读取的 64 位 long 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.io.ObjectInputStream.readFloat() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 32 位的 float 值。
+
+@return	读取的 32 位 float 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.io.ObjectInputStream.readDouble() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取一个 64 位的 double 值。
+
+@return	读取的 64 位 double 值。
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ObjectInputStream.readFully(byte[] buf) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取字节，同时阻塞直至读取所有字节。
+
+@param	buf 读入数据的缓冲区
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ObjectInputStream.readFully(byte[] buf, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取字节，同时阻塞直至读取所有字节。
+
+@param	buf 读入数据的缓冲区
+@param	off 数据的初始偏移量
+@param	len 要读取的最大字节数
+@throws	EOFException 如果到达文件末尾。
+@throws	IOException 如果发生其他 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.ObjectInputStream.skipBytes(int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+跳过字节。
+
+@param	len 要跳过的字节数
+@return	跳过的实际字节数。
+@throws	IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.ObjectInputStream.readLine() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在以 \n、\r、\r\n 或 EOF 结尾的行中读取。
+
+@return	行的 String 副本。
+@throws	IOException 如果从底层 <code>InputStream</code> 读取时发生 I/O 错误
+@deprecated 此方法不能正确地将字节转换为字符。请参见 DataInputStream 以获取详细信息和替代方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.ObjectInputStream.readUTF() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 <a href="DataInput.html#modified-utf-8">UTF-8 修改版</a>格式的 String。
+
+@return	String。
+@throws	IOException 如果从底层 <code>InputStream</code> 读取时发生 I/O 错误
+@throws	UTFDataFormatException 如果读取的字节不表示有效的 UTF-8 修改版编码的字符串
+
+<!-- END DATA -->

@@ -1,0 +1,709 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.prefs.Preferences extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+首选项数据的层次结构 collection 中的节点。此类允许应用程序存储和获取用户和系统首选项以及配置数据。此数据持久存储在依赖于实现的内部存储中。典型实现包括纯文本文件、特定于操作系统的注册表、目录服务器和 SQL 数据库。此类的用户无需关注内部存储的细节。
+ 
+<p>有两个独立的首选项节点树，一个用于用户首选项，一个用于系统首选项。每个用户都有一个单独的用户首选项树，而在给定系统中，所有用户都共享同一系统首选项树。对&ldquo;用户&rdquo;和&ldquo;系统&rdquo;的精确描述因实现而异。用户首选项树中存储的典型信息可能包括特定应用程序的字体选择、颜色选择和首选窗口的位置及大小。系统首选项树中存储的典型信息可能包括应用程序的安装配置数据。
+
+<p>使用类似的方式将首选项树中的节点命名为层次结构文件系统中的目录。首选项树的每个节点都具有一个<i>节点名</i>（不必是唯一的）、一个唯一的<i>绝对路径名</i> 和一个<i>相对于</i> 每个祖先（包括它自己）的路径名。
+
+<p>根节点的节点名为空字符串 (&quot;&quot;)。每个其他节点的节点名可以在创建时任意指定。此名称的唯一限制是，它不能是空字符串，也不能包含斜杠字符 ('/')。
+
+<p>根节点的绝对路径名为 <tt>&quot;/&quot;</tt>。根节点的子节点的绝对路径名是 <tt>&quot;/&quot; + </tt><i>&lt;节点名&gt;</i>。所有其他节点的绝对路径名是<i>&lt;父节点的绝对路径名&gt;</i><tt> + &quot;/&quot; + </tt><i>&lt;节点名&gt;</i>。注意，所有绝对路径名的第一个字符都是斜杠。
+
+<p>节点 <i>n</i> 相对于其祖先 <i>a</i> 的路径名只是为了形成 <i>n</i> 的绝对路径名，而必须添加到 <i>a</i> 的绝对路径名的字符串，同时移除开头的斜杠字符（如果存在）。注意：
+ <ul>
+<li>任何相对路径名的第一个字符都不能是斜杠。
+<li>每个节点相对于自身的路径名都是空字符串。
+<li>每个节点相对于父节点的路径名就是其节点名（根节点除外，因为它没有父节点）。
+<li>每个节点相对于根的路径名都是其移除开头斜杠的绝对路径名。
+ </ul>
+
+<p>最后注意：
+ <ul>
+<li>任何路径名均不能包含多个连续的斜杠字符。
+<li>任何路径名均不能以斜杠字符结尾，根的绝对路径名除外。
+<li>所有符合这两条规则的字符串都是有效的路径名。
+ </ul>
+
+<p>修改首选项数据的所有方法都允许进行异步操作；它们可能立即返回，但是更改最终将传播到持久内部存储中，其延迟取决于实现。可以使用 <tt>flush</tt> 方法同步地将更新强制同步到内部存储中。Java 虚拟机的正常终止<i>不会</i> 导致挂起更新的丢失，即在终止时<i>不</i> 需要进行显式 <tt>flush</tt> 调用来使挂起更新变得持久。
+ 
+<p>从 <tt>Preferences</tt> 对象读取首选项的所有方法都要求调用者提供一个默认值。如果以前没有设置任何值<i>或者内部存储不可用</i>，则会返回默认值。此默认值的目的是，即使内部存储不可用，应用程序也可以运行，只是功能稍微下降一点。在内部存储不可用的情况下，多个方法（如 <tt>flush</tt>）均包含阻止应用程序操作的语义。普通应用程序不必调用这些方法中的任何一个，它们可能以抛出 {@link BackingStoreException} 而告终。
+
+<p>单个 JVM 中的多个线程可以同时调用此类中的方法，无需进行外部同步，其结果等效于某些顺序执行。如果在同一个内部存储中存储其首选项数据的<i>多个 JVM</i> 同时使用此类，则数据存储也不会遭到破坏，但首选项数据的一致性难以得到保证。
+
+<p>此类包含导出/导入设施，允许将首选项&ldquo;导出&rdquo;到 XML 文档，将表示首选项的 XML 文档再&ldquo;导入&rdquo;回系统。可以使用此设施备份全部或部分首选项树，并在以后从备份中还原。
+
+<p>XML 文档具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE preferences SYSTEM &quot;http://java.sun.com/dtd/preferences.dtd&quot;&gt;
+ </pre>
+注意，导入或导出首选项时<i>不</i> 访问系统 URI (http://java.sun.com/dtd/preferences.dtd)；该系统 URI 仅作为一个唯一标识 DTD 的字符串：
+ <pre>
+    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+
+    &lt;!-- DTD for a Preferences tree. --&gt;
+
+    &lt;!-- The preferences element is at the root of an XML document
+         representing a Preferences tree. --&gt;
+    &lt;!ELEMENT preferences (root)&gt;
+  
+    &lt;!-- The preferences element contains an optional version attribute,
+          which specifies version of DTD. --&gt;
+    &lt;!ATTLIST preferences EXTERNAL_XML_VERSION CDATA &quot;0.0&quot; &gt;  
+
+    &lt;!-- The root element has a map representing the root's preferences
+         (if any), and one node for each child of the root (if any). --&gt;
+    &lt;!ELEMENT root (map, node*) &gt;
+
+    &lt;!-- Additionally, the root contains a type attribute, which
+         specifies whether it's the system or user root. --&gt;
+    &lt;!ATTLIST root
+              type (system|user) #REQUIRED &gt;
+
+    &lt;!-- Each node has a map representing its preferences (if any),
+         and one node for each child (if any). --&gt;
+    &lt;!ELEMENT node (map, node*) &gt;
+
+    &lt;!-- Additionally, each node has a name attribute --&gt;
+    &lt;!ATTLIST node
+              name CDATA #REQUIRED &gt;
+
+    &lt;!-- A map represents the preferences stored at a node (if any). --&gt;
+    &lt;!ELEMENT map (entry*) &gt;
+
+    &lt;!-- An entry represents a single preference, which is simply
+          a key-value pair. --&gt;
+    &lt;!ELEMENT entry EMPTY &gt;
+    &lt;!ATTLIST entry
+              key   CDATA #REQUIRED
+              value CDATA #REQUIRED &gt;
+ </pre>
+
+每个 <tt>Preferences</tt> 实现都必须具有一个关联的 {@link PreferencesFactory} 实现。每个 Java(TM) SE 实现都必须提供一些方式，来指定将哪个 <tt>PreferencesFactory</tt> 实现用于生成根首选项节点。这允许管理员使用替代实现替换默认首选项实现。
+
+<p>实现注意事项：在 Sun 的 JRE 中，<tt>PreferencesFactory</tt> 实现的位置如下：
+
+ <ol>
+
+<li><p>如果定义了系统属性 <tt>java.util.prefs.PreferencesFactory</tt>，则该属性名就会用作实现 <tt>PreferencesFactory</tt> 接口的类的完全限定名。加载并实例化该类；如果此进程失败，则抛出未指定的错误。</p></li>
+
+<li><p>如果在对{@link java.lang.ClassLoader#getSystemClassLoader 系统类加载器}可见的 jar 文件中安装了 <tt>PreferencesFactory</tt> 实现类文件，并且该 jar 文件在资源目录 <tt>META-INF/services</tt> 中包含名为 <tt>java.util.prefs.PreferencesFactory</tt> 的提供者配置文件，则采用在该文件中指定的第一个类名称。如果提供了一个以上这样的 jar 文件，则使用找到的第一个文件。加载并实例化该类；如果此进程失败，则抛出未指定的错误。</p></li>
+
+<li><p>最后，如果既没有提供上述系统属性也没有提供扩展 jar 文件，则加载和实例化底层平台的系统级默认 <tt>PreferencesFactory</tt> 实现。</p></li>
+
+ </ol>
+
+@author  Josh Bloch
+@version 1.25, 06/21/04
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.prefs.Preferences.MAX_KEY_LENGTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许作为键的字符串最大长度（80 个字符）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.prefs.Preferences.MAX_VALUE_LENGTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许作为值的字符串最大长度（8192 个字符）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.prefs.Preferences.MAX_NAME_LENGTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+节点名的最大长度（80 个字符）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.prefs.Preferences()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单独的构造方法。（由子类构造方法调用，通常是隐式的）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.prefs.Preferences java.util.prefs.Preferences.userNodeForPackage(java.lang.Class<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从调用用户首选项树（根据约定，它与指定类的包相关联）返回首选项节点。约定如下：节点的绝对路径名就是完全限定的包名，开头使用一个斜杠 (<tt>'/'</tt>)，并将其中的每一个句点 (<tt>'.'</tt>) 都替换为斜杠。例如，与类 <tt>com.acme.widget.Foo</tt> 关联的节点绝对路径名是 <tt>/com/acme/widget</tt>。
+
+<p>此约定不适用于未命名的包，未命名包的关联首选项节点是 <tt>&lt;unnamed&gt;</tt>。此节点只是为了方便程序的早期开发（而非长期使用）而存在的，它不属于任何包，只用于&ldquo;一次性&rdquo;程序。<i>在此节点中不应该存储有价值的数据，因为使用它的所有程序都可以共享它。</i>
+
+<p>希望访问与其包有关的首选项类 <tt>Foo</tt> 可以获得以下首选项节点： <pre>
+    static Preferences prefs = Preferences.userNodeForPackage(Foo.class);
+ </pre>
+此语句消除了使用字符串描述首选项节点的需求，从而降低了发生运行时故障的可能性。（如果类名称拼写错误，则通常会导致编译时错误。）
+
+<p>调用此方法将导致返回节点及其祖先的创建（如果它们不存在）。如果在此调用之前返回的节点不存在，那么在对返回节点（或者其某个祖先或子节点）调用 <tt>flush</tt> 方法之前，不能保证由此调用所创建的节点及其所有祖先是永久性的。
+
+@param c 用户首选项节点需要其包的类。
+@return 与 <tt>c</tt> 成员所属包相关联的用户首选项节点。
+@throws NullPointerException 如果 <tt>c</tt> 为 <tt>null</tt>。
+@throws SecurityException 如果安全管理器存在并且拒绝 <tt>RuntimePermission(&quot;preferences&quot;)</tt>。
+@see    RuntimePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.prefs.Preferences java.util.prefs.Preferences.systemNodeForPackage(java.lang.Class<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从系统首选项树（根据约定，它与指定类的包相关联）返回首选项节点。约定如下：节点的绝对路径名就是完全限定的包名，开头使用一个斜杠 (<tt>'/'</tt>)，并将其中的每一个句点 (<tt>'.'</tt>) 都替换为斜杠。例如，与类 <tt>com.acme.widget.Foo</tt> 关联的节点绝对路径名是 <tt>/com/acme/widget</tt>。
+
+<p>此约定不适用于未命名的包，未命名包的关联首选项节点是 <tt>&lt;unnamed&gt;</tt>。此节点只是为了方便程序的早期开发（而非长期使用）而存在的，它不属于任何包，只用于&ldquo;一次性&rdquo;程序。<i>在此节点中不应该存储有价值的数据，因为使用它的所有程序都可以共享它。</i>
+
+<p>希望访问与其包有关的首选项类 <tt>Foo</tt> 可以获得以下首选项节点：<pre>
+  static Preferences prefs = Preferences.systemNodeForPackage(Foo.class);
+ </pre>
+此语句消除了使用字符串描述首选项节点的需求，从而降低了发生运行时故障的可能性。（如果类名称拼写错误，则通常会导致编译时错误。）
+
+<p>调用此方法将导致返回节点及其祖先的创建（如果它们不存在）。如果在此调用之前返回的节点不存在，那么在对返回节点（或者其某个祖先或子节点）调用 <tt>flush</tt> 方法之前，不能保证由此调用所创建的节点及其所有祖先是永久性的。
+@param c 系统首选项节点需要其包的类。
+@return 与 <tt>c</tt> 成员所属包相关联的用户首选项节点。
+@throws NullPointerException 如果 <tt>c</tt> 为 <tt>null</tt>。
+@throws SecurityException 如果安全管理器存在并且拒绝 <tt>RuntimePermission(&quot;preferences&quot;)</tt>。
+@see    RuntimePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.prefs.Preferences java.util.prefs.Preferences.userRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回调用用户的根首选项节点。
+
+@return 调用用户的根首选项节点。
+@throws SecurityException 如果安全管理器存在并且拒绝 <tt>RuntimePermission(&quot;preferences&quot;)</tt>。
+@see    RuntimePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.prefs.Preferences java.util.prefs.Preferences.systemRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回系统的根首选项节点。
+
+@return 系统的根首选项节点。
+@throws SecurityException 如果安全管理器存在并且拒绝 <tt>RuntimePermission(&quot;preferences&quot;)</tt>。
+@see    RuntimePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.put(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定值与此首选项节点中的指定键相关联。
+
+@param key 指定的 value 将要关联的键。
+@param value 指定的 key 将要关联的值。
+@throws NullPointerException 如果 key 或 value 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt> 或者 <tt>value.length</tt> 超过 <tt>MAX_VALUE_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.util.prefs.Preferences.get(String key, String def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定键相关联的值。如果不存在与该键相关联的值或者内部存储不可访问，则返回指定的默认值。
+
+<p>有些实现可能将默认值存储在其内部存储中。如果不存在与指定键相关联的值，而只有<i>存储的默认值</i>，则系统优先返回存储的默认值（而不是指定的默认值）。
+
+@param key 要返回其相关值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值时所要返回的值。
+@return 与 <tt>key</tt> 相关联的值；如果没有与 <tt>key</tt> 相关联的值或者内部存储不可用，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。（值 <tt>null</tt> 用于 <tt>def</tt> <i>是</i> 允许的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.remove(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除与此首选项节点中与指定键相关联的值（如果有）。
+
+<p>如果此实现支持<i>存储的默认值</i>，并且指定的首选项存在这样的默认值，则此调用将&ldquo;公开&rdquo;存储的默认值，这表示对 <tt>get</tt> 的后续调用将返回它。
+
+@param key 从首选项节点中移除其映射关系的键。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.clear() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此首选项节点中的所有首选项（键-值关联）。此调用对此节点的所有子节点均没有影响。
+
+<p>如果此实现支持<i>存储的默认值</i>，并且首选项层次结构中的这一节点包含这样的默认值，则此调用将&ldquo;公开&rdquo;存储的默认值，这表示对 <tt>get</tt> 的后续调用将返回它。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #removeNode()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putInt(String key, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定 int 值的字符串与此首选项节点中的指定键相关联。关联字符串是将 int 值传递给 {@link Integer#toString(int)} 时将返回的字符串。此方法与 {@link #getInt} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getInt(String,int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.util.prefs.Preferences.getInt(String key, int def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中与指定键相关联的、由字符串表示的 int 值。该字符串由 {@link Integer#parseInt(String)} 转换为整数。如果不存在与该键相关联的值，内部存储不可用，或者传递关联值时 <tt>Integer.parseInt(String)</tt> 抛出 {@link NumberFormatException}，则返回指定的默认值。此方法与 {@link #putInt} 一起使用。
+
+<p>如果该实现支持<i>存储的默认值</i>，并且这样的默认值存在且可访问，而且可以使用 <tt>Integer.parseInt</tt> 将其转换为 int，则优先返回此 int（而不是指定默认值）。
+
+@param key 要作为 int 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 int 或者内部存储不可访问时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 int 值；如果该关联值不存在或无法被解释为 int，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@see #putInt(String,int)
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putLong(String key, long value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定 long 值的字符串与此首选项节点中的指定键相关联。关联字符串是将 long 值传递给 {@link Long#toString(long)} 时将返回的字符串。此方法与 {@link #getLong} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getLong(String,long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.util.prefs.Preferences.getLong(String key, long def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定的键相关联的、由字符串表示的 long 值。该字符串由 {@link Long#parseLong(String)} 转换为 long。如果不存在与该键相关联的值，内部存储不可用，或者传递关联值时 <tt>Long.parseLong(String)</tt> 抛出 {@link NumberFormatException}，则返回指定的默认值。此方法与 {@link #putLong} 一起使用。
+
+<p>如果该实现支持<i>存储的默认值</i>，这样的默认值存在且可访问，并且可以使用 <tt>Long.parseLong</tt> 转换为 long，则优先返回此 long（而不是指定默认值）。
+
+@param key 要作为 long 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 long 或者内部存储不可访问时要返回的值。
+@return 返回与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 long 值；如果关联值不存在或者无法将其解释为 long，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@see #putLong(String,long)
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putBoolean(String key, boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定 boolean 值的字符串与此首选项节点中的指定键相关联。如果该值为 true，则关联字符串为 <tt>&quot;true&quot;</tt>；如果其为 false，则关联字符串为 <tt>&quot;false&quot;</tt>。此方法与 {@link #getBoolean} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getBoolean(String,boolean)
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.util.prefs.Preferences.getBoolean(String key, boolean def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定的键相关联的、由字符串表示的 boolean 值。有效字符串是 <tt>&quot;true&quot;</tt>（表示真）和 <tt>&quot;false&quot;</tt>（表示假）。不区分大小写，例如，<tt>&quot;TRUE&quot;</tt> 和 <tt>&quot;False&quot;</tt> 也是有效的。此方法与 {@link #putBoolean} 一起使用。
+
+<p>如果不存在与该键相关联的值或者内部存储不可访问或者关联值是 <tt>&quot;true&quot;</tt> 或 <tt>&quot;false&quot;</tt>（不区分大小写）之外的其他值，则返回指定默认值。
+
+<p>如果该实现支持<i>存储的默认值</i>，这样的默认值存在且可访问，则优先使用存储的默认值（而不是指定默认值）；但如果存储的默认值是 <tt>&quot;true&quot;</tt> 或 <tt>&quot;false&quot;</tt>（不区分大小写）之外的其他值，在这种情况下，则使用指定默认值。
+
+@param key 要作为 boolean 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 boolean 或者内部存储不可访问时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 boolean 值；如果该关联值不存在或无法被解释为 boolean，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@see #get(String,String)
+@see #putBoolean(String,boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putFloat(String key, float value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定 float 值的字符串与此首选项节点中的指定键相关联。关联字符串是将 float 值传递给 {@link Float#toString(float)} 时将返回的字符串。此方法与 {@link #getFloat} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getFloat(String,float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract float java.util.prefs.Preferences.getFloat(String key, float def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定的键相关联的、由字符串表示的 float 值。该字符串由 {@link Float#parseFloat(String)} 转换为整数。如果不存在与该键相关联的值，内部存储不可用，或者传递关联值时 <tt>Float.parseFloat(String)</tt> 抛出 {@link NumberFormatException}，则返回指定的默认值。此方法与 {@link #putFloat} 一起使用。
+
+<p>如果该实现支持<i>存储的默认值</i>，这样的默认值存在且可访问，并且可以使用 <tt>Float.parseFloat</tt> 转换为 float，则优先返回此 float（而不是指定默认值）。
+
+@param key 要作为 float 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 float 或者内部存储不可访问时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 float 值；如果该关联值不存在或无法被解释为 float，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@see #putFloat(String,float)
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putDouble(String key, double value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定 double 值的字符串与此首选项节点中的指定键相关联。关联字符串是将 double 值传递给 {@link Double#toString(double)} 时将返回的字符串。此方法与 {@link #getDouble} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getDouble(String,double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract double java.util.prefs.Preferences.getDouble(String key, double def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定的键相关联的、由字符串表示的 double 值。该字符串由 {@link Double#parseDouble(String)} 转换为整数。如果不存在与该键相关联的值，内部存储不可用，或者传递关联值时 <tt>Double.parseDouble(String)</tt> 抛出 {@link NumberFormatException}，则返回指定的默认值。此方法与 {@link #putDouble} 一起使用。
+
+<p>如果该实现支持<i>存储的默认值</i>，这样的默认值存在且可访问，并且可以使用 <tt>Double.parseDouble</tt> 转换为 double，则优先返回此 double（而不是指定默认值）。
+
+@param key 要作为 double 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 double 或者内部存储不可访问时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 double 值；如果该关联值不存在或无法被解释为 double，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+@see #putDouble(String,double)
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.putByteArray(String key, byte[] value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定字节数组的字符串与此首选项节点中的指定键相关联。正如 <a
+ href=http://www.ietf.org/rfc/rfc2045.txt>RFC 2045</a>，第 6.8 节中定义的那样，该关联字符串是 <i>Base64</i> 编码的字节数组，其中有一处小的改动：该字符串仅由 <i>Base64 Alphabet</i> 中的字符构成；它不包含任何新行符。注意，该字节数组的最大长度限制是 <tt>MAX_VALUE_LENGTH</tt> 的四分之三，因此，Base64 编码的 String 的长度不能超过 <tt>MAX_VALUE_LENGTH</tt>。此方法与 {@link #getByteArray} 一起使用。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 或 value 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 key.length() 超过 MAX_KEY_LENGTH 或者 value.length 超过 MAX_VALUE_LENGTH*3/4。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #getByteArray(String,byte[])
+@see #get(String,String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.util.prefs.Preferences.getByteArray(String key, byte[] def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点中指定键相关联的、由字符串表示的字节数组。正如 <a
+ href=http://www.ietf.org/rfc/rfc2045.txt>RFC 2045</a>，第 6.8 节中定义的那样，有效的字符串是 <i>Base64</i> 编码的二进制数据，其中有一处小的改动：该字符串必须仅包含 <i>Base64 Alphabet</i> 中的字符；不允许使用任何新行符或额外字符。此方法与 {@link #putByteArray} 一起使用。
+
+<p>如果没有与该键相关联的值或者内部存储不可访问或者关联值不是有效的 Base64 编码字节数组（根据上面的定义），则返回指定默认值。
+
+<p>如果该实现支持<i>存储的默认值</i>，这样的默认值存在且可访问，则优先使用存储的默认值（而不是指定默认值）；但如果存储的默认值不是有效的 Base64 编码的字节数组（根据上面的定义），在这种情况下，则使用指定默认值。
+
+@param key 要作为字节数组返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为字节数组或者内部存储不可访问时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的字节数组值；如果该关联值不存在或无法被解释为字节数组，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。（值 <tt>null</tt> 用于 <tt>def</tt> <i>是</i> 允许的。）
+@see #get(String,String)
+@see #putByteArray(String,byte[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] java.util.prefs.Preferences.keys() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此首选项节点中具有关联值的所有键。（如果此节点不具有任何首选项，则返回数组的大小将为 0。）
+
+<p>如果该实现支持<i>存储的默认值</i>，此节点中存在这样的默认值并且没有被显式首选项重写，则在数组中除了返回所有显式首选项外，还返回默认值。
+
+@return 在此首选项节点中具有关联值的键数组。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] java.util.prefs.Preferences.childrenNames() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点相对于此节点的子节点名称。（如果此节点不具有任何子节点，则返回数组的大小将为 0。）
+
+@return 此首选项节点的子节点名称。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.prefs.Preferences java.util.prefs.Preferences.parent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点的父节点；如果此为根，则返回 <tt>null</tt>。
+
+@return 首选项节点的父节点。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.prefs.Preferences java.util.prefs.Preferences.node(String pathName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定首选项节点返回到此节点所在的同一树中，如果此节点及其祖先已经不存在，则创建它们。接受相对或绝对路径名。相对路径名（不以斜杠字符 <tt>('/')</tt> 开头）是相对于此首选项节点解释的。
+
+<p>如果在此调用之前返回的节点不存在，那么在对返回节点（或者其某个祖先或子节点）调用 <tt>flush</tt> 方法之前，不能保证由此调用所创建的节点及其所有祖先是永久性的。
+
+@param pathName 要返回的首选项节点的路径名。
+@return 指定的首选项节点。
+@throws IllegalArgumentException 如果路径名无效（即它包含多个连续的斜杠字符，或者以斜杠字符结束并且大于一个 long 字符）。
+@throws NullPointerException 如果路径名为 <tt>null</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.util.prefs.Preferences.nodeExists(String pathName) throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果此节点所在的树中存在指定首选项节点，则返回 true。相对路径名（不以斜杠字符 <tt>('/')</tt> 开头）是相对于此首选项节点解释的。
+
+<p>如果已经使用 {@link #removeNode()} 方法移除了此节点（及其祖先），则调用此方法也<i>是</i> 合法的，只是需要使用路径名 <tt>&quot;&quot;</tt>；该调用返回 <tt>false</tt>。因此，可以使用语句 <tt>p.nodeExists(&quot;&quot;)</tt> 测试 <tt>p</tt> 是否已被移除。
+
+@param pathName 要检查其是否存在的节点路径名。
+@return 如果指定的节点存在，则返回 true。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalArgumentException 如果路径名无效（即它包含多个连续的斜杠字符，或者以斜杠字符结束并且大于一个 long 字符）。
+@throws NullPointerException 如果路径名为 <tt>null</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先），并且 <tt>pathName</tt> 不是空字符串 (<tt>&quot;&quot;</tt>)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.removeNode() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+移除此首选项节点及其所有子节点，移除的节点中所包含的全部首选项都将失效。节点被移除后，针对相应 <tt>Preferences</tt> 实例尝试使用 {@link #name()}、{@link #absolutePath()}、{@link #isUserNode()}、{@link #flush()} 或 {@link #node(String) nodeExists(&quot;&quot;)} 之外的任何方法都将失败并抛出 <tt>IllegalStateException</tt>。（节点被移除后，在该节点上仍然可以调用在 {@link Object} 上定义的方法，并且不抛出 <tt>IllegalStateException</tt>。）
+
+<p>在此节点（或其祖先）上调用 <tt>flush</tt> 方法之前移除操作不保证是持久的。
+
+<p>如果此实现支持<i>存储的默认值</i>，则移除节点将公开此节点的或此节点下的所有存储的默认值。因此，对此节点的路径名后续调用 <tt>nodeExists</tt> 将返回 <tt>true</tt>，而对此路径名后续调用 <tt>node</tt> 则返回表示首选项和/或子首选项的非空 collection 的（不同）<tt>Preferences</tt> 实例。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws UnsupportedOperationException 如果在根节点上调用此方法。
+@see #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.util.prefs.Preferences.name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点相对于父节点的名称。
+
+@return 此首选项节点的名称（相对于其父节点）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.util.prefs.Preferences.absolutePath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点的绝对路径名。
+
+@return 此首选项节点的绝对路径名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.util.prefs.Preferences.isUserNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此首选项节点位于用户首选项树中，则返回 <tt>true</tt>；如果其位于系统首选项树中，则返回 <tt>false</tt>。
+
+@return 如果此首选项节点位于用户首选项树中，则返回 <tt>true</tt>；如果其位于系统首选项树中，则返回 <tt>false</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.util.prefs.Preferences.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点的字符串表示形式，与通过表达式：<tt>(this.isUserNode() ? &quot;User&quot; : &quot;System&quot;) + &quot; Preference Node: &quot; + this.absolutePath()</tt> 计算的结果一样。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.flush() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制进行从此首选项节点及其子节点到持久存储的内容更改。此方法成功返回后，即可安全地假定调用该方法前，在以此节点为根的子树中所作的全部更改都是永久性的。
+ 
+<p>实现可以在任何时间随意将更改刷新到持久存储中。它们无需等待此方法的调用。
+
+<p>对新创建的节点进行刷新后，它就变得持久了，同时其所有尚未变得持久的祖先（和子节点）也将变得持久。但是注意，<i>不</i> 保证其祖先中的所有首选项值的更改能变得持久。
+
+<p> 如果在已经使用 {@link #removeNode()} 方法移除的节点上调用此方法，则会在此节点（而非其他节点）上调用 flushSpi()。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@see    #sync()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.sync() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确保在调用 <tt>sync</tt> 之前从此首选项节点及其子节点进行的后续读取能反映出提交到持久存储（从任何 VM）的所有更改。另外，强制进行从此首选项节点及其子节点到持久存储的内容更改，与对此节点调用 <tt>flush</tt> 方法一样。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see    #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.addPreferenceChangeListener(PreferenceChangeListener pcl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定侦听器以接收此首选项节点的<i>首选项更改事件</i>。将首选项添加到此节点、从此节点移除首选项或者更改与首选项关联的值时都将生成首选项更改事件。（{@link #removeNode()} 方法<i>不</i> 生成首选项更改事件，该方法只生成<i>节点更改事件</i>。首选项更改事件<i>是</i> 由 <tt>clear</tt> 方法生成的。）
+
+<p>尽管有些实现可以为在 JVM 外进行的更改生成事件，但只有在已注册侦听器所在的 JVM 中所作的更改才能得到保证。事件可能是更改变得持久之前生成的。在此节点的子节点中修改首选项时不生成事件；需要此类事件的调用者必须在每个子节点中注册。
+ 
+@param pcl 要添加的首选项更改侦听器。
+@throws NullPointerException 如果 <tt>pcl</tt> 为 null。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #removePreferenceChangeListener(PreferenceChangeListener)
+@see #addNodeChangeListener(NodeChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.removePreferenceChangeListener(PreferenceChangeListener pcl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定首选项更改侦听器，使其不再接收首选项更改事件。
+
+@param pcl 要移除的首选项更改侦听器。
+@throws IllegalArgumentException 如果 <tt>pcl</tt> 不是此节点上的已注册首选项更改侦听器。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #addPreferenceChangeListener(PreferenceChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.addNodeChangeListener(NodeChangeListener ncl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定侦听器以接收此节点的<i>节点更改事件</i>。在此节点中添加或删除子节点时，将生成节点更改事件。（单个 {@link #removeNode()} 调用即可产生多个<i>节点更改事件</i>，每个都对应于以已移除节点为根的子树中的一个节点。）
+
+<p>尽管有些实现可以为在 JVM 外进行的更改生成事件，但只有在注册侦听器所在的 JVM 中所作的更改才能得到保证。事件可能是更改变得持久之前生成的。添加或移除此节点的间接子节点时不生成事件；需要此类事件的调用者必须在每个子节点中注册。
+
+<p>节点的创建难以得到保证。因为节点是基于访问隐式创建的，实现无法确定访问前内部存储中是否存在子节点（例如，内部存储不可访问或已缓存信息过期）。在这些情形下，实现既不要求生成节点更改事件也不禁止这样做。
+ 
+@param ncl 要添加的 <tt>NodeChangeListener</tt>。
+@throws NullPointerException 如果 <tt>ncl</tt> 为 null。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #removeNodeChangeListener(NodeChangeListener)
+@see #addPreferenceChangeListener(PreferenceChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.removeNodeChangeListener(NodeChangeListener ncl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定 <tt>NodeChangeListener</tt>，使其不再接收更改事件。
+
+@param ncl 要移除的 <tt>NodeChangeListener</tt>。
+@throws IllegalArgumentException 如果 <tt>ncl</tt> 不是此节点上的已注册 <tt>NodeChangeListener</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #addNodeChangeListener(NodeChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.exportNode(OutputStream os) throws java.io.IOException, java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定输出流上发出表示此节点（不是其子节点）中包含的所有首选项的 XML 文档。此 XML 文档实际上是节点的脱机备份。
+
+<p>该 XML 文档具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE preferences SYSTEM &quot;http://java.sun.com/dtd/preferences.dtd&quot;&gt;
+ </pre>
+使用 UTF-8 字符编码。
+
+<p>此方法对一般规则而言是个例外，在此类中并发执行多个方法将产生等效于某些顺序执行的结果。如果由于调用此方法而同时修改了此节点的多个首选项，则导出的首选项由该节点所包含的首选项的&ldquo;模糊快照&rdquo;组成；有些并发修改可能在导出数据中得到了反映，而有些则不然。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@throws IOException 如果写入指定的输出流导致 <tt>IOException</tt>。
+@throws BackingStoreException 如果无法从内部存储读取首选项数据。
+@see    #importPreferences(InputStream)
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.prefs.Preferences.exportSubtree(OutputStream os) throws java.io.IOException, java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出表示此节点及其所有子节点中包含的全部首选项的 XML 文档。此 XML 文档实际上是以该节点为根的子树的脱机备份。
+
+<p>该 XML 文档具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE preferences SYSTEM &quot;http://java.sun.com/dtd/preferences.dtd&quot;&gt;
+ </pre>
+使用 UTF-8 字符编码。
+
+<p>此方法对一般规则而言是个例外，在此类中并发执行多个方法将产生等效于某些顺序执行的结果。如果通过调用此方法同时修改了以此节点为根的子树中的首选项或节点，则导出的首选项由该子树的&ldquo;模糊快照&rdquo;组成；有些并发修改可能在导出数据中得到了反映，而有些则不然。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@throws IOException 如果写入指定的输出流导致 <tt>IOException</tt>。
+@throws BackingStoreException 如果无法从内部存储读取首选项数据。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see    #importPreferences(InputStream)
+@see    #exportNode(OutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.util.prefs.Preferences.importPreferences(InputStream is) throws java.io.IOException, java.util.prefs.InvalidPreferencesFormatException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导入指定输入流中由 XML 文档表示的所有首选项。该文档可能表示用户首选项或系统首选项。如果它表示用户首选项，则这些首选项将被导入到调用用户的首选项树（即使它们原先位于另外的用户首选项树）。如果该文档描述的某些首选项位于不存在的首选项节点，则创建这些节点。
+
+<p>该 XML 文档必须具有以下 DOCTYPE 声明：
+ <pre>
+ &lt;!DOCTYPE preferences SYSTEM &quot;http://java.sun.com/dtd/preferences.dtd&quot;&gt;
+ </pre>
+（此方法与 {@link #exportNode(OutputStream)} 和 {@link #exportSubtree(OutputStream)} 一起使用。
+
+<p>此方法对一般规则而言是个例外，在此类中并发执行多个方法将产生等效于某些顺序执行的结果。该方法好像要在此类中其他公共方法之上实现，尤其是 {@link #node(String)} 和 {@link #put(String, String)}。
+
+@param is 从中读取 XML 文档的输入流。
+@throws IOException 如果读取指定的输入流导致 <tt>IOException</tt>。
+@throws InvalidPreferencesFormatException 输入流中的数据没有按要求的文档类型组成有效的 XML 文档。
+@throws SecurityException 如果安全管理器存在并且拒绝 <tt>RuntimePermission(&quot;preferences&quot;)</tt>。
+@see    RuntimePermission
+
+<!-- END DATA -->

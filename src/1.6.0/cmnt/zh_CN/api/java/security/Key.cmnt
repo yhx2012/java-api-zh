@@ -1,0 +1,88 @@
+<!-- BEGIN KEY -->
+public interface java.security.Key extends java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Key 是所有密钥的顶层接口。它定义了供所有密钥对象共享的功能。所有的密钥都具有三个特征：
+
+ <UL>
+
+<LI>算法
+
+<P>这是该密钥的密钥算法。密钥算法通常是加密或不对称操作算法（如 DSA 或 RSA），它们将和那些算法及相关的算法（例如 MD5 和 RSA，SHA-1 和 RSA、Raw DSA 等等）一起使用。用 {@link #getAlgorithm() getAlgorithm} 方法获取密钥算法的名称。<P>
+
+<LI>编码形式
+
+<P>这是密钥的外部编码形式，在 Java 虚拟机之外需要密钥的标准表示形式时以及将密钥传输到其他某些部分时使用。密钥根据标准格式（如 X.509 <code>SubjectPublicKeyInfo</code> 或 PKCS#8）编码，使用 {@link #getEncoded() getEncoded} 方法返回。注：ASN.1 类型 <code>SubjectPublicKeyInfo</code> 的语法定义如下：
+
+ <pre>
+ SubjectPublicKeyInfo ::= SEQUENCE {
+   algorithm AlgorithmIdentifier,
+   subjectPublicKey BIT STRING }
+
+ AlgorithmIdentifier ::= SEQUENCE {
+   algorithm OBJECT IDENTIFIER,
+   parameters ANY DEFINED BY algorithm OPTIONAL }
+ </pre>
+ 
+有关更多信息，请参见 <a href="http://www.ietf.org/rfc/rfc2459.txt">RFC 2459: Internet X.509 Public Key Infrastructure Certificate and CRL Profile</a>.
+ <P>
+
+<LI>格式
+
+<P>这是已编码密钥的格式的名称。它由 {@link #getFormat() getFormat} 方法返回。<P>
+
+ </UL>
+
+密钥通常通过密钥生成器、证书或用来管理密钥的各种 Identity 类来获取。密钥也可以通过使用密钥工厂（请参见 {@link KeyFactory}）从密钥规范（基础密钥材料的透明表示形式）获取。
+
+<p> 密钥应该使用 KeyRep 作为其序列化的表示形式。注意，序列化的 Key 可能包含不应该在不可信任的环境中显示的敏感信息。有关更多信息，请参见序列化规范的<a href="../../../platform/serialization/spec/security.html">安全附录</a>。
+
+@see PublicKey
+@see PrivateKey
+@see KeyPair
+@see KeyPairGenerator
+@see KeyFactory
+@see KeyRep
+@see java.security.spec.KeySpec
+@see Identity
+@see Signer
+
+@version 1.54 03/12/19
+@author Benjamin Renaud
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long java.security.Key.serialVersionUID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置为指示与以前的类版本序列化兼容的类指纹。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Key.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此密钥的标准算法名称。例如，&quot;DSA&quot; 指示此密钥是一个 DSA 密钥。有关标准算法名称的信息，请参见 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+@return 与此密钥关联的算法名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Key.getFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此密钥的基本编码格式，如果此密钥不支持编码，则返回 null。如果存在此密钥的 ASN.1 规范，则根据合适的 ASN.1 数据格式命名基本编码格式。例如，公钥的 ASN.1 数据格式名称是 <I>SubjectPublicKeyInfo</I>（由 X.509 标准定义）；在这种情况下，返回的格式为 <code>&quot;X.509&quot;</code>。类似地，私钥的 ASN.1 数据格式名称是 <I>PrivateKeyInfo</I>（由 PKCS #8 标准定义）；在这种情况下，返回的格式为 <code>&quot;PKCS#8&quot;</code>。
+
+@return 密钥的基本编码格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.Key.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回基本编码格式的密钥，如果此密钥不支持编码，则返回 null。
+
+@return 编码的密钥，如果此密钥不支持编码，则返回 null。
+
+<!-- END DATA -->

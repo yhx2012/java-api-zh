@@ -1,0 +1,258 @@
+<!-- BEGIN KEY -->
+public interface javax.script.ScriptEngine
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ScriptEngine</code> 是基础接口，该接口的方法在此规范的每个实现中都必须具有完整的功能。<br><br> 这些方法提供基本的脚本功能。为这个简单接口编写的应用程序应该对每个实现稍做修改就能够运行。这包括执行脚本的方法，以及设置和获取值的方法。<br><br> 这些值是两种类型的键/值对。组成第一种类型的键/值对中的键是此规范或个别实现中保留和定义的键。包含保留键的键/值对中的值具有指定的含义。<br><br> 另一种类型由那些创建 Java 语言 Bindings 的键/值对组成，值通常通过相应键或其装饰的形式用脚本表示。
+
+@author Mike Grogan
+@version 1.0
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.ARGV
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它将一个位置参数数组传递给某一脚本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.FILENAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它是将被执行的文件的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.ENGINE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它是 <code>ScriptEngine</code> 实现的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.ENGINE_VERSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它标识 <code>ScriptEngine</code> 实现的版本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它标识脚本语言的短名称。<code>ScriptEngineManager</code> 使用该名称查找具有 <code>getEngineByName</code> 方法中的给定名称的 <code>ScriptEngine</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.LANGUAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它是受实现支持的 Scripting Language 的完全名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.script.ScriptEngine.LANGUAGE_VERSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定值的保留键，它标识受实现支持的脚本语言的版本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(String script, ScriptContext context) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+立即执行脚本，该脚本的源是作为第一个参数传递的 String。脚本在执行之前，可以重新解析或重新编译。以前的执行在引擎中遗留的状态（包括变量值和已编译的程序）在这次执行中是可见的。
+
+@param script 将由脚本引擎执行的脚本。
+
+@param context 公开不同范围中的属性集的 <code>ScriptContext</code>。规范中定义了范围 <code>ScriptContext.GLOBAL_SCOPE</code> 和 <code>ScriptContext.ENGINE_SCOPE</code> 的含义。<br><br> <code>ScriptContext</code> 的 <code>ENGINE_SCOPE</code> <code>Bindings</code> 包含将在此脚本执行期间使用的应用程序对象脚本变量的 bindings。
+
+
+@return 执行脚本所返回的值。
+
+@throws ScriptException 如果脚本发生错误。对于底层脚本实现抛出的经过检查的 Exception，ScriptEngine 应该创建并抛出 <code>ScriptException</code> 包装器。
+@throws NullPointerException 如果任一参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(Reader reader, ScriptContext context) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与 <code>eval(String, ScriptContext)</code> 相同，其中脚本的源是从 <code>Reader</code> 读取的。
+
+@param reader 将由脚本引擎执行的脚本的源。
+
+@param context 传递给脚本引擎的 <code>ScriptContext</code>。
+
+@return 执行脚本所返回的值。
+
+@throws ScriptException 如果脚本发生错误。
+@throws NullPointerException 如果任一参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(String script) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行指定的脚本。使用 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code>。
+
+@param script 要执行的脚本语言源。
+
+@return 执行脚本所返回的值。
+
+@throws ScriptException 如果脚本发生错误。
+@throws NullPointerException 如果参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(Reader reader) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除了脚本的源是以 <code>Reader</code> 形式提供的外，与 <code>eval(String)</code> 相同。
+
+@param reader 脚本的源。
+
+@return 脚本返回的值。
+
+@throws ScriptException 如果脚本发生错误。
+@throws NullPointerException 如果参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(String script, Bindings n) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行脚本，脚本执行期间使用 <code>Bindings</code> 参数作为 <code>ScriptEngine</code> 的 <code>ENGINE_SCOPE</code> <code>Bindings</code>。使用默认 <code>ScriptContext</code> 的 <code>Reader</code>、<code>Writer</code> 和非 <code>ENGINE_SCOPE</code> <code>Bindings</code>。<code>ScriptEngine</code> 的 <code>ENGINE_SCOPE</code> <code>Bindings</code> 不变，其映射关系不随脚本执行发生改变。
+
+@param script 脚本的源。
+
+@param n 将用于脚本执行的属性的 <code>Bindings</code>。
+
+@return 脚本返回的值。
+
+@throws ScriptException 如果脚本发生错误。
+@throws NullPointerException 如果任一参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.eval(Reader reader, Bindings n) throws javax.script.ScriptException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除了脚本的源是以 <code>Reader</code> 形式提供的外，与 <code>eval(String, Bindings)</code> 相同。
+
+@param reader 脚本的源。
+@param n 属性的 <code>Bindings</code>。
+
+@return 脚本返回的值。
+
+@throws ScriptException 如果发生错误。
+@throws NullPointerException 如果任一参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.script.ScriptEngine.put(String key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 ScriptEngine 的状态中的键/值对，它创建一个将在脚本执行中使用或者以其他方式使用的 Java Language Binding，具体取决于该键是否被保留。必须与 <code>getBindings(ScriptContext.ENGINE_SCOPE).put</code> 具有相同的效果。
+
+@param key 要添加的指定值的名称
+@param value 要添加的指定值的值。
+
+@throws NullPointerException 如果 key 为 null。
+@throws IllegalArgumentException 如果 key 为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngine.get(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在此引擎的状态中设置的值。该值可能是使用 <code>setValue</code> 设置的值，也可能是 <code>ScriptEngine</code> 状态中的某个其他值，具体取决于实现。必须与 <code>getBindings(ScriptContext.ENGINE_SCOPE).get</code> 具有相同的效果。
+
+@param key 将返回其值的键
+@return 给定键的值
+
+@throws NullPointerException 如果 key 为 null。
+@throws IllegalArgumentException 如果 key 为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.script.Bindings javax.script.ScriptEngine.getBindings(int scope)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定值的范围。可能的范围有： <br><br>
+ <ul>
+<li><code>ScriptContext.GLOBAL_SCOPE</code> - 表示全局范围的指定值的集合。如果此 <code>ScriptEngine</code> 是通过 <code>ScriptEngineManager</code> 创建的，则该管理器将设置全局范围 bindings。如果没有与此 <code>ScriptEngine</code> 关联的全局范围，则此范围可能为 <code>null</code></li>
+<li><code>ScriptContext.ENGINE_SCOPE</code> - 表示此 <code>ScriptEngine</code> 的状态的指定值的集合。在使用关联键作为变量名称的脚本中，这些值通常是可见的。</li>
+<li><code>ScriptEngine</code> 的默认 <code>ScriptContext</code> 中定义的其他范围值。
+ </li>
+ </ul>
+<br><br> 返回的 <code>Bindings</code> 实例必须与对 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code> 调用 <code>ScriptContext</code> 的 <code>getBindings</code> 方法（使用相应参数）所返回的实例一样。
+
+@param scope <code>ScriptContext.ENGINE_SCOPE</code> 或 <code>ScriptContext.GLOBAL_SCOPE</code>，指定要返回的 <code>Bindings</code>。<code>ScriptContext</code> 的实现可以定义其他范围。如果 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code> 定义了其他范围，则这些范围都可以传递给该参数，以获取相应的 <code>Bindings</code>。
+
+@return 指定范围的 <code>Bindings</code>。
+
+@throws IllegalArgumentException 如果指定范围无效
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.script.ScriptEngine.setBindings(Bindings bindings, int scope)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将由脚本使用的指定值的范围。可能的范围有： <br><br>
+ <ul>
+<li><code>ScriptContext.ENGINE_SCOPE</code> - 指定的 <code>Bindings</code> 将替代 <code>ScriptEngine</code> 的引擎范围。
+ </li>
+<li><code>ScriptContext.GLOBAL_SCOPE</code> - 指定的 <code>Bindings</code> 必须作为 <code>GLOBAL_SCOPE</code> 可见。
+ </li>
+<li><code>ScriptEngine</code> 的默认 <code>ScriptContext</code> 中定义的其他范围值。
+</li>
+ </ul>
+<br><br> 该方法必须与对 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code> 调用 <code>ScriptContext</code> 的 <code>setBindings</code> 方法（使用 <code>scope</code> 的相应值）的效果相同。
+
+@param bindings 指定范围的 <code>Bindings</code>。
+@param scope 指定的范围。<code>ScriptContext.ENGINE_SCOPE</code>、<code>ScriptContext.GLOBAL_SCOPE</code> 或者其他有效范围值。
+
+@throws IllegalArgumentException 如果 scope 有效
+@throws NullPointerException 如果 bindings 为 null 并且 scope 为 <code>ScriptContext.ENGINE_SCOPE</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.script.Bindings javax.script.ScriptEngine.createBindings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个未初始化的 <code>Bindings</code>。
+
+@return 用来替代此 <code>ScriptEngine</code> 状态的 <code>Bindings</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.script.ScriptContext javax.script.ScriptEngine.getContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code>，在没有指定 <code>ScriptContext</code> 时，该 ScriptEngine 的 Bindings、Reader 和 Writer 被用于脚本执行。
+
+@return <code>ScriptEngine</code> 的默认 <code>ScriptContext</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.script.ScriptEngine.setContext(ScriptContext context)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>ScriptEngine</code> 的默认 <code>ScriptContext</code>，在没有指定 <code>ScriptContext</code> 时，该 ScriptEngine 的 Bindings、Reader 和 Writer 被用于脚本执行。
+
+@param context 将替代 <code>ScriptEngine</code> 中默认 <code>ScriptContext</code> 的 <code>ScriptContext</code>。
+@throws NullPointerException 如果 context 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.script.ScriptEngineFactory javax.script.ScriptEngine.getFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ScriptEngine</code> 所属的类的 <code>ScriptEngineFactory</code>。
+
+@return <code>ScriptEngineFactory</code>
+
+<!-- END DATA -->

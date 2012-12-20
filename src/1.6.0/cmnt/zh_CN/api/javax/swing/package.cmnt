@@ -1,0 +1,78 @@
+<!-- BEGIN KEY -->
+javax.swing
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+
+<P>提供一组&ldquo;轻量级&rdquo;（全部是 Java 语言）组件，尽量让这些组件在所有平台上的工作方式都相同。有关使用这些组件的程序员指南，请参阅 <a href="http://java.sun.com/docs/books/tutorial/uiswing/index.html" 
+target="_top">Creating a GUI with JFC/Swing</a>，该内容在 <em>The Java Tutorial</em> 的结尾处。有关其他参考资料，请参阅<a href="#related">相关文档</a>。
+
+<H2><a name="threading">Swing 的线程策略</a></h2>
+
+通常 Swing 不是线程安全的。除非另行说明，否则所有 Swing 组件及相关类都必须在事件调度线程上访问。
+<p>
+典型的 Swing 应用程序执行处理以响应用户动作所生成的事件。例如，单击 {@code JButton} 通知所有添加到 {@code JButton} 的 {@code ActionListener}。由于用户动作所生成的所有事件都在调度线程上指派，所以大部分开发人员不受该限制的影响。 
+<p>
+但是，影响存在于构造以及显示 Swing 的应用程序中。对应用程序的 {@code main} 方法或 {@code Applet} 中方法的调用不在事件调度线程上调用。因此，构造和显示应用程序或 applet 时，必须注意要将控件转移到事件调度线程。转移控件和开始处理 Swing 的首选方法是使用 {@code invokeLater}。{@code invokeLater} 方法安排 {@code Runnable} 在事件调度线程上处理。以下两个示例都同样很好地用于转移控件和启动 Swing 应用程序：
+<pre>
+public class MyApp implements Runnable {
+    public void run() {
+        // Invoked on the event dispatching thread.
+        // Construct and show GUI.
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new MyApp(args));
+    }
+}
+</pre>
+或：
+<pre>
+public class MyApp {
+    MyApp(String[] args) {
+        // Invoked on the event dispatching thread. Do any initialization
+        // here.
+    }
+
+    public void show() {
+        // Show the UI.
+    }
+
+    public static void main(final String[] args) {
+        // Schedule a job for the event-dispatching thread:
+        // creating and showing this application's GUI.
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                new MyApp(args).show();
+            }
+        });
+    }
+}
+</pre>
+此限制也适用于连接到 Swing 组件的模型。例如，如果将 {@code TableModel} 连接到 {@code JTable}，则 {@code TableModel} 应该只在事件调度线程上进行修改。如果修改单独线程上的模型，就有遭遇异常和可能的显示损坏的风险。 
+ <p>
+由于所有事件都是在事件调度线程上传递的，所以必须注意事件处理。尤其是，在事件调度线程上执行的长运行时间任务（如网络 io 或计算密集处理）将阻塞事件调度线程调度任何其他线程。事件调度线程受阻塞时，应用程序对用户输入完全没有反应。有关处理 Swing 时执行这种处理的首选方式，请参阅 {@link SwingWorker}。
+ <p>
+可以在 <a href="http://java.sun.com/docs/books/tutorial/uiswing/">Swing tutorial</a> 中，尤其是 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</a> 一节找到关于此主题的更多信息。
+
+
+<H2>
+<a name="related">相关文档</a>
+</H2>
+<P>有关概述、教程、示例、指南和其他文档的信息，请参阅：
+
+<UL>
+   <LI><A HREF="http://java.sun.com/products/jfc/tsc/" 
+   target="_top">The Swing Connection</A>
+   <LI><A HREF="http://java.sun.com/docs/books/tutorial/" 
+   target="_top">The Java Tutorial</A>
+   <LI><A HREF="http://developer.java.sun.com/developer/onlineTraining/" 
+   target="_top">Online Training</A> Java Developer Connection<font size=-2><sup>SM</sup></font>
+   <LI><A HREF="http://java.sun.com/products/jfc/" 
+   target="_top">Java Foundation Classes (JFC)</A> 主页
+</UL>
+
+@serial exclude
+
+
+<!-- END DATA -->

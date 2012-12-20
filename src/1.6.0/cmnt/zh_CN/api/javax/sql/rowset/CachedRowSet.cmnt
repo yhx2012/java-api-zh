@@ -1,0 +1,871 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.CachedRowSet extends javax.sql.RowSet, javax.sql.rowset.Joinable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有标准 <code>CachedRowSet</code> 实现都必须实现的接口。  
+ <P>
+Sun Microsystems 提供的 <code>CachedRowSet</code> 接口的参考实现是一个标准实现。开发人员可以按原样使用此实现、可以扩展它，也可以选择自己编写此接口的实现。  
+ <P>
+<code>CachedRowSet</code> 对象是一个数据行的容器，可在内存中缓存其各行，这使得进行操作时无需总是连接到数据源。此外，它还是一个 JavaBeans<sup><font size=-2>TM</font></sup> 组件，是可滚动、可更新、可序列化的。<code>CachedRowSet</code> 对象通常包含结果集中的行，但它也可以包含任何具有表格式的文件（如电子表格）中的行。参考实现只支持从 <code>ResultSet</code> 对象中获取数据，但是开发人员可以扩展 <code>SyncProvider</code> 实现，以提供对其他表格数据源的访问。
+ <P>
+应用程序可以修改 <code>CachedRowSet</code> 对象中的数据，这些修改随后可以被传播回数据源。
+ <P>
+<code>CachedRowSet</code> 对象是一个<i>非连接</i> rowset，这意味着它只会短暂地连接其数据源。连接数据源发生在读取数据以用各行填充自身，以及将更改传播回其底层数据源时。其余时间 <code>CachedRowSet</code> 对象是非连接的，包括修改它的数据时。非连接使 <code>RowSet</code> 对象更为简洁，因此更容易传递给另一个组件。例如，非连接 <code>RowSet</code> 对象可以被序列化并通过导线传递到瘦客户端 (thin client)，如个人数字助理（personal digital assistant，PDA）。
+ <P>
+
+<h3>1.0 创建 <code>CachedRowSet</code> 对象</h3>
+以下代码行使用参考实现 (RI) 中提供的默认 <code>CachedRowSet</code> 构造方法来创建默认的 <code>CachedRowSet</code> 对象。
+ <PRE>
+     CachedRowSetImpl crs = new CachedRowSetImpl();
+ </PRE>
+这一新 <code>CachedRowSet</code> 对象的属性设置为 <code>BaseRowSet</code> 对象的默认属性，此外，它将 <code>RIOptimisticProvider</code> 对象作为其同步提供者。<code>RIOptimisticProvider</code>（RI 中包含的两个 <code>SyncProvider</code> 实现之一）是在没有指定同步提供者时，<code>SyncFactory</code> 单件 (singleton) 将提供的默认提供者。
+ <P>
+<code>SyncProvider</code> 对象提供了带有 reader 的（<code>RowSetReader</code> 对象）的 <code>CachedRowSet</code> 对象，用于从数据源读取数据以便用该数据填充自身。可以实现 reader 从 <code>ResultSet</code> 对象或者表格式的文件中读取数据。<code>SyncProvider</code> 对象还提供了 writer（<code>RowSetWriter</code> 对象），用于同步在与底层数据源中的数据断开连接时对 <code>CachedRowSet</code> 对象数据所做的任何更改。
+ <P>
+可以实现 writer 以在检查和避免冲突方面实施不同程度的关注。（如果使用某个值填充 rowset 后更改了数据源中的该值，则会发生冲突。）<code>RIOptimisticProvider</code> 实现假定冲突很少或没有冲突，因此不设置锁定。仅在没有冲突时，它才使用取自 <code>CachedRowSet</code> 对象的值更新数据源。也可以实现其他 writer，使其始终可将修改后的数据写入数据源，这可以通过不检查冲突来实现，或者从另一个方面着手，即通过设置足够的锁定来防止对数据源中的数据进行更改。这两种 writer 之间还可以有其他 writer 实现。
+ <P>
+<code>CachedRowSet</code> 对象可以使用任何已向 <code>SyncFactory</code> 单件注册的 <code>SyncProvider</code> 实现。通过调用以下代码行，应用程序可以找到已注册的 <code>SyncProvider</code> 实现。
+ <PRE>
+      java.util.Enumeration providers = SyncFactory.getRegisteredProviders();
+ </PRE>
+ <P>
+<code>CachedRowSet</code> 对象可使用两种方式来指定它将使用的 <code>SyncProvider</code> 对象。
+<UL)
+     <LI>向构造方法提供实现名<BR> 以下代码行创建 <code>CachedRowSet</code> 对象 <i>crs2</i>，使用默认值初始化该对象，但其 <code>SyncProvider</code> 对象是指定的。
+     <PRE>
+          CachedRowSetImpl crs2 = new CachedRowSetImpl(
+                                 &quot;com.fred.providers.HighAvailabilityProvider&quot;);
+     </PRE>
+<LI>使用 <code>CachedRowSet</code> 方法 <code>setSyncProvider</code> 设置 <code>SyncProvider</code><BR> 以下代码行为 <i>crs</i> 重置 <code>SyncProvider</code> 对象，该 <code>CachedRowSet</code> 对象是使用默认构造方法创建的。 
+      <PRE>
+           crs.setSyncProvider(&quot;com.fred.providers.HighAvailabilityProvider&quot;);
+      </PRE>
+</UL)
+有关更多细节，请参阅 <code>SyncFactory</code> 和 <code>SyncProvider</code> 的注释。
+
+ <P>
+<h3>2.0 从 <code>CachedRowSet</code> 对象获取数据</h3>
+从 <code>CachedRowSet</code> 对象获取数据可使用继承自 <code>ResultSet</code> 接口的获取方法。以下示例（其中 <code>crs</code> 是一个 <code>CachedRowSet</code> 对象）演示了如何在各行中进行迭代，获取每行中的列值。第一个示例使用以列号为参数的获取方法；第二个示例使用以列名为参数的获取方法。当 <code>RowSet</code> 对象的命令是 <code>SELECT * FROM TABLENAME</code> 形式时通常使用列号；当命令通过名称指定列时则通常使用列名。
+ <PRE>
+    while (crs.next()) {
+        String name = crs.getString(1);
+        int id = crs.getInt(2);
+        Clob comment = crs.getClob(3);
+        short dept = crs.getShort(4);
+        System.out.println(name + &quot;  &quot; + id + &quot;  &quot; + comment + &quot;  &quot; + dept);
+    }
+ </PRE>
+
+ <PRE>
+    while (crs.next()) {
+        String name = crs.getString(&quot;NAME&quot;);
+        int id = crs.getInt(&quot;ID&quot;);
+        Clob comment = crs.getClob(&quot;COM&quot;);
+        short dept = crs.getShort(&quot;DEPT&quot;);
+        System.out.println(name + &quot;  &quot; + id + &quot;  &quot; + comment + &quot;  &quot; + dept);
+    }
+ </PRE>
+<h4>2.1 获取 <code>RowSetMetaData</code></h4>
+通过在 <code>RowSetMetaData</code> 对象上调用 <code>ResultSetMetaData</code> 和 <code>RowSetMetaData</code> 的方法，应用程序可以获得有关 <code>CachedRowSet</code> 对象中各列的信息。以下代码片断（其中 <i>crs</i> 是一个 <code>CachedRowSet</code> 对象）展示了该过程。第一行使用关于 <i>crs</i> 中各列的信息创建一个 <code>RowSetMetaData</code> 对象。继承自 <code>ResultSet</code> 接口的方法 <code>getMetaData</code> 返回一个 <code>ResultSetMetaData</code> 对象，将该对象分配给变量 <i>rsmd</i> 前会将其强制转换为 <code>RowSetMetaData</code> 对象。第二行查明 <i>jrs</i> 的列数，第三行获得存储在 <code>jrs</code> 第二列中 JDBC 类型的值。
+ <PRE>
+     RowSetMetaData rsmd = (RowSetMetaData)crs.getMetaData();
+     int count = rsmd.getColumnCount();
+     int type = rsmd.getColumnType(2);
+ </PRE>
+<code>RowSetMetaData</code> 接口与 <code>ResultSetMetaData</code> 接口有两方面不同。
+ <UL>
+<LI><i>它包括<code>设置</code>方法：</i>当使用取自不同 <code>ResultSet</code> 对象的数据填充 <code>RowSet</code> 对象时，该 RowSet 对象在内部使用这些方法。
+   <P>
+<LI><i>它包含较少的<code>获取</code>方法：</i>某些 <code>ResultSetMetaData</code> 方法无法应用到 <code>RowSet</code> 对象。例如，不会应用那些获取某个列值是可写入的还是只读的方法，因为 <code>RowSet</code> 对象的所有列要么是可写入的，要么是只读的，这取决于该 rowset 是否可更新。         
+ </UL>
+注：要返回 <code>RowSetMetaData</code> 对象，实现必须重写 <code>java.sql.ResultSet</code> 中定义的 <code>getMetaData()</code> 方法返回 <code>RowSetMetaData</code> 对象。
+
+<h3>3.0 更新 <code>CachedRowSet</code> 对象</h3>
+更新 <code>CachedRowSet</code> 对象与更新 <code>ResultSet</code> 对象类似，但是因为更新 rowset 时它并未连接到其数据源，所以必须执行额外的步骤才能使更改在底层数据源中生效。调用方法 <code>updateRow</code> 或 <code>insertRow</code> 后，<code>CachedRowSet</code> 对象还必须调用方法 <code>acceptChanges</code> 使更新写入数据源。以下示例（其中指针在 <code>CachedRowSet</code> 对象 <i>crs</i> 中的行上）显示了更新当前行中两个列值并同样更新 <code>RowSet</code> 对象的底层数据源所需的代码。
+ <PRE>
+     crs.updateShort(3, 58);
+     crs.updateInt(4, 150000);
+     crs.updateRow();
+     crs.acceptChanges();
+ </PRE>
+ <P>
+下一个示例演示了移至插入行、在插入行上构建新行、将新行插入 rowset，然后调用方法 <code>acceptChanges</code> 将新行添加到底层数据源。注意，与获取方法一样，更新方法可以采用列索引或列名来指定所操作的列。
+ <PRE>
+     crs.moveToInsertRow();
+     crs.updateString(&quot;Name&quot;, &quot;Shakespeare&quot;);
+     crs.updateInt(&quot;ID&quot;, 10098347);
+     crs.updateShort(&quot;Age&quot;, 58);
+     crs.updateInt(&quot;Sal&quot;, 150000);
+     crs.insertRow();
+     crs.moveToCurrentRow();
+     crs.acceptChanges();
+ </PRE>
+ <P>
+注：<code>insertRow()</code> 方法在何处插入 <code>CachedRowSet</code> 对象的插入行内容是由实现定义的。<code>CachedRowSet</code> 接口的参考实现紧随当前行插入新行，但也可以实现为在任何其他位置插入新行。
+ <P>
+有关这些示例的另一个注意点是它们使用方法 <code>acceptChanges</code> 的方式。通过内部调用 <code>RowSet</code> 对象的 writer 将这些更改写入数据源，从而将 <code>CachedRowSet</code> 对象中的更改传播回底层数据源的正是此方法。为此，writer 不得不承受建立到数据源的连接所带来的开销。上述两个代码片断在调用 <code>updateRow</code> 或 <code>insertRow</code> 后立即调用方法 <code>acceptChanges</code>。但是，如果更改了多个行，则更高效的做法是在调用所有 <code>updateRow</code> 和 <code>insertRow</code> 后再调用 <code>acceptChanges</code>。如果只调用 <code>acceptChanges</code> 一次，则只需要建立一个连接。
+ <P>
+<h3>4.0 更新底层数据源</h3>
+执行 <code>acceptChanges</code> 方法时，在后台调用 <code>CachedRowSet</code> 对象的 writer（一个 <code>RowSetWriterImpl</code> 对象），以便将对 rowset 所作的更改写入底层数据源。实现该 writer 以建立到数据源的连接并写入更新。
+ <P>
+可通过 <code>SyncProvider</code> 接口的实现提供 writer，这已第 1 部分&ldquo;创建 <code>CachedRowSet</code> 对象&rdquo;中讨论。默认的参考实现提供者 <code>RIOptimisticProvider</code> 会实现其 writer 使用乐观并发控制 (optimistic concurrency control) 机制。也就是说，在 rowset 与数据库断开时它不对底层数据库维持任何锁定，在将数据写入数据源之前它只是检查是否有冲突。如果存在冲突，则不向数据源写入任何内容。 
+ <P>
+<code>SyncProvider</code> 类提供的 reader/writer 设施是可插入的，允许自定义数据的获取和更新。如果需要其他的并发控制机制，可使用方法 <code>setSyncProvider</code> 插入其他 <code>SyncProvider</code> 实现。
+ <P>
+要使用乐观并发控制例程，<code>RIOptismisticProvider</code> 要同时维护其当前值及其原始值（刚好位于当前值之前的值）。注意，如果没有对 <code>RowSet</code> 对象中的数据进行任何更改，则其当前值和原始值相同，都是最初填充 <code>RowSet</code> 对象时使用的值。但是，一旦更改了 <code>RowSet</code> 对象中的任何值，当前值和原始值就不同了，尽管此时原始值仍是最初的值。随着后续对 <code>RowSet</code> 对象中的数据进行更改，其原始值和当前值仍保持不同，但是其原始值将是前一个当前值。
+ <P>
+关注原始值允许 writer 对 <code>RowSet</code> 对象的原始值和数据库中的值进行比较。如果数据库中的值与 <code>RowSet</code> 对象的原始值不同，则意味着数据库中的值已经更改，出现了冲突。writer 是否检查冲突、检查的程度如何，以及它如何处理冲突都取决于它的实现方式。
+ <P>
+<h3>5.0 注册和通知侦听器</h3>
+作为 JavaBeans 组件，参与 JavaBeans 事件模型的所有 rowset 都继承了用来注册侦听器和用来通知这些侦听器 <code>BaseRowSet</code> 类中发生更改的各种方法。<code>CachedRowSet</code> 对象的侦听器是一个组件，只要 rowset 中发生更改，它就应得到通知。例如，如果 <code>CachedRowSet</code> 对象包含查询的结果，并且这些结果将以表格和条形图之类的形式显示，则可以向 rowset 将该表格和条形图注册为侦听器，这样它们可以更新以反映各种更改。要成为侦听器，表格和条形图类必须实现 <code>RowSetListener</code> 接口。然后可将它们添加到 <Code>CachedRowSet</code> 对象的侦听器列表，如以下代码行所示。
+ <PRE> 
+    crs.addRowSetListener(table);
+    crs.addRowSetListener(barGraph);
+ </PRE>
+每个移动指针或更改数据的 <code>CachedRowSet</code> 方法也将更改通知已注册的侦听器，所以当 <code>crs</code> 中发生更改时 <code>table</code> 和 <code>barGraph</code> 将得到通知。
+ <P>
+<h3>6.0 向瘦客户端传递数据</h3>
+使用 <code>CachedRowSet</code> 对象的主要原因之一是要在应用程序的不同组件之间传递数据。因为 <code>CachedRowSet</code> 对象是可序列化的，所以可使用它（举例来说）将运行于服务器环境的企业 JavaBeans 组件执行查询的结果通过网络发送到运行于 web 浏览器的客户端。
+ <P>
+由于 <code>CachedRowSet</code> 对象是非连接的，所以和具有相同数据的 <code>ResultSet</code> 对象相比更为简洁。因此，它特别适于向瘦客户端（如 PDA）发送数据，这种瘦客户端由于资源限制或安全考虑而不适于使用 JDBC 驱动程序。所以 <code>CachedRowSet</code> 对象可提供一种&ldquo;获取各行&rdquo;的方式而无需实现全部 JDBC API。
+ <P>
+<h3>7.0 滚动和更新</h3>
+<code>CachedRowSet</code> 对象的第二个主要用途是为那些本身不提供滚动和更新的 <code>ResultSet</code> 对象提供这些功能。换句话说，当 DBMS 不提供对滚动和更新的完全支持时，可使用 <code>CachedRowSet</code> 对象扩充启用 JDBC 技术的驱动程序（以下称为&ldquo;JDBC 驱动程序&rdquo;）的功能。要使不可滚动和只读的 <code>ResultSet</code> 对象变得可滚动和可更新，程序员只需创建一个使用该 <code>ResultSet</code> 对象的数据所填充的 <code>CachedRowSet</code> 对象即可。以下代码片断演示了这一过程，其中 <code>stmt</code> 是一个 <code>Statement</code> 对象。
+ <PRE>
+    ResultSet rs = stmt.executeQuery(&quot;SELECT * FROM EMPLOYEES&quot;);
+    CachedRowSetImpl crs = new CachedRowSetImpl();
+    crs.populate(rs);
+ </PRE>
+ <P>
+现在对象 <code>crs</code> 与对象 <code>rs</code> 一样，也包含了取自表 <code>EMPLOYEES</code> 的数据。不同的是 <code>crs</code> 的指针可以向前、向后移动，或者移动到特定行，即使 <code>rs</code> 的指针只能向前移动也是如此。此外，即使 <code>rs</code> 是不可更新的，<code>crs</code> 也将是可更新的，因为在默认情况下，<code>CachedRowSet</code> 对象是可滚动和可更新的。
+ <P>
+总之，可将 <code>CachedRowSet</code> 对象简单地看成是一个非连接的行集合，这些行将缓存在数据源外部。由于它比较小并且是可序列化的，所以它可以轻松地通过导线发送，并且非常适合于向瘦客户端发送数据。但是 <code>CachedRowSet</code> 对象也有局限性：它的大小限制在它一次可在内存中存储的数据量范围内。 
+ <P>
+<h3>8.0 获得通用数据访问</h3>
+<code>CachedRowSet</code> 类的另一个优势在于它能够从关系数据库以外各种数据源获取并存储数据。可以实现 rowset 的 reader 读取任何表格数据源（包括电子表格或平面文件）的数据，并用该数据填充其 rowset。因为 <code>CachedRowSet</code> 对象及其元数据都可以从头创建，所以充当 rowset 工厂的组件可以使用此功能来创建一个包含非 SQL 数据源数据的 rowset。但是，大部分情况下，希望 <code>CachedRowSet</code> 对象包含使用 JDBC API 从 SQL 数据库中获取的数据。
+ <P>
+<h3>9.0 设置属性</h3>
+所有 rowset 都维护一个属性集，通常使用某种工具来设置这些属性。rowset 具有的属性的数量和种类各不相同，这取决于 rowset 的用途及其获得数据的方式。例如，从 <code>ResultSet</code> 对象获得其数据的 rowset 需要设置那些建立数据库连接所需的属性。如果某个 rowset 使用 <code>DriverManager</code> 设施建立连接，则它需要设置一个标识合适驱动程序的 JDBC URL 属性，还需要设置那些提供用户名和密码的属性。另一方面，如果 rowset 使用 <code>DataSource</code> 对象建立连接（这是首选的方法），则它无需设置 JDBC URL 属性。但是它需要设置用于数据源逻辑名、用户名和密码的属性。
+ <P>
+注：要使用 <code>DataSource</code> 对象建立连接，该 <code>DataSource</code> 对象必须已经向使用 Java Naming and Directory Interface<sup><font size=-2>TM</font></sup> (JNDI) API 的命名服务注册。通常由具有系统管理员资格的人员完成此注册。
+ <P>
+为了能够使用数据库的数据填充，rowset 需要设置 command 属性。此属性是一种 <code>PreparedStatement</code> 对象的查询，该对象允许查询具有在运行时（而不是设计时）设置的参数占位符。要用各种值设置这些占位符参数，rowset 要为设置每种数据类型的值提供设置方法，类似于 <code>PreparedStatement</code> 接口提供的设置方法。 
+ <P>
+以下代码片断展示了如何设置 <code>CachedRowSet</code> 对象 <code>crs</code> 的 command 属性。注意，如果使用某种工具设置属性，则这就是该工具应使用的代码。
+ <PRE>
+    crs.setCommand(&quot;SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS &quot; +
+                   &quot;WHERE CREDIT_LIMIT &gt; ? AND REGION = ?&quot;);
+ </PRE>
+ <P>
+用于设置该命令占位符参数的值被包含在 <code>RowSet</code> 对象的 <code>params</code> 字段中，该字段是一个 <code>Vector</code> 对象。<code>CachedRowSet</code> 类为设置其 <code>params</code> 字段中的元素提供了一组设置方法。以下代码片断演示了如何设置前一个示例查询中的两个参数。
+ <PRE>
+    crs.setInt(1, 5000);
+    crs.setString(2, &quot;West&quot;);
+ </PRE>
+ <P>
+<code>params</code> 字段现在包含两个元素，每个元素都是一个两元素长的数组。第一个元素是参数号；第二个元素是要设置的值。在这种情况下，<code>params</code> 的第一个元素是 <code>1</code>，<code>5000</code>，第二个元素是 <code>2</code>，<code>&quot;West&quot;</code>。当应用程序调用方法 <code>execute</code> 时，它会依次调用此 <code>RowSet</code> 对象的 reader，该 reader 会依次调用其 <code>readData</code> 方法。作为实现的一部分，<code>readData</code> 将获得 <code>params</code> 中的值并使用这些值设置命令的占位符参数。以下代码片断说明了在获得 <code>Connection</code> 对象 <code>con</code> 后 reader 如何执行此操作。
+ <PRE>
+    PreparedStatement pstmt = con.prepareStatement(crs.getCommand());
+    reader.decodeParams();
+    // decodeParams figures out which setter methods to use and does something
+    // like the following:
+    //    for (i = 0; i &lt; params.length; i++) {
+    //        pstmt.setObject(i + 1, params[i]);
+    //    }
+ </PRE>
+ <P>
+这里用于 <code>crs</code> 的命令是查询 <code>&quot;SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS WHERE CREDIT_LIMIT &gt; 5000 AND REGION = &quot;West&quot;</code>。<code>readData</code> 方法使用以下代码行执行此命令后，它会获得 <code>rs</code> 的数据，该数据用于填充 <code>crs</code>。
+ <PRE>
+     ResultSet rs = pstmt.executeQuery();
+ </PRE>
+ <P>
+上述代码片断说明了在后台进行的操作；这些操作不会出现在应用程序中，因为应用程序不会调用 <code>readData</code> 和 <code>decodeParams</code> 之类的方法。相反，以下代码片断展示了应用程序可能执行的操作。它设置 rowset 的命令、设置 command 属性并执行该命令。只需调用 <code>execute</code> 方法，就可使用从表 <code>CUSTOMERS</code> 请求的数据生成 <code>crs</code>。
+ <PRE>
+    crs.setCommand(&quot;SELECT FIRST_NAME, LAST_NAME, ADDRESS FROM CUSTOMERS&quot; +
+                   &quot;WHERE CREDIT_LIMIT &gt; ? AND REGION = ?&quot;);
+    crs.setInt(1, 5000);
+    crs.setString(2, &quot;West&quot;);
+    crs.execute();
+ </PRE>
+
+<h3>10.0 分页数据</h3>
+因为 <code>CachedRowSet</code> 对象在内存中存储数据，所以它在任一时间可以包含的数据量是由可用的内存量决定的。要避开此限制，<code>CachedRowSet</code> 对象可以数据块（称为<i>页</i>）的形式从 <code>ResultSet</code> 对象中获取数据。要利用此机制，应用程序应使用方法 <code>setPageSize</code> 设置一页中要包括的行数。换句话说，如果页大小设置为 5，则一次从数据源中获取一个 5 行的数据块。应用程序也可选择设置一次可获取的最大行数。如果最大行数设置为 0，或者未设置最大行数，则对一次获取的行数没有限制。
+ <P>
+设置各个属性后，必须使用方法 <code>populate</code> 或方法 <code>execute</code> 用数据填充 <code>CachedRowSet</code> 对象。以下代码行演示了如何使用方法 <code>populate</code>。注意，该方法的这种形式采用两个参数，<code>ResultSet</code> 句柄和 <code>ResultSet</code> 对象中的行，从该行开始获取各行。
+ <PRE>
+     CachedRowSet crs = new CachedRowSetImpl();
+     crs.setMaxRows(20);
+     crs.setPageSize(4);
+     crs.populate(rsHandle, 10);
+ </PRE>
+运行此代码时，将使用 <i>rsHandle</i> 中从第 10 行开始的 4 行数据填充 <i>crs</i>。
+ <P>
+下一个代码片断展示了如何使用方法 <code>execute</code> 填充 <code>CachedRowSet</code> 对象，该方法可以采用 <code>Connection</code> 对象作为一个参数，也可以不采用。此代码向 <code>execute</code> 传递 <code>Connection</code> 对象 <i>conHandle</i>。 
+ <P>
+注意，以下代码片断和上述代码片断有两处差别。首先，没有调用方法 <code>setMaxRows</code>，所以没有对 <i>crs</i> 可以包含的行数设置限制。（记住，对于 <i>crs</i> 在内存中可以存储的数据量，总是有一个最高限制。）第二个差别是不能向方法 <code>execute</code> 传递 <code>ResultSet</code> 对象中起始获取行的行号。此方法始终从第一行开始获取。
+ <PRE>
+     CachedRowSet crs = new CachedRowSetImpl();
+     crs.setPageSize(5);
+     crs.execute(conHandle);
+ </PRE>
+运行此代码后，<i>crs</i> 将包含由 <i>crs</i> 的命令所生成的 <code>ResultSet</code> 对象中的 5 行数据。<i>crs</i> 的 writer 将使用 <i>conHandle</i> 连接数据源并执行 <i>crs</i> 的命令。然后应用程序就能够在 <i>crs</i> 中的数据上进行操作，方式与在任何其他 <code>CachedRowSet</code> 对象的数据上进行操作的方式相同。
+ <P>
+要访问下一页（数据块），应用程序可调用方法 <code>nextPage</code>。此方法创建新的 <code>CachedRowSet</code> 对象并用下一页的数据填充。例如，假定 <code>CachedRowSet</code> 对象的命令返回一个具有 1000 行数据的 <code>ResultSet</code> 对象 <i>rs</i>。如果页大小设置为 100，则首次调用方法 <code>nextPage</code> 将创建一个包含 <i>rs</i> 前 100 行的 <code>CachedRowSet</code> 对象。在使用这前 100 行的数据执行完所需的操作后，应用程序可以再次调用方法 <code>nextPage</code> 创建另一个带有 <i>rs</i> 第二个 100 行数据的 <code>CachedRowSet</code> 对象。第一个 <code>CachedRowSet</code> 对象中的数据不再存在于内存中，因为它已被第二个 <code>CachedRowSet</code> 对象的数据替换了。调用方法 <code>nextPage</code> 10 次后，第十个 <code>CachedRowSet</code> 对象将包含 <i>rs</i> 最后 100 行存储在内存中的数据。在任意给定时间，内存中仅存储一个 <code>CachedRowSet</code> 对象的数据。
+ <P>
+只要当前页不是各行的最后一页，方法 <code>nextPage</code> 就返回 <code>true</code>，没有其他页时，则返回 <code>false</code>。因此，可在 <code>while</code> 循环中使用它来获取所有页，正如在以下代码行中所演示的。
+ <PRE>
+     CachedRowSet crs = CachedRowSetImpl();
+     crs.setPageSize(100);
+     crs.execute(conHandle);
+
+     while(crs.nextPage()) {
+         while(crs.next()) {
+             . . . // operate on chunks (of 100 rows each) in crs, 
+                   // row by row
+         }
+     }
+ </PRE>
+运行此代码片断后，应用程序会遍历所有 1000 行，但是每次内存中的数据只有 100 行。
+ <P>
+<code>CachedRowSet</code> 接口还定义了方法 <code>previousPage</code>。正如方法 <code>nextPage</code> 类似于 <code>ResultSet</code> 方法 <code>next</code>，方法 <code>previousPage</code> 也类似于 <code>ResultSet</code> 方法 <code>previous</code>。与方法 <code>nextPage</code> 类似，<code>previousPage</code> 创建一个 <code>CachedRowSet</code> 对象，包含作为页大小设置的行数。因此，（举例来说）方法 <code>previousPage</code> 可用在上述代码片断末尾的 <code>while</code> 循环中，以从最后一页开始逆向遍历到第一页。方法 <code>previousPage</code> 也与 <code>nextPage</code> 类似，因为它也可以用在 <code>while</code> 循环中，不同之处在于它是在前面还有页时返回 <code>true</code>，前面没有页时返回 <code>false</code>。
+ <P>
+通过将指针定位于每页最后一行的后面（如以下代码片断所执行的），方法 <code>previous</code> 就可以在每页中从最后一行遍历到第一行。代码也可将指针置于每页第一行的前面，然后在 <code>while</code> 循环中使用 <code>next</code> 方法，以在每页中从最第一行遍历到最后一行。
+ <P>
+以下代码片断假定是前一个代码片断的继续，这意味着第十个 <code>CachedRowSet</code> 对象的指针位于最后一行。代码将指针移到最后一行的后面，这样第一次调用方法 <code>previous</code> 会将指针放回到最后一行上。遍历最后一页（<code>CachedRowSet</code> 对象 <i>crs</i>）的所有行后，代码接着会进入 <code>while</code> 循环以获得第九页、向后遍历各行、转至第八页、向后遍历各行，依此类推，直到第一页的第一行为止。
+ 
+ <PRE>
+     crs.afterLast();
+     while(crs.previous())  {
+         . . . // navigate through the rows, last to first
+     {
+     while(crs.previousPage())  {
+         crs.afterLast();
+         while(crs.previous())  {
+             . . . // go from the last row to the first row of each page
+         }
+     }
+ </PRE>
+ 
+@author Jonathan Bruce
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final boolean javax.sql.rowset.CachedRowSet.COMMIT_ON_ACCEPT_CHANGES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致在调用 <code>acceptChanges()</code> 时，<code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 提交更改。如果设置为 false，则在调用 <code>CachedRowSet</code> 接口的某个事务方法之前，<b>不</b>提交更改。
+
+@see #commit
+@see #rollback     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.populate(ResultSet data) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自给定 <code>ResultSet</code> 对象的数据填充此 <code>CachedRowSet</code> 对象。 
+ <P>
+当应用程序具有到开放 <code>ResultSet</code> 对象的连接时，此方法可作为 <code>execute</code> 方法的替代方法。使用方法 <code>populate</code> 比使用无参数的 <code>execute</code> 方法要更为高效，因为它不用打开新的连接和重新执行此 <code>CachedRowSet</code> 对象的命令。与采用 <code>ResultSet</code> 对象的 <code>execute</code> 相比，使用 <code>populate</code> 方法要更为便捷。
+
+@param data 一个 <code>ResultSet</code> 对象，它包含要读入到此 <code>CachedRowSet</code> 对象中的数据
+@throws SQLException 如果提供的 <code>ResultSet</code> 对象为 null 或者此 <code>CachedRowSet</code> 对象无法获取关联的 <code>ResultSetMetaData</code> 对象
+@see #execute
+@see java.sql.ResultSet
+@see java.sql.ResultSetMetaData
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.execute(Connection conn) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用数据填充此 <code>CachedRowSet</code> 对象，使用给定的连接来生成从中读取数据的结果集。此方法应该关闭它所创建的所有数据库连接，以确保此 <code>CachedRowSet</code> 对象是断开连接的，它从其数据源读取数据或向其数据源写入数据时除外。
+ <P>
+此 <code>CachedRowSet</code> 对象的 reader 将使用 <i>conn</i> 来建立到数据源的连接，以便能够执行 rowset 的命令，并将数据从得到的 <code>ResultSet</code> 对象读入此 <code>CachedRowSet</code> 对象中。此方法在填充此 <code>CachedRowSet</code> 对象后同样会关闭 <i>conn</i>。
+ <P>
+如果调用此方法时已经填充了实现，则设置（重置）内容和元数据。同样，如果在调用方法 <code>acceptChanges</code> 来提交显式的更新之前调用此方法，则这些更新会丢失。
+ 
+@param conn 带有有效属性的标准 JDBC <code>Connection</code> 对象
+@throws SQLException 如果提供了无效的 <code>Connection</code> 对象或在建立到数据源的连接过程中发生错误
+@see #populate
+@see java.sql.Connection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.acceptChanges() throws javax.sql.rowset.spi.SyncProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将对此 <code>CachedRowSet</code> 对象所做的行更新、插入以及删除更改传播到底层数据源。
+ <P>
+此方法调用此 <code>CachedRowSet</code> 对象的 writer 在后台完成工作。标准的 <code>CachedRowSet</code> 实现应该使用 <code>SyncFactory</code> 单件来获得 <code>SyncProvider</code> 实例，以提供一个 <code>RowSetWriter</code> 对象 (writer)。该 writer 会尝试将在此 <code>CachedRowSet</code> 对象中所做的更改传播回数据源。
+ <P>
+方法 <code>acceptChanges</code> 成功执行后，除了将更改写入数据源外，它还使当前行中的值成为原始行中的值。  
+ <P>
+根据所用 <code>SyncProvider</code> 实现的同步级别，writer 将原始值与数据源中的值进行比较，以检查是否有冲突。如果有冲突，则 <code>RIOptimisticProvider</code> 实现可能会抛出 <code>SyncProviderException</code> 并且不向数据源中写入任何内容。 
+ <P>
+应用程序可以选择捕获 <code>SyncProviderException</code> 对象并获取它所包含的 <code>SyncResolver</code> 对象。<code>SyncResolver</code> 对象逐行列出冲突，并在数据源上设置锁定，以避免在解决当前冲突的同时出现更多冲突。此外，对于每个冲突，它还提供了各种方法来检查该冲突和设置在数据源中应该保持不变的值。解决所有冲突后，应用程序必须再次调用 <code>acceptChanges</code> 方法，将已解决冲突的值写入数据源。如果数据源中的所有值都已经是保持不变的值，则方法 <code>acceptChanges</code> 不执行任何操作。
+ <P>
+某些提供者实现可以使用锁定来确保没有冲突。在这种情况下，可以保证在调用方法 <code>acceptChanges</code> 时，writer 能成功地将更改写入数据源。调用方法 <code>updateRow</code>、<code>insertRow</code> 或 <code>deleteRow</code> 后可立即调用此方法，但是在完成所有更改后只调用此方法一次要更为高效，这样只需要建立一个连接。
+ <P>
+注：<code>acceptChanges()</code> 方法将确定 <code>COMMIT_ON_ACCEPT_CHANGES</code> 是否设置为 true。如果设置为 true，则将同步中的所有更新都提交给数据源。否则应用程序<b>必须</b>显式地调用恰当的 <code>commit()</code> 或 <code>rollback()</code> 方法。
+
+@throws SQLException 如果指针位于插入行上
+@throws SyncProviderException 如果底层同步提供者的 writer 无法将更新写回数据源
+@see #acceptChanges(java.sql.Connection)
+@see javax.sql.RowSetWriter
+@see javax.sql.rowset.spi.SyncFactory
+@see javax.sql.rowset.spi.SyncProvider
+@see javax.sql.rowset.spi.SyncProviderException
+@see javax.sql.rowset.spi.SyncResolver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.acceptChanges(Connection con) throws javax.sql.rowset.spi.SyncProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有行更新、插入以及删除更改传播到支持此 <code>CachedRowSet</code> 对象的数据源，使用指定的 <code>Connection</code> 对象建立到数据源的连接。
+ <P>
+另一种形式的 <code>acceptChanges</code> 方法不传递连接，因为它使用已经定义在 <code>RowSet</code> 对象内的 <code>Connection</code> 对象，该对象是最初用来填充 RowSet 的连接。
+ <P>
+<code>acceptChanges</code> 方法的这一形式与无参数形式类似；但与其他形式不同的是，此形式只能在底层数据源是一个 JDBC 数据源时使用。<code>SyncProvider</code> 必须使用已更新的 <code>Connection</code> 属性来重置 <code>RowSetWriter</code> 配置，以确保 <code>CachedRowSet</code> 对象的内容是正确同步的。
+ <P> 
+方法 <code>acceptChanges</code> 成功执行后，除了将更改写入数据源外，它还使当前行中的值与原始行中的值相同。  
+ <P>
+根据所用 <code>SyncProvider</code> 实现的同步级别，writer 将原始值与数据源中的值进行比较，以检查是否有冲突。如果有冲突，则 <code>RIOptimisticProvider</code> 实现可能会抛出 <code>SyncProviderException</code> 并且不向数据源中写入任何内容。 
+ <P>
+应用程序可以选择捕获 <code>SyncProviderException</code> 对象并获取它所包含的 <code>SyncResolver</code> 对象。<code>SyncResolver</code> 对象逐行列出冲突，并在数据源上设置锁定，以避免在解决当前冲突的同时出现更多冲突。此外，对于每个冲突，它还提供了各种方法来检查该冲突和设置在数据源中应该保持不变的值。解决所有冲突后，应用程序必须再次调用 <code>acceptChanges</code> 方法，将已解决冲突的值写入数据源。如果数据源中的所有值都已经是保持不变的值，则方法 <code>acceptChanges</code> 不执行任何操作。
+ <P>
+某些提供者实现可以使用锁定来确保没有冲突。在这种情况下，可以保证在调用方法 <code>acceptChanges</code> 时，writer 能成功地将更改写入数据源。调用方法 <code>updateRow</code>、<code>insertRow</code> 或 <code>deleteRow</code> 后可立即调用此方法，但是在完成所有更改后只调用此方法一次要更为高效，这样只需要建立一个连接。
+ <P>
+注：<code>acceptChanges()</code> 方法将确定 <code>COMMIT_ON_ACCEPT_CHANGES</code> 是否设置为 true。如果设置为 true，则将同步中的所有更新都提交给数据源。否则应用程序<b>必须</b>显式地调用相应的 <code>commit</code> 或 <code>rollback</code> 方法。
+
+@param con 标准的 JDBC <code>Connection</code> 对象
+@throws SQLException 如果指针位于插入行上
+@throws SyncProviderException 如果底层同步提供者的 writer 无法将更新写回数据源
+@see #acceptChanges()
+@see javax.sql.RowSetWriter
+@see javax.sql.rowset.spi.SyncFactory
+@see javax.sql.rowset.spi.SyncProvider
+@see javax.sql.rowset.spi.SyncProviderException
+@see javax.sql.rowset.spi.SyncResolver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.restoreOriginal() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>CachedRowSet</code> 对象还原成其原始值，即执行上一组更改前的值。如果未对 rowset 进行任何更改或者只有一组更改，则原始值是填充此 <code>CachedRowSet</code> 对象时使用的值；否则原始值是正好在其当前值之前的值。
+ <P>
+调用此方法时，<code>CachedRowSet</code> 实现必须确保对当前 rowset 实例所做的所有更新、插入和删除都已由之前的值取代。此外，应该将指针重置到第一行，并且应该触发一个 <code>rowSetChanged</code> 事件，以通知所有已注册侦听器。
+
+@throws SQLException 如果将此 <code>CachedRowSet</code> 对象的当前值回滚到其之前的值时发生错误
+@see javax.sql.RowSetListener#rowSetChanged
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.release() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放此 <code>CachedRowSet</code> 对象的当前内容并将 <code>rowSetChanged</code> 事件发送到所有已注册侦听器。丢弃所有显式更新，调用此方法后 rowset 不包含任何行。不与底层数据源进行任何交互，并且所有 rowset 内容、元数据和内容更新都应该是不可恢复的。
+ <P>
+完全清除此 <code>CachedRowSet</code> 对象的内容和关联的更新之前，此对象应该保持锁定，从而防止其他持有对此 <code>RowSet</code> 对象引用的组件进行&ldquo;脏&rdquo;读。此外，在所有读取此 <code>CachedRowSet</code> 对象的组件完成其读取之前，不能释放对象的内容。触发 <code>rowSetChanged</code> 事件后，此 <code>CachedRowSet</code> 对象应该返回到正常行为。
+ <P>
+保留元数据（包括 JDBC 属性和 Synchronization SPI 属性）以备后用。各种属性（如 <code>command</code> 属性）与原始数据源（此 <code>CachedRowSet</code> 对象最初根据该数据源创建）相关是很重要的。
+ <P>
+此方法清空 rowset，这与 <code>close</code> 方法不同，后者将整个 rowset 标记为可恢复以允许垃圾回收器回收 rowset 的 Java VM 资源。
+
+@throws SQLException 如果清空此 <code>CachedRowSet</code> 对象的内容时发生错误
+@see javax.sql.RowSetListener#rowSetChanged
+@see java.sql.ResultSet#close
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.undoDelete() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消删除当前行并通知侦听器已更改了某个行。调用此方法后，不再将当前行标记为删除。在 rowset 生命周期中的任何时候都可调用此方法。
+ <P>
+此外，可以通过调整指针的位置取消多个行删除，调整指针位置可使用任何指针位置控制方法，比如：
+ <ul>
+ <li><code>CachedRowSet.absolute</code>
+ <li><code>CachedRowSet.first</code>
+ <li><code>CachedRowSet.last</code>
+ </ul>
+
+@throws SQLException 如果 (1) 尚未删除当前行或 (2) 指针在插入行上、在第一行的前面或在最后一行的后面
+@see javax.sql.rowset.CachedRowSet#undoInsert
+@see java.sql.ResultSet#cancelRowUpdates
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.undoInsert() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经插入了当前行，则立即将它从此 <code>CachedRowSet</code> 对象移除，同样要通知侦听器已更改了某个行。在 rowset 生命周期中的任何时候都可调用此方法，如果当前行在异常限制范围内（见下文），则它将取消当前行的行插入。
+ <P>
+此外，可以通过调整指针的位置取消多个行插入，调整指针位置可使用任何指针位置控制方法，比如：
+ <ul>
+ <li><code>CachedRowSet.absolute</code>
+ <li><code>CachedRowSet.first</code>
+ <li><code>CachedRowSet.last</code>
+ </ul>
+
+@throws SQLException 如果 (1) 尚未插入当前行或者 (2) 指针在第一行的前面、最后一行的后面或在插入行上
+@see javax.sql.rowset.CachedRowSet#undoDelete
+@see java.sql.ResultSet#cancelRowUpdates
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.undoUpdate() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经修改了行，则立即逆转上一次更新操作。可调用此方法逆转所有列上的更新，直到行中的所有更新都已回滚到其上一次同步 (<code>acceptChanges</code>) 或填充之前的状态。执行对插入行的更新时也可以调用此方法。
+ <P>
+ <code>undoUpdate</code> 可以在 rowset 生命周期中的任何时间调用；但是，在发生同步之后，此方法在发生对 rowset 数据的更多修改之前将无效。
+@throws SQLException 如果此 <code>CachedRowSet</code> 对象中指针在第一行的前面或最后一行的后面。
+@see #undoDelete
+@see #undoInsert
+@see java.sql.ResultSet#cancelRowUpdates
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.CachedRowSet.columnUpdated(int idx) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此 <code>CachedRowSet</code> 对象当前行中的指定列是否已更新。
+
+@param idx 一个 <code>int</code> 值，标识要检查更新的列
+@return 如果已对指定列进行可见更新，则返回 <code>true</code>；否则返回 <code>false</code>
+@throws SQLException 如果指针在插入行上、在第一行的前面或者在最后一行的后面
+@see java.sql.DatabaseMetaData#updatesAreDetected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.CachedRowSet.columnUpdated(String columnName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此 <code>CachedRowSet</code> 对象当前行中的指定列是否已更新。
+
+@param columnName 一个 <code>String</code> 对象，提供要检查更新的列名
+@return 如果已对该列进行可见更新，则返回 <code>true</code>；否则返回 <code>false</code>
+@throws SQLException 如果指针在插入行上、在第一行的前面或者在最后一行的后面
+@see java.sql.DatabaseMetaData#updatesAreDetected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<?> javax.sql.rowset.CachedRowSet.toCollection() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>CachedRowSet</code> 对象转换成一个 <code>Collection</code> 对象，它包含此 <code>CachedRowSet</code> 对象的所有数据。实现在如何表示此 <code>Collection</code> 对象上有一定的自由度，这是由于 <code>Collection</code> 框架的抽象本质所造成的。必须用通用 <code>Collection</code> 实现或专用的 <code>Collection</code> 实现（如 <code>TreeMap</code> 对象或 <code>Vector</code> 对象）来完全表示每一行。SQL <code>NULL</code> 列值必须表示为 Java 编程语言中的 <code>null</code>。
+ <P>
+<code>CachedRowSet</code> 接口的标准参考实现对 rowset 使用 <code>TreeMap</code> 对象，每行中的值都包含在 <code>Vector</code> 对象中。预期多数实现都是如此。
+ <P>
+<code>TreeMap</code> 类型的 collection 可保证按照键升序，并根据键类的自然顺序存储映射。每个键引用一个与 <code>RowSet</code> 对象的一行相对应的 <code>Vector</code> 对象。因此，每个 <code>Vector</code> 对象的大小必须与 <code>RowSet</code> 对象中的列数完全相等。<code>TreeMap</code> collection 使用的键由实现决定，实现可以选择利用内部 <code>RowSet</code> 表结构内可用的已设置键，这些键已经设置在 <code>RowSet</code> 对象本身或底层 SQL 数据上。 
+ <P>
+
+@return 一个 <code>Collection</code> 对象，它包含此 <code>CachedRowSet</code> 对象中每一行的值
+@throws SQLException 如果生成该 collection 时发生错误
+@see #toCollection(int)
+@see #toCollection(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<?> javax.sql.rowset.CachedRowSet.toCollection(int column) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>CachedRowSet</code> 对象中的指定列转换成一个 <code>Collection</code> 对象。实现在如何表示此 <code>Collection</code> 对象上有一定的自由度，这是由于 <code>Collection</code> 框架的抽象本质所造成的。应该用通用 <code>Collection</code> 实现或专用的 <code>Collection</code> 实现（如 <code>Vector</code> 对象）来完全表示每个列值。SQL <code>NULL</code> 列值必须表示为 Java 编程语言中的 <code>null</code>。
+ <P>
+标准的参考实现使用 <code>Vector</code> 对象包含列值，预期多数实现都是如此。如果使用 <code>Vector</code> 对象，则其大小必须与此 <code>CachedRowSet</code> 对象中的行数完全相等。
+
+@param column 一个 <code>int</code> 值，指示值要用 <code>Collection</code> 对象来表示的列
+@return 一个 <code>Collection</code> 对象，它包含存储在此 <code>CachedRowSet</code> 对象指定列中的值
+@throws SQLException 如果生成 collection 时发生错误，或者提供了无效的列 id
+@see #toCollection
+@see #toCollection(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<?> javax.sql.rowset.CachedRowSet.toCollection(String column) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将此 <code>CachedRowSet</code> 对象中的指定列转换成一个 <code>Collection</code> 对象。实现在如何表示此 <code>Collection</code> 对象上有一定的自由度，这是由于 <code>Collection</code> 框架的抽象本质所造成的。应该用通用 <code>Collection</code> 实现或专用的 <code>Collection</code> 实现（如 <code>Vector</code> 对象）来完全表示每个列值。SQL <code>NULL</code> 列值必须表示为 Java 编程语言中的 <code>null</code>。
+ <P>
+标准的参考实现使用 <code>Vector</code> 对象包含列值，预期多数实现都是如此。如果使用 <code>Vector</code> 对象，则其大小必须与此 <code>CachedRowSet</code> 对象中的行数完全相等。
+
+@param column 一个 <code>String</code> 对象，提供值要用 Collection 来表示的列的名称
+@return 一个 <code>Collection</code> 对象，它包含存储在此 <code>CachedRowSet</code> 对象指定列中的值
+@throws SQLException 如果生成该 collection 时发生错误，或者提供了无效的列 id
+@see #toCollection
+@see #toCollection(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.spi.SyncProvider javax.sql.rowset.CachedRowSet.getSyncProvider() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 实现。在内部，rowset 使用此方法来触发 rowset 和数据源之间的读取或写入动作。例如，rowset 可能需要从 <code>SyncProvider</code> 获得 rowset reader（<code>RowSetReader</code> 对象）上的句柄，以允许填充 rowset。
+ <pre>
+     RowSetReader rowsetReader = null;
+     SyncProvider provider = 
+         SyncFactory.getInstance(&quot;javax.sql.rowset.provider.RIOptimisticProvider&quot;);
+         if (provider instanceof RIOptimisticProvider) {
+             rowsetReader = provider.getRowSetReader();
+         }
+ </pre>
+假定 <i>rowsetReader</i> 是 rowset 实现内的一个私有的、可访问的字段，当应用程序调用 <code>execute</code> 方法时，它会依次调用 reader 的 <code>readData</code> 方法来填充该 <code>RowSet</code> 对象。
+<pre>    
+     rowsetReader.readData((RowSetInternal)this);
+ </pre>
+ <P>
+此外，应用程序可以使用此方法返回的 <code>SyncProvider</code> 对象来调用可返回有关 <code>SyncProvider</code> 对象信息的方法，这些信息包括有关供应商、版本、提供者标识、同步级别和当前已设置的锁定等。
+
+@return 实例化 rowset 时所设置的 <code>SyncProvider</code> 对象，如果没有设置，则返回默认的提供者
+@throws SQLException 如果在返回 <code>SyncProvider</code> 对象时发生错误
+@see #setSyncProvider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setSyncProvider(String provider) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 对象设置为指定的提供者。此方法允许重置 <code>SyncProvider</code> 对象。
+ <P>
+应该始终使用可用的 <code>SyncProvider</code> 机制来实例化 <code>CachedRowSet</code> 实现，但在某些情况下重置 <code>SyncProvider</code> 对象更合乎需要或者是必需的。例如，应用程序可能希望暂时使用默认的 <code>SyncProvider</code> 对象，然后选择使用最近可用并能更好地满足其需求的提供者。
+ <P>
+重置 <code>SyncProvider</code> 对象会导致 <code>RowSet</code> 对象从 <code>SyncFactory</code> 请求新的 <code>SyncProvider</code> 实现。这能够重置所有以前与原始数据源的连接和关系，并可能彻底更改非连接 rowset 的同步行为。
+ 
+@param provider 一个 <code>String</code> 对象，提供了 <code>SyncProvider</code> 实现的完全限定类名
+@throws SQLException 如果试图重置 <code>SyncProvider</code> 实现时发生错误
+@see #getSyncProvider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sql.rowset.CachedRowSet.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>CachedRowSet</code> 对象中的行数。
+
+@return rowset 中的行数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setMetaData(RowSetMetaData md) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>RowSetMetaData</code> 对象设置此 <code>CachedRowSet</code> 对象的元数据。当 <code>RowSetReader</code> 对象读取 rowset 内容时，它创建一个 <code>RowSetMetaData</code> 对象并使用 <code>RowSetMetaData</code> 实现中的方法进行初始化。参考实现则使用 <code>RowSetMetaDataImpl</code> 类。当 reader 完成 rowset 内容的读取后，在内部调用此方法，以便将 <code>RowSetMetaData</code> 对象传递到 rowset。
+
+@param md 一个 <code>RowSetMetaData</code> 对象，包含关于此 <code>CachedRowSet</code> 对象中各列的元数据
+@throws SQLException 如果向 rowset 提供了无效的元数据
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet javax.sql.rowset.CachedRowSet.getOriginal() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含此 <code>CachedRowSet</code> 对象原始值的 <code>ResultSet</code> 对象。
+ <P>
+<code>ResultSet</code> 对象的指针应该位于第一行的前面。此外，返回的 <code>ResultSet</code> 对象应该具有以下属性：
+ <UL>
+ <LI>ResultSet.TYPE_SCROLL_INSENSITIVE
+ <LI>ResultSet.CONCUR_UPDATABLE
+ </UL>
+ <P>
+<code>RowSet</code> 对象的原始值是上一次与底层数据源同步之前所具有的值。如果没有进行同步，则原始值就是填充该 <code>RowSet</code> 对象时所使用的值。当应用程序调用方法 <code>acceptChanges</code> 并且已实现了 <code>SyncProvider</code> 对象来检查冲突时，在内部调用此方法。如果正是这种情况，则 writer 比较原始值与数据源中当前的值，检查是否存在冲突。
+
+@return 包含此 <code>CachedRowSet</code> 对象原始值的 <code>ResultSet</code> 对象
+@throws SQLException 如果生成该 <code>ResultSet</code> 对象时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSet javax.sql.rowset.CachedRowSet.getOriginalRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个只包含此 <code>CachedRowSet</code> 对象当前行原始值的 <code>ResultSet</code> 对象。
+ <P>
+<code>ResultSet</code> 对象的指针应该位于第一行的前面。此外，返回的 <code>ResultSet</code> 对象应该具有以下属性：
+ <UL>
+ <LI>ResultSet.TYPE_SCROLL_INSENSITIVE
+ <LI>ResultSet.CONCUR_UPDATABLE
+ </UL>
+
+@return 原始行结果集
+@throws SQLException 如果没有当前行
+@see #setOriginalRow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setOriginalRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>CachedRowSet</code> 对象中的当前行设置为原始行。  
+ <P>
+将当前行中所有已修改的值与数据源同步后，在内部调用此方法。当前行必须被标记为无法再插入、删除或更新。
+ <P>
+调用 <code>setOriginalRow</code> 是不可逆的。
+
+@throws SQLException 如果没有当前行或重置原始行的内容时遇到错误
+@see #getOriginalRow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.sql.rowset.CachedRowSet.getTableName() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建此 <code>CachedRowSet</code> 对象时所用对象（表）的标识符。可在多种场合下设置此名称，并且规范并未对设置次数或标准实现是否应该跟踪以前的表名强加任何限制。
+
+@return 一个 <code>String</code> 对象，提供了作为此 <code>CachedRowSet</code> 对象的数据源的表名，如果没有为表设置名称，则返回 <code>null</code>
+@throws SQLException 如果返回表名时遇到错误
+@see javax.sql.RowSetMetaData#getTableName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setTableName(String tabName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将派生此 <code>CachedRowSet</code> 对象的表的标识符设置为给定的表名。尝试进行同步期间，在比较数据源中的值与 <code>CachedRowSet</code> 对象的值时，writer 使用此名称来确定要使用的表。表标识符还指示应该将取自此 <code>CachedRowSet</code> 对象的修改值写入何处。
+ <P>
+此 <code>CachedRowSet</code> 对象的实现可以从 <code>RowSetMetaDataImpl</code> 对象内部获得该名称。
+
+@param tabName 一个 <code>String</code> 对象，标识派生此 <code>CachedRowSet</code> 对象的表，不能为 <code>null</code>，但是可以为空字符串
+@throws SQLException 如果命名该表时遇到错误，或者 <i>tabName</i> 为 <code>null</code>
+@see javax.sql.RowSetMetaData#setTableName
+@see javax.sql.RowSetWriter
+@see javax.sql.rowset.spi.SyncProvider 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.sql.rowset.CachedRowSet.getKeyColumns() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含一个或多个列号的数组，这些列号指示了形成某个键的列，该键唯一地标识了此 <code>CachedRowSet</code> 对象中的某个行。
+ 
+@return 包含列号的数组，该列号指示哪些列组成此 <code>CachedRowSet</code> 对象中行的主键。如果没有列表示主键，则此数组应该为空。
+@throws SQLException 如果此 <code>CachedRowSet</code> 对象为空
+@see #setKeyColumns
+@see Joinable#getMatchColumnIndexes
+@see Joinable#getMatchColumnNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setKeyColumns(int[] keys) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的列号数组设置此 <code>CachedRowSet</code> 对象的 <code>keyCols</code> 字段，它形成了唯一标识此 <code>CachedRowSet</code> 对象中某个行的键。
+ <p>
+如果 <code>CachedRowSet</code> 对象成为 <code>JoinRowSet</code> 对象的一部分，那么在指定为键列的列也成为匹配列的情况下，会保留此方法所定义的键和得到的约束条件。
+
+@param keys 一个 <code>int</code> 数组，指示形成此 <code>CachedRowSet</code> 对象的主键的列；数组中的每个元素都必须大于 <code>0</code> 并小于等于此 rowset 中的列数
+@throws SQLException 如果给定数组中的任意元素对此 rowset 无效
+@see #getKeyColumns
+@see Joinable#setMatchColumn(String)
+@see Joinable#setMatchColumn(int)
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.RowSet javax.sql.rowset.CachedRowSet.createShared() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新的 <code>RowSet</code> 对象，支持该对象的数据与此 <code>CachedRowSet</code> 对象的相同。实际上，两个 <code>CachedRowSet</code> 对象在相同的数据上具有指针。因此，某个副本所做的任何更改对原始对象和所有其他副本而言都是可见的，就像原始对象所做的更改对其所有副本而言都是可见的一样。如果某个副本调用方法更改底层数据，则它所调用的方法会通知所有已注册侦听器，就像原始 <code>CachedRowSet</code> 对象调用该方法时一样。
+ <P>
+此外，此方法创建的所有 <code>RowSet</code> 对象具有与此 <code>CachedRowSet</code> 对象相同的属性。例如，如果此 <code>CachedRowSet</code> 对象是只读的，则其所有副本也是只读的。如果将 CachedRowSet 对象更改为可更新的，则所有副本也成为可更新的。
+ <P>
+注：如果多个线程访问通过 <code>createShared()</code> 方法创建的 <code>RowSet</code> 对象，则指定以下行为来保持共享数据的完整性：应该在每个对象和单个底层表结构之间连续进行所有共享 <code>RowSet</code> 对象的读取和写入。
+
+@return 新的共享 <code>RowSet</code> 对象，具有与此 <code>CachedRowSet</code> 对象相同的属性并且在相同的数据上具有指针
+@throws SQLException 如果发生错误或者底层平台中不支持复制
+@see javax.sql.RowSetEvent
+@see javax.sql.RowSetListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.CachedRowSet javax.sql.rowset.CachedRowSet.createCopy() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>RowSet</code> 对象，它是此 <code>CachedRowSet</code> 对象中数据的深层副本。与通过调用 <code>createShared</code> 所创建的 <code>RowSet</code> 对象相反，对原始 <code>RowSet</code> 对象副本所做的更新对于原始 <code>RowSet</code> 对象而言不得是可见的。同样，向原始 <code>RowSet</code> 注册的所有事件侦听器不得侦听新 <code>RowSet</code> 副本的事件。此外，必须维持已建立的所有约束限制。
+
+@return 新的 <code>RowSet</code> 对象，它是此 <code>CachedRowSet</code> 对象的深层副本并且完全独立于此 <code>CachedRowSet</code> 对象
+@throws SQLException 如果生成此 <code>CachedRowSet</code> 对象的副本时发生错误
+@see #createShared
+@see #createCopySchema
+@see #createCopyNoConstraints
+@see javax.sql.RowSetEvent
+@see javax.sql.RowSetListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.CachedRowSet javax.sql.rowset.CachedRowSet.createCopySchema() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>CachedRowSet</code> 对象，它是此 <code>CachedRowSet</code> 对象的空副本。该副本不得包含任何内容，而只能表示原始 <code>CachedRowSet</code> 对象的表结构。此外，在原始 <code>CachedRowSet</code> 对象中设置的主键和外键约束必须在新的空 <code>CachedRowSet</code> 对象中等效执行。与通过调用 <code>createShared</code> 方法所生成的 <code>RowSet</code> 对象相反，对使用 <code>createCopySchema</code> 方法创建的此 <code>CachedRowSet</code> 对象副本所做的更新对于此 CachedRowSet 对象而言不得是可见的。
+ <P>
+应用程序可以根据此方法返回的 <code>CachedRowSet</code> 对象来形成 <code>WebRowSet</code>，从而可将 <code>RowSet</code> 模式定义导出为 XML 以备后用。
+ 
+@throws SQLException 如果复制此 <code>CachedRowSet</code> 对象的结构时发送错误
+@see #createShared
+@see #createCopySchema
+@see #createCopyNoConstraints
+@see javax.sql.RowSetEvent
+@see javax.sql.RowSetListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.CachedRowSet javax.sql.rowset.CachedRowSet.createCopyNoConstraints() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>CachedRowSet</code> 对象，它是此 <code>CachedRowSet</code> 对象数据的深层副本，但是独立于此 CachedRowSet 对象。与通过调用 <code>createShared</code> 方法所生成的 <code>RowSet</code> 对象相反，对此 <code>CachedRowSet</code> 对象副本所做的更新对于此 CachedRowSet 对象而言不得是可见的。同样，向此 <code>CachedRowSet</code> 对象注册的所有事件侦听器不得侦听新 <code>RowSet</code> 对象的事件。此外，<b>不得</b>在副本中维持为此 <code>CachedRowSet</code> 对象所建立的任何约束限制。
+
+@return 新的 <code>CachedRowSet</code> 对象，它是此 <code>CachedRowSet</code> 对象的深层副本并且完全独立于此 <code>CachedRowSet</code> 对象
+@throws SQLException 如果生成此 <code>CachedRowSet</code> 对象的副本时发生错误
+@see #createCopy
+@see #createShared
+@see #createCopySchema
+@see javax.sql.RowSetEvent
+@see javax.sql.RowSetListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.RowSetWarning javax.sql.rowset.CachedRowSet.getRowSetWarnings() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>RowSet</code> 对象上的调用报告的第一个警告。此 <code>RowSet</code> 对象上的后续警告会被链接到此方法返回的 <code>RowSetWarning</code> 对象。
+
+每次读取新行时，都会自动清除警告链。不可以在已经关闭的 RowSet 对象上调用此方法；这样做将导致抛出 <code>SQLException</code>。
+
+@return 报告的第一个 <code>RowSetWarning</code> 对象，如果没有，则返回 null
+@throws SQLException 如果在已关闭的 RowSet 上调用此方法
+@see RowSetWarning
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.CachedRowSet.getShowDeleted() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个 <code>boolean</code> 值，该值指示标记为删除的行是否会出现在当前行集合中。如果返回 <code>true</code>，则已删除行与当前行一起可见。如果返回 <code>false</code>，则已删除行与当前行集合一起不可见。默认值为 <code>false</code>。
+ <P>
+出于安全考虑或为了更好地适合某些部署情况，标准的 rowset 实现可以选择限制此行为。这是由实现定义的，并不表示标准行为。          
+ <P>
+注：允许保持已删除行可见会使某些标准 JDBC <code>RowSet</code> 实现方法的行为变得复杂。但是，多数 rowset 用户可以简单地忽略此额外细节，因为只有极其特殊的应用程序才会利用此功能。
+
+@return 如果已删除行是可见的，则返回 <code>true</code>；否则返回 <code>false</code>
+@throws SQLException 如果 rowset 实现无法确定标记为删除的行是否可见
+@see #setShowDeleted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setShowDeleted(boolean b) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性 <code>showDeleted</code> 设置为给定的 <code>boolean</code> 值，它确定标记为删除的行是否会出现在当前行集合中。如果将值设置为 <code>true</code>，则已删除行与当前行集合一起立即可见。如果将值设置为 <code>false</code>，则已删除行与当前行集合一起被设置为不可见。
+ <P>
+出于安全考虑或为了更好地适合某些部署情况，标准的 rowset 实现可以选择限制此行为。这是由实现定义的，并不表示标准行为。
+
+@param b 如果应该显示已删除行，则为 <code>true</code>；否则为 <code>false</code>
+@exception SQLException 如果 rowset 实现无法重置已删除行是否应该可见
+@see #getShowDeleted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.commit() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 都包含一个取自 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递到其构造方法的 JDBC 属性。此方法包装 <code>Connection</code> 提交方法，以允许灵活的自动提交或非自动提交事务控制支持。
+ <p>
+使自从上一次提交/回滚以来 <code>acceptChanges()</code> 方法进行的所有更改成为持久更改。此方法应该只在已禁用自动提交模式时使用。
+
+@throws SQLException 如果发生数据库访问错误或者此 <code>CachedRowSet</code> 内的 Connection 对象处于自动提交模式下
+@see java.sql.Connection#setAutoCommit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.rollback() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。
+ <p>
+撤消当前事务中所做的所有更改。此方法应该只在已禁用自动提交模式时使用。
+ 
+@throws SQLException 如果发生数据库访问错误或者此 <code>CachedRowSet</code> 内的 Connection 对象处于自动提交模式下。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.rollback(Savepoint s) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 都包含一个取自原始 <code>ResultSet</code> 的 <code>Connection</code> 对象或传递给它的 JDBC 属性。
+ <p>
+撤消当前事务中所做的所有更改，回到上一次 <code>Savepoint</code> 事务标记。此方法应该只在已禁用自动提交模式时使用。
+ 
+@param s <code>Savepoint</code> 事务标记
+@throws SQLException 如果发生数据库访问错误或者此 <code>CachedRowSet</code> 内的 Connection 对象处于自动提交模式下。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.rowSetPopulated(RowSetEvent event, int numRows) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册侦听器给定 RowSetEvent 对象中的某个 RowSet 对象已经填充了多个附加行。<code>numRows</code> 参数确保只在每隔 <code>numRow</code> 行时才触发此事件。
+ <p>
+可使用方法 event.getSource 获取事件源。      
+
+@param event 一个 <code>RowSetEvent</code> 对象，包含作为事件源的 <code>RowSet</code> 对象
+@param numRows 填入此值时，指示生成的 <code>CachedRowSet</code> 应该触发事件的行间隔数；默认值是 0；不能小于 <code>fetchSize</code> 或 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.populate(ResultSet rs, int startRow) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用取自给定 <code>ResultSet</code> 对象的数据填充此 <code>CachedRowSet</code> 对象。虽然与 <code>populate(ResultSet)</code> 方法十分类似，但此方法提供了一个额外的参数，允许指定 <code>ResultSet</code> 内开始使用数据填充 CachedRowSet 实例的位置。
+ <P>
+当应用程序具有到开放 <code>ResultSet</code> 对象的连接时，此方法可作为 <code>execute</code> 方法的替代方法。使用方法 <code>populate</code> 比使用无参数的 <code>execute</code> 方法要更为高效，因为它不用打开新的连接和重新执行此 <code>CachedRowSet</code> 对象的命令。与采用 <code>ResultSet</code> 对象的 <code>execute</code> 相比，使用 <code>populate</code> 方法要更为便捷。
+
+@param startRow <code>ResultSet</code> 中的位置，从其处开始填充此 <code>CachedRowSet</code> 的记录
+@param rs 一个 <code>ResultSet</code> 对象，包含要读入到此 <code>CachedRowSet</code> 对象的数据
+@throws SQLException 如果提供的 <code>ResultSet</code> 对象为 null 或者此 <code>CachedRowSet</code> 对象无法获取关联的 <code>ResultSetMetaData</code> 对象
+@see #execute
+@see #populate(ResultSet)
+@see java.sql.ResultSet
+@see java.sql.ResultSetMetaData
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.CachedRowSet.setPageSize(int size) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>CachedRowSet</code> 对象的页大小。可以配置 <code>CachedRowSet</code> 以页大小的行数来填充 CachedRowSet。调用 <code>populate()</code> 或 <code>execute()</code> 时，<code>CachedRowSet</code> 都根据用于填充 RowSet 的原始 SQL 查询来获取附加页。
+
+@param size <code>CachedRowSet</code> 的页大小
+@throws SQLException 如果设置 <code>CachedRowSet</code> 页大小时发生错误或者页大小小于 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sql.rowset.CachedRowSet.getPageSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>CachedRowSet</code> 对象的页大小。
+ 
+@return <code>int</code> 值的页大小     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.CachedRowSet.nextPage() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+逐个增加 <code>CachedRowSet</code> 的当前页。如果剩余行仍在用于填充 RowSet 的原始 SQL 查询范围内，则此方法导致 <code>CachedRowSet</code> 实现获取下一个页面大小的行并填充 RowSet。
+
+@return 如果还有其他页，则返回 true；如果这是最后一页，则返回 false
+@throws SQLException 如果获取下一页时发生错误，或者在调用 populate 或 execute 之前过早地调用了此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.CachedRowSet.previousPage() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+逐个减少 <code>CachedRowSet</code> 的当前页。这导致 <code>CachedRowSet</code> 实现获取前一个页面大小的行并填充 RowSet。前一页中返回的行数必须始终在用于填充 RowSet 的原始 SQL 查询范围内。     
+
+@return 如果成功地获取了前一页，则返回 true；如果这是第一页，则返回 false。
+@throws SQLException 如果获取前一页时发生错误，或者在调用 populate 或 execute 之前过早地调用了此方法。
+
+<!-- END DATA -->

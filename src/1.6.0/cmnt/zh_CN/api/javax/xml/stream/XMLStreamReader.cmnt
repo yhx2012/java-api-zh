@@ -1,0 +1,583 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.stream.XMLStreamReader extends javax.xml.stream.XMLStreamConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+XMLStreamReader 接口允许转发 XML 和对 XML 的只读访问。它被设计为读取 XML 数据的最低层且最有效的方法。
+
+<p> XMLStreamReader 被设计为使用 next() 和 hasNext() 在 XML 上进行迭代。可以使用诸如 getEventType()、getNamespaceURI()、getLocalName() 和 getText() 之类的方法访问数据：
+
+<p> <a href="#next()">next()</a> 方法会使 reader 读取下一个解析事件。next() 方法返回一个整数，指示刚才读取的事件类型。
+<p> 事件类型可以使用 <a href="#getEventType()">getEventType()</a> 来确定。
+<p> 解析事件被定义为 XML 声明、DTD、开始标记、字符数据、空格、结束标记、注释或处理指令。属性或名称空间事件可以作为查询操作的结果在文档的根级别出现。
+
+<p>为了遵守 XML 1.0，XML 处理器必须将已声明的未解析实体的标识符、注释声明及其关联标识符传递给应用程序。此信息通过此接口上的属性 API 提供。以下两个属性允许访问此信息：javax.xml.stream.notations 和 javax.xml.stream.entities。当前事件为 DTD 时，以下调用将返回一个 Notation 列表 <code>List l = (List) getProperty(&quot;javax.xml.stream.notations&quot;);</code> 以下调用将返回一个实体声明列表：<code>List l = (List) getProperty(&quot;javax.xml.stream.entities&quot;);</code> 这些属性只能在 DTD 事件中访问，并且被定义为如果信息不可用，则返回 null。
+
+<p>下表描述了各种状态所对应的有效方法。如果某种方法是在无效状态中调用的，则该方法将抛出 java.lang.IllegalStateException。
+
+ <table border="2" rules="all" cellpadding="4">
+   <thead>
+     <tr>
+       <th align="center" colspan="2">
+每种状态对应的有效方法
+       </th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<th>事件类型</th>
+<th>有效方法</th>
+     </tr>
+     <tr>
+<td> 所有状态  </td>
+<td> getProperty()、hasNext()、require()、close()、getNamespaceURI()、isStartElement()、isEndElement()、isCharacters()、isWhiteSpace()、getNamespaceContext()、getEventType()、getLocation()、hasText()、hasName()
+       </td>
+     </tr>
+     <tr>
+<td> START_ELEMENT  </td>
+<td> next()、getName()、getLocalName()、hasName()、getPrefix()、getAttributeXXX()、isAttributeSpecified()、getNamespaceXXX()、getElementText()、nextTag()
+       </td>
+     </tr>
+<td> ATTRIBUTE  </td>
+<td> next()、nextTag()、getAttributeXXX()、isAttributeSpecified()
+       </td>
+     </tr>
+     </tr>
+<td> NAMESPACE  </td>
+<td> next()、nextTag()、getNamespaceXXX()
+       </td>
+     </tr>
+     <tr>
+<td> END_ELEMENT  </td>
+<td> next()、getName()、getLocalName()、hasName()、getPrefix()、getNamespaceXXX()、nextTag()
+      </td>
+     </tr>
+     <tr>
+<td> CHARACTERS  </td>
+<td> next()、getTextXXX()、nextTag() </td>
+     </tr>
+     <tr>
+<td> CDATA  </td>
+<td> next()、getTextXXX()、nextTag() </td>
+     </tr>
+     <tr>
+<td> COMMENT  </td>
+<td> next()、getTextXXX()、nextTag() </td>
+     </tr>
+     <tr>
+<td> SPACE  </td>
+<td> next()、getTextXXX()、nextTag() </td>
+     </tr>
+     <tr>
+<td> START_DOCUMENT  </td>
+<td> next()、getEncoding()、getVersion()、isStandalone()、standaloneSet()、getCharacterEncodingScheme()、nextTag()</td>
+     </tr>
+     <tr>
+<td> END_DOCUMENT  </td>
+<td> close()</td>
+     </tr>
+     <tr>
+<td> PROCESSING_INSTRUCTION  </td>
+<td> next()、getPITarget()、getPIData()、nextTag() </td>
+     </tr>
+     <tr>
+<td> ENTITY_REFERENCE  </td>
+<td> next()、getLocalName()、getText()、nextTag() </td>
+     </tr>
+     <tr>
+<td> DTD  </td>
+<td> next()、getText()、nextTag() </td>
+     </tr>
+   </tbody>
+  </table>
+
+@version 1.0
+@author Copyright (c) 2003 by BEA Systems.All Rights Reserved.
+@see javax.xml.stream.events.XMLEvent
+@see XMLInputFactory
+@see XMLStreamWriter
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.stream.XMLStreamReader.getProperty(String name) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从底层实现获取功能/属性的值
+@param name 属性的名称，不可以为 null
+@return 属性的值
+@throws IllegalArgumentException 如果名称为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.next() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取下一个解析事件——处理器可以用单个存储块返回所有连续的字符数据，它也可以将其分割成几个存储块。如果属性 javax.xml.stream.isCoalescing 设置为 true，则元素内容必须组合，对于连续元素内容或 CDATA 节，只需要返回一个 CHARACTERS 事件。  
+
+默认情况下，必须扩展实体引用，并透明地报告给应用程序。如果实体引用不能扩展，则抛出异常。如果元素内容为空（即内容为 &quot;&quot;），则不报告 CHARACTERS 事件。
+
+<p>假设给定以下 XML：<br>&lt;foo&gt;&lt;!--description--&gt;内容文本&lt;![CDATA[&lt;greeting&gt;Hello&lt;/greeting&gt;]]&gt;其他内容&lt;/foo&gt;<br> 对 foo 调用 next() 的行为将是：<br>1- 注释 (COMMENT)<br> 2- 然后是字符节 (CHARACTERS)<br> 3- 接下来是 CDATA 节（另一个 CHARACTERS）<br> 4- 再接下来是下一个字符节 （另一个 CHARACTERS）<br> 5- 最后是 END_ELEMENT<br>
+
+<p><b>注：</b> 空元素（如 &lt;tag/&gt;）将用以下两个单独的事件报告：START_ELEMENT 和 END_ELEMENT——这保证了空元素对 &lt;tag&gt;&lt;/tag&gt; 解析的等效性。
+
+如果是在 hasNext() 返回 false 之后调用此方法，则此方法将抛出 IllegalStateException。
+@see javax.xml.stream.events.XMLEvent
+@return 与当前解析事件相对应的整数码
+@throws NoSuchElementException 如果在 hasNext() 返回 false 时调用
+@throws XMLStreamException  如果处理底层 XML 源时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamReader.require(int type, String namespaceURI, String localName) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试当前事件是否属于给定的类型，以及名称空间和名称是否与当前事件的当前名称空间和名称相匹配。如果 namespaceURI 为 null，则该参数不进行相等性检查；如果 localName 为 null，则该参数不进行相等性检查。
+@param type 事件类型
+@param namespaceURI 事件的 URI，可以为 null
+@param localName 事件的 localName，可以为 null
+@throws XMLStreamException 如果所需值不匹配。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getElementText() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取纯文本元素的内容，如果不是纯文本元素，则抛出异常。无论 javax.xml.stream.isCoalescing 的值如何，此方法始终返回组合的内容。<br /> 前置条件：当前事件是 START_ELEMENT。<br /> 后置条件：当前事件是相应的 END_ELEMENT。
+
+<br />此方法执行下列操作（实现可以随意优化，但必须执行等效处理）：
+ <pre>
+if(getEventType() != XMLStreamConstants.START_ELEMENT) {
+throw new XMLStreamException(
+&quot;parser must be on START_ELEMENT to read next text&quot;, getLocation());
+ }
+int eventType = next();
+StringBuffer content = new StringBuffer();
+while(eventType != XMLStreamConstants.END_ELEMENT ) {
+if(eventType == XMLStreamConstants.CHARACTERS
+|| eventType == XMLStreamConstants.CDATA
+|| eventType == XMLStreamConstants.SPACE
+|| eventType == XMLStreamConstants.ENTITY_REFERENCE) {
+buf.append(getText());
+} else if(eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
+|| eventType == XMLStreamConstants.COMMENT) {
+// skipping
+} else if(eventType == XMLStreamConstants.END_DOCUMENT) {
+throw new XMLStreamException(
+&quot;unexpected end of document when reading element text content&quot;, this);
+} else if(eventType == XMLStreamConstants.START_ELEMENT) {
+throw new XMLStreamException(
+&quot;element text content may not contain START_ELEMENT&quot;, getLocation());
+} else {
+throw new XMLStreamException(
+&quot;Unexpected event type &quot;+eventType, getLocation());
+ }
+eventType = next();
+ }
+return buf.toString();
+ </pre>
+
+@throws XMLStreamException 如果当前事件不是 START_ELEMENT 或者遇到了非文本元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.nextTag() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在到达 START_ELEMENT 或 END_ELEMENT 之前，跳过所有空格（isWhiteSpace() 返回 true）、COMMENT 或 PROCESSING_INSTRUCTION。如果遇到空格字符、COMMENT、PROCESSING_INSTRUCTION、START_ELEMENT、END_ELEMENT 以外的其他内容，则抛出异常。在处理以空格分隔的纯元素内容时，应使用此方法。 
+
+<br /> 前置条件：无<br /> 后置条件：当前事件为 START_ELEMENT 或 END_ELEMENT，并且光标已经移到任何空格事件上。
+
+<br />它实际上执行下列操作（实现可以随意优化，但必须执行等效处理）：
+ <pre>
+int eventType = next();
+while((eventType == XMLStreamConstants.CHARACTERS &amp;&amp; isWhiteSpace()) // skip whitespace
+|| (eventType == XMLStreamConstants.CDATA &amp;&amp; isWhiteSpace()) 
+// skip whitespace
+|| eventType == XMLStreamConstants.SPACE
+|| eventType == XMLStreamConstants.PROCESSING_INSTRUCTION
+|| eventType == XMLStreamConstants.COMMENT
+ ) {
+eventType = next();
+ }
+if (eventType != XMLStreamConstants.START_ELEMENT &amp;&amp; eventType != XMLStreamConstants.END_ELEMENT) {
+throw new String XMLStreamException(&quot;expected start or end tag&quot;, getLocation());
+ }
+return eventType;
+ </pre>
+
+@return 元素读取的事件类型（START_ELEMENT 或 END_ELEMENT）
+@throws XMLStreamException 如果当前事件不是空格、PROCESSING_INSTRUCTION、START_ELEMENT 或 END_ELEMENT
+@throws NoSuchElementException 如果它在 hasNext() 返回 false 时被调用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.hasNext() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果有多个解析事件，则返回 true，如果不再有事件，则返回 false。如果 XMLStreamReader 的当前状态为 END_DOCUMENT，则此方法返回 false
+@return 如果有多个事件，则返回 true，否则返回 false
+@throws XMLStreamException 如果检测下一个状态时发生严重错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.stream.XMLStreamReader.close() throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放与此 Reader 关联的所有资源。此方法不会关闭底层输入源。
+@throws XMLStreamException 如果释放关联资源时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getNamespaceURI(String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定前缀的 URI。返回的 URI 取决于处理器的当前状态。
+
+<p><strong>注：</strong>根据 <a href="http://www.w3.org/TR/REC-xml-names/#ns-using">Namespaces in XML</a> 规范中的定义，'xml' 前缀被绑定到 &quot;http://www.w3.org/XML/1998/namespace&quot;。
+
+<p><strong>注：</strong>'xmlns' 前缀必须被解析到以下名称空间：<a href="http://www.w3.org/2000/xmlns/">http://www.w3.org/2000/xmlns/</a>
+@param prefix 要查找的前缀，不可以为 null
+@return 绑定到给定前缀的 URI，如果未绑定，则返回 null
+@throws IllegalArgumentException 如果前缀为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isStartElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果光标指向开始标记，则返回 true（否则返回 false）
+@return 如果光标指向开始标记，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isEndElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果光标指向结束标记，则返回 true（否则返回 false）
+@return 如果光标指向结束标记，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isCharacters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果光标指向字符数据事件，则返回 true
+@return 如果光标指向字符数据，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isWhiteSpace()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果光标指向由所有空格组成的字符数据事件，则返回 true
+@return 如果光标指向所有空格，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributeValue(String namespaceURI, String localName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回带有名称空间和 localName 的属性的规范化属性值。如果 namespaceURI 为 null，则名称空间不进行相等性检查
+@param namespaceURI 属性的名称空间
+@param localName 属性的本地名称，不可以为 null
+@return 返回属性的值，如果未找到，则返回 null
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getAttributeCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 START_ELEMENT 中的属性计数，此方法仅对 START_ELEMENT 或 ATTRIBUTE 有效。此计数不包括名称空间定义。属性索引从零开始。
+@return 返回属性数
+@throws IllegalStateException 如果这不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.stream.XMLStreamReader.getAttributeName(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所提供索引处的属性的 qname
+
+@param index 属性的位置
+@return 属性的 QName
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributeNamespace(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所提供索引处的属性的名称空间
+@param index 属性的位置
+@return 名称空间 URI（可以为 null）
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributeLocalName(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所提供索引处的属性的 localName
+@param index 属性的位置
+@return 属性的 localName
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributePrefix(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所提供索引处的属性的前缀
+@param index 属性的位置
+@return 属性的前缀
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributeType(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所提供索引处的属性的 XML 类型
+@param index 属性的位置
+@return 属性的 XML 类型
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getAttributeValue(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 index 处的属性值
+@param index 属性的位置
+@return 属性值
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isAttributeSpecified(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 boolean 值，它指示此属性是否为默认创建的
+@param index 属性的位置
+@return 如果这是一个默认属性，则返回 true
+@throws IllegalStateException 如果不是 START_ELEMENT 或 ATTRIBUTE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getNamespaceCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 START_ELEMENT 或 END_ELEMENT 中声明的名称空间的计数，此方法仅对 START_ELEMENT、END_ELEMENT 或 NAMESPACE 有效。对于 END_ELEMENT，计数是最大的名称空间范围。它等同于 SAX 回调所报告的有关结束元素事件的信息。
+@return 返回此特定元素中的名称空间声明数
+@throws IllegalStateException 如果不是 START_ELEMENT、END_ELEMENT 或 NAMESPACE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getNamespacePrefix(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 index 处声明的名称空间前缀。如果是默认名称空间声明，则返回 null
+
+@param index 名称空间声明的位置
+@return 返回名称空间前缀
+@throws IllegalStateException 如果不是 START_ELEMENT、END_ELEMENT 或 NAMESPACE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getNamespaceURI(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 index 处声明的名称空间 URI。
+
+@param index 名称空间声明的位置
+@return 返回名称空间 URI
+@throws IllegalStateException 如果不是 START_ELEMENT、END_ELEMENT 或 NAMESPACE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.NamespaceContext javax.xml.stream.XMLStreamReader.getNamespaceContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前位置的只读名称空间上下文。上下文为 transient，只在调用 next() 更改 reader 的状态之前才有效。
+@return 返回名称空间上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getEventType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个整数码，指示光标所指向的事件的类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以字符串的形式返回解析事件的当前值，此方法返回 CHARACTERS 事件的字符串值，返回 COMMENT 的值、ENTITY_REFERENCE 的替代值、CDATA 节的字符串值、SPACE 事件的字符串值、DTD 内部子集的字符串值。如果已经解析了 ENTITY_REFERENCE，则所有字符数据都将被报告为 CHARACTERS 事件。
+@return 当前文本或 null
+@throws java.lang.IllegalStateException 如果此状态不是有效的文本状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char[] javax.xml.stream.XMLStreamReader.getTextCharacters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含此事件中字符的数组。此数组应被视为只读的和 transient，即在 XMLStreamReader 移动到下一个事件之前，数组将包含文本字符。试图在超出该时间范围后保存到字符数组，或者试图修改数组的内容，这些都是违背此接口约定的行为。
+@return 当前文本或空数组
+@throws java.lang.IllegalStateException 如果此状态不是有效的文本状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getTextCharacters(int sourceStart, char[] target, int targetStart, int length) throws javax.xml.stream.XMLStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与 CHARACTERS、SPACE 或 CDATA 事件关联的文本。以 &quot;sourceStart&quot; 开始的文本被复制到以 &quot;targetStart&quot; 开始的 &quot;target&quot; 中。最多复制 &quot;length&quot; 个字符。返回实际复制的字符数。
+
+&quot;sourceStart&quot; 参数必须大于等于 0 且小于等于与事件关联的字符数。通常，一个请求文本以 &quot;sourceStart&quot; 为 0 开始。如果实际复制的字符数小于 &quot;length&quot;，则表示没有更多的文本。否则，在检索完所有文本之前，需要进行后续的调用。例如：
+ 
+<code>int length = 1024; char[] myBuffer = new char[ length ];
+ 
+for ( int sourceStart = 0 ; ; sourceStart += length ) { int nCopied = stream.getTextCharacters( sourceStart, myBuffer, 0, length );
+
+if (nCopied &lt; length) break; }</code> 如果在底层源中存在任何 XML 错误，则抛出 XMLStreamException。&quot;targetStart&quot; 参数必须大于等于 0 且小于 &quot;target&quot; 的长度，Length 必须大于 0，而 &quot;targetStart + length&quot; 必须小于等于 &quot;target&quot; 的长度。  
+
+@param sourceStart 要复制的源数组中第一个字符的索引
+@param target 目标数组
+@param targetStart 目标数组中的起始偏移量
+@param length 要复制的字符数
+@return 实际复制的字符数
+@throws XMLStreamException 如果底层 XML 源不是格式良好的
+@throws IndexOutOfBoundsException 如果 targetStart &lt; 0 或 &gt; 目标长度
+@throws IndexOutOfBoundsException 如果 length &lt; 0 或 targetStart + length &gt; 目标长度
+@throws UnsupportedOperationException 如果此方法不受支持
+@throws NullPointerException 如果目标为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getTextStart()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回存储（此文本事件的）第一个字符位置处的文本字符数组的偏移量。
+@throws java.lang.IllegalStateException 如果此状态不是有效的文本状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.stream.XMLStreamReader.getTextLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文本字符数组中此文本事件的字符序列长度。
+@throws java.lang.IllegalStateException 如果此状态不是有效的文本状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果输入编码已知，则返回输入编码；如果未知，则返回 null。
+@return 此实例的编码或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.hasText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前事件具有文本，则返回 true，否则返回 false。以下事件具有文本：CHARACTERS、DTD、ENTITY_REFERENCE、COMMENT、SPACE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.stream.Location javax.xml.stream.XMLStreamReader.getLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回处理器的当前位置。如果 Location 未知，则处理器应返回 Location 的实现，该实现对位置返回 -1，对 publicId 和 systemId 返回 null。位置信息仅在调用 next() 之前有效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.stream.XMLStreamReader.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前 START_ELEMENT 或 END_ELEMENT 事件的 QName
+@return 当前 START_ELEMENT 或 END_ELEMENT 事件的 QName
+@throws IllegalStateException 如果不是 START_ELEMENT 或 END_ELEMENT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getLocalName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前事件的（本地）名称。对于 START_ELEMENT 或 END_ELEMENT，返回当前元素的（本地）名称。对于 ENTITY_REFERENCE，返回实体名称。当前事件必须是 START_ELEMENT、END_ELEMENT 或 ENTITY_REFERENCE
+@return localName
+@throws IllegalStateException 如果不是 START_ELEMENT、END_ELEMENT 或 ENTITY_REFERENCE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.hasName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前事件有名称（是 START_ELEMENT 或 END_ELEMENT），则返回 ture，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getNamespaceURI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前事件是 START_ELEMENT 或 END_ELEMENT，则此方法返回前缀的 URI 或默认名称空间。如果事件没有前缀，则返回 null。
+@return 绑定到此元素前缀的 URI、默认名称空间或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getPrefix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前事件的前缀，如果事件没有前缀，则返回 null
+@return 前缀或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在 xml 声明中声明的 xml 版本，如果没有声明版本，则返回 null
+@return XML 版本或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.isStandalone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 xml 声明中的独立声明
+@return 如果是独立的，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.stream.XMLStreamReader.standaloneSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查文档中是否设置了独立
+@return 如果文档中设置了独立，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getCharacterEncodingScheme()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 xml 声明中声明的字符编码。如果没有声明字符编码，则返回 null
+@return 在文档中声明的编码或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getPITarget()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取处理指令的目标
+@return 目标或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.stream.XMLStreamReader.getPIData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取处理指令的数据节
+@return 数据或 null
+
+<!-- END DATA -->

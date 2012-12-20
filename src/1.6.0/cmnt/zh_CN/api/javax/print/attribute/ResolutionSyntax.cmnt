@@ -1,0 +1,191 @@
+<!-- BEGIN KEY -->
+public abstract class javax.print.attribute.ResolutionSyntax extends java.lang.Object implements java.io.Serializable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+类 ResolutionSyntax 是一种抽象的基类，它提供表示打印机分辨率的所有属性的公共实现。 
+ <P>
+分辨率属性的值由两项组成，即反向进纸分辨率和进纸分辨率。通过提供两个值和指示测量该值的单位可以构造分辨率属性。提供一些方法以返回分辨率属性的值，并指示将要返回的值的单位。两个最常见分辨率单位是每英寸点数 (dpi) 和每厘米点数 (dpcm)，为指示这些单位，提供了导出的常量 {@link #DPI <CODE>DPI</CODE>} 和 {@link #DPCM <CODE>DPCM</CODE>}。 
+ <P>
+一旦构造之后，分辨率属性的值就是不可变的。 
+ <P>
+<B>设计</B>
+ <P>
+分辨率属性的反向进纸分辨率和进纸分辨率值是使用每 100 英寸的点数为单位 (dphi) 进行内部存储的。使用 dphi（比方说，而不是公制单位）存储该值允许在 dpi 和 dphi 之间以及 dpcm 和 dphi 之间进行精确的整数算法转换：1 dpi = 100 dphi，1 dpcm = 254 dphi。因此，可以使用任一单位将该值存储到分辨率属性，并从其获取，精度上没有任何损失。如果使用浮点表示形式，则不能保证这一点。但是，如果使用一个单位创建分辨率属性的值，使用其他单位进行获取，则通常会发生舍入误差；例如，600 dpi 将被舍入为 236 dpcm，而实际值（五位数）为 236.22 dpcm。 
+ <P>
+使用通用单位 dphi 内部存储该值可以比较这两种分辨率属性，无需考虑创建值的单位；例如，300 dpcm 将相当于 762 dpi，因为它们都存储为 76200 dphi。尤其是，查询服务可以基于它们序列化表示形式的相等性来匹配分辨率属性，而不管它们用哪种单位创建。另外，对内部存储使用整数可以允许执行精确的相等性比较，如果使用浮点表示形式，则不保证这一点。 
+ <P>
+导出的常量 {@link #DPI <CODE>DPI</CODE>} 实际上是转换因子，将一个以 dpi 为单位的值乘以转换因子可以获得以 dphi 为单位的值。同样，导出的常量 {@link #DPCM <CODE>DPCM</CODE>} 实际上是转换因子，将一个以 dpcm 为单位的值乘以转换因子可以获得以 dphi 为单位的值。客户机可以通过提供其自已的转换因子指定使用某些单位（ dpi 或 dpcm 除外）的分辨率值。但是，由于只注意支持外部单位 dpi 和 dpcm 而选择了内部单位 dphi，所以不能保证对客户机单位的转换因子将是一个准确的整数。如果转换因子不是一个准确的整数，则使用客户机单位的分辨率值不能精确地存储。 
+ <P>
+
+@author  David Mendenhall
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.attribute.ResolutionSyntax.DPI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示每英寸点数为单位 (dpi) 的值。它实际上是转换因子，dpi 乘以该转换因子得到 dphi (100)。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.attribute.ResolutionSyntax.DPCM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示每厘米点数为单位 (dpcm) 的值。它实际上是转换因子，dpcm 乘以该转换因子得到 dphi (254)。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.print.attribute.ResolutionSyntax.crossFeedResolution
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以每 100 英寸点数 (dphi) 为单位的反向进纸分辨率。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.print.attribute.ResolutionSyntax.feedResolution
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以每 100 英寸点数 (dphi) 为单位的进纸分辨率。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.ResolutionSyntax(int crossFeedResolution, int feedResolution, int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定项构造一个新的分辨率属性。
+
+@param  crossFeedResolution 反向进纸分辨率。
+@param  feedResolution 进纸分辨率。
+@param units 单位转换因子，即 {@link #DPI <CODE>DPI</CODE>} 或 {@link #DPCM <CODE>DPCM</CODE>}。 
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>crossFeedResolution</CODE> &lt; 1 或 <CODE>feedResolution</CODE> &lt; 1 或 <CODE>units</CODE> &lt; 1，则抛出该异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.print.attribute.ResolutionSyntax.getResolution(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定单位的此分辨率属性的分辨率值。将该值舍入为最接近的整数。 
+
+@param units 单位转换因子，即 {@link #DPI <CODE>DPI</CODE>} 或 {@link #DPCM <CODE>DPCM</CODE>}。 
+
+@return  包含索引 0 处的反向进纸分辨率和索引 1 处的进纸分辨率的两元素数组。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.ResolutionSyntax.getCrossFeedResolution(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此分辨率属性的反向进纸分辨率。将该值舍入为最接近的整数。 
+
+@param units 单位转换因子，即 {@link #DPI <CODE>DPI</CODE>} 或 {@link #DPCM <CODE>DPCM</CODE>}。 
+
+@return  反向进纸分辨率。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.ResolutionSyntax.getFeedResolution(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此分辨率属性的进纸分辨率。将该值舍入为最接近的整数。 
+
+@param units 单位转换因子，即 {@link #DPI <CODE>DPI</CODE>} 或 {@link #DPCM <CODE>DPCM</CODE>}。 
+
+@return  进纸分辨率。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.print.attribute.ResolutionSyntax.toString(int units, String unitsName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此分辨率属性的字符串版本。该字符串采用的形式是 <CODE>&quot;<I>C</I>x<I>F</I> <I>U</I>&quot;</CODE>，其中 <I>C</I> 为反向进纸分辨率，<I>F</I> 为进纸分辨率，<I>U</I> 为单位名称。将该值舍入为最接近的整数。 
+
+@param units 单位转换因子，即 {@link #DPI <CODE>DPI</CODE>} 或 {@link #DPCM <CODE>DPCM</CODE>}。
+@param  unitsName 单位名称字符串，即 <CODE>&quot;dpi&quot;</CODE> 或 <CODE>&quot;dpcm&quot;</CODE>。如果为 null，则没有任何单位名称附加到该结果。 
+
+@return  此分辨率属性的字符串版本。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.ResolutionSyntax.lessThanOrEquals(ResolutionSyntax other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此分辨率属性的值是否小于或等于给定分辨率属性的值。如果以下条件都为 true，则为 true： 
+ <UL>
+ <LI>
+此属性的反向进纸分辨率小于或等于 <CODE>other</CODE> 属性的反向进纸分辨率。
+ <LI>
+此属性的进纸分辨率小于或等于 <CODE>other</CODE> 属性的进纸分辨率。 
+ </UL>
+
+@param  other  与之比较的分辨率属性。
+
+@return  如果此分辨率属性小于或等于 <CODE>other</CODE> 分辨率属性，则返回 True，否则返回 false。
+
+@exception  NullPointerException （未经检查的异常）如果 <CODE>other</CODE> 为 null，则抛出该异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.ResolutionSyntax.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此分辨率属性是否等效于传入的对象。若要等效，以下所有条件都必须为 true： 
+ <OL TYPE=1>
+ <LI>
+<CODE>object</CODE> 不为 null。
+ <LI>
+<CODE>object</CODE> 是类 ResolutionSyntax 的一个实例。
+ <LI>
+此属性的反向进纸分辨率等于 <CODE>object</CODE> 的反向进纸分辨率。 
+ <LI>
+此属性的进纸分辨率等于 <CODE>object</CODE> 的进纸分辨率。 
+ </OL>
+
+@param  object  要比较的对象。
+
+@return  如果 <CODE>object</CODE> 等效于此分辨率属性，则返回 True，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.ResolutionSyntax.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此分辨率属性的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.print.attribute.ResolutionSyntax.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此分辨率属性的字符串版本。此字符串采用的形式是 <CODE>&quot;<I>C</I>x<I>F</I> dphi&quot;</CODE>，其中 <I>C</I> 为反向进纸分辨率，<I>F</I> 为进纸分辨率。使用内部单位 dphi 报告该值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.print.attribute.ResolutionSyntax.getCrossFeedResolutionDphi()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 dphi 为单位的此分辨率属性的反向进纸分辨率。（在子类中使用。）
+
+@return  反向进纸分辨率。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.print.attribute.ResolutionSyntax.getFeedResolutionDphi()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 dphi 为单位的此分辨率属性的进纸分辨率。（在子类中使用。） 
+
+@return  进纸分辨率。
+
+<!-- END DATA -->

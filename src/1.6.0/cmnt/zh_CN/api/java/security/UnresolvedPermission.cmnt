@@ -1,0 +1,189 @@
+<!-- BEGIN KEY -->
+public final class java.security.UnresolvedPermission extends java.security.Permission implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UnresolvedPermission 类用来保持初始化 Policy 时&ldquo;未解析&rdquo;的权限。未解析的权限是这样的一种权限：初始化 Policy 时其实际 Permission 类尚未存在（请参见以下内容）。
+ 
+<p>Java 运行时的策略（指定各种主体代码可用的权限）由 Policy 对象表示。每当初始化或刷新 Policy 时，都将为该 Policy 允许的所有权限创建相应类的 Permission 对象。
+ 
+<p>策略配置引用的许多权限类类型都是一些本机存在的类型（即一些可在 CLASSPATH 上找到的类型）。此类权限的对象可在策略初始化期间实例化。例如，自从在 CLASSPATH 上找到 FilePermission 类之后，始终可以实例化 java.io.FilePermission。
+ 
+<p>在 Policy 初始化期间，其他权限类可能尚未存在。例如，引用的权限类可能处在以后将加载的 JAR 文件中。将对每个这样的类初始化 UnresolvedPermission。因此，UnresolvedPermission 实际上是一个包含有关权限信息的&ldquo;占位符&rdquo;。
+ 
+<p>稍后，当代码在以前未解析、但其类在那时已经加载的类型权限上调用 AccessController.checkPermission 时，该类型以前未解析的权限将被&ldquo;解析&rdquo;。也就是说，将基于 UnresolvedPermission 中的信息，为每个这样的 UnresolvedPermission 实例化一个新的相应类类型的对象。
+
+<p> 为了实例化此新类，UnresolvedPermission 假定该类提供了零、一个和/或两个参数构造方法。零参数构造方法将用来实例化不带有名称和操作的权限。假定带一个参数的构造方法采用 <code>String</code> 名称作为输入；带两个参数的构造方法采用 <code>String</code> 名称和 <code>String</code> 操作作为输入。UnresolvedPermission 可以调用带有 <code>null</code> 名称和/或操作的构造方法。如果没有提供适当的权限构造方法，则将忽略 UnresolvedPermission，并且不会授予执行代码的相关权限。
+
+<p> 新创建的权限对象取代 UnresolvedPermission，并将后者移除。
+
+<p> 注意，用于 <code>UnresolvedPermission</code> 的 <code>getName</code> 方法将返回尚未解析的基础权限的 <code>type</code>（类名称）。
+
+@see java.security.Permission
+@see java.security.Permissions
+@see java.security.PermissionCollection
+@see java.security.Policy
+
+@version 1.29 04/02/03
+
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.UnresolvedPermission.type
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析此未解析的权限时将创建 Permission 类的类名称。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.UnresolvedPermission.name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+权限名称。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.UnresolvedPermission.actions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对权限的操作。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.UnresolvedPermission(String type, String name, String actions, java.security.cert.Certificate[] certs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在解析权限时，创建一个新的 UnresolvedPermission，使之包含稍后实际创建指定类的 Permission 时所需的权限信息。
+ 
+@param type 解析此未解析的权限时将创建的 Permission 类的类名称。
+@param name 权限名称。
+@param actions 对权限的操作。
+@param certs 用来为权限类签名的证书。这是一个证书链列表，其中每个链都是由签署人证书和其可选的支持证书链构成。每个链都按从底到顶进行排序（即签署人证书排在首位置，（根）证书授权排在末位置）。签署人证书是从数组中复制的。数组的后续更改不会影响此 UnsolvedPermission。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.UnresolvedPermission.implies(Permission p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对于未解析的权限，此方法始终返回 false。也就是说，从不认为 UnresolvedPermission 暗含其他权限。
+
+@param p 所要检查的权限。
+ 
+@return false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.UnresolvedPermission.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 UnresolvedPermission 对象的相等性。检查 <i>obj</i> 是否为 UnresolvedPermission，是否具有与此对象相同的类型（类）名称、权限名称、操作和证书。
+
+<p> 为了确定证书是否相等，此方法仅比较实际签署人证书。此方法没有考虑对证书链的支持。
+ 
+@param obj 要与此对象进行相等性测试的对象。
+ 
+@return 如果 obj 是 UnresolvedPermission，并且具有与此对象相同的类型（类）名称、权限名称、操作和证书，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.UnresolvedPermission.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的哈希码值。
+
+@return  此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.UnresolvedPermission.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回这些操作的规范的字符串表示形式，该字符串当前为空字符串 &quot;&quot;，原因是没有针对 UnresolvedPermission 的操作。也就是说，解析此 UnresolvedPermission 时将创建的权限的操作可以为非 null，但永远不会认为 UnresolvedPermission 本身具有任何操作。
+
+@return 空字符串 &quot;&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.UnresolvedPermission.getUnresolvedType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取尚未解析的基础权限的类型（类名称）。
+
+@return 获取尚未解析的基础权限的类型（类名称）
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.UnresolvedPermission.getUnresolvedName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取尚未解析的基础权限的目标名称。
+
+@return 获取尚未解析的基础权限的目标名称，如果没有目标名称，则返回 <code>null</code>
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.UnresolvedPermission.getUnresolvedActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取尚未解析的基础权限的操作。
+
+@return 尚未解析的基础权限的操作，如果没有操作，则返回 <code>null</code>
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.Certificate[] java.security.UnresolvedPermission.getUnresolvedCerts()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取尚未解析的基础权限的签署者证书（无任何支持链）。
+
+@return 尚未解析的基础权限的签署者证书，如果没有签署者证书，则返回 null。每次调用此方法时都返回一个新的数组。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.UnresolvedPermission.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 UnresolvedPermission 的字符串。惯例是按以下形式指定类名称、权限名称和操作：'(unresolved &quot;ClassName&quot; &quot;name&quot; &quot;actions&quot;)'。
+ 
+@return 与此 UnresolvedPermission 有关的信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.security.UnresolvedPermission.newPermissionCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回存储 UnresolvedPermission 对象的新 PermissionCollection 对象。
+ <p>
+@return 适合存储 UnresolvedPermissions 的新 PermissionCollection 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.security.UnresolvedPermission.readObject(ObjectInputStream ois) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流还原此对象（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.security.UnresolvedPermission.writeObject(ObjectOutputStream oos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象写入流中（也就是将其序列化）。
+
+@serialData 初始 <code>String</code>（表示 <code>type</code>）后跟一个 <code>String</code>（表示 <code>name</code>），其后又跟一个 <code>String</code>（表示 <code>actions</code>），它后面又跟一个 <code>int</code>，指示要使用的证书数量；如果该值为&ldquo;零&rdquo;，则表示没有与此对象相关的证书。每个证书的编写都从一个表示证书类型的 <code>String</code> 开始，其后是 <code>int</code>，用来指定证书编码的长度，再向后是以 byte 数组形式写出的证书编码本身。
+
+<!-- END DATA -->

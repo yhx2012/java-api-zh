@@ -1,0 +1,48 @@
+<!-- BEGIN KEY -->
+public interface javax.management.modelmbean.ModelMBean extends javax.management.DynamicMBean, javax.management.PersistentMBean, javax.management.modelmbean.ModelMBeanNotificationBroadcaster
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ModelMBean 必须实现此接口。此接口的实现必须与每个 JMX Agent 一起分发。
+ <P>
+Java 资源使用 MBeanServer 的 createMBean 方法来实例化 ModelMBean，以便具有可管理性。然后该资源设置 ModelMBean 实例的 ModelMBeanInfo（带有 Descriptor）。通过 ModelMBean 的 ModelMBeanInfo 公开的属性和操作像其他 MBean 一样可以从 MBean、连接器/适配器进行访问。通过 ModelMBeanInfo Descriptor，可以定义托管应用程序中的值和方法，并可以将它们映射到 ModelMBean 的属性和操作。此映射可以在 XML 格式文件的开发过程中定义，也可以以编程方式在运行时动态定义。 
+ <P>
+在 MBeanServer 中实例化的每个 ModelMBean 都是可管理的：通过连接到该 MBeanServer 的连接器/适配器，可以远程访问其属性和操作。如果 Java 对象不是 JMX 兼容的 MBean，则它不能在 MBeanServer 中进行注册。通过实例化 ModelMBean，资源可保证 MBean 是有效的。
+ <P>
+每个公共方法必须抛出 MBeanException 和 RuntimeOperationsException。这允许包装来自分布式通信（RMI、EJB 等）的异常。这些异常不必由实现抛出，在规范和 javadoc 中描述的情形除外。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBean.setModelMBeanInfo(ModelMBeanInfo inModelMBeanInfo) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用传入的 ModelMBeanInfo 实例化 ModelMBean 对象。此方法能够在 ModelMBean 上设置自定义的 ModelMBeanInfo（只要它没有向 MBeanServer 注册）。<br>一旦自定义并在  ModelMBean 上设置 ModelMBean 的 ModelMBeanInfo（带有 Descriptor）之后，就可以向 MBeanServer 注册  ModelMBean。
+ <P>
+如果当前注册 ModelMBean，则此方法抛出包装 {@link IllegalStateException} 的 {@link javax.management.RuntimeOperationsException}
+
+@param inModelMBeanInfo ModelMBean 要使用的 ModelMBeanInfo 对象。    
+	 
+@exception MBeanException 包装了一个分布式通信异常。
+@exception RuntimeOperationsException 
+<ul><li>如果传入参数的 MBeanInfo 为 null，则包装一个 {@link IllegalArgumentException}。</li>
+<li>如果当前在 MBeanServer 中注册 ModelMBean，则包装一个 {@link IllegalStateException}。</li>
+ </ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBean.setManagedResource(Object mr, String mr_type) throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException, javax.management.modelmbean.InvalidTargetObjectTypeException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置对象的实例句柄，我们将根据此句柄执行此 ModelMBean 管理接口（MBeanInfo 和 Descriptor）中的所有方法。
+
+@param mr 作为托管资源的对象
+@param mr_type 托管资源的引用类型。可以为：ObjectReference、Handle、IOR、EJBHandle 和 RMIReference。如果 MBeanServer 不能处理传入的 mr_type，将抛出 InvalidTargetTypeException。
+     
+@exception MBeanException 如果对象的初始化程序已抛出异常。
+@exception RuntimeOperationsException 如果包装了一个 IllegalArgumentException：传入参数的托管资源类型为 null。
+@exception InstanceNotFoundException 如果找不到托管资源对象。
+@exception InvalidTargetObjectTypeException 如果 ModelMBean 或 JMX Agent 不能处理托管资源类型。
+
+<!-- END DATA -->

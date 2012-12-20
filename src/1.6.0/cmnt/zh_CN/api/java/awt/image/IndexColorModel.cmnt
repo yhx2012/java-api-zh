@@ -1,0 +1,442 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.IndexColorModel extends java.awt.image.ColorModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>IndexColorModel</code> 类是一个 <code>ColorModel</code> 类，它使用由单个样本组成的像素值，这些像素值是默认 sRGB 颜色空间中固定 colormap 中的索引。colormap 指定了对应于每个索引的红色、绿色、蓝色和可选的 alpha 分量。在 colormap 中，所有分量都以 8 位无符号整数值表示。某些构造方法允许调用者在 colormap 中指定&ldquo;空洞&rdquo;：通过 <code>BigInteger</code> 对象中的位集指示哪些 colormap 项是有效的，以及哪些项表示不可用的颜色。此颜色模型与 X11 PseudoColor 可视化模型类似。
+ <p>
+某些构造方法还提供了为 colormap 中的每个像素指定 alpha 分量的方法，而其他构造方法则要么不提供这种方法，要么在某些情况中使用一个标志来指示 colormap 数据是否包含 alpha 值。如果未向构造方法提供 alpha 值，则将为每个条目假定一个不透明的 alpha 分量 (alpha = 1.0)。无论为像素值提供或假定使用何种 alpha 分量，都可以提供一个指示该像素完全透明的可选透明像素值。注意，<code>IndexColorModel</code> 对象 colormap 中的颜色分量不会预乘 alpha 分量。
+ <p>
+<a name="transparency">确定 <code>IndexColorModel</code> 对象透明度的方式如下：检查 colormap 中各颜色的 alpha 分量，并在考虑可选的 alpha 值和所有指定的透明索引后选择最具体的值。只有在 colormap 中的所有有效颜色都为不透明，并且不存在有效的透明像素时，透明度值才为 <code>Transparency.OPAQUE</code>。如果 colormap 中的所有有效颜色要么是完全不透明的 (alpha = 1.0)，要么是完全透明的 (alpha = 0.0)（通常在指定了有效透明像素时出现该情况），则透明值为 <code>Transparency.BITMASK</code>。否则透明值将为 <code>Transparency.TRANSLUCENT</code>，指示有效颜色具有的 alpha 分量既不是完全透明的，也不是完全不透明的 (0.0 &lt; alpha &lt; 1.0)。</a>
+
+ <p>
+如果 <code>IndexColorModel</code> 对象的透明值是 <code>Transparency.OPAQUE</code>，则 <code>hasAlpha</code> 和 <code>getNumComponents</code> 方法（均继承自 <code>ColorModel</code>）分别返回 false 和 3。对于所有其他透明度值，<code>hasAlpha</code> 返回 true，<code>getNumComponents</code> 返回 4。
+
+ <p>
+<a name="index_values">
+ 用于 colormap 中索引的那些值取自像素表示形式的最低有效 <em>n</em> 位，其中 <em>n</em> 基于构造方法中指定的像素大小。对于小于 8 位的像素大小，<em>n</em> 向上舍入为 2 的次幂（3 变为 4，5、6 和 7 则变为 8）。对于介于 8 和 16 位之间的像素大小，<em>n</em> 就等于像素大小。大于 16 位的像素大小不受此类的支持。在像素表示形式中，超过 <em>n</em> 的高位字节将被忽略。大于或等于映射大小、但小于 2<sup><em>n</em></sup> 的索引值是未定义的，并对所有颜色和 alpha 组件返回 0。
+
+ <p>
+对于那些使用 <code>transferType</code> 类型基本数组像素表示形式的方法，数组的长度总是一。支持的传输类型有 <code>DataBuffer.TYPE_BYTE</code> 和 <code>DataBuffer.TYPE_USHORT</code>。因为总是能以单个 int 值表示此类使用的像素值，所以单个 int 像素表示形式对于此类的所有对象都是有效的。因此，使用这种表示形式的方法不会因无效的像素值而抛出 <code>IllegalArgumentException</code>。
+ <p>
+此类中的很多方法都声明为 final。这样做的原因是底层本机图形代码做出了有关布局和此类操作的假设，并且这些假设反映在标记为 final 的方法实现中。用户可以出于其他原因子类化此类，但是无法重写或修改这些方法的行为。
+
+@see ColorModel
+@see ColorSpace
+@see DataBuffer
+
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, byte[] r, byte[] g, byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的红色、绿色和蓝色分量数组构造一个 <code>IndexColorModel</code>。此颜色模型所描述的像素都具有非标准化的 255（标准化是 1.0）alpha 分量，这意味着这些像素是完全不透明的。所有指定颜色分量的数组都必须至少具有指定的条目数。<code>ColorSpace</code> 是默认的 sRGB 空间。由于此构造方法的所有参数中都没有 alpha 信息，所以透明度值总是为 <code>Transparency.OPAQUE</code>。传输类型是 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 中能够保存单个像素的最小值。
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param r		红色分量数组
+@param g		绿色分量数组
+@param b		蓝色分量数组
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, byte[] r, byte[] g, byte[] b, int trans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的红色、绿色和蓝色分量数组构造一个 <code>IndexColorModel</code>。此颜色模型所描述的像素都具有非标准化的 255（标准化是 1.0）alpha 分量，这意味着这些像素是完全不透明的，但指示呈现为透明的像素除外。所有指定颜色分量的数组都必须至少具有指定的条目数。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code> 或 <code>Transparency.BITMASK</code>，正如上文<a href="#transparency">类描述</a>中所指定的。传输类型是能够保存单个像素的 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 的最小值。
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param r		红色分量数组
+@param g		绿色分量数组
+@param b		蓝色分量数组
+@param trans	透明像素的索引
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16 
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, byte[] r, byte[] g, byte[] b, byte[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的红色、绿色、蓝色和 alpha 分量数组构造一个 <code>IndexColorModel</code>。所有指定分量的数组都必须至少具有指定的条目数。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code>、<code>Transparency.BITMASK</code> 或 <code>Transparency.TRANSLUCENT</code>，正如上文<a href="#transparency">类描述</a>中所指定的。传输类型是能够保存单个像素的 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 的最小值。
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param r		红色分量数组
+@param g		绿色分量数组
+@param b		蓝色分量数组
+@param a		alpha 值分量数组
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, byte[] cmap, int start, boolean hasalpha)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据交错存取红色、绿色、蓝色和可选 alpha 分量的单个数组构造一个 <code>IndexColorModel</code>。该数组中必须具有足够的值，以填充具有指定大小的所有所需分量数组。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code>、<code>Transparency.BITMASK</code> 或 <code>Transparency.TRANSLUCENT</code>，正如上文<a href="#transparency">类描述</a>中所指定的。传输类型是能够保存单个像素的 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 的最小值。
+ 
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param cmap	颜色分量数组
+@param start	第一个颜色分量的起始偏移量
+@param hasalpha   指示 <code>cmap</code> 数组中是否包含 alpha 值
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, byte[] cmap, int start, boolean hasalpha, int trans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据交错存取红色、绿色、蓝色和可选 alpha 分量的单个数组构造一个 <code>IndexColorModel</code>。指定的透明索引表示完全透明的像素，无论为其指定的 alpha 值是什么。该数组中必须具有足够的值，以填充具有指定大小的所有所需分量数组。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code>、<code>Transparency.BITMASK</code> 或 <code>Transparency.TRANSLUCENT</code>，正如上文<a href="#transparency">类描述</a>中所指定的。传输类型是能够保存单个像素的 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 的最小值。
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param cmap	颜色分量数组
+@param start	第一个颜色分量的起始偏移量
+@param hasalpha	指示 <code>cmap</code> 数组中是否包含 alpha 值
+@param trans	完全透明像素的索引
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16 
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, int[] cmap, int start, boolean hasalpha, int trans, int transferType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据一个 int 数组构造一个 <code>IndexColorModel</code>，该数组中的每个 int 值都由默认 RGB 颜色模型格式的红色、绿色、蓝色和可选 alpha 分量构成。指定的透明索引表示完全透明的像素，无论为其指定的 alpha 值是什么。该数组中必须具有足够的值，以填充具有指定大小的所有所需分量数组。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code>、<code>Transparency.BITMASK</code> 或 <code>Transparency.TRANSLUCENT</code>，正如上文<a href="#transparency">类描述</a>中所指定的。
+@param bits	每个像素占用的位数
+@param size	颜色分量数组的大小
+@param cmap	颜色分量数组
+@param start	第一个颜色分量的起始偏移量
+@param hasalpha	指示 <code>cmap</code> 数组中是否包含 alpha 值
+@param trans	完全透明像素的索引
+@param transferType 用于表示像素值的数组数据类型。该数据类型必须是 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code>。
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16 
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+@throws IllegalArgumentException 如果 <code>transferType</code> 不是 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel(int bits, int size, int[] cmap, int start, int transferType, BigInteger validBits)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据一个 <code>int</code> 数组构造一个 <code>IndexColorModel</code>，该数组中的每个 <code>int</code> 值都由默认 RGB 颜色模型格式的红色、绿色、蓝色和 alpha 分量构成。该数组中必须具有足够的值，以填充具有指定大小的所有所需分量数组。<code>ColorSpace</code> 是默认的 sRGB 空间。根据参数的不同，透明度值可能是 <code>Transparency.OPAQUE</code>、<code>Transparency.BITMASK</code> 或 <code>Transparency.TRANSLUCENT</code>，正如上文<a href="#transparency">类描述</a>中所指定的。该数据类型必须是 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 之一。<code>BigInteger</code> 对象指定了 <code>cmap</code> 数组中的有效/无效像素。如果设置了某个索引处的 <code>BigInteger</code> 值，则该像素是有效的；如果未设置该索引处的 <code>BigInteger</code> 位，则该像素是无效的。
+@param bits 每个像素占用的位数
+@param size 颜色分量数组的大小
+@param cmap 颜色分量数组
+@param start 第一个颜色分量的起始偏移量
+@param transferType 指定的数据类型
+@param validBits 一个 <code>BigInteger</code> 对象。如果设置了 BigInteger 中的某个位，则该索引处的像素是有效的。如果未设置该位，则认为该索引处的像素无效。如果为 null，则所有像素都是有效的。只考虑从 0 到 colormap 大小的所有位。
+@throws IllegalArgumentException 如果 <code>bits</code> 小于 1 或大于 16 
+@throws IllegalArgumentException 如果 <code>size</code> 小于 1
+@throws IllegalArgumentException 如果 <code>transferType</code> 不是 <code>DataBuffer.TYPE_BYTE</code> 或 <code>DataBuffer.TYPE_USHORT</code> 之一
+@since 1.3
+    
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.IndexColorModel.getTransparency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回透明度。返回 OPAQUE、BITMASK 或 TRANSLUCENT
+@return 此 <code>IndexColorModel</code> 的透明度值
+@see Transparency#OPAQUE
+@see Transparency#BITMASK
+@see Transparency#TRANSLUCENT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.IndexColorModel.getComponentSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含各个颜色/alpha 分量位数的数组。该数组包含颜色分量的顺序是红色、绿色、蓝色，最后是 alpha 分量（如果存在）。
+@return 包含此 <code>IndexColorModel</code> 的各个颜色和 alpha 分量位数的数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getMapSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>IndexColorModel</code> 中颜色/alpha 分量数组的大小。
+@return 颜色和 alpha 分量数组的大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getTransparentPixel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>IndexColorModel</code> 中透明像素的索引；如果没有 alpha 值为 0 的像素，则返回 -1。如果通过像素的索引在某个构造方法中显式地指定了透明像素，则优先返回该像素，否则可能返回任何正好是完全透明像素的索引。
+@return 此 <code>IndexColorModel</code> 对象中透明像素的索引；如果没有这样的像素，则为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.image.IndexColorModel.getReds(byte[] r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将红色分量数组复制到指定的数组中。只写入 {@link #getMapSize() getMapSize} 指定的初始数组条目。
+@param r 指定的数组，红色分量数组元素要复制到该数组中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.image.IndexColorModel.getGreens(byte[] g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将绿色分量数组复制到指定的数组中。只写入 <code>getMapSize</code> 指定的初始数组条目。
+@param g 指定的数组，绿色分量数组元素要复制到该数组中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.image.IndexColorModel.getBlues(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将蓝色分量数组复制到指定的数组中。只写入 <code>getMapSize</code> 指定的初始数组条目。
+@param b 指定的数组，蓝色分量数组元素要复制到该数组中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.image.IndexColorModel.getAlphas(byte[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 alpha 透明度分量数组复制到指定的数组中。只写入 <code>getMapSize</code> 指定的初始数组条目。
+@param a 指定的数组，alpha 分量数组元素要复制到该数组中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.image.IndexColorModel.getRGBs(int[] rgb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将颜色和 alpha 分量数组中每个索引的数据转换成默认 RGB ColorModel 格式的 int 值，并将得到的 32 位 ARGB 值复制到指定数组中。只写入 <code>getMapSize</code> 指定的初始数组条目。
+@param rgb 指定的数组，从颜色和 alpha 分量数组转换得到的 ARGB 值要复制到该数组中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getRed(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的红色分量，在默认的 RGB ColorSpace (sRGB) 中为 0 到 255。该像素值指定为 int 值。只有像素值的较低 <em>n</em> 位用于计算返回的值，正如上文<a href="#index_values">类描述</a>中所指定的。返回值是一个未预乘的值。
+@param pixel 指定的像素
+@return 指定像素的红色分量值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getGreen(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的绿色分量，在默认的 RGB ColorSpace (sRGB) 中为 0 到 255。该像素值指定为 int 值。只有像素值的较低 <em>n</em> 位用于计算返回的值，正如上文<a href="#index_values">类描述</a>中所指定的。返回值是一个未预乘的值。
+@param pixel 指定的像素
+@return 指定像素的绿色分量值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getBlue(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的蓝色分量，在默认的 RGB ColorSpace (sRGB) 中为 0 到 255。该像素值指定为 int 值。只有像素值的较低 <em>n</em> 位用于计算返回的值，正如上文<a href="#index_values">类描述</a>中所指定的。返回值是一个未预乘的值。
+@param pixel 指定的像素
+@return 指定像素的蓝色分量值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getAlpha(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定像素的 alpha 分量，该值为 0 到 255。该像素值指定为 int 值。只有像素值的较低 <em>n</em> 位用于计算返回的值，正如上文<a href="#index_values">类描述</a>中所指定的。
+@param pixel 指定的像素
+@return 指定像素的 alpha 分量值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.IndexColorModel.getRGB(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以默认 RGB 颜色模型格式返回像素的颜色/alpha 分量。该像素值指定为 int 值。只有像素值的较低 <em>n</em> 位用于计算返回的值，正如上文<a href="#index_values">类描述</a>中所指定的。返回值是一个未预乘格式的值。
+@param pixel 指定的像素
+@return 指定像素的颜色和 alpha 分量
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.awt.image.IndexColorModel.getDataElements(int rgb, Object pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据默认 RGB 颜色模型中的整数像素表示形式，返回此 ColorModel 中像素的数据元素数组表示形式。然后可将此数组传递到 {@link WritableRaster} 对象的 {@link WritableRaster#setDataElements(int, int, java.lang.Object) setDataElements} 方法。如果 pixel 变量为 <code>null</code>，则分配一个新数组。如果 <code>pixel</code> 不为 <code>null</code>，则它必须是一个 <code>transferType</code> 类型的基本数组；否则抛出 <code>ClassCastException</code>。如果 <code>pixel</code> 不足以保存此 <code>ColorModel</code> 的一个像素值，则抛出 <code>ArrayIndexOutOfBoundsException</code>。返回 pixel 数组。
+ <p>
+因为可以子类化 <code>IndexColorModel</code>，所以子类继承此方法的实现，如果不重写子类，则在使用不受支持的 <code>transferType</code> 时将抛出异常。
+
+@param rgb 默认 RGB 颜色模型中的整数像素表示形式
+@param pixel 指定的像素
+@return 表示此 <code>IndexColorModel</code> 中指定像素的数组。
+@throws ClassCastException 如果 <code>pixel</code> 不是 <code>transferType</code> 类型的基本数组
+@throws ArrayIndexOutOfBoundsException 如果 <code>pixel</code> 不足以保存此 <code>ColorModel</code> 中的一个像素值
+@throws UnsupportedOperationException 如果 <code>transferType</code> 无效
+@see WritableRaster#setDataElements
+@see SampleModel#setDataElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.IndexColorModel.getComponents(int pixel, int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ColorModel</code> 中指定像素的非标准化颜色/alpha 分量数组。该像素值指定为 int 值。如果 <code>components</code> 数组为 <code>null</code>，则分配一个包含 <code>offset + getNumComponents()</code> 个元素的新数组。返回 <code>components</code> 数组，仅在 <code>hasAlpha</code> 返回 true 时，该数组才包括 alpha 分量。即使从 <code>offset</code> 开始的 <code>components</code> 数组是由此方法所分配的，颜色/alpha 分量也将存储在该数组中。如果 <code>components</code> 数组不为 <code>null</code> 并且大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param pixel 指定的像素
+@param components 接收指定像素的颜色和 alpha 分量的数组
+@param offset  <code>components</code> 数组中的偏移量，从此处开始存储颜色和 alpha 分量 
+@return 包含从指定偏移量处开始的指定像素的颜色和 alpha 分量的数组。
+@see ColorModel#hasAlpha
+@see ColorModel#getNumComponents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.IndexColorModel.getComponents(Object pixel, int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ColorModel</code> 中指定像素的非标准化颜色/alpha 分量数组。像素值由作为对象引用传入的 <code>transferType</code> 类型的数据元素数组指定。如果 <code>pixel</code> 不是 <code>transferType</code> 类型的基本数组，则抛出 <code>ClassCastException</code>。如果 <code>pixel</code> 大小不足以保存此 <code>ColorModel</code> 的一个像素值，则抛出 <code>ArrayIndexOutOfBoundsException</code>。如果 <code>components</code> 数组为 <code>null</code>，则分配一个包含 <code>offset + getNumComponents()</code> 个元素的新数组。返回 <code>components</code> 数组，仅在 <code>hasAlpha</code> 返回 true 时，该数组才包括 alpha 分量。即使从 <code>offset</code> 开始的 <code>components</code> 数组是由此方法所分配的，颜色/alpha 分量也将存储在该数组中。如果 <code>components</code> 数组不为 <code>null</code> 并且大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。  
+ <p>
+因为可以子类化 <code>IndexColorModel</code>，所以子类继承此方法的实现，如果不重写子类，则在使用不受支持的 <code>transferType</code> 时将抛出异常。
+
+@param pixel 指定的像素
+@param components 接收指定像素的颜色和 alpha 分量的数组
+@param offset  <code>components</code> 数组中的索引，从此处开始存储指定像素的颜色和 alpha 分量 
+@return 从指定偏移量处开始包含指定像素的颜色和 alpha 分量的数组。
+@throws ArrayIndexOutOfBoundsException 如果 <code>pixel</code> 大小不足以保存此 <code>ColorModel</code> 的一个像素值，或者 <code>components</code> 数组不为 <code>null</code> 并且大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量
+@throws ClassCastException 如果 <code>pixel</code> 不是 <code>transferType</code> 类型的基本数组
+@throws UnsupportedOperationException 如果 <code>transferType</code> 不是受支持的传送类型之一
+@see ColorModel#hasAlpha
+@see ColorModel#getNumComponents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.IndexColorModel.getDataElement(int[] components, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定非标准化颜色/alpha 分量数组的情况下，以 int 形式返回此 <code>ColorModel</code> 中的像素值。如果 <code>components</code> 数组大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。因为可以子类化 <code>ColorModel</code>，所以子类继承此方法的实现，如果不重写子类，则在使用不受支持的 transferType 时将抛出异常。
+@param components 非标准化颜色和 alpha 分量的数组
+@param offset  <code>components</code> 数组中的索引，从此处开始检索颜色和 alpha 分量 
+@return 对应于指定分量的此 <code>ColorModel</code> 中的 <code>int</code> 像素值。
+@throws ArrayIndexOutOfBoundsException 如果 <code>components</code> 数组大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量 
+@throws UnsupportedOperationException 如果 <code>transferType</code> 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.IndexColorModel.getDataElements(int[] components, int offset, Object pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定非标准化颜色/alpha 分量数组的情况下，返回表示此 <code>ColorModel</code> 中像素的数据元素数组。然后可将此数组传递到 <code>WritableRaster</code> 对象的 <code>setDataElements</code> 方法。如果 <code>components</code> 数组大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量，则抛出 <code>ArrayIndexOutOfBoundsException</code>。如果 pixel 变量为 <code>null</code>，则分配一个新数组。如果 <code>pixel</code> 不为 <code>null</code>，则它必须是一个 <code>transferType</code> 类型的基本数组；否则抛出 <code>ClassCastException</code>。如果 pixel 大小不足以保存此 <code>ColorModel</code> 的一个像素值，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+ <p>
+因为可以子类化 <code>IndexColorModel</code>，所以子类继承此方法的实现，如果不重写子类，则在使用不受支持的 <code>transferType</code> 时将抛出异常。
+
+@param components 非标准化颜色和 alpha 分量的数组
+@param offset  <code>components</code> 中的索引，从此处开始检索颜色和 alpha 分量
+@param pixel 表示颜色和 alpha 分量数组的 <code>Object</code> 
+@return 一个表示颜色和 alpha 分量数组的 <code>Object</code>。
+@throws ClassCastException 如果 <code>pixel</code> 不是 <code>transferType</code> 类型的基本数组
+@throws ArrayIndexOutOfBoundsException 如果 <code>pixel</code> 大小不足以保存此 <code>ColorModel</code> 的一个像素值，或者 <code>components</code> 大小不足以保存从 <code>offset</code> 处开始的所有颜色和 alpha 分量
+@throws UnsupportedOperationException 如果 <code>transferType</code> 不是受支持的传输类型之一
+@see WritableRaster#setDataElements
+@see SampleModel#setDataElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.IndexColorModel.createCompatibleWritableRaster(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定宽度和高度、数据布局 (<code>SampleModel</code>) 与此 <code>ColorModel</code> 兼容的 <code>WritableRaster</code>。此方法只对每个像素使用 16 或更少位的颜色模型有效。
+ <p>
+因为可以子类化 <code>IndexColorModel</code>，所以任何支持每像素使用多于 16 位的子类必须重写此方法。
+
+@param w 应用于新 <code>WritableRaster</code> 的宽度
+@param h 应用于新 <code>WritableRaster</code> 的高度
+@return 具有指定宽度和高度的 <code>WritableRaster</code> 对象。
+@throws UnsupportedOperationException 如果像素中的位数大于 16
+@see WritableRaster
+@see SampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.IndexColorModel.isCompatibleRaster(Raster raster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>raster</code> 与此 <code>ColorModel</code> 兼容，则返回 <code>true</code>；如果不与此 <code>ColorModel</code> 兼容，则返回 <code>false</code>。
+@param raster 要测试兼容性的 {@link Raster} 对象
+@return 如果 <code>raster</code> 与此 <code>ColorModel</code> 兼容，则返回 <code>true</code>；否则返回 <code>false</code>。
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.IndexColorModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定宽度和高度、数据布局与此 <code>ColorModel</code> 兼容的 <code>SampleModel</code>。
+@param w 应用于新 <code>SampleModel</code> 的宽度
+@param h 应用于新 <code>SampleModel</code> 的高度
+@return 具有指定宽度和高度的 <code>SampleModel</code> 对象。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+@see SampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.IndexColorModel.isCompatibleSampleModel(SampleModel sm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+检查指定的 <code>SampleModel</code> 是否与此 <code>ColorModel</code> 兼容。如果 <code>sm</code> 为 <code>null</code>，则此方法返回 <code>false</code>。
+@param sm 指定的 <code>SampleModel</code>，或者为 <code>null</code>
+@return 如果指定的 <code>SampleModel</code> 与此 <code>ColorModel</code> 兼容，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see SampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.IndexColorModel.convertToIntDiscrete(Raster raster, boolean forceARGB)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 TYPE_INT_ARGB 或 TYPE_INT_RGB 的新 <code>BufferedImage</code>，其 <code>Raster</code> 的像素数据是通过使用此 <code>ColorModel</code> 的颜色/alpha 分量数组扩展源 <code>Raster</code> 中的各索引来计算的。只有源 <code>Raster</code> 中每个像素值的较低 <em>n</em> 位用于计算返回图像中的 color/alpha 值，正如上文<a href="#index_values">类描述</a>中所指定的。如果 <code>forceARGB</code> 为 <code>true</code>，则无论此 <code>ColorModel</code> 是否有 alpha 分量数组或透明像素，都返回一幅 TYPE_INT_ARGB 图像。
+@param raster 指定的 <code>Raster</code>
+@param forceARGB 如果为 <code>true</code>，则返回的 <code>BufferedImage</code> 是 TYPE_INT_ARGB；否则是 TYPE_INT_RGB
+@return 使用指定 <code>Raster</code> 创建的 <code>BufferedImage</code>
+@throws IllegalArgumentException 如果 raster 参数与此 IndexColorModel 不兼容
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.IndexColorModel.isValid(int pixel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素是否有效。
+@param pixel 指定的像素值
+@return 如果 <code>pixel</code> 有效，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.IndexColorModel.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有像素是否有效。
+@return 如果所有像素都有效，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.awt.image.IndexColorModel.getValidPixels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指示 colormap 中有效/无效像素的 <code>BigInteger</code>。如果设置了某个位索引处的 <code>BigInteger</code> 值，则该位是有效的；如果未设置该索引处的 <code>BigInteger</code> 值，则该位是无效的。<code>BigInteger</code> 中惟一有效的查询范围是 0 到 colormap 的大小。
+@return 一个指示有效/无效像素的 <code>BigInteger</code>。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.IndexColorModel.finalize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不再引用此 <code>ColorModel</code> 后，释放与此 <code>ColorModel</code> 关联的系统资源。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.image.IndexColorModel.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ColorModel</code> 对象内容的 <code>String</code> 表示形式。
+@return 表示此 <code>ColorModel</code> 对象内容的 <code>String</code>。
+
+<!-- END DATA -->

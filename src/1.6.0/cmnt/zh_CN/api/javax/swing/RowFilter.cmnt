@@ -1,0 +1,167 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.RowFilter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RowFilter</code> 用于从模型中过滤条目，使得这些条目不会在视图中显示。例如，一个与 <code>JTable</code> 关联的 <code>RowFilter</code> 可能只允许包含带指定字符串的列的那些行。<em>条目</em> 的含义取决于组件类型。例如，当过滤器与 <code>JTable</code> 关联时，一个条目对应于一行；当过滤器与 <code>JTree</code> 关联时，一个条目对应于一个节点。
+ <p>
+子类必须重写 <code>include</code> 方法指示是否应该在视图中显示该条目。<code>Entry</code> 参数可用于获取该条目中每一列的值。下例显示了一个 <code>include</code> 方法，该方法只允许包含以字符串&ldquo;a&rdquo;开头的一个或多个值的条目。
+ <pre>
+RowFilter&lt;Object,Object&gt; startsWithAFilter = new RowFilter&lt;Object,Object&gt;() {
+public boolean include(Entry&lt;? extends Object, ? extends Object&gt; entry) {
+for (int i = entry.getValueCount() - 1; i &gt;= 0; i--) {
+if (entry.getStringValue(i).startsWith(&quot;a&quot;)) {
+// The value starts with &quot;a&quot;, include it
+return true;
+       }
+     }
+// None of the columns start with &quot;a&quot;; return false so that this
+// entry is not shown
+return false;
+   }
+ };
+ </pre>
+<code>RowFilter</code> 有两个形式类型参数，可用来为特定模型创建 <code>RowFilter</code>。例如，以下代码假定一个包装 <code>Person</code> 类型对象的特定模型。只显示年龄大于 20 的 <code>Person</code>：
+ <pre>
+RowFilter&lt;PersonModel,Integer&gt; ageFilter = new RowFilter&lt;PersonModel,Integer&gt;() {
+public boolean include(Entry&lt;? extends PersonModel, ? extends Integer&gt; entry) {
+PersonModel personModel = entry.getModel();
+Person person = personModel.getPerson(entry.getIdentifier());
+if (person.getAge() &gt; 20) {
+// Returning true indicates this row should be shown.
+return true;
+     }
+// Age is &lt;= 20, don't show it.
+return false;
+   }
+ };
+PersonModel model = createPersonModel();
+TableRowSorter&lt;PersonModel&gt; sorter = new TableRowSorter&lt;PersonModel&gt;(model);
+sorter.setRowFilter(ageFilter);
+ </pre>
+
+@param <M> 模型的类型；例如 <code>PersonModel</code>
+@param <I> 标识符的类型；使用 <code>TableRowSorter</code> 时，此类型将是 <code>Integer</code>
+@version 1.6 03/15/06
+@see javax.swing.table.TableRowSorter
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.regexFilter(String regex, int[] indices)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它使用正则表达式确定要包含哪些条目。只包含至少有一个匹配值的条目。例如，以下代码创建了一个 <code>RowFilter</code>，它包含其值至少有一个以&ldquo;a&rdquo;开头的条目。
+ <pre>
+RowFilter.regexFilter(&quot;^a&quot;);
+ </pre>
+ <p>
+返回的过滤器使用 {@link java.util.regex.Matcher#find} 对包含进行测试。若要测试完全匹配，可分别使用字符 '^' 和 '$' 来匹配该字符串的开头和结尾。例如，&ldquo;^foo$&rdquo;只包含其字符串完全为&ldquo;foo&rdquo;的行，而不是&ldquo;food&rdquo;之类。有关受支持的正则表达式结构的完整描述，请参阅 {@link java.util.regex.Pattern}。
+
+@param regex 在其上进行过滤的正则表达式
+@param indices 要检查的值的索引如果没有提供，则计算所有的值
+@return 一个实现指定标准的 <code>RowFilter</code>
+@throws NullPointerException 如果 <code>regex</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果任一 <code>indices</code> 值小于 0
+@throws PatternSyntaxException 如果 <code>regex</code> 不是有效的正则表达式
+@see java.util.regex.Pattern
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.dateFilter(RowFilter.ComparisonType type, Date date, int[] indices)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它包含至少具有一个符合指定标准的 <code>Date</code> 值的条目。例如，下面的 <code>RowFilter</code> 只包含至少具有一个当前日期之后的日期值的条目：
+ <pre>
+RowFilter.dateFilter(ComparisonType.AFTER, new Date());
+ </pre>
+
+@param type 要执行的比较类型
+@param date 要比较的日期
+@param indices 要检查的值的索引。如果没有提供，则计算所有的值
+@return 一个实现指定标准的 <code>RowFilter</code>
+@throws NullPointerException 如果 <code>date</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果任一 <code>indices</code> 值小于 0 或 <code>type</code> 为 <code>null</code>
+@see java.util.Calendar
+@see java.util.Date
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.numberFilter(RowFilter.ComparisonType type, Number number, int[] indices)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它包含至少具有一个符合指定标准的 <code>Number</code> 值的条目。例如，下面的过滤器将只包含至少具有一个等于 10 的数值的条目：
+ <pre>
+RowFilter.numberFilter(ComparisonType.EQUAL, 10);
+ </pre>
+
+@param type 要执行的比较类型
+@param indices 要检查的值的索引。如果没有提供，则计算所有值
+@return 一个实现指定标准的 <code>RowFilter</code>
+@throws IllegalArgumentException 如果任一 <code>indices</code> 值小于 0，<code>type</code> 为 <code>null</code> 或者 <code>number</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.orFilter(java.lang.Iterable<? extends javax.swing.RowFilter<? super M, ? super I>> filters)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它包含所有提供的过滤器所包含的条目。
+ <p>
+下例创建了一个 <code>RowFilter</code>，它将包括所有包含字符串&ldquo;foo&rdquo;或字符串&ldquo;bar&rdquo;的条目：
+ <pre>
+List&lt;RowFilter&lt;Object,Object&gt;&gt; filters = new ArrayList&lt;RowFilter&lt;Object,Object&gt;&gt;(2);
+filters.add(RowFilter.regexFilter(&quot;foo&quot;));
+filters.add(RowFilter.regexFilter(&quot;bar&quot;));
+RowFilter&lt;Object,Object&gt; fooBarFilter = RowFilter.orFilter(filters);
+ </pre>
+
+@param filters 要测试的 <code>RowFilter</code>
+@throws IllegalArgumentException 如果任一过滤器为 <code>null</code>
+@throws NullPointerException 如果 <code>filters</code> 为 null
+@return 一个实现指定标准的 <code>RowFilter</code>
+@see java.util.Arrays#asList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.andFilter(java.lang.Iterable<? extends javax.swing.RowFilter<? super M, ? super I>> filters)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它包含所有提供的过滤器所包含的条目。
+ <p>
+下例创建了一个 <code>RowFilter</code>，它将包括所有包含字符串&ldquo;foo&rdquo;和字符串&ldquo;bar&rdquo;的条目：
+ <pre>
+List&lt;RowFilter&lt;Object,Object&gt;&gt; filters = new ArrayList&lt;RowFilter&lt;Object,Object&gt;&gt;(2);
+filters.add(RowFilter.regexFilter(&quot;foo&quot;));
+filters.add(RowFilter.regexFilter(&quot;bar&quot;));
+RowFilter&lt;Object,Object&gt; fooBarFilter = RowFilter.andFilter(filters);
+ </pre>
+
+@param filters 要测试的 <code>RowFilter</code>
+@return 一个实现指定标准的 <code>RowFilter</code>
+@throws IllegalArgumentException 如果任一过滤器为 <code>null</code>
+@throws NullPointerException 如果 <code>filters</code> 为 null
+@see java.util.Arrays#asList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.RowFilter<M, I> javax.swing.RowFilter.notFilter(javax.swing.RowFilter<M, I> filter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>RowFilter</code>，它包含提供的过滤器不包含的条目。
+
+@param filter 要求反 (negate) 的 <code>RowFilter</code>
+@return 一个实现指定标准的 <code>RowFilter</code>
+@throws IllegalArgumentException 如果 <code>filter</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.swing.RowFilter.include(javax.swing.RowFilter.Entry<? extends M, ? extends I> entry)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果应该显示指定的条目，则返回 true；如果应该隐藏该条目，则返回 false。
+ <p>
+<code>entry</code> 参数只在调用期间有效。在调用返回之后使用 <code>entry</code> 将导致不确定的行为。
+
+@param entry 一个非 <code>null</code> 对象，它包装取自模型的底层对象
+@return 如果应该显示该条目，则返回 true
+
+<!-- END DATA -->

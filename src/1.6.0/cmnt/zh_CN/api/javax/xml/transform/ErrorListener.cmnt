@@ -1,0 +1,63 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.transform.ErrorListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>要提供自定义错误处理，则需实现此接口并使用 <code>setErrorListener</code> 方法注册一个带有 {@link javax.xml.transform.Transformer} 的实现的实例。然后由 <code>Transformer</code> 通过此接口来报告所有错误和警告。</p>
+
+<p>如果应用程序<em>没有</em> 注册自己的自定义 <code>ErrorListener</code>，则使用默认的 <code>ErrorListener</code>，它向 <code>System.err</code> 报告所有警告和错误，但不抛出任何 <code>Exception</code>。<em>建议</em> 应用程序注册和使用 <code>ErrorListener</code>，以确保正确的警告和错误行为。</p>
+
+<p>对于转换错误，<code>Transformer</code> 必须使用此接口，而不是抛出 <code>Exception</code>：应用程序负责决定对于不同类型的错误和警告是否抛出 <code>Exception</code>。但要注意，在调用 {@link #fatalError(TransformerException exception)} 后，不再需要对转换使用 <code>Transformer</code>。</p>
+
+<p><code>Transformer</code> 可以使用此机制来报告 XML 分析错误和转换错误。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.transform.ErrorListener.warning(TransformerException exception) throws javax.xml.transform.TransformerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收警告通知。
+
+<p>{@link javax.xml.transform.Transformer} 可以使用此方法来报告不是错误或致命错误的条件。默认行为是不采取动作。</p>
+
+<p>调用此方法后，必须继续对转换使用 Transformer。应用程序应该仍有可能处理文档，直到文档结尾。</p>
+
+@param exception transformer 异常中封装的警告信息。
+
+@throws javax.xml.transform.TransformerException 如果应用程序选择中止转换。
+
+
+@see javax.xml.transform.TransformerException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.transform.ErrorListener.error(TransformerException exception) throws javax.xml.transform.TransformerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收可恢复错误的通知。
+
+<p>调用此方法后，转换器必须继续尝试并提供正常转换。如果未遇到其他错误，应用程序应该仍有可能处理文档，直到文档结尾。</p>
+
+@param exception transformer 异常中封装的错误信息。
+
+@throws javax.xml.transform.TransformerException 如果应用程序选择中止转换。
+
+@see javax.xml.transform.TransformerException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.transform.ErrorListener.fatalError(TransformerException exception) throws javax.xml.transform.TransformerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>接收不可恢复错误的通知。</p>
+
+ <p>处理器可能会选择继续执行处理操作，但无法正常成功地完成处理。</p>
+
+ <p>如果不能处理错误，或者希望立即终止执行，则该方法应该抛出异常。服务器不一定响应此请求。</p>
+
+@param exception <code>TransformerException</code> 中封装的错误信息。
+
+@throws javax.xml.transform.TransformerException 如果应用程序选择中止转换。
+
+@see javax.xml.transform.TransformerException
+
+<!-- END DATA -->

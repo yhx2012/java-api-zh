@@ -1,0 +1,158 @@
+<!-- BEGIN KEY -->
+public abstract class javax.print.attribute.SetOfIntegerSyntax extends java.lang.Object implements java.io.Serializable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+类 SetOfIntegerSyntax 是一种抽象的基类，它提供其值是非负整数集合的所有属性的公共实现。这包括其值是一个整数范围的属性和其值是一组整数范围的属性。 
+ <P>
+可以用&ldquo;字符串形式&rdquo;构造一个 SetOfIntegerSyntax 的实例。字符串由零或多个用逗号分隔的整数组组成。每个整数组由一个整数、连字符 (<CODE>-</CODE>) 分隔的两个整数，或冒号 (<CODE>:</CODE>) 分隔的两个整数组成。每个整数由一个或多个十进制数字（<CODE>0</CODE> 至 <CODE>9</CODE>）组成。空格字符不能在整数中显示，否则被忽略。例如： <CODE>&quot;&quot;</CODE>, <CODE>&quot;1&quot;</CODE>, <CODE>&quot;5-10&quot;</CODE>, <CODE>&quot;1:2, 4&quot;</CODE>. 
+ <P>
+也可以使用&ldquo;数组形式&rdquo;构造一个 SetOfIntegerSyntax 的实例。数组形式由零个或多个整数组的数组组成，其中每个整数组是长度为 1 或长度为 2 的 <CODE>int</CODE> 数组；例如，<CODE>int[0][]</CODE>、<CODE>int[][]{{1}}</CODE>、<CODE>int[][]{{5,10}}</CODE>、<CODE>int[][]{{1,2},{4}}</CODE>。 
+ <P>
+在字符串形式和数组形式中，每个连续的整数组都提供一系列在集合中包括的整数。每组中的第一个整数提供该范围的下边界；第二个整数提供该范围的上边界；如果在组中仅有一个整数，则上边界与下边界相同。如果上边界小于下边界，则它表示一个 null 范围（无值）。如果上边界等于下边界，则它表示由单个值组成的范围。如果上边界大于下边界，则它表示由多个值组成的范围。该范围可以按任意顺序显示，并允许重叠。所有范围的并集给出该集合的内容。一旦构造 SetOfIntegerSyntax 实例之后，其值就是不可变的。 
+ <P>
+SetOfIntegerSyntax 对象的值实际上以&ldquo;<I>规范</I> 数组形式&rdquo;存储。除没有任何 null 范围外，这与数组形式相同；用尽可能少的范围（即：合并重叠范围）表示集合的成员；范围按升序显示；并且将每个范围按形式 {下边界, 上边界} 表示为长度为 2 的 <CODE>int</CODE> 数组。将空集表示为零长度数组。 
+ <P> 
+类 SetOfIntegerSyntax 可以进行以下操作：以规范数组形式返回集合的成员、测试给定的整数是否为集合的成员，迭代集合的成员。
+ <P>
+
+@author  David Mendenhall
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int[][] javax.print.attribute.SetOfIntegerSyntax.members
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+规范数组形式表示的此集合的成员。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.SetOfIntegerSyntax(String members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用以字符串形式给定的成员构造一个新的整数集属性。 
+
+@param  members  字符串形式的集合成员。如果为 null，则构造一个空集。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>members</CODE> 不遵循正确的语法，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.SetOfIntegerSyntax(int[][] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用以字符串形式给定的成员构造一个新的整数集属性。 
+
+@param  members  数组形式的集合成员。如果为 null，则构造一个空集。
+
+@exception  NullPointerException （未经检查的异常）如果 <CODE>members</CODE> 的任何元素为 null，则抛出该异常。
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>members</CODE> 的任何元素不是长度为 1 或长度为 2 的数组，或者如果 <CODE>members</CODE> 中任何非 null 范围的下边界小于零，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.SetOfIntegerSyntax(int member)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包含单个整数的新整数集属性。
+
+@param  member  集合成员。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>member</CODE> 小于零，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.SetOfIntegerSyntax(int lowerBound, int upperBound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包含单一整数范围的新整数集属性。如果下边界大于上边界（null 范围），则构造一个空集。 
+
+@param  lowerBound  范围的下边界。
+@param  upperBound  范围的上边界。
+
+@exception  IllegalArgumentException （未经检查的异常）如果范围为非 null，并且 <CODE>lowerBound</CODE> 小于零，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[][] javax.print.attribute.SetOfIntegerSyntax.getMembers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取规范数组形式的此整数集属性的成员。返回的数组是&ldquo;安全的&rdquo;；客户机可以在不影响此整数集属性的情况下对它进行更改。
+
+@return  规范数组形式的此整数集属性的成员。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.SetOfIntegerSyntax.contains(int x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此整数集属性是否包含给定的值。
+
+@param  x  整数值。
+
+@return  如果此整数集属性包含值 <CODE>x</CODE>，则返回 True，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.SetOfIntegerSyntax.contains(IntegerSyntax attribute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此整数集属性是否包含给定的整数属性的值。 
+
+@param  attribute  整数属性。
+
+@return  如果此整数集属性包含 <CODE>theAttribute</CODE> 的值，则返回 True，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.SetOfIntegerSyntax.next(int x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此整数集属性中的最小整数是否大于给定值。如果此整数集属性中没有任何整数大于给定值，则返回 <CODE>-1</CODE>。（由于整数集属性只包含非负值，所以该集合中始终不显示 <CODE>-1</CODE>。）可以使用 <CODE>next()</CODE> 方法按升序迭代整数集属性中的整数值，如下所示： 
+ <PRE>
+     SetOfIntegerSyntax attribute = . . .;
+     int i = -1;
+     while ((i = attribute.next (i)) != -1)
+         {
+         foo (i);
+         }
+ </PRE>
+
+@param  x  整数值。
+
+@return  此整数集属性中大于 <CODE>x</CODE> 的最小整数，如果此整数集属性中没有任何整数大于 <CODE>x</CODE>，则返回 <CODE>-1</CODE>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.SetOfIntegerSyntax.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此整数集属性是否等效于传入的对象。若要等效，以下所有条件都必须为 true： 
+ <OL TYPE=1>
+ <LI>
+<CODE>object</CODE> 不为 null。
+ <LI>
+<CODE>object</CODE> 是类 SetOfIntegerSyntax 的一个实例。
+ <LI>
+此整数集属性的成员和 <CODE>object</CODE> 的成员相同。 
+ </OL>
+
+@param  object  要比较的对象。
+
+@return  如果 <CODE>object</CODE> 等效于此整数集属性，则返回 True，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.SetOfIntegerSyntax.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此整数集属性的哈希码值。哈希码是规范数组形式的范围的上边界和下边界的总数，0 表示空集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.print.attribute.SetOfIntegerSyntax.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于此整数集属性的字符串值。如果此集合为空，则字符串值为零长度字符串。否则，字符串值是规范数组形式的范围的逗号分隔的列表，其中，如果下边界等于上边界，则可以将每个范围表示为 <CODE>&quot;<I>i</I>&quot;</CODE>，否则表示为 <CODE>&quot;<I>i</I>-<I>j</I>&quot;</CODE>。 
+
+<!-- END DATA -->

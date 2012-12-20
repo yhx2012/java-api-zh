@@ -1,0 +1,2660 @@
+<!-- BEGIN KEY -->
+public interface java.sql.ResultSet extends java.sql.Wrapper
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示数据库结果集的数据表，通常通过执行查询数据库的语句生成。 
+ 
+<P><code>ResultSet</code> 对象具有指向其当前数据行的光标。最初，光标被置于第一行之前。<code>next</code> 方法将光标移动到下一行；因为该方法在 <code>ResultSet</code> 对象没有下一行时返回 <code>false</code>，所以可以在 <code>while</code> 循环中使用它来迭代结果集。
+ <P>
+默认的 <code>ResultSet</code> 对象不可更新，仅有一个向前移动的光标。因此，只能迭代它一次，并且只能按从第一行到最后一行的顺序进行。可以生成可滚动和/或可更新的 <code>ResultSet</code> 对象。以下代码片段（其中 <code>con</code> 为有效的 <code>Connection</code> 对象）演示了如何生成可滚动且不受其他更新影响的可更新结果集。有关其他选项，请参见 <code>ResultSet</code> 字段。
+ <PRE>
+
+       Statement stmt = con.createStatement(
+                                      ResultSet.TYPE_SCROLL_INSENSITIVE,
+                                      ResultSet.CONCUR_UPDATABLE);
+       ResultSet rs = stmt.executeQuery(&quot;SELECT a, b FROM TABLE2&quot;);
+       // rs will be scrollable, will not show changes made by others,
+       // and will be updatable
+
+ </PRE>
+<code>ResultSet</code> 接口提供用于从当前行获取列值的<i>获取</i> 方法（<code>getBoolean</code>、<code>getLong</code> 等）。可以使用列的索引编号或列的名称获取值。一般情况下，使用列索引较为高效。列从 1 开始编号。为了获得最大的可移植性，应该按从左到右的顺序读取每行中的结果集列，每列只能读取一次。
+
+<P>对于获取方法，JDBC 驱动程序尝试将底层数据转换为在获取方法中指定的 Java 类型，并返回适当的 Java 值。JDBC 规范有一个表，显示允许的从 SQL 类型到 <code>ResultSet</code> 获取方法所使用的 Java 类型的映射关系。
+ <P>
+<P>用作获取方法的输入的列名称不区分大小写。用列名称调用获取方法时，如果多个列具有这一名称，则返回第一个匹配列的值。在生成结果集的 SQL 查询中使用列名称时，将使用列名称选项。对于没有在查询中显式指定的列，最好使用列编号。如果使用列名称，则程序员应该注意保证名称唯一引用预期的列，这可以使用 SQL <i>AS</i> 子句确定。
+ <P>
+在 JDBC 2.0 API（Java<sup><font size=-2>TM</font></sup> 2 SDK 标准版 1.2 版）中，此接口添加了一组更新方法。关于获取方法参数的注释同样适用于更新方法的参数。
+<P>
+可以用以下两种方式使用更新方法：
+ <ol>
+<LI>更新当前行中的列值。在可滚动的 <code>ResultSet</code> 对象中，可以向前和向后移动光标，将其置于绝对位置或相对于当前行的位置。以下代码片段更新 <code>ResultSet</code> 对象 <code>rs</code> 第五行中的 <code>NAME</code> 列，然后使用方法 <code>updateRow</code> 更新导出 <code>rs</code> 的数据源表。
+ <PRE>
+
+       rs.absolute(5); // moves the cursor to the fifth row of rs
+       rs.updateString(&quot;NAME&quot;, &quot;AINSWORTH&quot;); // updates the 
+          // <code>NAME</code> column of row 5 to be <code>AINSWORTH</code>
+       rs.updateRow(); // updates the row in the data source
+
+ </PRE>
+<LI>将列值插入到插入行中。可更新的 <code>ResultSet</code> 对象具有一个与其关联的特殊行，该行用作构建要插入的行的暂存区域 (staging area)。以下代码片段将光标移动到插入行，构建一个三列的行，并使用方法 <code>insertRow</code> 将其插入到 <code>rs</code> 和数据源表中。
+ <PRE>
+
+       rs.moveToInsertRow(); // moves cursor to the insert row
+       rs.updateString(1, &quot;AINSWORTH&quot;); // updates the 
+          // first column of the insert row to be <code>AINSWORTH</code>
+       rs.updateInt(2,35); // updates the second column to be <code>35</code>
+       rs.updateBoolean(3, true); // updates the third column to <code>true</code>
+       rs.insertRow();
+       rs.moveToCurrentRow();
+
+ </PRE>
+ </ol>
+<P>当生成 <code>ResultSet</code> 对象的 <code>Statement</code> 对象关闭、重新执行或用来从多个结果的序列获取下一个结果时，<code>ResultSet</code> 对象将自动关闭。
+ 
+<P><code>ResultSet</code> 对象的列的编号、类型和属性由 <code>ResultSet.getMetaData</code> 方法返回的 <code>ResulSetMetaData</code> 对象提供。
+
+@see Statement#executeQuery
+@see Statement#getResultSet
+@see ResultSetMetaData 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.FETCH_FORWARD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示将按正向（即从第一个到最后一个）处理结果集中的行。<code>setFetchDirection</code> 方法将此常量用作驱动程序的提示，驱动程序可能忽略它。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.FETCH_REVERSE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示将按逆向（即从最后一个到第一个）处理结果集中的行处理。<code>setFetchDirection</code> 方法将此常量用作驱动程序的提示，驱动程序可能忽略它。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.FETCH_UNKNOWN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示结果集中的行的处理顺序未知。<code>setFetchDirection</code> 方法将此常量用作驱动程序的提示，驱动程序可能忽略它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.TYPE_FORWARD_ONLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示光标只能向前移动的 <code>ResultSet</code> 对象的类型。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.TYPE_SCROLL_INSENSITIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示可滚动但通常不受 <code>ResultSet</code> 底层数据更改影响的 <code>ResultSet</code> 对象的类型。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.TYPE_SCROLL_SENSITIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示可滚动并且通常受 <code>ResultSet</code> 底层数据更改影响的 <code>ResultSet</code> 对象的类型。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.CONCUR_READ_ONLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示不可以更新的 <code>ResultSet</code> 对象的并发模式。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.CONCUR_UPDATABLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示可以更新的 <code>ResultSet</code> 对象的并发模式。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.HOLD_CURSORS_OVER_COMMIT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示提交当前事务时，具有此可保存性的打开的 <code>ResultSet</code> 对象将保持开放。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.sql.ResultSet.CLOSE_CURSORS_AT_COMMIT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量指示提交当前事务时，具有此可保存性的打开的 <code>ResultSet</code> 对象将被关闭。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.next() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标从当前位置向前移一行。<code>ResultSet</code> 光标最初位于第一行之前；第一次调用 <code>next</code> 方法使第一行成为当前行；第二次调用使第二行成为当前行，依此类推。
+ <p>
+当调用 <code>next</code> 方法返回 <code>false</code> 时，光标位于最后一行的后面。任何要求当前行的 <code>ResultSet</code> 方法调用将导致抛出 <code>SQLException</code>。如果结果集的类型是 <code>TYPE_FORWARD_ONLY</code>，则其 JDBC 驱动程序实现对后续 <code>next</code> 调用是返回 <code>false</code> 还是抛出 <code>SQLException</code> 将由供应商指定。
+
+<P>如果对当前行开启了输入流，则调用 <code>next</code> 方法将隐式关闭它。读取新行时，将清除 <code>ResultSet</code> 对象的警告链。
+
+@return 如果新的当前行有效，则返回 <code>true</code>；如果不存在下一行，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.close() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+立即释放此 <code>ResultSet</code> 对象的数据库和 JDBC 资源，而不是等待该对象自动关闭时发生此操作。
+
+ <P>关闭 <code>ResultSet</code> 对象<strong>不会</strong>关闭 <code>ResultSet</code> 创建的 <code>Blob</code>、<code>Clob</code> 或 <code>NClob</code> 对象。<code>Blob</code>、<code>Clob</code> 或 <code>NClob</code> 对象至少在创建它们的事务期间持续有效，除非调用了其 <code>free</code> 方法。
+<p>
+ 当关闭 <code>ResultSet</code> 时，所有通过调用 <code>getMetaData</code> 方法创建的 <code>ResultSetMetaData</code> 实例都可以访问。
+
+<P><B>注：</B>当生成 <code>ResultSet</code> 对象的 <code>Statement</code> 对象关闭、重新执行或用来从多个结果的序列获取下一个结果时，该 <code>Statement</code> 对象将自动关闭 <code>ResultSet</code> 对象。
+<p>
+ 在已关闭的 <code>ResultSet</code> 对象上调用 <code>close</code> 方法是无操作 (no-op)。
+ <P>
+ <p>
+
+@exception SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.wasNull() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告最后一个读取的列是否具有值 SQL <code>NULL</code>。注意，必须首先对列调用一个获取方法尝试读取其值，然后调用 <code>wasNull</code> 方法查看读取的值是否为 SQL <code>NULL</code>。
+
+@return 如果最后一个读取的列值为 SQL <code>NULL</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultSet.getString(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.getBoolean(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>boolean</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+ <P>如果指定列的数据类型为 CHAR 或 VARCHAR 且包含 "0"，或者数据类型为 BIT、TINYINT、SMALLINT、INTEGER 或 BIGINT 且包含 0，则返回 <code>false</code> 值。如果指定列的数据类型为 CHAR 或 VARCHAR 且包含 "1"，或者数据类型为 BIT、TINYINT、SMALLINT、INTEGER 或 BIGINT 且包含 1，则返回 <code>true</code> 值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>false</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.sql.ResultSet.getByte(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.sql.ResultSet.getShort(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>short</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getInt(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>int</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.sql.ResultSet.getLong(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>long</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.sql.ResultSet.getFloat(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>float</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.sql.ResultSet.getDouble(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>double</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.ResultSet.getBigDecimal(int columnIndex, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.BigDecimal</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param scale 小数点右边的位数
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.sql.ResultSet.getBytes(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 数组的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。这些字节表示驱动程序返回的原始值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.ResultSet.getDate(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Date</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.ResultSet.getTime(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Time</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.ResultSet.getTimestamp(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Timestamp</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getAsciiStream(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 ASCII 字符流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。然后，可以按块从流中读取值。此方法尤其适合于获取很大的 <char>LONGVARCHAR</char> 值。JDBC 驱动程序将执行从数据库格式到 ASCII 的任何必要转换。
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>InputStream.available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 以一字节 ASCII 字符流的形式返回传递数据库列值的 Java 输入流；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getUnicodeStream(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以两字节 3 字符流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。第一个字节是高字节；第二个字节是低字节。然后，可以按块从流中读取值。此方法尤其适合于获取很大的 <code>LONGVARCHAR</code> 值。JDBC 驱动程序将执行从数据库格式到 Unicode 的任何必要转换。
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>InputStream.available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 以两字节 Unicode 字符流的形式返回传递数据库列值的 Java 输入流；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@deprecated 使用 <code>getCharacterStream</code> 取代 <code>getUnicodeStream</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getBinaryStream(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以未解释字节的流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。然后，可以按块从流中读取值。此方法尤其适合于获取很大的 <code>LONGVARBINARY</code> 值。
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>InputStream.available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 以未解释字节的流的形式返回传递数据库列值的 Java 输入流；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultSet.getString(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.getBoolean(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>boolean</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+<P>如果指定列的数据类型为 CHAR 或 VARCHAR 且包含 "0"，或者数据类型为 BIT、TINYINT、SMALLINT、INTEGER 或  BIGINT 且包含 0，则返回 <code>false</code> 值。如果指定列的数据类型为 CHAR 或 VARCHAR 且包含 "1"，或者数据类型为 BIT、TINYINT、SMALLINT、INTEGER 或 BIGINT 且包含 1，则返回 <code>true</code> 值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>false</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.sql.ResultSet.getByte(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.sql.ResultSet.getShort(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>short</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getInt(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>int</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.sql.ResultSet.getLong(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>long</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.sql.ResultSet.getFloat(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>float</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.sql.ResultSet.getDouble(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>double</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>0</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.ResultSet.getBigDecimal(String columnLabel, int scale) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.math.BigDecimal</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param scale 小数点右边的位数
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.sql.ResultSet.getBytes(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>byte</code> 数组的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。这些字节表示驱动程序返回的原始值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.ResultSet.getDate(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中的 <code>java.sql.Date</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.ResultSet.getTime(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Time</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.ResultSet.getTimestamp(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Timestamp</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getAsciiStream(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 ASCII 字符流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。然后，可以按块从流中读取值。此方法尤其适合于获取很大的 <code>LONGVARCHAR</code> 值。JDBC 驱动程序将执行从数据库格式到 ASCII 的任何必要转换。
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 以一字节 ASCII 字符流的形式返回传递数据库列值的 Java 输入流。如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getUnicodeStream(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以两字节 Unicode 字符流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。第一个字节是高字节；第二个字节是低字节。然后，可以按块从流中读取值。此方法尤其适合于获取很大的 <code>LONGVARCHAR</code> 值。采用 JDBC 技术的驱动程序将执行从数据库格式到 Unicode 的任何必要转换。
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>InputStream.available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 以两字节 Unicode 字符流的形式返回传递数据库列值的 Java 输入流。如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@deprecated 使用 <code>getCharacterStream</code> 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.sql.ResultSet.getBinaryStream(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以未解释的 <code>byte</code> 流的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。然后，可以按块从流中读取该值。此方法尤其适合于获取很大的 <code>LONGVARBINARY</code> 值。 
+
+<P><B>注：</B>在获取任何其他列的值之前必须读取返回流中的所有数据。下一次调用获取方法将隐式关闭该流。此外，当调用 <code>available</code> 方法时，不管是否存在可用数据，流都可能返回 <code>0</code>。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 以未解释字节流的形式返回传递数据库列值的 Java 输入流；如果值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLWarning java.sql.ResultSet.getWarnings() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象上的调用报告的第一个警告。此 <code>ResultSet</code> 对象上的后续警告会被链接到此方法返回的 <code>SQLWarning</code> 对象。
+
+<P>每次读取新行时，都会自动清除警告链。不可以在已经关闭的 <code>ResultSet</code> 对象上调用此方法；这样做将导致抛出 <code>SQLException</code>。
+ <P>
+<B>注：</B>此警告链仅包含 <code>ResultSet</code> 方法产生的警告。<code>Statement</code> 方法（如读取 OUT 参数）产生的任何警告都将链接在 <code>Statement</code> 对象上。 
+
+@return 报告的第一个 <code>SQLWarning</code> 对象；如果不存在，则返回 <code>null</code>
+@exception SQLException 如果发生数据库访问错误或在关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.clearWarnings() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除在此 <code>ResultSet</code> 对象上报告的所有警告。调用此方法后，在为此 <code>ResultSet</code> 对象报告新的警告之前，<code>getWarnings</code> 方法将返回 <code>null</code>。  
+
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultSet.getCursorName() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象使用的 SQL 光标的名称。
+
+<P>在 SQL 中，通过指定的光标获取结果表。通过一个引用光标名称来定位的更新/删除语句，可以更新或删除结果集的当前行。为了确保光标具有支持更新的适当隔离级别，光标的 <code>SELECT</code> 语句的形式应该为 <code>SELECT FOR UPDATE</code>。如果省略 <code>FOR UPDATE</code>，则定位更新可能失败。
+ 
+<P>JDBC API 通过提供 <code>ResultSet</code> 对象使用的 SQL 光标的名称支持此 SQL 功能。<code>ResultSet</code> 对象的当前行也是此 SQL 光标的当前行。
+
+@return 此 <code>ResultSet</code> 对象的光标的 SQL 名称
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.ResultSetMetaData java.sql.ResultSet.getMetaData() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象的列的编号、类型和属性。
+
+@return 此 <code>ResultSet</code> 对象的列的描述
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.ResultSet.getObject(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>以 Java 编程语言中 <code>Object</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+<p>此方法将以 Java 对象的形式返回给定列的值。Java 对象的类型将为与该列的 SQL 类型相对应的默认 Java 对象类型，它遵守在 JDBC 规范中指定的内置类型的映射关系。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。
+
+<p>此方法还可用于读取特定于数据库的抽象数据类型。在 JDBC 2.0 API 中，可以扩展 <code>getObject</code> 方法的行为来实现 SQL 自定义类型的数据。
+ <p>
+如果 <code>Connection.getTypeMap</code> 不抛出 <code>SQLFeatureNotSupportedException</code>，则当列包含结构值或独特值时，此方法的行为类似于调用：<code>getObject(columnIndex, this.getStatement().getConnection().getTypeMap())</code>。
+
+如果 <code>Connection.getTypeMap</code> 抛出 <code>SQLFeatureNotSupportedException</code>，则结构值不受支持，独特值映射到 DISTINCT 类型的底层 SQL 类型确定的默认 Java 类。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 保存列值的 <code>java.lang.Object</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.ResultSet.getObject(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>以 Java 编程语言中 <code>Object</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+<p>此方法将以 Java 对象的形式返回给定列的值。Java 对象的类型将为与该列的 SQL 类型相对应的默认 Java 对象类型，它遵守在 JDBC 规范中指定的内置类型的映射关系。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。
+ <P>
+此方法还可用于读取特定于数据库的抽象数据类型。
+ <P>
+在 JDBC 2.0 API 中，可以扩展 <code>getObject</code> 方法的行为来实现 SQL 自定义类型的数据。当列包含结构化的或独特的值时，此方法的行为类似于调用：<code>getObject(columnIndex, this.getStatement().getConnection().getTypeMap())</code>。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 保存列值的 <code>java.lang.Object</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.findColumn(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>ResultSet</code> 列标签映射到其 <code>ResultSet</code> 列索引。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 给定列名称的列索引
+@exception SQLException 如果 <code>ResultSet</code> 对象不包含标记为 <code>columnLabel</code> 的列，发生数据库访问错误或在已关闭的结果集上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.ResultSet.getCharacterStream(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.io.Reader</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+@return 包含列值的 <code>java.io.Reader</code> 对象；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>。
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.ResultSet.getCharacterStream(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.io.Reader</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 包含列值的 <code>java.io.Reader</code> 对象；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.ResultSet.getBigDecimal(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以具有全精度的 <code>java.math.BigDecimal</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值（全精度）；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.sql.ResultSet.getBigDecimal(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以具有全精度的 <code>java.math.BigDecimal</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 列值（全精度）；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.isBeforeFirst() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取光标是否位于此 <code>ResultSet</code> 对象的第一行之前。
+ <p>
+<strong>注：</strong>对于带有 <code>TYPE_FORWARD_ONLY</code> 的结果集类型的 <code>ResultSet</code>，对 <code>isBeforeFirst</code> 方法的支持是可选的
+
+@return 如果光标位于第一行之前，则返回 <code>true</code>；如果光标位于任何其他位置或者结果集不包含任何行，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.isAfterLast() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取光标是否位于此 <code>ResultSet</code> 对象的最后一行之后。
+ <p>
+<strong>注：</strong>对于带有 <code>TYPE_FORWARD_ONLY</code> 的结果集类型的 <code>ResultSet</code>，对 <code>isAfterLast</code> 方法的支持是可选的
+
+@return 如果光标位于最后一行之后，则返回 <code>true</code>；如果光标位于任何其他位置或者结果集不包含任何行，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.isFirst() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取光标是否位于此 <code>ResultSet</code> 对象的第一行。
+ <p>
+<strong>注：</strong>对于带有 <code>TYPE_FORWARD_ONLY</code> 的结果集类型的 <code>ResultSet</code>，对 <code>isFirst</code> 方法的支持是可选的
+
+@return 如果光标位于第一行，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.isLast() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取光标是否位于此 <code>ResultSet</code> 对象的最后一行。<strong>注：</strong>调用 <code>isLast</code> 方法可能开销很大，因为 JDBC 驱动程序可能需要再往后获取一行，以确定当前行是否为结果集中的最后一行。
+ <p>
+<strong>注：</strong>对于带有 <code>TYPE_FORWARD_ONLY</code> 的结果集类型的 <code>ResultSet</code>，对 <code>isLast</code> 方法的支持是可选的
+@return 如果光标位于最后一行上，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.beforeFirst() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的开头，正好位于第一行之前。如果结果集中不包含任何行，则此方法无效。
+
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.afterLast() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的末尾，正好位于最后一行之后。如果结果集中不包含任何行，则此方法无效。
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.first() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的第一行。
+
+@return 如果光标位于有效行，则返回 <code>true</code>；如果结果集中不存在任何行，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.last() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的最后一行。
+
+@return 如果光标位于有效行，则返回 <code>true</code>；如果结果集中不存在任何行，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前行编号。第一行为 1 号，第二行为 2 号，依此类推。  
+ <p>
+<strong>注：</strong>对于带有 <code>TYPE_FORWARD_ONLY</code> 的结果集类型的 <code>ResultSet</code>，对 <code>getRow</code> 方法的支持是可选的
+
+@return 当前行的编号；如果不存在当前行，则返回 <code>0</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.absolute(int row) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的给定行编号。
+
+<p>如果行编号为正，则将光标移动到相对于结果集开头的给定行编号。第一行为行 1，第二行为行 2，依此类推。 
+
+<p>如果给定行编号为负，则将光标移动到相对于结果集末尾的绝对行位置。例如，调用方法 <code>absolute(-1)</code> 将光标置于最后一行；调用方法 <code>absolute(-2)</code> 将光标移动到倒数第二行，依此类推。
+
+<p>试图将光标置于结果集的第一行/最后一行之外将导致光标位于第一行之前或最后一行之后。
+
+<p><B>注：</B>调用 <code>absolute(1)</code> 等效于调用 <code>first()</code>。调用 <code>absolute(-1)</code> 等效于调用 <code>last()</code>。
+
+@param row 光标应该移动到的行的编号。正的编号指示从结果集开头开始计数的行编号；负的编号指示从结果集末尾开始计数的行编号
+@return 如果光标移动到此 <code>ResultSet</code> 对象的位置处，则返回 <code>true</code>；如果光标在第一行的前面或最后一行的后面，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.relative(int rows) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按相对行数（或正或负）移动光标。试图移动到结果集的第一行/最后一行之外，会将光标置于第一行之前或最后一行之后。调用 <code>relative(0)</code> 有效，但是不更改光标位置。
+
+<p>注：调用方法 <code>relative(1)</code> 等效于调用方法 <code>next()</code>，而调用方法 <code>relative(-1)</code> 等效于调用方法 <code>previous()</code>。
+
+@param rows 指定从当前行开始移动的行数的 <code>int</code>；正数表示光标向前移动；负数表示光标向后移动
+@return 如果光标位于行上，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.previous() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到此 <code>ResultSet</code> 对象的上一行。
+<p>
+当调用 <code>previous</code> 方法返回 <code>false</code> 时，光标位于第一行之前。要求当前行的任何 <code>ResultSet</code> 方法的调用将导致抛出 <code>SQLException</code>。
+<p>
+如果开启了对当前行的输入流，则调用 <code>previous</code> 方法将隐式关闭它。读取新的一行时清除 <code>ResultSet</code> 对象的警告更改。
+<p>
+
+@return 如果光标现在位于有效行上，则返回 <code>true</code>；如果光标位于第一行的前面，则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.setFetchDirection(int direction) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>ResultSet</code> 对象中行的处理方向。初始值由生成此 <code>ResultSet</code> 对象的 <code>Statement</code> 对象确定。获取方向可以在任何时间更改。
+
+@param direction 指定建议获取方向的 <code>int</code>；<code>ResultSet.FETCH_FORWARD</code>、<code>ResultSet.FETCH_REVERSE</code> 或 <code>ResultSet.FETCH_UNKNOWN</code> 之一
+@exception SQLException 如果发生数据库访问错误，在已关闭的结果集上调用此方法或结果集类型为 <code>TYPE_FORWARD_ONLY</code> 但获取方向不是 <code>FETCH_FORWARD</code>
+@since 1.2
+@see Statement#setFetchDirection
+@see #getFetchDirection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getFetchDirection() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象的获取方向。
+
+@return 此 <code>ResultSet</code> 对象的当前获取方向
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+@see #setFetchDirection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.setFetchSize(int rows) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 JDBC 驱动程序设置此 <code>ResultSet</code> 对象需要更多行时应该从数据库获取的行数。如果指定的获取大小为零，则 JDBC 驱动程序忽略该值，随意对获取大小作出它自己的最佳猜测。默认值由创建结果集的 <code>Statement</code> 对象设置。获取大小可以在任何时间更改。
+
+@param rows 要获取的行数
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或不满足条件 <code>rows >= 0 </code>
+@since 1.2
+@see #getFetchSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getFetchSize() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象的获取大小。
+
+@return 此 <code>ResultSet</code> 对象的当前获取大小
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+@see #setFetchSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getType() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象的类型。类型由创建结果集的 <code>Statement</code> 对象确定。
+
+@return <code>ResultSet.TYPE_FORWARD_ONLY</code>、<code>ResultSet.TYPE_SCROLL_INSENSITIVE</code> 或 <code>ResultSet.TYPE_SCROLL_SENSITIVE</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getConcurrency() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象的并发模式。使用的并发由创建结果集的 <code>Statement</code> 对象确定。
+
+@return 并发类型，<code>ResultSet.CONCUR_READ_ONLY</code> 或 <code>ResultSet.CONCUR_UPDATABLE</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.rowUpdated() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取是否已更新当前行。返回值取决于结果集是否可以检测到更新。
+ <p>
+<strong>注：</strong>对于 <code>CONCUR_READ_ONLY</code> 的结果集并发性，对 <code>rowUpdated</code> 方法的支持是可选的
+@return 如果所有者和其他人检测到当前行已进行可见更新，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@see DatabaseMetaData#updatesAreDetected
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.rowInserted() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前行是否已有插入。返回值取决于此 <code>ResultSet</code> 对象是否可以检测到可见插入。
+ <p>
+<strong>注：</strong>对于 <code>CONCUR_READ_ONLY</code> 的结果集并发性，对 <code>rowUpdated</code> 方法的支持是可选的
+@return 如果当前检测到已插入，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ 
+@see DatabaseMetaData#insertsAreDetected
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.rowDeleted() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取是否已删除某行。删除的行可能在结果集中留下一个可见的&ldquo;洞&rdquo;。此方法可用于检测结果集中的洞。返回值取决于此 <code>ResultSet</code> 对象是否可以检测到删除。
+ <p>
+<strong>注：</strong>对于 <code>CONCUR_READ_ONLY</code> 的结果集并发性，对 <code>rowDeleted</code> 方法的支持是可选的
+@return 如果所有者或其他人检测到当前行已删除，则返回 <code>true</code>；否则返回 <code>false</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ 
+@see DatabaseMetaData#deletesAreDetected
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNull(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>null</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBoolean(int columnIndex, boolean x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>boolean</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateByte(int columnIndex, byte x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>byte</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateShort(int columnIndex, short x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>short</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateInt(int columnIndex, int x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>int</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateLong(int columnIndex, long x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>long</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateFloat(int columnIndex, float x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>float</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateDouble(int columnIndex, double x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>double</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBigDecimal(int columnIndex, BigDecimal x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.math.BigDecimal</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateString(int columnIndex, String x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>String</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBytes(int columnIndex, byte[] x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>byte</code> 数组值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateDate(int columnIndex, Date x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Date</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateTime(int columnIndex, Time x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Time</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateTimestamp(int columnIndex, Timestamp x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Timestamp</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(int columnIndex, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 ascii 流值更新指定列，该列将具有指定字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流的长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(int columnIndex, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用二进制流值更新指定列，该列将具有指定字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流的长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(int columnIndex, Reader x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定列，该列将具有指定字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流的长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateObject(int columnIndex, Object x, int scaleOrLength) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>Object</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+<p>
+如果第二个参数是 <code>InputStream</code>，则该流必须包含 scaleOrLength 指定的字节数。如果第二个参数是 <code>Reader</code>，则它必须包含 scaleOrLength 指定的字符数。如果这些条件不为真，则执行该语句时驱动程序将生成一个 <code>SQLException</code>。 
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param scaleOrLength 对于 <code>java.math.BigDecimal</code> 对象，此参数是小数点后的位数。对于 Java 对象类型 <code>InputStream</code> 和 <code>Reader</code>，此参数是该流或 reader 中数据的长度。对于其他所有类型，将忽略此值。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateObject(int columnIndex, Object x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>Object</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNull(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>null</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBoolean(String columnLabel, boolean x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>boolean</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateByte(String columnLabel, byte x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>byte</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateShort(String columnLabel, short x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>short</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateInt(String columnLabel, int x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>int</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateLong(String columnLabel, long x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>long</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateFloat(String columnLabel, float x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>float</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateDouble(String columnLabel, double x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>double</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBigDecimal(String columnLabel, BigDecimal x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.BigDecimal</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateString(String columnLabel, String x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>String</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBytes(String columnLabel, byte[] x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字节数组值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateDate(String columnLabel, Date x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Date</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateTime(String columnLabel, Time x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Time</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateTimestamp(String columnLabel, Timestamp x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Timestamp</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(String columnLabel, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 ascii 流值更新指定列，该列具有指定的字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@param length 流的长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(String columnLabel, InputStream x, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用二进制流值更新指定列，该列具有指定的字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@param length 流的长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(String columnLabel, Reader reader, int length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定列，该列具有指定的字节数。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含新列值的 <code>java.io.Reader</code> 对象
+@param length 流的长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateObject(String columnLabel, Object x, int scaleOrLength) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>Object</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+<p>
+如果第二个参数是 <code>InputStream</code>，则该流必须包含 scaleOrLength 指定的字节数。如果第二个参数是 <code>Reader</code>，则它必须包含 scaleOrLength 指定的字符数。如果这些条件不为真，则执行该语句时驱动程序将生成一个 <code>SQLException</code>。 
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@param scaleOrLength 对于 <code>java.math.BigDecimal</code> 对象，此参数是小数点后的位数。对于 Java 对象类型 <code>InputStream</code> 和 <code>Reader</code>，此参数是该流或 reader 中数据的长度。 对于其他所有类型，将忽略此值。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateObject(String columnLabel, Object x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>Object</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.insertRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入行的内容插入到此 <code>ResultSet</code> 对象和数据库中。调用此方法时，光标必须位于插入行上。
+
+@exception SQLException 如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法；如果在光标不位于插入行上时调用此方法，或者插入行中所有不可为 null 的列中还存在未分配非 null 值的列
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用此 <code>ResultSet</code> 对象的当前行的新内容更新底层数据库。光标不位于插入行上时不能调用此方法。
+
+@exception SQLException 如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code>；在已关闭的结果集上调用此方法，或者在光标不位于插入行上时调用了此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.deleteRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>ResultSet</code> 对象和底层数据库中删除当前行。光标不位于插入行上时不能调用此方法。
+
+@exception SQLException 如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code>；在已关闭的结果集上调用此方法，或者在光标不位于插入行上时调用了此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.refreshRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用数据库中的最近值刷新当前行。光标不位于插入行上时不能调用此方法。
+
+<P><code>refreshRow</code> 方法提供一种让应用程序显式告知 JDBC 驱动程序从数据库重新获取行的方式。应用程序可能需要在 JDBC 驱动程序完成缓存或预获取操作后调用 <code>refreshRow</code>，以便从数据库获取行的最新值。如果获取大小大于 1，则 JDBC 驱动程序可以一次实际刷新多行。
+ 
+<P> 应根据事务隔离级别和光标敏感度确定是否重新获取所有值。如果在调用更新方法之后，但在调用 <code>updateRow</code> 方法之前调用 <code>refreshRow</code>，则会丢失对行所作的更新。频繁调用方法 <code>refreshRow</code> 可能导致性能下降。
+
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法；结果集类型为 <code>TYPE_FORWARD_ONLY</code>，或者在光标不位于插入行上时调用了此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法，或者对于指定的结果集类型和结果集并发性此方法不受支持。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.cancelRowUpdates() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消对 <code>ResultSet</code> 对象中的当前行所作的更新。此方法在调用更新方法之后，但在调用 <code>updateRow</code> 方法之前调用才可以回滚对行所作的更新。如果没有进行任何更新或者已经调用 <code>updateRow</code> 方法，则此方法无效。
+
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法；结果集并发性为 <code>CONCUR_READ_ONLY</code>，或者在光标不位于插入行上时调用了此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.moveToInsertRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到插入行。将光标置于插入行上时，当前的光标位置会被记住。插入行是一个与可更新结果集相关联的特殊行。它实际上是一个缓冲区，在将行插入到结果集前可以通过调用更新方法在其中构造新行。当光标位于插入行上时，仅能调用更新方法、获取方法以及 <code>insertRow</code> 方法。每次在调用 <code>insertRow</code> 之前调用此方法时，必须为结果集中的所有列分配值。在对列值调用获取方法之前，必须调用更新方法。
+
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集并发性为 <code>CONCUR_READ_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.moveToCurrentRow() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将光标移动到记住的光标位置，通常为当前行。如果光标不位于插入行上，则此方法无效。 
+
+@exception SQLException 如果发生数据库访问错误；在已关闭的结果集上调用此方法或结果集并发性为 <code>CONCUR_READ_ONLY</code>
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Statement java.sql.ResultSet.getStatement() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取生成此 <code>ResultSet</code> 对象的 <code>Statement</code> 对象。如果结果集是以其他方式生成的（如通过 <code>DatabaseMetaData</code> 方法），则此方法可能返回 <code>null</code>。
+
+@return 生成此 <code>ResultSet</code> 对象的 <code>Statment</code> 对象；如果结果集是以其他方法生成的，则返回 <code>null</code>
+@exception SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.ResultSet.getObject(int columnIndex, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Object</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。此方法使用给定的 <code>Map</code> 对象作为正在获取的 SQL 结构化或独特类型的自定义映射关系。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param map 一个 <code>java.util.Map</code> 对象，包含从 SQL 类型名称到 Java 编程语言中类的映射关系
+@return 表示 SQL 值的 Java 编程语言中的 <code>Object</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Ref java.sql.ResultSet.getRef(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Ref</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 表示 SQL <code>REF</code> 值的 <code>Ref</code> 对象
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Blob java.sql.ResultSet.getBlob(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Blob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 表示指定列中的 SQL <code>BLOB</code> 值的 <code>BLOB</code> 对象
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Clob java.sql.ResultSet.getClob(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Clob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 表示指定列中的 SQL <code>Clob</code> 值的 <code>Clob</code> 对象
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Array java.sql.ResultSet.getArray(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Array</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 表示指定列中的 SQL <code>Array</code> 值的 <code>Array</code> 对象
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.sql.ResultSet.getObject(String columnLabel, java.util.Map<java.lang.String, java.lang.Class<?>> map) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Object</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果值为 SQL <code>NULL</code>，则驱动程序返回一个 Java <code>null</code>。此方法使用指定的 <code>Map</code> 对象自定义映射关系（如果合适）。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param map 包含从 SQL 类型名称到 Java 编程语言中类的映射关系的 <code>java.util.Map</code> 对象
+@return 表示指定列中的 SQL 值的 <code>Object</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Ref java.sql.ResultSet.getRef(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Ref</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 表示指定列中 SQL <code>Ref</code> 值的 <code>Ref</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Blob java.sql.ResultSet.getBlob(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Blob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 表示指定列中 SQL <code>Blob</code> 值的 <code>Blob</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Clob java.sql.ResultSet.getClob(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Clob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 表示指定列中 SQL <code>CLOB</code> 值的 <code>Clob</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Array java.sql.ResultSet.getArray(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>Array</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 表示指定列中 SQL <code>ARRAY</code> 值的 <code>ARRAY</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.ResultSet.getDate(int columnIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Date</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造日期的适当毫秒值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param cal 在构造日期时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Date</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Date java.sql.ResultSet.getDate(String columnLabel, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Date</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造日期的适当毫秒值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param cal 在构造日期时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Date</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.ResultSet.getTime(int columnIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Time</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造时间的适当毫秒值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param cal 在构造时间时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Time</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Time java.sql.ResultSet.getTime(String columnLabel, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Time</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造时间的适当毫秒值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param cal 在构造时间时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Time</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.ResultSet.getTimestamp(int columnIndex, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Timestamp</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造时间戳的适当毫秒值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param cal 在构造时间戳时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Timestamp</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp java.sql.ResultSet.getTimestamp(String columnLabel, Calendar cal) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.Timestamp</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。如果底层数据库未存储时区信息，则此方法使用给定日历构造时间戳的适当毫秒值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param cal 在构造日期时使用的 <code>java.util.Calendar</code> 对象
+@return <code>java.sql.Timestamp</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.sql.ResultSet.getURL(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.net.URL</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+ 
+@param columnIndex 索引，其中第一个列是 1、第二个列是 2，……
+@return <code>java.net.URL</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法或 URL 是错误的
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.sql.ResultSet.getURL(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.net.URL</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+ 
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return <code>java.net.URL</code> 对象形式的列值；如果值为 SQL <code>NULL</code>，则返回值为 Java 编程语言中的 <code>null</code>
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法，或者 URL 是错误的
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateRef(int columnIndex, Ref x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Ref</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateRef(String columnLabel, Ref x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 <code>java.sql.Ref</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(int columnIndex, Blob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Blob</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(String columnLabel, Blob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 <code>java.sql.Blob</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(int columnIndex, Clob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Clob</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(String columnLabel, Clob x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 <code>java.sql.Clob</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateArray(int columnIndex, Array x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.Array</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateArray(String columnLabel, Array x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用 <code>java.sql.Array</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值，并不会更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.RowId java.sql.ResultSet.getRowId(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.RowId</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+ @param columnIndex 第一个列是 1，第二个列是 2，……
+ @return 列值；如果该值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+ @throws SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.RowId java.sql.ResultSet.getRowId(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>java.sql.RowId</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+ @param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+ @return 列值；如果该值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+ @throws SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateRowId(int columnIndex, RowId x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>RowId</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ 
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateRowId(String columnLabel, RowId x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>RowId</code> 值更新指定的列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ 
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.ResultSet.getHoldability() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取此 <code>ResultSet</code> 对象的可保存性
+ @return  <code>ResultSet.HOLD_CURSORS_OVER_COMMIT</code> 或 <code>ResultSet.CLOSE_CURSORS_AT_COMMIT</code>
+ @throws SQLException 如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultSet.isClosed() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>ResultSet</code> 对象是否已关闭。如果已经在 <code>ResultSet</code> 上调用了 close 方法，或者 <code>ResultSet</code> 自动关闭，则 <code>ResultSet</code> 已关闭。
+
+ @return 如果此 <code>ResultSet</code> 对象已关闭，则返回 true；如果它仍然是打开的，则返回 false
+ @throws SQLException 如果发生数据库访问错误
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNString(int columnIndex, String nString) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>String</code> 值更新指定的列。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时使用该方法。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param nString 要更新的列值
+@throws SQLException 如果 columnIndex 无效；如果驱动程序不支持国家字符集 (national character set)；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNString(String columnLabel, String nString) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>String</code> 值更新指定的列。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时使用该方法。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param nString 要更新的列值
+@throws SQLException 如果 columnLabel 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(int columnIndex, NClob nClob) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.NClob</code> 值更新指定的列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param nClob 要更新的列值
+@throws SQLException 如果 columnIndex 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(String columnLabel, NClob nClob) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.NClob</code> 值更新指定的列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param nClob 要更新的列值
+@throws SQLException 如果 columnLabel 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.NClob java.sql.ResultSet.getNClob(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>NClob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 表示指定列中 SQL <code>NCLOB</code> 值的 <code>NClob</code> 对象
+@exception SQLException 如果 columnIndex 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法或发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.NClob java.sql.ResultSet.getNClob(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>NClob</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 表示指定列中 SQL <code>NCLOB</code> 值的 <code>NClob</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法或发生数据库访问错误
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLXML java.sql.ResultSet.getSQLXML(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.sql.SQLXML</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+ @param columnIndex 第一个列是 1，第二个列是 2，……
+ @return 一个映射 <code>SQL XML</code> 值的 <code>SQLXML</code> 对象
+ @throws SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.SQLXML java.sql.ResultSet.getSQLXML(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 Java 编程语言中 <code>java.sql.SQLXML</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。
+ @param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+ @return 一个映射 <code>SQL XML</code> 值的 <code>SQLXML</code> 对象
+ @throws SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateSQLXML(int columnIndex, SQLXML xmlObject) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.SQLXML</code> 值更新指定列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ <p>
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param xmlObject 要更新的列值
+@throws SQLException 如果 columnIndex 无效；如果发生数据库访问错误；在已关闭的结果集上调用此方法；没有为 <code>SQLXML</code> 对象关闭 <code>java.xml.transform.Result</code>、<code>Writer</code> 或 <code>OutputStream</code>；如果在处理 XML 值的过程中发生错误或结果集并发性为 <code>CONCUR_READ_ONLY</code>。该异常的 <code>getCause</code> 方法可以提供更详细的异常信息，例如，如果该流不包含有效的 XML。
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateSQLXML(String columnLabel, SQLXML xmlObject) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 <code>java.sql.SQLXML</code> 值更新指定的列。更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ <p>
+ 
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param xmlObject 列值
+@throws SQLException 如果 columnLabel 无效；如果发生数据库访问错误；在已关闭的结果集上调用此方法；没有为 <code>SQLXML</code> 对象关闭 <code>java.xml.transform.Result</code>、<code>Writer</code> 或 <code>OutputStream</code>；如果在处理 XML 值的过程中发生错误或结果集并发性为 <code>CONCUR_READ_ONLY</code>。该异常的 <code>getCause</code> 方法可能提供更详细的异常信息，例如，如果该流不包含有效的 XML。
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultSet.getNString(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@return 列值；如果该值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultSet.getNString(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Java 编程语言中 <code>String</code> 的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+
+ @param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+ @return 列值；如果该值为 SQL <code>NULL</code>，则返回值为 <code>null</code>
+ @exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+ @exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.ResultSet.getNCharacterStream(int columnIndex) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.io.Reader</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+
+@return 包含该列值的 <code>java.io.Reader</code> 对象；如果该值为 SQL <code>NULL</code>，则返回 Java 编程语言中的值 <code>null</code>。 
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.sql.ResultSet.getNCharacterStream(String columnLabel) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>java.io.Reader</code> 对象的形式获取此 <code>ResultSet</code> 对象的当前行中指定列的值。访问 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+ 
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@return 包含该列值的 <code>java.io.Reader</code> 对象；如果该值为 SQL <code>NULL</code>，则返回 Java 编程语言中的值 <code>null</code>
+
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNCharacterStream(int columnIndex, Reader x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列，该值将具有指定的字节数。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNCharacterStream(String columnLabel, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列，该值将具有指定的字节数。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+ <p>    
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含新列值的 <code>java.io.Reader</code> 对象
+@param length 流长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(int columnIndex, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 ascii 流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(int columnIndex, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用二进制流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(int columnIndex, Reader x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(String columnLabel, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 ascii 流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(String columnLabel, InputStream x, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用二进制流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@param length 流长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(String columnLabel, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列，该值将具有指定的字节数。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含新列值的 <code>java.io.Reader</code> 对象
+@param length 流长度
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(int columnIndex, InputStream inputStream, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定输入流更新指定的列，该流将具有指定的字节数。 
+
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param inputStream 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字节数。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(String columnLabel, InputStream inputStream, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定输入流更新指定列，该流将具有指定的字节数。 
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param inputStream 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字节数。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(int columnIndex, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列，该对象是给定的字符长度数目。在将一个非常大的 UNICODE 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param reader 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字符数。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(String columnLabel, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列，该对象是给定的字符长度数目。在将一个非常大的 UNICODE 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字符数。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(int columnIndex, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定的列，该对象是给定的字符长度数目。在将一个非常大的 UNICODE 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param reader 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字符数。
+@throws SQLException 如果 columnIndex 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；如果发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(String columnLabel, Reader reader, long length) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定的列，该对象是给定的字符长度数目。在将一个非常大的 UNICODE 值输入到 <code>LONGVARCHAR</code> 参数时，通过 <code>java.io.Reader</code> 对象发送它可能更为实际。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含用来设置参数值的数据的对象。
+@param length 参数数据中的字符数。
+@throws SQLException 如果 columnLabel 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；如果发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNCharacterStream(int columnIndex, Reader x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列。将根据需要从流中读取数据，一直读取到流末尾。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateNCharacterStream</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNCharacterStream(String columnLabel, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列。将根据需要从流中读取数据，一直读取到流末尾。驱动程序执行从 Java 字符格式到数据库中国家字符集的必要转换。更新 <code>NCHAR</code>、<code>NVARCHAR</code> 和 <code>LONGNVARCHAR</code> 列时可使用此方法。
+ <p>    
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateNCharacterStream</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含新列值的 <code>java.io.Reader</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(int columnIndex, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 ascii 流值更新指定的列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateAsciiStream</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(int columnIndex, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用二进制流值更新指定的列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateBinaryStream</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(int columnIndex, Reader x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定的列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateCharacterStream</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param x 新列值
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateAsciiStream(String columnLabel, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用 ascii 流值更新指定列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateAsciiStream</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBinaryStream(String columnLabel, InputStream x) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用二进制流值更新指定列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateBinaryStream</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param x 新列值
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateCharacterStream(String columnLabel, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用字符流值更新指定列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateCharacterStream</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含新列值的 <code>java.io.Reader</code> 对象
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(int columnIndex, InputStream inputStream) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定输入流值更新指定列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ 
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateBlob</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param inputStream 包含用来设置参数值的数据的对象。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateBlob(String columnLabel, InputStream inputStream) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定输入流值更新指定列。将根据需要从流中读取数据，一直读取到流末尾。 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateBlob</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param inputStream 包含用来设置参数值的数据的对象。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(int columnIndex, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列。将根据需要从流中读取数据，一直读取到流末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateClob</code> 是否更有效。
+     
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param reader 包含用来设置参数值的数据的对象。
+@exception SQLException 如果 columnIndex 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateClob(String columnLabel, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列。将根据需要从流中读取数据，一直读取到流末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+ 
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateClob</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含用来设置参数值的数据的对象。
+@exception SQLException 如果 columnLabel 无效；如果发生数据库访问错误；结果集并发性为 <code>CONCUR_READ_ONLY</code> 或在已关闭的结果集上调用此方法 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(int columnIndex, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列。将根据需要从流中读取数据，一直读取到流末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+ 
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateNClob</code> 是否更有效。
+
+@param columnIndex 第一个列是 1，第二个列是 2，……
+@param reader 包含用来设置参数值的数据的对象。
+@throws SQLException 如果 columnIndex 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；如果发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.ResultSet.updateNClob(String columnLabel, Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 <code>Reader</code> 对象更新指定列。将根据需要从流中读取数据，一直读取到流末尾。JDBC 驱动程序将执行从 UNICODE 到数据库 char 格式的任何必要转换。
+
+ <p>
+更新方法用于更新当前行或插入行中的列值。更新方法不更新底层数据库；更新数据库要调用 <code>updateRow</code> 或 <code>insertRow</code> 方法。
+
+<P><B>注：</B>请参考 JDBC 驱动程序文档，以确定使用带长度参数的 <code>updateNClob</code> 是否更有效。
+
+@param columnLabel 使用 SQL AS 子句指定的列标签。如果未指定 SQL AS 子句，则标签是列名称
+@param reader 包含用来设置参数值的数据的对象。
+@throws SQLException 如果 columnLabel 无效；如果驱动程序不支持国家字符集；如果驱动程序检测到可能发生数据转换错误；在已关闭的结果集上调用此方法；如果发生数据库访问错误或结果集并发性为 <code>CONCUR_READ_ONLY</code> 
+@exception SQLFeatureNotSupportedException 如果 JDBC 驱动程序不支持此方法
+@since 1.6
+
+<!-- END DATA -->

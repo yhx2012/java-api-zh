@@ -1,0 +1,154 @@
+<!-- BEGIN KEY -->
+public class javax.swing.table.DefaultTableCellRenderer extends javax.swing.JLabel implements javax.swing.table.TableCellRenderer, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+呈现（显示） <code>JTable</code> 中每个单元格的标准类。
+ <p>
+
+<strong><a name="override">实现注意事项：</a></strong>此类继承自一个标准的组件类 <code>JLabel</code>。但是 <code>JTable</code> 为其单元格的呈现使用了特殊的机制，因此要求稍微对其单元格渲染器的行为进行修改。该 table 类定义一个单元格渲染器，并将其用作呈现表中所有单元格的橡皮图章；它呈现第一个单元格、更改该单元格渲染器的内容、将原点移到新的位置、重新进行绘制，等等。标准的 <code>JLabel</code> 组件不是通过此方式使用的，每次绘制单元格时，我们都希望避免触发 <code>revalidate</code> 事件。这会大大降低程序的性能，因为 <code>revalidate</code> 消息会沿容器的层次结构向上传递，以确定任意其他组件是否将受到影响。由于该渲染器是绘制操作生命周期中唯一的父类，类似地，我们也希望避免与为进行绘制操作而遍历容器层次结构相关联的开销。所以此类将 <code>validate</code>、<code>invalidate</code>、<code>revalidate</code>、<code>repaint</code> 和 <code>firePropertyChange</code> 方法重写为无操作，并单独重写 <code>isOpaque</code> 方法以提高性能。如果您编写自己的渲染器，请记住此性能方面的考虑。
+ <p>
+
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.38 03/05/04
+@author Philip Milne
+@see JTable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static javax.swing.border.Border javax.swing.table.DefaultTableCellRenderer.noFocusBorder
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个空 <code>Border</code>。可以不使用此字段。要更改此渲染器所使用的 <code>Border</code>，请重写 <code>getTableCellRendererComponent</code> 方法并直接设置所返回组件的边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableCellRenderer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个默认的表单元格渲染器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.setForeground(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>JComponent.setForeground</code> 将未选定单元格的前景色分配为指定颜色。 
+ 
+@param c 将前景色设置为此值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.setBackground(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>JComponent.setBackground</code> 将未选定单元格的背景色分配为指定颜色。
+
+@param c 将背景色设置为此值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取自 <code>UIManager</code> 的关于外观 [L&F] 已更改的通知。用取自 <code>UIManager</code> 的最新版本 UI 对象替换当前的 UI 对象。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.table.DefaultTableCellRenderer.getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回默认的表单元格渲染器。
+<p>
+在打印操作期间，将调用此方法（<code>isSelected</code> 和 <code>hasFocus</code> 为 <code>false</code>）阻止选择和焦点在打印输出中出现。要根据是否打印表进行其他定制，检查 {@link javax.swing.JComponent#isPaintingForPrint()} 的返回值。
+
+@param table <code>JTable</code>
+@param value 分配给 <code>[row, column]</code> 处单元格的值
+@param isSelected 如果已选定单元格，则为 true
+@param hasFocus 如果单元格具有焦点，则为 true
+@param row  要呈现的单元格所在行
+@param column  要呈现的单元格所在列
+@return 默认的表单元格渲染器
+@see javax.swing.JComponent#isPaintingForPrint()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.table.DefaultTableCellRenderer.isOpaque()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.invalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.validate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.revalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.repaint(long tm, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.repaint(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.repaint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.table.DefaultTableCellRenderer.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableCellRenderer.firePropertyChange(String propertyName, boolean oldValue, boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为性能原因而被重写。有关更多信息，请参见<a href="#override">实现注意事项</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.table.DefaultTableCellRenderer.setValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将要呈现的单元格的 <code>String</code> 对象设置为 <code>value</code>。
+ 
+@param value 此单元格的字符串值；如果 value 为 <code>null</code>，则将文本值设置为空字符串
+@see JLabel#setText
+ 
+<!-- END DATA -->

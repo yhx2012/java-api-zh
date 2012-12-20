@@ -1,0 +1,569 @@
+<!-- BEGIN KEY -->
+public class java.awt.Rectangle extends java.awt.geom.Rectangle2D implements java.awt.Shape, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Rectangle</code> 指定坐标空间中的一个区域，通过坐标空间中 <code>Rectangle</code> 对象左上方的点 {@code (x,y)}、宽度和高度可以定义这个区域。 
+ <p>
+<code>Rectangle</code> 对象的 <code>width</code> 和 <code>height</code> 是 <code>public</code> 字段。创建 <code>Rectangle</code> 的构造方法，以及可以修改该对象的方法，都允许将 width 和 height 设置为负值。 
+ <p>
+对于 <a name="Empty"> width 或 height 正好为 0 的 {@code Rectangle}，它在相应轴上存在维数为 0 的位置，但在这种情况下，也可将其视为空的 Rectangle。对于这种 {@code Rectangle}，{@link #isEmpty} 方法将返回 ture。 如果两个维数中任一维数为 0，则测试空 {@code Rectangle} 是否包含某个点或是否与某个矩形相交的方法将始终返回 false。用点或矩形合并这种 {@code Rectangle} 的方法将在结果中包含 {@code Rectangle} 在该轴上的位置，正如调用 {@link #add(Point)} 方法一样。</a>
+ <p>
+对于 <a name="NonExistant"> width 或 height 为负值的 {@code Rectangle}，它在相应轴上并不存在维数为负的位置或维数。这种 {@code Rectangle} 将被视为不存在相应的轴上。对于包含计算，这种 {@code Rectangle} 也为空，测试它是否包含某个点或是否与某个矩形相交的方法将始终返回 false。用点或矩形合并这种 {@code Rectangle} 的方法将在生成结果时完全忽略 {@code Rectangle}。如果合并了两个 {@code Rectangle} 对象，且每个对象都具有一个负维数，则结果中至少有一个负维数。</a>
+ <p>
+对于仅影响 {@code Rectangle} 位置的方法，无论 {@code Rectangle} 是否沿任一轴具有负维数或 0 维数，都将在其位置上进行操作。
+ <p>
+注意，用默认不带参数的构造方法构造的 {@code Rectangle} 将具有 {@code 0x0} 维数，因此为空。{@code Rectangle} 仍然具有 {@code (0,0)} 的位置，且将该位置用于合并和添加操作。因此，尝试累积点集合范围的代码最初应使用具体的负 width 和负 height 来构造 {@code Rectangle}，或者应使用该集合中的第一个点构造 {@code Rectangle}。例如：
+ <pre>
+Rectangle bounds = new Rectangle(0, 0, -1, -1);
+for (int i = 0; i &lt; points.length; i++) {
+bounds.add(points[i]);
+     }
+ </pre>
+如果知道点数组中至少包含了一个点，那么也可以：
+ <pre>
+Rectangle bounds = new Rectangle(points[0]);
+for (int i = 1; i &lt; points.length; i++) {
+bounds.add(points[i]);
+     }
+ </pre>
+ <p>
+此类用 32 位整数存储其位置和维数。通常情况下，这些操作可能生成超过 32 位整数范围的结果。这些方法将以某种方式计算它们的结果，该方式可以避免任何针对中间结果的 32 位溢出，然后将选择最佳的表示方式，将最终结果存储回保存位置和维数的 32 位字段中。通过将真实结果修改为最接近的 32 位值，将得到的位置存储到 {@link #x} 和 {@link #y} 字段中。存储到 {@link #width} 和 {@link #height} 维数字段中的值将被作为 32 位值选择，这些值尽可能包含真实结果的最大部分。通常情况下，这意味着维数将被独立地修改为 32 位整数范围内，但以下情况除外：如果必须移动位置才能将其存储到 32 位字段对中，则将相对于位置的&ldquo;最佳表示形式&rdquo;对维数进行调整；如果真实结果有一个负维数，并因此沿一个或两个轴不存在，则存储的维数在这些轴中将为负数；如果真实结果有一个位置可以在 32 位整数范围内表示，但沿一个或两个轴维数为 0，则存储的维数在这些轴中将为 0。
+
+@version	1.73, 05/18/06
+@author	Sami Shaio
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Rectangle.x
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Rectangle</code> 左上角的 X 坐标。
+
+@serial
+@see #setLocation(int, int)
+@see #getLocation()
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Rectangle.y
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Rectangle</code> 左上角的 Y 坐标。
+ 
+@serial
+@see #setLocation(int, int)
+@see #getLocation()
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Rectangle.width
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Rectangle</code> 的宽度。
+@serial
+@see #setSize(int, int)
+@see #getSize()
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Rectangle.height
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <code>Rectangle</code> 的高度。
+ 
+@serial
+@see #setSize(int, int)
+@see #getSize()
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角的坐标为 (0,0)，宽度和高度均为 0。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，并将其初始化，以与指定 <code>Rectangle</code> 的值匹配。
+@param r   <code>Rectangle</code>，要从中将初始值复制到新构造的 <code>Rectangle</code>
+@since 1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角被指定为 {@code (x,y)}，其宽度和高度由同名的参数指定。
+@param     x 指定的 X 坐标
+@param     y 指定的 Y 坐标
+@param     width    <code>Rectangle</code> 的宽度
+@param     height   <code>Rectangle</code> 的高度
+@since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角的坐标为 (0,0)，其宽度和高度由同名的参数指定。
+@param width <code>Rectangle</code> 的宽度
+@param height <code>Rectangle</code> 的高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(Point p, Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角由 {@link Point} 参数指定，其宽度和高度由 {@link Dimension} 参数指定。
+@param p 一个 <code>Point</code>，它是 <code>Rectangle</code> 的左上角
+@param d 一个 <code>Dimension</code>，表示 <code>Rectangle</code> 的宽度和高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角是指定的 <code>Point</code>，其宽度和高度均为 0。
+@param p 一个 <code>Point</code>，它是 <code>Rectangle</code> 左上角的顶点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle(Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Rectangle</code>，其左上角为 (0,0)，其宽度和高度由 <code>Dimension</code> 参数指定。
+@param d 一个 <code>Dimension</code>，用于指定宽度和高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.Rectangle.getX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>double</code> 精度返回边界 <code>Rectangle</code> 的 X 坐标。
+@return 边界 <code>Rectangle</code> 的 X 坐标。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.Rectangle.getY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>double</code> 精度返回边界 <code>Rectangle</code> 的 Y 坐标。
+@return 边界 <code>Rectangle</code> 的 Y 坐标。    
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.Rectangle.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>double</code> 精度返回边界 <code>Rectangle</code> 的宽度。
+@return 边界 <code>Rectangle</code> 的宽度。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.Rectangle.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>double</code> 精度返回边界 <code>Rectangle</code> 的高度。
+@return 边界 <code>Rectangle</code> 的高度。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Rectangle.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>Rectangle</code> 的边界 <code>Rectangle</code>。
+ <p>
+包含此方法是出于完整性考虑，以对应 {@link Component} 的 <code>getBounds</code> 方法。
+@return    一个新 <code>Rectangle</code>，它等同于此 <code>Rectangle</code> 的边界 <code>Rectangle</code>。
+@see       java.awt.Component#getBounds
+@see       #setBounds(Rectangle)
+@see       #setBounds(int, int, int, int)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.Rectangle.getBounds2D()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setBounds(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Rectangle</code> 的边界 <code>Rectangle</code>，以匹配指定的 <code>Rectangle</code>。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setBounds</code> 方法。
+@param r 指定的 <code>Rectangle</code>
+@see       #getBounds
+@see	  java.awt.Component#setBounds(java.awt.Rectangle)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setBounds(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 的边界 <code>Rectangle</code> 设置为指定的 <code>x</code>、<code>y</code>、<code>width</code> 和 <code>height</code>。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setBounds</code> 方法。
+@param x 此 <code>Rectangle</code> 左上角的新 X 坐标
+@param y 此 <code>Rectangle</code> 左上角的新 Y 坐标
+@param width 此 <code>Rectangle</code> 的新宽度
+@param height 此 <code>Rectangle</code> 的新高度
+@see       #getBounds
+@see       java.awt.Component#setBounds(int, int, int, int)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setRect(double x, double y, double width, double height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 {@code Rectangle} 的边界设置为整数边界，它包含指定的 {@code x}、{@code y}、{@code width} 和 {@code height}。如果这些参数指定的 {@code Rectangle} 超出整数的最大范围，则结果将为与最大整数边界相交的指定 {@code Rectangle} 的最佳表示形式。
+@param x 指定矩形左上角的 X 坐标
+@param y 指定矩形左上角的 Y 坐标
+@param width 指定矩形的宽度
+@param height 指定矩形的新高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.reshape(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 的边界 <code>Rectangle</code> 设置为指定的 <code>x</code>、<code>y</code>、<code>width</code> 和 <code>height</code>。
+ <p>
+@param x 此 <code>Rectangle</code> 左上角的新 X 坐标
+@param 此  <code>Rectangle</code> 左上角的新 Y 坐标
+@param width 此 <code>Rectangle</code> 的新宽度
+@param height 此 <code>Rectangle</code> 的新高度
+@deprecated 从 JDK version 1.1 开始，由 <code>setBounds(int, int, int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Rectangle.getLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Rectangle</code> 的位置。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>getLocation</code> 方法。
+@return 一个 <code>Point</code>，它是此 <code>Rectangle</code> 左上角的顶点。
+@see       java.awt.Component#getLocation
+@see       #setLocation(Point)
+@see       #setLocation(int, int)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setLocation(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 移动到指定位置。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setLocation</code> 方法。
+@param p 指定此 <code>Rectangle</code> 新位置的 <code>Point</code>
+@see       java.awt.Component#setLocation(java.awt.Point)
+@see       #getLocation
+@since    1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setLocation(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 移动到指定位置。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setLocation</code> 方法。
+@param x 新位置的 X 坐标
+@param y 新位置的 Y 坐标
+@see       #getLocation
+@see	  java.awt.Component#setLocation(int, int)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.move(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 移动到指定位置。
+ <p>
+@param x 新位置的 X 坐标
+@param 新位置的 Y 坐标
+@deprecated 从 JDK version 1.1 开始，由 <code>setLocation(int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.translate(int dx, int dy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 沿 X 坐标轴向右，沿 Y 坐标轴向下平移指定距离。
+@param dx 沿 X 轴移动此 <code>Rectangle</code> 的距离
+@param dy 沿 Y 轴移动此 <code>Rectangle</code> 的距离
+@see       java.awt.Rectangle#setLocation(int, int)
+@see       java.awt.Rectangle#setLocation(java.awt.Point)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Rectangle.getSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>Rectangle</code> 的大小，用返回的 <code>Dimension</code> 表示。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>getSize</code> 方法。
+@return 一个 <code>Dimension</code>，表示此 <code>Rectangle</code> 的大小。
+@see       java.awt.Component#getSize
+@see       #setSize(Dimension)
+@see       #setSize(int, int)
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setSize(Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Rectangle</code> 的大小，以匹配指定的 <code>Dimension</code>。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setSize</code> 方法。
+@param d <code>Dimension</code> 对象的新大小
+@see       java.awt.Component#setSize(java.awt.Dimension)
+@see       #getSize
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.setSize(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 的大小设置为指定的宽度和高度。
+ <p>
+包含此方法是出于完整性考虑，以对应 <code>Component</code> 的 <code>setSize</code> 方法。
+@param width 此 <code>Rectangle</code> 的新宽度
+@param height 此 <code>Rectangle</code> 的新高度
+@see       java.awt.Component#setSize(int, int)
+@see       #getSize
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.resize(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Rectangle</code> 的大小设置为指定的宽度和高度。
+ <p>
+@param width 此 <code>Rectangle</code> 的新宽度
+@param height 此  <code>Rectangle</code> 的新高度
+@deprecated 从 JDK version 1.1 开始，由 <code>setSize(int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.contains(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <code>Rectangle</code> 是否包含指定的 <code>Point</code>。
+@param p 要测试的 <code>Point</code> 
+@return 如果指定的 <code>Point</code> 位于此 <code>Rectangle</code> 中，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.contains(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <code>Rectangle</code> 是否包含位于指定位置 {@code (x,y)} 的点。
+
+@param  x 指定的 X 坐标
+@param  y 指定的 Y 坐标
+@return    如果点 {@code (x,y)} 位于此 <code>Rectangle</code> 中，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.contains(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <code>Rectangle</code> 是否完全包含指定的 <code>Rectangle</code>。
+
+@param     r   指定的 <code>Rectangle</code>
+@return     如果 <code>Rectangle</code> 完全包含在此 <code>Rectangle</code> 中，则返回 <code>true</code>；否则返回 <code>false</code>
+@since     1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.contains(int X, int Y, int W, int H)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此  <code>Rectangle</code> 是否完全包含位于指定位置 {@code (X,Y)} 且具有指定维数 {@code (W,H)} 的 <code>Rectangle</code>。
+@param     X 指定的 X 坐标
+@param     Y 指定的 Y 坐标
+@param     W   <code>Rectangle</code> 的宽度
+@param     H   <code>Rectangle</code> 的高度
+@return  如果由 {@code (X, Y, W, H)} 指定的 <code>Rectangle</code> 完全包含在此 <code>Rectangle</code> 中，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since     1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.inside(int X, int Y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <code>Rectangle</code> 是否包含位于指定位置 {@code (X,Y)} 的点。
+
+@param  X 指定的 X 坐标
+@param  Y 指定的 Y 坐标
+@return  如果点 {@code (X,Y)} 位于此 <code>Rectangle</code> 中，则返回 <code>true</code>；否则返回 <code>false</code>。
+@deprecated 从 JDK version 1.1 开始，由 <code>contains(int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.intersects(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此 <code>Rectangle</code> 是否与指定的 <code>Rectangle</code> 相交。如果两个矩形的交集为非空，则它们是相交的。 
+
+@param r 指定的 <code>Rectangle</code>
+@return     如果指定的 <code>Rectangle</code> 与此 <code>Rectangle</code> 相交，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Rectangle.intersection(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算此 <code>Rectangle</code> 与指定 <code>Rectangle</code> 的交集。返回一个新的 <code>Rectangle</code>，它表示两个矩形的交集。如果两个矩形没有相交，则结果将是一个空矩形。
+
+@param     r   指定的 <code>Rectangle</code>
+@return    同时包含在指定 <code>Rectangle</code> 和此 <code>Rectangle</code> 中的最大 <code>Rectangle</code>；如果这些矩形没有相交，则返回一个空矩形。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Rectangle.union(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算此 <code>Rectangle</code> 与指定 <code>Rectangle</code> 的并集。返回一个新的 <code>Rectangle</code>，它表示两个矩形的并集。
+ <p>
+如果两个 {@code Rectangle} 的任何维数小于 0，则应用针对<a href=#NonExistant>不存在</a>矩形的规则。如果只有一个维数小于 0，那么结果将是另一个 {@code Rectangle} 的副本。如果两个维数都小于 0，则结果中将至少有一个维数小于 0。
+ <p>
+如果得到的 {@code Rectangle} 维数太大而无法表示为 {@code int}，则结果中将沿该维数有一个为 {@code Integer.MAX_VALUE} 的维数。
+@param r 指定的 <code>Rectangle</code>
+@return  同时包含指定 <code>Rectangle</code> 和此 <code>Rectangle</code> 的最小 <code>Rectangle</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.add(int newx, int newy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个由整数参数 {@code newx,newy} 指定的点添加到此 {@code Rectangle} 的边界。
+ <p>
+如果此 {@code Rectangle} 的任何维数小于 0，则应用针对<a href=#NonExistant>不存在</a>矩形的规则。在这种情况下，此 {@code Rectangle} 的新边界的位置将等于指定的坐标，且宽度和高度等于 0。
+ <p>
+在添加一个点后，调用将添加的点作为参数的 <code>contains</code> 方法不一定返回 <code>true</code>。对于 <code>Rectangl</code> 右边和底部边界线上的点，<code>econtains</code> 方法不返回 <code>true</code>。所以，如果添加的点落在放大的 <code>Rectangle</code> 右边和底部边界线上，则 <code>contains</code> 将针对该点返回 <code>false</code>。如果指定的点必须包含在新 {@code Rectangle} 中，则应添加 1x1 矩形：
+ <pre>
+r.add(newx, newy, 1, 1);
+ </pre>
+@param newx 新点的 X 坐标
+@param newy 新点的 Y 坐标
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.add(Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的 {@code Point} 添加到此 {@code Rectangle} 的边界。
+ <p>
+如果此 {@code Rectangle} 的任何维数小于 0，则应用针对<a href=#NonExistant>不存在</a>矩形的规则。在这种情况下，此 {@code Rectangle} 新边界的位置将等于指定 {@code Point} 的坐标，且宽度和高度等于 0。
+ <p>
+在添加一个 <code>Point</code> 后，调用将添加的 <code>Point</code> 作为参数的 <code>contains</code> 方法不一定返回 <code>true</code>。对于 <code>Rectangl</code> 右边和底部边界线上的点，<code>econtains</code> 方法不返回 <code>true</code>。所以，如果添加的 <code>Point</code> 落在放大的 <code>Rectangle</code> 右边和底部边界线上，则 <code>contains</code> 将针对该 <code>Point</code> 返回 <code>false</code>。如果指定的点必须包含在新 {@code Rectangle} 中，则应添加 1x1 矩形：
+ <pre>
+r.add(pt.x, pt.y, 1, 1);
+ </pre>
+@param pt 添加到此 <code>Rectangle</code> 中的新 <code>Point</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.add(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>Rectangle</code> 添加到此 <code>Rectangle</code> 中。得到的 <code>Rectangle</code> 是两个矩形的并集。 
+ <p>
+如果任何一个 {@code Rectangle} 任何维数小于 0，则结果将是另一个 {@code Rectangle} 的维数。如果两个 {@code Rectangle} 都至少有一个维数小于 0，则结果中至少有一个维数小于 0。
+ <p>
+如果任何一个 {@code Rectangle} 中有一个或两个维数等于 0，则沿那些轴具有 0 维数的结果将等同于通过将相应原坐标添加到沿该轴的结果矩形中所获得的结果，这类似于 {@link #add(Point)} 方法的操作，但没有超过该坐标的维数。
+ <p>
+如果得到的 {@code Rectangle} 维数太大而无法表示为 {@code int}，则结果中将沿该维数有一个为 {@code Integer.MAX_VALUE} 的维数。
+@param  r 指定的 <code>Rectangle</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Rectangle.grow(int h, int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在水平方向和垂直方向上同时调整 <code>Rectangle</code> 的大小。
+ <p>
+此方法修改 <code>Rectangle</code>，使它左边和右边都增加 <code>h</code> 个单位，顶部和底部都增加 <code>v</code> 个单位。 
+ <p>
+新的 <code>Rectangle</code> 的左上角是 {@code (x - h, y - v)}，宽度是 {@code (width + 2h)}，高度是 {@code (height + 2v)}。
+ <p>
+如果为 <code>h</code> 和 <code>v</code> 提供的是负值，则 <code>Rectangle</code> 的大小也相应地缩小。{@code grow} 方法检查整数溢出或下溢，但不检查得到的 {@code width} 和 {@code height} 值是否从负值增大到非负值或从非负值减小到负值。
+@param h 水平扩展
+@param v 垂直扩展
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Rectangle.outcode(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.Rectangle.createIntersection(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.Rectangle.createUnion(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Rectangle.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个矩形是否相等。
+ <p>
+当且仅当参数不是 <code>null</code>，而是一个与此 <code>Rectangle</code> 具有相同左上角、宽度和高度的 <code>Rectangle</code> 对象时，结果才为 <code>true</code>。
+@param obj 要与此 <code>Rectangle</code> 进行比较的 <code>Object</code>
+@return   如果对象相等，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.Rectangle.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>Rectangle</code> 及其值的 <code>String</code>。
+@return 表示此 <code>Rectangle</code> 对象的坐标和大小值的 <code>String</code>。
+
+<!-- END DATA -->

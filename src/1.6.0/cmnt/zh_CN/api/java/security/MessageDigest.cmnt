@@ -1,0 +1,269 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.MessageDigest extends java.security.MessageDigestSpi
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 MessageDigest 类为应用程序提供信息摘要算法的功能，如 MD5 或 SHA 算法。信息摘要是安全的单向哈希函数，它接收任意大小的数据，并输出固定长度的哈希值。
+
+<p>MessageDigest 对象开始被初始化。该对象通过使用 {@link #update(byte) update} 方法处理数据。任何时候都可以调用 {@link #reset() reset} 方法重置摘要。一旦所有需要更新的数据都已经被更新了，应该调用 {@link #digest() digest} 方法之一完成哈希计算。
+
+<p>对于给定数量的更新数据，<code>digest</code> 方法只能被调用一次。在调用 <code>digest</code> 之后，MessageDigest 对象被重新设置成其初始状态。
+
+<p>该实现可随意选择是否实现 Cloneable 接口。客户端应用程可以通过尝试复制和捕获 CloneNotSupportedException 来测试可复制性： <p>    
+
+ <pre>
+ MessageDigest md = MessageDigest.getInstance(&quot;SHA&quot;);
+
+ try {
+     md.update(toChapter1);
+     MessageDigest tc1 = md.clone();
+     byte[] toChapter1Digest = tc1.digest();
+     md.update(toChapter2);
+     ...etc.
+ } catch (CloneNotSupportedException cnse) {
+     throw new DigestException(&quot;couldn't make digest of partial content&quot;);
+ }
+ </pre>
+
+<p>注意，如果给定的实现是不可复制的，而事先已经知道摘要的数目，则仍然能够通过实例化几个实例计算中间摘要。
+
+<p>注意，由于历史原因，此类是抽象类，是从 <code>MessageDigestSpi</code> 扩展的。应用程序开发人员只需注意在此 <code>MessageDigest</code> 类中定义的方法；超类中的所有方法是供希望提供自己的信息摘要算法实现的加密服务提供者使用的。
+
+@author Benjamin Renaud 
+
+@version 1.81, 04/21/06
+
+@see DigestInputStream
+@see DigestOutputStream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.MessageDigest(String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定算法名称的信息摘要。
+ 
+@param algorithm 摘要算法的标准名称。有关标准算法名称的信息，请参阅 <a href=  "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.MessageDigest java.security.MessageDigest.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回实现指定摘要算法的 MessageDigest 对象。
+
+ <p> 此方法从首选 Provider 开始遍历已注册安全提供者列表。返回封装取自第一个 Provider 的 MessageDigestSpi 实现的新 MessageDigest 对象，第一个 Provider 支持指定算法。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 所请求算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @return 实现指定算法的 Message Digest 对象。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 MessageDigestSpi 实现
+
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.MessageDigest java.security.MessageDigest.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回实现指定摘要算法的 MessageDigest 对象。
+
+ <p> 返回封装 MessageDigestSpi 实现的新 MessageDigest 对象，该实现取自指定提供者。指定提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 所请求算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者的名称。
+
+ @return 实现指定算法的 MessageDigest 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 MessageDigestSpi 实现不能从指定提供者获得。
+		
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception IllegalArgumentException 如果提供者的名称为 null 或空。
+
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.MessageDigest java.security.MessageDigest.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回实现指定摘要算法的 MessageDigest 对象。
+
+ <p> 返回封装 MessageDigestSpi 实现的新 MessageDigest 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。
+
+ @param algorithm 所请求算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者。
+
+ @return 实现指定算法的 MessageDigest 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 MessageDigestSpi 实现不能从指定的提供者对象获得。
+		
+ @exception IllegalArgumentException 如果指定的提供者为 null。
+
+ @see Provider
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.MessageDigest.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此信息摘要对象的提供者。
+ 
+@return 此信息摘要对象的提供者。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.MessageDigest.update(byte input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的字节更新摘要。    
+ 
+@param input 用于更新摘要的字节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.MessageDigest.update(byte[] input, int offset, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 byte 数组，从指定的偏移量开始更新摘要。
+ 
+@param input  byte 数组。
+
+@param offset  byte 数组中的偏移量，操作从此处开始。
+
+@param len 要使用的字节数，始于 <code>offset</code>。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.MessageDigest.update(byte[] input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 byte 数组更新摘要。
+ 
+@param input  byte 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.MessageDigest.update(ByteBuffer input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 ByteBuffer 更新摘要。使用始于 <code>input.position()</code> 处的 <code>input.remaining()</code> 个字节更新摘要。一旦返回，该缓冲区的位置将等于它的界限；它的界限将不会更改。
+
+@param input ByteBuffer
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.MessageDigest.digest()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过执行诸如填充之类的最终操作完成哈希计算。在调用此方法之后，摘要被重置。
+
+@return 存放哈希值结果的 byte 数组。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.MessageDigest.digest(byte[] buf, int offset, int len) throws java.security.DigestException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过执行诸如填充之类的最终操作完成哈希计算。在调用此方法之后，摘要被重置。
+
+@param buf 存放计算摘要的输出缓冲区
+
+@param offset 输出缓冲区中的偏移量，从此处开始存储摘要。
+
+@param len 在 buf 中分配给摘要的字节数
+
+@return 放到 <code>buf</code> 中的字节数
+ 
+@exception DigestException 如果发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.security.MessageDigest.digest(byte[] input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 byte 数组对摘要进行最后更新，然后完成摘要计算。也就是说，此方法首先调用 {@link #update(byte[]) update(input)}，向 <code>update</code> 方法传递 <i>input</i> 数组，然后调用 {@link #digest() digest()}。
+
+@param input 在完成摘要计算前要更新的输入。
+
+@return 存放哈希值结果的 byte 数组。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.MessageDigest.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此信息摘要对象的字符串表示形式。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.security.MessageDigest.isEqual(byte[] digesta, byte[] digestb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个摘要的相等性。做简单的字节比较。
+ 
+@param digesta 要比较的摘要之一。
+ 
+@param digestb 要比较的另一个摘要。    
+
+@return 如果摘要相等，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.MessageDigest.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置摘要以供再次使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.MessageDigest.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回标识算法的独立于实现细节的字符串。此名称应该是标准的 Java 安全名称（如 &quot;SHA&quot;、&quot;MD5&quot; 等等）。有关标准算法名称的信息，请参阅 <a href=  "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+
+@return 算法的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.security.MessageDigest.getDigestLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回以字节为单位的摘要长度，如果提供者不支持此操作并且实现是不可复制的，则返回 0。
+
+@return 以字节为单位的摘要长度，如果提供者不支持此操作并且实现是不可复制的，则返回 0。
+ 
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.MessageDigest.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果实现是可复制的，则返回一个副本。    
+ 
+@return 如果实现是可复制的，则返回一个副本。
+
+@exception CloneNotSupportedException 如果对一个不支持 <code>Cloneable</code> 的实现调用此方法。
+
+<!-- END DATA -->

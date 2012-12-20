@@ -1,0 +1,489 @@
+<!-- BEGIN KEY -->
+public class java.lang.Runtime extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个 Java 应用程序都有一个 <code>Runtime</code> 类实例，使应用程序能够与其运行的环境相连接。可以通过 <code>getRuntime</code> 方法获取当前运行时。 
+ <p>
+应用程序不能创建自己的 Runtime 类实例。 
+
+@author  unascribed 
+@version 1.78, 04/10/06
+@see     java.lang.Runtime#getRuntime() 
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Runtime java.lang.Runtime.getRuntime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与当前 Java 应用程序相关的运行时对象。<code>Runtime</code> 类的大多数方法是实例方法，并且必须根据当前的运行时对象对其进行调用。 
+ 
+@return  与当前 Java 应用程序相关的 <code>Runtime</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.exit(int status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过启动虚拟机的关闭序列，终止当前正在运行的 Java 虚拟机。此方法从不正常返回。可以将变量作为一个状态码；根据惯例，非零的状态码表示非正常终止。
+
+<p> 虚拟机的关闭序列包含两个阶段。在第一个阶段中，会以某种未指定的顺序启动所有已注册的{@link #addShutdownHook 关闭钩子 (hook)}（如果有的话），并且允许它们同时运行直至结束。在第二个阶段中，如果已启用{@link #runFinalizersOnExit 退出终结}，则运行所有未调用的终结方法。一旦完成这个阶段，虚拟机就会{@link #halt 暂停}。
+
+<p> 如果在虚拟机已开始其关闭序列后才调用此方法，那么若正在运行关闭钩子，则将无限期地阻断此方法。如果已经运行完关闭钩子，并且已启用退出终结 (on-exit finalization)，那么此方法将利用给定的状态码（如果状态码是非零值）暂停虚拟机；否则将无限期地阻断虚拟机。
+
+<p> <tt>{@link System#exit(int) System.exit}</tt> 方法是调用此方法的一种传统而便捷的方式。 <p>
+
+@param  status 终止状态。按照惯例，非零的状态码表明非正常终止。
+
+@throws SecurityException 如果安全管理器存在，并且其 <tt>{@link SecurityManager#checkExit checkExit}</tt> 方法不允许存在指定的状态
+
+@see java.lang.SecurityException 
+@see java.lang.SecurityManager#checkExit(int) 
+@see #addShutdownHook 
+@see #removeShutdownHook 
+@see #runFinalizersOnExit
+@see #halt(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.addShutdownHook(Thread hook)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册新的虚拟机来关闭钩子。
+
+<p> Java 虚拟机会为了响应以下两类事件而<i>关闭</i>：
+
+   <ul>
+
+<p> <li> 程序正常<i>退出</i>，这发生在最后的非守护线程退出时，或者在调用 <tt>{@link #exit exit}</tt>（等同于 <tt>{@link System#exit(int) System.exit}</tt>）方法时。或者，
+
+<p> <li> 为响应用户中断而<i>终止</i> 虚拟机，如键入 <tt>^C</tt>；或发生系统事件，比如用户注销或系统关闭。
+
+   </ul>
+
+<p> <i>关闭钩子</i> 只是一个已初始化但尚未启动的线程。虚拟机开始启用其关闭序列时，它会以某种未指定的顺序启动所有已注册的关闭钩子，并让它们同时运行。运行完所有的钩子后，如果已启用退出终结，那么虚拟机接着会运行所有未调用的终结方法。最后，虚拟机会暂停。注意，关闭序列期间会继续运行守护线程，如果通过调用 <tt>{@link #exit exit}</tt> 方法来发起关闭序列，那么也会继续运行非守护线程。
+
+<p> 一旦开始了关闭序列，则只能通过调用 <tt>{@link #halt halt}</tt> 方法来停止这个序列，此方法可强行终止虚拟机。
+
+<p> 一旦开始了关闭序列，则不可能注册新的关闭钩子或取消注册先前已注册的钩子。尝试执行这些操作会导致抛出 <tt>{@link IllegalStateException}</tt>。
+
+<p> 关闭钩子可在虚拟机生命周期中的特定时间运行，因此应保护性地对其进行编码。特别是应将关闭钩子编写为线程安全的，并尽可能地避免死锁。关闭钩子还应该不盲目地依靠某些服务，这些服务可能已注册了自己的关闭钩子，所以其本身可能正处于关闭进程中。例如，试图使用其他基于线程的服务（如 AWT 事件指派线程）可能导致死锁。
+
+<p> 关闭钩子应该快速地完成其工作。当程序调用 <tt>{@link #exit exit}</tt> 时，虚拟机应该迅速地关闭并退出。由于用户注销或系统关闭而终止虚拟机时，底层的操作系统可能只允许在固定的时间内关闭并退出。因此在关闭钩子中尝试进行任何用户交互或执行长时间的计算都是不明智的。
+
+<p> 与其他所有线程一样，通过调用线程 <tt>{@link ThreadGroup}</tt> 对象的 <tt>{@link ThreadGroup#uncaughtException uncaughtException}</tt> 方法，可在关闭钩子中处理未捕获的异常。此方法的默认实现是将该异常的堆栈跟踪打印至 <tt>{@link System#err}</tt> 并终止线程；它不会导致虚拟机退出或暂停。
+
+<p> 仅在很少的情况下，虚拟机可能会<i>中止</i>，也就是没有完全关闭就停止运行。虚拟机被外部终止时会出现这种现象，比如在 Unix 上使用 <tt>SIGKILL</tt> 信号或者在 Microsoft Windows 上调用 <tt>TerminateProcess</tt>。如果由于内部数据结构损坏或试图访问不存在的内存而导致本机方法执行错误，那么可能也会中止虚拟机。如果虚拟机中止，则无法保证是否将运行关闭钩子。 <p>
+
+@param   hook 一个已初始化但尚未启动的 <tt>{@link Thread}</tt> 对象
+
+@throws  IllegalArgumentException 如果指定的钩子已注册，或者可以确定钩子正在运行或者已运行完毕
+
+@throws  IllegalStateException 如果虚拟机已经处于关闭进程中
+
+@throws  SecurityException 如果安全管理器存在并且拒绝 <tt>{@link RuntimePermission}(&quot;shutdownHooks&quot;)</tt>
+
+@see #removeShutdownHook 
+@see #halt(int) 
+@see #exit(int) 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Runtime.removeShutdownHook(Thread hook)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消注册某个先前已注册的虚拟机关闭钩子。 <p>
+
+@param hook 要删除的钩子 
+@return 如果指定的钩子先前已注册并且成功地取消注册，则返回 <tt>true</tt>，其他情况返回 <tt>false</tt>。
+
+@throws  IllegalStateException 如果虚拟机已经处于关闭进程中
+
+@throws  SecurityException 如果安全管理器存在并且拒绝 <tt>{@link RuntimePermission}(&quot;shutdownHooks&quot;)</tt>
+
+@see #addShutdownHook 
+@see #exit(int) 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.halt(int status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强行终止目前正在运行的 Java 虚拟机。此方法从不正常返回。 
+
+<p> 应小心使用此方法。与 <tt>{@link #exit exit}</tt> 方法不同，此方法不会启动关闭钩子，并且如果已启用退出终结，此方法也不会运行未调用的终结方法。如果已经发起关闭序列，那么此方法不会等待所有正在运行的关闭钩子或终结方法完成其工作。 <p>
+
+@param  status 终止状态。按照惯例，非零的状态码表明非正常终止。如果已经调用了 <tt>{@link Runtime#exit exit}</tt>（<tt>{@link System#exit(int) System.exit}</tt> 也一样）方法，那么该状态码将重写已传递至此方法的状态码。
+
+@throws SecurityException 如果安全管理器存在，并且其 <tt>{@link SecurityManager#checkExit checkExit}</tt> 方法不允许具有指定状态时退出
+
+@see #exit 
+@see #addShutdownHook 
+@see #removeShutdownHook 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.lang.Runtime.runFinalizersOnExit(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在退出时启用或禁用终结；这样做可指定拥有未被自动调用终结方法的所有对象的终结方法，并将在退出 Java 运行时前运行此终结方法。默认情况下，禁用退出终结。
+ 
+<p>如果有安全管理器，则首先使用 0 作为变量来调用其 <code>checkExit</code> 方法，以确保允许退出。这可能会导致 SecurityException。
+
+@param value 如果启用退出时终结，则该参数为 true，如果禁用退出时终结，则该参数为 false
+@deprecated  此方法本身具有不安全性。它可能对正在使用的对象调用终结方法，而其他线程正在操作这些对象，从而导致不正确的行为或死锁。
+ 
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkExit</code> 方法不允许退出。
+
+@see     java.lang.Runtime#exit(int) 
+@see     java.lang.Runtime#gc() 
+@see     java.lang.SecurityManager#checkExit(int) 
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(String command) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在单独的进程中执行指定的字符串命令。
+
+<p>这是一个很有用的方法。对于 <tt>exec(command)</tt> 形式的调用而言，其行为与调用 <tt>{@link #exec(String, String[], File) exec}(command, null, null)</tt> 完全相同。
+
+@param   command   一条指定的系统命令。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>command</code> 为 <code>null</code>
+
+@throws  IllegalArgumentException 如果 <code>command</code> 为空
+
+@see     #exec(String[], String[], File) 
+@see     ProcessBuilder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(String command, java.lang.String[] envp) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定环境的单独进程中执行指定的字符串命令。
+
+<p>这是一个很有用的方法。对于 <tt>exec(command, envp)</tt> 形式的调用而言，其行为与调用 <tt>{@link #exec(String, String[], File) exec}(command, envp, null)</tt> 完全相同。
+
+@param   command   一条指定的系统命令。
+
+@param   envp      字符串数组，其中每个元素的环境变量的设置格式为 <i>name</i>=<i>value</i>；如果子进程应该继承当前进程的环境，或该参数为 <tt>null</tt>。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>command</code> 为 <code>null</code>，或 <code>envp</code> 的元素之一为 <code>null</code>
+
+@throws  IllegalArgumentException 如果 <code>command</code> 为空
+
+@see     #exec(String[], String[], File) 
+@see     ProcessBuilder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(String command, java.lang.String[] envp, File dir) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在有指定环境和工作目录的独立进程中执行指定的字符串命令。
+
+<p>这是一个很有用的方法。对于 <tt>exec(command, envp, dir)</tt> 形式的调用而言，其行为与调用 <tt>{@link #exec(String[], String[], File) exec}(cmdarray, envp, dir)</tt> 完全相同，其中 <code>cmdarray</code> 是 <code>command</code> 中所有标记的数组。
+
+<p>更准确地说，可以使用通过调用 <code>new {@link StringTokenizer}(command)</code> 创建的 {@link StringTokenizer} 将 <code>command</code> 字符串拆解成标记，调用时不对字符类别做进一步的修改。然后将标记生成器所生成的标记以相同的顺序放入新的字符串数组 <code>cmdarray</code> 中。
+
+@param   command   一条指定的系统命令。
+
+@param   envp      字符串数组，其中每个元素的环境变量的设置格式为 <i>name</i>=<i>value</i>；如果子进程应该继承当前进程的环境，或该参数为 <tt>null</tt>。
+
+@param   dir       子进程的工作目录；如果子进程应该继承当前进程的工作目录，则该参数为 <tt>null</tt>。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>command</code> 为 <code>null</code>，或者 <code>envp</code> 的某个元素为 <code>null</code>
+
+@throws  IllegalArgumentException 如果 <code>command</code> 为空
+
+@see     ProcessBuilder 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(java.lang.String[] cmdarray) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在单独的进程中执行指定命令和变量。
+
+<p>这是一个很有用的方法。对于 <tt>exec(cmdarray)</tt> 形式的调用而言，其行为与调用 <tt>{@link #exec(String[], String[], File) exec}(cmdarray, null, null)</tt> 完全相同。
+
+@param   cmdarray  包含所调用命令及其参数的数组。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>cmdarray</code> 为 <code>null</code>，或者 <code>cmdarray</code> 的某个元素为 <code>null</code>
+
+@throws  IndexOutOfBoundsException 如果 <code>cmdarray</code> 是一个空数组（长度为 <code>0</code>）
+
+@see     ProcessBuilder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(java.lang.String[] cmdarray, java.lang.String[] envp) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定环境的独立进程中执行指定命令和变量。
+
+<p>这是一个很有用的方法。对于 <tt>exec(cmdarray, envp)</tt> 形式的调用而言，其行为与调用 <tt>{@link #exec(String[], String[], File) exec}(cmdarray, envp, null)</tt> 完全相同。
+
+@param   cmdarray  包含所调用命令及其参数的数组。
+
+@param   envp      字符串数组，其中每个元素的环境变量的设置格式为 <i>name</i>=<i>value</i>；如果子进程应该继承当前进程的环境，或该参数为 <tt>null</tt>。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>cmdarray</code> 为 <code>null</code>，或者 <code>cmdarray</code> 的某个元素为 <code>null</code>，或者 <code>envp</code> 的某个元素为 <code>null</code>
+
+@throws  IndexOutOfBoundsException 如果 <code>cmdarray</code> 是一个空数组（长度为 <code>0</code>）
+
+@see     ProcessBuilder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.Runtime.exec(java.lang.String[] cmdarray, java.lang.String[] envp, File dir) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定环境和工作目录的独立进程中执行指定的命令和变量。
+
+<p>给定的字符串数组 <code>cmdarray</code> 表示一个命令行标记，字符串数组 <code>envp</code> 则表示“环境”变量设置，此方法会创建一个新进程，而指定的命令就在这个进程中执行。
+
+<p>此方法检查 <code>cmdarray</code> 是否是一条有效的操作系统命令。哪些命令有效取决于系统，但是该命令至少必须有一个非 null 字符串的非空列表。
+
+<p>如果 <tt>envp</tt> 为 <tt>null</tt>，那么子进程会继承当前进程的环境设置。
+
+<p>{@link ProcessBuilder#start()} 现在是启用一个具有已修改环境的进程的首选方法。
+
+<p><tt>dir</tt> 指定了新子进程的工作目录。如果 <tt>dir</tt> 为 <tt>null</tt>，那么子进程会继承当前进程的当前工作目录。
+
+<p>如果安全管理器存在，则用数组 <code>cmdarray</code> 的第一个元素作为变量来调用安全管理器的 {@link SecurityManager#checkExec checkExec} 方法。这可能导致抛出 {@link SecurityException}。
+
+<p>启动操作系统进程的方式完全取决于系统。其中有很多方面会导致错误：
+ <ul>
+<li>未找到操作系统程序文件。
+<li>对程序文件的访问被拒绝。
+<li>工作目录不存在。
+ </ul>
+
+<p>这些情况都会抛出一个异常。该异常的具体特性取决于系统，但它总是 {@link IOException} 的一个子类。
+
+
+@param   cmdarray  包含所调用命令及其参数的数组。
+
+@param   envp      字符串数组，其中每个元素的环境变量的设置格式为 <i>name</i>=<i>value</i>，如果子进程应该继承当前进程的环境，或该参数为 <tt>null</tt>。
+
+@param   dir       子进程的工作目录；如果子进程应该继承当前进程的工作目录，则该参数为 <tt>null</tt>。
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  SecurityException 如果安全管理器存在，并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@throws  NullPointerException 如果 <code>cmdarray</code> 为 <code>null</code>，或者 <code>cmdarray</code> 的某个元素为 <code>null</code>，抑或 <code>envp</code> 的某个元素为 <code>null</code>
+
+@throws  IndexOutOfBoundsException 如果 <code>cmdarray</code> 是一个空数组（长度为 <code>0</code>）
+
+@see     ProcessBuilder 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native int java.lang.Runtime.availableProcessors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 Java 虚拟机返回可用处理器的数目。
+
+<p> 该值在特定的虚拟机调用期间可能发生更改。因此，对可用处理器数目很敏感的应用程序应该不定期地轮询该属性，并相应地调整其资源用法。 </p>
+
+@return  虚拟机可用的最大处理器数目；从不小于 1 
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native long java.lang.Runtime.freeMemory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机中的空闲内存量。调用 <code>gc</code> 方法可能导致 <code>freeMemory</code> 返回值的增加。
+
+@return  供将来分配对象使用的当前可用内存的近似总量，以字节为单位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native long java.lang.Runtime.totalMemory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机中的内存总量。此方法返回的值可能随时间的推移而变化，这取决于主机环境。
+ <p>
+注意，保存任意给定类型的一个对象所需的内存量可能取决于实现方法。
+ 
+@return  目前为当前和后续对象提供的内存总量，以字节为单位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native long java.lang.Runtime.maxMemory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机试图使用的最大内存量。如果内存本身没有限制，则返回值 {@link java.lang.Long#MAX_VALUE}。 </p>
+
+@return  虚拟机试图使用的最大内存量，以字节为单位。 
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.lang.Runtime.gc()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+运行垃圾回收器。调用此方法意味着 Java 虚拟机做了一些努力来回收未用对象，以便能够快速地重用这些对象当前占用的内存。当控制从方法调用中返回时，虚拟机已经尽最大努力回收了所有丢弃的对象。 
+ <p>
+名称 <code>gc</code> 代表“垃圾回收器”。虚拟机根据需要在单独的线程中自动执行回收过程，甚至不用显式调用 <code>gc</code> 方法。
+ <p>
+方法 {@link System#gc()} 是调用此方法的一种传统而便捷的方式。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.runFinalization()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+运行挂起 finalization 的所有对象的终止方法。调用此方法意味着 Java 虚拟机做了一些努力运行已被丢弃对象的 <code>finalize</code> 方法，但是这些对象的 <code>finalize</code> 方法还没有运行。当控制从方法调用中返回时，Java 虚拟机已经尽最大努力去完成所有未执行的终止方法。 
+ <p>
+如果不显式调用 <code>runFinalization</code> 方法，则 Java 虚拟机会根据需要在单独的线程中自动执行此终止过程。 
+ <p>
+方法 {@link System#runFinalization()} 是调用此方法的一种传统而便捷的方式。
+
+@see     java.lang.Object#finalize()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.lang.Runtime.traceInstructions(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用／禁用指令跟踪。如果 <code>boolean</code> 变量为 <code>true</code>，则执行此方法意味着让 Java 虚拟机发送虚拟机中每条指令执行的调试信息。该信息的格式，以及虚拟机所发送的文件或其他输出流的格式取决于主机的环境。如果虚拟机不支持此功能，则忽略这一请求。跟踪输出的目的地取决于系统。 
+ <p>
+如果 <code>boolean</code> 变量为 <code>false</code>，则执行此方法时将使 Java 虚拟机停止执行详细的指令跟踪。
+
+@param   on 为 <code>true</code> 时启用指令跟踪；为 <code>false</code> 时则禁用此功能。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native void java.lang.Runtime.traceMethodCalls(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用／禁用方法调用跟踪。如果 <code>boolean</code> 变量为 <code>true</code>，则执行此方法意味着让 Java 虚拟机发送虚拟机中每个方法的调试信息。该信息的格式，以及虚拟机所发送的文件或其他输出流的格式取决于主机的环境。如果虚拟机不支持此功能，则忽略这一请求。  
+ <p>
+使用变量 false 调用此方法意味着虚拟机停止发送每个调用的调试信息。
+
+@param   on 为 <code>true</code> 时启用指令跟踪；为 <code>false</code> 时则禁用此功能。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.load(String filename)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载作为动态库的指定文件名。文件名变量必须是一个完整的路径名，（例如 <code>Runtime.getRuntime().load("/home/avh/lib/libX11.so");</code>）。
+ <p>
+首先，如果有安全管理器，则用 <code>filename</code> 作为参数调用 <code>checkLink</code> 方法。这可能导致安全异常。 
+ <p>
+这与 {@link #loadLibrary(String)} 方法类似，但它接受通用文件名作为变量，而不仅仅是库名，从而能够加载所有的本机代码文件。
+ <p>
+方法 {@link System#load(String)} 是调用此方法的一种传统而便捷的方式。
+
+@param      filename   要加载的文件。
+@exception  SecurityException  如果安全管理器存在，并且其 <code>checkLink</code> 方法不允许加载指定的动态库
+@exception  UnsatisfiedLinkError  如果文件不存在。
+@exception  NullPointerException 如果 <code>filename</code> 为 <code>null</code> 
+@see        java.lang.Runtime#getRuntime() 
+@see        java.lang.SecurityException 
+@see        java.lang.SecurityManager#checkLink(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.Runtime.loadLibrary(String libname)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载具有指定库名的动态库。从以前获取库文件的本地文件系统中加载含有本机代码的文件。这一过程的细节取决于实现方法。可以以某种特定于系统的方式完成从库名到特定文件名的映射。  
+ <p>
+首先，如果有安全管理器，则用 <code>libname</code> 作为参数调用 <code>checkLink</code> 方法。这可能导致安全性异常。 
+ <p>
+方法 {@link System#loadLibrary(String)} 是调用此方法的一种传统而便捷的方式。如果在某个类实现中使用本机方法，则标准的策略是将本机代码放入一个库文件中（称为 <code>LibFile</code>），然后在类声明中放入一个静态的初始值设定项：
+ <blockquote><pre>
+static { System.loadLibrary("LibFile"); }
+ </pre></blockquote>
+当加载并初始化这个类时，也将加载实现本机方法所需的本机代码。 
+ <p>
+如果用相同库名多次调用此方法，则忽略第二次及后续的调用。 
+
+@param      libname   库名。
+@exception  SecurityException  如果安全管理器存在，并且其 <code>checkLink</code> 方法不允许加载指定的动态库
+@exception  UnsatisfiedLinkError  如果库不存在。
+@exception  NullPointerException 如果 <code>libname</code> 为 <code>null</code> 
+@see        java.lang.SecurityException 
+@see        java.lang.SecurityManager#checkLink(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.lang.Runtime.getLocalizedInputStream(InputStream in)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建输入流的本地化版本。此方法获取 <code>InputStream</code>，并返回除本地化外其他所有方面都和变量等效的 <code>InputStream</code>，这些方面包括：作为本地字符集中的字符从流中被读取，并将它们从本地字符集自动转换为 Unicode。 
+ <p>
+如果参数已经是本地化流，则可作为结果返回。 
+
+@param      in 要本地化的 InputStream
+@return     已本地化的输入流 
+@see        java.io.InputStream 
+@see        java.io.BufferedReader#BufferedReader(java.io.Reader) 
+@see        java.io.InputStreamReader#InputStreamReader(java.io.InputStream) 
+@deprecated 从 JDK&nbsp;1.1 开始，将本地编码字节流转换为 Unicode 字符流的首选方法是使用 <code>InputStreamReader</code> 和 <code>BufferedReader</code> 类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStream java.lang.Runtime.getLocalizedOutputStream(OutputStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建输出流的本地化版本。此方法获取 <code>OutputStream</code>，并返回除本地化外其他所有方面都和变量等效的 <code>OutputStream</code>，这些方面包括：作为 Unicode 字符被写入流中，并被自动转换为本地字符集。 
+ <p>
+如果参数已经是本地流，则可作为结果返回。 
+
+@deprecated 从 JDK&nbsp;1.1 开始，将 Unicode 字符流转换为本地编码字节流的首选方法是使用 <code>OutputStreamWriter</code>、<code>BufferedWriter</code> 和 <code>PrintWriter</code> 类。
+
+@param      out 要本地化的 OutputStream  
+@return     已本地化的输出流 
+@see        java.io.OutputStream 
+@see        java.io.BufferedWriter#BufferedWriter(java.io.Writer) 
+@see        java.io.OutputStreamWriter#OutputStreamWriter(java.io.OutputStream) 
+@see        java.io.PrintWriter#PrintWriter(java.io.OutputStream)
+
+<!-- END DATA -->

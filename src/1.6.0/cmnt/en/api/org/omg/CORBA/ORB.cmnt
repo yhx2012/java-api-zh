@@ -1,0 +1,1075 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.ORB extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A class providing APIs for the CORBA Object Request Broker
+ features.  The <code>ORB</code> class also provides
+ "pluggable ORB implementation" APIs that allow another vendor's ORB
+ implementation to be used.
+ <P>
+ An ORB makes it possible for CORBA objects to communicate
+ with each other by connecting objects making requests (clients) with
+ objects servicing requests (servers).
+ <P>
+
+ The <code>ORB</code> class, which
+ encapsulates generic CORBA functionality, does the following:
+ (Note that items 5 and 6, which include most of the methods in
+ the class <code>ORB</code>, are typically used with the <code>Dynamic Invocation
+ Interface</code> (DII) and the <code>Dynamic Skeleton Interface</code>
+ (DSI).
+ These interfaces may be used by a developer directly, but
+ most commonly they are used by the ORB internally and are
+ not seen by the general programmer.)
+ <OL>
+ <li> initializes the ORB implementation by supplying values for
+      predefined properties and environmental parameters
+ <li> obtains initial object references to services such as
+ the NameService using the method <code>resolve_initial_references</code>
+ <li> converts object references to strings and back
+ <li> connects the ORB to a servant (an instance of a CORBA object
+ implementation) and disconnects the ORB from a servant
+ <li> creates objects such as
+   <ul>
+   <li><code>TypeCode</code>
+   <li><code>Any</code>
+   <li><code>NamedValue</code>
+   <li><code>Context</code>
+   <li><code>Environment</code>
+   <li>lists (such as <code>NVList</code>) containing these objects
+   </ul>
+ <li> sends multiple messages in the DII
+ </OL>
+
+ <P>
+ The <code>ORB</code> class can be used to obtain references to objects
+ implemented anywhere on the network.
+ <P>
+ An application or applet gains access to the CORBA environment
+ by initializing itself into an <code>ORB</code> using one of
+ three <code>init</code> methods.  Two of the three methods use the properties
+ (associations of a name with a value) shown in the
+ table below.<BR>
+ <TABLE BORDER=1 SUMMARY="Standard Java CORBA Properties">
+ <TR><TH>Property Name</TH>   <TH>Property Value</TH></TR>
+ <CAPTION>Standard Java CORBA Properties:</CAPTION>
+     <TR><TD>org.omg.CORBA.ORBClass</TD>
+     <TD>class name of an ORB implementation</TD></TR>
+     <TR><TD>org.omg.CORBA.ORBSingletonClass</TD>
+     <TD>class name of the ORB returned by <code>init()</code></TD></TR>
+ </TABLE>
+ <P>
+ These properties allow a different vendor's <code>ORB</code>
+ implementation to be "plugged in."
+ <P>
+ When an ORB instance is being created, the class name of the ORB
+ implementation is located using
+ the following standard search order:<P>
+
+ <OL>
+     <LI>check in Applet parameter or application string array, if any
+
+     <LI>check in properties parameter, if any
+
+     <LI>check in the System properties 
+
+     <LI>check in the orb.properties file located in the user.home 
+         directory (if any)
+
+     <LI>check in the orb.properties file located in the java.home/lib 
+         directory (if any)
+
+     <LI>fall back on a hardcoded default behavior (use the Java&nbsp;IDL
+         implementation)
+ </OL>
+ <P>
+ Note that Java&nbsp;IDL provides a default implementation for the
+ fully-functional ORB and for the Singleton ORB.  When the method
+ <code>init</code> is given no parameters, the default Singleton
+ ORB is returned.  When the method <code>init</code> is given parameters
+ but no ORB class is specified, the Java&nbsp;IDL ORB implementation
+ is returned.
+ <P>
+ The following code fragment creates an <code>ORB</code> object
+ initialized with the default ORB Singleton.
+ This ORB has a
+ restricted implementation to prevent malicious applets from doing
+ anything beyond creating typecodes.
+ It is called a singleton
+ because there is only one instance for an entire virtual machine.
+ <PRE>
+    ORB orb = ORB.init();
+ </PRE>
+ <P>
+ The following code fragment creates an <code>ORB</code> object
+ for an application.  The parameter <code>args</code>
+ represents the arguments supplied to the application's <code>main</code>
+ method.  Since the property specifies the ORB class to be
+ "SomeORBImplementation", the new ORB will be initialized with
+ that ORB implementation.  If p had been null,
+ and the arguments had not specified an ORB class,
+ the new ORB would have been
+ initialized with the default Java&nbsp;IDL implementation.
+ <PRE>
+    Properties p = new Properties();
+    p.put("org.omg.CORBA.ORBClass", "SomeORBImplementation");
+    ORB orb = ORB.init(args, p);
+ </PRE>
+ <P>
+ The following code fragment creates an <code>ORB</code> object
+ for the applet supplied as the first parameter.  If the given
+ applet does not specify an ORB class, the new ORB will be
+ initialized with the default Java&nbsp;IDL implementation.
+ <PRE>
+    ORB orb = ORB.init(myApplet, null);
+ </PRE>
+ <P>
+ An application or applet can be initialized in one or more ORBs.
+ ORB initialization is a bootstrap call into the CORBA world.
+ @version 1.70, 09/09/97
+ @since   JDK1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <code>ORB</code> singleton object. This method always returns the
+ same ORB instance, which is an instance of the class described by the
+ <code>org.omg.CORBA.ORBSingletonClass</code> system property.
+ <P>
+ This no-argument version of the method <code>init</code> is used primarily
+ as a factory for <code>TypeCode</code> objects, which are used by
+ <code>Helper</code> classes to implement the method <code>type</code>.
+ It is also used to create <code>Any</code> objects that are used to
+ describe <code>union</code> labels (as part of creating a <code>
+ TypeCode</code> object for a <code>union</code>).
+ <P>
+ This method is not intended to be used by applets, and in the event
+ that it is called in an applet environment, the ORB it returns
+ is restricted so that it can be used only as a factory for
+ <code>TypeCode</code> objects.  Any <code>TypeCode</code> objects
+ it produces can be safely shared among untrusted applets.
+ <P>
+ If an ORB is created using this method from an applet,
+ a system exception will be thrown if
+ methods other than those for
+ creating <code>TypeCode</code> objects are invoked.
+
+ @return the singleton ORB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init(java.lang.String[] args, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new <code>ORB</code> instance for a standalone
+ application.  This method may be called from applications
+ only and returns a new fully functional <code>ORB</code> object
+ each time it is called.
+ @param args command-line arguments for the application's <code>main</code>
+             method; may be <code>null</code>
+ @param props application-specific properties; may be <code>null</code>
+ @return the newly-created ORB instance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init(Applet app, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new <code>ORB</code> instance for an applet.  This
+ method may be called from applets only and returns a new
+ fully-functional <code>ORB</code> object each time it is called.
+ @param app the applet; may be <code>null</code>
+ @param props applet-specific properties; may be <code>null</code>
+ @return the newly-created ORB instance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void org.omg.CORBA.ORB.set_parameters(java.lang.String[] args, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the ORB implementation to be initialized with the given
+ parameters and properties. This method, used in applications only,
+ is implemented by subclass ORB implementations and called
+ by the appropriate <code>init</code> method to pass in its parameters.
+
+ @param args command-line arguments for the application's <code>main</code>
+             method; may be <code>null</code>
+ @param props application-specific properties; may be <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void org.omg.CORBA.ORB.set_parameters(Applet app, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the ORB implementation to be initialized with the given
+ applet and parameters. This method, used in applets only,
+ is implemented by subclass ORB implementations and called
+ by the appropriate <code>init</code> method to pass in its parameters.
+
+ @param app the applet; may be <code>null</code>
+ @param props applet-specific properties; may be <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.connect(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Connects the given servant object (a Java object that is
+ an instance of the server implementation class)
+ to the ORB. The servant class must
+ extend the <code>ImplBase</code> class corresponding to the interface that is
+ supported by the server. The servant must thus be a CORBA object
+ reference, and inherit from <code>org.omg.CORBA.Object</code>.
+ Servants created by the user can start receiving remote invocations
+ after the method <code>connect</code> has been called. A servant may also be
+ automatically and implicitly connected to the ORB if it is passed as
+ an IDL parameter in an IDL method invocation on a non-local object,
+ that is, if the servant object has to be marshalled and sent outside of the
+ process address space.
+ <P>
+ Calling the method <code>connect</code> has no effect
+ when the servant object is already connected to the ORB.
+ <P>
+ Deprecated by the OMG in favor of the Portable Object Adapter APIs.
+
+ @param obj The servant object reference
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.destroy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Destroys the ORB so that its resources can be reclaimed.
+ Any operation invoked on a destroyed ORB reference will throw the
+ <code>OBJECT_NOT_EXIST</code> exception.
+ Once an ORB has been destroyed, another call to <code>init</code>
+ with the same ORBid will return a reference to a newly constructed ORB.<p>
+ If <code>destroy</code> is called on an ORB that has not been shut down,
+ it will start the shut down process and block until the ORB has shut down
+ before it destroys the ORB.<br>
+ If an application calls <code>destroy</code> in a thread that is currently servicing
+ an invocation, the <code>BAD_INV_ORDER</code> system exception will be thrown
+ with the OMG minor code 3, since blocking would result in a deadlock.<p>
+ For maximum portability and to avoid resource leaks, an application should
+ always call <code>shutdown</code> and <code>destroy</code>
+ on all ORB instances before exiting.
+
+ @throws org.omg.CORBA.BAD_INV_ORDER if the current thread is servicing an invocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.disconnect(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Disconnects the given servant object from the ORB. After this method returns,
+ the ORB will reject incoming remote requests for the disconnected
+ servant and will send the exception
+ <code>org.omg.CORBA.OBJECT_NOT_EXIST</code> back to the
+ remote client. Thus the object appears to be destroyed from the
+ point of view of remote clients. Note, however, that local requests issued
+ using the servant  directly do not
+ pass through the ORB; hence, they will continue to be processed by the
+ servant.
+ <P>
+ Calling the method <code>disconnect</code> has no effect
+ if the servant is not connected to the ORB.
+ <P>
+ Deprecated by the OMG in favor of the Portable Object Adapter APIs.
+
+ @param obj The servant object to be disconnected from the ORB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] org.omg.CORBA.ORB.list_initial_services()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a list of the initially available CORBA object references,
+ such as "NameService" and "InterfaceRepository".
+
+ @return an array of <code>String</code> objects that represent
+         the object references for CORBA services
+         that are initially available with this ORB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Object org.omg.CORBA.ORB.resolve_initial_references(String object_name) throws org.omg.CORBA.ORBPackage.InvalidName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Resolves a specific object reference from the set of available
+ initial service names.
+
+ @param object_name the name of the initial service as a string
+ @return  the object reference associated with the given name
+ @exception InvalidName if the given name is not associated with a
+                         known service
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.ORB.object_to_string(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts the given CORBA object reference to a string.
+ Note that the format of this string is predefined by IIOP, allowing
+ strings generated by a different ORB to be converted back into an object
+ reference.
+ <P>
+ The resulting <code>String</code> object may be stored or communicated
+ in any way that a <code>String</code> object can be manipulated.
+
+ @param obj the object reference to stringify
+ @return the string representing the object reference
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Object org.omg.CORBA.ORB.string_to_object(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts a string produced by the method <code>object_to_string</code>
+ back to a CORBA object reference.
+
+ @param str the string to be converted back to an object reference.  It must
+ be the result of converting an object reference to a string using the
+ method <code>object_to_string</code>.
+ @return the object reference
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.NVList org.omg.CORBA.ORB.create_list(int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allocates an <code>NVList</code> with (probably) enough
+ space for the specified number of <code>NamedValue</code> objects.
+ Note that the specified size is only a hint to help with
+ storage allocation and does not imply the maximum size of the list.
+
+ @param count  suggested number of <code>NamedValue</code> objects for
+               which to allocate space
+ @return the newly-created <code>NVList</code>
+
+ @see NVList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.NVList org.omg.CORBA.ORB.create_operation_list(Object oper)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an <code>NVList</code> initialized with argument
+ descriptions for the operation described in the given
+ <code>OperationDef</code> object.  This <code>OperationDef</code> object
+ is obtained from an Interface Repository. The arguments in the
+ returned <code>NVList</code> object are in the same order as in the
+ original IDL operation definition, which makes it possible for the list
+ to be used in dynamic invocation requests.
+
+ @param oper	the <code>OperationDef</code> object to use to create the list
+ @return		a newly-created <code>NVList</code> object containing
+ descriptions of the arguments to the method described in the given
+ <code>OperationDef</code> object
+
+ @see NVList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.NamedValue org.omg.CORBA.ORB.create_named_value(String s, Any any, int flags)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>NamedValue</code> object
+ using the given name, value, and argument mode flags.
+ <P>
+ A <code>NamedValue</code> object serves as (1) a parameter or return
+ value or (2) a context property.
+ It may be used by itself or
+ as an element in an <code>NVList</code> object.
+
+ @param s  the name of the <code>NamedValue</code> object
+ @param any  the <code>Any</code> value to be inserted into the
+             <code>NamedValue</code> object
+ @param flags  the argument mode flags for the <code>NamedValue</code>: one of
+ <code>ARG_IN.value</code>, <code>ARG_OUT.value</code>,
+ or <code>ARG_INOUT.value</code>.
+
+ @return	the newly-created <code>NamedValue</code> object
+ @see NamedValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.ExceptionList org.omg.CORBA.ORB.create_exception_list()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an empty <code>ExceptionList</code> object.
+
+ @return	the newly-created <code>ExceptionList</code> object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.ContextList org.omg.CORBA.ORB.create_context_list()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an empty <code>ContextList</code> object.
+
+ @return	the newly-created <code>ContextList</code> object
+ @see ContextList
+ @see Context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Context org.omg.CORBA.ORB.get_default_context()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the default <code>Context</code> object.
+
+ @return the default <code>Context</code> object
+ @see Context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Environment org.omg.CORBA.ORB.create_environment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an <code>Environment</code> object.
+
+ @return	the newly-created <code>Environment</code> object
+ @see Environment
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.portable.OutputStream org.omg.CORBA.ORB.create_output_stream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new <code>org.omg.CORBA.portable.OutputStream</code> into which
+ IDL method parameters can be marshalled during method invocation.
+ @return		the newly-created
+              <code>org.omg.CORBA.portable.OutputStream</code> object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.ORB.send_multiple_requests_oneway(org.omg.CORBA.Request[] req)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sends multiple dynamic (DII) requests asynchronously without expecting
+ any responses. Note that oneway invocations are not guaranteed to
+ reach the server.
+
+ @param req		an array of request objects
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.ORB.send_multiple_requests_deferred(org.omg.CORBA.Request[] req)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sends multiple dynamic (DII) requests asynchronously.
+
+ @param req		an array of <code>Request</code> objects
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean org.omg.CORBA.ORB.poll_next_response()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Finds out if any of the deferred (asynchronous) invocations have
+ a response yet.
+ @return <code>true</code> if there is a response available;
+         <code> false</code> otherwise
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Request org.omg.CORBA.ORB.get_next_response() throws org.omg.CORBA.WrongTransaction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the next <code>Request</code> instance for which a response
+ has been received.
+
+ @return		the next <code>Request</code> object ready with a response
+ @exception WrongTransaction if the method <code>get_next_response</code>
+ is called from a transaction scope different
+ from the one from which the original request was sent. See the
+ OMG Transaction Service specification for details.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.get_primitive_tc(TCKind tcKind)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves the <code>TypeCode</code> object that represents
+ the given primitive IDL type.
+
+ @param tcKind	the <code>TCKind</code> instance corresponding to the
+                  desired primitive type
+ @return		the requested <code>TypeCode</code> object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_struct_tc(String id, String name, org.omg.CORBA.StructMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>struct</code>.
+ The <code>TypeCode</code> object is initialized with the given id,
+ name, and members.
+
+ @param id	the repository id for the <code>struct</code>
+ @param name	the name of the <code>struct</code>
+ @param members	an array describing the members of the <code>struct</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>struct</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_union_tc(String id, String name, TypeCode discriminator_type, org.omg.CORBA.UnionMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>union</code>.
+ The <code>TypeCode</code> object is initialized with the given id,
+ name, discriminator type, and members.
+
+ @param id	the repository id of the <code>union</code>
+ @param name	the name of the <code>union</code>
+ @param discriminator_type	the type of the <code>union</code> discriminator
+ @param members	an array describing the members of the <code>union</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>union</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_enum_tc(String id, String name, java.lang.String[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>enum</code>.
+ The <code>TypeCode</code> object is initialized with the given id,
+ name, and members.
+
+ @param id	the repository id for the <code>enum</code>
+ @param name	the name for the <code>enum</code>
+ @param members	an array describing the members of the <code>enum</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>enum</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_alias_tc(String id, String name, TypeCode original_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>alias</code>
+ (<code>typedef</code>).
+ The <code>TypeCode</code> object is initialized with the given id,
+ name, and original type.
+
+ @param id	the repository id for the alias
+ @param name	the name for the alias
+ @param original_type
+ 			the <code>TypeCode</code> object describing the original type
+          for which this is an alias
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>alias</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_exception_tc(String id, String name, org.omg.CORBA.StructMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>exception</code>.
+ The <code>TypeCode</code> object is initialized with the given id,
+ name, and members.
+
+ @param id	the repository id for the <code>exception</code>
+ @param name	the name for the <code>exception</code>
+ @param members	an array describing the members of the <code>exception</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>exception</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_interface_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>interface</code>.
+ The <code>TypeCode</code> object is initialized with the given id
+ and name.
+
+ @param id	the repository id for the interface
+ @param name	the name for the interface
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>interface</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_string_tc(int bound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing a bounded IDL 
+ <code>string</code>.
+ The <code>TypeCode</code> object is initialized with the given bound,
+ which represents the maximum length of the string. Zero indicates
+ that the string described by this type code is unbounded.
+
+ @param bound	the bound for the <code>string</code>; cannot be negative
+ @return		a newly-created <code>TypeCode</code> object describing
+              a bounded IDL <code>string</code>
+ @exception BAD_PARAM if bound is a negative value
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_wstring_tc(int bound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing a bounded IDL
+ <code>wstring</code> (wide string).
+ The <code>TypeCode</code> object is initialized with the given bound,
+ which represents the maximum length of the wide string. Zero indicates
+ that the string described by this type code is unbounded.
+
+ @param bound	the bound for the <code>wstring</code>; cannot be negative
+ @return		a newly-created <code>TypeCode</code> object describing
+              a bounded IDL <code>wstring</code>
+ @exception BAD_PARAM if bound is a negative value
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_sequence_tc(int bound, TypeCode element_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>sequence</code>.
+ The <code>TypeCode</code> object is initialized with the given bound and
+ element type.
+
+ @param bound	the bound for the <code>sequence</code>, 0 if unbounded
+ @param element_type
+			the <code>TypeCode</code> object describing the elements
+          contained in the <code>sequence</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>sequence</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_recursive_sequence_tc(int bound, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing a
+ a recursive IDL <code>sequence</code>.
+ <P>
+ For the IDL <code>struct</code> Node in following code fragment,
+ the offset parameter for creating its sequence would be 1:
+ <PRE>
+    Struct Node {
+        long value;
+        Sequence &lt;Node&gt; subnodes;
+    };
+ </PRE>
+
+ @param bound	the bound for the sequence, 0 if unbounded
+ @param offset	the index to the enclosing <code>TypeCode</code> object
+                  that describes the elements of this sequence
+ @return		a newly-created <code>TypeCode</code> object describing
+                   a recursive sequence
+ @deprecated Use a combination of create_recursive_tc and create_sequence_tc instead
+ @see #create_recursive_tc(String) create_recursive_tc
+ @see #create_sequence_tc(int, TypeCode) create_sequence_tc
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_array_tc(int length, TypeCode element_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object representing an IDL <code>array</code>.
+ The <code>TypeCode</code> object is initialized with the given length and
+ element type.
+
+ @param length	the length of the <code>array</code>
+ @param element_type  a <code>TypeCode</code> object describing the type
+                      of element contained in the <code>array</code>
+ @return		a newly-created <code>TypeCode</code> object describing
+              an IDL <code>array</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_native_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a <code>TypeCode</code> object for an IDL native type.
+
+ @param id        the logical id for the native type.
+ @param name      the name of the native type.
+ @return          the requested TypeCode.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_abstract_interface_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a <code>TypeCode</code> object for an IDL abstract interface.
+
+ @param id        the logical id for the abstract interface type.
+ @param name      the name of the abstract interface type.
+ @return          the requested TypeCode.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_fixed_tc(short digits, short scale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a <code>TypeCode</code> object for an IDL fixed type.
+
+ @param digits    specifies the total number of decimal digits in the number
+                  and must be from 1 to 31 inclusive.
+ @param scale     specifies the position of the decimal point.
+ @return          the requested TypeCode.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_value_tc(String id, String name, short type_modifier, TypeCode concrete_base, org.omg.CORBA.ValueMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a <code>TypeCode</code> object for an IDL value type.
+ The concrete_base parameter is the TypeCode for the immediate
+ concrete valuetype base of the valuetype for which the TypeCode
+ is being created.
+ It may be null if the valuetype does not have a concrete base.
+
+ @param id                 the logical id for the value type.
+ @param name               the name of the value type.
+ @param type_modifier      one of the value type modifier constants:
+                           VM_NONE, VM_CUSTOM, VM_ABSTRACT or VM_TRUNCATABLE
+ @param concrete_base      a <code>TypeCode</code> object
+                           describing the concrete valuetype base
+ @param members            an array containing the members of the value type
+ @return                   the requested TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_recursive_tc(String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a recursive <code>TypeCode</code> object which
+ serves as a placeholder for a concrete TypeCode during the process of creating
+ TypeCodes which contain recursion. The id parameter specifies the repository id of
+ the type for which the recursive TypeCode is serving as a placeholder. Once the
+ recursive TypeCode has been properly embedded in the enclosing TypeCode which
+ corresponds to the specified repository id, it will function as a normal TypeCode.
+ Invoking operations on the recursive TypeCode before it has been embedded in the
+ enclosing TypeCode will result in a <code>BAD_TYPECODE</code> exception.
+ <P>
+ For example, the following IDL type declaration contains recursion:
+ <PRE>
+    Struct Node {
+        Sequence&lt;Node&gt; subnodes;
+    };
+ </PRE>
+ <P>
+ To create a TypeCode for struct Node, you would invoke the TypeCode creation
+ operations as shown below:
+ <PRE>
+ String nodeID = "IDL:Node:1.0";
+ TypeCode recursiveSeqTC = orb.create_sequence_tc(0, orb.create_recursive_tc(nodeID));
+ StructMember[] members = { new StructMember("subnodes", recursiveSeqTC, null) };
+ TypeCode structNodeTC = orb.create_struct_tc(nodeID, "Node", members);
+ </PRE>
+ <P>
+ Also note that the following is an illegal IDL type declaration:
+ <PRE>
+    Struct Node {
+        Node next;
+    };
+ </PRE>
+ <P>
+ Recursive types can only appear within sequences which can be empty.
+ That way marshaling problems, when transmitting the struct in an Any, are avoided.
+ <P>
+ @param id                 the logical id of the referenced type
+ @return                   the requested TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_value_box_tc(String id, String name, TypeCode boxed_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>TypeCode</code> object for an IDL value box.
+
+ @param id                 the logical id for the value type
+ @param name               the name of the value type
+ @param boxed_type         the TypeCode for the type
+ @return                   the requested TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Any org.omg.CORBA.ORB.create_any()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an IDL <code>Any</code> object initialized to
+ contain a <code>Typecode</code> object whose <code>kind</code> field
+ is set to <code>TCKind.tc_null</code>.
+
+ @return		a newly-created <code>Any</code> object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Current org.omg.CORBA.ORB.get_current()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves a <code>Current</code> object.
+ The <code>Current</code> interface is used to manage thread-specific
+ information for use by services such as transactions and security.
+
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+
+ @return		a newly-created <code>Current</code> object
+ @deprecated      use <code>resolve_initial_references</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.run()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This operation blocks the current thread until the ORB has
+ completed the shutdown process, initiated when some thread calls
+ <code>shutdown</code>. It may be used by multiple threads which
+ get all notified when the ORB shuts down.
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.shutdown(boolean wait_for_completion)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Instructs the ORB to shut down, which causes all
+ object adapters to shut down, in preparation for destruction.<br>
+ If the <code>wait_for_completion</code> parameter
+ is true, this operation blocks until all ORB processing (including
+ processing of currently executing requests, object deactivation,
+ and other object adapter operations) has completed.
+ If an application does this in a thread that is currently servicing
+ an invocation, the <code>BAD_INV_ORDER</code> system exception
+ will be thrown with the OMG minor code 3,
+ since blocking would result in a deadlock.<br>
+ If the <code>wait_for_completion</code> parameter is <code>FALSE</code>,
+ then shutdown may not have completed upon return.<p>
+ While the ORB is in the process of shutting down, the ORB operates as normal,
+ servicing incoming and outgoing requests until all requests have been completed.
+ Once an ORB has shutdown, only object reference management operations
+ may be invoked on the ORB or any object reference obtained from it.
+ An application may also invoke the <code>destroy</code> operation on the ORB itself.
+ Invoking any other operation will throw the <code>BAD_INV_ORDER</code>
+ system exception with the OMG minor code 4.<p>
+ The <code>ORB.run</code> method will return after
+ <code>shutdown</code> has been called.
+
+ @param wait_for_completion <code>true</code> if the call
+        should block until the shutdown is complete;
+        <code>false</code> if it should return immediately
+ @throws org.omg.CORBA.BAD_INV_ORDER if the current thread is servicing
+         an invocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.ORB.work_pending()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <code>true</code> if the ORB needs the main thread to
+ perform some work, and <code>false</code> if the ORB does not
+ need the main thread.
+
+ @return <code>true</code> if there is work pending, meaning that the ORB
+         needs the main thread to perform some work; <code>false</code>
+         if there is no work pending and thus the ORB does not need the
+         main thread
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.perform_work()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Performs an implementation-dependent unit of work if called
+ by the main thread. Otherwise it does nothing.
+ The methods <code>work_pending</code> and <code>perform_work</code>
+ can be used in
+ conjunction to implement a simple polling loop that multiplexes
+ the main thread among the ORB and other activities.
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.ORB.get_service_information(short service_type, ServiceInformationHolder service_info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Used to obtain information about CORBA facilities and services 
+ that are supported by this ORB. The service type for which 
+ information is being requested is passed in as the in 
+ parameter <tt>service_type</tt>, the values defined by
+ constants in the CORBA module. If service information is 
+ available for that type, that is returned in the out parameter
+ <tt>service_info</tt>, and the operation returns the
+ value <tt>true</tt>. If no information for the requested 
+ services type is available, the operation returns <tt>false</tt>
+  (i.e., the service is not supported by this ORB).
+ <P>
+ @param service_type a <code>short</code> indicating the
+        service type for which information is being requested
+ @param service_info a <code>ServiceInformationHolder</code> object
+        that will hold the <code>ServiceInformation</code> object
+        produced by this method
+ @return <code>true</code> if service information is available
+        for the <tt>service_type</tt>; 
+         <tt>false</tt> if no information for the
+         requested services type is available 
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynAny org.omg.CORBA.ORB.create_dyn_any(Any value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynAny</code> object from the given
+ <code>Any</code> object.
+ <P>
+ @param value the <code>Any</code> object from which to create a new
+        <code>DynAny</code> object
+ @return the new <code>DynAny</code> object created from the given
+         <code>Any</code> object
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynAny org.omg.CORBA.ORB.create_basic_dyn_any(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a basic <code>DynAny</code> object from the given 
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynAny</code> object
+ @return the new <code>DynAny</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynStruct org.omg.CORBA.ORB.create_dyn_struct(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynStruct</code> object from the given
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynStruct</code> object
+ @return the new <code>DynStruct</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynSequence org.omg.CORBA.ORB.create_dyn_sequence(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynSequence</code> object from the given
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynSequence</code> object
+ @return the new <code>DynSequence</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynArray org.omg.CORBA.ORB.create_dyn_array(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynArray</code> object from the given
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynArray</code> object
+ @return the new <code>DynArray</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynUnion org.omg.CORBA.ORB.create_dyn_union(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynUnion</code> object from the given
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynUnion</code> object
+ @return the new <code>DynUnion</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynEnum org.omg.CORBA.ORB.create_dyn_enum(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Creates a new <code>DynEnum</code> object from the given
+ <code>TypeCode</code> object.
+ <P>
+ @param type the <code>TypeCode</code> object from which to create a new
+        <code>DynEnum</code> object
+ @return the new <code>DynEnum</code> object created from the given
+         <code>TypeCode</code> object
+ @throws org.omg.CORBA.ORBPackage.InconsistentTypeCode if the given
+         <code>TypeCode</code> object is not consistent with the operation.
+ @see <a href="package-summary.html#unimpl"><code>CORBA</code> package
+      comments for unimplemented features</a>
+ @deprecated Use the new <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API instead
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Policy org.omg.CORBA.ORB.create_policy(int type, Any val) throws org.omg.CORBA.PolicyError
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Can be invoked to create new instances of policy objects 
+ of a specific type with specified initial state. If 
+ <tt>create_policy</tt> fails to instantiate a new Policy 
+ object due to its inability to interpret the requested type
+ and content of the policy, it raises the <tt>PolicyError</tt>
+ exception with the appropriate reason.
+ @param type the <tt>PolicyType</tt> of the policy object to 
+        be created
+ @param val the value that will be used to set the initial
+        state of the <tt>Policy</tt> object that is created
+ @return Reference to a newly created <tt>Policy</tt> object 
+        of type specified by the <tt>type</tt> parameter and 
+        initialized to a state specified by the <tt>val</tt>
+        parameter
+ @throws <tt>org.omg.CORBA.PolicyError</tt> when the requested
+        policy is not supported or a requested initial state 
+        for the policy is not supported.
+
+<!-- END DATA -->

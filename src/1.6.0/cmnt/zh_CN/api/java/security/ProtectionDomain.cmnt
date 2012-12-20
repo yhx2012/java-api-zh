@@ -1,0 +1,111 @@
+<!-- BEGIN KEY -->
+public class java.security.ProtectionDomain extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>
+此 ProtectionDomain 类封装域的特征，域中包装一个类集合，在代表给定的主体集合执行这些类的实例时会授予它们一个权限集合。
+ <p>
+在构造 ProtectionDomain 时可以对它绑定一个静态的权限集合；不管 Policy 是否有效，都会将这些权限授予域。但是，为了支持动态安全策略，也可以构造 ProtectionDomain，使得只要检查权限时就能通过当前 Policy 将其动态地映射到一个权限集合。
+ <p>
+ 
+@version 	1.45, 12/19/03
+@author Li Gong
+@author Roland Schemers
+@author Gary Ellison
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.ProtectionDomain(CodeSource codesource, PermissionCollection permissions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有给定 CodeSource 和 Permissions 的新 ProtectionDomain。如果 permissions 对象不为 null，那么将在传入的 Permissions 对象上调用 <code>setReadOnly()</code>。只授予此域那些指定的权限；不参考当前的 Policy。
+
+@param codesource 与此域关联的 codesource
+@param permissions 授予此域的权限
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.ProtectionDomain(CodeSource codesource, PermissionCollection permissions, ClassLoader classloader, java.security.Principal[] principals)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建由给定的 CodeSource、Permissions、ClassLoader 和 Principal 数组限定的新 ProtectionDomain。如果 permissions 对象不为 null，那么将在传入的 Permissions 对象上调用 <code>setReadOnly()</code>。授予此域的权限是动态的；它们包括传递给此构造方法的静态权限以及检查权限时当前 Policy 授予此域的任何权限。
+ <p>
+此构造方法通常由 {@link SecureClassLoader ClassLoaders} 和 {@link DomainCombiner DomainCombiners} 使用，它们委托 <code>Policy</code> 积极地关联授予此域的权限。此构造方法为 Policy provider 提供扩充 PermissionCollection 的机会以反映策略变化。
+ <p>
+
+@param codesource 与此域关联的 CodeSource
+@param permissions 授予此域的权限
+@param classloader 与此域关联的 ClassLoader
+@param principals 与此域关联的 Principals。复制数组的内容，以防随后进行修改。
+@see Policy#refresh
+@see Policy#getPermissions(ProtectionDomain)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.CodeSource java.security.ProtectionDomain.getCodeSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此域的 CodeSource。
+@return 此域的 CodeSource，它可以为 null。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.ClassLoader java.security.ProtectionDomain.getClassLoader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此域的 ClassLoader。
+@return 此域的 ClassLoader，它可以为 null。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Principal[] java.security.ProtectionDomain.getPrincipals()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此域的 principals 数组。
+@return 此域非 null 的 principals 数组。每次调用此方法都返回一个新的数组。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.PermissionCollection java.security.ProtectionDomain.getPermissions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回授予此域的静态权限。 
+ 
+@return 此域的静态权限集合，它可以为 null。
+@see Policy#refresh
+@see Policy#getPermissions(ProtectionDomain)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.ProtectionDomain.implies(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查看此 ProtectionDomain 是否暗含了 Permission 对象中表示的权限。 
+ <p>
+计算的权限集合依赖于该 ProtectionDomain 是用静态的权限集合构造的还是被绑定到动态映射的权限集合。
+ <p>
+如果 ProtectionDomain 被构造为{@link #ProtectionDomain(CodeSource, PermissionCollection) 静态绑定的} PermissionCollection，那么只会依据构造时提供的 PermissionCollection 来检查权限。
+ <p>
+但是，如果 ProtectionDomain 是用支持{@link #ProtectionDomain(CodeSource, PermissionCollection, ClassLoader, java.security.Principal[]) 动态绑定}权限的构造方法变体构造的,那么将会依据构造时提供的 PermissionCollection 和当前 Policy 绑定的组合来检查权限。
+ <p>
+
+@param permission 要检查的 Permission 对象。
+
+@return 如果 &quot;permission&quot; 暗含此 ProtectionDomain 中，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.ProtectionDomain.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 ProtectionDomain 转换成为 String。
+
+<!-- END DATA -->

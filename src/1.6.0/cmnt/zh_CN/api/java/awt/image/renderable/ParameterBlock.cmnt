@@ -1,0 +1,486 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.renderable.ParameterBlock extends java.lang.Object implements java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ParameterBlock</code> 封装有关 RenderableImageOp 所需的源和参数 (Object) 的所有信息，或者其他处理图像的类。
+
+<p> 尽管可以将任意对象放入源 Vector，但此类的用户可能会强加一些语义限制，如要求所有源都作为 RenderedImages 或 RenderableImage。<code>ParameterBlock</code> 本身只是一个容器，而且不对源或参数类型执行检查。
+
+<p> <code>ParameterBlock</code> 中的所有参数都是对象；可以使用便捷的 add 和 set 方法，这些方法带基本类型的参数并构建 Number（Integer 或 Float）的适当子类。相应的 get 方法执行向下强制转换并拥有基本类型的返回值；如果存储的值没有正确的类型，则会抛出异常。无法区分 "short s; add(s)" 和 "add(new Short(s))" 之间的结果。
+
+<p> 注意，get 和 set 方法对引用进行操作。因此，需要小心的是，在不适当的时候一定不要共享 <code>ParameterBlock</code> 之间的引用。例如，要创建一个与旧  <code>ParameterBlock</code>（除了添加的源之外）相等的新  <code>ParameterBlock</code>，有人可能会尝试编写以下程序：
+
+ <pre>
+ ParameterBlock addSource(ParameterBlock pb, RenderableImage im) {
+     ParameterBlock pb1 = new ParameterBlock(pb.getSources());
+     pb1.addSource(im);
+     return pb1;
+ }
+ </pre>
+
+<p> 这段代码具有替换原来 <code>ParameterBlock</code> 的负作用，因为 getSources 操作返回一个对其源 Vector 的引用。pb 和 pb1 同时共享其源 Vector，而且对其中之一的更改相对于两者来说都是可见的。
+
+<p> 编写 addSource 函数的正确方法是复制源 Vector：
+
+ <pre>
+ ParameterBlock addSource (ParameterBlock pb, RenderableImage im) {
+     ParameterBlock pb1 = new ParameterBlock(pb.getSources().clone());
+     pb1.addSource(im);
+     return pb1;
+ }
+ </pre>
+
+<p> 因此，定义了 <code>ParameterBlock</code> 的 clone 方法，以执行源和参数 Vectors 的副本。可以使用标准的浅表副本 shallowClone。
+
+<p> 定义了 addSource、setSource、add 和 set 方法，以在添加其参数后返回 'this'。这允许使用类似以下的语法：
+
+ <pre>
+ ParameterBlock pb = new ParameterBlock();
+ op = new RenderableImageOp("operation", pb.add(arg1).add(arg2));
+ </pre>
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector<java.lang.Object> java.awt.image.renderable.ParameterBlock.sources
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+源的 Vector，存储为任意 Objects。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector<java.lang.Object> java.awt.image.renderable.ParameterBlock.parameters
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个非源参数的 Vector，存储为任意 Object。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个 dummy 构造方法。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock(java.util.Vector<java.lang.Object> sources)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用源的给定 Vector 构造一个 <code>ParameterBlock</code>。
+@param sources 源映像的 <code>Vector</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock(java.util.Vector<java.lang.Object> sources, java.util.Vector<java.lang.Object> parameters)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用源的给定 Vector 和参数的 Vector 构造一个 <code>ParameterBlock</code>。
+@param sources 源映像的 <code>Vector</code>
+@param parameters 要在呈现操作中使用的参数的 <code>Vector</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.ParameterBlock.shallowClone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>ParameterBlock</code> 的一个浅表副本。按引用复制源和参数 Vectors，添加或更改将对两个版本都可见。
+
+@return <code>ParameterBlock</code> 的 Object 副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.ParameterBlock.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>ParameterBlock</code> 的一个副本。复制源和参数 Vector，但实际源和参数按引用复制。这允许对副本中源和参数的顺序和数量的更改在初始 <code>ParameterBlock</code> 中可见。对共享源或参数本身的更改仍将可见。
+
+@return <code>ParameterBlock</code> 的 Object 副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.addSource(Object source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个图像添加到源列表的末尾。将图像存储为对象，以便将来允许新的节点类型。
+
+@param source 将存储到源列表中的图像对象。
+@return 包含指定 <code>source</code> 的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.ParameterBlock.getSource(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为通用 Object 的源。调用者必须将其强制转换为一个适当的类型。
+
+@param index 要返回的源的索引。
+@return 表示位于 <code>sources</code> <code>Vector</code> 中指定索引处的源的 <code>Object</code>。
+@see #setSource(Object, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.setSource(Object source, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将源列表中的某个项替换为一个新源。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param source 指定的源图像
+@param index 指向 <code>sources</code> <code>Vector</code> 索引，在该处将插入指定的 <code>source</code>
+@return 包含位于指定 <code>index</code> 处的指定 <code>source</code> 的新 <code>ParameterBlock</code>。
+@see #getSource(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RenderedImage java.awt.image.renderable.ParameterBlock.getRenderedSource(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为 <code>RenderedImage</code> 的源。这是一种便捷方法。如果源不是 RenderedImage，则会抛出异常。
+
+@param index 要返回的源的索引
+@return 表示位于 <code>sources</code> <code>Vector</code> 中指定索引处的源图像的 <code>RenderedImage</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.RenderableImage java.awt.image.renderable.ParameterBlock.getRenderableSource(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为 RenderableImage 的源。这是一种便捷方法。如果源不是 RenderableImage，则会抛出异常。
+
+@param index 要返回的源的索引
+@return 表示位于此 <code>sources</code> <code>Vector</code> 中指定索引处的源图像的 <code>RenderableImage</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.renderable.ParameterBlock.getNumSources()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回源图像的数量。
+@return 返回此 <code>sources</code> <code>Vector</code> 中源图像的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector<java.lang.Object> java.awt.image.renderable.ParameterBlock.getSources()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回源的整个 Vector。
+@return <code>sources</code> <code>Vector</code>。
+@see #setSources(Vector)  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.renderable.ParameterBlock.setSources(java.util.Vector<java.lang.Object> sources)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将源的整个 Vector 设置为给定 Vector。
+@param sources 源图像的 <code>Vector</code>
+@see #getSources
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.renderable.ParameterBlock.removeSources()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除源图像的列表。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.renderable.ParameterBlock.getNumParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回参数的数量（不包括源图像）。
+@return 此 <code>parameters</code> <code>Vector</code> 中的参数数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector<java.lang.Object> java.awt.image.renderable.ParameterBlock.getParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回参数的整个 Vector。
+@return <code>parameters</code> <code>Vector</code>。
+@see #setParameters(Vector)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.renderable.ParameterBlock.setParameters(java.util.Vector<java.lang.Object> parameters)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将参数的整个 Vector 设置为给定 Vector。
+@param parameters 参数的指定 <code>Vector</code>
+@see #getParameters
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.renderable.ParameterBlock.removeParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除参数列表。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Object 添加到此参数列表。
+@param obj 要添加到此 <code>parameters</code> <code>Vector</code> 的 <code>Object</code>
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(byte b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Byte 添加到此参数列表。
+@param b 要添加到此 <code>parameters</code> <code>Vector</code> 的 Byte
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Character 添加到此参数列表。
+@param c 要添加到此 <code>parameters</code> <code>Vector</code> 的 char
+@return 包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(short s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Short 添加到此参数列表。
+@param s 要添加到此 <code>parameters</code> <code>Vector</code> 的 short
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Integer 添加到此参数列表。
+@param i 要添加到此 <code>parameters</code> <code>Vector</code> 的 int
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(long l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Long 添加到此参数列表。
+@param l 要添加到此 <code>parameters</code> <code>Vector</code> 的 long
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(float f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Float 添加到此参数列表。
+@param f 要添加到此 <code>parameters</code> <code>Vector</code> 的 float
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.add(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将一个 Double 添加到此参数列表。
+@param d 要添加到此 <code>parameters</code> <code>Vector</code> 的 double
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(Object obj, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替换此参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param obj 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(byte b, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Byte 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param b 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(char c, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Character 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param c 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(short s, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Short 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param s 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(int i, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Integer 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param i 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(long l, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Long 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param l 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(float f, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Float 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param f 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.ParameterBlock.set(double d, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Double 替换参数列表中的一个 Object。如果索引位于当前源列表之外，则该列表将根据需要使用 null 进行扩展。
+@param d 替换 <code>parameters</code> <code>Vector</code> 中指定索引处参数的参数
+@param index 要使用指定参数替换的参数索引
+@return 一个包含指定参数的新 <code>ParameterBlock</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.ParameterBlock.getObjectParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取作为对象的参数。
+@param index 要获取的参数的索引
+@return 表示 <code>parameters</code> <code>Vector</code> 中指定索引处参数的 <code>Object</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.awt.image.renderable.ParameterBlock.getByteParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 byte 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是一个 <code>Byte</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>byte</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Byte</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char java.awt.image.renderable.ParameterBlock.getCharParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 char 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是 <code>Character</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>char</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Character</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.awt.image.renderable.ParameterBlock.getShortParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 short 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是一个 <code>Short</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>short</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Short</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.renderable.ParameterBlock.getIntParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 int 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是一个 <code>Integer</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>int</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Integer</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.awt.image.renderable.ParameterBlock.getLongParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 long 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是 <code>Long</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>long</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Long</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.renderable.ParameterBlock.getFloatParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 float 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是一个 <code>Float</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>float</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Float</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.image.renderable.ParameterBlock.getDoubleParameter(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 double 返回参数的便捷方法。如果该参数为 <code>null</code> 或者不是一个 <code>Double</code>，则抛出异常。
+
+@param index 要返回的参数的索引。
+@return 指定索引处作为 <code>double</code> 值的参数。
+@throws ClassCastException 如果指定索引处的参数不是一个 <code>Double</code>
+@throws NullPointerException 如果指定索引处的参数为 <code>null</code>
+@throws ArrayIndexOutOfBoundsException 如果 <code>index</code> 为负或不小于此 <code>ParameterBlock</code> 对象的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] java.awt.image.renderable.ParameterBlock.getParamClasses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述该参数的 Class 对象的数组。
+@return <code>Class</code> 对象的数组。
+
+<!-- END DATA -->

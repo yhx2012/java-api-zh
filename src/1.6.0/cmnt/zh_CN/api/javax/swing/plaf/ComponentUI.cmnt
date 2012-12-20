@@ -1,0 +1,204 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.plaf.ComponentUI extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 Swing 可插入外观架构中所有 UI 委托对象的基本类。Swing 组件的 UI 委托对象负责实现依赖于外观的那些组件的某些方面。为了委托那些可能随所安装的外观而改变的操作（绘制、布局计算等等），<code>JComponent</code> 类要调用来自此类的方法。<b>客户端程序不应在此类上直接调用这些方法。</b>
+
+@see javax.swing.JComponent
+@see javax.swing.UIManager 
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ComponentUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单独的构造方法。（由子类构造方法调用，通常是隐式的）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.ComponentUI.installUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+配置指定组件，使其适合外观。当 <code>ComponentUI</code> 实例将作为 UI 委托安装在指定组件上时，可调用此方法。此方法应该为外观完整地配置组件，包括以下方面：
+ <ol>
+<li>在组件上安装用于颜色、字体、边框、图标、不透明性等方面的所有默认属性值。只要有可能，就<i>不</i> 应该重写由客户端程序初始化的属性值。
+<li>如有必要，可在组件上安装一个 <code>LayoutManager</code>。
+<li>将所需的所有子组件创建/添加到组件中。
+<li>在组件上创建/安装事件侦听器。
+<li>为了检测和适当响应组件属性更改，可在组件上创建/安装一个 <code>PropertyChangeListener</code>。
+<li>在组件上安装键盘 UI（助记符、遍历等等）。
+<li>初始化任何适当的实例数据。
+ </ol>
+@param c 将安装此 UI 委托的组件
+
+@see #uninstallUI
+@see javax.swing.JComponent#setUI
+@see javax.swing.JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.ComponentUI.uninstallUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 <code>installUI</code> 期间，在指定组件上反向执行的配置操作。当此 <code>UIComponent</code> 实例将作为 UI 委托从指定组件上移除时，可调用此方法。此方法应该取消在 <code>installUI</code> 中执行的配置操作，非常小心地使 <code>JComponent</code> 实例处于某种洁净状态（没有额外的侦听器、没有特定于外观的属性对象等等)。配置内容应该包括以下方面：
+ <ol>
+<li>从组件中移除所有 UI 设置的边框。
+<li>从组件上移除所有 UI 设置的布局管理器。
+<li>从组件中移除所有 UI 添加的子组件。
+<li>从组件中移除所有 UI 添加的事件/属性侦听器。
+<li>从组件中移除所有 UI 安装的键盘 UI。
+<li>使所有已分配的实例数据对象无效，从而允许进行 GC 操作。
+ </ol>
+@param c 从中移除此 UI 委托的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+
+@see #installUI
+@see javax.swing.JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.ComponentUI.paint(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制指定组件，使其适合外观。在将要绘制指定组件时，从 <code>ComponentUI.update</code> 方法中调用此方法。子类应该重写此方法并使用指定 <code>Graphics</code> 对象来呈现组件的内容。
+
+@param g 将在其中进行绘制的 <code>Graphics</code> 上下文
+@param c 将绘制的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+
+@see #update
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.ComponentUI.update(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此 UI 委托开始绘制指定的组件。在将要绘制指定组件时，由 <code>JComponent</code> 调用此方法。默认情况下，此方法将使用其背景色填充指定组件（如果其 <code>opaque</code> 属性为 <code>true</code>），然后立刻调用 <code>paint</code>。通常无需由子类重写此方法；所有呈现代码的外观都应位于 <code>paint</code> 方法中。
+
+@param g 将在其中进行绘制的 <code>Graphics</code> 上下文
+@param c 将绘制的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+ 
+@see #paint
+@see javax.swing.JComponent#paintComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.ComponentUI.getPreferredSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的适合外观的首选大小。如果返回 <code>null</code>，则首选大小将由组件的布局管理器计算（对于安装了特定布局管理器的组件而言，这是首选方法）。此方法的默认实现返回 <code>null</code>。
+
+@param c 将查询其首选大小的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+
+@see javax.swing.JComponent#getPreferredSize
+@see java.awt.LayoutManager#preferredLayoutSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.ComponentUI.getMinimumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的适合外观的最小大小。如果返回 <code>null</code>，则最小大小将由组件的布局管理器计算（对于安装了特定布局管理器的组件而言，这是首选方法）。此方法的默认实现调用 <code>getPreferredSize</code> 并返回该值。
+
+@param c 将查询其最小大小的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+
+@return 一个 <code>Dimension</code> 对象或 <code>null</code>
+
+@see javax.swing.JComponent#getMinimumSize
+@see java.awt.LayoutManager#minimumLayoutSize
+@see #getPreferredSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.ComponentUI.getMaximumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的适合外观的最大大小。如果返回 <code>null</code>，则最大大小将由组件的布局管理器计算（对于安装了特定布局管理器的组件而言，这是首选方法）。此方法的默认实现调用 <code>getPreferredSize</code> 并返回该值。
+
+@param c 将查询其最大大小的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+@return 一个 <code>Dimension</code> 对象或 <code>null</code>
+
+@see javax.swing.JComponent#getMaximumSize
+@see java.awt.LayoutManager2#maximumLayoutSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.plaf.ComponentUI.contains(JComponent c, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定 <i>x,y</i> 位置包含在指定组件外观的已定义形状中，则返回 <code>true</code>。<code>x</code> 和 <code>y</code> 都是相对于指定组件的坐标系统定义的。尽管组件的 <code>bounds</code> 被限制为一个矩形，但为了进行命中检测，此方法提供了在这些边界内定义非矩形形状的办法。
+
+@param c 将在其中查询 <i>x,y</i> 的组件；此参数常被忽略，但如果 UI 对象是无状态的并由多个组件共享，则可以使用该参数
+@param x 点的 <i>x</i> 坐标
+@param y 点的 <i>y</i> 坐标
+
+@see javax.swing.JComponent#contains
+@see java.awt.Component#contains
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.plaf.ComponentUI javax.swing.plaf.ComponentUI.createUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回指定组件的一个 UI 委托实例。每个子类都必须提供自己的静态 <code>createUI</code> 方法，该方法返回 UI 委托子类的一个实例。如果 UI 委托子类是无状态的，则该方法可以返回一个由多个组件共享的实例。如果 UI 委托是有状态的，则该方法应该为每个组件返回一个新实例。此方法的默认实现抛出一个错误，因为它永远都不应该被调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.ComponentUI.getBaseline(JComponent c, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回基线。从组件的顶部测量基线。此方法主要供 <code>LayoutManager</code> 用来沿其基线对齐组件。小于 0 的返回值指示此组件不具有合理的基线以及 <code>LayoutManager</code> 不应在其基线上对齐此组件。
+<p>
+此方法返回 -1。具有有意义的基线的子类应该适当地进行重写。
+
+@param c 为其请求基线的 <code>JComponent</code>
+@param width 为其获取基线的宽度
+@param height 为其获取基线的高度
+@throws NullPointerException 如果 <code>c</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果宽度或高度 &lt; 0
+@return 基线；如果没有合理的基线，则返回 &lt; 0 的值
+@see javax.swing.JComponent#getBaseline(int,int)
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component.BaselineResizeBehavior javax.swing.plaf.ComponentUI.getBaselineResizeBehavior(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个枚举，指示组件的基线如何随大小的改变而发生更改。此方法主要供布局管理器和 GUI 生成器使用。
+<p>
+此方法返回 <code>BaselineResizeBehavior.OTHER</code>。支持基线的子类应该适当地进行重写。
+
+@param c 为其返回调整大小行为的 <code>JComponent</code>
+@return 一个枚举，指示基线如何随组件大小的改变而发生更改
+@throws NullPointerException 如果 <code>c</code> 为 <code>null</code>
+@see javax.swing.JComponent#getBaseline(int, int)
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.ComponentUI.getAccessibleChildrenCount(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对象中的可访问子对象数。如果此对象的所有子对象都实现 <code>Accessible</code>，那么此方法应返回此对象的子对象数。如果 UI 在可看作组件的屏幕上呈现一些区域，那么它们可能希望重写此方法，但实际组件并不用于呈现那些区域。
+
+注：从 v1.3 开始，建议开发人员调用 <code>Component.AccessibleAWTComponent.getAccessibleChildrenCount()</code> 替代此方法。
+
+@see #getAccessibleChild
+@return 该对象中可访问的子对象数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.Accessible javax.swing.plaf.ComponentUI.getAccessibleChild(JComponent c, int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对象的第 <code>i</code> 个 <code>Accessible</code> 子对象。如果 UI 在可看作组件的屏幕上呈现一些区域，那么它们可能需要重写此方法，但实际组件并不用于呈现那些区域。
+
+ <p>
+
+注：从 v1.3 开始，建议开发人员调用 <code>Component.AccessibleAWTComponent.getAccessibleChild()</code> 替代此方法。
+
+@see #getAccessibleChildrenCount
+@param i 子对象的从零开始的索引
+@return 对象的第 <code>i</code> 个 <code>Accessible</code> 子对象
+
+<!-- END DATA -->

@@ -1,0 +1,61 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.html.parser.DocumentParser extends javax.swing.text.html.parser.Parser
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+HTML 文档的解析器 (Parser)（实际上，您可以指定一个 DTD，但实际上仅应将此类与 swing 中的 html dtd 一起使用）。读取 HTML 的 InputStream，并调用 ParserCallback 类中的适当方法。这是 HTMLEditorKit 用于解析 HTML url 的默认解析器。
+<p>此类将通知回调所有有效的标记，以及被隐含但没有明确指定的标记。例如，html 字符串 (&lt;p&gt;blah) 只定义了一个 p 标记。该回调将看到下面的方法：
+ <ol><li><i>handleStartTag(html, ...)</i></li>
+     <li><i>handleStartTag(head, ...)</i></li>
+     <li><i>handleEndTag(head)</i></li>
+     <li><i>handleStartTag(body, ...)</i></li>
+     <li>handleStartTag(p, ...)</i></li>
+     <li>handleText(...)</li>
+     <li><i>handleEndTag(p)</i></li>
+     <li><i>handleEndTag(body)</i></li>
+     <li><i>handleEndTag(html)</i></li>
+ </ol>
+<i>斜体</i> 表示的项是隐含的，也就是说，它们未被明确指定为本来应该提供的正确的 html（尽管头不是必须的，但仍生成了头）。对于隐含的标记，AttributeSet 参数中键 <code>HTMLEditorKit.ParserCallback.IMPLIED</code> 的值为 <code>Boolean.TRUE</code>。
+<p>HTML.Attributes 定义 html 属性的一个类型安全的枚举。如果在 HTML.Attribute 中定义了一个标记的属性键，HTML.Attribute 将作为键，否则将使用一个 String 作为键。例如，&lt;p foo=bar class=neat&gt; 有两个属性，foo 在 HTML.Attribute 中未定义，而 class 在其中定义，因此 AttributeSet 将包含两个值，HTML.Attribute.CLASS 作为键的 String 值 &quot;neat&quot;，String &quot;foo&quot; 作为键的 String 值 &quot;bar&quot;。
+<p>位置参数将指示标记、注释或文本的开始。与数组类似，流中的第一个字符位置为 0。对于被隐含的标记来说，位置参数将指示下一个出现的标记的位置。在第一个示例中，隐含的开始正文和 html 标记将具有与 p 标记相同的位置，隐含的结束 p、html 和正文标记都将具有相同的位置。
+<p>由于 html 跳过空白，因此文本的位置将是第一个有效字符的位置，例如，在字符串 &quot;\n\n\nblah&quot; 中，文本 &quot;blah&quot; 位置为 3，换行将被跳过。
+ <p>
+对于没有值的属性，例如，在 html 字符串 <code>&lt;foo blah&gt;</code> 中，属性 <code>blah</code> 没有值，存在两个可以放入 AttributeSet 值中的可能值：
+ <ul>
+<li>如果 DTD 不包含该元素的定义，或者该定义没有一个显式值，则 AttributeSet 中的值将为 <code>HTML.NULL_ATTRIBUTE_VALUE</code>。
+<li>如果 DTD 包含一个显式值，如：<code>&lt;!ATTLIST OPTION selected (selected) #IMPLIED&gt;</code> 将使用 dtd（在此情形中已选中）中的这一值。
+ </ul>
+ <p>
+在解析流之后，将通知回调最可能的行字符串结束符。行字符串的结束符将是 \n、\r 或 \r\n 之一，它在解析流中出现得最多。
+
+@version 	1.28 12/19/03
+@author      Sunita Mani
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.DocumentParser.handleStartTag(TagElement tag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理开始标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.DocumentParser.handleEmptyTag(TagElement tag) throws javax.swing.text.ChangedCharSetException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理空标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.DocumentParser.handleEndTag(TagElement tag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理结束标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.DocumentParser.handleText(char[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理文本。
+
+<!-- END DATA -->

@@ -1,0 +1,739 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JSlider extends javax.swing.JComponent implements javax.swing.SwingConstants, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个让用户以图形方式在有界区间内通过移动滑块来选择值的组件。
+ <p>
+滑块可以显示主刻度标记以及主刻度之间的次刻度标记。刻度标记之间的值的个数由 <code>setMajorTickSpacing</code> 和 <code>setMinorTickSpacing</code> 来控制。刻度标记的绘制由 {@code setPaintTicks} 控制。
+ <p>
+ 滑块也可以在固定时间间隔（或在任意位置）沿滑块刻度打印文本标签。标签的绘制由 {@code setLabelTable} 和 {@code setPaintLabels} 控制。
+ <p>
+有关更多信息和示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/slider.html">How to Use Sliders</a> 一节。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute: isContainer false description: 支持在某个范围中选择一个整数值的组件。
+ 
+@version 1.105 05/12/04
+@author David Kloba
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.BoundedRangeModel javax.swing.JSlider.sliderModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理滑块的数字最大值、最小值和当前位置值的数据模型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JSlider.majorTickSpacing
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+主刻度标记（分解次刻度标记的较大标记）之间的值的个数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JSlider.minorTickSpacing
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+次刻度标记（出现在主刻度标记之间的较小标记）之间的值的个数。
+@see #setMinorTickSpacing
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JSlider.snapToTicks
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，滑块（及其所表示的值）解析为最靠近用户放置滑块处的刻度标记的值。默认情况下为 false。
+@see #setSnapToTicks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JSlider.orientation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滑块方向是水平还是垂直的。默认情况下是水平的。
+
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JSlider.changeListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+changeListener（无前缀）是添加到滑块模型的侦听器。此侦听器被初始化为从 {@code createChangeListener} 返回的 {@code ChangeListener}，默认情况下，{@code ChangeListener} 仅将事件转发给直接添加到该滑块的 {@code ChangeListener}（如果有）。
+ 
+@see #addChangeListener
+@see #createChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.event.ChangeEvent javax.swing.JSlider.changeEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个滑块实例仅需要一个 <code>ChangeEvent</code>，因为该事件唯一（只读）的状态是源属性。这里生成的事件源总是 &quot;this&quot;。该事件是在第一次触发某个事件通知时以延迟方式创建的。
+ 
+@see #fireStateChanged
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.JSlider.snapToValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果返回 true，滑块（及其所表示的值）解析为最靠近用户放置滑块处的滑块值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Dictionary javax.swing.JSlider.labelTable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+哪些标签在哪些值处进行绘制的 {@code Dictionary} 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个范围在 0 到 100 之间并且初始值为 50 的水平滑块。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider(int orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的方向创建一个滑块，范围在 {@code 0} 到 {@code 100} 之间并且初始值为 {@code 50}。方向可以是 <code>SwingConstants.VERTICAL</code> 或 <code>SwingConstants.HORIZONTAL</code>。
+
+ @param  orientation  滑块的方向
+ @throws IllegalArgumentException 如果方向不是 {@code VERTICAL}、{@code HORIZONTAL} 之一
+ @see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider(int min, int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的最小值和最大值创建一个水平滑块，初始值等于最小值加上最大值的平均值。
+ <p>
+保存滑块数据的 <code>BoundedRangeModel</code> 可处理由于在滑块上错误地设置了最小值和最大值而引起的任何问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+
+ @param min  滑块的最小值
+ @param max  滑块的最大值
+
+ @see BoundedRangeModel
+ @see #setMinimum
+ @see #setMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider(int min, int max, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的最小值、最大值和初始值创建一个水平滑块。
+ <p>
+保存滑块数据的 <code>BoundedRangeModel</code> 可处理由于在滑块上错误地设置了最小值、初始值和最大值而引起的任何问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+
+ @param min   滑块的最小值
+ @param max   滑块的最大值
+ @param value  滑块的初始值
+
+ @see BoundedRangeModel
+ @see #setMinimum
+ @see #setMaximum
+ @see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider(int orientation, int min, int max, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的方向和指定的最小值、最大值以及初始值创建一个滑块。方向可以是 <code>SwingConstants.VERTICAL</code> 或 
+ <code>SwingConstants.HORIZONTAL</code>。
+ <p>
+保存滑块数据的 <code>BoundedRangeModel</code> 可处理由于在滑块上错误地设置了最小值、初始值和最大值而引起的任何问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ 
+ @param orientation  滑块的方向
+ @param min   滑块的最小值
+ @param max   滑块的最大值
+ @param value  滑块的初始值
+
+ @throws IllegalArgumentException 如果方向不是 {@code VERTICAL}、{@code HORIZONTAL} 之一
+
+ @see BoundedRangeModel
+ @see #setOrientation
+ @see #setMinimum
+ @see #setMaximum
+ @see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSlider(BoundedRangeModel brm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 BoundedRangeModel 创建一个水平滑块。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.SliderUI javax.swing.JSlider.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取实现此组件 L&F 的 UI 对象。
+
+@return 实现 Slider L&F 的 SliderUI 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setUI(SliderUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置实现此组件 L&F 的 UI 对象。
+
+@param ui SliderUI L&F 对象
+@see UIDefaults#getUI
+@beaninfo bound: true hidden: true attribute: visualUpdate true description: 实现此滑块的 LookAndFeel 的 UI 对象。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据当前外观将 UI 属性重设为某个值。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JSlider.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的 L&F 的类名。
+
+@return &quot;SliderUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JSlider.createChangeListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+想要以不同方式处理模型的 {@code ChangeEvent} 的子类可以重写此方法，以返回自定义 <code>ChangeListener</code> 实现的实例。默认 {@code ChangeListener} 调用 {@code fireStateChanged} 方法将 {@code ChangeEvent} 转发给已直接添加到滑块的 {@code ChangeListener}。
+ @see #changeListener
+ @see #fireStateChanged
+ @see javax.swing.event.ChangeListener
+ @see javax.swing.BoundedRangeModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 ChangeListener 添加到滑块。
+
+@param l 要添加的 ChangeListener
+@see #fireStateChanged
+@see #removeChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从滑块中移除一个 ChangeListener。
+
+@param l 要移除的 ChangeListener
+@see #fireStateChanged
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.JSlider.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个通过 addChangeListener() 方法添加此 JSlider 的所有 <code>ChangeListener</code> 的数组。
+
+@return 所有被添加的 <code>ChangeListener</code>；如果没有添加任何侦听器，则返回空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JSlider.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个其源为此 {@code JSlider} 的 {@code ChangeEvent} 发送到所有需要 {@code ChangeEvent} 的已注册 {@code ChangeListener}。每次从模型中收到 {@code ChangeEvent} 时都要调用此方法。
+ <p>
+必要时创建事件实例，并存储在 {@code changeEvent} 中。
+ 
+@see #addChangeListener
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.BoundedRangeModel javax.swing.JSlider.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回处理滑块三个基本属性（minimum、maximum、value）的 {@code BoundedRangeModel}。 
+ 
+ @return 此组件的数据模型
+ @see #setModel
+ @see    BoundedRangeModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setModel(BoundedRangeModel newModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置处理滑块三个基本属性（minimum、maximum、value）的 {@code BoundedRangeModel}。 
+<p>
+试图将 {@code null} 模型传递给此方法将导致不确定的行为，很有可能是异常。
+ 
+ @param  newModel 要使用的新的{@code 非 null} <code>BoundedRangeModel</code> 
+
+ @see #getModel
+ @see    BoundedRangeModel
+ @beaninfo
+       bound: true
+ description: The sliders BoundedRangeModel.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 {@code BoundedRangeModel} 返回滑块的当前值。 
+
+ @return  滑块的当前值
+ @see     #setValue
+ @see     BoundedRangeModel#getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setValue(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将滑块的当前值设置为 {@code n}。此方法将新值转发给模型。 
+ <p>
+ 数据模型（{@code BoundedRangeModel} 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+ 如果新值不同于以前的值，则通知所有的更改侦听器。
+
+ @param   n       新值
+ @see     #getValue
+ @see     #addChangeListener
+ @see     BoundedRangeModel#setValue
+ @beaninfo
+   preferred: true
+ description: The sliders current value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getMinimum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>BoundedRangeModel</code> 返回滑块所支持的最小值。 
+
+@return 模型最小属性的值
+@see #setMinimum
+@see     BoundedRangeModel#getMinimum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setMinimum(int minimum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将滑块的最小值设置为 {@code minimum}。此方法将新的最小值转发给模型。 
+ <p>
+ 数据模型（{@code BoundedRangeModel} 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+ 如果新的最小值不同于以前的最小值，则通知所有的更改侦听器。
+
+ @param  n       新的最小值
+ @see #getMinimum
+ @see    #addChangeListener
+ @see BoundedRangeModel#setMinimum
+ @beaninfo
+       bound: true
+   preferred: true
+ description: 滑块最小值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getMaximum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>BoundedRangeModel</code> 返回滑块所支持的最大值。
+
+@return 模型最大属性的值
+@see #setMaximum
+@see     BoundedRangeModel#getMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setMaximum(int maximum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将滑块的最大值设置为 {@code maximum}。此方法将新的最大值转发给模型。 
+ <p>
+ 数据模型（{@code BoundedRangeModel} 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+ 如果新的最大值不同于以前的最大值，则通知所有的更改侦听器。 
+
+ @param  n       新的最大值
+ @see #getMaximum
+ @see    #addChangeListener
+ @see BoundedRangeModel#setMaximum
+ @beaninfo
+       bound: true
+   preferred: true
+ description: 滑块最大值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getValueIsAdjusting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从模型返回 {@code valueIsAdjusting} 属性。有关如何使用此方法的详细信息，请参阅 {@code setValueIsAdjusting} 文档。
+ 
+ @return 模型的 {@code valueIsAdjusting} 属性的值
+ @see #setValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setValueIsAdjusting(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型的 {@code valueIsAdjusting} 属性。滑块的外观实现应该在开始拖动滑块时将此属性设置为 {@code true}，并在拖动结束时设为 {@code false}。当 {@code valueIsAdjusting} 为 {@code true} 时，滑块模型不会产生 {@code ChangeEvent}。
+ 
+@param b {@code valueIsAdjusting} 属性的新值
+@see #getValueIsAdjusting
+@see BoundedRangeModel#setValueIsAdjusting
+@beaninfo expert: true description:如果正在拖动滑块柄，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getExtent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 从 <code>BoundedRangeModel</code> 返回“范围”。此范围表示滑块所“覆盖”的范围。
+
+@return 表示范围的一个整数
+@see #setExtent
+@see BoundedRangeModel#getExtent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setExtent(int extent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置滑块所&ldquo;覆盖&rdquo;的范围的大小。如果用户单击滑块的任何一侧，大多数的外观实现将根据此数量而更改值。此方法仅将新的范围值转发给模型。
+ <p>
+数据模型（{@code BoundedRangeModel} 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+如果新的范围值不同于以前的范围值，则通知所有的更改侦听器。 
+ 
+ @param extent 新的范围值
+ @see   #getExtent
+ @see   BoundedRangeModel#setExtent
+ @beaninfo
+      expert: true
+ description: 滑块所覆盖范围的大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此滑块的垂直或者水平方向。
+@return {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setOrientation(int orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将滑块的方向设置为 {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}。
+ 
+@param orientation {@code HORIZONTAL} 或 {@code VERTICAL}
+@throws IllegalArgumentException 如果方向不是 {@code VERTICAL}、{@code HORIZONTAL} 之一
+@see #getOrientation
+@beaninfo preferred: true bound: true attribute: visualUpdate true description: 设置滚动条方向为 VERTICAL 或者 HORIZONTAL。enum: VERTICAL JSlider.VERTICAL HORIZONTAL JSlider.HORIZONTAL
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setFont(Font font)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Dictionary javax.swing.JSlider.getLabelTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回哪些标签在哪些值处绘制的字典。
+
+@return 包含标签及其绘制位置的 <code>Dictionary</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setLabelTable(java.util.Dictionary labels)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指定将在给定值处绘制哪个标签。键-值对有如下格式：<code>{ Integer value, java.swing.JComponent label }</code>。
+ <p>
+生成值标签标准表的一个便捷方式是通过使用 {@code createStandardLabels} 方法。
+ <p>
+只要已经设置了该标签，此方法就调用 {@link #updateLabelUIs}。注意，只有 {@code paintLabels} 属性为 {@code true} 时才绘制该标签。
+
+ @param labels 标签的新 {@code Dictionary}，为 {@code null} 表示移除所有标签
+ @see #createStandardLabels(int)
+ @see #getLabelTable
+ @see #setPaintLabels
+ @beaninfo
+       hidden: true
+        bound: true
+    attribute: visualUpdate true
+  description: 指定针对任何给定值将要绘制哪些标签。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JSlider.updateLabelUIs()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 通过在每个标签上调用 {@code updateUI} 更新标签表中标签的 UI。根据当前外观更新 UI。标签也将设置为其首选大小。 
+
+ @see #setLabelTable
+ @see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable javax.swing.JSlider.createStandardLabels(int increment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个数字文本标签的 {@code Hashtable}，从滑块最小值处开始并使用指定的增量。例如，如果调用 <code>createStandardLabels( 10 )</code> 并且滑块的最小值为 0，那么创建的标签值将为 0、10、20、30，依此类推。
+ <p>
+对于要在滑块上绘制的标签，返回的 {@code Hashtable} 必须传递到 {@code setLabelTable} 并且 {@code setPaintLabels} 必须被设置为 {@code true}。
+ <p>
+有关返回的 {@code Hashtable} 组成的更多信息，请参阅 {@code setLabelTable} 文档。
+
+ @param  increment  生成的哈希表中标签之间的距离
+ @return 标签的新 {@code Hashtable} 
+ @see #setLabelTable
+ @see #setPaintLabels
+ @throws IllegalArgumentException 如果 {@code increment} 小于等于 0 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable javax.swing.JSlider.createStandardLabels(int increment, int start)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个数字文本标签的 {@code Hashtable}，从指定起始点处开始并使用指定的增量。例如，如果调用 <code>createStandardLabels( 10, 2 )</code>，那么创建的标签值将为 2、12、22、32，依此类推。
+ <p>
+对于要在滑块上绘制的标签，返回的 {@code Hashtable} 必须传递到 {@code setLabelTable} 并且 {@code setPaintLabels} 必须设置为 {@code true}。
+ <p>
+有关返回的 {@code Hashtable} 组成的更多信息，请参阅 {@code setLabelTable} 文档。
+
+ @param  increment  生成的哈希表中标签之间的距离
+ @param  start      标签的开始值
+ @return 标签的新 {@code Hashtable} 
+ @see #setLabelTable
+ @see #setPaintLabels
+ @exception IllegalArgumentException 如果 {@code start} 超出范围，或者 {@code increment} 小于等于 0 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getInverted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果滑块显示的值范围反转，则返回 true。
+
+@return 如果滑块值相对其正常顺序是反转的，则返回 true
+@see #setInverted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setInverted(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定为 true，则反转滑块显示的值范围，指定为 false 则将值范围置为正常顺序。此顺序取决于滑块的 <code>ComponentOrientation</code> 属性。<code>ComponentOrientation</code> 值为 <code>LEFT_TO_RIGHT</code> 的正常（非反转）水平滑块最大值位于右边。<code>ComponentOrientation</code> 值为 <code>RIGHT_TO_LEFT</code> 的正常水平滑块最大值位于左边。正常的垂直滑块其最大值位于顶部。当滑块颠倒时，这些标签也反转。
+ <p>
+默认情况下，此属性的值为 {@code false}。
+
+@param b 为 true 时从滑块正常顺序反转滑块值
+@beaninfo bound: true attribute: visualUpdate true description: 如果为 true，则从滑块正常顺序反转值
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getMajorTickSpacing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回主刻度标记的间隔。返回的数字表示在每个主刻度标记之间以值衡量的距离。如果您有一个范围从 0 到 50 的滑块并且主刻度标记间隔为 10，则您会发现主刻度标记在如下值旁边：0、10、20、30、40、50。
+
+@return 主刻度标记之间的值的个数
+@see #setMajorTickSpacing
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setMajorTickSpacing(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法设置主刻度标记的间隔。传入的数字表示在每个主刻度标记之间以值衡量的距离。如果您有一个范围从 0 到 50 的滑块并且主刻度标记间隔为 10，则您会发现主刻度标记在如下值旁边：0&#x3001;10&#x3001;20&#x3001;30&#x3001;40&#x3001;50。
+ <p>
+要绘制主刻度，{@code setPaintTicks} 必须设置为 {@code true}。
+ <p>
+此方法也将为您设置一个标签表。如果还没有标签表，并且主刻度间隔为 {@code > 0}，并且 {@code getPaintLabels} 返回 {@code true}，则会生成一个在主刻度标记处带有标签的标准标签表（通过调用 {@code createStandardLabels}）。对于上述示例，将获取文本标签："0"、"10"、"20"、"30"、"40"、"50"。然后通过调用 {@code setLabelTable} 在滑块上设置标签表。
+
+ @param  n  {@code majorTickSpacing} 属性的新值
+ @see #getMajorTickSpacing
+ @see #setPaintTicks
+ @see #setLabelTable
+ @see #createStandardLabels(int)
+ @beaninfo
+        bound: true
+    attribute: visualUpdate true
+  description: 设置在主刻度标记之间值的个数。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSlider.getMinorTickSpacing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回次刻度标记的间隔。返回的数字表示在每个次刻度标记之间以值衡量的距离。如果您有一个范围从 0 到 50 的滑块并且次刻度标记间隔为 10，则您会发现次刻度标记在如下值旁边：0&#x3001;10&#x3001;20&#x3001;30&#x3001;40&#x3001;50&#x3002;
+
+@return 次刻度标记之间的值的个数
+@see #getMinorTickSpacing
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setMinorTickSpacing(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法设置次刻度标记的间隔。传入的数字表示在每个次刻度标记之间以值衡量的距离。如果您有一个范围从 0 到 50 的滑块并且次刻度标记间隔为 10，则您会发现次刻度标记在如下值旁边：0&#x3001;10&#x3001;20&#x3001;30&#x3001;40&#x3001;50&#x3002;
+ <p>
+要绘制次刻度，{@code setPaintTicks} 必须设置为 {@code true}。
+
+ @param  n  {@code minorTickSpacing} 属性的新值
+ @see #getMinorTickSpacing
+ @see #setPaintTicks
+ @beaninfo bound: true attribute: visualUpdate true description: 设置在次刻度标记之间值的个数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getSnapToTicks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果滑块（及其所表示的值）解析为最靠近用户放置滑块处的刻度标记的值，则返回为 true。
+
+@return 如果值对齐最近的刻度标记，则返回 true；否则返回 false
+@see #setSnapToTicks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setSnapToTicks(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定为 true，则滑块（及其所表示的值）解析为最靠近用户放置滑块处的刻度标记的值。默认情况下，此属性为 {@code false}。
+
+@param b 为 true 则对齐滑块到最近的刻度标记
+@see #getSnapToTicks
+@beaninfo bound: true description: 如果为 true，则对齐滑块到最近的刻度标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getPaintTicks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知是否绘制刻度标记。
+@return 如果绘制刻度标记，则返回 true；否则返回 false
+@see #setPaintTicks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setPaintTicks(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否在滑块上绘制刻度标记。默认情况下，此属性为 {@code false}。
+
+@param  b  是否应该绘制标记刻度
+@see #getPaintTicks
+@beaninfo bound: true attribute: visualUpdate true description: 如果为 true，则在滑块上绘制刻度标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getPaintTrack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知是否绘制滑道（滑块滑动的区域）。
+@return 如果绘制滑道，则返回 true；否则返回 false
+@see #setPaintTrack
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setPaintTrack(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否在滑块上绘制滑道。默认情况下，此属性为 {@code true}。
+
+@param  b  是否绘制滑道
+@see #getPaintTrack
+@beaninfo bound: true attribute: visualUpdate true description: 如果为 true，则在滑块上绘制滑道。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JSlider.getPaintLabels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知是否绘制标签。
+@return 如果绘制标签，则返回 true；否则返回 false
+@see #setPaintLabels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSlider.setPaintLabels(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否在滑块上绘制标签。
+ <p>
+此方法也将为您设置一个标签表。如果还没有标签表，并且主刻度间隔为 {@code > 0}，则会生成一个在主刻度标记处带有标签的标准标签表（通过调用 {@code createStandardLabels}）。然后通过调用 {@code setLabelTable} 在滑块上设置标签表。
+ <p>
+默认情况下，此属性为 {@code false}。
+
+ @param  b  是否绘制标签
+ @see #getPaintLabels
+ @see #getLabelTable
+ @see #createStandardLabels(int)
+ @beaninfo bound: true attribute: visualUpdate true description: 如果为 true，则在滑块上绘制刻度标签。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JSlider.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JSlider 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回字符串可以为空，但不可以为 <code>null</code>。
+ 
+@return  此 JSlider 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JSlider.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JSlider 关联的 AccessibleContext。对于滑块，AccessibleContext 采取 AccessibleJSlider 的形式。必要时创建新的 AccessibleJSlider 实例。
+
+@return 一个 AccessibleJSlider，它充当此 JSlider 的 AccessibleContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JSlider.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+关于 Swing 中序列化的更多信息，请参阅 JComponent 中 readObject() 和 writeObject()。
+
+<!-- END DATA -->

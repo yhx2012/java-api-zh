@@ -1,0 +1,952 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JTabbedPane extends javax.swing.JComponent implements java.io.Serializable, javax.accessibility.Accessible, javax.swing.SwingConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个组件，它允许用户通过单击具有给定标题和/或图标的选项卡，在一组组件之间进行切换。有关使用选项卡窗格的例子和信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/tabbedpane.html">How to Use Tabbed Panes</a> 一节。
+ <p>
+通过使用 <code>addTab</code> 和 <code>insertTab</code> 方法将选项卡/组件添加到 <code>TabbedPane</code> 对象中。选项卡通过对应于添加位置的索引来表示，其中第一个选项卡的索引为 0，最后一个选项卡的索引为选项卡数减 1。
+ <p>
+<code>TabbedPane</code> 使用 <code>SingleSelectionModel</code> 来表示选项卡索引集和当前所选择的索引。如果选项卡数大于 0，则总会有一个被选定的索引，此索引默认被初始化为第一个选项卡。如果选项卡数为 0，则所选择的索引为 -1。
+ <p>
+制表符标题可由 <code>Component</code> 呈现。例如，以下代码将产生类似的结果：
+ <pre>
+ // In this case the look and feel renders the title for the tab.
+ tabbedPane.addTab("Tab", myComponent);
+ // In this case the custom component is responsible for rendering the
+ // title of the tab.
+ tabbedPane.addTab(null, myComponent);
+ tabbedPane.setTabComponentAt(0, new JLabel("Tab"));
+ </pre>
+当想要一个更复杂的用户交互（需要制表符上的自定义组件）时，通常使用后者。例如，可提供一个显示动画的自定义组件或者具有关闭制表符的小部件的组件。
+ <p>
+如果为制表符指定一个组件，则 <code>JTabbedPane</code> 将不会呈现为该制表符指定的任何文本或图标。
+ <p> 
+ <strong>注：</strong>
+不要在制表符组件上直接使用 <code>setVisible</code> 以使其可见，使用 <code>setSelectedComponent</code> 或 <code>setSelectedIndex</code> 方法来替代。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute:isContainer true 描述：一个组件，它提供了一种选项卡文件夹表示法，用于显示一组组件中的一个组件。
+
+@version 1.140 04/02/04
+@author Dave Moore
+@author Philip Milne
+@author Amy Fowler
+
+@see SingleSelectionModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JTabbedPane.WRAP_TAB_LAYOUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当在一次运行中不能放入所有的选项卡时，在多次运行中包装选项卡的选项卡布局策略。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JTabbedPane.SCROLL_TAB_LAYOUT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当在一次运行中不能放入所有的选项卡时，用于提供可用选项卡子集的选项卡布局策略。如果在一次运行中不能放入所有的选项卡，则外观（look and feel）将提供一种导航到隐藏的选项卡的方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JTabbedPane.tabPlacement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+选项卡的放置位置。
+@see #setTabPlacement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SingleSelectionModel javax.swing.JTabbedPane.model
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的选择模型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JTabbedPane.changeListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>changeListener</code> 是添加到模型中的侦听器。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.event.ChangeEvent javax.swing.JTabbedPane.changeEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于事件仅有的（只读）状态是源属性，因此每个 <code>TabPane</code> 实例只需要一个 <code>ChangeEvent</code>。此处生成的事件源总是 &quot;this&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTabbedPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有默认的 <code>JTabbedPane.TOP</code> 选项卡布局的空 <code>TabbedPane</code>。
+@see #addTab
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTabbedPane(int tabPlacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空的 <code>TabbedPane</code>，使其具有以下指定选项卡布局中的一种：<code>JTabbedPane.TOP</code>、<code>JTabbedPane.BOTTOM</code>、<code>JTabbedPane.LEFT</code> 或 <code>JTabbedPane.RIGHT</code>。
+
+@param tabPlacement 关于内容的选项卡布局
+@see #addTab
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTabbedPane(int tabPlacement, int tabLayoutPolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空的 <code>TabbedPane</code>，使其具有指定的选项卡布局和选项卡布局策略。布局可以是以下几种之一：<code>JTabbedPane.TOP</code>、<code>JTabbedPane.BOTTOM</code>、<code>JTabbedPane.LEFT</code> 或 <code>JTabbedPane.RIGHT</code>。布局策略可以是以下两种之一：<code>JTabbedPane.WRAP_TAB_LAYOUT</code> 或 <code>JTabbedPane.SCROLL_TAB_LAYOUT</code>。
+
+@param tabPlacement 关于内容的选项卡布局
+@param tabLayoutPolicy 当在一次运行中不能放入所有的选项卡时，放置选项卡的策略
+@exception IllegalArgumentException 如果选项卡布局或选项卡布局策略不是以上受支持的值中的一个
+@see #addTab
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.TabbedPaneUI javax.swing.JTabbedPane.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现此组件的 L&amp;F 的 UI 对象。
+
+@return  <code>TabbedPaneUI</code> 对象
+@see #setUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setUI(TabbedPaneUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置实现此组件的 L&amp;F 的 UI 对象。
+
+@param ui 新的 UI 对象
+@see UIDefaults#getUI
+@beaninfo bound：true hidden:true attribute:visualUpdate true 描述：实现选项卡窗格的 LookAndFeel 的 UI 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从当前外观更新 UI 属性的值。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTabbedPane.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现此组件的 L&amp;F 的 UI 类的名称。
+
+@return 字符串 &quot;TabbedPaneUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JTabbedPane.createChangeListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要对 <code>ChangeEvents</code> 进行不同处理的子类可以重写它，从而返回 <code>ModelListener</code> 的一个子类，或者返回另一个 <code>ChangeListener</code> 实现。
+ 
+@see #fireStateChanged
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>ChangeListener</code> 添加到此选项卡窗格中。
+
+@param l 要添加的 <code>ChangeListener</code>
+@see #fireStateChanged
+@see #removeChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此选项卡窗格中移除一个 <code>ChangeListener</code>。
+
+@param l 要移除的 <code>ChangeListener</code>
+@see #fireStateChanged
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.JTabbedPane.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 <code>addChangeListener</code> 方法添加到此 <code>JTabbedPane</code> 中的所有 <code>ChangeListener</code> 的数组。
+
+@return 所有添加的 <code>ChangeListener</code>，或者在没有添加侦听器时返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JTabbedPane.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 {@code ChangeEvent}（以此 {@code JTabbedPane} 作为源）发送到每个已注册的侦听器。每次选定的索引或 {@code JTabbedPane} 中选定的制表符发生了更改时调用此方法。通常，选定的索引和选定的制表符同时更改。但是，在某些情况下（如选项卡增加），选定的索引发生了更改而选定的选项卡却保持不变。还有一些情况下（如删除选定的选项卡），索引保持不变，但一个新的选项卡移动到该索引。对于所有这些情况都将触发事件。
+ 
+@see #addChangeListener
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SingleSelectionModel javax.swing.JTabbedPane.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此选项卡窗格关联的模型。
+
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setModel(SingleSelectionModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要用于此选项卡窗格的模型。
+ 
+@param model 要使用的模型
+@see #getModel
+@beaninfo bound：true 描述：选项卡窗格的 SingleSelectionModel。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getTabPlacement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此选项卡窗格的选项卡布局。
+@see #setTabPlacement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setTabPlacement(int tabPlacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此选项卡窗格的选项卡布局。可能的值为：<ul>
+ <li><code>JTabbedPane.TOP</code>
+ <li><code>JTabbedPane.BOTTOM</code>
+ <li><code>JTabbedPane.LEFT</code>
+ <li><code>JTabbedPane.RIGHT</code>
+ </ul>
+如果未设置，则默认值为 <code>SwingConstants.TOP</code>。
+
+@param tabPlacement 关于内容的选项卡布局
+@exception IllegalArgumentException 如果选项卡布局的值不是以上的有效值之一
+
+@beaninfo preferred:true bound:true attribute:visualUpdate true 枚举：TOP JTabbedPane.TOP LEFT JTabbedPane.LEFT BOTTOM JTabbedPane.BOTTOM RIGHT JTabbedPane.RIGHT 描述：选项卡窗格的选项卡布局。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getTabLayoutPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在一次运行中不能放入所有的选项卡时，选项卡窗格使用的对选项卡进行布局安排的策略。
+@see #setTabLayoutPolicy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setTabLayoutPolicy(int tabLayoutPolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在一次运行中不能放入所有的选项卡时，选项卡窗格使用的对选项卡进行布局安排的策略。可能的值为：
+ <ul>
+ <li><code>JTabbedPane.WRAP_TAB_LAYOUT</code>
+ <li><code>JTabbedPane.SCROLL_TAB_LAYOUT</code>
+ </ul>
+ 
+如果未通过 UI 进行设置，则默认值为 <code>JTabbedPane.WRAP_TAB_LAYOUT</code>。
+ <p>
+一些外观可能只支持可能的布局策略的一个子集，在这种情况下可以忽略此属性的值。
+
+@param tabLayoutPolicy 用于安排选项卡的策略
+@exception IllegalArgumentException 如果 layoutPolicy 的值不是以上有效值之一
+@see #getTabLayoutPolicy
+@since 1.4
+
+@beaninfo preferred:true bound:true attribute:visualUpdate true 枚举：WRAP_TAB_LAYOUT JTabbedPane.WRAP_TAB_LAYOUT SCROLL_TAB_LAYOUT JTabbedPane.SCROLL_TAB_LAYOUT 描述：安排选项卡的选项卡窗格策略
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getSelectedIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前选择的此选项卡窗格的索引。如果当前没有选择选项卡，则返回 -1。
+
+@return 所选择的选项卡的索引
+@see #setSelectedIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setSelectedIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所选择的此选项卡窗格的索引。索引必须为有效的选项卡索引或为 -1，-1 指示不应该选择选项卡（也可以用于选项卡窗格中没有选项卡的情况）。如果在选项卡窗格中包含一个或多个选项卡时指定了 -1，则结果将是已定义的实现。
+
+@param index  要选择的索引
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; -1 || index &gt;= tab count）
+
+@see #getSelectedIndex
+@see SingleSelectionModel#setSelectedIndex
+@beaninfo preferred:true 描述：选项卡窗格的已选选项卡索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.getSelectedComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此选项卡窗格当前选择的组件。如果当前没有选择选项卡，则返回 <code>null</code>。
+
+@return 与选择的选项卡对应的组件
+@see #setSelectedComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setSelectedComponent(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此选项卡窗格的已选组件。这将自动将 <code>selectedIndex</code> 设置为对应于指定组件的索引。
+
+@exception IllegalArgumentException 如果选项卡窗格中没有组件
+@see #getSelectedComponent
+@beaninfo preferred:true 描述：选项卡窗格的已选组件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.insertTab(String title, Icon icon, Component component, String tip, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 <code>index</code> 位置插入一个 <code>component</code>，该组件通过 <code>title</code> 和/或 <code>icon</code>（任意一个都可以为 <code>null</code>）来表示。在内部使用 java.util.Vector，有关插入约定的详细信息请参阅 <code>insertElementAt</code>。 
+
+@param title 要在此选项卡中显示的标题
+@param icon 要在此选项卡中显示的图标
+@param component 单击此选项卡时要显示的组件。
+@param tip 此选项卡要显示的工具提示
+@param index 要插入此新选项卡的位置 
+
+@see #addTab
+@see #removeTabAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.addTab(String title, Icon icon, Component component, String tip)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加由 <code>title</code> 和/或 <code>icon</code> 表示的 <code>component</code> 和 <code>tip</code>，其中任意一个都可以为 <code>null</code>。<code>insertTab</code> 的覆盖方法。
+
+@param title 此选项卡中要显示的标题
+@param icon 此选项卡中要显示的图标
+@param component 单击此选项卡时要显示的组件
+@param tip 此选项卡要显示的工具提示
+ 
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.addTab(String title, Icon icon, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个由 <code>title</code> 和/或 <code>icon</code> 表示的 <code>component</code>，其任意一个都可以为 <code>null</code>。<code>insertTab</code> 的覆盖方法。 
+
+@param title 此选项卡中要显示的标题
+@param icon 此选项卡中要显示的图标
+@param component 单击此选项卡时要显示的组件
+
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.addTab(String title, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个由 <code>title</code> 表示，且没有图标的 <code>component</code>。<code>insertTab</code> 的覆盖方法。
+
+@param title 此选项卡要显示的标题
+@param component 单击此选项卡时要显示的组件
+ 
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.add(Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个 <code>component</code>，其选项卡的默认值为调用 <code>component.getName</code> 返回的组件的名称。<code>insertTab</code> 的覆盖方法。
+
+@param component 单击此选项卡时要显示的组件
+@return 此组件
+
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.add(String title, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加具有指定选项卡标题的 <code>component</code>。<code>insertTab</code> 的覆盖方法。
+
+@param title 此选项卡要显示的标题
+@param component 单击此选项卡时要显示的组件
+@return 此组件
+
+@see #insertTab
+@see #removeTabAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.add(Component component, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的选项卡索引位置添加一个 <code>component</code>，默认的选项卡标题为组件名称。<code>insertTab</code> 的覆盖方法。
+
+@param component 单击此选项卡时要显示的组件
+@param index 新选项卡的插入位置
+@return 此组件
+
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.add(Component component, Object constraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>component</code> 添加到选项卡窗格中。如果 <code>constraints</code> 为 <code>String</code> 或 <code>Icon</code>，则它将用于选项卡标题，否则组件名称将用作选项卡标题。<code>insertTab</code> 的覆盖方法。
+
+@param component 单击此选项卡时要显示的组件
+@param constraints 选项卡中要显示的对象
+
+@see #insertTab
+@see #removeTabAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.add(Component component, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的选项卡索引位置添加一个 <code>component</code>。如果 <code>constraints</code> 为 <code>String</code> 或 <code>Icon</code>，则它将用于选项卡标题，否则组件名称将用作选项卡标题。<code>insertTab</code> 的覆盖方法。
+
+@param component 单击此选项卡时要显示的组件
+@param constraints 选项卡中要显示的对象
+@param index 插入新选项卡的位置 
+
+@see #insertTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.removeTabAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除 <code>index</code> 位置的选项卡。移除与 <code>index</code> 关联的组件后，将其可见性重置为 true，以确保加入到其他容器时是可见的。
+@param index 要移除的选项卡的索引
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #addTab
+@see #insertTab  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.remove(Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>JTabbedPane</code> 中移除指定 <code>Component</code>。如果 <code>component</code> 为 null，则此方法不执行任何操作。
+
+@param component 要从选项卡窗格中移除的组件
+@see #addTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除对应于指定索引的选项卡和组件。
+
+@param index 要从 <code>tabbedpane</code> 中移除的组件的索引
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+@see #addTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.removeAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>tabbedpane</code> 中移除所有选项卡及其相应组件。
+
+@see #addTab
+@see #removeTabAt  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getTabCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>tabbedpane</code> 的选项卡数。
+
+@return 指定了选项卡页数的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getTabRunCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前运行的用于显示选项卡的选项卡数。
+@return 一个整数，如果 <code>tabPlacement</code> 为 <code>TOP</code> 或 <code>BOTTOM</code>，则此数给出了行数，如果 <code>tabPlacement</code> 为 <code>LEFT</code> 或 <code>RIGHT</code>，则此数给出了列数，如果此 <code>tabbedpane</code> 没有设置 UI，则此数为 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTabbedPane.getTitleAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡标题。
+
+@param index  正在被查询的项的索引
+@return <code>index</code> 位置的标题
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count)
+@see #setTitleAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.JTabbedPane.getIconAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡图标。
+
+@param index  正在被查询的项的索引
+@return <code>index</code> 位置的图标
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setIconAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.JTabbedPane.getDisabledIconAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡禁用图标。如果在 <code>index</code> 位置不存在选项卡禁用图标，则将该调用转发到外观，以从对应的启用的 Icon 构造合适的禁用 Icon。一些外观可能不呈现禁用的 Icon，在这种情况下将不创建禁用的 Icon。
+ 
+@param index  正在被查询的项的索引
+@return <code>index</code> 位置的图标
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setDisabledIconAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTabbedPane.getToolTipTextAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡工具提示文本。
+
+@param index  正在被查询的项的索引
+@return 包含 <code>index</code> 位置的工具提示文本的字符串
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setToolTipTextAt
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.JTabbedPane.getBackgroundAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡背景色。
+
+@param index  正在被查询的项的索引
+@return <code>index</code> 位置的选项卡背景色的 <code>Color</code>
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setBackgroundAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.JTabbedPane.getForegroundAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡背景色。
+
+@param index  正在被查询的项的索引
+@return <code>index</code> 位置的选项卡的前景 <code>Color</code>
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setForegroundAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JTabbedPane.isEnabledAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前是否启用了 <code>index</code> 位置的选项卡。
+
+@param index  正在被查询的项的索引
+@return 如果启用了 <code>index</code> 位置的选项卡，则返回 true；否则返回 false
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setEnabledAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.getComponentAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的组件。
+
+@param index  正在被查询的项的索引
+@return  <code>index</code> 位置的 <code>Component</code>
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setComponentAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getMnemonicAt(int tabIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于访问指定选项卡的键盘助记符。助记符是一个键，在与外观的无鼠标修改键（通常为 Alt）一起使用时，它将激活指定的选项卡。
+
+@since 1.4
+@param tabIndex 助记符引用的选项卡的索引
+@return 表示助记符的键代码；如果选项卡没有指定助记符，则返回 -1
+@exception IndexOutOfBoundsException 如果索引超出了范围（<code>tabIndex</code> &lt; 0 || <code>tabIndex</code> &gt;= tab count）
+@see #setDisplayedMnemonicIndexAt(int,int)
+@see #setMnemonicAt(int,int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.getDisplayedMnemonicIndexAt(int tabIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为索引的字符，外观必须提供它来表示助记符字符。
+
+@since 1.4
+@param tabIndex 助记符要引用的选项卡索引
+@return 表示助记符字符（如果存在）的索引；否则返回 -1
+@exception IndexOutOfBoundsException 如果索引超出了范围（<code>tabIndex</code> &lt; 0 || <code>tabIndex</code> &gt;= tab count）
+@see #setDisplayedMnemonicIndexAt(int,int)
+@see #setMnemonicAt(int,int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JTabbedPane.getBoundsAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 位置的选项卡边界。如果当前此索引位置的选项卡在 UI 中不可见，则返回 <code>null</code>。如果在此 <code>tabbedpane</code> 上没有设置 UI，则返回 <code>null</code>。
+
+@param index 要查询的索引
+@return 包含 <code>index</code> 位置的选项卡边界的 <code>Rectangle</code>，如果当前 <code>index</code> 位置的选项卡在 UI 中不可见，则返回 <code>null</code>，如果在此 <code>tabbedpane</code> 上没有设置 UI，也将返回 <code>null</code>
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setTitleAt(int index, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的标题设置为 <code>title</code>，它可以为 <code>null</code>。如果未指定此选项卡的选项卡组件，则不显示该标题。如果在该索引位置没有选项卡，则将引发一个内部异常。
+
+@param index 标题要被设置的位置的选项卡索引
+@param title 选项卡上要显示的标题
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getTitleAt
+@see #setTabComponentAt
+@beaninfo preferred:true attribute:visualUpdate true 描述：指定的选项卡索引的标题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setIconAt(int index, Icon icon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的图标设置为 <code>icon</code>，它可以为 <code>null</code>。此方法不能设置 <code>icon</code> 位置的禁用图标。如果新的 Icon 不同于当前的 Icon，且禁用的图标不是显式设置的，那么 LookAndFeel 会被要求生成一个禁用的 Icon。要显式设置禁用的图标，请使用 <code>setDisableIconAt()</code>。如果指定了此选项卡的选项卡组件，则不显示该图标。如果在该索引位置没有选项卡，则会引发一个内部异常。 
+
+@param index 图标要被设置的位置的选项卡索引
+@param icon 要在选项卡中显示的图标
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #setDisabledIconAt
+@see #getIconAt
+@see #getDisabledIconAt
+@see #setTabComponentAt  
+@beaninfo preferred:true attribute:visualUpdate true 描述：指定的选项卡索引位置的图标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setDisabledIconAt(int index, Icon disabledIcon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的禁用图标设置为 <code>icon</code>，它可以为 <code>null</code>。如果在该索引位置没有选项卡，则会引发一个内部异常。 
+
+@param index 图标要被设置的位置的选项卡索引
+@param disabledIcon 当禁用时要在选项卡中显示的图标
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getDisabledIconAt
+@beaninfo preferred:true attribute:visualUpdate true 描述：指定的选项卡索引位置上的禁用图标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setToolTipTextAt(int index, String toolTipText)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的工具提示文本设置为 <code>toolTipText</code>，它可以为 <code>null</code>。如果在该索引位置没有选项卡，则会引发一个内部异常。
+
+@param index 工具提示文本要被设置的位置选项卡索引
+@param toolTipText 选项卡中要显示的工具提示文本
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getToolTipTextAt
+@beaninfo preferred:true 描述：指定的选项卡索引位置的工具提示文本。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setBackgroundAt(int index, Color background)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的背景色设置为 <code>background</code>，它可以为 <code>null</code>，在这种情况下选项卡的背景色默认为 <code>tabbedpane</code> 的背景色。如果在该索引位置没有选项卡，则会引发一个内部异常。
+@param index 要设置背景色的位置的选项卡索引
+@param background 要在选项卡背景中显示的颜色
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getBackgroundAt
+@beaninfo preferred:true attribute:visualUpdate true 描述：指定的选项卡索引位置上的背景色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setForegroundAt(int index, Color foreground)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的前景色设置为 <code>foreground</code>，它可以为 <code>null</code>，在这种情况下选项卡的前景色默认为此 <code>tabbedpane</code> 的前景色。如果在该索引位置没有选项卡，则会引发一个内部异常。 
+
+@param index 要设置前景色的位置的选项卡索引
+@param foreground 要作为选项卡前景色显示的颜色
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getForegroundAt
+@beaninfo preferred:true attribute:visualUpdate true 描述：指定的选项卡索引位置的前景色。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setEnabledAt(int index, boolean enabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否启用 <code>index</code> 位置的选项卡。如果在该索引位置没有选项卡，则会引发一个内部异常。
+
+@param index 要启用/禁用的选项卡索引
+@param enabled 选项卡是否启用
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #isEnabledAt 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setComponentAt(int index, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>index</code> 位置的组件设置为 <code>component</code>。如果在该索引位置没有选项卡，则会引发一个内部异常。
+
+@param index 此组件放置位置的选项卡索引
+@param component 选项卡的组件
+@exception IndexOutOfBoundsException 如果索引超出了范围（index &lt; 0 || index &gt;= tab count）
+
+@see #getComponentAt
+@beaninfo attribute:visualUpdate true 描述：指定的选项卡索引位置上的组件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setDisplayedMnemonicIndexAt(int tabIndex, int mnemonicIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个外观的提示，此提示是关于文本中哪此字符必须被装饰用来表示助记符。不是所有的外观都支持此功能。-1 指示两种情况，或者此选项卡没有助记符，或者用户不希望此选项卡显示助记符。
+ <p>
+此值随着助记符相关属性的改变（例如助记符本身、文本等等）而更新。如果不需要默认字符带有下划线，则不必调用此方法。例如，如果索引为 3 的选项卡的文本为 'Apple Price'，助记符为 'p'，并且要将其装饰为 'Apple <u>P</u>rice'，那么必须在调用 <code>setMnemonicAt(3, KeyEvent.VK_P)</code> 之后调用 <code>setDisplayedMnemonicIndex(3, 6)</code>。
+<p>注意，程序员要负责确保每个选项卡具有惟一的助记符，否则将发生不可预计的结果。
+
+@since 1.4
+@param tabIndex 助记符引用的选项卡索引
+@param mnemonicIndex 要加下划线的 <code>String</code> 的索引
+@exception IndexOutOfBoundsException 如果 <code>tabIndex</code> 超出了范围（<code>tabIndex &lt; 0 || tabIndex &gt;= tab count</code>)
+@exception IllegalArgumentException 将被抛出，如果 <code>mnemonicIndex</code> &gt;= 选项卡标题的长度或 &lt; -1
+@see #setMnemonicAt(int,int)
+@see #getDisplayedMnemonicIndexAt(int)
+
+@beaninfo bound:true attribute:visualUpdate true 描述：String 的索引，在此索引位置上绘制键盘字符助记符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setMnemonicAt(int tabIndex, int mnemonic)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于访问指定选项卡的键盘助记符。助记符是一个键，在与外观的无鼠标修改键（通常为 Alt）一起使用时，它将激活指定的选项卡。
+ <p>
+助记符必须对应于键盘上的单个键，且必须使用 <code>java.awt.event.KeyEvent</code> 中定义的 <code>VK_XXX</code> 键代码之一来指定。助记符是不区分大小写的，因此具有对应键代码的键事件将导致铵钮被激活，而不管 Shift 键是否按下。
+ <p>
+这将更新指定选项卡所显示的助记符属性。
+
+@since 1.4
+@param tabIndex 助记符引用的选项卡的索引
+@param mnemonic 表示助记符的键代码
+@exception IndexOutOfBoundsException 如果 <code>tabIndex</code> 超出了范围（<code>tabIndex &lt; 0 || tabIndex &gt;= tab count</code>）
+@see #getMnemonicAt(int)
+@see #setDisplayedMnemonicIndexAt(int,int)
+
+@beaninfo bound:true attribute:visualUpdate true 描述：针对指定选项卡的键盘助记符（为一个 KeyEvent VK 常量）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.indexOfTab(String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有给定 <code>title</code> 的第一个选项卡索引，如果没有具有此标题的选项卡，则返回 -1。 
+
+@param title 选项卡的标题
+@return 与 <code>title</code> 匹配的第一个选项卡索引，如果没有具有此标题的选项卡，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.indexOfTab(Icon icon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有给定的 <code>icon</code> 的第一个选项卡索引，如果没有具有此图标的选项卡，则返回 -1。
+
+@param icon 选项卡的图标
+@return 与 <code>icon</code> 匹配的第一个选项卡索引，如果没有具有此图标的选项卡，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.indexOfComponent(Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的选项卡索引。如果此组件没有选项卡，则返回 -1。
+
+@param component 选项卡的组件
+@return 与此组件匹配的第一个选项卡，如果此组件没有选项卡，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.indexAtLocation(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选项卡边界与指定区域相交的选项卡索引。如果没有与此区域相交的选项卡，则返回 -1。
+
+@param x 相对于此选项卡窗格的 x 位置
+@param y 相对于此选项卡窗格的 y 位置
+@return 与此位置相交的选项卡索引，如果没有与此位置相交的选项卡，则返回 -1
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTabbedPane.getToolTipText(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由鼠标事件位置确定的组件的工具提示文本。
+
+@param event  <code>MouseEvent</code>，它告知光标的当前位置
+@return 包含工具提示文本的 <code>String</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JTabbedPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JTabbedPane</code> 的字符串表示。此方法仅用于调试目的，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 JTabbedPane 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JTabbedPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JTabbedPane 关联的 AccessibleContext。对于选项卡窗格，AccessibleContext 采用 AccessibleJTabbedPane 的形式。必要时创建新的 AccessibleJTabbedPane 实例。
+
+@return 一个 AccessibleJTabbedPane，它充当此 JTabbedPane 的 AccessibleContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTabbedPane.setTabComponentAt(int index, Component component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置负责呈现指定选项卡标题的组件。null 值意味着 <code>JTabbedPane</code> 将呈现指定选项卡的标题和/或图标。非 null 值意味着该组件将呈现标题，并且 <code>JTabbedPane</code> 将不呈现标题和/或图标。
+ <p>
+ 注：该组件不得是开发人员已添加到选项卡面板中的组件之一。
+  
+ @param index 应该在其中设置组件的选项卡索引
+ @param component 要呈现指定选项卡标题的组件
+ @exception IndexOutOfBoundsException 如果索引超出了范围 (index < 0 || index >= tab count)
+ @exception IllegalArgumentException 如果组件已添加到此 <code>JTabbedPane</code> 中
+
+ @see #getTabComponentAt
+ @beaninfo
+    preferred: true
+    attribute: visualUpdate true
+  description: 指定的选项卡索引位置上的选项卡组件。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JTabbedPane.getTabComponentAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回 <code>index</code> 位置上的选项卡组件。
+
+ @param index  被查询的项的索引
+ @return <code>index</code> 位置上的选项卡组件
+ @exception IndexOutOfBoundsException 如果索引超出了范围 (index < 0 || index >= tab count)
+
+ @see #setTabComponentAt
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTabbedPane.indexOfTabComponent(Component tabComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定选项卡组件的选项卡索引。如果此选项卡组件没有选项卡，则返回 -1。 
+
+ @param tabComponent 该选项卡的选项卡组件
+ @return 匹配此选项卡组件的第一个选项卡；如果此选项卡组件没有选项卡，则返回 -1 
+ @see #setTabComponentAt
+ @see #getTabComponentAt
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JTabbedPane.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 序列化的更多信息，请参阅 <code>JComponent</code> 中的 <code>readObject</code> 和 <code>writeObject</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JTabbedPane.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 序列化的更多信息，请参阅 <code>JComponent</code> 中的 <code>readObject</code> 和 <code>writeObject</code>。
+
+<!-- END DATA -->

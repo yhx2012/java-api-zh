@@ -1,0 +1,127 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.ServerRequest extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+捕获对动态框架接口（Dynamic Skeleton Interface，DSI）请求的显式状态的对象。此类是 DSI 的基础，类似于 DII 中的 <code>Request</code> 对象。
+ <P>
+ORB 负责创建具体的请求，并将它传递给动态实现例程（Dynamic Implementation Routine，DIR）。动态 servant（一个 DIR）是通过实现 <code>DynamicImplementation</code> 类创建的，该类有一个 <code>invoke</code> 方法。此方法接受 <code>ServerRequest</code> 对象。
+
+抽象类 <code>ServerRequest</code> 定义了一些方法，用来访问请求的方法名称、参数和上下文，以及将该请求的结果设置为返回值或异常。 <p>
+
+访问该请求参数的一个微妙之处在于：DIR 需要提供有关所期望参数的类型信息，因为没有关于这些类型的已编译信息。此信息是通过 <code>NVList</code> 提供的，NVList 是 <code>NamedValue</code> 对象列表。每个 <code>NamedValue</code> 对象都包含一个 <code>Any</code> 对象，每个 Any 对象都有一个表示参数类型的 <code>TypeCode</code> 对象。 <p>
+
+类似地，还需要为响应、所期望的结果或异常提供类型信息，因此方法 <code>result</code> 和 <code>except</code> 使用 <code>Any</code> 对象作为参数。 <p>
+
+@see org.omg.CORBA.DynamicImplementation
+@see org.omg.CORBA.NVList
+@see org.omg.CORBA.NamedValue
+
+@version 1.15 09/09/97
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.CORBA.ServerRequest.op_name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索将被调用的操作的名称。根据 OMG IDL 的规则，这些名称在此对象的&ldquo;最终派生&rdquo;接口所支持的所有操作中必须是唯一的。注意，用来获取和设置属性的操作名称分别是 <code>_get_&lt;attribute_name&gt;</code> 和 <code>_set_&lt;attribute_name&gt;</code>。
+
+@return 要调用的操作的名称
+@deprecated 使用 operation()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.CORBA.ServerRequest.operation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 <code>org.omg.CORBA.NO_IMPLEMENT</code> 异常。
+ <P>
+检索将被调用的操作的名称。根据 OMG IDL 的规则，这些名称在此对象的&ldquo;最终派生&rdquo;接口所支持的所有操作中必须是唯一的。注意，用来获取和设置属性的操作名称分别是 <code>_get_&lt;attribute_name&gt;</code> 和 <code>_set_&lt;attribute_name&gt;</code>。
+
+@return     将被调用的操作的名称
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.params(NVList params)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定方法参数类型并检索 &quot;in&quot; 和 &quot;inout&quot; 参数值。
+ <P>
+注意，此方法已过时，使用 <code>arguments</code> 方法替代它。
+ <P>
+如果没有调用 <code>set_exception</code> 方法，则 DIR 必须调用此方法一次，即使该方法签名不包含任何参数。一旦已经调用 <code>arguments</code> 或 <code>set_exception</code> 方法，则对同一个 <code>ServerRequest</code> 对象调用 <code>arguments</code> 将导致 <code>BAD_INV_ORDER</code> 系统异常。DIR 必须向方法 <code>arguments</code> 传入使用 TypeCodes 初始化的 NVList 和描述该操作参数类型的 Flag，按照它们在 IDL 规范中出现的顺序（从左到右）传入。使用所提供的 &quot;in&quot; 和 &quot;inout&quot; 参数值，<code>arguments</code> 返回的 NVList 可能不同。如果没有调用 <code>set_exception</code> 方法，则返回前 DIR 必须提供所返回的 NVList，该列表带有用于任何 &quot;out&quot; 参数的返回值，DIR 还可以更改用于任何 &quot;inout&quot; 参数的返回值。
+
+@param params		<code>NVList</code> 对象形式的方法参数
+@deprecated 使用方法 <code>arguments</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.arguments(NVList args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定方法参数类型并检索 &quot;in&quot; 和 &quot;inout&quot; 参数值。如果没有调用 <code>set_exception</code> 方法，则 DIR 必须调用此方法一次，即使该方法签名不包含任何参数。一旦已经调用 <code>arguments</code> 或 <code>set_exception</code> 方法，则对同一个 <code>ServerRequest</code> 对象调用 <code>arguments</code> 将导致 <code>BAD_INV_ORDER</code> 系统异常。DIR 必须向方法 <code>arguments</code> 传入使用 TypeCodes 初始化的 NVList 和描述该操作参数类型的 Flag，按照它们在 IDL 规范中出现的顺序（从左到右）传入。使用所提供的 &quot;in&quot; 和 &quot;inout&quot; 参数值，<code>arguments</code> 返回的 NVList 可能不同。如果没有调用 <code>set_exception</code> 方法，则返回前 DIR 必须提供所返回的 NVList，该列表带有用于任何 &quot;out&quot; 参数的返回值，DIR 还可以更改用于任何 &quot;inout&quot; 参数的返回值。
+
+@param args              NVList 形式的方法参数
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.result(Any any)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为调用指定任何返回值。 
+ <P>
+注意，不推荐使用此方法，建议使用 <code>set_result</code> 方法替代它。
+ <P>
+如果没有调用 <code>set_exception</code> 方法，则在调用的方法有一个非 void 结果类型时，必须在 DIR 返回前调用 <code>set_result</code> 方法一次。如果该操作有一个 void 结果类型，则可以有选择地调用 <code>set_result</code> 方法一次，并使用类型为 <code>tk_void</code> 的 <code>Any</code> 对象作为参数。在调用 <code>arguments</code> 方法之前调用 <code>set_result</code> 方法，或者在调用 <code>set_result</code> 或 <code>set_exception</code> 方法之后调用该方法将导致 BAD_INV_ORDER 异常。当 IDL 操作包含一个上下文表达式，或者传递给 arguments 的 NVList 没有描述客户端传递的所有参数时，在调用 <code>set_result</code> 方法之前没有调用 <code>ctx</code> 方法将导致 MARSHAL 系统异常。
+
+@param any 包含将被设置的返回值的 <code>Any</code> 对象
+@deprecated 使用方法 <code>set_result</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.set_result(Any any)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 <code>org.omg.CORBA.NO_IMPLEMENT</code> 异常。
+ <P>
+为调用指定任何返回值。如果没有调用 <code>set_exception</code> 方法，则在调用的方法有一个非 void 结果类型时，必须在 DIR 返回前调用 <code>set_result</code> 方法一次。如果该操作有一个 void 结果类型，则可以有选择地调用 <code>set_result</code> 方法一次，并使用类型为 <code>tk_void</code> 的 <code>Any</code> 对象作为参数。在调用 <code>arguments</code> 方法之前调用 <code>set_result</code> 方法，或者在调用 <code>set_result</code> 或 <code>set_exception</code> 方法之后调用该方法将导致 BAD_INV_ORDER 异常。当 IDL 操作包含一个上下文表达式，或者传递给参数的 NVList 没有描述客户端传递的所有参数时，调用 <code>set_result</code> 方法（没有首先调用 <code>ctx</code> 方法）将导致 MARSHAL 系统异常。
+
+@param any 包含将被设置的返回值的 <code>Any</code> 对象
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.except(Any any)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+DIR 可以随时调用 set_exception 向客户端返回异常。传递给 set_exception 的 Any 必须包含系统异常，或者所调用操作 IDL 定义的引发表达式中指定的用户异常。传入不包含任何异常的 Any 将导致 BAD_PARAM 系统异常。传入未列出的用户异常将导致 DIR 收到一个 BAD_PARAM 系统异常，或导致客户端收到一个 UNKNOWN_EXCEPTION 系统异常。
+
+@param any	包含异常的 <code>Any</code> 对象
+@deprecated 使用 set_exception()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ServerRequest.set_exception(Any any)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抛出 <code>org.omg.CORBA.NO_IMPLEMENT</code> 异常。
+ <P>
+将给定异常返回给客户端。此方法由 DIR 随时调用。传递给此方法的 <code>Any</code> 对象必须包含一个系统异常，或者所调用操作 IDL 定义中指定的用户异常之一。传入不包含任何异常的 <code>Any</code> 对象将导致抛出 BAD_PARAM 系统异常。传入未列出的用户异常将导致 DIR 收到一个 BAD_PARAM 系统异常，或导致客户端收到一个 UNKNOWN_EXCEPTION 系统异常。
+
+@param any	包含异常的 <code>Any</code> 对象
+@exception BAD_PARAM 如果给定 <code>Any</code> 对象不包含异常，或者该异常是一个未列出的用户异常
+@exception UNKNOWN_EXCEPTION 如果给定异常是一个未列出的用户异常，并且 DIR 没有收到 BAD_PARAM 异常
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Context org.omg.CORBA.ServerRequest.ctx()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当操作不是一个属性访问并且该操作的 IDL 定义中包含上下文表达式时，该操作返回用 IDL 指定的上下文信息；否则返回 nil <code>Context</code> 引用。在调用 <code>arguments</code> 方法之前调用 <code>ctx</code> 方法，或者在调用 <code>ctx</code>、<code>set_result</code> 或 <code>set_exception</code> 方法之后调用该方法都将导致 BAD_INV_ORDER 系统异常。
+
+@return			Context 对象，将使用该对象来解析任何其值需要与调用一起发送的上下文字符串
+@exception BAD_INV_ORDER  如果 (1) 在调用 <code>arguments</code> 方法之前调用 <code>ctx</code> 方法或 (2) 在调用 <code>set_result</code> 或 <code>set_exception</code> 之后调用 <code>ctx</code> 方法
+
+<!-- END DATA -->

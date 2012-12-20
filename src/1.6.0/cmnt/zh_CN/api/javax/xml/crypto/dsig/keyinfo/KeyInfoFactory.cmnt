@@ -1,0 +1,304 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.crypto.dsig.keyinfo.KeyInfoFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于从头创建 {@link KeyInfo} 对象或从相应的 XML 表示形式解组 <code>KeyInfo</code> 对象的工厂。
+
+<p>每个 <code>KeyInfoFactory</code> 实例都支持一个特定的 XML 机制类型。要创建 <code>KeyInfoFactory</code>，则需要调用一个静态 {@link #getInstance getInstance} 方法，并传入所需的 XML 机制类型，例如：
+
+<blockquote><code>KeyInfoFactory factory = KeyInfoFactory.getInstance(&quot;DOM&quot;);</code></blockquote>
+
+<p>此工厂生成的对象将基于 DOM 并遵守 DOM 互操作性要求，正如 API 概述的
+ <a href="../../../../../../technotes/guides/security/xmldsig/overview.html#DOM Mechanism Requirements">DOM Mechanism Requirements</a> 部分所定义的。有关标准机制类型列表，请参阅 API 概述的
+ <a href="../../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+
+<p>使用 {@link java.security.Provider} 机制来注册和加载 <code>KeyInfoFactory</code> 实现。例如，支持 DOM 机制的服务提供者将在 <code>Provider</code> 子类中指定，如下所示：
+ <pre>
+   put(&quot;KeyInfoFactory.DOM&quot;, &quot;org.example.DOMKeyInfoFactory&quot;);
+ </pre>
+
+<p>同时，由此工厂创建的 <code>XMLStructure</code> 可能包含特定于 <code>KeyInfo</code> 的状态，并且该状态是不可重用的。
+
+<p>实现至少必须支持默认的机制类型：DOM。
+
+<p>注意，调用者必须使用相同的 <code>KeyInfoFactory</code> 实例来创建特定 <code>KeyInfo</code> 对象的 <code>XMLStructure</code>。如果同时使用来自不同提供者或不同机制类型的 <code>XMLStructure</code>，则行为是不明确的。
+
+<p><b>并发访问</b>
+<p>可保证此类的静态方法是线程安全的。多个线程可以并发调用此类中所定义的静态方法，而不会产生不良效果。
+
+<p>但是，对于此类所定义的非静态方法并非如此。除非具体的提供者另行指定，否则需要并发访问单个 <code>KeyInfoFactory</code> 实例的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同 <code>KeyInfoFactory</code> 实例的多个线程而言，无需实现同步。
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.crypto.dsig.keyinfo.KeyInfoFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法，由子类调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.keyinfo.KeyInfoFactory javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getInstance(String mechanismType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>KeyInfoFactory</code>，它支持指定的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）。
+
+<p>此方法使用标准的 JCA 提供者查找机制来查找并实例化所需机制类型的 <code>KeyInfoFactory</code> 实现。它将从首选的 <code>Provider</code> 开始，遍历已注册的安全 <code>Provider</code> 的列表。返回取自第一个支持指定机制的 <code>Provider</code> 中的新 <code>KeyInfoFactory</code> 对象。 
+ 
+<p> 注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。 
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@return 新的 <code>KeyInfoFactory</code>
+@throws NullPointerException 如果 <code>mechanismType</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果没有任何 <code>Provider</code> 支持指定机制的 <code>KeyInfoFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.keyinfo.KeyInfoFactory javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getInstance(String mechanismType, Provider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持所需的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）的 <code>KeyInfoFactory</code>，由指定提供者提供。注意，指定的 <code>Provider</code> 对象不必已经在提供者列表中注册。 
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@param provider <code>Provider</code> 对象
+@return 新的 <code>KeyInfoFactory</code>
+@throws NullPointerException 如果 <code>mechanismType</code> 或 <code>provider</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果不能从指定的 <code>Provider</code> 对象使用指定机制的 <code>KeyInfoFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.keyinfo.KeyInfoFactory javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getInstance(String mechanismType, String provider) throws java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持所需的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）的 <code>KeyInfoFactory</code>，由指定提供者提供。指定的提供者必须已在安全提供者列表中注册。 
+
+<p>注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。 
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@param provider 提供者的字符串名称
+@return 新的 <code>KeyInfoFactory</code>
+@throws NoSuchProviderException 如果指定的提供者没有在安全提供者列表中注册
+@throws NullPointerException 如果 <code>mechanismType</code> 或 <code>provider</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果从指定的提供者不能使用指定机制的 <code>KeyInfoFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.keyinfo.KeyInfoFactory javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持默认 XML 处理机制和表示形式类型（&ldquo;DOM&rdquo;） 的 <code>KeyInfoFactory</code>。
+
+<p>此方法使用标准的 JCA 提供者查找机制来查找并实例化默认机制类型的 <code>KeyInfoFactory</code> 实现。它将从首选的 <code>Provider</code> 开始，遍历已注册的安全 <code>Provider</code> 的列表。返回取自第一个支持 DOM 机制的 <code>Provider</code> 中的新 <code>KeyInfoFactory</code> 对象。 
+ 
+<p> 注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。 
+
+@return 新的 <code>KeyInfoFactory</code>
+@throws NoSuchMechanismException 如果没有任何 <code>Provider</code> 支持 DOM 机制的 <code>KeyInfoFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getMechanismType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>KeyInfoFactory</code> 支持的 XML 处理机制类型和表示形式类型（比如：&ldquo;DOM&rdquo;）。
+
+@return 此 <code>KeyInfoFactory</code> 支持的 XML 处理机制类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>KeyInfoFactory</code> 的提供者。
+
+@return 此 <code>KeyInfoFactory</code> 的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.KeyInfo javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newKeyInfo(java.util.List content)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的密钥信息类型列表的 <code>KeyInfo</code>。
+
+@param content 一个列表，由一个或多个表示密钥信息类型的 {@link XMLStructure} 组成。需要复制该列表，以防止随后被修改。
+@return <code>KeyInfo</code>
+@throws NullPointerException 如果 <code>content</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>content</code> 为空
+@throws ClassCastException 如果 <code>content</code> 包含任何不是类型 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.KeyInfo javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newKeyInfo(java.util.List content, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的密钥信息类型列表和可选 id 的 <code>KeyInfo</code>。<code>id</code> 参数表示 XML <code>ID</code> 属性值，对于从其他 XML 结构引用 <code>KeyInfo</code> 很有用。 
+
+@param content 一个列表，由一个或多个表示密钥信息类型的 {@link XMLStructure} 组成。需要复制该列表，以防止随后被修改。
+@param id XML <code>ID</code> 的值（可以为 <code>null</code>）
+@return <code>KeyInfo</code>
+@throws NullPointerException 如果 <code>content</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>content</code> 为空
+@throws ClassCastException 如果 <code>content</code> 包含任何不是类型 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.KeyName javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newKeyName(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的名称创建 <code>KeyName</code>。
+
+@param name 标识密钥的名称
+@return <code>KeyName</code>
+@throws NullPointerException 如果 <code>name</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.KeyValue javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newKeyValue(PublicKey key) throws java.security.KeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的公钥创建 <code>KeyValue</code>。
+
+@param key 公钥
+@return <code>KeyValue</code>
+@throws KeyException 如果 <code>key</code> 的算法不可识别或不受 <code>KeyInfoFactory</code> 的支持
+@throws NullPointerException 如果 <code>key</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.PGPData javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newPGPData(byte[] keyId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的 PGP 公钥标识符创建 <code>PGPData</code>。
+
+@param keyId <a href=
+    "http://www.ietf.org/rfc/rfc2440.txt">RFC 2440</a> 第 11.2 节定义的 PGP 公钥标识符。复制该数组，以防止随后被修改。
+@return <code>PGPData</code>
+@throws NullPointerException 如果 <code>keyId</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果密钥 id 的格式不正确
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.PGPData javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newPGPData(byte[] keyId, byte[] keyPacket, java.util.List other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的 PGP 公钥标识符、可选的密钥材料包和外部元素的列表，创建 <code>PGPData</code>。
+
+@param keyId <a href=     "http://www.ietf.org/rfc/rfc2440.txt">RFC 2440</a> 第 11.2 节定义的 PGP 公钥标识符。复制该数组，以防止随后被修改。
+@param keyPacket <a href=     "http://www.ietf.org/rfc/rfc2440.txt">RFC 2440</a> 第 5.5 节定义的 PGP 密钥材料包。复制该数组，以防止随后被修改。可以为 <code>null</code>。
+@param other 一个列表，由表示外部名称空间中的元素的 {@link XMLStructure} 组成。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@return <code>PGPData</code>
+@throws NullPointerException 如果 <code>keyId</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>keyId</code> 或 <code>keyPacket</code> 的格式不正确。对于 <code>keyPacket</code>，将检查包头的格式，并验证标记，确定它属于哪种类型的密钥材料。包正文的内容和格式无需检查。
+@throws ClassCastException 如果 <code>other</code> 包含任何不是类型 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.PGPData javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newPGPData(byte[] keyPacket, java.util.List other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的 PGP 密钥材料包和可选的外部元素列表创建 <code>PGPData</code>。
+
+@param keyPacket <a href=     "http://www.ietf.org/rfc/rfc2440.txt">RFC 2440</a> 第 5.5 节定义的 PGP 密钥材料包。复制该数组，以防止随后被修改。
+@param other 一个列表，由表示外部名称空间中的元素的 {@link XMLStructure} 组成。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@return <code>PGPData</code>
+@throws NullPointerException 如果 <code>keyPacket</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>keyPacket</code> 的格式不正确。对于 <code>keyPacket</code>，将检查包头的格式，并验证标记，确定它属于哪种类型的密钥材料。包正文的内容和格式无需检查。
+@throws ClassCastException 如果 <code>other</code> 包含任何不是类型 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.RetrievalMethod javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newRetrievalMethod(String uri)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的 URI 创建 <code>RetrievalMethod</code>。
+
+@param uri 标识将要检索的 <code>KeyInfo</code> 信息的 URI
+@return <code>RetrievalMethod</code>
+@throws NullPointerException 如果 <code>uri</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.RetrievalMethod javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newRetrievalMethod(String uri, String type, java.util.List transforms)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的参数创建 <code>RetrievalMethod</code>。
+
+@param uri 标识将要检索的 <code>KeyInfo</code> 信息的 URI
+@param type 标识将要检索的 <code>KeyInfo</code> 信息的类型的 URI （可以为 <code>null</code>）
+@param transforms {@link Transform} 的列表。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@return <code>RetrievalMethod</code>
+@throws NullPointerException 如果 <code>uri</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容
+@throws ClassCastException 如果 <code>transforms</code> 包含不是类型 {@link Transform} 的任何条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.X509Data javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newX509Data(java.util.List content)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的 X.509 内容列表的 <code>X509Data</code>。
+
+@param content 一个列表，由一个或多个 X.509 内容类型组成。有效的类型有 {@link String}（主体名称）、<code>byte[]</code>（主体的密钥 id）、{@link java.security.cert.X509Certificate}、{@link X509CRL} 或 {@link XMLStructure}（来自外部名称空间的 {@link X509IssuerSerial} 对象或元素）。主体名称是 RFC 2253 String 格式的标识名。这些实现必须支持 RFC 2253（CN、L、ST、O、OU、C、STREET、DC 和 UID）中定义的属性类型关键字。这些实现可能还支持其他关键字。需要复制该列表，以防止随后被修改。
+@return <code>X509Data</code>
+@throws NullPointerException 如果 <code>content</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>content</code> 为空，或者主体与 RFC 2253 不兼容或无法识别其中一个属性类型关键字。
+@throws ClassCastException 如果 <code>content</code> 包含不是上述任何有效类型的任何条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.X509IssuerSerial javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.newX509IssuerSerial(String issuerName, BigInteger serialNumber)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的 X.500 发布方标识名和序列号创建 <code>X509IssuerSerial</code>。
+
+@param issuerName RFC 2253 String 格式的发布方标识名。这些实现必须支持 RFC 2253（CN、L、ST、O、OU、C、STREET、DC 和 UID）中定义的属性类型关键字。这些实现可能还支持其他关键字。
+@param serialNumber 序列号
+@return <code>X509IssuerSerial</code>
+@throws NullPointerException 如果 <code>issuerName</code> 或 <code>serialNumber</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果发布方名称与 RFC 2253 不兼容，或者无法识别其中一个属性类型关键字。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.isFeatureSupported(String feature)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否支持指定的功能。
+
+@param feature 功能名称（以抽象 URI 形式）
+@return 如果支持指定功能，则返回 <code>true</code>，否则返回 <code>false</code>
+@throws NullPointerException 如果 <code>feature</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.URIDereferencer javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.getURIDereferencer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对 <code>URIDereferencer</code> 的引用，默认情况下用于取消引用 {@link RetrievalMethod} 对象中的 URI。
+
+@return 对默认 <code>URIDereferencer</code> 的引用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.keyinfo.KeyInfo javax.xml.crypto.dsig.keyinfo.KeyInfoFactory.unmarshalKeyInfo(XMLStructure xmlStructure) throws javax.xml.crypto.MarshalException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据特定于机制的 <code>XMLStructure</code>（比如：{@link DOMStructure}）实例解组新的 <code>KeyInfo</code> 实例。
+
+@param xmlStructure 从中解组 keyinfo 的特定于机制的 XML 结构
+@return <code>KeyInfo</code>
+@throws NullPointerException 如果 <code>xmlStructure</code> 为 <code>null</code>
+@throws ClassCastException 如果 <code>xmlStructure</code> 的类型不适合此工厂
+@throws MarshalException 如果解组过程中发生不可恢复的异常
+
+<!-- END DATA -->

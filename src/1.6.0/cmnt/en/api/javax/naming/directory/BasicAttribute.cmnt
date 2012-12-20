@@ -1,0 +1,272 @@
+<!-- BEGIN KEY -->
+public class javax.naming.directory.BasicAttribute extends java.lang.Object implements javax.naming.directory.Attribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This class provides a basic implementation of the <tt>Attribute</tt> interface.
+<p>
+ This implementation does not support the schema methods
+ <tt>getAttributeDefinition()</tt> and <tt>getAttributeSyntaxDefinition()</tt>.
+ They simply throw <tt>OperationNotSupportedException</tt>.
+ Subclasses of <tt>BasicAttribute</tt> should override these methods if they 
+ support them.
+<p>
+ The <tt>BasicAttribute</tt> class by default uses <tt>Object.equals()</tt> to 
+ determine equality of attribute values when testing for equality or 
+ when searching for values, <em>except</em> when the value is an array.
+ For an array, each element of the array is checked using <tt>Object.equals()</tt>.
+ Subclasses of <tt>BasicAttribute</tt> can make use of schema information
+ when doing similar equality checks by overriding methods
+ in which such use of schema is meaningful.
+ Similarly, the <tt>BasicAttribute</tt> class by default returns the values passed to its
+ constructor and/or manipulated using the add/remove methods.
+ Subclasses of <tt>BasicAttribute</tt> can override <tt>get()</tt> and <tt>getAll()</tt>
+ to get the values dynamically from the directory (or implement 
+ the <tt>Attribute</tt> interface directly instead of subclassing <tt>BasicAttribute</tt>).
+<p>
+ Note that updates to <tt>BasicAttribute</tt> (such as adding or removing a value)
+ does not affect the corresponding representation of the attribute
+ in the directory.  Updates to the directory can only be effected
+ using operations in the <tt>DirContext</tt> interface.
+<p>
+ A <tt>BasicAttribute</tt> instance is not synchronized against concurrent
+ multithreaded access. Multiple threads trying to access and modify a
+ <tt>BasicAttribute</tt> should lock the object.
+
+ @author Rosanna Lee
+ @author Scott Seligman
+ @version 1.14 05/11/17
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.naming.directory.BasicAttribute.attrID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Holds the attribute's id. It is initialized by the public constructor and 
+ cannot be null unless methods in BasicAttribute that use attrID
+ have been overridden.
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.util.Vector<java.lang.Object> javax.naming.directory.BasicAttribute.values
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Holds the attribute's values. Initialized by public constructors.
+ Cannot be null unless methods in BasicAttribute that use
+ values have been overridden.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.naming.directory.BasicAttribute.ordered
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A flag for recording whether this attribute's values are ordered.
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new instance of an unordered attribute with no value.
+
+ @param id The attribute's id. It cannot be null.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new instance of an unordered attribute with a single value.
+
+ @param id The attribute's id. It cannot be null.
+ @param value The attribute's value. If null, a null
+        value is added to the attribute.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, boolean ordered)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new instance of a possibly ordered attribute with no value.
+
+ @param id The attribute's id. It cannot be null.
+ @param ordered true means the attribute's values will be ordered; 
+ false otherwise.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, Object value, boolean ordered)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a new instance of a possibly ordered attribute with a 
+ single value.
+
+ @param id The attribute's id. It cannot be null.
+ @param value The attribute's value. If null, a null
+        value is added to the attribute.
+ @param ordered true means the attribute's values will be ordered; 
+ false otherwise.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines whether obj is equal to this attribute.
+ Two attributes are equal if their attribute-ids, syntaxes
+ and values are equal. 
+ If the attribute values are unordered, the order that the values were added
+ are irrelevant. If the attribute values are ordered, then the
+ order the values must match.
+ If obj is null or not an Attribute, false is returned.
+<p>
+ By default <tt>Object.equals()</tt> is used when comparing the attribute
+ id and its values except when a value is an array. For an array, 
+ each element of the array is checked using <tt>Object.equals()</tt>.
+ A subclass may override this to make
+ use of schema syntax information and matching rules, 
+ which define what it means for two attributes to be equal. 
+ How and whether a subclass makes
+ use of the schema information is determined by the subclass.
+ If a subclass overrides <tt>equals()</tt>, it should also override 
+ <tt>hashCode()</tt>
+ such that two attributes that are equal have the same hash code.
+
+ @param obj	The possibly null object to check.
+ @return true if obj is equal to this attribute; false otherwise.
+ @see #hashCode
+ @see #contains
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.directory.BasicAttribute.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calculates the hash code of this attribute.
+<p>
+ The hash code is computed by adding the hash code of
+ the attribute's id and that of all of its values except for
+ values that are arrays.
+ For an array, the hash code of each element of the array is summed.
+ If a subclass overrides <tt>hashCode()</tt>, it should override 
+ <tt>equals()</tt>
+ as well so that two attributes that are equal have the same hash code.
+
+ @return an int representing the hash code of this attribute.
+ @see #equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.directory.BasicAttribute.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Generates the string representation of this attribute.
+ The string consists of the attribute's id and its values.
+ This string is meant for debugging and not meant to be 
+ interpreted programmatically.
+ @return The non-null string representation of this attribute.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<?> javax.naming.directory.BasicAttribute.getAll() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves an enumeration of this attribute's values.
+<p>
+ By default, the values returned are those passed to the
+ constructor and/or manipulated using the add/replace/remove methods.
+ A subclass may override this to retrieve the values dynamically
+ from the directory.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.BasicAttribute.get() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves one of this attribute's values.
+<p>
+ By default, the value returned is one of those passed to the
+ constructor and/or manipulated using the add/replace/remove methods.
+ A subclass may override this to retrieve the value dynamically
+ from the directory.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.contains(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines whether a value is in this attribute.
+<p>
+ By default, 
+ <tt>Object.equals()</tt> is used when comparing <tt>attrVal</tt>
+ with this attribute's values except when <tt>attrVal</tt> is an array.
+ For an array, each element of the array is checked using 
+ <tt>Object.equals()</tt>.
+ A subclass may use schema information to determine equality.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.add(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adds a new value to this attribute. 
+<p>
+ By default, <tt>Object.equals()</tt> is used when comparing <tt>attrVal</tt>
+ with this attribute's values except when <tt>attrVal</tt> is an array.
+ For an array, each element of the array is checked using 
+ <tt>Object.equals()</tt>. 
+ A subclass may use schema information to determine equality.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.remove(Object attrval)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes a specified value from this attribute.
+<p>
+ By default, <tt>Object.equals()</tt> is used when comparing <tt>attrVal</tt>
+ with this attribute's values except when <tt>attrVal</tt> is an array.
+ For an array, each element of the array is checked using 
+ <tt>Object.equals()</tt>. 
+ A subclass may use schema information to determine equality.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.BasicAttribute.getAttributeSyntaxDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves the syntax definition associated with this attribute.
+<p>
+ This method by default throws OperationNotSupportedException. A subclass
+ should override this method if it supports schema.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.BasicAttribute.getAttributeDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves this attribute's schema definition.
+<p>
+ This method by default throws OperationNotSupportedException. A subclass
+ should override this method if it supports schema.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.directory.BasicAttribute.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overridden to avoid exposing implementation details.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.directory.BasicAttribute.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overridden to avoid exposing implementation details
+ @serialData Default field (the attribute ID -- a String), 
+ followed by the number of values (an int), and the
+ individual values.
+
+<!-- END DATA -->

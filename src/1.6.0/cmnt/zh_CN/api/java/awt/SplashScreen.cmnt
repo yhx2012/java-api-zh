@@ -1,0 +1,124 @@
+<!-- BEGIN KEY -->
+public final class java.awt.SplashScreen extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Java 虚拟机 (JVM) 启动之前，可以在应用程序启动时创建闪现屏幕。闪现屏幕显示为一个包含图像的未装饰窗口。可以使用 GIF、JPEG 和 PNG 文件作为图像。支持动画（用于 GIF）和透明度（用于 GIF、PNG 文件）。窗口位于屏幕的中心（在多监视器系统中的位置没有指定&mdash;&mdash;它与平台和实现有关）。一旦 Swing/AWT 显示第一个窗口，此窗口就会自动关闭（也可以使用 Java API 手动关闭窗口，参见以下内容）。
+ <P>
+显示本机闪现屏幕有两种方式：
+ <P>
+ <UL>
+<LI>如果是用命令行或快捷方式运行应用程序，则使用 &quot;-splash:&quot;Java 应用程序启动器选项来显示闪现屏幕。<BR>例如： 
+ <PRE>
+java -splash:filename.gif Test
+ </PRE>
+<LI>如果应用程序被打包在 jar 文件中，可以使用清单文件中的 &quot;SplashScreen-Image&quot; 选项来显示闪现屏幕。将图像放在 jar 归档文件中并用选项指定路径。路径不应以斜杠开头。<BR>例如，在 <code>manifest.mf</code> 文件中：
+ <PRE>
+Manifest-Version: 1.0
+Main-Class:Test
+SplashScreen-Image:filename.gif
+ </PRE>
+命令行接口的优先级高于清单设置。
+ </UL>
+ <p>
+{@code SplashScreen} 类提供用于控制闪现屏幕的 API。此类可用于关闭闪现屏幕、更改闪现屏幕图像、获取图像位置/大小以及在闪现屏幕中进行绘制。它不能用于创建闪现屏幕；应当使用命令行或清单文件选项来实现该操作。
+ <p>
+此类无法被实例化。只能存在一个此类的实例，可以使用 {@link #getSplashScreen()} 静态方法获得该实例。如果闪现屏幕不是通过命令行或清单文件选项在应用程序启动时创建的，那么 <code>getSplashScreen</code> 方法将返回 <code>null</code>。
+
+@author Oleg Semenov
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.awt.SplashScreen java.awt.SplashScreen.getSplashScreen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于 Java 启动闪现屏幕控制的 {@code SplashScreen} 对象。
+
+@throws UnsupportedOperationException 如果当前工具包不支持闪现屏幕功能
+@throws HeadlessException 如果 {@code GraphicsEnvironment.isHeadless()} 返回 true
+@return {@link SplashScreen} 实例；如果没有该实例或者已经关闭它，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.SplashScreen.setImageURL(URL imageURL) throws java.lang.NullPointerException, java.io.IOException, java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改闪现屏幕图像。从指定的 URL 加载新图像；支持 GIF、JPEG 和 PNG 图像格式。此方法在图像完成加载且窗口更新之后返回。闪现屏幕窗口根据图像的大小进行调整且在屏幕上居中。
+
+@param imageURL 新闪现屏幕图像的非 <code>null</code> URL
+@throws NullPointerException 如果 {@code imageURL} 为 <code>null</code>
+@throws IOException 如果加载图像时出现错误
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.net.URL java.awt.SplashScreen.getImageURL() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前闪现屏幕图像。
+
+@return 当前闪现屏幕图像文件的 URL
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.SplashScreen.getBounds() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 {@link Rectangle} 形式返回闪现屏幕窗口的边界。例如，如果想在同一位置用窗口替换闪现屏幕，此方法将很有用。
+ <p>
+无法控制闪现屏幕的大小或位置。图像更改时闪现屏幕的大小将自动调整。
+
+@return 包含闪现屏幕边界的 {@code Rectangle}
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.SplashScreen.getSize() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 {@link Dimension} 形式返回闪现屏幕窗口的大小。例如，如果想在闪现屏幕叠加表面上进行绘制，这将很有用。
+ <p>
+无法控制闪现屏幕的大小或位置。图像更改时闪现屏幕的大小将自动调整。
+
+@return {@link Dimension} 对象，用于指示闪现屏幕的大小
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics2D java.awt.SplashScreen.createGraphics() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建闪现屏幕叠加图像的图形上下文（{@link Graphics2D} 形式），它允许在闪现屏幕上进行绘制。注意，不是在主图像上绘制，而是在使用 alpha 混合的主图像上显示的图像中进行绘制。 还要注意的是，在叠加图像上绘制不必更新闪现屏幕窗口的内容。当希望闪现屏幕立即获得更新时，应当在 <code>SplashScreen</code> 上调用 {@code update()}。
+
+@return 闪现屏幕叠加表面的图形上下文
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.SplashScreen.update() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用当前叠加图像的上下文来更新闪现屏幕窗口。
+
+@throws IllegalStateException 如果叠加图像不存在；例如，如果从未调用 {@code createGraphics}，或闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.SplashScreen.close() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+隐藏闪现屏幕、关闭窗口并释放所有相关资源。
+
+@throws IllegalStateException 如果闪现屏幕已经关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.SplashScreen.isVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定闪现屏幕是否可见。可以使用 {@link #close()} 隐藏闪现屏幕，当第一个 AWT/Swing 窗口变得可见时，闪现屏幕也将自动隐藏。
+
+@return 如果闪现屏幕可见（尚未关闭），则返回 true，否则返回 false
+
+<!-- END DATA -->

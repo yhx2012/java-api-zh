@@ -1,0 +1,282 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.Collator extends java.lang.Object implements java.util.Comparator, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Collator</code> 类执行区分语言环境的 <code>String</code> 比较。使用此类可为自然语言文本构建搜索和排序例程。
+
+ <p>
+<code>Collator</code> 是一个抽象基类。其子类实现具体的整理策略。Java 平台目前提供了 <code>RuleBasedCollator</code> 子类，它适用于很多种语言。还可以创建其他子类，以处理更多的专门需要。
+
+ <p>
+与其他区分语言环境的类一样，可以使用静态工厂方法 <code>getInstance</code> 来为给定的语言环境获得适当的 <code>Collator</code> 对象。如果需要理解特定整理策略的细节或者需要修改策略，只需查看 <code>Collator</code> 的子类即可。
+
+ <p>
+下面的示例显示了如何使用针对默认语言环境的 <code>Collator</code> 比较两个字符串。
+ <blockquote>
+ <pre>
+ // Compare two strings in the default locale
+ Collator myCollator = Collator.getInstance();
+ if( myCollator.compare(&quot;abc&quot;, &quot;ABC&quot;) &lt; 0 )
+     System.out.println(&quot;abc is less than ABC&quot;);
+ else
+     System.out.println(&quot;abc is greater than or equal to ABC&quot;);
+ </pre>
+ </blockquote>
+
+ <p>
+可以设置 <code>Collator</code> 的 <em>strength</em> 属性来确定比较中认为显著的差异级别。提供了四种 strength：<code>PRIMARY</code>、<code>SECONDARY</code>、<code>TERTIARY</code> 和 <code>IDENTICAL</code>。对语言特征的确切 strength 赋值和语言环境相关。例如在捷克语中，&quot;e&quot; 和 &quot;f&quot; 被认为是 PRIMARY 差异，而 &quot;e&quot; 和 &quot;&#283;&quot; 则是 SECONDARY 差异，&quot;e&quot; 和 &quot;E&quot; 是 TERTIARY 差异，&quot;e&quot; 和 &quot;e&quot; 是 IDENTICAL。下面的示例显示了如何针对美国英语忽略大小写和重音。
+ <blockquote>
+ <pre>
+ //Get the Collator for US English and set its strength to PRIMARY
+ Collator usCollator = Collator.getInstance(Locale.US);
+ usCollator.setStrength(Collator.PRIMARY);
+ if( usCollator.compare(&quot;abc&quot;, &quot;ABC&quot;) == 0 ) {
+     System.out.println(&quot;Strings are equivalent&quot;);
+ }
+ </pre>
+ </blockquote>
+ <p>
+如果正好比较 <code>String</code> 一次，则 <code>compare</code> 方法可提供最佳性能。但在对 <code>String</code> 列表排序时，通常需要对每个 <code>String</code> 进行多次比较。在这种情况下，<code>CollationKey</code> 可提供更好的性能。<code>CollationKey</code> 类将一个 <code>String</code> 转换成一系列可与其他 <code>CollationKey</code> 进行按位比较的位。<code>CollationKey</code> 是由 <code>Collator</code> 对象为给定的 <code>String</code> 所创建的。<br><strong>注：</strong>不能比较由不同 <code>Collator</code> 创建的 <code>CollationKey</code>。有关使用 <code>CollationKey</code> 的示例，请参阅 {@link CollationKey} 的类描述。
+
+@see         RuleBasedCollator
+@see         CollationKey
+@see         CollationElementIterator
+@see         Locale
+@version     1.46, 07/23/06
+@author      Helena Shih, Laura Werner, Richard Gillam
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.PRIMARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Collator 的 strength 值。设置该值后，比较期间仅将 PRIMARY 及以上的差异视为显著的。对语言特征的 strength 赋值和语言环境相关。常见的例子是将不同的基本字母（&quot;a&quot; 和 &quot;b&quot;）视为 PRIMARY 差异。
+@see java.text.Collator#setStrength
+@see java.text.Collator#getStrength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.SECONDARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Collator 的 strength 值。设置该值后，比较期间仅将 SECONDARY 的差异视为显著的。对语言特征的 strength 赋值和语言环境相关。常见的例子是将相同基本字母的不同重音形式（&quot;a&quot; 和 &quot;?&quot;）视为 SECONDARY 差异。
+@see java.text.Collator#setStrength
+@see java.text.Collator#getStrength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.TERTIARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Collator 的 strength 值。设置该值后，比较期间仅将 TERTIARY 及以上的差异视为显著的。对语言特征的 strength 赋值和语言环境相关。常见的例子是将大小写差异（如 &quot;a&quot; 和 &quot;A&quot;）视为 TERTIARY 差异。
+@see java.text.Collator#setStrength
+@see java.text.Collator#getStrength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.IDENTICAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Collator 的 strength 值。设置该值后，比较期间将所有的差异都视为显著的。对语言特征的 strength 赋值和语言环境相关。常见的例子是控制字符（&quot;\u0001&quot; 和 &quot;\u0002&quot;）在 PRIMARY、SECONDARY 和 TERTIARY 级别视为相等的，但在 IDENTICAL 级别则是不同的。另外，如果将 decomposition 设置为 NO_DECOMPOSITION，则像 &quot;\u00C0&quot;（A-重音）的前构重音和像 &quot;A\u0300&quot;（A，组合重音）的组合重音将在 IDENTICAL 级别被视为是显著差异。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.NO_DECOMPOSITION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Decomposition 模式值。设置为 NO_DECOMPOSITION 时，不会为了整理而分解重音字符。这是默认的设置并可提供最快的整理，但是仅对那些不使用重音的语言才能得出正确的结果。
+@see java.text.Collator#getDecomposition
+@see java.text.Collator#setDecomposition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.CANONICAL_DECOMPOSITION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Decomposition 模式值。设置为 CANONICAL_DECOMPOSITION 时，将为整理而分解那些根据 Unicode 标准为规范变体的字符。要获取重音字符的正确整理，应该使用该值。
+ <p>
+CANONICAL_DECOMPOSITION 对应于 <a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Technical Report #15</a> 中所描述的 Normalization Form D。
+@see java.text.Collator#getDecomposition
+@see java.text.Collator#setDecomposition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.Collator.FULL_DECOMPOSITION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Decomposition 模式值。设置为 FULL_DECOMPOSITION 时，将为整理而分解 Unicode 规范变体和 Unicode 兼容变体。这样就不仅能排序重音字符，而且对于具有特殊格式的字符，也能够使用其标准化形式进行排序。例如，半角和全角的 ASCII 字符与片假名字符就能一同排序了。FULL_DECOMPOSITION 是最完整的，因此也是最慢的 decomposition 模式。
+ <p>
+FULL_DECOMPOSITION 对应于 <a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html">Unicode Technical Report #15</a> 中所描述的 Normalization Form KD。
+@see java.text.Collator#getDecomposition
+@see java.text.Collator#setDecomposition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.Collator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法。此构造方法是受保护的，所以子类可以访问它。用户通常调用 getInstance 工厂方法来创建一个 Collator 子类。
+@see java.text.Collator#getInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.text.Collator java.text.Collator.getInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前默认语言环境的 Collator。通过 java.util.Locale.getDefault 来确定默认的语言环境。
+@return 默认语言环境（例如 en_US）的 Collator。
+@see java.util.Locale#getDefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.text.Collator java.text.Collator.getInstance(Locale desiredLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所需语言环境的 Collator。
+@param desiredLocale 所需的语言环境。
+@return 所需语言环境的 Collator。
+@see java.util.Locale
+@see java.util.ResourceBundle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.Collator.compare(String source, String target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此 Collator 的整理规则来比较源字符串和目标字符串。根据源字符串是小于、等于或大于目标字符串来返回负整数、零或正整数。有关此方法的使用示例，请参阅 Collator 的类描述。
+ <p>
+对于一次比较，此方法具有最佳性能。如果在多次比较中涉及给定的 String，则 CollationKey.compareTo 具有最佳性能。有关使用 CollationKeys 的示例，请参阅 Collator 的类描述。
+@param source 源字符串。
+@param target 目标字符串。
+@return 返回一个整数值。如果源小于目标，则该值小于零；如果源等于目标，则该值为零；如果源大于目标，则该值大于零。
+@see java.text.CollationKey
+@see java.text.Collator#getCollationKey
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.Collator.compare(Object o1, Object o2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此方法两个参数的顺序。第一个参数小于、等于或大于第二个参数时分别返回负整数、零或正整数。
+ <p>
+此实现仅返回 <code> compare((String)o1, (String)o2)</code>。
+ 
+@return 第一个参数小于、等于或大于第二个参数时分别返回负整数、零或正整数。
+@exception ClassCastException 无法将参数强制转换为 String。
+@see java.util.Comparator
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.text.CollationKey java.text.Collator.getCollationKey(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该 String 转换为一系列可以和其他 CollationKey 按位进行比较的位。在多次比较中均涉及 String 时，CollationKey 的性能要优于 Collator.compare。有关使用 CollationKeys 的示例，请参阅 Collator 的类描述。
+@param source 将要被转换为整理键的字符串。
+@return 根据此 Collator 的整理规则为给定 String 创建的 CollationKey。如果源 String 为 null，则返回一个 null CollationKey。
+@see java.text.CollationKey
+@see java.text.Collator#compare
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Collator.equals(String source, String target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此 Collator 的整理规则比较两个字符串是否相等的便捷方法。
+@param source 要比较的源字符串。
+@param target 要比较的目标字符串。
+@return 如果根据整理规则，两个字符串相等，则返回 true；否则返回 false。
+@see java.text.Collator#compare
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.text.Collator.getStrength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Collator 的 strength 属性。strength 属性确定了在比较期间被视为显著的最低差异级别。有关此方法的使用示例，请参阅 Collator 的类描述。
+@return 此 Collator 的当前 strength 属性。
+@see java.text.Collator#setStrength
+@see java.text.Collator#PRIMARY
+@see java.text.Collator#SECONDARY
+@see java.text.Collator#TERTIARY
+@see java.text.Collator#IDENTICAL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.text.Collator.setStrength(int newStrength)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 Collator 的 strength 属性。strength 属性确定了在比较期间被视为显著的最低差异级别。有关此方法的使用示例，请参阅 Collator 的类描述。
+@param newStrength  新的 strength 值。
+@see java.text.Collator#getStrength
+@see java.text.Collator#PRIMARY
+@see java.text.Collator#SECONDARY
+@see java.text.Collator#TERTIARY
+@see java.text.Collator#IDENTICAL
+@exception  IllegalArgumentException 如果新的 strength 值不是 PRIMARY、SECONDARY、TERTIARY 或 IDENTICAL 之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.text.Collator.getDecomposition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 Collator 的 decomposition 模式。Decomposition 模式确定如何处理 Unicode 组合字符。调整 decomposition 模式允许用户在更快和更完整的整理行为之间进行选择。
+<p>用于 decomposition 模式的三个值是：
+ <UL>
+<LI>NO_DECOMPOSITION，
+<LI>CANONICAL_DECOMPOSITION，
+<LI>FULL_DECOMPOSITION。
+ </UL>
+有关这三个常量含义的描述，请参阅这些常量的文档。
+@return decomposition 模式
+@see java.text.Collator#setDecomposition
+@see java.text.Collator#NO_DECOMPOSITION
+@see java.text.Collator#CANONICAL_DECOMPOSITION
+@see java.text.Collator#FULL_DECOMPOSITION
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.text.Collator.setDecomposition(int decompositionMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 Collator 的 decomposition 模式。有关 decomposition 模式的描述，请参阅 getDecomposition。
+@param decompositionMode  新的 decomposition 模式。
+@see java.text.Collator#getDecomposition
+@see java.text.Collator#NO_DECOMPOSITION
+@see java.text.Collator#CANONICAL_DECOMPOSITION
+@see java.text.Collator#FULL_DECOMPOSITION
+@exception IllegalArgumentException 如果给定值不是有效的 decomposition 模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.util.Locale[] java.text.Collator.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个所有受支持语言环境的数组，此类的 <code>getInstance</code> 方法可为这些语言环境返回已本地化的实例。 返回的数组代表 Java 运行时和已安装的 {@link java.text.spi.CollatorProvider CollatorProvider} 实现所支持的语言环境的联合。它至少包含一个等同于 {@link java.util.Locale#US Locale.US} 的 Locale 实例。
+
+@return 一个语言环境数组，可以为这些语言环境提供已本地化的 <code>Collator</code> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.Collator.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 Cloneable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.Collator.equals(Object that)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个 Collator 的相等性。
+@param that 要与此 Collator 进行比较的 Collator。
+@return 如果此 Collator 与该 Collator 相同，则返回 true；否则返回 false.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.Collator.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成此 Collator 的哈希码。
+
+<!-- END DATA -->

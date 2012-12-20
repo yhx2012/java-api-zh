@@ -1,0 +1,195 @@
+<!-- BEGIN KEY -->
+public abstract class java.net.Authenticator extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Authenticator 类表示懂得如何获得网络连接验证的对象。通常，它通过提示用户输入信息来完成此操作。
+ <p>
+应用程序通过重写子类中的 {@link #getPasswordAuthentication()} 使用此类。此方法通常使用各种 getXXX() 访问器方法获取关于请求验证的实体的信息。然后，它必须通过与用户交互或者某些其他非交互手段获取用户名和密码。之后凭据将以 {@link PasswordAuthentication} 返回值的形式返回。
+ <p>
+接下来通过调用 {@link #setDefault(Authenticator)} 向系统注册此具体子类的实例。需要进行验证时，系统将调用其中一个 requestPasswordAuthentication() 方法，这些方法将依次调用注册对象的 getPasswordAuthentication() 方法。 
+ <p>
+请求验证的所有方法都有一个失败的默认实现。
+
+@see java.net.Authenticator#setDefault(java.net.Authenticator)
+@see java.net.Authenticator#getPasswordAuthentication()
+
+@author  Bill Foote
+@version 1.32, 06/28/04
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.net.Authenticator.setDefault(Authenticator a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在代理或 HTTP 服务器请求验证时连网密码使用的 authenticator。
+ <p>
+首先，如果存在安全管理器，则在 <code>NetPermission(&quot;setDefaultAuthenticator&quot;)</code> 权限下调用 <code>checkPermission</code> 方法。这可能导致 java.lang.SecurityException。
+
+@param	a  要设置的 authenticator。如果 a 为 <code>null</code>，则移除以前设置的所有 authenticator。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许设置默认 authenticator。
+
+@see SecurityManager#checkPermission
+@see java.net.NetPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.net.PasswordAuthentication java.net.Authenticator.requestPasswordAuthentication(InetAddress addr, int port, String protocol, String prompt, String scheme)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要求已经向系统注册的 authenticator 提供密码。
+ <p>
+首先，如果存在安全管理器，则在 <code>NetPermission(&quot;requestPasswordAuthentication&quot;)</code> 权限下调用 <code>checkPermission</code> 方法。这可能导致 java.lang.SecurityException。
+
+@param addr 请求授权的站点的 InetAddress；如果未知则为 null。
+@param port 所请求的连接的端口
+@param protocol 正在请求连接的协议 ({@link java.net.Authenticator#getRequestingProtocol()})
+@param prompt 用户的提示字符串
+@param scheme 验证方案
+
+@return 用户名/密码；或者无法得到，则返回 null。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许密码验证请求。
+
+@see SecurityManager#checkPermission
+@see java.net.NetPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.net.PasswordAuthentication java.net.Authenticator.requestPasswordAuthentication(String host, InetAddress addr, int port, String protocol, String prompt, String scheme)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要求已经向系统注册的 authenticator 提供密码。此方法为请求密码的首选方法，因为在InetAddress 不可用时可以提供主机名。
+ <p>
+首先，如果存在安全管理器，则在 <code>NetPermission(&quot;requestPasswordAuthentication&quot;)</code> 权限下调用 <code>checkPermission</code> 方法。这可能导致 java.lang.SecurityException。
+
+@param host 请求验证的站点的主机名。
+@param addr 请求授权的站点的 InetAddress；如果未知则为 null。
+@param port 所请求的连接的端口。
+@param protocol 请求连接的协议 ({@link java.net.Authenticator#getRequestingProtocol()})
+@param prompt 标识验证域 (authentication realm) 的用户的提示字符串。
+@param scheme 验证方案
+
+@return 用户名/密码；或者无法得到，则返回 null。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许密码验证请求。
+
+@see SecurityManager#checkPermission
+@see java.net.NetPermission
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.net.PasswordAuthentication java.net.Authenticator.requestPasswordAuthentication(String host, InetAddress addr, int port, String protocol, String prompt, String scheme, URL url, Authenticator.RequestorType reqType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要求已经向系统注册的 authenticator 提供密码。
+ <p>
+首先，如果存在安全管理器，则在 <code>NetPermission(&quot;requestPasswordAuthentication&quot;)</code> 权限下调用 <code>checkPermission</code> 方法。这可能导致 java.lang.SecurityException。
+
+@param host 请求验证的站点的主机名。
+@param addr 请求授权的站点的 InetAddress；或者未知则为 null。
+@param port 所请求的连接的端口
+@param protocol 请求连接的协议 ({@link java.net.Authenticator#getRequestingProtocol()})
+@param prompt 用户的提示字符串
+@param scheme 验证方案
+@param url 导致验证的请求 URL
+@param reqType 请求验证的实体的类型（服务器或代理）。
+
+@return 用户名/密码；或者无法得到，则返回 null。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许密码验证请求。
+
+@see SecurityManager#checkPermission
+@see java.net.NetPermission
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.String java.net.Authenticator.getRequestingHost()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取请求验证的站点或代理的 <code>hostname</code>；如果不可用，则为 <code>null</code>。
+ 
+@return 需要验证的连接的主机名；如果不可用，则返回 null。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.net.InetAddress java.net.Authenticator.getRequestingSite()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取请求授权的站点的 <code>InetAddress</code>；如果不可用，则为 <code>null</code>。
+ 
+@return 请求授权的站点的 InetAddress；如果不可用，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final int java.net.Authenticator.getRequestingPort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所请求的连接的端口号。
+@return 指示所请求连接的端口的 <code>int</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.String java.net.Authenticator.getRequestingProtocol()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+给出正在请求连接的协议。此协议往往基于 URL，但在以后的 JDK 中，它可能是（举例来说）用于密码保护的 SOCKS5 防火墙的 &quot;SOCKS&quot;。
+
+@return 协议，可以选择是否后跟 &quot;/version&quot;，其中 version 指的是版本号。
+
+@see java.net.URL#getProtocol()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.String java.net.Authenticator.getRequestingPrompt()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取请求方给出的提示字符串。
+
+@return 请求方给出的提示字符串（对于 http 请求就是验证域）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.String java.net.Authenticator.getRequestingScheme()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取请求方的方案（例如，HTTP 防火墙的 HTTP 方案）。
+
+@return 请求方的方案
+	      
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.PasswordAuthentication java.net.Authenticator.getPasswordAuthentication()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+需要密码授权时调用。子类应该重写默认实现，默认实现返回 null。
+@return 从用户收集的 PasswordAuthentication；如果一个也没有提供，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.URL java.net.Authenticator.getRequestingURL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回导致请求验证的 URL。
+
+@since 1.5
+
+@return 请求 URL
+	      
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.Authenticator.RequestorType java.net.Authenticator.getRequestorType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回请求方是代理还是服务器。
+
+@since 1.5
+
+@return 请求方的验证类型
+	      
+<!-- END DATA -->

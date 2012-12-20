@@ -1,0 +1,118 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.LookupOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类实现从源到目标的查找操作。LookupTable 对象可能包含单个数组或多个数组，遵循如下限制。
+ <p>
+对 Raster，对 band 执行查找操作。查找数组的数目可能为一，此时对所有 band 应用同一个数组，否则查找数组的数目必须等于 Source Raster 的 band 数。
+ <p>
+对于 BufferedImage，对颜色和 alpha 分量执行查找操作。查找数组的数目可能为一，此时对所有颜色（但没有 alpha）分量应用同一个数组。否则查找数组的数目可能等于 Source 的颜色分量数，此时如果存在 alpha 分量，则不执行此分量的查找。如果这两种情况都不适用，则查找数组的数目必须等于 Source 颜色分量数加上 alpha 分量数，此时对所有颜色和 alpha 分量执行查找。这就允许多 band BufferedImage 的非一致缩放。
+ <p>
+对于查找操作，处理具有预乘 alpha 数据的 BufferedImage 源的方式与处理没有预乘的图像的方式相同。也就是说，无论是否预乘了数据，查找都是对 BufferedImage 源的原始数据的每个 band 执行。如果需要进行到目标 ColorModel 的颜色转换，则此步骤将考虑源和目标的预乘状态。
+ <p>
+不能使用具有 IndexColorModel 的图像。
+ <p>
+如果在构造方法中指定了 RenderingHints 对象，则在需要颜色转换时可以使用颜色呈现提示和抖动提示。
+ <p>
+此类允许 Source 与 Destination 相同。
+
+@version 10 Feb 1997
+@see LookupTable
+@see java.awt.RenderingHints#KEY_COLOR_RENDERING
+@see java.awt.RenderingHints#KEY_DITHERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.LookupOp(LookupTable lookup, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定查找表和 <code>RenderingHints</code> 对象（可能为 <code>null</code>）的情况下，构造一个 <code>LookupOp</code> 对象。
+@param lookup 指定的 <code>LookupTable</code>
+@param hints 指定的 <code>RenderingHints</code>，或者为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.LookupTable java.awt.image.LookupOp.getTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>LookupTable</code>。
+@return 此 <code>LookupOp</code> 的 <code>LookupTable</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.LookupOp.filter(BufferedImage src, BufferedImage dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对 <code>BufferedImage</code> 执行查找操作。如果源图像的颜色模型与目标图像的不同，则在目标图像中转换像素。如果目标图像为 <code>null</code>，则创建一个具有合适的 <code>ColorModel</code> 的 <code>BufferedImage</code>。如果 <code>LookupTable</code> 中的数组数不符合上面类注释所声明的限制，如果源图像有一个 <code>IndexColorModel</code>，则抛出 <code>IllegalArgumentException</code>。
+@param src 要过滤的 <code>BufferedImage</code> 
+@param dst 存储过滤操作结果的 <code>BufferedImage</code> 
+@return 过滤后的 <code>BufferedImage</code>。
+@throws IllegalArgumentException 如果 <code>LookupTable</code> 中的数组数不符合上面类注释所声明的限制，或者源图像有一个 <code>IndexColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.LookupOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 <code>Raster</code> 上执行查找操作。如果目标 <code>Raster</code> 为 <code>null</code>，则创建一个新的 <code>Raster</code>。如果源 <code>Raster</code> 和目标 <code>Raster</code> 的 band 数不同，或者 <code>LookupTable</code> 中的数组数不符合上面类注释所声明的限制，则可能抛出 <code>IllegalArgumentException</code>。
+@param src 要过滤的源 <code>Raster</code> 
+@param dst 用于已过滤 <code>src</code> 的目标 <code>WritableRaster</code>
+@return 过滤后的 <code>WritableRaster</code>。
+@throws IllegalArgumentException 如果源和目标 raster 的 band 数不同，或者 <code>LookupTable</code> 中的数组数不符合上面类注释所声明的限制。
+         
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.LookupOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回过滤后的目标图像的边界框。因为这不是一个几何操作，所以不会改变边界框。
+@param src 要过滤的 <code>BufferedImage</code> 
+@return 过滤后的目标图像的边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.LookupOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回过滤后目标 Raster 的边界框。因为这不是一个几何操作，所以不会改变边界框。
+@param src 要过滤的 <code>Raster</code>  
+@return 过滤后的目标 <code>Raster</code> 的边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.LookupOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一幅具有正确大小和 band 数的、经过检查的目标图像。如果 destCM 为 <code>null</code>，则将使用适当的 <code>ColorModel</code>。
+@param src   过滤操作的源图像。
+@param destCM    目标的 <code>ColorModel</code>，可以为 <code>null</code>。
+@return 过滤后的目标 <code>BufferedImage</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.LookupOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定源 Raster 的情况下，创建一幅具有正确大小和 band 数的、经过检查的目标 <code>Raster</code>。
+@param src 要转换的 <code>Raster</code> 
+@return 经过检查的目标 <code>Raster</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.LookupOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定源图像中某个点的情况下，返回目标点的位置。如果 <code>dstPt</code> 不为 <code>null</code>，则使用它来保存返回值。因为这不是一个几何操作，所以 <code>srcPt</code> 将等于 <code>dstPt</code>。
+@param srcPt 表示源图像中某个点的 <code>Point2D</code> 
+@param dstPt 表示目标图像中位置的 <code>Point2D</code>
+@return 与源图像中指定点相对应的目标图像中的 <code>Point2D</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.LookupOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此操作的呈现提示。
+@return 与此操作相关联的 <code>RenderingHints</code> 对象。
+
+<!-- END DATA -->

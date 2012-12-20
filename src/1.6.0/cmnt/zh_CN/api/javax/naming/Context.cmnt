@@ -1,0 +1,741 @@
+<!-- BEGIN KEY -->
+public interface javax.naming.Context
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示一个命名上下文，它由一组名称到对象的绑定组成。它包含检查和更新这些绑定的一些方法。
+ <p>
+<h4>名称</h4>
+每个作为参数传递给 <tt>Context</tt> 方法的名称都是相对于该上下文的。空名称用于命名上下文本身。名称参数绝对不能为 null。
+ <p>
+大多数方法具有重载形式，一种带有 <code>Name</code> 参数，另一种带有 <code>String</code> 参数。这些重载的方法是等效的：如果 <code>Name</code> 和 <code>String</code> 参数只是相同名称的不同表示形式，则相同方法的重载形式的行为也相同。在以下方法描述中，仅完整记录一种形式。第二种形式将链接到第一种：对两者应用相同的文档。
+ <p>
+对于支持联合的系统，<tt>Context</tt> 方法的 <tt>String</tt> 名称参数是复合名称。是 <tt>CompositeName</tt> 实例的那些名称参数被视为复合名称，而不是 <tt>CompositeName</tt> 实例的 <tt>Name</tt> 参数被视为组合名称（可能是 <tt>CompoundName</tt> 实例或组合名称的其他实现）。这允许将 <tt>NameParser.parse()</tt> 的结果用作 <tt>Context</tt> 方法的参数。在 JNDI 1.2 之前，所有名称参数都被视为复合名称。
+<p>
+此外，对于支持联合的系统，<tt>NamingEnumeration</tt> 中所有从 <tt>list()</tt> 和 <tt>listBindings()</tt> 返回的名称都是表示为字符串的复合名称。有关名称的字符串语法，请参见 <tt>CompositeName</tt>。
+<p>
+对于不支持联合的系统，名称参数（<tt>Name</tt> 或 <tt>String</tt> 形式）和 <tt>NamingEnumeration</tt> 中返回的名称可能是其自己的名称空间中的名称，而不是复合名称空间中的名称，这由服务提供者决定。
+<p>
+<h4>异常</h4>
+此接口中的所有方法都可以抛出 <tt>NamingException</tt> 或其任意子类。有关每个异常的详细信息，请参见 <tt>NamingException</tt> 及其子类。
+<p>
+<h4>并发访问</h4>
+不保证 Context 实例与多个线程的并发访问是同步的。需要并发地访问单个 Context 实例的线程应该在它们之间实现同步并提供必需的锁定。对于每个线程都操作一个不同 Context 实例的多个线程而言，无需实现同步。注意，向 {@link #lookup(Name) <tt>lookup</tt>} 方法传递空名称将返回一个表示相同命名上下文的新 Context 实例。
+<p>
+为了实现并发控制，返回 <tt>NamingEnumeration</tt> 的 Context 操作在枚举仍在使用中或者仍在遵从该操作生成的所有引用时被认为尚未完成。
+
+<p>
+<h4>参数</h4>
+传递给 <tt>Context</tt> 接口或其子接口之一中任何方法的 <tt>Name</tt> 参数不会被服务提供者修改。服务提供者可以在执行操作期间保留一个对它的引用，其中包括方法结果的所有枚举和生成的所有引用的处理。调用者在这段时间内不能修改该对象。任何这类方法返回的 <tt>Name</tt> 都归调用者所有。调用者随后可修改它，而服务提供者则不能。
+
+<p>
+<h4>环境属性</h4>
+<p>
+JNDI 应用程序需要一种方式来传达定义访问命名服务和目录服务的环境的各种首选项和属性。例如，为了访问服务，某个上下文可能需要安全证书的规约。另一个上下文可能要求提供服务器的配置信息。这些被称为某一上下文的<em>环境</em>。<tt>Context</tt> 接口提供一些检索和更新此环境的方法。
+<p>
+该环境在上下文方法从一个上下文到下一个上下文时从父上下文中继承。对某一上下文环境的更改不会直接影响其他上下文的环境。
+<p>
+当将环境属性用于有效性和/或验证有效性时，这些属性与实现有关。例如，一些与安全有关的属性被服务提供者用于&ldquo;登录&rdquo;目录。此登录过程可能发生在创建上下文时，或者发生在第一次对该上下文调用方法时。无论这在何时或是否发生，此环境属性都与实现有关。在将环境属性添加到上下文中或从上下文中移除时，验证这些更改的有效性也都与实现有关。例如，验证某些属性可能发生在进行更改时，或者发生在对上下文执行下一个操作时，抑或根本不验证。
+<p>
+拥有对某一上下文的引用的任何对象都可以检查该上下文的环境。敏感信息（比如明文密码）不应该存储在该环境中，除非已知实现能保护这类信息。
+
+<p>
+<a name=RESOURCEFILES></a>
+<h4>资源文件</h4>
+<p>
+要简化设置 JNDI 应用程序所需环境的任务，可以将<em>资源文件</em> 与应用程序组件和服务提供者一起发布。JNDI 资源文件是使用属性文件格式的文件（参见 {@link java.util.Properties#load <tt>java.util.Properties</tt>}），包括一个键/值对列表。键是属性的名称（例如 &quot;java.naming.factory.object&quot;），而值是使用为该属性定义的格式的字符串。以下是 JNDI 资源文件的一个示例：
+
+ <blockquote><tt><pre>
+ java.naming.factory.object=com.sun.jndi.ldap.AttrsToCorba:com.wiz.from.Person
+ java.naming.factory.state=com.sun.jndi.ldap.CorbaToAttrs:com.wiz.from.Person
+ java.naming.factory.control=com.sun.jndi.ldap.ResponseControlFactory
+ </pre></tt></blockquote>
+
+JNDI 类库读取资源文件，并使属性值随意可用。因此应该认为 JNDI 资源文件是&ldquo;所有人可读的&rdquo;，敏感信息（比如明文密码）不应该存储在那里。
+<p>
+有两种 JNDI 资源文件：<em>提供者</em> 和<em>应用程序</em>。
+
+<h5>提供者资源文件</h5>
+
+每个服务提供者都有一个可选的资源，该资源列出了特定于该提供者的属性。此资源的名称是：
+ <blockquote>
+ [<em>prefix</em>/]<tt>jndiprovider.properties</tt>
+ </blockquote>
+其中 <em>prefix</em> 是提供者的上下文实现的包名称，其每个句点 (&quot;.&quot;) 都被转换成一个斜杠 (&quot;/&quot;)。
+
+例如，假设服务提供者定义了一个带有类名称 <tt>com.sun.jndi.ldap.LdapCtx</tt> 的上下文实现。此提供者的提供者资源被命名为 <tt>com/sun/jndi/ldap/jndiprovider.properties</tt>。如果该类不在一个包中，则资源的名称就是 <tt>jndiprovider.properties</tt>。
+
+ <p>
+<a name=LISTPROPS></a> JNDI 类库中的某些方法使用指定 JNDI 工厂列表的标准 JNDI 属性：
+ <ul>
+ <li>java.naming.factory.object
+ <li>java.naming.factory.state
+ <li>java.naming.factory.control
+ <li>java.naming.factory.url.pkgs
+ </ul>
+在确定这些属性的值时，JNDI 库将参考提供者资源文件。这以外的属性可由服务提供者在提供者资源文件中设置。服务提供者的文档应该明确声明哪些属性是被允许的；文件中的其他属性将被忽略。
+
+<h5>应用程序资源文件</h5>
+
+在部署应用程序时，该应用程序通常将在其类路径中生成若干代码基目录和 JAR。类似地，在部署 applet 时，它将有一个指定 applet 类所处地址的代码基和档案文件。JNDI 查找（使用 {@link ClassLoader#getResources <tt>ClassLoader.getResources()</tt>}）类路径中所有名为 <tt>jndi.properties</tt> 的<em>应用程序资源文件</em>。此外，如果文件 <i>java.home</i><tt>/lib/jndi.properties</tt> 存在并且是可读的，则 JNDI 会将其视为一个额外的应用程序资源文件。（<i>java.home</i> 指示由 <tt>java.home</tt> 系统属性命名的目录。）包含在这些文件中的所有属性都被放置在初始上下文环境中。然后此环境由其他上下文继承。
+
+ <p>
+对于同时出现在多个应用程序资源文件中的每个属性，JNDI 使用最先找到的值，或者在少数有意义的情况下串联所有这些值（细节在下文给出）。例如，如果在三个 <tt>jndi.properties</tt> 资源文件中存在 &quot;java.naming.factory.object&quot; 属性，则对象工厂列表是所有三个文件中的属性值的串联。使用此方案，每个可部署组件都要负责列出它导出的工厂。JNDI 在搜索工厂类时自动收集和使用所有这些导出列表。
+
+ <p>
+从 Java 2 Platform 开始可使用应用程序资源文件，<i>java.home</i><tt>/lib</tt> 中的文件除外，它在较早的 Java 平台上也可以使用。
+
+<h5>属性的搜索算法</h5>
+
+当 JNDI 构造一个初始上下文时，该上下文的环境是使用传递给构造方法的环境参数中定义的属性、系统属性、applet 参数和应用程序资源文件进行初始化的。有关细节请参见 <a href=InitialContext.html#ENVIRONMENT><tt>InitialContext</tt></a>。然后此初始环境由其他上下文实例继承。
+
+ <p>
+如果 JNDI 类库需要确定某一属性的值，它将通过按顺序合并取自以下两个源的值来实现这一点：
+ <ol>
+<li>将在其上执行操作的上下文的环境。
+<li>将在其上执行操作的上下文的提供者资源文件 (<tt>jndiprovider.properties</tt>)。
+ </ol>
+对于每个同时存在于这两个源中的属性，JNDI 用以下方式确定属性的值。如果该属性是指定 JNDI 工厂列表的标准 JNDI 属性之一（如<a href=#LISTPROPS>上文</a>所列），则这些值被串联成一个以冒号分隔的列表。对于其他属性，只使用最先找到的值。
+
+ <p>
+当服务提供者需要确定某一属性的值时，它通常将直接从环境中获取该值。服务提供者可以定义将置于其本身提供者资源文件中的特定于提供者的属性。在这种情况下，它应该根据上文所述合并这些值。
+
+ <p>
+这样，每个服务提供者开发人员便可以指定与该服务提供者一起使用的工厂列表。这可以由应用程序或 applet 的部署者指定的应用程序资源修改，而这些资源又可以由用户修改。
+
+@author Rosanna Lee
+@author Scott Seligman
+@author R. Vasudevan
+@version 1.13 05/11/17
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.INITIAL_CONTEXT_FACTORY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定要使用的初始上下文工厂的环境属性名称。该属性的值应该是将创建初始上下文的工厂类的完全限定类名称。此属性可以在传递给初始上下文构造方法的环境参数、applet 参数、系统属性或应用程序资源文件中指定。如果没有在任何这些源中指定该属性，则在需要初始上下文完成某项操作时将抛出 <tt>NoInitialContextException</tt>。
+
+<p> 此常量的值是 &quot;java.naming.factory.initial&quot;。
+
+@see InitialContext
+@see javax.naming.directory.InitialDirContext
+@see javax.naming.spi.NamingManager#getInitialContext
+@see javax.naming.spi.InitialContextFactory
+@see NoInitialContextException
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see #APPLET
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.OBJECT_FACTORIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定要使用的对象工厂列表的环境属性名称。该属性的值应该是工厂类以冒号分隔的完全限定类名称列表，这些类将在给定关于对象信息的情况下创建该对象。此属性可以在环境、applet 参数、系统属性或者一个或多个资源文件中指定。
+
+<p> 此常量的值是 &quot;java.naming.factory.object&quot;。
+
+@see javax.naming.spi.NamingManager#getObjectInstance
+@see javax.naming.spi.ObjectFactory
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see #APPLET
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.STATE_FACTORIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定要使用的状态工厂列表的环境属性名称。该属性的值应该是状态工厂类以冒号分隔的完全限定类名称列表，这些类将被用来在给定对象本身的情况下获得该对象的状态。此属性可以在环境、applet 参数、系统属性或者一个或多个资源文件中指定。
+
+<p> 此常量的值是 &quot;java.naming.factory.state&quot;。
+
+@see javax.naming.spi.NamingManager#getStateToBind
+@see javax.naming.spi.StateFactory
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see #APPLET
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.URL_PKG_PREFIXES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定加载 URL 上下文工厂时要使用的包前缀列表的环境属性名称。该属性的值应该是工厂类名称以冒号分隔的包前缀列表，该工厂类将创建一个 URL 上下文工厂。此属性可以在环境、applet 参数、系统属性或者一个或多个资源文件中指定。前缀 <tt>com.sun.jndi.url</tt> 总是被追加到可能为空的包前缀列表中。
+
+<p> 此常量的值是 &quot;java.naming.factory.url.pkgs&quot;。
+
+@see javax.naming.spi.NamingManager#getObjectInstance
+@see javax.naming.spi.NamingManager#getURLContext
+@see javax.naming.spi.ObjectFactory
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see #APPLET
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.PROVIDER_URL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定要使用的服务提供者配置信息的环境属性名称。该属性的值应该包含一个 URL 字符串（例如 &quot;ldap://somehost:389&quot;）。此属性可以在环境、applet 参数、系统属性或资源文件中指定。如果没有在任何这些源中指定该属性，则由服务提供者确定默认配置。
+
+<p> 此常量的值是 &quot;java.naming.provider.url&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see #APPLET
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.DNS_URL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定用于 JNDI URL 上下文的 DNS 主机名和域名（例如 &quot;dns://somehost/wiz.com&quot;）的环境属性名称。此属性可以在环境、applet 参数、系统属性或资源文件中指定。如果没有在任何这些源中指定该属性并且程序试图使用包含 DNS 名称的 JNDI URL，则将抛出 <tt>ConfigurationException</tt>。
+
+<p> 此常量的值是 &quot;java.naming.dns.url&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.AUTHORITATIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定所请求服务的权威性的环境属性名称。如果该属性的值是字符串 &quot;true&quot;，则意味着访问的是最具权威的源（即无需任何缓冲或副本）。如果该值是其他任何值，则该源不必（但可能）是权威性的。如果该值未指定，则默认为 &quot;false&quot;。
+
+<p> 此常量的值是 &quot;java.naming.authoritative&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.BATCHSIZE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定通过服务协议返回数据时要使用的批处理量 (batch size) 的环境属性名称。这是一个提示，提示提供者按指定的批处理量返回操作的结果，以便提供者可以优化其性能和对资源的使用。该属性的值是某一整数的字符串表示形式。如果该值未指定，则由服务提供者确定批处理量。
+
+<p> 此常量的值是 &quot;java.naming.batchsize&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.REFERRAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定将如何处理服务提供者遇到的引用的环境属性名称。该属性的值是以下字符串之一：
+ <dl>
+ <dt>&quot;follow&quot;
+<dd>自动服从引用
+ <dt>&quot;ignore&quot;
+<dd>忽略引用
+<dt>&quot;throw&quot;
+<dd>在遇到引用时抛出 <tt>ReferralException</tt>。
+ </dl>
+如果未指定此属性，则由提供者确定默认值。
+
+<p> 此常量的值是 &quot;java.naming.referral&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.SECURITY_PROTOCOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定将使用的安全协议的环境属性名称。该属性的值是一个由服务提供者确定的字符串（例如 &quot;ssl&quot;）。如果未指定此属性，则由服务提供者确定如何运行。
+
+<p> 此常量的值是 &quot;java.naming.security.protocol&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.SECURITY_AUTHENTICATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定将使用的安全级别的环境属性名称。该属性的值是下列字符串之一：&quot;none&quot;、&quot;simple&quot; 和 &quot;strong&quot;。如果未指定此属性，则由服务提供者确定如何运行。
+
+<p> 此常量的值是 &quot;java.naming.security.authentication&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.SECURITY_PRINCIPAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定用于验证服务调用者主体身份的环境属性名称。主体格式取决于验证方案。如果未指定此属性，则由服务提供者确定如何运行。
+
+<p> 此常量的值是 &quot;java.naming.security.principal&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.SECURITY_CREDENTIALS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定用于验证服务调用者主体证书的环境属性名称。该属性值取决于验证方案。例如，它可以是一个散列式密码、明文密码、密钥、证书，等等。如果未指定此属性，则由服务提供者确定如何运行。
+
+<p> 此常量的值是 &quot;java.naming.security.credentials&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.LANGUAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定用于服务的首选语言的环境属性名称。该属性的值是一个以冒号分隔的语言标记列表，RFC 1766 中定义了这些标记。如果未指定此属性，则由服务提供者确定语言优先级。
+
+<p> 此常量的值是 &quot;java.naming.language&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.Context.APPLET
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量保存用来指定搜索其他属性时将使用的初始上下文构造方法的 applet 的环境属性名称。此属性的值是将被执行的 <tt>java.applet.Applet</tt> 实例。可以在传递给初始上下文构造方法的环境参数中指定此属性。在设置此属性时，初始上下文构造方法在系统属性中查找的每个属性都是在 applet 的参数列表中最先查找到的属性。如果未指定此属性，则初始上下文构造方法将仅在传递给它的环境参数、系统属性和应用程序资源文件中搜索属性。
+
+<p> 此常量的值是 &quot;java.naming.applet&quot;。
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+@see InitialContext
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.lookup(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索指定的对象。如果 <tt>name</tt> 为空，则返回此上下文的一个新实例（该实例表示与此上下文相同的命名上下文，但其环境可以独立地进行修改，而且可以并发访问）。
+
+@param name 要查询的对象的名称
+@return	绑定到 <tt>name</tt> 的对象
+@throws	NamingException 如果遇到命名异常
+
+@see #lookup(String)
+@see #lookupLink(Name)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.lookup(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索指定的对象。有关详细信息请参见 {@link #lookup(Name)}。
+@param name 要查询的对象的名称
+@return	绑定到 <tt>name</tt> 的对象
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.bind(Name name, Object obj) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名称绑定到对象。所有中间上下文和目标上下文（由该名称最终原子组件以外的其他所有组件指定）都必须已经存在。
+
+@param name 要绑定的名称，不可以为空
+@param obj  要绑定的对象，可能为 null
+@throws	NameAlreadyBoundException 如果已经绑定了 name
+@throws	javax.naming.directory.InvalidAttributesException 如果对象不支持所有强制属性
+@throws	NamingException 如果遇到命名异常
+
+@see #bind(String, Object)
+@see #rebind(Name, Object)
+@see javax.naming.directory.DirContext#bind(Name, Object, javax.naming.directory.Attributes)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.bind(String name, Object obj) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名称绑定到对象。有关详细信息请参见 {@link #bind(Name, Object)}。
+
+@param name 要绑定的名称，不可以为空
+@param obj  要绑定的对象，可能为 null
+@throws	NameAlreadyBoundException 如果已经绑定了 name
+@throws	javax.naming.directory.InvalidAttributesException 如果对象不支持所有强制属性
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.rebind(Name name, Object obj) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名称绑定到对象，重写任何现有绑定。所有中间上下文和目标上下文（由该名称最终原子组件以外的其他所有组件指定）都必须已经存在。
+
+<p> 如果该对象是一个 <tt>DirContext</tt>，则使用该对象的属性替换与该名称关联的所有现有属性。否则，与该名称关联的所有现有属性保持不变。
+
+@param name 要绑定的名称，不可以为空
+@param obj 要绑定的对象，可能为 null
+@throws	javax.naming.directory.InvalidAttributesException 如果对象不支持所有强制属性
+@throws	NamingException 如果遇到命名异常
+
+@see #rebind(String, Object)
+@see #bind(Name, Object)
+@see javax.naming.directory.DirContext#rebind(Name, Object, javax.naming.directory.Attributes)
+@see javax.naming.directory.DirContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.rebind(String name, Object obj) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将名称绑定到对象，重写所有现有绑定。有关详细信息请参见 {@link #rebind(Name, Object)}。
+
+@param name 要绑定的名称，不可以为空
+@param obj  要绑定的对象，可能为 null
+@throws	javax.naming.directory.InvalidAttributesException 如果对象不支持所有强制属性
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.unbind(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消对指定对象的绑定。从目标上下文中移除名为 <code>name</code> 的最终原子名称，目标上下文由 <code>name</code> 的最终原子部分以外的所有名称指定。
+
+<p> 此方法是幂等的 (idempotent)。即使最终原子名称没有绑定在目标上下文中，该操作也能成功，但如果不存在任何中间上下文，则将抛出 <tt>NameNotFoundException</tt>。
+
+<p> 所有与该名称关联的属性都被移除。不更改中间上下文。
+
+@param name 要取消绑定的名称，不能为空
+@throws	NameNotFoundException 如果不存在中间上下文
+@throws	NamingException 如果遇到命名异常
+@see #unbind(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.unbind(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消对指定对象的绑定。有关详细信息请参见 {@link #unbind(Name)}。
+
+@param name 要取消绑定的名称，不能为空
+@throws	NameNotFoundException 如果不存在中间上下文
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.rename(Name oldName, Name newName) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个新名称绑定到已经被绑定到某一旧名称的对象上，并取消对旧名称的绑定。两个名称都是相对于此上下文的。所有与旧名称关联的属性都改为与新名称关联。不更改旧名称的中间上下文。
+
+@param oldName 现有绑定的名称，不能为空
+@param newName 新绑定的名称，不能为空
+@throws	NameAlreadyBoundException 如果已经绑定了 <tt>newName</tt>
+@throws	NamingException 如果遇到命名异常
+
+@see #rename(String, String)
+@see #bind(Name, Object)
+@see #rebind(Name, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.rename(String oldName, String newName) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个新名称绑定到已经被绑定到某一旧名称的对象上，并取消对旧名称的绑定。有关详细信息请参见 {@link #rename(Name, Name)}。
+
+@param oldName 现有绑定的名称，不能为空
+@param newName 新绑定的名称，不能为空
+@throws	NameAlreadyBoundException 如果已经绑定了 <tt>newName</tt>
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<javax.naming.NameClassPair> javax.naming.Context.list(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+枚举绑定在指定上下文中的名称，以及绑定到这些名称的对象的类名称。不包括任何子上下文的内容。
+
+<p> 如果将某一绑定添加到此上下文，或者从此上下文中移除某个绑定，则对以前返回的枚举的影响是不确定的。
+
+@param name 要列出的上下文的名称
+@return	名称和此上下文中的绑定的类名称所组成的枚举。每个枚举元素都属于 <tt>NameClassPair</tt> 类型。
+@throws	NamingException 如果遇到命名异常
+
+@see #list(String)
+@see #listBindings(Name)
+@see NameClassPair
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<javax.naming.NameClassPair> javax.naming.Context.list(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+枚举绑定在指定上下文中的名称，以及绑定到这些名称的对象的类名称。有关详细信息请参见 {@link #list(Name)}。
+
+@param name  要列出的上下文的名称
+@return	名称和此上下文中的绑定的类名称所组成的枚举。每个枚举元素都属于 <tt>NameClassPair</tt> 类型。
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<javax.naming.Binding> javax.naming.Context.listBindings(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+枚举绑定在指定上下文中的名称，以及绑定到这些名称的对象。不包括任何子上下文的内容。
+
+<p> 如果将某一绑定添加到此上下文，或者从此上下文中移除某个绑定，则对以前返回的枚举的影响是不确定的。
+
+@param name 要列出的上下文的名称
+@return	此上下文中的绑定所组成的枚举。每个枚举元素都属于 <tt>Binding</tt> 类型。
+@throws	NamingException 如果遇到命名异常
+
+
+@see #listBindings(String)
+@see #list(Name)
+@see Binding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<javax.naming.Binding> javax.naming.Context.listBindings(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+枚举绑定在指定上下文中的名称，以及绑定到这些名称的对象。有关详细信息请参见 {@link #listBindings(Name)}。
+
+@param name 要列出的上下文的名称
+@return	此上下文中的绑定所组成的枚举。每个枚举元素都属于 <tt>Binding</tt> 类型。
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.destroySubcontext(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁指定上下文，并将它从名称空间中移除。所有与该名称关联的属性也被移除。不销毁中间上下文。
+
+<p> 此方法是幂等的。即使最终原子名称没有绑定在目标上下文中，该操作也能成功，但如果不存在任何中间上下文，则将抛出 <tt>NameNotFoundException</tt>。
+
+<p> 在联合命名系统中，取自某一命名系统的上下文可以绑定到另一个命名系统中的名称上。随后可以使用复合名称在外部上下文 (foreign context) 中查询和执行操作。不过，试图使用此复合名称销毁上下文将失败并抛出 <tt>NotContextException</tt>，因为外部上下文不是绑定该复合名称的上下文的子上下文。改为使用 <tt>unbind()</tt> 移除外部上下文的绑定。销毁外部上下文需要对取自该外部上下文的&ldquo;本机&rdquo;命名系统的上下文执行 <tt>destroySubcontext()</tt>。
+
+@param name 要销毁的上下文的名称，不能为空
+@throws	NameNotFoundException 如果不存在中间上下文
+@throws	NotContextException 如果该名称被绑定，但它没有指定一个上下文，或者它没有指定适当类型的上下文
+@throws	ContextNotEmptyException 如果指定的上下文不为空
+@throws	NamingException 如果遇到命名异常
+
+
+@see #destroySubcontext(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.destroySubcontext(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁指定上下文，并将它从名称空间中移除。有关详细信息请参见 {@link #destroySubcontext(Name)}。
+
+@param name 要销毁的上下文的名称，不能为空
+@throws	NameNotFoundException 如果不存在中间上下文
+@throws	NotContextException 如果该名称被绑定，但它没有指定一个上下文，或者它没有指定适当类型的上下文
+@throws	ContextNotEmptyException 如果指定的上下文不为空
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Context javax.naming.Context.createSubcontext(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并绑定一个新上下文。使用给定名称创建一个新上下文，并将它绑定在目标上下文中（由该名称最终原子组件以外的所有名称指定）。所有中间上下文和目标上下文都必须已经存在。
+
+@param name 要创建的上下文的名称，不能为空
+@return	新创建的上下文。
+
+@throws	NameAlreadyBoundException 如果已经绑定了 name
+@throws	javax.naming.directory.InvalidAttributesException 如果创建子上下文需要指定强制属性
+@throws	NamingException 如果遇到命名异常
+
+
+@see #createSubcontext(String)
+@see javax.naming.directory.DirContext#createSubcontext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Context javax.naming.Context.createSubcontext(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并绑定一个新上下文。有关详细信息请参见 {@link #createSubcontext(Name)}。
+
+@param name 要创建的上下文的名称，不能为空
+@return	新创建的上下文。
+
+@throws	NameAlreadyBoundException 如果已经绑定了 name
+@throws	javax.naming.directory.InvalidAttributesException 如果创建子上下文需要指定强制属性
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.lookupLink(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照除名称的最终原子组件以外的链接检索指定对象。如果绑定到 <tt>name</tt> 的对象不是一个链接，则返回该对象本身。
+
+@param name 要查询的对象的名称
+@return	绑定到 <tt>name</tt> 的对象不遵从最终链接（如果有）。
+@throws	NamingException 如果遇到命名异常
+
+
+@see #lookupLink(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.lookupLink(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照除名称的最终原子组件以外的链接检索指定对象。有关详细信息请参见 {@link #lookupLink(Name)}。
+
+@param name 要查询的对象的名称
+@return	绑定到 <tt>name</tt> 的对象不遵从最终链接（如果有）
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NameParser javax.naming.Context.getNameParser(Name name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索与指定上下文关联的解析器。在联合名称空间中，不同的命名系统将以不同的方式解析名称。此方法允许应用程序使用特定命名系统的命名约定获得用来将名称解析成其原子组件的解析器。在任意一个命名系统中，由此方法返回的 <tt>NameParser</tt> 对象必须相等（可使用 <tt>equals()</tt> 进行测试）。
+
+@param name 从中获得解析器的上下文的名称
+@return	可以将组合名称解析成其原子组件的名称解析器
+@throws	NamingException 如果遇到命名异常
+
+@see #getNameParser(String)
+@see CompoundName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NameParser javax.naming.Context.getNameParser(String name) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索与指定上下文关联的解析器。有关详细信息请参见 {@link #getNameParser(Name)}。
+
+@param name 从中获得解析器的上下文的名称
+@return	可以将组合名称解析成其原子组件的名称解析器
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.Context.composeName(Name name, Name prefix) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此上下文的名称与相对于此上下文的名称组合。在给定相对于此上下文的名称(<code>name</code>)以及此上下文相对于其一个祖先的名称(<code>prefix</code>)的情况下，此方法使用适合所涉及命名系统的语法返回这两个名称的组合。也就是说，如果 <code>name</code> 指定一个相对于此上下文的对象，则结果是同一个对象的名称，但该名称相对于祖先上下文。所有名称都不能为 null。
+ <p>
+例如，如果此上下文被命名为 &quot;wiz.com&quot;，该名称相对于初始上下文，则
+ <pre>
+	composeName(&quot;east&quot;, &quot;wiz.com&quot;)	</pre>
+可能返回 <code>&quot;east.wiz.com&quot;</code>。如果将此上下文命名为 &quot;org/research&quot;，则
+ <pre>
+	composeName(&quot;user/jane&quot;, &quot;org/research&quot;)	</pre>
+可能返回 <code>&quot;org/research/user/jane&quot;</code>，而
+ <pre>
+	composeName(&quot;user/jane&quot;, &quot;research&quot;)	</pre>
+返回 <code>&quot;research/user/jane&quot;</code>。
+
+@param name 相对于此上下文的名称
+@param prefix 此上下文相对于其一个祖先的名称
+@return	<code>prefix</code> 和 <code>name</code> 的组合
+@throws	NamingException 如果遇到命名异常
+
+@see #composeName(String, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Context.composeName(String name, String prefix) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此上下文的名称与相对于此上下文的名称组合。有关详细信息请参见 {@link #composeName(Name, Name)}。
+
+@param name 相对于此上下文的名称
+@param prefix 此上下文相对于其一个祖先的名称
+@return	<code>prefix</code> 和 <code>name</code> 的组合
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.addToEnvironment(String propName, Object propVal) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个新环境属性添加到此上下文的环境中。如果该属性已经存在，则重写该属性的值。有关环境属性的更多详细信息，请参阅类描述。
+
+@param propName 要添加的环境属性的名称，不能为 null
+@param propVal 要添加的属性的值，不能为 null
+@return	该属性以前的值，如果该属性以前不在此环境中，则返回 null
+@throws	NamingException 如果遇到命名异常
+
+@see #getEnvironment()
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Context.removeFromEnvironment(String propName) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此上下文的环境中移除一个环境属性。有关环境属性的更多详细信息，请参阅类描述。
+
+@param propName 要移除的环境属性的名称，不能为 null
+@return	该属性以前的值，如果该属性以前不在此环境中，则返回 null
+@throws	NamingException 如果遇到命名异常
+
+@see #getEnvironment()
+@see #addToEnvironment(String, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable<?, ?> javax.naming.Context.getEnvironment() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索对此上下文有效的环境。有关环境属性的更多详细信息，请参阅类描述。
+
+<p> 调用者不应对返回的对象进行任何更改：因为这些更改对于上下文的影响是不确定的。可以使用 <tt>addToEnvironment()</tt> 和 <tt>removeFromEnvironment()</tt> 更改此上下文的环境。
+
+@return	此上下文的环境，决不能为 null
+@throws	NamingException 如果遇到命名异常
+
+@see #addToEnvironment(String, Object)
+@see #removeFromEnvironment(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Context.close() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此上下文。此方法立即释放此上下文的资源，而不是等待垃圾回收器自动释放它们。
+
+<p> 此方法是幂等的：对已经关闭的上下文调用此方法无效。对已关闭的上下文调用其他任何方法都是不允许的，这会导致不确定的行为。
+
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Context.getNameInNamespace() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此上下文自己的名称空间中检索其完全名称。
+
+<p> 许多命名服务都有一个&ldquo;完全名称&rdquo;的概念，用于其各自的名称空间中的对象。例如，LDAP 项有一个独特的名称，而 DNS 记录有一个完全限定名。此方法允许客户端应用程序检索此名称。此方法返回的字符串不是一个 JNDI 复合名称，不应将它直接传递给上下文方法。在没有完全名称概念的命名系统中，将抛出 <tt>OperationNotSupportedException</tt>。
+
+@return	此上下文在其自己的名称空间中的名称，决不能为 null
+@throws	OperationNotSupportedException 如果命名系统没有完全名称的概念
+@throws	NamingException 如果遇到命名异常
+
+@since 1.3
+
+<!-- END DATA -->

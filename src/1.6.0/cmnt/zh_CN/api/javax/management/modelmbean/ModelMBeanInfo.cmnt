@@ -1,0 +1,241 @@
+<!-- BEGIN KEY -->
+public interface javax.management.modelmbean.ModelMBeanInfo
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口由每个 ModelMBean 的 ModelMBeanInfo 实现。此接口的实现必须与每个 JMX Agent 一起发布。 
+ <P>
+Java 资源使用 MBeanServer 的 createMBean 方法来实例化 ModelMBean，以便具有可管理性。然后该资源设置 ModelMBean 实例的 ModelMBeanInfo 和 Descriptor。通过 ModelMBean 的 ModelMBeanInfo 公开的属性、操作和通知组成了管理接口，并且像其他 MBean 一样可以从 MBean、连接器/适配器进行访问。通过 Descriptor，可以定义托管应用程序中的值和方法，并可以将它们映射到 ModelMBean 的属性和操作。此映射可以在文件的开发过程中定义，也可以以编程方式在运行时动态定义。
+ <P>
+MBeanServer 中实例化的每个 ModelMBean 都是可管理的：通过连接到该 MBeanServer 的连接器/适配器，可以远程访问其属性、操作和通知。Java 对象不能在 MBeanServer 中进行注册，除非它是 JMX 兼容的 MBean。通过实例化 ModelMBean，资源可保证 MBean 是有效的。
+
+每个公共方法必须抛出 MBeanException 和 RuntimeOperationsException。这允许包装来自分布式通信（RMI 和 EJB 等）的异常。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.Descriptor[] javax.management.modelmbean.ModelMBeanInfo.getDescriptors(String inDescriptorType) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 inDescriptorType 类型的 ModelMBeanInfo 的所有 Descriptor 组成的 Descriptor 数组。
+
+@param inDescriptorType 必须为要返回的描述符设置的 descriptorType 字段值。必须为 &quot;mbean&quot;、&quot;attribute&quot;、&quot;operation&quot;、&quot;constructor&quot; 或 &quot;notification&quot;。如果它为 null 或空，则将返回所有类型。
+
+@return 包含 inDescriptorType 类型的 ModelMBean 的所有描述符的 Descriptor 数组。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 当参数中的 descriptorType 不是以下值之一时，包装一个 IllegalArgumentException：&quot;mbean&quot;、&quot;attribute&quot;、&quot;operation&quot;、&quot;constructor&quot;、&quot;notification&quot;、空、 null。
+
+@see #setDescriptors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanInfo.setDescriptors(javax.management.Descriptor[] inDescriptors) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加或替换 ModelMBeanInfo 中的描述符。
+
+@param inDescriptors ModelMBeanInfo 中要设置的描述符。忽略列表中的 null 元素。所有描述符必须具有 name 和 descriptorType 字段。
+
+@exception RuntimeOperationsException 包装 null 或无效描述符的 IllegalArgumentException。
+@exception MBeanException 包装一个分布式通信异常。
+
+@see #getDescriptors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.Descriptor javax.management.modelmbean.ModelMBeanInfo.getDescriptor(String inDescriptorName, String inDescriptorType) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 name 和 descriptorType 请求的 Descriptor。
+
+@param inDescriptorName 描述符的名称。
+@param inDescriptorType 要请求的描述符的类型。如果它为 null 或空，就搜索所有类型。有效的类型有 'mbean'、'attribute'、'constructor'、'operation'、'notification'。此值将等于所返回的描述符中的 'descriptorType' 字段。
+
+@return 包含具有相同 name 和 descriptorType 的 ModelMBean 描述符的 Descriptor。如果未找到描述符，则返回 null。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装描述符的名称为 null 的 IllegalArgumentException，或者 null 或无效类型的 IllegalArgumentException。类型必须为 &quot;mbean&quot;、&quot;attribute&quot;、&quot;constructor&quot;、&quot;operation&quot; 或 &quot;notification&quot;。
+
+@see #setDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanInfo.setDescriptor(Descriptor inDescriptor, String inDescriptorType) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 inDescriptorType 类型的 ModelMBean 的 info 数组中的描述符。将调用对应 ModelMBean*Info 的 setDescriptor 方法来设置指定的描述符。
+
+@param inDescriptor ModelMBean 中要设置的描述符。它必须不为 null。所有描述符必须有 name 和 descriptorType 字段。
+@param inDescriptorType 要设置的描述符类型。如果它为 null，则使用描述符中的 descriptorType 字段。如果此值是指定的，则必须在描述符的 descriptorType 字段中设置它。必须为 &quot;mbean&quot;、&quot;attribute&quot;、&quot;constructor&quot;、&quot;operation&quot; 或 &quot;notification&quot;。
+
+@exception RuntimeOperationsException 包装非法或 null 参数的 IllegalArgumentException，或者如果在对应的 MBeanAttributeInfo、MBeanConstructorInfo、MBeanNotificationInfo 或 MBeanOperationInfo 中找不到描述符的 name 字段。
+@exception MBeanException 包装一个分布式通信异常。
+
+@see #getDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.Descriptor javax.management.modelmbean.ModelMBeanInfo.getMBeanDescriptor() throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含 MBean 级策略的 ModelMBean 的描述符。此描述符包含关于 MBean 和默认持久性及缓存策略的元数据。
+ <P>
+描述符中的字段定义如下，但不限于此： 
+ <PRE>
+ name           : MBean 名称  
+ descriptorType : 必须为 &quot;mbean&quot;   
+ displayName    : 要在显示中使用的属性名称
+ persistPolicy  : OnUpdate|OnTimer|NoMoreOftenThan|OnUnregister|Always|Never  
+ persistLocation : 应在其中保持 MBean 的完全限定目录名（如果适当）。
+ persistFile    : 应在其中保持 MBean 的文件名称。
+ persistPeriod  : 秒数 －  OnTime 和 NoMoreOftenThan PersistPolicy 的保持周期的频率
+ currencyTimeLimit : 值保持有效的时间，&lt;0 为无效，=0 为总是有效，&gt;0 为有效的秒数
+ log            : 其中 t：记录所有通知；f：不记录通知
+ logfile        : 要记录事件的完全限定文件名
+ visibility     : 1-4，其中 1：总是可见；4：几乎不可见
+ export         : 要用于导出/公开此 MBean 的名称，以便其他 JMX Agent 可以找到它
+                     
+ presentationString : 允许数据与 MBean 关联的 xml 格式的字符串。 
+ </PRE>
+ <P>
+默认描述符为：name=mbeanName、descriptorType=mbean、displayName=this.getClassName()、persistPolicy=never、log=F、export=F、visibility=1 如果描述符不包含所有这些字段，则将以这些默认值添加它们。
+
+<p><b>注：</b>由于与此规范的以前版本不一致，因此对于 <code>currencyTimeLimit</code>，推荐不使用负值或零。要指示某个缓存的值永远无效，请忽略 <code>currencyTimeLimit</code> 字段。要指示它总是有效，请为此字段使用一个非常大的值。</p>
+
+@return MBean 描述符。
+
+@exception MBeanException 包装一个分布式通信异常。
+
+@exception RuntimeOperationsException 如果获取描述符时发生 {@link RuntimeException}。
+
+@see #setMBeanDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanInfo.setMBeanDescriptor(Descriptor inDescriptor) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 ModelMBean 的描述符。此描述符包含默认的、关于 MBean 和默认持久性及缓存策略的 MBean 级元数据。此操作执行描述符的完全替换，不执行合并。如果要设置的描述符为 null，则将创建默认描述符。默认描述符为：name=mbeanName、descriptorType=mbean、displayName=this.getClassName()、 persistPolicy=never、log=F、export=F、visibility=1 如果描述符不包含所有这些字段，则将以这些默认值添加它们。
+
+有关有效字段名称的描述，请参阅 {@link #getMBeanDescriptor getMBeanDescriptor} 方法的 javadoc。
+
+@param inDescriptor 要设置的描述符。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装无效描述符的 IllegalArgumentException。 
+
+@see #getMBeanDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.modelmbean.ModelMBeanAttributeInfo javax.management.modelmbean.ModelMBeanInfo.getAttribute(String inName) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过名称请求的 ModelMBeanAttributeInfo。
+
+@param inName 要获取的 ModelMBeanAttributeInfo 名称。如果不存在此名称的 ModelMBeanAttributeInfo，则返回 null。
+
+@return 指定属性的属性信息，如果没有，则返回 null。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装 null 属性名称的 IllegalArgumentException。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.modelmbean.ModelMBeanOperationInfo javax.management.modelmbean.ModelMBeanInfo.getOperation(String inName) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过名称请求的 ModelMBeanOperationInfo。
+
+@param inName 要获取的 ModelMBeanOperationInfo 名称。如果不存在此名称的 ModelMBeanOperationInfo，则返回 null。
+
+@return 指定操作的操作信息，如果没有，则返回 null。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装 null 操作名称的 IllegalArgumentException。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.modelmbean.ModelMBeanNotificationInfo javax.management.modelmbean.ModelMBeanInfo.getNotification(String inName) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过名称请求的 ModelMBeanNotificationInfo。
+
+@param inName 要获取的 ModelMBeanNotificationInfo 名称。如果不存在此名称的 ModelMBeanNotificationInfo，则返回 null。
+
+@return 指定通知的信息，如果没有，则返回 null。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装 null 通知名称的 IllegalArgumentException。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.modelmbean.ModelMBeanInfo.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回此对象的一个副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanAttributeInfo[] javax.management.modelmbean.ModelMBeanInfo.getAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为管理公开的属性列表。每个属性由一个 <CODE>MBeanAttributeInfo</CODE> 对象描述。
+
+@return  <CODE>MBeanAttributeInfo</CODE> 对象的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.modelmbean.ModelMBeanInfo.getClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <CODE>MBeanInfo</CODE> 所描述的 MBean 的 Java 类名称。
+
+@return Java 类名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanConstructorInfo[] javax.management.modelmbean.ModelMBeanInfo.getConstructors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 的公共构造方法列表。每个属性由一个 <CODE>MBeanConstructorInfo</CODE> 对象描述。
+
+@return <CODE>MBeanConstructorInfo</CODE> 对象的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.modelmbean.ModelMBeanInfo.getDescription()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 的可读描述。
+
+@return 描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanNotificationInfo[] javax.management.modelmbean.ModelMBeanInfo.getNotifications()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 所发送的通知列表。每个通知由一个 <CODE>MBeanNotificationInfo</CODE> 对象描述。
+ <P>
+除了由应用程序指定的任何通知之外，ModelMBean 还可以始终发送两个其他通知：
+ <UL>  
+<LI> 一个通知的描述符名称为 &quot;GENERIC&quot;，displayName 为 &quot;jmx.modelmbean.generic&quot; 。
+<LI> 第二个通知是标准的属性更改通知，描述符的名称为 &quot;ATTRIBUTE_CHANGE&quot;，displayName 为 &quot;jmx.attribute.change&quot;。
+ </UL>
+因此，除应用程序所指定的通知之外，ModelMBeanInfo 的任何实现应该总是添加这两个通知。
+ 
+@return  <CODE>MBeanNotificationInfo</CODE> 对象的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanOperationInfo[] javax.management.modelmbean.ModelMBeanInfo.getOperations()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 的操作列表。每个操作由一个 <CODE>MBeanOperationInfo</CODE> 对象描述。
+
+@return  <CODE>MBeanOperationInfo</CODE> 对象的数组。
+
+<!-- END DATA -->

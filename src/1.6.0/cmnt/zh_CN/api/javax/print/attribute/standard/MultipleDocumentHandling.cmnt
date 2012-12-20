@@ -1,0 +1,135 @@
+<!-- BEGIN KEY -->
+public class javax.print.attribute.standard.MultipleDocumentHandling extends javax.print.attribute.EnumSyntax implements javax.print.attribute.PrintRequestAttribute, javax.print.attribute.PrintJobAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+MultipleDocumentHandling 类是打印属性类，它是一个枚举值，控制结束操作和一个或多个打印流在印张中和在介质纸张上的布局。当 {@link Copies Copies} 属性值超过 1 时，MultipleDocumentHandling 还控制从处理文档所得到的副本的生成顺序。此属性仅与由两个或多个文档组成的多文档打印作业相关。 
+ <P>
+简单地说，MultipleDocumentHandling 确定了被输入到多文档打印作业中的多个输入(电子)文档之间与多文档打印作业所生成的输出(物理)文档(或多个文档)之间的关系。有两种可能： 
+ <UL>
+ <LI>
+多个输入文档被合并到单个输出文档中。在此单个输出文档上执行结束操作({@link Finishings Finishings})。{@link Copies Copies} 属性通知要生成的此单个输出文档的副本数。MultipleDocumentHandling 值 SINGLE_DOCUMENT 和 SINGLE_DOCUMENT_NEW_SHEET 指定了此可能性的两个变量。 
+ <P>
+ <LI>
+多个输入文档保持独立的输出文档。在每个输出文档上独立执行结束操作({@link Finishings Finishings})。{@link Copies Copies} 属性通知要生成的每个独立输出文档的副本数。MultipleDocumentHandling 值 SEPARATE_DOCUMENTS_UNCOLLATED_COPIES 和 SEPARATE_DOCUMENTS_COLLATED_COPIES 指定此可能性的两个变量。 
+ </UL>
+ <P>
+在以下的详细解释中，如果 &quot;<CODE>a</CODE>&quot; 表示文档数据的实例，则处理 &quot;<CODE>a</CODE>&quot; 中的数据的结果为由 &quot;<CODE>a(*)</CODE>&quot; 表示的介质纸张序列。 
+ <P>
+标准的 MultipleDocumentHandling 值有：
+ <UL>
+ <LI>
+<A NAME="sdfi">{@link #SINGLE_DOCUMENT <B><CODE>SINGLE_DOCUMENT</CODE></B>}</A>。如果打印作业有多个文档（比方说，文档数据称为 <CODE>a</CODE> 和 <CODE>b</CODE>），则所有文档数据（<CODE>a</CODE> 然后 <CODE>b</CODE>）的处理结果必须被视为结束操作的单个介质纸张序列；即应以 <CODE>a(*),b(*)</CODE> 序列的串联顺序执行结束操作。打印机不能强制将每个文档实例中的数据格式化到新的打印流页，也不能在新的介质纸张上开始新的印张。如果生成多个副本，则处理文档数据得到的介质纸张集的顺序必须为 <CODE>a(*),b(*),a(*),b(*),...</CODE>，并且打印机对象必须强制在新介质纸张上开始每个副本（<CODE>a(*),b(*)</CODE>）。 
+ <P>
+ <LI>
+ <A NAME="sducfi">{@link #SEPARATE_DOCUMENTS_UNCOLLATED_COPIES <B><CODE>SEPARATE_DOCUMENTS_UNCOLLATED_COPIES</CODE></B>}</A>.如果打印作业有多个文档（比方说，文档数据称为 <CODE>a</CODE> 和 <CODE>b</CODE>），则每个文档实例的数据处理结果必须被视为结束操作的单个介质纸张序列；即应独立地结束每个集合 <CODE>a(*)</CODE> 和 <CODE>b(*)</CODE>。打印机必须强制单个文档中数据处理结果的每个副本在新介质纸张上开始。如果生成多个副本，则处理文档数据得到的介质纸张集合顺序必须为 <CODE>a(*),a(*),...,b(*),b(*)...</CODE>。 
+ <P>
+ <LI>
+ <A NAME="sdccfi">{@link #SEPARATE_DOCUMENTS_COLLATED_COPIES <B><CODE>SEPARATE_DOCUMENTS_COLLATED_COPIES</CODE></B>}</A>.如果打印作业有多个文档（比方说，文档数据称为 <CODE>a</CODE> 和 <CODE>b</CODE>），则每个文档实例中的数据处理结果必须被视为结束操作的单个介质纸张序列；即应独立地结束每个集合 <CODE>a(*)</CODE> 和 <CODE>b(*)</CODE>。打印机必须强制单个文档中数据处理结果的每个副本在新介质纸张上开始。如果生成多个副本，则处理文档数据得到的介质纸张集合顺序必须为 <CODE>a(*),b(*),a(*),b(*),...</CODE>。 
+ <P>
+ <LI>
+<A NAME="sdnsfi">{@link #SINGLE_DOCUMENT <B><CODE>SINGLE_DOCUMENT</CODE></B>}</A>。与 SINGLE_DOCUMENT 相同，除打印机必须确保作业中每个文档实例的首个印张被置于新介质纸张上。此值允许用单个装订点将多个文档装订到一起，其中每个文档均在新介质纸张上开始。 
+ </UL>
+ <P>
+SINGLE_DOCUMENT 在打印流页顺序方面与 SEPARATE_DOCUMENTS_COLLATED_COPIES 相同，但在介质纸张生成方面不同，因为 SINGLE_DOCUMENT 将下一个文档的首页置于纸张的后端（如果作业到目前为止已生成奇数页），而 SEPARATE_DOCUMENTS_COLLATED_COPIES 总是强制将下一个文档或文档副本置于新纸张上。
+ <P>
+此外，如果指定了 {@link Finishings#STAPLE <CODE>STAPLE</CODE>} 的 {@link Finishings Finishings} 属性，则： 
+ <UL>
+ <LI>
+对于 SINGLE_DOCUMENT，文档 <CODE>a</CODE> 和 <CODE>b</CODE> 作为单个文档被装订到一起（不在新纸张上开始）。 
+ <P>
+ <LI>
+对于 SINGLE_DOCUMENT_NEW_SHEET，文档 <CODE>a</CODE> 和 <CODE>b</CODE> 作为单个文档被装订到一起，但文档 <CODE>b</CODE> 在新纸张上开始。 
+ <P>
+ <LI>
+对于 SEPARATE_DOCUMENTS_UNCOLLATED_COPIES 和 SEPARATE_DOCUMENTS_COLLATED_COPIES，文档 <CODE>a</CODE> 和 <CODE>b</CODE> 独立装订。 
+ </UL>
+ <P>
+<I>注：</I> 这些值均不提供在文档中生成非逐份打印纸张的方式，即其中纸张 <I>n</I> 的多个副本在相同文档的纸张 <I>n</I>+1 之前生成。要指定该功能，请参见 {@link SheetCollate SheetCollate} 属性。 
+ <P>
+ <B>IPP Compatibility:</B> <CODE>getName()</CODE> 所返回的类别名称为 IPP 属性名称。枚举的整数值为 IPP 枚举值。<code>toString()</code> 方法返回属性值的 IPP 字符串表示形式。
+ <P>
+
+@see  Copies
+@see  Finishings
+@see  NumberUp
+@see  PageRanges
+@see  SheetCollate
+@see  Sides
+
+@author  David Mendenhall
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.MultipleDocumentHandling javax.print.attribute.standard.MultipleDocumentHandling.SINGLE_DOCUMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单个文档 －－ 有关<A HREF="#sdfi">更多信息</A>，请参见上文。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.MultipleDocumentHandling javax.print.attribute.standard.MultipleDocumentHandling.SEPARATE_DOCUMENTS_UNCOLLATED_COPIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+独立文档非逐份打印副本 －－ 有关<A HREF="#sducfi">更多信息</A>，请参见上文。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.MultipleDocumentHandling javax.print.attribute.standard.MultipleDocumentHandling.SEPARATE_DOCUMENTS_COLLATED_COPIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+独立文档逐份打印副本 －－ 有关<A HREF="#sdccfi">更多信息</A>，请参见上文。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.MultipleDocumentHandling javax.print.attribute.standard.MultipleDocumentHandling.SINGLE_DOCUMENT_NEW_SHEET
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单个文档新纸张 －－ 有关<A HREF="#sdnsfi">更多信息</A>，请参见上文。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.standard.MultipleDocumentHandling(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 MultipleDocumentHandling 枚举值。 
+
+@param  value  整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.print.attribute.standard.MultipleDocumentHandling.getStringTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MultipleDocumentHandling 类的字符串表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.EnumSyntax[] javax.print.attribute.standard.MultipleDocumentHandling.getEnumValueTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MultipleDocumentHandling 类的枚举值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.MultipleDocumentHandling.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将被用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于 MultipleDocumentHandling 类和任何供应商定义的子类，类别为 MultipleDocumentHandling 类本身。 
+
+@return  打印属性类（类别），它是 {@link java.lang.Class java.lang.Class} 类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.MultipleDocumentHandling.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别名称，此属性值为该类别的实例。 
+ <P>
+对于 MultipleDocumentHandling 类和任何供应商定义的子类，类别名称为 <CODE>&quot;multiple-document-handling&quot;</CODE>。
+
+@return  属性类别名称。
+
+<!-- END DATA -->

@@ -1,0 +1,47 @@
+<!-- BEGIN KEY -->
+public interface javax.management.PersistentMBean
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是一个由希望是持久性的 MBean 实现的接口。在构造期间，支持此接口的 MBean 必须调用加载方法，以便为构造准备好持久存储中的 MBean。对于 ModelMBean 来说，必须基于 ModelMBean 中的描述符由 MBeanServer 调用 store 方法，或者在常规处理 ModelMBean 期间由 MBean 自身调用。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.PersistentMBean.load() throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用持久存储中找到的 MBean 的数据实例化此 MBean 实例。加载的数据可以包括属性和操作值。
+
+必须在构造或初始化此实例期间以及在 MBean 向 MBeanServer 注册之前调用此方法。
+
+@exception MBeanException 包装另一个异常或不受支持的持久性
+@exception RuntimeOperationsException 包装持久性机制中的异常
+@exception InstanceNotFoundException 无法从持久存储中找到或加载此 MBean
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.PersistentMBean.store() throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+捕获此 MBean 实例的当前状态并将其写出到持久存储中。存储的状态可以包括属性和操作值。如果这些持久方法中有一种不受支持，则将抛出 &quot;serviceNotFound&quot; 异常。
+ <P>
+MBean 和属性描述符中的持久策略可用来控制此方法的异常。如果 'persistPolicy' 字段是如下形式，则必须存储 MBean：
+ <PRE>  != &quot;never&quot; 
+   = &quot;always&quot; 
+   = &quot;onTimer&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'
+   = &quot;NoMoreOftenThan&quot; and now &gt; 'lastPersistTime' + 'persistPeriod'
+   = "onUnregister"
+ <P>
+ Do not store the MBean if 'persistPolicy' field is:
+    = &quot;never&quot;
+    = &quot;onUpdate&quot;
+    = &quot;onTimer&quot; &amp;&amp; now &lt; 'lastPersistTime' + 'persistPeriod' 
+ <P></PRE>
+
+@exception MBeanException 包装另一个异常或不受支持的持久性
+@exception RuntimeOperationsException 包装持久性机制中的异常
+@exception InstanceNotFoundException 无法查找/访问持久存储
+
+<!-- END DATA -->

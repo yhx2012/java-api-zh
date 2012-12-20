@@ -1,0 +1,209 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.spi.SyncResolver extends javax.sql.RowSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义一个框架，当发生同步冲突时，它允许应用程序使用手工决策树来确定应该执行的操作。虽然应用程序手工解决同步冲突并不是委托过程，但此框架还是提供了一些发生冲突时委托应用程序的方法。
+ <p>
+注意，冲突是指 <code>RowSet</code> 对象的原始行值与数据源中的值不匹配的情况，它指示自最后一次同步以来数据源行已被修改。还要注意，<code>RowSet</code> 对象的原始值就是最后一次同步之前的值，不必是其初始值。
+ <p>
+
+<H2><code>SyncResolver</code> 对象的描述</H2>
+ 
+<code>SyncResolver</code> 对象是实现 <code>SyncResolver</code> 接口的专用 <code>RowSet</code> 对象。它<b>可以</b>以连接的 <code>RowSet</code> 对象（<code>JdbcRowSet</code> 接口的实现）或非连接 <code>RowSet</code> 对象（<code>CachedRowSet</code> 接口或其一个子接口的实现）的形式进行操作。有关子接口的信息，请参阅 <a href="../package-summary.html"><code>javax.sql.rowset</code></a> 包描述。<code>SyncResolver</code> 的参考实现实现了 <code>CachedRowSet</code> 接口，但是其他实现可以选择实现 <code>JdbcRowSet</code> 接口，以满足特定的需要。
+ <P> 
+应用程序尝试使 <code>RowSet</code> 对象与数据源同步（通过调用 <code>CachedRowSet</code> 方法 <code>acceptChanges</code>），并且找到一个或多个冲突之后，rowset 的 <code>SyncProvider</code> 对象会创建一个 <code>SyncResolver</code> 实例。这一新的 <code>SyncResolver</code> 对象具有与正在尝试同步的 <code>RowSet</code> 对象相同的行数和列数。<code>SyncResolver</code> 对象包含数据源中导致冲突的值，其他值都为 <code>null</code>。另外，它包含关于每个冲突的信息。
+ <P>
+
+<H2>获取并使用 <code>SyncResolver</code> 对象</H2>
+ 
+当方法 <code>acceptChanges</code> 遇到冲突时，<code>SyncProvider</code> 对象会创建 <code>SyncProviderException</code> 对象，并使用新的 <code>SyncResolver</code> 对象设置它。方法 <code>acceptChanges</code> 将抛出此异常，然后应用程序可以捕获它并用以获取它包含的 <code>SyncResolver</code> 对象。以下代码片段使用 <code>SyncProviderException</code> 方法 <code>getSyncResolver</code> 来获取 <code>SyncResolver</code> 对象 <i>resolver</i>。  
+ <PRE>
+     } catch (SyncProviderException spe) {
+         SyncResolver resolver = spe.getSyncResolver();
+     ...
+     }
+ </PRE>
+ <P>
+通过所拥有的 <i>resolver</i>，应用程序可以使用它获取关于冲突的信息。<code>SyncResolver</code> 对象（如 <i>resolver</i>）跟踪存在冲突的每个行中的冲突。它还可以锁定受 rowset 命令影响的表，以便在解决当前冲突时不再发生其他冲突。
+ <P>
+可以从 <code>SyncResolver</code> 对象获取以下几种信息： 
+ <P>
+<LI>发生冲突时正试图进行的操作<BR> <code>SyncProvider</code> 接口定义了四个常量来描述可能发生的状态。其中三个常量描述发现冲突时 <code>RowSet</code> 对象正试图执行的操作类型（更新、删除或插入），第四个常量指示不存在冲突。当 <code>SyncResolver</code> 对象调用方法 <code>getStatus</code> 时，这些常量都是可能的返回值。
+ <PRE>
+     int operation = resolver.getStatus();
+ </PRE>
+ <P>
+<LI>数据源中导致冲突的值<BR> 当 <code>RowSet</code> 对象更改并尝试写入到数据源的值自上一次同步以来也在数据源中被更改时，会发生冲突。应用程序可以调用 <code>SyncResolver</code> 的方法 <code>getConflictValue</code >来获取数据源中导致冲突的值，因为 <code>SyncResolver</code> 对象中的值是取自数据源的冲突值。 
+ <PRE>
+     java.lang.Object conflictValue = resolver.getConflictValue(2);
+ </PRE>
+注意，<i>resolver</i> 中的列可以使用列号指定（如以上代码行中所示），也可以用列名称指定。
+ </UL>
+ <P>
+使用从方法 <code>getStatus</code> 和 <code>getConflictValue</code> 获取到的信息，应用程序可以做出应在数据源中保留哪一个值的决定。然后，应用程序调用 <code>SyncResolver</code> 的方法 <code>setResolvedValue</code>，它可以设置 <code>RowSet</code> 对象中和数据源中要保留的值。
+ <PRE>
+     resolver.setResolvedValue(&quot;DEPT&quot;, 8390426);
+ </PRE>
+在以上代码行中，列名称指定 <code>RowSet</code> 对象中要使用给定值设置的列。也可以用列号来指定列。
+ <P>
+解决当前冲突行中的所有冲突之后，应用程序会调用方法 <code>setResolvedValue</code>，并对 <code>SyncResolver</code> 对象中每个冲突行重复此过程。
+ <P>
+
+<H2>导航 <code>SyncResolver</code> 对象</H2>
+
+因为 <code>SyncResolver</code> 对象是 <code>RowSet</code> 对象，所以应用程序可以使用所有的 <code>RowSet</code> 方法移动指针来导航 <code>SyncResolver</code> 对象。例如，应用程序可以使用 <code>RowSet</code> 的方法 <code>next</code> 到达每个行，然后调用 <code>SyncResolver</code> 的方法 <code>getStatus</code> 查看行是否包含冲突。在具有一个或多个冲突的行中，应用程序可以迭代列来查找任何非 null 值，它将是数据源中处于冲突状态的值。
+ <P> 
+要使导航 <code>SyncResolver</code> 对象更容易，尤其是存在大量没有冲突的行时，<code>SyncResolver</code> 接口定义了方法 <code>nextConflict</code> 和 <code>previousConflict</code>，它们只移动到至少包含一个冲突值的行。然后，应用程序通过提供列号作为参数调用 <code>SyncResolver</code> 的方法 <code>getConflictValue</code>，以获取冲突值本身。下一节中的代码片段给出了一个示例。
+
+<H2>代码示例</H2>
+ 
+以下代码片段演示非连接 <code>RowSet</code> 对象 <i>crs</i> 如何尝试使自已与底层数据源同步，然后解决冲突。在 <code>try</code> 块中，<i>crs</i> 调用方法 <code>acceptChanges</code>，将 <code>Connection</code> 对象 <i>con</i> 传递给它。如果不存在冲突，则将 <i>crs</i> 中的更改写入到数据源即可。但是，如果存在冲突，则方法 <code>acceptChanges</code> 将抛出 <code>SyncProviderException</code> 对象，<code>catch</code> 块生效。在此示例中，阐述了多种 <code>SyncResolver</code> 对象使用方式中的一种，在 <code>while</code> 循环中，使用 <code>SyncResolver</code> 的方法 <code>nextConflict</code>。<code>nextConflict</code> 返回 <code>false</code> 时循环将终止，这发生在 <code>SyncResolver</code> 对象 <i>resolver</i> 中不再有冲突行时。在此特定的代码片段中，<i>resolver</i> 查找有更新冲突的行（状态为 <code>SyncResolver.UPDATE_ROW_CONFLICT</code> 的行），此代码片段其余部分仅执行由于 <i>crs</i> 尝试更新而发生冲突的行。  
+ <P>
+<i>resolver</i> 的指针移动到有更新冲突的下一个冲突行之后，方法 <code>getRow</code> 指示当前行的数字，并且将 <code>CachedRowSet</code> 对象 <i>crs</i> 的指针移到 <i>crs</i> 中的对等行。通过迭代 <i>resolver</i> 和 <i>crs</i> 中行的列，可以获取和比较冲突值，以确定应保留哪一个值。在此代码片段中，<i>crs</i> 中的值是设置为解决值的值，这意味着它将用于重写数据源中的冲突值。
+ 
+ <PRE>
+     try {
+
+         crs.acceptChanges(con);
+
+     } catch (SyncProviderException spe) {
+
+         SyncResolver resolver = spe.getSyncResolver();
+
+         Object crsValue;  // value in the <code>RowSet</code> object 
+         Object resolverValue:  // value in the <code>SyncResolver</code> object
+         Object resolvedValue:  // value to be persisted
+
+         while(resolver.nextConflict())  {
+             if(resolver.getStatus() == SyncResolver.UPDATE_ROW_CONFLICT)  {
+                 int row = resolver.getRow();
+                 crs.absolute(row);
+
+                 int colCount = crs.getMetaData().getColumnCount();
+                 for(int j = 1; j &lt;= colCount; j++) {
+                     if (resolver.getConflictValue(j) != null)  {
+                         crsValue = crs.getObject(j);
+                         resolverValue = resolver.getConflictValue(j);
+                         . . . 
+                         // compare crsValue and resolverValue to determine
+                         // which should be the resolved value (the value to persist)
+                         resolvedValue = crsValue;
+
+                         resolver.setResolvedValue(j, resolvedValue);
+                      } 
+                  } 
+              }
+          }
+      }
+ </PRE>
+
+@author Jonathan Bruce
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.spi.SyncResolver.UPDATE_ROW_CONFLICT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示在 <code>RowSet</code> 对象试图更新数据源中的行时发生冲突。数据源行中要更新的值不同于该行的 <code>RowSet</code> 对象的原始值，这意味着自上一次同步以来已更新或删除了数据源中的行。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.spi.SyncResolver.DELETE_ROW_CONFLICT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指示在 <code>RowSet</code> 对象试图删除数据源中的行时发生冲突。数据源行中要更新的值不同于该行的 <code>RowSet</code> 对象的原始值，这意味着自上一次同步以来已更新或删除了数据源中的行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.spi.SyncResolver.INSERT_ROW_CONFLICT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示在 <code>RowSet</code> 对象试图将行插入数据源中时发生冲突。这意味着自上一次同步以来已经在数据源中插入了一个与要插入的行具有相同主键的行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.spi.SyncResolver.NO_ROW_CONFLICT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示在 <code>RowSet</code> 对象试图更新、删除或插入数据源中的行时<b>不</b>发生任何冲突。<code>SyncResolver</code> 中的值将包含 <code>null</code> 值，该值仅指示此行中没有关于冲突解决的信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sql.rowset.spi.SyncResolver.getStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SyncResolver</code> 的当前行的冲突状态，它指示在发生冲突时 <code>RowSet</code> 对象正尝试的操作。
+
+@return 以下常量之一：<code>SyncResolver.UPDATE_ROW_CONFLICT</code>、<code>SyncResolver.DELETE_ROW_CONFLICT</code>、<code>SyncResolver.INSERT_ROW_CONFLICT</code> 或 <code>SyncResolver.NO_ROW_CONFLICT</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.sql.rowset.spi.SyncResolver.getConflictValue(int index) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SyncResolver</code> 对象的当前行中指定列的值，它是数据源中导致冲突的值。
+
+@param index 一个 <code>int</code>，它指定此 <code>SyncResolver</code> 对象的此行中的列，从该列可以获取导致冲突的值
+@return 此 <code>SyncResolver</code> 对象的当前行中指定列的值
+@throws SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.sql.rowset.spi.SyncResolver.getConflictValue(String columnName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SyncResolver</code> 对象的当前行中指定列的值，它是数据源中导致冲突的值。
+
+@param columnName  <code>String</code> 对象，它指定此 <code>SyncResolver</code> 对象的此行中的列，从该列可以获取导致冲突的值
+@return 此 <code>SyncResolver</code> 对象的当前行中指定列的值
+@throws SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.SyncResolver.setResolvedValue(int index, Object obj) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <i>obj</i> 设置为将同步的 <code>RowSet</code> 对象当前行中第 <i>index</i> 列的值。将 <i>obj</i> 内部地设置为数据源中的值。
+
+@param index 一个 <code>int</code>，它提供要设置保留值的列号
+@param obj 一个 <code>Object</code>，它是在 <code>RowSet</code> 对象中设置的值，将它保留在数据源中
+@throws SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.SyncResolver.setResolvedValue(String columnName, Object obj) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <i>obj</i> 设置为将同步的 <code>RowSet</code> 对象当前行中列 <i>columnName</i> 的值。将 <i>obj</i> 内部地设置为数据源中的值。
+
+@param columnName  <code>String</code> 对象，它提供要设置保留值的列名称
+@param obj 一个 <code>Object</code>，它是在 <code>RowSet</code> 对象中设置的值，将它保留在数据源中
+@throws SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.spi.SyncResolver.nextConflict() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指针从其当前位置移动到下一个包含冲突值的行。<code>SyncResolver</code> 对象的指针最初位于第一个冲突行之前；第一次调用 <code>nextConflict</code> 方法使第一个冲突行成为当前行；第二次调用使第二个冲突行成为当前行，依此类推。
+ <p>
+调用方法 <code>nextConflict</code> 将隐式关闭输入流（如果有打开的输入流），并且将清除 <code>SyncResolver</code> 对象的警告链。
+
+@return 如果新的当前行有效，则返回 <code>true</code>；如果不存在下一行，则返回 <code>false</code>
+@throws SQLException 如果发生数据库访问错误，或者结果集类型为 <code>TYPE_FORWARD_ONLY</code>
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.spi.SyncResolver.previousConflict() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指针从其当前位置移动到此 <code>SyncResolver</code> 对象中上一个冲突行。
+ <p>
+调用方法 <code>previousConflict</code> 将隐式关闭输入流（如果有打开的输入流），并且将清除 <code>SyncResolver</code> 对象的警告链。
+
+@return 如果指针位于有效行上，则返回 <code>true</code>；如果它不在结果集中，则返回 <code>false</code> 
+@throws SQLException 如果发生数据库访问错误，或者结果集类型为 <code>TYPE_FORWARD_ONLY</code> 
+
+<!-- END DATA -->

@@ -1,0 +1,131 @@
+<!-- BEGIN KEY -->
+public final class java.rmi.server.ObjID extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ObjID</code> 是用于标识导出到 RMI 运行时的远程对象。导出远程对象时，将根据用于导出的 API，或隐式或显示地向该对象分配一个对象标识符。
+
+<p>{@link #ObjID()} 构造方法可用于生成唯一的对象标识符。这样一个 <code>ObjID</code> 对于生成它的主机时间来说是唯一的。{@link #ObjID(int)} 构造方法可用于创建&ldquo;已知的&rdquo;对象标识符。已知 <code>ObjID</code> 的范围取决于将它导出到其中的 RMI 运行时。
+
+<p><code>ObjID</code> 实例包含一个对象数（属于类型 <code>long</code>）和一个地址空间标识符（属于类型 {@link UID}）。在唯一的 <code>ObjID</code> 中，地址空间标识符对于给定主机来说是不随时间变化的。在已知的 <code>ObjID</code> 中，地址空间标识符等效于通过调用具有值 0 的 {@link UID#UID(short)} 构造方法返回的标识符。
+
+<p>如果将系统属性 <code>java.rmi.server.randomIDs</code> 定义为等于字符串 <code>&quot;true&quot;</code>（不分大小写），则 {@link #ObjID()} 构造方法将使用加密的强伪随机数生成器来选择返回的 <code>ObjID</code> 的对象数。
+
+@author	Ann Wollrath
+@author	Peter Jones
+@version	1.29, 03/12/19
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.rmi.server.ObjID.REGISTRY_ID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册表的已知 <code>ObjID</code> 的对象数。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.rmi.server.ObjID.ACTIVATOR_ID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活程序的已知 <code>ObjID</code> 的对象数。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.rmi.server.ObjID.DGC_ID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分布式垃圾回收器的已知 <code>ObjID</code> 的对象数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final long java.rmi.server.ObjID.objNum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial object number
+@see #hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.rmi.server.UID java.rmi.server.ObjID.space
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial address space identifier (unique to host over time)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.ObjID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成唯一的对象标识符。
+
+<p>如果将系统属性 <code>java.rmi.server.randomIDs</code> 定义为等于字符串 <code>&quot;true&quot;</code>（不分大小写），则此构造方法将使用加密的强伪随机数生成器来选择返回的 <code>ObjID</code> 的对象数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.ObjID(int objNum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建&ldquo;已知的&rdquo;对象标识符。
+
+<p>通过此构造方法创建的 <code>ObjID</code> 将不与通过无参数构造方法生成的 <code>ObjID</code> 冲突。
+
+@param	objNum 已知对象标识符的对象数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.server.ObjID.write(ObjectOutput out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>ObjID</code> 的二进制表示形式编组为一个 <code>ObjectOutput</code> 实例。
+
+<p>需要特别说明的是，此方法首先根据此对象标识符的对象数调用给定流的 {@link ObjectOutput#writeLong(long)} 方法，然后根据该流调用 {@link UID#write(DataOutput)} 方法写入其地址空间标识符。
+
+@param	out 要将此 <code>ObjID</code> 写入其中的 <code>ObjectOutput</code> 实例
+
+@throws  IOException 如果在执行此操作时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.server.ObjID java.rmi.server.ObjID.read(ObjectInput in) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过从 <code>ObjectInput</code> 实例解组二进制表示形式来构造和返回一个新的 <code>ObjID</code> 实例。
+
+<p>特别是，此方法首先调用给定流的 {@link ObjectInput#readLong()} 方法来读取一个对象数，然后根据此流调用 {@link UID#read(DataInput)} 来读取地址空间标识符，接着创建并返回一个新的 <code>ObjID</code> 实例，该实例包含从该流读取的对象数和地址空间标识符。
+
+@param	in 要从中读取 <code>ObjID</code> 的 <code>ObjectInput</code> 实例
+
+@return	已解组的 <code>ObjID</code> 实例
+
+@throws	IOException 如果在执行此操作时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.server.ObjID.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象标识符、对象数的哈希码值。
+
+@return	此对象标识符的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.server.ObjID.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此 <code>ObjID</code> 是否相等。
+
+当且仅当该指定对象是一个与该对象具有相同对象数和地址空间标识符的 <code>ObjID</code> 时，此方法返回 <code>true</code>。
+
+@param	obj 要与此 <code>ObjID</code> 比较的对象
+
+@return	如果给定对象与此对象等效，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.server.ObjID.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象标识符的字符串表示形式。
+
+@return	此对象标识符的字符串表示形式
+
+<!-- END DATA -->

@@ -1,0 +1,599 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.NumberFormat extends java.text.Format
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>NumberFormat</code> 是所有数值格式的抽象基类。此类提供格式化和解析数值的接口。<code>NumberFormat</code> 还提供了一些方法来确定哪些语言环境具有数值格式，以及它们的名称是什么。
+
+ <p>
+<code>NumberFormat</code> 可用于格式化和解析任何语言环境的数值。使代码能够完全独立于小数点、千位分隔符甚至所用特定小数位数的语言环境约定，并与数值格式是否为偶小数无关。
+
+ <p>
+若要格式化当前 Locale 的数值，可使用其中一个工厂类方法：
+ <blockquote>
+ <pre>
+  myString = NumberFormat.getInstance().format(myNumber);
+ </pre>
+ </blockquote>
+如果格式化多个数值，那么获取该格式并多次使用它是更为高效的做法，这样系统就不必多次获取关于语言环境语言和国家/地区约定的信息了。
+ <blockquote>
+ <pre>
+ NumberFormat nf = NumberFormat.getInstance();
+ for (int i = 0; i &lt; myNumber.length; ++i) {
+     output.println(nf.format(myNumber[i]) + &quot;; &quot;);
+ }
+ </pre>
+ </blockquote>
+若要格式化不同 Locale 的日期，可在对 <code>getInstance</code> 的调用中指定它。
+ <blockquote>
+ <pre>
+ NumberFormat nf = NumberFormat.getInstance(Locale.FRENCH);
+ </pre>
+ </blockquote>
+还可以使用 <code>NumberFormat</code> 来解析数值：
+ <blockquote>
+ <pre>
+ myNumber = nf.parse(myString);
+ </pre>
+ </blockquote>
+使用 <code>getInstance</code> 或 <code>getNumberInstance</code> 来获取常规数值格式。使用 <code>getIntegerInstance</code> 来获取整数数值格式。使用 <code>getCurrencyInstance</code> 来获取货币数值格式。使用 <code>getPercentInstance</code> 来获取显示百分比的格式。使用此格式，小数 0.53 将显示为 53%。
+
+ <p>
+使用 <code>setMinimumFractionDigits</code> 之类的方法还可以控制数值的显示。如果想对格式化和解析进行更多的控制（或者给予用户更多的控制），可以尝试将从工厂方法获取的 <code>NumberFormat</code> 强制转换为 <code>DecimalFormat</code>。这适用于大多数语言环境；只是要记住将其放入一个 <code>try</code> 代码块中，以防遇到特殊情况。
+
+ <p>
+NumberFormat 和 DecimalFormat 的作用在于，有一些方法控制格式化，还有一些方法控制解析。以下是对每种控制方法的详细描述：
+ <p>
+setParseIntegerOnly : 只影响解析，例如，如果为 true，则 &quot;3456.78&quot; -&gt; 3456（并保留索引 6 后面的那个解析位置），如果为 false，则 &quot;3456.78&quot; -&gt; 3456.78（并保留索引 8 后面的那个解析位置）。此方法与格式化无关。如果希望在小数点后面没有数值的情况下不显示小数点，则使用 setDecimalSeparatorAlwaysShown。
+ <p>
+ setDecimalSeparatorAlwaysShown :只影响格式化，且只影响小数点后没有数值的情况，例如模式 &quot;#,##0.##&quot;，如果为 true，则 3456.00 -&gt; &quot;3,456.&quot;，如果为 false，则 3456.00 -&gt; &quot;3456&quot;。此方法与解析无关。如果希望解析在小数点处停止，则使用 setParseIntegerOnly。
+
+ <p>
+还可以使用带有 <code>ParsePosition</code> 和 <code>FieldPosition</code> 的 <code>parse</code> 和 <code>format</code> 方法的形式，它们允许：
+ <ul>
+<li> 逐步地解析字符串的各部分
+<li> 对齐小数点和其他区域
+ </ul>
+例如，可以通过两种方式对齐数值：
+ <ol>
+<li> 如果使用以间隔来对齐的等宽字体，可以在格式调用中传递 <code>FieldPosition</code>，令 <code>field</code> = <code>INTEGER_FIELD</code>。在输出时，<code>getEndIndex</code> 将被设置为最后一个整数字符和小数字符之间的偏移量。在字符串前面加入 (desiredSpaceCount - getEndIndex) 个空格。
+
+<li> 如果使用成比例的字体，则不是通过填充空格的方法，而是以像素为单位度量从开始处到 <code>getEndIndex</code> 的字符串宽度。然后在绘制文本之前将画笔移动 (desiredPixelWidth - widthToAlignmentPoint) 个像素。对于没有小数但可能在末尾有其他字符的字符串，这种方法也是有效的，例如，带有圆括号的负数：&quot;(12)&quot; 用于 -12。
+ </ol>
+
+<h4><a name="synchronization">同步</a></h4>
+
+ <p>
+数值格式化通常是不同步的。建议为每个线程创建独立的格式实例。如果多个线程同时访问一个格式，则它必须是外部同步的。
+
+@see          DecimalFormat
+@see          ChoiceFormat
+@version      1.74, 11/17/05
+@author       Mark Davis
+@author       Helena Shih
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.NumberFormat.INTEGER_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于构造 FieldPosition 对象的字段常量。表示必须返回格式化数值整数部分的位置。
+@see java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.NumberFormat.FRACTION_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于构造 FieldPosition 对象的字段常量。表示必须返回格式化数值小数部分的位置。
+@see java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.text.NumberFormat.groupingUsed
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果格式化和解析数值时使用了组（即千位）分隔符，则返回 true。
+
+@serial
+@see #isGroupingUsed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.NumberFormat.maxIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数值的整数部分允许的最大位数。<code>maxIntegerDigits</code> 必须大于等于 <code>minIntegerDigits</code>。
+ <p>
+<strong>注：</strong>此字段仅在与 JDK 1.1 兼容的序列化中存在。在 Java 2 平台 的 v1.2 和更高版本中，用 <code>int</code> 字段 <code>maximumIntegerDigits</code> 来替代。当写入一个流时，<code>maxIntegerDigits</code> 被设置为 <code>maximumIntegerDigits</code> 或 <code>Byte.MAX_VALUE</code> 中较小的一个。当从一个流读取时，仅当 <code>serialVersionOnStream</code> 小于 1 时使用此字段。 
+
+@serial
+@see #getMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.NumberFormat.minIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的整数部分允许的最小位数，<code>minimumIntegerDigits</code> 必须小于等于 <code>maximumIntegerDigits</code>。
+ <p>
+<strong>注：</strong>此字段仅在与 JDK 1.1 兼容的序列化中存在。在 Java 2 平台 的 v1.2 和更高版本中，用新的 <code>int</code> 字段 <code>minimumIntegerDigits</code> 来替代。当写入一个流时，<code>minIntegerDigits</code> 被设置为 <code>minimumIntegerDigits</code> 或 <code>Byte.MAX_VALUE</code> 中较小的一个。当从一个流读取时，仅当 <code>serialVersionOnStream</code> 小于 1 时使用此字段。 
+
+@serial
+@see #getMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.NumberFormat.maxFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的小数部分允许的最大位数，<code>maximumFractionDigits</code> 必须大于等于 <code>minimumFractionDigits</code>。
+ <p>
+<strong>注：</strong> 此字段仅在与 JDK 1.1 兼容的序列化中存在。在 Java 2 平台 的 v1.2 和更高版本中，用新的 <code>int</code> 字段 <code>maximumFractionDigits</code> 来替代。当写入一个流时，<code>maxFractionDigits</code> 被设置为 <code>maximumFractionDigits</code> 或 <code>Byte.MAX_VALUE</code> 中较小的一个。当从一个流读取时，仅当 <code>serialVersionOnStream</code> 小于 1 时使用此字段。 
+
+@serial
+@see #getMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.NumberFormat.minFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的小数部分允许的最小位数。<code>minimumFractionDigits</code> 必须小于等于 <code>maximumFractionDigits</code>。
+ <p>
+<strong>注：</strong>此字段仅在与 JDK 1.1 兼容的序列化中存在。在 Java 2 平台 的 v1.2 和更高版本中，用新的 <code>int</code> field <code>minimumFractionDigits</code> 来替代。当写入一个流时，<code>minFractionDigits</code> 被设置为 <code>minimumFractionDigits</code> 或 <code>Byte.MAX_VALUE</code> 中较小的一个。当从一个流读取时，仅当 <code>serialVersionOnStream</code> 小于 1 时使用此字段。 
+
+@serial
+@see #getMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.text.NumberFormat.parseIntegerOnly
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此格式仅将数作为整数解析，则返回 true。
+
+@serial
+@see #isParseIntegerOnly
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.NumberFormat.maximumIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的整数部分允许的最大位数。<code>maximumIntegerDigits</code> 必须大于等于 <code>minimumIntegerDigits</code>。
+
+@serial
+@since 1.2
+@see #getMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.NumberFormat.minimumIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的整数部分允许的最小位数。<code>minimumIntegerDigits</code> 必须小于等于 <code>maximumIntegerDigits</code>。
+
+@serial
+@since 1.2
+@see #getMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.NumberFormat.maximumFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的小数部分允许的最大位数。<code>maximumFractionDigits</code> 必须大于等于 <code>minimumFractionDigits</code>。
+
+@serial
+@since 1.2
+@see #getMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.NumberFormat.minimumFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的小数部分允许的最小位数。<code>minimumFractionDigits</code> 必须小于等于 <code>maximumFractionDigits</code>。
+
+@serial
+@since 1.2
+@see #getMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.NumberFormat.serialVersionOnStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+描述了流上存在的 <code>NumberFormat</code> 的版本。可能的值为：
+ <ul>
+<li><b>0</b>（或未初始化）：流格式的 JDK 1.1 版本。在此版本中，诸如 <code>maximumIntegerDigits</code> 之类的 <code>int</code> 字段不存在，而使用如 <code>maxIntegerDigits</code> 这样的 <code>byte</code> 字段来替代。
+
+<li><b>1</b>：流格式的 1.2 版本。诸如 <code>maxIntegerDigits</code> 之类的 <code>byte</code> 字段的值被忽略，而使用如 <code>maximumIntegerDigits</code> 这样的 <code>int</code> 字段来替代。
+ </ul>
+当流出 <code>NumberFormat</code> 时，总是写入最近的格式（对应于允许的最高 <code>serialVersionOnStream</code>）。
+
+@serial
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.NumberFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 唯一的构造方法。（由子类构造方法调用，通常是隐式的）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.NumberFormat.format(Object number, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个数并将所得文本添加到给定字符串缓冲区。该数可以是 {@link java.lang.Number} 的任何子类。
+ <p>
+对于能够被转换为 <code>long</code> 类型而不丢失信息的所有整型值，此实现使用 {@link java.lang.Number#longValue()} 提取其数值，包括{@link java.math.BigInteger#bitLength() 位长}小于 64 的 <code>BigInteger</code> 值；使用 {@link java.lang.Number#doubleValue()} 提取所有其他类型的值。然后它调用 {@link #format(long,java.lang.StringBuffer,java.text.FieldPosition)} 或 {@link #format(double,java.lang.StringBuffer,java.text.FieldPosition)}。这可能导致丢失数值信息以及 <code>BigInteger</code> 和 <code>BigDecimal</code> 值的精度。
+@param number     要格式化的数
+@param toAppendTo 要添加格式化文本的 <code>StringBuffer</code> 
+@param pos        输入时：如果需要，是一个对齐字段。输出时：是对齐字段的偏移量。
+@return           作为 <code>toAppendTo</code> 传入的值
+@exception        IllegalArgumentException 如果 <code>number</code> 为 null 或不是 <code>Number</code> 的实例。
+@exception        NullPointerException 如果 <code>toAppendTo</code> 或 <code>pos</code> 为 null
+@exception        ArithmeticException 如果需要进行舍入但舍入模式设置为 RoundingMode.UNNECESSARY
+@see              java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.text.NumberFormat.parseObject(String source, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析字符串中的文本，以生成一个 <code>Number</code>。
+ <p>
+此方法试图解析从 <code>pos</code> 给定的索引处开始的文本。如果解析成功，则将 <code>pos</code> 的索引更新为所解析的最后一字符后的索引（不一定对直到字符串结尾的所有字符进行解析），并返回解析后的数。更新后的 <code>pos</code> 可以用来指示下次调用此方法的起始点。如果发生错误，则 <code>pos</code> 的索引不变，<code>pos</code> 的错误索引被设置为发生错误的字符的索引，并返回 null。
+ <p>
+有关数值解析的更多信息，请参阅 {@link #parse(String, ParsePosition)} 方法。
+
+@param source 一部分将要被解析的 <code>String</code>。
+@param pos 具有以上所述的索引和错误索引信息的 <code>ParsePosition</code> 对象。
+@return 从字符串进行解析的 <code>Number</code>。如果发生错误，则返回 null。
+@exception NullPointerException 如果 <code>pos</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.text.NumberFormat.format(double number)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式规范。
+@exception        ArithmeticException 如果需要进行舍入但舍入模式设置为 RoundingMode.UNNECESSARY
+@see java.text.Format#format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.text.NumberFormat.format(long number)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式规范。
+@exception        ArithmeticException 如果需要进行舍入但舍入模式设置为 RoundingMode.UNNECESSARY
+@see java.text.Format#format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.StringBuffer java.text.NumberFormat.format(double number, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式规范。
+@exception        ArithmeticException 如果需要进行舍入但舍入模式设置为 RoundingMode.UNNECESSARY
+@see java.text.Format#format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.StringBuffer java.text.NumberFormat.format(long number, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式规范。
+@exception        ArithmeticException 如果需要进行舍入但舍入模式设置为 RoundingMode.UNNECESSARY
+@see java.text.Format#format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Number java.text.NumberFormat.parse(String source, ParsePosition parsePosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果可能则返回 Long （例如，在 [Long.MIN_VALUE, Long.MAX_VALUE] 范围内且没有小数），否则返回 Double。如果设置了 IntegerOnly，则将在小数点处停止解析（或者；例如，对于有理数 &quot;1 2/3&quot;，将在 1 后面停止）。不抛出异常；如果没有可被解析的对象，则索引不变！
+@see java.text.NumberFormat#isParseIntegerOnly
+@see java.text.Format#parseObject
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Number java.text.NumberFormat.parse(String source) throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析给定字符串开头的文本，生成一个数值。此方法不可以使用给定字符串的全部文本。
+ <p>
+有关数值解析的更多信息，请参阅 {@link #parse(String, ParsePosition)} 方法。
+
+@param source 开头应被解析的 <code>String</code>。
+@return 从字符串解析的 <code>Number</code>。
+@exception ParseException 如果无法解析指定字符串的开头。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.NumberFormat.isParseIntegerOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此格式只将数作为整数解析，则返回 true。例如，在 English 语言环境中，如果 ParseIntegerOnly 为 true，则字符串 &quot;1234.&quot; 将作为整数值 1234 进行解析，且解析将在 &quot;.&quot; 字符处停止。当然，解析操作所接受的确切格式与语言环境相关，并且是由 NumberFormat 的子类确定的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setParseIntegerOnly(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置数是否应该仅作为整数进行解析。
+@see #isParseIntegerOnly
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.NumberFormat java.text.NumberFormat.getInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前默认语言环境的通用数值格式。这与调用 {@link #getNumberInstance() getNumberInstance()} 相同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.NumberFormat java.text.NumberFormat.getInstance(Locale inLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定语言环境的通用数值格式。这与调用 {@link #getNumberInstance(java.util.Locale) getNumberInstance(inLocale)} 相同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.NumberFormat java.text.NumberFormat.getNumberInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前默认语言环境的通用数值格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.NumberFormat java.text.NumberFormat.getNumberInstance(Locale inLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定语言环境的通用数值格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.NumberFormat java.text.NumberFormat.getIntegerInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前默认语言环境的整数格式。返回数的格式使用四舍五入算法将浮点数舍入为最接近的整数（参见 {@link
+ java.math.RoundingMode#HALF_EVEN RoundingMode.HALF_EVEN})，并只解析输入字符串的整数部分（参见 {@link #isParseIntegerOnly isParseIntegerOnly}）。
+
+@see #getRoundingMode()
+@return 整数值的数值格式
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.NumberFormat java.text.NumberFormat.getIntegerInstance(Locale inLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定语言环境的整数格式。返回数的格式使用四舍五入算法将浮点数舍入为最接近的整数（参见 {@link
+ java.math.RoundingMode#HALF_EVEN RoundingMode.HALF_EVEN})，并只解析输入字符串的整数部分（参见 {@link #isParseIntegerOnly isParseIntegerOnly}）。
+
+@see #getRoundingMode()
+@return 整数值的数值格式
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.NumberFormat java.text.NumberFormat.getCurrencyInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前默认语言环境的货币格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.NumberFormat java.text.NumberFormat.getCurrencyInstance(Locale inLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定语言环境的货币格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.NumberFormat java.text.NumberFormat.getPercentInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前默认语言环境的百分比格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.NumberFormat java.text.NumberFormat.getPercentInstance(Locale inLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定语言环境的百分比格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Locale[] java.text.NumberFormat.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，它包含所有此类的 <code>get*Instance</code> 方法可以为其返回本地化实例的语言环境。返回数组表示 Java 运行时和安装的 {@link java.text.spi.NumberFormatProvider NumberFormatProvider} 实现所支持的语言环境的并集。它必须至少包含一个等同于 {@link java.util.Locale#US Locale.US} 的 <code>Locale</code> 实例。
+
+@return 一个数组，它包含可获得其本地化 <code>NumberFormat</code> 实例的语言环境。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.NumberFormat.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.NumberFormat.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.NumberFormat.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 Cloneable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.NumberFormat.isGroupingUsed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此格式中使用了分组，则返回 true。例如，在 English 语言环境中，如果使用了分组，则数 1234567 将被格式化为 &quot;1,234,567&quot;。组分隔符以及每个组的大小是与语言环境相关的，由 NumberFormat 的子类确定。
+@see #setGroupingUsed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setGroupingUsed(boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此格式中是否使用分组。
+@see #isGroupingUsed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.NumberFormat.getMaximumIntegerDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数的整数部分所允许的最大位数。
+@see #setMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setMaximumIntegerDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置数的整数部分所允许的最大位数。maximumIntegerDigits 必须 &gt;= minimumIntegerDigits。如果 maximumIntegerDigits 的新值小于 minimumIntegerDigits 的当前值，则 minimumIntegerDigits 也将被设置为新值。
+@param newValue 要显示的最大整数位数；如果小于 0，则使用 0。具体子类可以为此值强加一个上限，以适合于被格式化的数值类型。
+@see #getMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.NumberFormat.getMinimumIntegerDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数的整数部分所允许的最小位数。
+@see #setMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setMinimumIntegerDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置数的整数部分所允许的最小位数。minimumIntegerDigits 必须 &lt;= maximumIntegerDigits。如果 minimumIntegerDigits 的新值超过了 maximumIntegerDigits 的当前值，那么 maximumIntegerDigits 也将被设置为新值
+@param newValue 要显示的整数的最小位数；如果小于 0，则使用 0。具体子类可以为此值强加一个上限，以适合于被格式化的数值类型。
+@see #getMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.NumberFormat.getMaximumFractionDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数的小数部分所允许的最大位数。
+@see #setMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setMaximumFractionDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置数的小数部分所允许的最大位数。maximumFractionDigits 必须 &gt;= minimumFractionDigits。如果 maximumFractionDigits 的新值小于 minimumFractionDigits 的当前值，则 minimumFractionDigits 也将被设置为新值。
+@param newValue 要显示的小数的最大位数；如果小于 0，则使用 0。具体子类可以为此值强加一个上限，以适合于被格式化的数值类型。
+@see #getMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.NumberFormat.getMinimumFractionDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数的小数部分所允许的最小位数。
+@see #setMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setMinimumFractionDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置数的小数部分所允许的最小位数。minimumFractionDigits 必须 &lt;= maximumFractionDigits。如果 minimumFractionDigits 的新值超过了 maximumFractionDigits 的当前值，那么 maximumIntegerDigits 也将被设置为新值
+@param newValue 要显示的小数的最小位数；如果小于 0，则使用 0。具体子类可以为此值强加一个上限，以适合于被格式化的数值类型。
+@see #getMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Currency java.text.NumberFormat.getCurrency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取格式化货币值时此数值格式使用的货币。以与语言环境相关的方式导出初始值。如果不能确定有效的货币，或者没有使用 {@link #setCurrency(java.util.Currency) setCurrency} 设置任何货币，则返回值为 null。
+ <p>
+默认实现抛出 <code>UnsupportedOperationException</code>。
+
+@return 此数值格式使用的货币，或者 <code>null</code>
+@exception UnsupportedOperationException 如果数值格式类不实现货币格式化
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setCurrency(Currency currency)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置格式化货币值时此数值格式使用的货币。此方法不更新数值格式所使用的小数的最小位数或最大位数。
+ <p>
+默认实现抛出 <code>UnsupportedOperationException</code>。
+
+@param currency 此数值格式要使用的新货币
+@exception UnsupportedOperationException 如果数值格式类不实现货币格式化
+@exception NullPointerException 如果 <code>currency</code> 为 null
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.RoundingMode java.text.NumberFormat.getRoundingMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在此 NumberFormat 中使用的 {@link java.math.RoundingMode}。在 NumberFormat 中此方法的默认实现始终抛出 {@link java.lang.UnsupportedOperationException}。处理不同舍入模式的子类应该重写此方法。
+
+ @exception UnsupportedOperationException 默认实现始终抛出此异常
+ @return 用于此 NumberFormat 的 <code>RoundingMode</code>。
+ @see #setRoundingMode(RoundingMode)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.NumberFormat.setRoundingMode(RoundingMode roundingMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在此 NumberFormat 中使用的 {@link java.math.RoundingMode}。在 NumberFormat 中此方法的默认实现始终抛出 {@link java.lang.UnsupportedOperationException}。处理不同舍入模式的子类应该重写此方法。
+
+ @exception UnsupportedOperationException 默认实现始终抛出此异常
+ @exception NullPointerException 如果 <code>roundingMode</code> 为 null
+ @param roundingMode 要使用的 <code>RoundingMode</code> 
+ @see #getRoundingMode()
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.text.NumberFormat.readObject(ObjectInputStream stream) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+首先，读取默认的序列化数据。
+
+然后，如果 <code>serialVersionOnStream</code> 小于 1，指示流是用 JDK 1.1 编写的，则设置 <code>int</code> 字段（例如 <code>maximumIntegerDigits</code>）等于 <code>byte</code> 字段（例如 <code>maxIntegerDigits</code>），因为 <code>int</code> 字段在 JDK 1.1 中不存在。最后，将 serialVersionOnStream 重新设置为允许的最大值，这样如果此对象再次流出时，默认的序列化可以正常工作。
+
+<p>如果 <code>minimumIntegerDigits</code> 大于 <code>maximumIntegerDigits</code>，或者 <code>minimumFractionDigits</code> 大于 <code>maximumFractionDigits</code>，则流数据无效且此方法抛出 <code>InvalidObjectException</code>。此外，如果这些值中的任何一个是负数，则此方法抛出 <code>InvalidObjectException</code>。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.text.NumberFormat.writeObject(ObjectOutputStream stream) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了与流格式的 JDK 1.1 版本保持兼容，首先设置 <code>byte</code> 字段（例如 <code>maxIntegerDigits</code>）等于 <code>int</code> 字段（例如 <code>maximumIntegerDigits</code>）（或者等于 <code>Byte.MAX_VALUE</code>，取决于二者中那个值更小），然后写出默认的序列化数据。
+
+@since 1.2
+
+<!-- END DATA -->

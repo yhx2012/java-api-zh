@@ -1,0 +1,161 @@
+<!-- BEGIN KEY -->
+public class javax.security.auth.kerberos.KerberosKey extends java.lang.Object implements javax.crypto.SecretKey, javax.security.auth.Destroyable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类为 Kerberos 主体封装一个长期秘密密钥。<p>
+
+获取主体的密码和从主体生成秘密密钥的所有 Kerberos JAAS 登录模块都应该使用此类。在任何可以使用的地方，登录模块甚至可以直接从 Kerberos &quot;keytab&quot; 读取此秘密密钥。有时，例如在没有用户到用户 (user-to-user) 验证的情况下对服务器进行验证时，在验证过程的提交阶段，登录模块将在 {@link javax.security.auth.Subject Subject} 的私有证书集中存储此类的实例。<p>
+
+如果应用程序需要从 Subject 访问 KerberosKey 实例，可能必须授予应用程序 {@link javax.security.auth.PrivateCredentialPermission PrivateCredentialPermission} 权限。当应用程序依靠默认的 JGSS Kerberos 机制去访问 KerberosKey 时，不需要此权限。但在这种情况下，应用程序将需要适当的 {@link javax.security.auth.kerberos.ServicePermission ServicePermission} 权限。
+
+@author Mayank Upadhyay
+@version 1.17, 01/13/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosKey.principal
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此秘密密钥所属的主体。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.security.auth.kerberos.KerberosKey.versionNum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此秘密密钥的版本号。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.security.auth.kerberos.KeyImpl javax.security.auth.kerberos.KerberosKey.key
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过写出加密密钥的 ASN1 Encoded 字节来序列化 <code>KeyImpl</code>。ASN1 编码在 RFC1510 中得到定义，如下所示：
+			<pre>
+			EncryptionKey ::=   SEQUENCE {
+				keytype[0]    INTEGER,
+				keyvalue[1]   OCTET STRING    	
+				}
+			</pre>
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.kerberos.KerberosKey(KerberosPrincipal principal, byte[] keyBytes, int keyType, int versionNum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当已知密钥类型和密钥版本号时，根据给出的字节构造 KerberosKey。当从 Kerberos &quot;keytab&quot; 读取秘密密钥信息时，可以使用此 KerberosKey。
+ 
+@param principal 此秘密密钥所属的主体
+@param keyBytes 秘密密钥的原始字节
+@param keyType 秘密密钥的密钥类型，由 Kerberos 协议规范定义。
+@param versionNum 此秘密密钥的版本号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.kerberos.KerberosKey(KerberosPrincipal principal, char[] password, String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据主体的密码构造 KerberosKey。
+
+@param principal 此密码所属的主体
+@param password 应该用于计算密钥的密码
+@param algorithm 此密钥将使用的算法的名称。在假定默认算法为 &quot;DES&quot; 的情况下此参数可以为 null。
+@throws IllegalArgumentException 如果不支持传递的算法名称。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.kerberos.KerberosPrincipal javax.security.auth.kerberos.KerberosKey.getPrincipal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此密钥所属的主体。
+
+@return 此密钥所属的主体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int javax.security.auth.kerberos.KerberosKey.getVersionNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回密钥版本号。
+
+@return 密钥版本号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int javax.security.auth.kerberos.KerberosKey.getKeyType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此长期密钥的密钥类型。
+
+@return 密钥类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.security.auth.kerberos.KerberosKey.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此密钥的标准算法名称。例如，&quot;DES&quot; 指示此密钥是一个 DES 密钥。有关标准算法名称的信息，请参阅 <a href= 
+ "../../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+ 
+与此密钥有关联的算法的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.security.auth.kerberos.KerberosKey.getFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此秘密密钥的编码格式的名称。
+
+@return 字符串 &quot;RAW&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] javax.security.auth.kerberos.KerberosKey.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回秘密密钥的密钥材料。
+
+@return 密钥材料。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.kerberos.KerberosKey.destroy() throws javax.security.auth.DestroyFailedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁此密钥。销毁密钥后对此密钥其他任何方法的调用将导致抛出 IllegalStateException。
+
+@throws DestroyFailedException 如果销毁密钥时出现一些错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosKey.isDestroyed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此密钥是否已经销毁。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.kerberos.KerberosKey.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 KerberosKey 的哈希码。
+ 
+ @return <code>KerberosKey</code> 的 hashCode()
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.KerberosKey.equals(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 比较指定 Object 与此 KerberosKey 的相等性。如果给定对象也是 <code>KerberosKey</code> 并且两个 <code>KerberosKey</code> 实例相等，则返回 true。
+
+<!-- END DATA -->

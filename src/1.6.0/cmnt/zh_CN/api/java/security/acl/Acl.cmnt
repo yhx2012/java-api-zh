@@ -1,0 +1,146 @@
+<!-- BEGIN KEY -->
+public interface java.security.acl.Acl extends java.security.acl.Owner
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示访问控制列表 (ACL) 的接口。访问控制列表是一种数据结构，用于保护对资源的访问。<p>
+
+可将一个 ACL 看作是具有多个 ACL 项的数据结构。每个接口类型为 AclEntry 的 ACL 项都包含一组与特定主体相关联的权限。（主体表示一个实体，如单独用户或一个用户组）。另外，可以将每个 ACL 项指定为 positive 或 negative 的。如果为 positive，则将权限授予相关联的主体。如果为 negative，则拒绝该权限。<p>
+
+每个 ACL 中的 ACL 项都遵循以下规则：<p>
+
+<ul> <li>每个主体最多有一个 positive  ACL 项和一个 negative ACL 项；也就是对于任何主体，不允许有多个 positive 或 negative ACL 项。每项指定了一组要授予（如果为 positive）或要拒绝（如果为 negative）的权限。 <p>
+ 
+<li>如果没有针对特定主体的 ACL 项，则认为该主体具有一个 null（空）的权限集。<p>
+
+<li>如果有向某个主体授予特定权限的 positive 项，并且有拒绝向该主体授予同一权限的 negative 项，则结果就如同既不授予也不拒绝该权限一样。 <p>
+
+<li>个体权限总是覆盖该个体所属组（组群）的权限。也就是说，个体 negative 权限（特定权限的拒绝）覆盖组的 positive 权限。而个体 positive 权限则覆盖组的 negative 权限。<p>
+
+ </ul>
+
+<code>java.security.acl</code> 包为 ACL 和相关的数据结构（ACL 项、组、权限等等）提供了接口，<code>sun.security.acl</code> 类则提供了该接口的默认实现。例如，<code>java.security.acl.Acl</code> 为 ACL 提供了接口，而 <code>sun.security.acl.AclImpl</code> 类则提供了该接口的默认实现。<p>
+ 
+<code>java.security.acl.Acl</code> 接口扩展了 <code>java.security.acl.Owner</code> 接口。该 Owner 接口用于维护每个 ACL 的所有者列表。只允许 ACL 的所有者修改该 ACL。例如，只有所有者才能调用 ACL 的 <code>addEntry</code> 方法来向 ACL 中添加新的 ACL 项。
+
+@see java.security.acl.AclEntry
+@see java.security.acl.Owner
+@see java.security.acl.Acl#getPermissions
+ 
+@version 1.23, 04/05/05
+@author Satish Dharmaraj 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.acl.Acl.setName(Principal caller, String name) throws java.security.acl.NotOwnerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 ACL 的名称。
+
+@param caller 调用此方法的主体。必须是此 ACL 的所有者。
+
+@param name 赋予此 ACL 的名称。
+
+@exception NotOwnerException 如果调用方主体不是此 ACL 的所有者。 
+
+@see #getName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.acl.Acl.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 ACL 的名称。 
+
+@return 此 ACL 的名称。
+
+@see #setName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.acl.Acl.addEntry(Principal caller, AclEntry entry) throws java.security.acl.NotOwnerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此 ACL 中添加 ACL 项。ACL 项将主体（例如个体或组）与一组权限关联起来。每个主体最多有一个 positive ACL 项（指定要授予该主体的权限）和一个 negative ACL 项（指定要拒绝的权限）。如果该 ACL 中已经有一个相同类型（ negative 或 positive ）的 ACL 项，则返回 false。
+ 
+@param caller 调用此方法的主体。必须是此 ACL 的所有者。
+
+@param entry 要添加到此 ACL 中的 ACL 项。
+
+@return 如果添加成功，则返回 true；如果此 ACL 中已经有一个针对同一主体的相同类型（negative 或 positive）的 ACL 项，则返回 false。
+
+@exception NotOwnerException 如果调用方主体不是此 ACL 的所有者。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.acl.Acl.removeEntry(Principal caller, AclEntry entry) throws java.security.acl.NotOwnerException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 ACL 中移除 ACL 项。
+ 
+@param caller 调用此方法的主体。必须是此 ACL 的所有者。
+ 
+@param entry 要从此 ACL 中移除的 ACL 项。
+ 
+@return 如果移除成功，则返回 true；如果该项不是此 ACL 的一部分，则返回 false。
+ 
+@exception NotOwnerException 如果调用方主体不是此 ACL 的所有者。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<java.security.acl.Permission> java.security.acl.Acl.getPermissions(Principal user)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指定主体（表示一个实体，如个体或组）的许可权限集合的枚举。按以下方式计算该许可权限集合：<p>
+
+ <ul>
+ 
+<li>如果此访问控制列表中没有针对指定主体的项，则返回空的权限集合。<p>
+ 
+<li>否则确定该主体的组权限集合。（一个主体可以属于一个或多个组，其中组是一个主体组，由 Group 接口表示。）该组的 positive 权限集合是该主体所属每个组的所有 positive 权限的并集。该组的 negative 权限集合是该主体所属每个组的所有 negative 权限的并集。如果某个指定的权限同时出现在 positive 权限集合和 negative 权限集合中，则将它从这两个集合中移除。<p>
+
+还要确定个体 positive 和 negative 权限集合。positive 权限集合包含该主体的 positive ACL 项（如果有的话）中所指定的权限。类似地，negative 权限集合包含该主体的 negative ACL 项（如果有的话）中所指定的权限。如果此 ACL 中没有针对该主体的 positive（negative）ACL 项，则认为个体 positive（或 negative ）权限集合为 null。<p>
+
+然后使用个体权限总是覆盖组权限这一简单规则来计算授予该主体的权限集合。也就是说，该主体的个体 negative 权限集合（特定权限的拒绝）覆盖组的 positive 权限集合，该主体的个体 positive 权限集合则覆盖组的 negative 权限集合。 
+ 
+ </ul>
+
+@param user 要返回其权限集合的主体。
+ 
+@return 指定该主体的许可权限的权限集合。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<java.security.acl.AclEntry> java.security.acl.Acl.entries()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 ACL 中各项的枚举。该枚举中的每个元素的类型都是 AclEntry。
+ 
+@return 此 ACL 中各项的枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.acl.Acl.checkPermission(Principal principal, Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查指定的主体是否具有指定的权限。如果确实有，则返回 true；否则返回 false。
+ 
+更明确地说，此方法检查所传入的权限是否为指定主体的许可权限集合的一个成员。由 <code>getPermissions</code> 方法所使用的相同算法来确定该许可权限集合。
+ 
+@param principal 主体，假定是一个有效的、已进行身份验证的 Principal。
+ 
+@param permission 要检查的权限。
+ 
+@return 如果主体具有指定的权限，则返回 true；否则返回 false。
+ 
+@see #getPermissions
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.acl.Acl.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ACL 内容的字符串表示形式。
+ 
+@return ACL 内容的字符串表示形式。
+
+<!-- END DATA -->

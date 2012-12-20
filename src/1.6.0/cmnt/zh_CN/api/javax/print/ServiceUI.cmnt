@@ -1,0 +1,63 @@
+<!-- BEGIN KEY -->
+public class javax.print.ServiceUI extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是各种 UI 便捷方法的集合，这些方法为浏览那些通过 Java Print Service API 所查找的 PrintService 提供了图形用户对话框。
+ <p>
+该对话框遵从标准的模式，为用户提供继续/取消的选项，以及允许用户选择要使用并指定各种选择（如纸张大小和份数）的 PrintService。
+ <p>
+ <p>
+该对话框设计成通过可插入 PrintService 的公共 API 来与这些服务一同使用。
+ <p>
+如果 PrintService 提供了任意的供应商扩展，则用户可通过供应商提供的选项卡窗格 Component 来访问这些扩展。鼓励这种供应商扩展使用 Swing! 并支持其可访问性 API。供应商扩展应该返回作为 AttributeSet 一部分的设置。希望保持用户设置的应用程序应该使用这些设置来指定打印作业。注意，Java 打印服务的所有其他部分都不引用此类，并且不包括在与 AWT 包的存在无关的配置文件中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.print.PrintService javax.print.ServiceUI.printDialog(GraphicsConfiguration gc, int x, int y, javax.print.PrintService[] services, PrintService defaultService, DocFlavor flavor, PrintRequestAttributeSet attributes) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为用户提供一个选择 PrintService（打印机）的对话框。在应用程序指定的位置显示它，并且它是有模式的。如果指定的位置无效或者要使该对话框不可见，则在由实现所确定的位置显示它。该对话框阻塞其调用的线程，并且是有模式的应用程序。
+ <p>
+该对话框可以包括一个选项卡窗格，该窗格具有在浏览 PrintService 时，可以延迟方式从 PrintService 的 ServiceUIFactory 所获得的自定义 UI。对话框会首先试图查找一个作为 JComponent 的 MAIN_UIROLE，然后查找作为 Panel 的 MAIN_UIROLE。如果没有 ServiceUIFactory 或没有相符的角色，则自定义选项卡将为空或不可见。
+ <p>
+如果用户&ldquo;确定&rdquo;了该对话框，则对话框返回用户选择的 PrintService，如果用户&ldquo;取消&rdquo;了该对话框，则返回 null。
+ <p>
+应用程序必须传递要浏览的 PrintService 的数组。该数组必须是非 null 和非空的。通常应用程序只传递能够打印特定 doc flavor 的 PrintService。
+ <p>
+应用程序可以传递最初显示的 PrintService。可浏览服务的数组中必须包括非 null 参数。如果此参数为 null，则由实现选择某个服务。
+ <p>
+可选地，应用程序可以传递要打印的 flavor。如果这是呈现给用户的非 mull 选择，则可针对该服务所支持的 flavor 更好地验证该选择。应用程序必须为返回的用户选择传递 PrintRequestAttributeSet。所调用的 PrintRequestAttributeSet 可以为空，或者可包含特定于应用程序的值。
+ <p>
+这些内容用于为最初显示的 PrintService 设置初始设置。忽略那些 PrintService 不支持的值。在用户浏览 PrintService 时，将属性和值复制到新的显示内容。如果用户浏览的 PrintService 不支持特定的属性-值，则将该服务的默认值用作要复制的新值。
+ <p>
+如果用户取消了对话框，则返回的属性将不会反映用户进行的任何更改。
+
+此方法的典型基本用法是：
+ <pre>
+ PrintService[] services = PrintServiceLookup.lookupPrintServices(
+                            DocFlavor.INPUT_STREAM.JPEG, null);
+ PrintRequestAttributeSet attributes = new HashPrintRequestAttributeSet();
+ if (services.length &gt; 0) {
+    PrintService service =  ServiceUI.printDialog(null, 50, 50,
+                                               services, services[0],
+                                               null,
+                                               attributes);
+    if (service != null) {
+     ... print ...
+    }
+ }
+ </pre>
+ <p>
+
+@param gc 用于选择屏幕。null 意味着主屏幕或默认屏幕。
+@param x 对话框在屏幕坐标中的位置，包括边框
+@param y 对话框在屏幕坐标中的位置，包括边框
+@param services 可浏览的服务，必须不为 null。
+@param defaultService 要显示的初始 PrintService。
+@param flavor 要打印的 flavor，或者为 null。
+@param attributes 输入时为应用程序最初提供的首选项。这不能为 null，但可以为空。输出时为反映用户所作的更改的属性。
+@return 用户选择的 PrintService，如果用户取消了对话框，则返回 null。
+@throws HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true。
+@throws IllegalArgumentException 如果 services 为 null 或为空，或者 attributes 为 null，或者初始的 PrintService 未在可浏览服务的列表中。
+
+<!-- END DATA -->

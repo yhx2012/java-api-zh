@@ -1,0 +1,87 @@
+<!-- BEGIN KEY -->
+public abstract class javax.naming.ldap.LdapReferralException extends javax.naming.ReferralException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此抽象类用于表示 LDAP 引用异常。它通过提供接受请求控件的 <tt>getReferralContext()</tt> 方法扩展基础 <tt>ReferralException</tt>。LdapReferralException 是一个抽象类。它具体的实现确定其同步和序列化属性。
+<p>
+作为参数传递给 <tt>getReferralContext()</tt> 方法的 <tt>Control[]</tt> 数组为调用者所有。服务提供者将不修改数组，也不保持对它的引用，但它可能保持对数组中个别 <tt>Control</tt> 对象的引用。
+
+@author Rosanna Lee
+@author Scott Seligman
+@author Vincent Ryan
+@version 1.13 05/11/17
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.ldap.LdapReferralException(String explanation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用所提供的解释构造一个新的 LdapReferralException 实例。将所有其他字段都设置为 null。
+
+@param	explanation	有关此异常的附加详细信息。可以为 null。
+@see java.lang.Throwable#getMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.ldap.LdapReferralException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 LdapReferralException 实例。将所有字段都设置为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.naming.Context javax.naming.ldap.LdapReferralException.getReferralContext() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用上下文的环境（但不使用控件）检索继续该方法的上下文。使用抛出 <tt>ReferralException</tt> 的上下文的环境属性（但不使用控件）创建引用上下文。
+<p>
+该方法等效于
+<blockquote><pre>
+ getReferralContext(ctx.getEnvironment(), null);
+</pre></blockquote>
+其中 <tt>ctx</tt> 是抛出 <tt>ReferralException.</tt> 的上下文
+<p>
+在此类中重写该方法仅出于文档编制目的。有关使用此方法的方式，请参阅 <tt>ReferralException</tt>。
+ 
+@return 将继续该方法的非 null 上下文。
+@exception NamingException 如果遇到命名异常。调用 <tt>retryReferral()</tt> 或 <tt>skipReferral()</tt> 来继续处理这些引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.naming.Context javax.naming.ldap.LdapReferralException.getReferralContext(java.util.Hashtable<?, ?> env) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用环境属性（但不使用控件）检索继续该方法的上下文。使用 <tt>env</tt> 作为其环境属性（但不使用控件）创建引用上下文。
+<p>
+该方法等效于
+<blockquote><pre>
+ getReferralContext(env, null);
+</pre></blockquote>
+<p>
+在此类中重写该方法仅出于文档编制目的。有关使用此方法的方式，请参阅 <tt>ReferralException</tt>。
+ 
+@param env 检索引用上下文时要使用的环境（可能为 null）。如果为 null，则不使用环境属性。
+
+@return 将继续该方法的非 null 上下文。
+@exception NamingException 如果遇到命名异常。调用 <tt>retryReferral()</tt> 或 <tt>skipReferral()</tt> 来继续处理这些引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.naming.Context javax.naming.ldap.LdapReferralException.getReferralContext(java.util.Hashtable<?, ?> env, javax.naming.ldap.Control[] reqCtls) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用请求控件和环境属性检索继续该方法的上下文。不管在上下文操作期间（例如在搜索枚举期间）是否直接或间接地遇到某一引用，引用异常都应该提供一个继续该操作的上下文。要继续该操作，客户端程序应该使用与初始调用相同的参数重新调用该方法。
+<p>
+<tt>reqCtls</tt> 在创建到引用的服务器的连接时使用。这些控件将用作上下文和从上下文派生的上下文实例的连接请求控件。<tt>reqCtls</tt> 同时还是后续上下文操作的上下文请求控件。有关详细信息，请参阅 <tt>LdapContext</tt> 类描述。
+<p>
+当调用者需要提供请求控件来创建引用上下文时，应该使用此方法，而不是其他两个重载形式。例如，当需要提供与验证有关的特殊控件时，它可能这样做。
+<p>
+服务提供者的实现方应该参阅 <tt>LdapContext</tt> 类描述中的 &quot;Service Provider&quot; 一节，以获取实现的详细信息。
+
+@param reqCtls 要用于新上下文的请求控件（可能为 null）。如果 null 或空数组意味着不使用任何请求控件。
+@param env 要用于新上下文的环境属性（可能为 null）。如果为 null，则不使用任何环境属性初始化上下文。
+@return 将继续该方法的非 null 上下文。
+@exception NamingException 如果遇到命名异常。调用 <tt>retryReferral()</tt> 或 <tt>skipReferral()</tt> 来继续处理这些引用。
+
+<!-- END DATA -->

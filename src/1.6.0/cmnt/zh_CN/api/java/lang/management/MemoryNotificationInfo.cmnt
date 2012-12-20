@@ -1,0 +1,133 @@
+<!-- BEGIN KEY -->
+public class java.lang.management.MemoryNotificationInfo extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关于内存通知的信息。
+
+<p>
+当 Java 虚拟机检测到内存池的内存使用量超过了阈值时，{@link MemoryMXBean} 将发出内存通知。发出的通知将包含关于检测到的情况的内存通知信息：
+<ul>
+  <li>内存池的名称。</li>
+  <li>构造通知时内存池的内存使用量。</li>
+  <li>构造通知时，内存使用量超过阈值的次数。对于使用量阈值通知，此计数将为{@link MemoryPoolMXBean#getUsageThresholdCount 使用量阈值计数}。对于集合使用量阈值通知，此计数将为{@link MemoryPoolMXBean#getCollectionUsageThresholdCount 集合使用量阈值计数}。
+       </li>
+</ul>
+
+<p>
+表示 <tt>MemoryNotificationInfo</tt> 对象的 {@link CompositeData CompositeData} 存储在{@link javax.management.Notification 通知}的{@link javax.management.Notification#setUserData 用户数据}中。提供了{@link #from 表单}方法将 <tt>CompositeData</tt> 转换为 <tt>MemoryNotificationInfo</tt> 对象。例如：
+
+ <blockquote><pre>
+      Notification notif;
+
+      // receive the notification emitted by MemoryMXBean and set to notif
+      ...
+            
+      String notifType = notif.getType();
+      if (notifType.equals(MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED) ||
+          notifType.equals(MemoryNotificationInfo.MEMORY_COLLECTION_THRESHOLD_EXCEEDED)) {
+          // retrieve the memory notification information
+          CompositeData cd = (CompositeData) notif.getUserData();
+          MemoryNotificationInfo info = MemoryNotificationInfo.from(cd);
+          ....
+      }  
+ </pre></blockquote>
+
+<p>
+<tt>MemoryMXBean</tt> 发出的通知类型为：
+<ul> 
+  <li>{@link #MEMORY_THRESHOLD_EXCEEDED 使用量阈值超过通知}。<br>当内存池的内存使用量增加，达到或超过其<a href="MemoryPoolMXBean.html#UsageThreshold">使用量阈值</a>，将发出此通知。后续的使用量阈值超过情况不会导致更多的通知，一直到内存使用量返回到小于使用量阈值的状态为止。
+       <p></li>
+  <li>{@link #MEMORY_COLLECTION_THRESHOLD_EXCEEDED 集合使用量阈值超过通知}。<br>当 Java 虚拟机对内存池中不使用的对象进行了回收工作之后，内存池的内存使用量大于或等于其<a href="MemoryPoolMXBean.html#CollectionThreshold">集合使用量阈值</a>时，将发出此通知。</li> 
+ </ul>
+
+@author  Mandy Chung
+@version 1.6, 04/18/04
+@since   1.5
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.MemoryNotificationInfo.MEMORY_THRESHOLD_EXCEEDED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示内存池的内存使用量已达到或超过其<a href="MemoryPoolMXBean.html#UsageThreshold">使用量阈值</a>的通知类型。此通知由 {@link MemoryMXBean} 发出。后续的使用量阈值超过情况不会导致更多的通知，一直到内存使用量返回到小于使用量阈值的状态为止。此通知类型的值为 <tt>java.management.memory.threshold.exceeded</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.MemoryNotificationInfo.MEMORY_COLLECTION_THRESHOLD_EXCEEDED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示当 Java 虚拟机对内存池中的不使用的对象进行了回收工作之后，内存池的内存使用量大于或等于其<a href="MemoryPoolMXBean.html#CollectionThreshold">集合使用量阈值</a>的通知类型。此通知由 {@link MemoryMXBean} 发出。此通知类型的值为 <tt>java.management.memory.collection.threshold.exceeded</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.management.MemoryNotificationInfo(String poolName, MemoryUsage usage, long count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <tt>MemoryNotificationInfo</tt> 对象。
+
+@param poolName 触发此通知的内存池的名称。
+@param usage 内存池的内存使用量。
+@param count 超过阈值的次数计数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.management.MemoryNotificationInfo.getPoolName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回触发此通知的内存池的名称。内存池使用量已经超过阈值。
+
+@return 触发此通知的内存池的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.management.MemoryUsage java.lang.management.MemoryNotificationInfo.getUsage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回构造此通知时内存池的内存使用量。
+
+@return 构造此通知时内存池的内存使用量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.management.MemoryNotificationInfo.getCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回构造通知时内存使用量超过阈值的次数。对于使用量阈值通知，此计数将为{@link MemoryPoolMXBean#getUsageThresholdCount 阈值计数}。对于集合使用量阈值通知，此计数将为{@link MemoryPoolMXBean#getCollectionUsageThresholdCount 集合使用量阈值计数}。
+
+@return 构造通知时，内存使用量超过阈值的次数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.MemoryNotificationInfo java.lang.management.MemoryNotificationInfo.from(CompositeData cd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由给定 <tt>CompositeData</tt> 表示的 <tt>MemoryNotificationInfo</tt> 对象。此给定的 <tt>CompositeData</tt> 必须包含以下属性：
+ <blockquote>
+ <table border>
+ <tr>
+<th align=left>属性名称</th>
+<th align=left>类型</th>
+ </tr>
+ <tr>
+   <td>poolName</td>
+<td><tt>java.lang.String</tt></td>
+ </tr>
+ <tr>
+   <td>usage</td>
+   <td><tt>javax.management.openmbean.CompositeData</tt></td>
+ </tr>
+ <tr>
+   <td>count</td>
+<td><tt>java.lang.Long</tt></td>
+ </tr>
+ </table>
+ </blockquote>
+
+@param cd 表示 <tt>MemoryNotificationInfo</tt> 的 <tt>CompositeData</tt>
+
+@throws IllegalArgumentException 如果 <tt>cd</tt> 不表示 <tt>MemoryNotificationInfo</tt> 对象。
+
+@return 如果 <tt>cd</tt> 不为 <tt>null</tt>，则返回由 <tt>cd</tt> 表示的 <tt>MemoryNotificationInfo</tt> 对象；否则，返回 <tt>null</tt>。
+
+<!-- END DATA -->

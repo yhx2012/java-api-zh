@@ -1,0 +1,1271 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JList extends javax.swing.JComponent implements javax.swing.Scrollable, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示对象列表并且允许用户选择一个或多个项的组件。单独的模型 {@code ListModel} 维护列表的内容。
+ <p>
+使用能自动构建只读 {@code ListModel} 实例的 {@code JList} 构造方法，可以方便地显示对象数组或对象 Vector：
+ <pre>
+ // Create a JList that displays strings from an array
+
+ String[] data = {"one", "two", "three", "four"};
+ JList myList = new JList(data);
+
+ // Create a JList that displays the superclasses of JList.class, by
+ // creating it with a Vector populated with this data
+
+ Vector superClasses = new Vector();
+ Class rootClass = javax.swing.JList.class;
+ for(Class cls = rootClass; cls != null; cls = cls.getSuperclass()) {
+     superClasses.addElement(cls);
+ }
+ JList myList = new JList(superClasses);
+ 
+ // The automatically created model is stored in JList's "model"
+ // property, which you can retrieve
+
+ ListModel model = myList.getModel();
+ for(int i = 0; i < model.getSize(); i++) {
+     System.out.println(model.getElementAt(i));
+ }
+ </pre>
+ <p>
+可通过构造方法或 {@code setModel} 方法向 {@code JList} 直接提供 {@code ListModel}。内容不需要是静态的，即项数和项值可以随时间而更改。正确的 {@code ListModel} 实现在每次发生更改时通知已添加到其中的 {@code javax.swing.event.ListDataListener} 集合。这些更改的特性由标识已修改、已添加或已移除的列表索引范围的 {@code javax.swing.event.ListDataEvent} 来描述。通过侦听该模型，{@code JList} 的 {@code ListUI} 负责保持可视化表示形式与更改一致。
+ <p>
+简单的、动态内容的 {@code JList} 应用程序可以使用 {@code DefaultListModel} 类维护列表元素。此类实现 {@code ListModel} 接口，它还提供类似于 <code>java.util.Vector</code> 的 API。而需要自定义 <code>ListModel</code> 实现的应用程序可能希望子类化 {@code AbstractListModel}，它提供对管理和通知侦听器的基本支持。例如，{@code AbstractListModel} 的一个只读实现：
+ <pre>
+ // This list model has about 2^16 elements.  Enjoy scrolling.
+
+ ListModel bigData = new AbstractListModel() {
+     public int getSize() { return Short.MAX_VALUE; }
+     public Object getElementAt(int index) { return &quot;Index &quot; + index; }
+ };
+ </pre>
+ <p>
+{@code JList} 的选择状态由另一个独立模型（{@code ListSelectionModel} 的一个实例）进行管理。{@code JList} 在构造时使用选择模型初始化，它还包含要查询或设置此选择模型的方法。此外，{@code JList} 提供了便捷的方法，可以很容易地管理选择。这些方法（如 {@code setSelectedIndex} 和 {@code getSelectedValue}）是维护与选择模型交互细节的覆盖方法。默认情况下，{@code JList} 的选择模型配置为允许一次选择项的任何组合；选择模式为 {@code MULTIPLE_INTERVAL_SELECTION}。选择模式可以在选择模型上进行直接更改，或者通过 {@code JList} 的覆盖方法更改。更新选择模型以响应用户动作的责任取决于列表的 {@code ListUI}。
+ <p>
+正确的 {@code ListSelectionModel} 实现在每次选择发生更改时通知向其添加的 {@code javax.swing.event.ListSelectionListener} 集合。这些更改的特征由标识选择更改范围的 {@code javax.swing.event.ListSelectionEvent} 来描述。 
+ <p>
+侦听列表选择中更改的首选方法是向 {@code JList} 中直接添加 {@code ListSelectionListener}。然后，{@code JList} 负责侦听选择模型并向侦听器通知更改。
+ <p>
+侦听选择更改以便使列表可视化表示形式保持最新的责任取决于列表的 {@code ListUI}。
+ <p>
+ <a name="renderer">
+绘制 {@code JList} 中的单元由称为单元渲染器（以 {@code cellRenderer} 属性的形式安装在列表上）的委托进行处理。渲染器提供一个其用法类似 "rubber stamp" 的 {@code java.awt.Component} 来绘制单元。每当需要绘制单元时，列表的 {@code ListUI} 就请求组件的单元渲染器，将其移动到位，然后通过其 {@code paint} 方法绘制单元的内容。默认单元渲染器（它使用 {@code JLabel} 组件呈现）由列表的 {@code ListUI} 安装。用户还可以使用如下代码替换自己的渲染器：
+ <pre>
+  // Display an icon and a string for each object in the list.
+
+ class MyCellRenderer extends JLabel implements ListCellRenderer {
+     final static ImageIcon longIcon = new ImageIcon("long.gif");
+     final static ImageIcon shortIcon = new ImageIcon("short.gif");
+
+     // This is the only method defined by ListCellRenderer.
+     // We just reconfigure the JLabel each time we're called.
+
+     public Component getListCellRendererComponent(
+       JList list,              // the list
+       Object value,            // value to display
+       int index,               // cell index
+       boolean isSelected,      // is the cell selected
+       boolean cellHasFocus)    // does the cell have focus
+     {
+         String s = value.toString();
+         setText(s);
+         setIcon((s.length() > 10) ? longIcon : shortIcon);
+         if (isSelected) {
+             setBackground(list.getSelectionBackground());
+             setForeground(list.getSelectionForeground());
+         } else {
+             setBackground(list.getBackground());
+             setForeground(list.getForeground());
+         }
+         setEnabled(list.isEnabled());
+         setFont(list.getFont());
+         setOpaque(true);
+         return this;
+     }
+ }
+
+ myList.setCellRenderer(new MyCellRenderer());
+ </pre>
+ <p>
+单元渲染器的另一项工作是帮助确定列表的大小信息。默认情况下，列表的 {@code ListUI} 通过请求单元渲染器提供每个列表项的首选大小来确定单元的大小。对于大的项列表，这可能开销很大。为了避免这些计算，可以在列表上设置 {@code fixedCellWidth} 和 {@code fixedCellHeight}，或者根据单个原型值自动计算这些值：
+ <a name="prototype_example">
+ <pre>
+ JList bigDataList = new JList(bigData);
+
+ // We don't want the JList implementation to compute the width
+ // or height of all of the list cells, so we give it a string
+ // that's as big as we'll need for any cell.  It uses this to
+ // compute values for the fixedCellWidth and fixedCellHeight
+// properties.
+
+ bigDataList.setPrototypeCellValue(&quot;Index 1234567890&quot;);
+ </pre>
+ <p>
+{@code JList} 不实现直接滚动。要创建一个滚动的列表，请将它作为 {@code JScrollPane} 的视口视图。例如：
+<pre>
+ JScrollPane scrollPane = new JScrollPane(myList);
+
+ // Or in two steps:
+ JScrollPane scrollPane = new JScrollPane();
+ scrollPane.getViewport().setView(myList);
+ </pre>
+ <p>
+{@code JList} 没有提供两次或三次（或 N 次）鼠标单击的任何特殊处理，但是，如果希望对这些事件采取操作，则可以很方便地添加一个 {@code MouseListener}。使用 {@code locationToIndex} 方法确定单击的是哪一个单元。例如：
+ <pre>
+ MouseListener mouseListener = new MouseAdapter() {
+     public void mouseClicked(MouseEvent e) {
+         if (e.getClickCount() == 2) {
+             int index = list.locationToIndex(e.getPoint());
+             System.out.println(&quot;Double clicked on Item &quot; + index);
+          }
+     }
+ };
+ list.addMouseListener(mouseListener);
+ </pre>
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+ <p>
+有关更多文档，请参阅 <a href="http://java.sun.com/Series/Tutorial/index.html"><em>The Java Tutorial</em></a> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/list.html">How to Use Lists</a>。另请参见 <a href="http://java.sun.com/products/jfc/tsc"><em>The Swing Connection</em></a> 中的文章 <a href="http://java.sun.com/products/jfc/tsc/tech_topics/jlist_1/jlist.html">Advanced JList Programming</a>。
+　<p>
+@see ListModel
+@see AbstractListModel
+@see DefaultListModel
+@see ListSelectionModel
+@see DefaultListSelectionModel
+@see ListCellRenderer
+@see DefaultListCellRenderer
+
+@beaninfo
+   attribute: isContainer false
+ description: A component which allows for the selection of one or more objects from a list.
+
+@version 1.112 05/05/04
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JList.VERTICAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指示单个列中单元的垂直布局；默认布局。
+@see #setLayoutOrientation
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JList.VERTICAL_WRAP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指示&ldquo;报纸样式&rdquo;布局，单元按先垂直后水平排列。
+@see #setLayoutOrientation
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JList.HORIZONTAL_WRAP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指示&ldquo;报纸样式&rdquo;布局，单元按先水平后垂直排列。
+@see #setLayoutOrientation
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.swing.JList.layoutOrientation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单元布局的方式；默认值为 <code>VERTICAL</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.DropMode javax.swing.JList.dropMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 此组件的放置模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JList(ListModel dataModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 根据指定的{@code 非 null} 模型构造一个显示元素的 {@code JList}。所有 {@code JList} 构造方法都委托给此方法。
+ <p>
+ 此构造方法向 {@code ToolTipManager} 注册列表，允许工具提示由单元渲染器提供。
+
+ @param dataModel 该列表的模型
+ @exception IllegalArgumentException 如果模型为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JList(java.lang.Object[] listData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>JList</code>，使其显示指定数组中的元素。此构造方法为给定数组创建一个只读模型，然后委托给带有 {@code ListModel}　的构造方法。
+ <p>
+如果试图将一个 {@code null} 值传递给此方法，则会导致不确定的行为，最有可能导致异常。创建的模型直接引用给定的数组。如果试图在构造列表之后修改该数组，则会导致不确定的行为。
+
+ @param  listData  要加载到数据模型中的 Object 的数组（为{@code 非 null}）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JList(java.util.Vector<?> listData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>JList</code>，使其显示指定 <code>Vector</code> 中的元素。此构造方法为给定 {@code Vector} 创建一个只读模型，然后委托给带有 {@code ListModel} 的构造方法。
+ <p>
+如果试图将一个 {@code null} 值传递给此方法，则会导致不确定的行为，最有可能导致异常。创建的模型直接引用给定的 {@code Vector}。如果试图在构造列表之后修改该 {@code Vector}，则会导致不确定的行为。
+
+ @param  listData  要加载到数据模型中的 <code>Vector</code>（为{@code 非 null}）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有空的、只读模型的 <code>JList</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ListUI javax.swing.JList.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的外观对象 {@code ListUI}。 
+
+@return 呈现此组件的 <code>ListUI</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setUI(ListUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的外观对象 {@code ListUI}。 
+
+@param ui  <code>ListUI</code> 对象
+@see UIDefaults#getUI
+@beaninfo bound:true hidden:true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置 {@code ListUI} 属性，将其设置为当前外观所提供的值。如果当前单元渲染器由开发人员（而不是外观本身）安装，则这还会导致单元渲染器及其子单元渲染器被更新（通过在其上调用 {@code SwingUtilities.updateComponentTreeUI}）。
+
+@see UIManager#getUI
+@see SwingUtilities#updateComponentTreeUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JList.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code "ListUI"}，它是用于查找定义此组件外观的 {@code javax.swing.plaf.ListUI} 类名称的 <code>UIDefaults</code> 键。
+
+@return 字符串 &quot;ListUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JList.getPrototypeCellValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回“原型的”单元值，即用于计算单元的固定宽度和高度的值。如果没有这样的值，则可以返回 {@code null}。
+
+@return {@code prototypeCellValue} 属性的值
+@see #setPrototypeCellValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setPrototypeCellValue(Object prototypeCellValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@code prototypeCellValue} 属性，然后（如果新值为{@code 非 null}）计算 {@code fixedCellWidth} 和 {@code fixedCellHeight} 属性：请求单元渲染器组件提供单元渲染器的给定值（及索引 0），并使用该组件的首选大小。
+ <p>
+当由于列表过长而不允许 {@code ListUI} 计算每个单元的宽度/高度，并且已知某个单元值（所谓的原型）所占用的空间与任何其他单元一样多时，此方法很有用。 
+ <p>
+尽管 {@code prototypeCellValue}、{@code fixedCellHeight} 和 {@code fixedCellWidth} 三个属性都可以由此方法进行修改时，但只有 {@code prototypeCellValue} 属性更改时才发送 {@code PropertyChangeEvent} 通知。
+ <p>
+要查看设置此属性的示例，请参见上述<a href="#prototype_example">类描述</a>。
+ <p>
+此属性的默认值为 <code>null</code>。
+ <p>
+这是一个 JavaBeans 绑定属性。  
+
+@param prototypeCellValue  作为 <code>fixedCellWidth</code> 和 <code>fixedCellHeight</code> 的基础的值
+@see #getPrototypeCellValue
+@see #setFixedCellWidth
+@see #setFixedCellHeight
+@see JComponent#addPropertyChangeListener
+@beaninfo bound:true attribute: visualUpdate true description: The cell prototype value, used to compute cell width and height.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getFixedCellWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code fixedCellWidth} 属性的值。
+
+@return 固定单元宽度
+@see #setFixedCellWidth
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setFixedCellWidth(int width)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个固定值，将用于列表中每个单元的宽度。如果 {@code width} 为 -1，则可以通过将 <code>getPreferredSize</code> 应用到每个列表元素的单元渲染器组件来计算 {@code ListUI} 的单元宽度。
+ <p>
+此属性的默认值为 {@code -1}。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param width   将用于该列表中所有单元的宽度
+@see #setPrototypeCellValue
+@see #setFixedCellWidth
+@see JComponent#addPropertyChangeListener
+@beaninfo bound:true attribute: visualUpdate true description: Defines a fixed cell width when greater than zero.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getFixedCellHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code fixedCellHeight} 属性的值。
+ 
+@return 固定单元高度
+@see #setFixedCellHeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setFixedCellHeight(int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个固定值，将用于列表中每个单元的高度。如果 {@code height} 为 -1，则可以通过将 <code>getPreferredSize</code> 应用到每个列表元素的单元渲染器组件来计算 {@code ListUI} 的单元高度。
+ <p>
+此属性的默认值为 {@code -1}。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param height 将用于该列表中所有单元的高度
+@see #setPrototypeCellValue
+@see #setFixedCellWidth
+@see JComponent#addPropertyChangeListener
+@beaninfo bound:true attribute: visualUpdate true description: Defines a fixed cell height when greater than zero.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.ListCellRenderer javax.swing.JList.getCellRenderer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回负责绘制列表项的对象。
+
+@return {@code cellRenderer} 属性的值
+@see #setCellRenderer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setCellRenderer(ListCellRenderer cellRenderer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于绘制列表中每个单元的委托。<a href="#renderer">类级别文档</a>中更加详细地讨论了单元渲染器的工作。 
+ <p>
+如果 {@code prototypeCellValue} 属性为{@code 非 null}，则设置单元渲染器还导致重新计算 {@code fixedCellWidth} 和 {@code fixedCellHeight} 属性。但是只对 <code>cellRenderer</code> 属性生成一个 <code>PropertyChangeEvent</code>。 
+ <p>
+此属性的默认值由 {@code ListUI} 委托（即外观实现）提供。 
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param cellRenderer 绘制列表单元的 <code>ListCellRenderer</code>
+@see #getCellRenderer
+@beaninfo bound:true attribute: visualUpdate true description: The component used to draw the cells.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.JList.getSelectionForeground()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于绘制选定项的前景的颜色。{@code DefaultListCellRenderer} 使用此颜色来绘制选定状态中的项的前景，就像大多数 {@code ListUI} 实现安装的渲染器所做的一样。
+
+ @return 用于绘制选定项的前景的颜色
+ @see #setSelectionForeground
+ @see DefaultListCellRenderer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectionForeground(Color selectionForeground)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于绘制选定项的前景的颜色，单元渲染器可以使用此颜色呈现文本和图形。{@code DefaultListCellRenderer} 使用此颜色来绘制选定状态中的项的前景，就像大多数 {@code ListUI} 实现安装的渲染器所做的一样。
+ <p>
+此属性的默认值由外观实现定义。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param selectionForeground  在所选列表项的前景中使用的 {@code Color}
+@see #getSelectionForeground
+@see #setSelectionBackground
+@see #setForeground
+@see #setBackground
+@see #setFont
+@see DefaultListCellRenderer
+@beaninfo bound:true attribute: visualUpdate true description: The foreground color of selected cells.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.JList.getSelectionBackground()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于绘制选定项的背景的颜色。{@code DefaultListCellRenderer} 使用此颜色来绘制选定状态中的项的背景，就像大多数 {@code ListUI} 实现安装的渲染器所做的一样。
+
+ @return  用于绘制选定项的背景的颜色
+ @see #setSelectionBackground
+ @see DefaultListCellRenderer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectionBackground(Color selectionBackground)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于绘制选定项的背景的颜色，单元渲染器可以使用此颜色填充所选单元。{@code DefaultListCellRenderer} 使用此颜色来填充选定状态中的项的背景，就像大多数 {@code ListUI} 实现安装的渲染器所做的一样。
+ <p>
+此属性的默认值由外观实现定义。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param selectionBackground  用于所选单元的背景的 {@code Color}
+@see #getSelectionBackground
+@see #setSelectionForeground
+@see #setForeground
+@see #setBackground
+@see #setFont
+@see DefaultListCellRenderer
+@beaninfo bound:true attribute: visualUpdate true description: The background color of selected cells.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getVisibleRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code visibleRowCount} 属性的值。有关如何解释此值的详细信息，请参阅 {@link #setVisibleRowCount} 的文档。
+
+@return {@code visibleRowCount} 属性的值。
+@see #setVisibleRowCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setVisibleRowCount(int visibleRowCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置 {@code visibleRowCount} 属性，对于不同的布局方向，此方法有不同的含义：对于 {@code VERTICAL} 布局方向，此方法设置要显示的首选行数（不要求滚动）；对于其他方向，它影响单元的包装。
+ <p>
+ 在 {@code VERTICAL} 方向上：<br>
+ 设置此属性将影响 {@link #getPreferredScrollableViewportSize} 方法（它用于计算封闭视口的首选大小）的返回值。有关更多信息，请参阅该方法的文档。
+ <p>
+ 在 {@code HORIZONTAL_WRAP} 和 {@code VERTICAL_WRAP} 方向上：<br>
+ 这将影响如何包装单元。有关更多信息，请参阅 {@link #setLayoutOrientation} 的文档。
+ <p>
+ 此属性的默认值为 {@code 8}。
+ <p>
+ 使用负值调用此方法将导致该属性被设置为 {@code 0}。
+ <p>
+ 这是一个 JavaBeans 绑定属性。
+
+ @param visibleRowCount  一个整数值，指示要显示的首选行数（不要求滚动）
+ @see #getVisibleRowCount
+ @see #getPreferredScrollableViewportSize
+ @see #setLayoutOrientation
+ @see JComponent#getVisibleRect
+ @see JViewport
+ @beaninfo
+       bound: true
+   attribute: visualUpdate true
+ description: The preferred number of rows to display without
+              requiring scrolling
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getLayoutOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表的布局方向属性：如果布局是单列单元，则返回 {@code VERTICAL}；如果布局是“报纸样式”并且内容按先垂直后水平排列， 则返回 {@code VERTICAL_WRAP}；如果布局是“报纸样式”并且内容按先水平后垂直排列，则返回 {@code HORIZONTAL_WRAP}。 
+ 
+@return {@code layoutOrientation} 属性的值
+@see #setLayoutOrientation
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setLayoutOrientation(int layoutOrientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义布置列表单元的方式。考虑一个具有五个单元的 {@code JList}。单元的布局可以采用以下方式之一：
+ <p>
+ <pre>
+ VERTICAL:          0
+                    1
+                    2
+                    3
+                    4
+
+ HORIZONTAL_WRAP:   0  1  2
+                    3  4
+
+ VERTICAL_WRAP:     0  3
+                    1  4
+                    2
+ </pre>
+ <p>
+ 这些布局的描述遵循如下内容：
+
+ <table border="1" 
+  summary="Describes layouts VERTICAL, HORIZONTAL_WRAP, and VERTICAL_WRAP">
+   <tr><th><p align="left">值</p></th><th><p align="left">描述</p></th></tr>
+   <tr><td><code>VERTICAL</code>
+       <td>在单个列中垂直布置单元。
+   <tr><td><code>HORIZONTAL_WRAP</code>
+       <td>水平布置单元，根据需要将单元包装到新行中。如果 {@code visibleRowCount} 属性小于等于 0，则包装由该列表的宽度确定；否则，以确保列表中 {@code visibleRowCount} 行的方式进行包装。
+   <tr><td><code>VERTICAL_WRAP</code>
+       <td>垂直布置单元，根据需要将单元包装到新列中。如果 {@code visibleRowCount} 属性小于等于 0，则包装由该列表的宽度确定；否则，在 {@code visibleRowCount} 行进行包装。
+  </table>
+ <p>
+ 此属性的默认值为 <code>VERTICAL</code>。
+
+ @param layoutOrientation 新的布局方向，{@code VERTICAL}、{@code HORIZONTAL_WRAP} 或 {@code VERTICAL_WRAP} 之一
+ @see #getLayoutOrientation
+ @see #setVisibleRowCount
+ @see #getScrollableTracksViewportHeight
+ @see #getScrollableTracksViewportWidth
+ @throws IllegalArgumentException 如果 {@code layoutOrientation} 不是所允许的值之一
+ @since 1.4
+ @beaninfo
+       bound: true
+   attribute: visualUpdate true
+ description: Defines the way list cells are layed out.
+        enum: VERTICAL JList.VERTICAL 
+              HORIZONTAL_WRAP JList.HORIZONTAL_WRAP
+              VERTICAL_WRAP JList.VERTICAL_WRAP
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getFirstVisibleIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前可见的最小的列表索引。在从左到右的 {@code componentOrientation} 中，第一个可见单元最接近列表的左上角。在从右到左方向上，它最接近右上角。如果任何单元都不可见或者列表为空，则返回 {@code -1}。注意，返回的单元可能只有部分可见。
+
+@return 第一个可见单元的索引
+@see #getLastVisibleIndex
+@see JComponent#getVisibleRect
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getLastVisibleIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回当前可见的最大列表索引。如果任何单元都不可见或者列表为空，则返回 {@code -1}。注意，返回的单元可能只有部分可见。
+
+@return 最后一个可见单元的索引 
+@see #getFirstVisibleIndex
+@see JComponent#getVisibleRect
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.ensureIndexIsVisible(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动封闭视口中的列表，使指定单元完全可见。此方法使用指定单元的边界调用 {@code scrollRectToVisible}。要让此方法生效，{@code JList} 必须在 <code>JViewport</code> 中。
+ <p>
+如果给定索引超出列表中单元的范围，则此方法不起任何作用。
+
+@param index  要变得可见的单元的索引
+@see JComponent#scrollRectToVisible
+@see #getVisibleRect
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setDragEnabled(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开或关闭自动拖动处理。要启用自动拖动处理，此属性应该设置为 {@code true}，列表的 {@code TransferHandler} 需要为{@code 非 null}。{@code dragEnabled} 属性的默认值为 {@code false}。
+ <p>
+遵守此属性的作业以及识别用户拖动动作取决于外观实现，尤其是列表的 {@code ListUI}。启用自动拖动处理时，只要用户在项上按下鼠标按键，然后将鼠标移动几个像素，大多数外观（包括子类化 {@code BasicLookAndFeel} 的外观）就开始拖放操作了。因此，将此属性设置为 {@code true} 可以对选择的行为方式产生微妙的影响。
+ <p>
+如果使用忽略此属性的外观，则仍然可以通过在列表的 {@code TransferHandler} 上调用 {@code exportAsDrag} 开始一个拖动操作。
+
+@param b 是否启用自动拖动处理
+@exception HeadlessException 如果 <code>b</code> 为 <code>true</code> 并且 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+@see #getDragEnabled
+@see #setTransferHandler
+@see TransferHandler
+@since 1.4
+
+@beaninfo
+  description: determines whether automatic drag handling is enabled
+        bound: false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.getDragEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否启用自动拖动处理。
+
+@return {@code dragEnabled} 属性的值
+@see #setDragEnabled
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JList.setDropMode(DropMode dropMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件的放置模式。为了向后兼容性，此属性的默认值为 <code>DropMode.USE_SELECTION</code>。但是，为了方便用户使用，建议使用其他模式。例如，<code>DropMode.ON</code> 提供与选择相似的显示项的行为，但执行此操作不会影响列表中的实际选择。
+ <p>
+ <code>JList</code> 支持下列放置模式：
+ <ul>
+    <li><code>DropMode.USE_SELECTION</code></li>
+    <li><code>DropMode.ON</code></li>
+    <li><code>DropMode.INSERT</code></li>
+    <li><code>DropMode.ON_OR_INSERT</code></li>
+ </ul>
+ 只有此组件具有接受放置的 <code>TransferHandler</code> 时，放置模式才有意义。
+
+ @param dropMode 要使用的放置模式
+ @throws IllegalArgumentException 如果放置模式不受支持或为 <code>null</code>
+ @see #getDropMode
+ @see #getDropLocation
+ @see #setTransferHandler
+ @see TransferHandler
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.DropMode javax.swing.JList.getDropMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此组件的放置模式。
+
+ @return 此组件的放置模式
+ @see #setDropMode
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.JList.DropLocation javax.swing.JList.getDropLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在该组件上执行 DnD 操作期间此组件应该视觉上指示为放置位置的位置；如果当前没有任何显示的位置，则返回 {@code null}。 
+ <p>
+此方法不用于查询 {@code TransferHandler} 的放置位置，因为只有在 {@code TransferHandler} 的 <code>canImport</code> 已返回并允许显示放置位置之后才设置了放置位置。
+ <p>
+此属性更改时，带有 "dropLocation" 名称的属性更改事件由该组件触发。
+ <p>
+默认情况下，负责侦听对此属性的更改以及视觉上指示放置位置的是列表的 {@code ListUI}，它可以直接绘制该位置和/或安装一个用来执行此操作的渲染器。希望实现自定义放置操作绘制和/或替换默认单元渲染器的开发人员可能需要遵守此属性。
+
+ @return 放置操作
+ @see #setDropMode
+ @see TransferHandler#canImport(TransferHandler.TransferSupport)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getNextMatch(String prefix, int startIndex, Position.Bias bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其 {@code toString} 值以给定前缀开头的下一个列表元素。
+
+@param prefix 要测试是否匹配的字符串
+@param startIndex 开始搜索的索引
+@param bias 搜索方向，Position.Bias.Forward 或 Position.Bias.Backward。
+@return 以 prefix 开头的下一个列表元素的索引；否则返回 {@code -1}
+@exception IllegalArgumentException 如果 prefix 为 {@code null} 或者 startIndex 超出范围
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JList.getToolTipText(MouseEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于给定事件的工具提示文本。此方法重写 {@code JComponent} 的 {@code getToolTipText}，首先检查其上发生事件的单元的单元渲染器组件，并返回其工具提示文本（如果有）。此实现允许使用单元渲染器组件上的 {@code setToolTipText} 在单元层上指定工具提示文本。
+ <p>
+<bold>注：</bold>要让 <code>JList</code> 以此方式正确地显示其渲染器的工具提示，<code>JList</code> 必须是已向 <code>ToolTipManager</code> 注册的组件。此注册可以在构造方法中自动完成。但是，如果之后通过调用 {@code setToolTipText(null)} 注销了 <code>JList</code>，则渲染器的提示将不再显示。 
+
+@param event 用于获取工具提示文本的 {@code MouseEvent} 
+@see JComponent#setToolTipText
+@see JComponent#getToolTipText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.locationToIndex(Point location)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最接近列表的坐标系统中给定位置的单元索引。要确定单元是否实际包含指定的位置，需要将该点与单元的边界进行比较，边界由 {@code getCellBounds} 提供。如果模型为空，则此方法返回 {@code -1}
+ <p>
+此方法是委托给列表的 {@code ListUI} 中同名方法的覆盖方法。如果列表没有 {@code ListUI}，则它返回 {@code -1}。 
+
+ @param location 点的坐标
+ @return 接近给定位置的单元索引或 {@code -1}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.JList.indexToLocation(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表的坐标系统中指定项的原点。如果索引无效，则此方法返回 {@code null}。 
+ <p>
+此方法是委托给列表的 {@code ListUI} 中同名方法的覆盖方法。如果列表没有 {@code ListUI}，则它返回 {@code null}。 
+
+ @param index 单元索引
+ @return 单元的原点或 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JList.getCellBounds(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回列表的坐标系统中两个索引所指定单元范围内的边界矩形。索引可以按任意顺序提供。
+ <p>
+如果较小索引超出单元的列表范围，则此方法返回 {@code null}。如果较小索引有效，但较大索引超出列表范围，则只返回第一个索引的边界。否则，返回有效范围的边界。
+ <p>
+此方法是委托给列表的 {@code ListUI} 中同名方法的覆盖方法。如果列表没有 {@code ListUI}，则它返回 {@code null}。 
+
+ @param index0 范围中的第一个索引
+ @param index1 范围中的第二个索引
+ @return 单元范围的边界矩形或 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.ListModel javax.swing.JList.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回保存由 <code>JList</code> 组件显示的项列表的数据模型。
+
+@return 提供显示的项列表的 <code>ListModel</code>
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setModel(ListModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置表示列表内容或列表“值”的模型，通知属性更改侦听器，然后清除列表选择。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param model  提供要显示的项列表的 <code>ListModel</code>
+@exception IllegalArgumentException  如果 <code>model</code> 为 <code>null</code>
+@see #getModel
+@see #clearSelection
+@beaninfo bound:true attribute: visualUpdate true description: The object that contains the data to be drawn by this JList.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setListData(java.lang.Object[] listData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据一个对象数组构造只读 <code>ListModel</code>，然后对此模型调用 {@code setModel}。
+ <p>
+试图将 {@code null} 值传递给此方法将导致不确定的行为，很有可能是异常。创建的模型直接引用给定数组。试图在调用此方法之后修改该数组将导致不确定的行为。
+
+ @param listData 包含要在列表中显示的项的 {@code Object} 数组
+ @see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setListData(java.util.Vector<?> listData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据一个 <code>Vector</code> 构造只读 <code>ListModel</code>，然后对此模型调用 {@code setModel}。
+ <p>
+试图将 {@code null} 值传递给此方法将导致不确定的行为，很有可能是异常。创建的模型直接引用给定 {@code Vector}。试图在调用此方法之后修改该 {@code Vector} 将导致不确定的行为。
+
+@param listData 包含要在列表中显示的项的 <code>Vector</code>
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.ListSelectionModel javax.swing.JList.createSelectionModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 {@code DefaultListSelectionModel} 实例；在构造期间调用此方法初始化列表的选择模型属性。 
+
+@return 一个 {@code DefaultListSelecitonModel}，用于在构造期间初始化列表的选择模型属性
+@see #setSelectionModel
+@see DefaultListSelectionModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.ListSelectionModel javax.swing.JList.getSelectionModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前选择模型。选择模型维护列表的选择状态。有关更多信息，请参阅类级别文档。
+
+@return 维护列表的选择的 <code>ListSelectionModel</code> 
+
+@see #setSelectionModel
+@see ListSelectionModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JList.fireSelectionValueChanged(int firstIndex, int lastIndex, boolean isAdjusting)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知直接添加到列表的 {@code ListSelectionListener} 对列表模型做出了选择更改。{@code JList} 侦听选择模型中对选择所做的更改，并通过调用此方法将通知转发到直接添加到列表的侦听器。
+ <p>
+此方法以此列表作为源，使用指定的参数构造 {@code ListSelectionEvent}，并将其发送到已注册的 {@code ListSelectionListener}。
+
+ @param firstIndex 范围内的第一个索引（{@code <= lastIndex}）
+ @param lastIndex 范围内的最后一个索引（{@code >= firstIndex}）
+ @param isAdjusting 此事件是否是多个连续事件之一，其中更改仍然在进行
+
+ @see #addListSelectionListener
+ @see #removeListSelectionListener
+ @see javax.swing.event.ListSelectionEvent
+ @see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.addListSelectionListener(ListSelectionListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将侦听器添加到列表，每次选择发生更改时将获得通知；这是侦听选择状态更改的首选方式。{@code JList} 负责侦听选择模型中选择状态更改，并通知每个更改的给定侦听器。发送到侦听器的 {@code ListSelectionEvent} 具有设置为此列表的 {@code source} 属性。
+
+@param listener 要添加的 {@code ListSelectionListener}
+@see #getSelectionModel
+@see #getListSelectionListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.removeListSelectionListener(ListSelectionListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从列表中移除一个选择侦听器。
+
+@param listener 要移除的 {@code ListSelectionListener}
+@see #getSelectionModel
+@see #getListSelectionListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ListSelectionListener[] javax.swing.JList.getListSelectionListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 {@code addListSelectionListener} 添加到此 {@code JList} 中的所有 {@code ListSelectionListener} 所组成的数组。 
+
+@return 此列表上的所有 {@code ListSelectionListener}；如果没有添加任何侦听器，则返回空数组
+@see #addListSelectionListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectionModel(ListSelectionModel selectionModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将列表的 <code>selectionModel</code> 设置为非 <code>null</code> 的 <code>ListSelectionModel</code> 实现。选择模型可以完成单个选择、连续范围选择和非连续范围选择等任务。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param selectionModel  实现选择的 <code>ListSelectionModel</code>
+@exception IllegalArgumentException   如果 <code>selectionModel</code> 为 <code>null</code>
+@see #getSelectionModel
+@beaninfo bound:true description: The selection model, recording which cells are selected.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectionMode(int selectionMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置列表的选择模式。此方法是在选择模型上直接设置选择模式的覆盖方法。
+ <p>
+ 以下列表描述了可接受的选择模式：
+ <ul>
+ <li>{@code ListSelectionModel.SINGLE_SELECTION} - 一次只能选择一个列表索引。在此模式中，{@code setSelectionInterval} 和 {@code addSelectionInterval} 是等效的，两者都使用第二个参数（“lead”）所表示的索引来替换当前选择。
+ <li>{@code ListSelectionModel.SINGLE_INTERVAL_SELECTION} - 一次只能选择一个连续间隔。在此模式中，如果给定间隔没有紧邻着现有选择或与现有选择重叠，则 {@code addSelectionInterval} 与 {@code setSelectionInterval} 完全相同（替换当前选择），并可用于生成选择。
+ <li>{@code ListSelectionModel.MULTIPLE_INTERVAL_SELECTION} - 在此模式中，不存在对选择的限制。此模式是默认设置。
+ </ul>
+
+@param selectionMode 选择模式
+@see #getSelectionMode
+@throws IllegalArgumentException 如果选择模式不是那些允许的模式之一
+@beaninfo description: The selection mode. enum: SINGLE_SELECTION    ListSelectionModel.SINGLE_SELECTION SINGLE_INTERVAL_SELECTION   ListSelectionModel.SINGLE_INTERVAL_SELECTION MULTIPLE_INTERVAL_SELECTION ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getSelectionMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表的当前选择模式。此方法是委托给列表的选择模型上同名方法的覆盖方法。 
+
+@return 当前选择模式
+@see #setSelectionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getAnchorSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回定位选择索引。此方法是委托给列表的选择模型上同名方法的覆盖方法。  
+
+ @return 定位选择索引
+ @see ListSelectionModel#getAnchorSelectionIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getLeadSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回前导选择索引。此方法是委托给列表的选择模型上同名方法的覆盖方法。  
+
+ @return 前导选择索引
+ @see ListSelectionModel#getLeadSelectionIndex
+ @beaninfo
+ description: The lead selection index.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getMinSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回选择的最小单元索引；如果选择为空，则返回 {@code -1}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+
+ @return 选择的最小单元索引或 {@code -1}
+ @see ListSelectionModel#getMinSelectionIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getMaxSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选择的最大单元索引；如果选择为空，则返回 {@code -1}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+
+@return 选择的最大单元索引
+@see ListSelectionModel#getMaxSelectionIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.isSelectedIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果选择了指定的索引，则返回 {@code true}；否则返回 {@code false}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+ 
+@param index 要查询其选择状态的索引
+@return 如果选择了指定的索引，则返回 {@code true}；否则返回 {@code false}
+@see ListSelectionModel#isSelectedIndex
+@see #setSelectedIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.isSelectionEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果什么也没有选择，则返回 {@code true}；否则返回 {@code false}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+
+@return 如果什么也没有选择，则返回 {@code true}；否则返回 {@code false}
+@see ListSelectionModel#isSelectionEmpty
+@see #clearSelection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.clearSelection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除选择；调用此方法后，{@code isSelectionEmpty} 将返回 {@code true}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+
+@see ListSelectionModel#clearSelection
+@see #isSelectionEmpty
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectionInterval(int anchor, int lead)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择指定的间隔。包括 {@code anchor} 和 {@code lead} 两个索引。{@code anchor} 不必小于等于 {@code lead}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+ <p>
+有关如何处理小于 {@code 0} 的值的详细信息，请参阅所用选择模型类的文档。
+
+ @param anchor 要选择的第一个索引
+ @param lead 要选择的最后一个索引
+ @see ListSelectionModel#setSelectionInterval
+ @see DefaultListSelectionModel#setSelectionInterval
+ @see #createSelectionModel
+ @see #addSelectionInterval
+ @see #removeSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.addSelectionInterval(int anchor, int lead)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将选择设置为指定间隔与当前选择的并集。包括 {@code anchor} 和 {@code lead} 两个索引。{@code anchor} 不必小于等于 {@code lead}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+ <p>
+有关如何处理小于 {@code 0} 的值的详细信息，请参阅所用选择模型类的文档。
+
+ @param anchor 要添加到选择的第一个索引
+ @param lead 要添加到选择的最后一个索引
+ @see ListSelectionModel#addSelectionInterval
+ @see DefaultListSelectionModel#addSelectionInterval
+ @see #createSelectionModel
+ @see #setSelectionInterval
+ @see #removeSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.removeSelectionInterval(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将选择设置为指定间隔和当前选择的差集。两个索引 {@code index0} 和 {@code index1} 都要移除。{@code index0} 不必小于等于 {@code index1}。此方法是委托给列表的选择模型上同名方法的覆盖方法。   
+ <p>
+有关如何处理小于 {@code 0} 的值的详细信息，请参阅所用选择模型类的文档。
+
+ @param index0 要从选择移除的第一个索引
+ @param index1 要从选择移除的最后一个索引
+ @see ListSelectionModel#removeSelectionInterval
+ @see DefaultListSelectionModel#removeSelectionInterval
+ @see #createSelectionModel
+ @see #setSelectionInterval
+ @see #addSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setValueIsAdjusting(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置选择模型的 {@code valueIsAdjusting} 属性。当为 {@code true} 时，即将进行的选择更改应该被视为单个更改的一部分。此属性供内部使用，开发人员通常不要调用此方法。例如，模型正被更新以响应用户拖动时，如果拖动已经开始，那么该属性值被设置为 {@code true}；如果拖动已经结束，则被设置为 {@code false}。此属性允许侦听器只在更改结束时进行更新，而不是处理所有的中间值。
+ <p>
+如果所做的一系列更改都应该被视为单个更改的一部分，则可能需要直接使用此方法。
+ <p>
+此方法是委托给列表的选择模型上同名方法的覆盖方法。有关更多信息，请参阅 {@link javax.swing.ListSelectionModel#setValueIsAdjusting} 的文档。
+
+ @param b 属性的新值
+ @see ListSelectionModel#setValueIsAdjusting
+ @see javax.swing.event.ListSelectionEvent#getValueIsAdjusting
+ @see #getValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.getValueIsAdjusting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回选择模型的 {@code isAdjusting} 属性的值。
+ <p>
+ 此方法是委托给列表的选择模型上同名方法的覆盖方法。
+
+ @return 选择模型的 {@code isAdjusting} 属性的值。
+
+ @see #setValueIsAdjusting
+ @see ListSelectionModel#getValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.swing.JList.getSelectedIndices()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所选的全部索引的数组（按升序排列）。
+
+@return 所选的全部索引（按升序排列）；如果什么也没有选择，则返回一个空数组
+@see #removeSelectionInterval
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectedIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择单个单元。如果给定索引大于等于模型大小，则不执行任何操作。此方法是在选择模型上使用 {@code setSelectionInterval} 的便捷方法。有关如何处理小于 {@code 0} 的值的详细信息，请参阅所用选择模型类的文档。
+
+@param index 要选择的单元的索引
+@see ListSelectionModel#setSelectionInterval
+@see #isSelectedIndex
+@see #addListSelectionListener
+@beaninfo description: The index of the selected cell.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectedIndices(int[] indices)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将选择更改为给定数组所指定的索引的集合。忽略大于等于模型大小的索引。此方法是清除选择、然后在选择模型上使用 {@code addSelectionInterval} 添加索引的便捷方法。有关如何处理小于 {@code 0} 的值的详细信息，请参阅所用选择模型类的文档。
+
+ @param indices 要选择的单元的索引数组（为{@code 非 null}）
+ @see ListSelectionModel#addSelectionInterval
+ @see #isSelectedIndex
+ @see #addListSelectionListener
+ @throws NullPointerException 如果给定数组为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.swing.JList.getSelectedValues()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有选择值的数组，根据其列表中的索引顺序按升序排序。
+
+@return 所选值；如果什么也没有选择，则返回一个空数组
+@see #isSelectedIndex
+@see #getModel
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getSelectedIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最小的选择单元索引；只选择了列表中单个项时，返回<i>该选择</i>。选择了多项时，则只返回最小的选择索引。如果什么也没有选择，则返回 {@code -1}。
+ <p>
+此方法是委托给 {@code getMinSelectionIndex} 的覆盖方法。
+
+ @return 最小的选择的单元索引
+ @see #getMinSelectionIndex
+ @see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JList.getSelectedValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最小的选择单元索引的值；只选择了列表中单个项时，返回<i>所选值</i>。选择了多项时，返回最小的选择索引的值。如果什么也没有选择，则返回 {@code null}。 
+ <p>
+此方法是返回 {@code getMinSelectionIndex} 的模型值的便捷方法。
+
+@return 所选的第一个值
+@see #getMinSelectionIndex
+@see #getModel
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JList.setSelectedValue(Object anObject, boolean shouldScroll)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从列表中选择指定的对象。
+
+@param anObject      要选择的对象
+@param shouldScroll  如果所选对象存在，但列表需要滚动才能显示，则为 {@code true}；否则为 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JList.getPreferredScrollableViewportSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算显示 {@code visibleRowCount} 行所需的视口的大小。此方法所返回的值取决于布局方向： 
+ <p>
+ <b>{@code VERTICAL}:</b>
+ <br>
+如果已（显式地或通过指定一个原型单元值）设置了 {@code fixedCellWidth} 和 {@code fixedCellHeight}，则此操作无足轻重。宽度是 {@code fixedCellWidth} 加上列表的水平 insets。高度是 {@code fixedCellHeight} 乘以 {@code visibleRowCount} 再加上列表的垂直 insets。
+ <p>
+如果尚未指定 {@code fixedCellWidth} 或 {@code fixedCellHeight}，则使用直观推断。模型为空时，如果 {@code fixedCellWidth} 大于 {@code 0}，则宽度为 {@code fixedCellWidth}，否则为 {@code 256} 的固定编码 (hard coded) 值。如果 {@code fixedCellHeight} 大于 {@code 0}，则高度为 {@code fixedCellHeight} 乘以 {@code visibleRowCount}；否则它是固定编码 (hard coded) 值 {@code 16} 乘以 {@code visibleRowCount}。 
+ <p>
+如果模型不为空，则宽度为首选大小的宽度，通常是最宽的列表元素的宽度。高度是 {@code fixedCellHeight} 乘以 {@code visibleRowCount} 再加上列表的垂直 insets。
+ <p>
+ <b>{@code VERTICAL_WRAP} 或 {@code HORIZONTAL_WRAP}：</b>
+ <br>
+此方法只返回 {@code getPreferredSize} 的返回值。期望列表的 {@code ListUI} 重写 {@code getPreferredSize} 以返回适当的值。
+
+ @return 包含显示 {@code visibleRowCount} 行所需视口大小的 dimension 
+ @see #getPreferredScrollableViewportSize
+ @see #setPrototypeCellValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为显露上一个或下一个行（垂直滚动）或列（水平滚动）而滚动的距离。
+ <p>
+对于水平滚动，如果布局方向为 {@code VERTICAL}，则返回列表的字体大小（如果字体为 {@code null}，则返回 {@code 1}）。 
+
+ @param visibleRect 视口中可见的视图区域
+ @param orientation {@code SwingConstants.HORIZONTAL} 或 {@code SwingConstants.VERTICAL}               
+ @param direction 小于等于 0 表示向上滚动/后退，大于 0 表示向下滚动/前进
+ @return 沿指定方向滚动的“单位”增量；永远为正数
+ @see #getScrollableBlockIncrement
+ @see Scrollable#getScrollableUnitIncrement
+ @throws IllegalArgumentException 如果 {@code visibleRect} 为 {@code null}，或者 {@code orientation} 不为 {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JList.getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回为显露上一个或下一个块而滚动的距离。
+ <p>
+ 对于垂直滚动，使用以下规则：
+ <ul>
+ <li>如果向下滚动，则返回使最后一个可见元素就成为第一个完全可见元素的滚动距离
+ <li>如果向上滚动，则返回使第一个可见元素就成为最后一个完全可见元素的滚动距离
+ <li>如果列表为空，则返回 {@code visibleRect.height} 
+ </ul>
+ <p>
+ 对于水平滚动，当布局方向为 {@code VERTICAL_WRAP} 或 {@code HORIZONTAL_WRAP} 时：
+ <ul>
+ <li>如果向右滚动，则返回使最后一个可见元素就成为第一个完全可见元素的滚动距离
+ <li>如果向左滚动，则返回使第一个可见元素就成为最后一个完全可见元素的滚动距离
+ <li>如果列表为空，则返回 {@code visibleRect.width} 
+ </ul>
+ <p>
+ 对于水平滚动和 {@code VERTICAL} 方向，则返回 {@code visibleRect.width}。
+ <p>
+ 注意，{@code visibleRect} 的值必须等于 {@code this.getVisibleRect()}。
+
+ @param visibleRect 视口中可见的视图区域
+ @param orientation {@code SwingConstants.HORIZONTAL} 或 {@code SwingConstants.VERTICAL}
+ @param direction 小于等于 0 表示向上滚动/后退，大于 0 表示向下滚动/前进
+ @return 沿指定方向滚动的“块”增量；永远为负数
+ @see #getScrollableUnitIncrement
+ @see Scrollable#getScrollableBlockIncrement
+ @throws IllegalArgumentException 如果 {@code visibleRect} 为 {@code null}，或者 {@code orientation} 不为 {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.getScrollableTracksViewportWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 {@code JList} 在 {@code JViewport} 中显示并且视口的宽度大于列表的首选宽度，或者布局方向为 {@code HORIZONTAL_WRAP} 和 {@code visibleRowCount <= 0}，则返回 {@code true}；否则返回 {@code false}。
+ <p>
+如果返回 {@code false}，则不跟踪视口宽度。如果 {@code JViewport} 本身嵌入在 {@code JScrollPane} 中，则此操作允许水平滚动。
+
+ @return 封闭视口是否强制列表的宽度与其自身宽度匹配
+ @see Scrollable#getScrollableTracksViewportWidth
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JList.getScrollableTracksViewportHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 {@code JList} 在 {@code JViewport} 中显示并且视口的高度大于列表的首选高度，或者布局方向为 {@code VERTICAL_WRAP} 或 {@code visibleRowCount <= 0}，则返回 {@code true}；否则返回 {@code false}。
+ <p>
+如果返回 {@code false}，则不跟踪视口高度。如果 {@code JViewport} 本身嵌入在 {@code JScrollPane} 中，则此操作允许垂直滚动。
+
+ @return 封闭视口是否强制列表的高度与其自身高度匹配
+ @see Scrollable#getScrollableTracksViewportHeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JList.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 {@code JList} 的 {@code String} 表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回 {@code String} 的内容和格式可能有所不同。返回的 {@code String} 可以为空，但不可以为 {@code null}。
+ 
+@return  此 {@code JList} 的 {@code String} 表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JList.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 {@code JList} 关联的 {@code AccessibleContext}。对于 {@code JList}，{@code AccessibleContext} 采取 {@code AccessibleJList} 的形式。
+ <p>
+如有必要，可以创建一个新的 {@code AccessibleJList} 实例。
+
+@return 一个 {@code AccessibleJList}，它充当此 {@code JList} 的 {@code AccessibleContext} 
+
+<!-- END DATA -->

@@ -1,0 +1,108 @@
+<!-- BEGIN KEY -->
+public interface org.omg.PortableInterceptor.ORBInitInfoOperations
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+传递给每个 <code>ORBInitializer</code>，允许其在初始化 ORB 时注册 interceptor 并执行其他职责。
+ <p>
+<code>ORBInitInfo</code> 对象只在 <code>ORB.init</code> 期间有效。如果服务保持对其 <code>ORBInitInfo</code> 对象的引用，并试图在 <code>ORB.init</code> 返回后使用该对象，则该对象将不再存在，并抛出 <code>OBJECT_NOT_EXIST</code> 异常。
+
+@see ORBInitializer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] org.omg.PortableInterceptor.ORBInitInfoOperations.arguments()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回传递给 <code>ORB.init</code> 的参数。它们可能包含 ORB 的参数，也可能不包含。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.PortableInterceptor.ORBInitInfoOperations.orb_id()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回将被初始化的 ORB 的 ID。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.IOP.CodecFactory org.omg.PortableInterceptor.ORBInitInfoOperations.codec_factory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回 <code>IOP.CodecFactory</code>。通常通过调用 <code>ORB.resolve_initial_references( &quot;CodecFactory&quot; )</code> 获取 <code>CodecFactory</code>，但是因为 ORB 当前不可用，而且 Interceptor（尤其是在处理服务上下文时）将请求 <code>Codec</code>，所以必须在初始化 ORB 时获取 <code>Codec</code> 的方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitInfoOperations.register_initial_reference(String id, Object obj) throws org.omg.PortableInterceptor.ORBInitInfoPackage.InvalidName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+等同于 <code>ORB.register_initial_reference</code>。这里提供一个具有相同功能的方法是因为：未完全初始化的 ORB 当前不可用，但是初始引用可能需要作为 Interceptor 注册的一部分被注册。唯一的不同之处在于，ORB 中的这一操作使用 PIDL (<code>CORBA.ORB.ObjectId</code>) 和 (<code>CORBA.ORB.InvalidName</code>)，而此接口中的这一操作使用此接口中定义的 IDL；语义是等同的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Object org.omg.PortableInterceptor.ORBInitInfoOperations.resolve_initial_references(String id) throws org.omg.PortableInterceptor.ORBInitInfoPackage.InvalidName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等同于 <code>ORB.resolve_initial_references</code>。这里提供一个具有相同功能的方法是因为：未完全初始化的 ORB 当前不可用，但是 ORB 中的初始引用可能需要作为 Interceptor 注册的一部分。唯一的不同之处在于，ORB 中的这一操作使用 PIDL (<code>CORBA::ORB::ObjectId</code>) 和 (<code>CORBA::ORB::InvalidName</code>)，而此接口中的这一操作使用此接口中定义的 IDL；语义是等同的。
+ <p>
+此操作仅在 post_init 期间有效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitInfoOperations.add_client_request_interceptor(ClientRequestInterceptor interceptor) throws org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法用来将客户端的请求 Interceptor 添加到客户端请求 Interceptor 列表。  
+
+@param interceptor 要添加的 <code>ClientRequestInterceptor</code>。
+@exception DuplicateName 如果客户端的请求 Interceptor 已经使用此 Interceptor 的名称注册。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitInfoOperations.add_server_request_interceptor(ServerRequestInterceptor interceptor) throws org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此方法用来将服务器端的请求 Interceptor 添加到服务器端请求 Interceptor 列表。
+
+@param interceptor 要添加的 ServerRequestInterceptor。
+@exception DuplicateName 如果服务器端的请求 Interceptor 已经使用此 Interceptor 的名称注册。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitInfoOperations.add_ior_interceptor(IORInterceptor interceptor) throws org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法用来将 IOR Interceptor 添加到 IOR Interceptor 列表。 
+
+@param interceptor 要添加的 IORInterceptor。
+@exception DuplicateName 如果 IOR Interceptor 已经使用此 Interceptor 名称注册。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.omg.PortableInterceptor.ORBInitInfoOperations.allocate_slot_id()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用此方法来在 <code>PortableInterceptor.Current</code> 上分配槽 (slot)。 
+ <p>
+注意，可以在 ORB 初始化程序中分配槽的 id，但不能初始化槽本身。 
+
+@return 已经分配的槽的索引。
+@exception BAD_INV_ORDER 如果在 ORB 初始化程序内对 <code>PICurrent</code> 调用 <code>set_slot</code> 或 <code>get_slot</code>，则抛出此异常并带有标准次要代码 14。
+@see Current
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.ORBInitInfoOperations.register_policy_factory(int type, PolicyFactory policy_factory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册给定 <code>PolicyType</code> 的 <code>PolicyFactory</code>。 
+ 
+@param type 给定 <code>PolicyFactory</code> 服务的策略类型。
+@param policy_factory 给定策略类型的工厂。
+@exception BAD_INV_ORDER 如果已经存在给定 <code>PolicyType</code> 的 <code>PolicyFactory</code>，则抛出此异常并带有标准次要代码 16。
+
+<!-- END DATA -->

@@ -1,0 +1,299 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.ConcurrentHashMap extends java.util.AbstractMap implements java.util.concurrent.ConcurrentMap, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持获取的完全并发和更新的所期望可调整并发的哈希表。此类遵守与 {@link java.util.Hashtable} 相同的功能规范，并且包括对应于 <tt>Hashtable</tt> 的每个方法的方法版本。不过，尽管所有操作都是线程安全的，但获取操作<em>不</em> 必锁定，并且<em>不</em> 支持以某种防止所有访问的方式锁定整个表。此类可以通过程序完全与 <tt>Hashtable</tt> 进行互操作，这取决于其线程安全，而与其同步细节无关。
+
+<p> 获取操作（包括 <tt>get</tt>）通常不会受阻塞，因此，可能与更新操作交迭（包括 <tt>put</tt> 和 <tt>remove</tt>）。获取会影响最近<em>完成的</em> 更新操作的结果。对于一些聚合操作，比如 <tt>putAll</tt> 和 <tt>clear</tt>，并发获取可能只影响某些条目的插入和移除。类似地，在创建迭代器/枚举时或自此之后，Iterators 和 Enumerations 返回在某一时间点上影响哈希表状态的元素。它们<em>不会</em> 抛出 {@link ConcurrentModificationException}。不过，迭代器被设计成每次仅由一个线程使用。
+
+<p> 这允许通过可选的 <tt>concurrencyLevel</tt> 构造方法参数（默认值为 <tt>16</tt>）来引导更新操作之间的并发，该参数用作内部调整大小的一个提示。表是在内部进行分区的，试图允许指示无争用并发更新的数量。因为哈希表中的位置基本上是随意的，所以实际的并发将各不相同。理想情况下，应该选择一个尽可能多地容纳并发修改该表的线程的值。使用一个比所需要的值高很多的值可能会浪费空间和时间，而使用一个显然低很多的值可能导致线程争用。对数量级估计过高或估计过低通常都会带来非常显著的影响。当仅有一个线程将执行修改操作，而其他所有线程都只是执行读取操作时，才认为某个值是合适的。此外，重新调整此类或其他任何种类哈希表的大小都是一个相对较慢的操作，因此，在可能的时候，提供构造方法中期望表大小的估计值是一个好主意。
+
+<p>此类及其视图和迭代器实现了 {@link Map} 和 {@link Iterator} 接口的所有<em>可选</em> 方法。
+
+<p>此类与 {@link Hashtable} 相似，但与 {@link HashMap} 不同，它<em>不</em> 允许将 <tt>null</tt> 用作键或值。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@since 1.5
+@author Doug Lea
+@param <K> 此映射维护的键的类型
+@param <V> 映射值的类 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+final int java.util.concurrent.ConcurrentHashMap.segmentMask
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来对段进行索引的掩码值。哈希表的键的高位被用来选择段。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+final int java.util.concurrent.ConcurrentHashMap.segmentShift
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来在段中进行索引的移位值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+final java.util.concurrent.ConcurrentHashMap.Segment[] java.util.concurrent.ConcurrentHashMap.segments
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个段都是一个专门的哈希表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentHashMap(int initialCapacity, float loadFactor, int concurrencyLevel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有指定初始容量、加载因子和并发级别的新的空映射。
+
+@param initialCapacity 初始容量。该实现执行内部大小调整，以容纳这些元素。
+@param loadFactor 加载因子阈值，用来控制重新调整大小。在每 bin 中的平均元素数大于此阈值时，可能要重新调整大小。
+@param concurrencyLevel 当前更新线程的估计数。该实现将执行内部大小调整，以尽量容纳这些线程。
+@throws IllegalArgumentException 如果初始容量为负，或者加载因子或 concurrencyLevel 为非正。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentHashMap(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个带有指定初始容量、加载因子和默认 concurrencyLevel (16) 的新的空映射。
+
+ @param initialCapacity 该实现执行内部的大小调整，以容纳这些元素。
+ @param loadFactor  加载因子阈值，用来控制重新调整大小。在每 bin 中的平均元素数大于此阈值时，可能要重新调整大小。
+ @throws IllegalArgumentException 如果元素的初始容量为负，或者加载因子为非正
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentHashMap(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有指定初始容量、默认加载因子 (0.75) 和 concurrencyLevel (16) 的新的空映射。
+
+@param  initialCapacity 初始容量。该实现执行内部的大小调整，以容纳这些元素。
+@throws IllegalArgumentException 如果元素的初始容量为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentHashMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有默认初始容量 (16)、加载因子 (0.75) 和 concurrencyLevel (16) 的新的空映射。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentHashMap(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个与给定映射具有相同映射关系的新映射。使用给定映射中映射关系数 1.5 倍的容量或 16（选更大的那一个）、默认加载因子 (0.75) 和 concurrencyLevel (16) 来创建该映射。
+
+ @param m 映射
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果此映射不包含键-值映射关系，则返回 <tt>true</tt>。 
+
+ @return 如果此映射不包含键-值映射关系，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.ConcurrentHashMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此映射中的键-值映射关系数。如果该映射包含的元素多于 <tt>Integer.MAX_VALUE</tt>，则返回 <tt>Integer.MAX_VALUE</tt>。
+
+ @return 此映射中的键-值映射关系数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentHashMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定键所映射到的值，如果此映射不包含该键的映射关系，则返回 {@code null}。
+
+<p>更确切地讲，如果此映射包含满足从键 {@code k} 到值 {@code v} 的映射关系 {@code key.equals(k)}，则此方法返回 {@code v}；否则它返回 {@code null}。（最多只能有一个这样的映射关系）。 
+
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定对象是否为此表中的键。
+
+@param   key  可能的键
+@return  当且仅当指定对象（由 <tt>equals</tt> 方法确定）是此表中的键时，返回 <tt>true</tt>；否则返回 <tt>false</tt>。
+@throws  NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>。注：此方法需要完全内部遍历哈希表，因此它比方法 <tt>containsKey</tt> 更慢。
+
+@param value 测试在此映射中是否存在的值
+@return 如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>
+@throws NullPointerException  如果指定值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.contains(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一种遗留方法，测试此表中是否有一些与指定值存在映射关系的键。此方法在功能上等同于 {@link #containsValue}，并且它的存在只是为了确保与 {@link java.util.Hashtable} 类完全兼容，在引入 Java  Collection 框架之前，该类支持此方法。
+
+@param  value 要搜索的值
+@return  当且仅当此表中某个键映射到 <tt>value</tt> 参数时（由 <tt>equals</tt> 方法确定），返回 <tt>true</tt>；否则返回 <tt>false</tt>
+@throws NullPointerException  如果指定值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentHashMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定键映射到此表中的指定值。键和值都不可以为 <tt>null</tt>。 
+
+<p> 通过使用与原来的键相同的键调用 <tt>get</tt> 方法，可以获取相应的值。
+
+@param key 与指定值相关联的键
+@param value 与指定键相关联的值
+@return 以前与 <tt>key</tt> 相关联的值，如果 <tt>key</tt> 没有映射关系，则返回 <tt>null</tt>
+@throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentHashMap.putIfAbsent(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @return 以前与指定键相关联的值，如果该键没有映射关系，则返回 <tt>null</tt>
+ @throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ConcurrentHashMap.putAll(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定映射中所有映射关系复制到此映射中。针对指定映射中的当前所有键，这些映射关系将替换此映射中具有的所有映射关系。
+
+@param m 将存储在此映射中的映射关系
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentHashMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除键（及其相应的值）。如果该键不在映射中，则此方法不执行任何操作。
+
+@param   key   需要移除的键
+@return  与 <tt>key</tt> 关联的先前值；如果 <tt>key</tt> 没有映射关系，则返回 <tt>null</tt>
+@throws  NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.remove(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentHashMap.replace(K key, V oldValue, V newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @throws NullPointerException 如果任何参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentHashMap.replace(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @return 与指定键关联的先前值；如果没有该键的映射关系，则返回 <tt>null</tt> 
+ @throws NullPointerException 如果指定键或值为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ConcurrentHashMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从该映射中移除所有映射关系
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.concurrent.ConcurrentHashMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中包含的键的 {@link Set} 视图。该 set 受映射支持，所以对映射的改变可在该 set 中反映出来，反之亦然。该 set 支持元素的移除，它通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，从此映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<p>该视图的 <tt>iterator</tt> 是一个&ldquo;弱一致&rdquo;的迭代器，它从来不会抛出 {@link ConcurrentModificationException}，并且确保可遍历迭代器构造时存在的元素，此外还可能（但并不保证）反映构造后的所有修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.concurrent.ConcurrentHashMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中包含的值的 {@link Collection} 视图。该 collection 受映射支持，所以对映射的改变可在该 collection 中反映出来，反之亦然。该 collection 支持元素的移除，它通过 <tt>Iterator.remove</tt>、<tt>Collection.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，从此映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<p>该视图的 <tt>iterator</tt> 是一个&ldquo;弱一致&rdquo;迭代器，它不会抛出 {@link ConcurrentModificationException}，并且确保可遍历迭代器构造时存在的元素，此外还可能（但并不保证）反映构造后的所有修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.concurrent.ConcurrentHashMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射所包含的映射关系的 {@link Set} 视图。该 set 受映射支持，所以对映射的改变可在该 set 中反映出来，反之亦然。该 set 支持元素的移除，它通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，从此映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<p>该视图的返回的 <tt>iterator</tt> 是一个&ldquo;弱一致&rdquo;迭代器，它不会抛出 {@link ConcurrentModificationException}，并且确保可遍历迭代器构造时存在的元素，此外还可能（但并不保证）反映构造后的所有修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<K> java.util.concurrent.ConcurrentHashMap.keys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此表中键的枚举。
+
+@return  此表中键的枚举
+@see     #keySet()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<V> java.util.concurrent.ConcurrentHashMap.elements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此表中值的枚举。
+
+@return  此表中值的枚举
+@see     #values()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.ConcurrentHashMap.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构 <tt>ConcurrentHashMap</tt> 实例（也就是将其反序列化）。
+@param s 流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.ConcurrentHashMap.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <tt>ConcurrentHashMap</tt> 实例的状态保存到流中（也就是将其序列化）。
+@param s 流
+@serialData 每个键-值映射关系的键 (Object) 和值 (Object)，后跟一个 null 对。键-值映射关系的发出没有任何特定顺序。
+
+<!-- END DATA -->

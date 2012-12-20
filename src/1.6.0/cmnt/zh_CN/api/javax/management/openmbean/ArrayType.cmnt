@@ -1,0 +1,428 @@
+<!-- BEGIN KEY -->
+public class javax.management.openmbean.ArrayType extends javax.management.openmbean.OpenType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ArrayType</code> 类是一种<i>开放类型</i> 类，其实例描述了作为<i>开放数据</i> 值的 n 维数组的所有<i>开放数据</i> 值。
+<p>
+ 有效 {@code ArrayType} 实例的示例有： 
+<pre>
+ // 2-dimension array of java.lang.String
+ ArrayType<String[][]> a1 = new ArrayType<String[][]>(2, SimpleType.STRING);
+
+ // 1-dimension array of int
+ ArrayType<int[]> a2 = new ArrayType<int[]>(SimpleType.INTEGER, true);
+
+ // 1-dimension array of java.lang.Integer
+ ArrayType<Integer[]> a3 = new ArrayType<Integer[]>(SimpleType.INTEGER, false);
+
+ // 4-dimension array of int
+ ArrayType<int[][][][]> a4 = new ArrayType<int[][][][]>(3, a2);
+
+ // 4-dimension array of java.lang.Integer
+ ArrayType<Integer[][][][]> a5 = new ArrayType<Integer[][][][]>(3, a3);
+
+ // 1-dimension array of java.lang.String
+ ArrayType<String[]> a6 = new ArrayType<String[]>(SimpleType.STRING, false);
+
+ // 1-dimension array of long
+ ArrayType<long[]> a7 = new ArrayType<long[]>(SimpleType.LONG, true);
+
+ // 1-dimension array of java.lang.Integer
+ ArrayType<Integer[]> a8 = ArrayType.getArrayType(SimpleType.INTEGER);
+
+ // 2-dimension array of java.lang.Integer
+ ArrayType<Integer[][]> a9 = ArrayType.getArrayType(a8);
+
+ // 2-dimension array of int
+ ArrayType<int[][]> a10 = ArrayType.getPrimitiveArrayType(int[][].class);
+
+ // 3-dimension array of int
+ ArrayType<int[][][]> a11 = ArrayType.getArrayType(a10);
+
+ // 1-dimension array of float
+ ArrayType<float[]> a12 = ArrayType.getPrimitiveArrayType(float[].class);
+
+ // 2-dimension array of float
+ ArrayType<float[][]> a13 = ArrayType.getArrayType(a12);
+
+ // 1-dimension array of javax.management.ObjectName
+ ArrayType<ObjectName[]> a14 = ArrayType.getArrayType(SimpleType.OBJECTNAME);
+
+ // 2-dimension array of javax.management.ObjectName
+ ArrayType<ObjectName[][]> a15 = ArrayType.getArrayType(a14);
+
+ // 3-dimension array of java.lang.String
+ ArrayType<String[][][]> a16 = new ArrayType<String[][][]>(3, SimpleType.STRING);
+
+ // 1-dimension array of java.lang.String
+ ArrayType<String[]> a17 = new ArrayType<String[]>(1, SimpleType.STRING);
+
+ // 2-dimension array of java.lang.String
+ ArrayType<String[][]> a18 = new ArrayType<String[][]>(1, a17);
+
+ // 3-dimension array of java.lang.String
+ ArrayType<String[][][]> a19 = new ArrayType<String[][][]>(1, a18);
+ </pre>
+
+@version     3.36  06/05/15
+@author      Sun Microsystems, Inc.
+
+@since 1.5
+@since.unbundled JMX 1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.management.openmbean.ArrayType.dimension
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 此 {@link ArrayType} 实例描述的数组的维度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.management.openmbean.OpenType<?> javax.management.openmbean.ArrayType.elementType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 此 {@link ArrayType} 实例描述的数组中包含的元素值的<i>开放类型</i>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.management.openmbean.ArrayType.primitiveArray
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @serial This flag indicates whether this {@link ArrayType}
+         describes a primitive array.
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.ArrayType(int dimension, javax.management.openmbean.OpenType<?> elementType) throws javax.management.openmbean.OpenDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个描述<i>开放数据</i> 值的 <tt>ArrayType</tt> 实例，该值是其元素的<i>开放类型</i> 为 <var>elementType</var>、元素的维度为 <var>dimension</var> 的数组。
+ <p>
+在 <tt>ArrayType</tt> 实例上调用时，{@link OpenType#getClassName() getClassName} 方法会返回它所描述的数组实例的类名（按照 <code>java.lang.Class</code> 的 {@link Class#getName() getName} 方法定义的规则），而不是数组元素的类名（由对 <tt>getElementOpenType().getClassName()</tt> 的调用返回）。
+ <p>
+还可以将对应于此 <code>ArrayType</code> 实例类型名称的内部字段设置为它描述的数组实例的类名。换句话说，方法 <code>getClassName</code> 和 <code>getTypeName</code> 返回相同的字符串值。将对应于此 <code>ArrayType</code> 实例的描述的内部字段设置为符合以下模板的字符串值：
+ <ul>
+ <li>如果是非基本类型数组：<tt><i>&lt;dimension&gt;</i>-dimension array of <i>&lt;element_class_name&gt;</i></tt></li>
+ <li>如果是基本类型数组：<tt><i>&lt;dimension&gt;</i>-dimension array of <i>&lt;primitive_type_of_the_element_class_name&gt;</i></tt></li>
+ </ul>
+ <p>
+例如，以下代码片段：
+ <pre>
+ ArrayType<String[][][]> t = new ArrayType<String[][][]>(3, SimpleType.STRING);
+ System.out.println(&quot;array class name       = &quot;+ t.getClassName());
+ System.out.println(&quot;element class name     = &quot;+ t.getElementOpenType().getClassName());
+ System.out.println(&quot;array type name        = &quot;+ t.getTypeName());
+ System.out.println(&quot;array type description = &quot;+ t.getDescription());
+ </pre>
+将得到以下输出：
+ <pre>
+ array class name       = [[[Ljava.lang.String;
+ element class name     = java.lang.String
+ array type name        = [[[Ljava.lang.String;
+ array type description = 3-dimension array of java.lang.String
+ </pre>
+以下代码片段（与上述代码片段等效）也能得到相同的输出：
+ <pre>
+ ArrayType<String[]> t1 = new ArrayType<String[]>(1, SimpleType.STRING);
+ ArrayType<String[][]> t2 = new ArrayType<String[][]>(1, t1);
+ ArrayType<String[][][]> t3 = new ArrayType<String[][][]>(1, t2);
+ System.out.println("array class name       = " + t3.getClassName());
+ System.out.println("element class name     = " + t3.getElementOpenType().getClassName());
+ System.out.println("array type name        = " + t3.getTypeName());
+ System.out.println("array type description = " + t3.getDescription());
+ </pre>
+ 
+@param  dimension  此 <tt>ArrayType</tt> 实例描述的数组的维度；必须大于或等于 1。
+
+@param  elementType  此 <tt>ArrayType</tt> 实例描述的数组中包含的元素值的<i>开放类型</i>；必须是 <tt>SimpleType</tt>、<tt>CompositeType</tt>、<tt>TabularType</tt> 的一个实例，或者另一个以 <tt>SimpleType</tt>、<tt>CompositeType</tt> 或 <tt>TabularType</tt> 作为其 <tt>elementType</tt> 的 <tt>ArrayType</tt>。
+                      
+@throws IllegalArgumentException  如果 {@code dimension} 不是一个正整数。
+
+@throws OpenDataException  如果 <var>elementType 的 className</var> 不是一个受允许的开放数据 Java 类名称。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.ArrayType(javax.management.openmbean.SimpleType<?> elementType, boolean primitiveArray) throws javax.management.openmbean.OpenDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为提供的 {@code SimpleType} 构造一个一维 {@code ArrayType} 实例。
+ <p>
+{@code primitiveArray} 为 {@code true} 时此构造方法支持创建基本类型数组。
+ <p>
+对于基本类型数组，{@link #getElementOpenType()} 方法返回对应于基本类型数组的包装器类型的 {@link SimpleType}。
+ <p>
+在 <tt>ArrayType</tt> 实例上调用时，{@link OpenType#getClassName() getClassName} 方法会返回它描述的数组实例的类名（按照 <code>java.lang.Class</code> 的 {@link Class#getName() getName} 方法定义的规则），而不是数组元素的类名（由对 <tt>getElementOpenType().getClassName()</tt> 的调用返回）。
+ <p>
+还可以将对应于此 <code>ArrayType</code> 实例类型名称的内部字段设置为它描述的数组实例的类名。换句话说，方法 <code>getClassName</code> 和 <code>getTypeName</code> 返回相同的字符串值。将对应于此 <code>ArrayType</code> 实例的描述的内部字段设置为符合以下模板的字符串值：
+ <ul>
+ <li>如果是非基本类型数组：<tt>1-dimension array of <i>&lt;element_class_name&gt;</i></tt></li>
+ <li>如果是基本类型数组：<tt>1-dimension array of <i>&lt;primitive_type_of_the_element_class_name&gt;</i></tt></li>
+ </ul>
+ <p>
+ 例如，以下代码片段：
+ <pre>
+ ArrayType<int[]> t = new ArrayType<int[]>(SimpleType.INTEGER, true);
+ System.out.println("array class name       = " + t.getClassName());
+ System.out.println("element class name     = " + t.getElementOpenType().getClassName());
+ System.out.println("array type name        = " + t.getTypeName());
+ System.out.println("array type description = " + t.getDescription());
+ </pre>
+将得到以下输出：
+ <pre>
+ array class name       = [I
+ element class name     = java.lang.Integer
+ array type name        = [I
+ array type description = 1-dimension array of int
+ </pre>
+
+ @param elementType 此 {@code ArrayType} 实例描述的数组所包含的元素值的 {@code SimpleType}。
+
+ @param primitiveArray 此数组描述基本类型数组时为 {@code true}。
+
+ @throws IllegalArgumentException 如果 {@code dimension} 不是正整数。
+
+ @throws OpenDataException 如果 {@code primitiveArray} 为 {@code true}，且 {@code elementType} 不是有效的基本类型 {@code SimpleType}。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.management.openmbean.ArrayType.getDimension()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>ArrayType</tt> 实例描述的数组的维度。
+
+@return 维度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.OpenType<?> javax.management.openmbean.ArrayType.getElementOpenType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>ArrayType</tt> 实例描述的数组中包含的元素值的<i>开放类型</i>。
+
+@return 元素类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.openmbean.ArrayType.isPrimitiveArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此开放类型描述的开放数据值是基本类型数组，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+ @return 如果此为基本类型数组，则返回 true。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.openmbean.ArrayType.isValue(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <var>obj</var> 是否为此 <code>ArrayType</code> 实例的值。
+ <p>
+当且仅当 <var>obj</var> 不为 null，<var>obj</var> 是一个数组，并且下面任何一个条件为 <tt>true</tt> 时，此方法才返回 <code>true</code>：
+<ul>
+<li>如果此 <code>ArrayType</code> 实例描述 <tt>SimpleType</tt> 元素或其对应基本类型的数组，则 <var>obj</var> 的类名与此 <code>ArrayType</code> 实例定义的 className 字段相同（即 {@link OpenType#getClassName() getClassName} 方法返回的类名，它包括维度信息）<br>&nbsp; </li>
+<li>如果此 <code>ArrayType</code> 实例描述实现 {@code TabularData} 接口或 {@code CompositeData} 接口的类的数组，则 <var>obj</var> 可分配给这样的声明数组，<var>obj</var> 中包含的每个元素或者为 null，或者为此 <code>ArrayType</code> 实例指定元素的开放类型的有效值。
+ </li>
+</ul>
+
+@param obj 要测试的对象。
+
+@return 如果 <var>obj</var> 是此 <code>ArrayType</code> 实例的一个值，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.openmbean.ArrayType.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定的 <code>obj</code> 参数与此 <code>ArrayType</code> 实例的相等性。
+ <p> 
+当且仅当两个 <code>ArrayType</code> 实例描述具有相同维度、元素的开放类型以及基本类型数组标记的数组实例时，它们才相等。 
+ 
+@param  obj  与此 <code>ArrayType</code> 实例比较相等性的对象；如果 <var>obj</var> 为 <code>null</code>，或者不是类 <code>ArrayType</code> 的一个实例，则此方法返回 <code>false</code>。
+ 
+@return 如果指定的对象等于此 <code>ArrayType</code> 实例，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.management.openmbean.ArrayType.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ArrayType</code> 实例的哈希码值。
+ <p>
+<code>ArrayType</code> 实例的哈希码是在 <code>equals</code> 比较中使用的信息的所有元素的哈希码总和（即维度、元素的开放类型和基本类型数组标记）。基本类型值的哈希码是其对应装箱对象的哈希码（例如，<tt>true</tt> 的哈希码为 <tt>Boolean.TRUE.hashCode()</tt>）。这确保 <code>t1.equals(t2)</code> 意味着对于任何两个 <code>ArrayType</code> 实例 <code>t1</code> 和 <code>t2</code> 而言，都存在 <code>t1.hashCode()==t2.hashCode()</code>，这是方法 {@link Object#hashCode() Object.hashCode()} 的通用协定所要求的。
+ <p>
+由于 <code>ArrayType</code> 实例是不可变的，此实例的哈希码在首次调用 <code>hashCode</code> 时计算一次，然后对于后续的调用返回相同的值。
+
+@return  此 <code>ArrayType</code> 实例的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.openmbean.ArrayType.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ArrayType</code> 实例的字符串表示形式。
+ <p>
+字符串表示形式由此类（即 <code>javax.management.openmbean.ArrayType</code>）的名称，以及为此实例定义的类型名称、维度、元素的开放类型和基本类型数组标记组成。 
+ <p>
+由于 <code>ArrayType</code> 实例是不可变的，此实例的字符串表示形式在首次调用 <code>toString</code> 时计算一次，然后对于后续的调用返回相同的值。
+ 
+@return  此 <code>ArrayType</code> 实例的字符串表示形式
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.openmbean.ArrayType<E[]> javax.management.openmbean.ArrayType.getArrayType(javax.management.openmbean.OpenType<E> elementType) throws javax.management.openmbean.OpenDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以类型安全的方式创建一个 {@code ArrayType} 实例。
+ <p>
+根据需要多次调用此方法可以创建多维数组。
+ <p>
+使用相同的参数调用此方法两次可以返回相同的对象，或者相等但不同的两个对象。
+ <p>
+ 例如，以下代码片段：
+ <pre>
+ ArrayType<String[]> t1 = ArrayType.getArrayType(SimpleType.STRING);
+ ArrayType<String[][]> t2 = ArrayType.getArrayType(t1);
+ ArrayType<String[][][]> t3 = ArrayType.getArrayType(t2);
+ System.out.println("array class name       = " + t3.getClassName());
+ System.out.println("element class name     = " + t3.getElementOpenType().getClassName());
+ System.out.println("array type name        = " + t3.getTypeName());
+ System.out.println("array type description = " + t3.getDescription());
+ </pre>
+ 将得到以下输出：
+ <pre>
+ array class name       = [[[Ljava.lang.String;
+ element class name     = java.lang.String
+ array type name        = [[[Ljava.lang.String;
+ array type description = 3-dimension array of java.lang.String
+ </pre>
+
+ @param  elementType  此 <tt>ArrayType</tt> 实例描述的数组中包含的元素值的<i>开放类型</i>；必须是 <tt>SimpleType</tt>、<tt>CompositeType</tt>、<tt>TabularType</tt> 的一个实例，或者另一个以 <tt>SimpleType</tt>、<tt>CompositeType</tt> 或 <tt>TabularType</tt> 作为其 <tt>elementType</tt> 的 <tt>ArrayType</tt>。
+
+ @throws OpenDataException 如果 <var>elementType 的 className</var> 不是一个受允许的开放数据 Java 类名称。
+
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.openmbean.ArrayType<T> javax.management.openmbean.ArrayType.getPrimitiveArrayType(java.lang.Class<T> arrayClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以类型安全的方式创建一个 {@code ArrayType} 实例。
+ <p>
+使用相同的参数调用此方法两次可以返回相同的对象，或者相等但不同的两个对象。
+ <p>
+  例如，以下代码片段：
+ <pre>
+ ArrayType<int[][][]> t = ArrayType.getPrimitiveArrayType(int[][][].class);
+ System.out.println("array class name       = " + t.getClassName());
+ System.out.println("element class name     = " + t.getElementOpenType().getClassName());
+ System.out.println("array type name        = " + t.getTypeName());
+ System.out.println("array type description = " + t.getDescription());
+ </pre>
+  将得到以下输出：
+ <pre>
+ array class name       = [[[I
+ element class name     = java.lang.Integer
+ array type name        = [[[I
+ array type description = 3-dimension array of int
+ </pre>
+
+ @param arrayClass 基本类型数组类，如 {@code int[].class}、{@code boolean[][].class} 等等。返回 {@code ArrayType} 的 {@link #getElementOpenType()} 方法将返回对应于基本类型数组包装器类型的 {@link SimpleType}。
+
+ @throws IllegalArgumentException 如果 <var>arrayClass</var> 不是基本类型数组。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object javax.management.openmbean.ArrayType.readResolve() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在从流中读取的对象返回到调用者之前对其进行替换和解析。
+
+ @serialData The new serial form of this class defines a new serializable
+ {@code boolean} field {@code primitiveArray}. In order to guarantee the
+ interoperability with previous versions of this class the new serial
+ form must continue to refer to primitive wrapper types even when the
+ {@code ArrayType} instance describes a primitive type array. So when
+ {@code primitiveArray} is {@code true} the {@code className},
+ {@code typeName} and {@code description} serializable fields
+ are converted into primitive types before the deserialized
+ {@code ArrayType} instance is return to the caller. The
+ {@code elementType} field always returns the {@code SimpleType}
+ corresponding to the primitive wrapper type of the array's
+ primitive type.
+ <p>
+ Therefore the following serializable fields are deserialized as follows:
+ <ul>
+   <li>if {@code primitiveArray} is {@code true} the {@code className}
+       field is deserialized by replacing the array's component primitive
+       wrapper type by the corresponding array's component primitive type,
+       e.g. {@code "[[Ljava.lang.Integer;"} will be deserialized as
+       {@code "[[I"}.</li>
+   <li>if {@code primitiveArray} is {@code true} the {@code typeName}
+       field is deserialized by replacing the array's component primitive
+       wrapper type by the corresponding array's component primitive type,
+       e.g. {@code "[[Ljava.lang.Integer;"} will be deserialized as
+       {@code "[[I"}.</li>
+   <li>if {@code primitiveArray} is {@code true} the {@code description}
+       field is deserialized by replacing the array's component primitive
+       wrapper type by the corresponding array's component primitive type,
+       e.g. {@code "2-dimension array of java.lang.Integer"} will be
+       deserialized as {@code "2-dimension array of int"}.</li>
+ </ul>
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object javax.management.openmbean.ArrayType.writeReplace() throws java.io.ObjectStreamException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在流中的此对象被写入前制定一个替换对象。
+
+ @serialData The new serial form of this class defines a new serializable
+ {@code boolean} field {@code primitiveArray}. In order to guarantee the
+ interoperability with previous versions of this class the new serial
+ form must continue to refer to primitive wrapper types even when the
+ {@code ArrayType} instance describes a primitive type array. So when
+ {@code primitiveArray} is {@code true} the {@code className},
+ {@code typeName} and {@code description} serializable fields
+ are converted into wrapper types before the serialized
+ {@code ArrayType} instance is written to the stream. The
+ {@code elementType} field always returns the {@code SimpleType}
+ corresponding to the primitive wrapper type of the array's
+ primitive type.
+ <p>
+ Therefore the following serializable fields are serialized as follows:
+ <ul>
+   <li>if {@code primitiveArray} is {@code true} the {@code className}
+       field is serialized by replacing the array's component primitive
+       type by the corresponding array's component primitive wrapper type,
+       e.g. {@code "[[I"} will be serialized as
+       {@code "[[Ljava.lang.Integer;"}.</li>
+   <li>if {@code primitiveArray} is {@code true} the {@code typeName}
+       field is serialized by replacing the array's component primitive
+       type by the corresponding array's component primitive wrapper type,
+       e.g. {@code "[[I"} will be serialized as
+       {@code "[[Ljava.lang.Integer;"}.</li>
+   <li>if {@code primitiveArray} is {@code true} the {@code description}
+       field is serialized by replacing the array's component primitive
+       type by the corresponding array's component primitive wrapper type,
+       e.g. {@code "2-dimension array of int"} will be serialized as
+       {@code "2-dimension array of java.lang.Integer"}.</li>
+ </ul>
+
+ @since 1.6
+
+<!-- END DATA -->

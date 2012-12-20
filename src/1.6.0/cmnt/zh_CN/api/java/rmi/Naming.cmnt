@@ -1,0 +1,98 @@
+<!-- BEGIN KEY -->
+public final class java.rmi.Naming extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Naming</code> 类提供在对象注册表中存储和获得远程对远程对象引用的方法。<code>Naming</code> 类的每个方法都可将某个名称作为其一个参数，该名称是使用以下形式的 URL 格式（没有 scheme 组件）的 <code>java.lang.String</code>：
+
+ <PRE>
+    //host:port/name
+ </PRE>
+ 
+ <P>其中 <code>host</code> 是注册表所在的主机（远程或本地），<code>port</code> 是注册表接受调用的端口号，<code>name</code> 是未经注册表解释的简单字符串。<code>host</code> 和 <code>port</code> 两者都是可选项。如果省略了 <code>host</code>，则主机默认为本地主机。如果省略了 <code>port</code>，则端口默认为 1099，该端口是 RMI 的注册表 <code>rmiregistry</code> 使用的&ldquo;著名&rdquo;端口。
+
+ <P>为远程对象 <em>绑定</em> 名称是指为远程对象关联或注册一个名称，以后可以使用该名称来查找该远程对象。可以使用 <code>Naming</code> 类的 <code>bind</code> 或 <code>rebind</code> 方法将远程对象与某个名称相关联。
+
+ <P>一旦远程对象向本地主机上 RMI 注册表注册（绑定），远程（或本地）主机上的调用方可以通过名称查找远程对象，获得其引用，并在该对象上调用远程方法。注册表可由在一个主机上运行的所有服务器共享，需要时个别服务器进程也可以创建和使用自己的注册表（有关详细信息，请参见 <code>java.rmi.registry.LocateRegistry.createRegistry</code>）。
+
+
+@version 1.13, 09/05/99
+@author  Ann Wollrath
+@author  Roger Riggs
+@since   JDK1.1
+@see     java.rmi.registry.Registry
+@see     java.rmi.registry.LocateRegistry
+@see     java.rmi.registry.LocateRegistry#createRegistry(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.Naming.lookup(String name) throws java.rmi.NotBoundException, java.net.MalformedURLException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定 <code>name</code> 关联的远程对象的引用（一个 stub）。
+
+@param name   使用 URL 格式（不含 scheme 组件）的名称
+@return  远程对象的引用
+@exception NotBoundException 如果当前未绑定名称
+@exception RemoteException 如果无法联系注册表
+@exception AccessException 如果不允许执行此操作
+@exception MalformedURLException 如果名称不是适当格式化的 URL
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.rmi.Naming.bind(String name, Remote obj) throws java.rmi.AlreadyBoundException, java.net.MalformedURLException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 <code>name</code> 绑定到远程对象。
+
+@param name   使用 URL 格式（不含 scheme 组件）的名称
+@param obj 远程对象的引用（通常是一个 stub）
+@exception AlreadyBoundException 如果已经绑定了名称
+@exception MalformedURLException 如果该名称不是适当格式化的 URL
+@exception RemoteException 如果无法联系注册表
+@exception AccessException 如果不允许进行此操作（例如，如果起源于非本地主机）
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.rmi.Naming.unbind(String name) throws java.rmi.RemoteException, java.rmi.NotBoundException, java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁与远程对象关联的指定名称的绑定。
+
+@param name  使用 URL 格式（不含 scheme 组件）的名称
+@exception NotBoundException 如果当前未绑定名称
+@exception MalformedURLException 如果该名称不是适当格式化的 URL
+@exception RemoteException 如果无法联系注册表
+@exception AccessException 如果不允许进行此操作（例如，如果起源于非本地主机）
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.rmi.Naming.rebind(String name, Remote obj) throws java.rmi.RemoteException, java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定名称重新绑定到一个新的远程对象。 将替换任何现有绑定。
+
+@param name  使用 URL 格式（不含 scheme 组件）
+@param obj 将与名称关联的新远程对象
+@exception MalformedURLException 如果该名称不是适当格式化的 URL
+@exception RemoteException 如果无法联系注册表
+@exception AccessException 如果不允许执行此操作（例如，如果起源于非本地主机）
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String[] java.rmi.Naming.list(String name) throws java.rmi.RemoteException, java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在注册表中绑定的名称所组成的数组。该名称为 URL 格式（不含 scheme 组件）的字符串。该数组包含在调用时出现在注册表中的名称快照。
+
+@param 	name  使用 URL 格式（不含 scheme 组件）的注册表名称
+@return 	 在注册表中绑定的名称（使用适当格式）所组成的数组
+@exception MalformedURLException 如果该名称不是适当格式化的 URL
+@exception RemoteException 如果无法联系注册表。
+@since JDK1.1
+
+<!-- END DATA -->

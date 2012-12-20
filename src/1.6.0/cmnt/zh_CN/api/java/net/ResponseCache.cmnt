@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public abstract class java.net.ResponseCache extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示 URLConnection 缓存的实现。这种类的实例可以通过执行 ResponseCache.setDefault(ResponseCache) 向系统注册，系统将调用此对象以便：
+
+<ul><li>将从外部源获得的资源数据存储到缓存中</li>
+<li>试图获取可能存储在缓存中的请求资源</li>
+    </ul>
+
+ResponseCache 实现决定应该缓存的资源和缓存它们的时间。如果无法从缓存获得请求资源，则协议处理程序将从其初始位置获取该资料。
+
+URLConnection#useCaches 的设置控制着是否允许协议使用缓存的响应。
+
+有关 HTTP 缓存的更多信息，请参见 <a
+ href="http://www.ietf.org/rfc/rfc2616.txt""><i>RFC&nbsp;2616: Hypertext
+ Transfer Protocol -- HTTP/1.1</i></a>。
+
+@version 1.1, 03/09/22
+@author Yingxian Wang
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.net.ResponseCache java.net.ResponseCache.getDefault()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取系统级响应缓存。
+
+@throws  SecurityException 如果安装了安全管理器并且它拒绝 {@link NetPermission}<tt>(&quot;getResponseCache&quot;)</tt>
+
+@see #setDefault(ResponseCache)
+@return 系统级 <code>ResponseCache</code>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.net.ResponseCache.setDefault(ResponseCache responseCache)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置（或取消设置）系统级缓存。
+
+注：非标准协议处理程序可能忽略此设置。
+
+@param responseCache 响应缓存，或者为 <code>null</code>，表示取消设置缓存。
+
+@throws  SecurityException 如果安装了安全管理器并且它拒绝 {@link NetPermission}<tt>(&quot;setResponseCache&quot;)</tt>
+
+@see #getDefault()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.net.CacheResponse java.net.ResponseCache.get(URI uri, String rqstMethod, java.util.Map<java.lang.String, java.util.List<java.lang.String>> rqstHeaders) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据请求的 uri、请求方法和请求头获取缓存的响应。通常，此方法由协议处理程序在发出获取网络资源的请求之前调用。如果返回缓存的响应，则改为使用该资源。
+
+@param uri 用于引用所请求的网络资源的 <code>URI</code>
+@param rqstMethod 表示请求方法的 <code>String</code>
+@param rqstHeaders 从请求头字段名称到表示当前请求头的字段值列表的映射
+@return <code>CacheResponse</code> 实例，如果可从缓存中得到；否则返回 null
+@throws	IOException 如果发生 I/O 错误
+@throws  IllegalArgumentException 如果参数中的任何一个为 null
+
+@see     java.net.URLConnection#setUseCaches(boolean)
+@see     java.net.URLConnection#getUseCaches()
+@see     java.net.URLConnection#setDefaultUseCaches(boolean)
+@see     java.net.URLConnection#getDefaultUseCaches()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.net.CacheRequest java.net.ResponseCache.put(URI uri, URLConnection conn) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+协议处理程序在获得资源后调用此方法，ResponseCache 必须决定是否在其缓存中存储资源。如果缓存资源，则 put() 必须返回 CacheRequest 对象，该对象包含协议处理程序用来将资源写入缓存的 WriteableByteChannel。如果不缓存资源，则 put 必须返回 null。
+
+@param uri 用于引用所请求的网络资源的 <code>URI</code>
+@param conn 用于获取要缓存的响应的 URLConnection 实例
+@return 用于记录要缓存的响应的 <code>CacheRequest</code>。返回 null 指示调用方不打算缓存响应。
+@throws IOException 如果发生 I/O 错误
+@throws IllegalArgumentException 如果参数中的任何一个为 null
+
+<!-- END DATA -->

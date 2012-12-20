@@ -1,0 +1,215 @@
+<!-- BEGIN KEY -->
+public class java.awt.SystemTray extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SystemTray</code> 类表示桌面的系统托盘。在 Microsoft Windows 上，它被称为&ldquo;任务栏状态区域 (Taskbar Status Area)&rdquo;，在 Gnome 上，它被称为&ldquo;通知区域 (Notification Area)&rdquo;，在 KDE 上，它被成为&ldquo;系统托盘 (System Tray)&rdquo;。系统托盘由运行在桌面上的所有应用程序共享。
+
+<p> 在某些平台上，可能不存在或不支持系统托盘，在这种情况下，{@link SystemTray#getSystemTray()} 将抛出 {@link UnsupportedOperationException}。要检查系统托盘是否受支持，可以使用 {@link SystemTray#isSupported}。
+ 
+<p><code>SystemTray</code> 可以包含一个或多个 {@link TrayIcon TrayIcon}，可以使用 {@link #add} 方法将它们添加到托盘，当不再需要托盘时，使用 {@link #remove} 移除它。<code>TrayIcon</code> 由图像、弹出菜单和一组相关侦听器组成。有关详细信息，请参阅 {@link TrayIcon} 类。
+
+<p>每个 Java 应用程序都有一个 <code>SystemTray</code> 实例，在应用程序运行时，它允许应用程序与桌面系统托盘建立连接。<code>SystemTray</code> 实例可以通过 {@link #getSystemTray} 方法获得。应用程序不能创建自己的 <code>SystemTray</code> 实例。
+ 
+<p>以下代码片段演示了如何访问和自定义系统托盘： <code>
+ <pre>
+{@link TrayIcon} trayIcon = null;
+if (SystemTray.isSupported()) {
+// get the SystemTray instance
+SystemTray tray = SystemTray.{@link #getSystemTray};
+// load an image
+{@link java.awt.Image} image = {@link java.awt.Toolkit#getImage(String) Toolkit.getDefaultToolkit.getImage}(...);
+// create a action listener to listen for default action executed on the tray icon
+{@link java.awt.event.ActionListener} listener = new {@link java.awt.event.ActionListener ActionListener}() {
+public void {@link java.awt.event.ActionListener#actionPerformed actionPerformed}({@link java.awt.event.ActionEvent} e) {
+// execute default action of the application
+                 // ...
+             }
+         };
+// create a popup menu
+{@link java.awt.PopupMenu} popup = new {@link java.awt.PopupMenu#PopupMenu PopupMenu}();
+// create menu item for the default action
+MenuItem defaultItem = new MenuItem(...);
+defaultItem.addActionListener(listener);
+popup.add(defaultItem);
+/// ... add other items
+// construct a TrayIcon
+trayIcon = new {@link TrayIcon#TrayIcon(java.awt.Image, String, java.awt.PopupMenu) TrayIcon}(image, &quot;Tray Demo&quot;, popup);
+// set the TrayIcon properties
+trayIcon.{@link TrayIcon#addActionListener(java.awt.event.ActionListener) addActionListener}(listener);
+         // ...
+// add the tray image
+try {
+tray.{@link SystemTray#add(TrayIcon) add}(trayIcon);
+} catch (AWTException e) {
+System.err.println(e);
+         }
+         // ...
+} else {
+// disable tray option in your application or
+// perform other actions
+         ...
+     }
+     // ...
+// some time later
+// the application state has changed - update the image
+if (trayIcon != null) {
+trayIcon.{@link TrayIcon#setImage(java.awt.Image) setImage}(updatedImage);
+     }
+     // ...
+ </pre>
+ </code>
+
+@since 1.6
+@see TrayIcon
+
+@author Bino George
+@author Denis Mikhalkin
+@author Sharon Zakhour
+@author Anton Tarasov
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.SystemTray java.awt.SystemTray.getSystemTray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示桌面托盘区的 <code>SystemTray</code> 实例。它总是对每个应用程序返回相同的实例。在一些平台上，可能不支持系统托盘。可以使用 {@link #isSupported} 方法检查系统托盘是否受支持。
+
+<p>如果安装了 SecurityManager，则必须授予 AWTPermission {@code accessSystemTray} 才能获取 {@code SystemTray} 实例。否则，此方法将抛出 SecurityException。
+
+@return 表示桌面托盘区的 <code>SystemTray</code> 实例
+@throws UnsupportedOperationException 如果当前平台不支持系统托盘
+@throws HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>
+@throws SecurityException 如果未授予 {@code accessSystemTray} 权限
+@see #add(TrayIcon)
+@see TrayIcon
+@see #isSupported
+@see SecurityManager#checkPermission
+@see AWTPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.SystemTray.isSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前平台是否支持系统托盘。除了显示托盘图标之外，最小系统托盘支持还包括弹出菜单（请参阅 {@link TrayIcon#setPopupMenu(PopupMenu)}）或操作事件（请参阅 {@link TrayIcon#addActionListener(ActionListener)}）。
+
+<p>开发人员不应假定所有系统托盘功能都是受支持的。要保证始终可以访问托盘图标的默认动作，则应将默认动作同时添加到动作侦听器和弹出菜单。有关如何执行此操作的示例，请参阅 {@link SystemTray example}。
+ 
+<p><b>注</b>：在实现 <code>SystemTray</code> 和 <code>TrayIcon</code> 时，<em>强烈建议</em> 为弹出菜单和动作事件分配不同的动作。为两种目的重载一个动作时会产生混淆，并可能阻止用户访问它们其中的一个或另一个。
+
+@see #getSystemTray
+@return 如果不支持系统托盘访问，则返回 <code>false</code>；如果当前平台支持最小系统托盘访问，但不保证支持所有系统托盘功能，则此方法返回 <code>true</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.SystemTray.add(TrayIcon trayIcon) throws java.awt.AWTException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>TrayIcon</code> 添加到 <code>SystemTray</code>。一旦添加了托盘图标，就可以在系统托盘中看到它。图标在托盘中的显示顺序未指定&mdash;&mdash;它与平台和实现有关。
+
+<p> 在应用程序退出时，应用程序添加的所有图标都将自动从 <code>SystemTray</code> 移除，在桌面系统托盘不可用时也一样。
+
+@param trayIcon 要添加的 <code>TrayIcon</code>
+@throws NullPointerException 如果 <code>trayIcon</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果多次添加 <code>TrayIcon</code> 的同一实例
+@throws AWTException 如果桌面系统托盘不可用
+@see #remove(TrayIcon)
+@see #getSystemTray
+@see TrayIcon
+@see java.awt.Image
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.SystemTray.remove(TrayIcon trayIcon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>SystemTray</code> 中移除指定的 <code>TrayIcon</code>。
+
+<p> 在应用程序退出时，应用程序添加的所有图标都将自动从 <code>SystemTray</code> 移除，在桌面系统托盘不可用时也一样。
+
+<p> 如果 <code>trayIcon</code> 为 <code>null</code> 或未添加到系统托盘，则不抛出任何异常且不执行任何动作。
+
+@param trayIcon 要移除的 <code>TrayIcon</code> 
+@see #add(TrayIcon)
+@see TrayIcon
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.TrayIcon[] java.awt.SystemTray.getTrayIcons()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由此应用程序添加到托盘中的所有图标的数组。用户无法访问由另一个应用程序添加的图标。有些浏览器将使用不同代码基的 applet 划分为单独的上下文，并在这些上下文之间建墙分隔。在这种情形下，只返回从此上下文中添加的托盘图标。
+
+<p> 返回的数组是实际数组的副本，可以以任意方式修改它，而不会影响系统托盘。要从 <code>SystemTray</code> 中移除 <code>TrayIcon</code>，可以使用 {@link #remove(TrayIcon)} 方法。
+
+@return 添加到此托盘的所有托盘图标的数组；如果未添加托盘图标，则返回空数组
+@see #add(TrayIcon)
+@see TrayIcon
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.SystemTray.getTrayIconSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回托盘图标在系统托盘中占用的空间大小（以像素为单位）。开发人员可以使用这种方法在创建托盘图标之前获取图像属性的首选大小。为方便起见，在 <code>TrayIcon</code> 类中有一个类似的方法 {@link TrayIcon#getSize}。
+
+@return 托盘图标的默认大小（以像素为单位）
+@see TrayIcon#setImageAutoSize(boolean)
+@see java.awt.Image
+@see TrayIcon#getSize()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.SystemTray.addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 {@code PropertyChangeListener} 添加到特定属性的侦听器列表中。当前支持的属性：
+ <ul>
+<li>{@code trayIcons}<p>
+        <p>
+此 {@code SystemTray} 的 {@code TrayIcon} 数组。通过 {@link SystemTray#getTrayIcons} 可以访问该数组。<br>在将 {@code TrayIcon} 添加到 {@code SystemTray}（或从中移除 {@code TrayIcon}）时，此属性将发生更改。<br>例如，当本机 {@code SystemTray} 在桌面上不可用时，此属性将被更改<br>且自动移除 {@code TrayIcon}。</li>
+ </ul>
+ <p>
+{@code listener} 仅在此上下文中侦听属性更改。
+ <p>
+如果 {@code listener} 为 {@code null}，则不抛出任何异常且不执行任何动作。
+
+@param propertyName 指定的属性
+@param listener 要添加的属性更改侦听器
+
+@see #removePropertyChangeListener
+@see #getPropertyChangeListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.SystemTray.removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从特定属性的侦听器列表中移除 {@code PropertyChangeListener}。
+ <p>
+{@code PropertyChangeListener} 必须来自于此上下文。
+ <p>
+如果 {@code propertyName} 或 {@code listener} 为 {@code null} 或无效，则不抛出任何异常且不执行任何动作。
+
+@param propertyName 指定的属性
+@param listener 要移除的 PropertyChangeListener
+
+@see #addPropertyChangeListener
+@see #getPropertyChangeListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] java.awt.SystemTray.getPropertyChangeListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定属性关联的所有侦听器的数组。
+ <p>
+只返回此上下文中的侦听器。 
+
+@param propertyName 指定的属性
+@return 与指定属性关联的所有 {@code PropertyChangeListener}；如果未添加此类侦听器或者 {@code propertyName} 为 {@code null} 或无效，则返回空数组
+
+@see #addPropertyChangeListener
+@see #removePropertyChangeListener
+
+<!-- END DATA -->

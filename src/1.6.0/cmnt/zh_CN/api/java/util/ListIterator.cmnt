@@ -1,0 +1,121 @@
+<!-- BEGIN KEY -->
+public interface java.util.ListIterator extends java.util.Iterator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+系列表迭代器，允许程序员按任一方向遍历列表、迭代期间修改列表，并获得迭代器在列表中的当前位置。<TT>ListIterator</TT> 没有当前元素；它的<I>光标位置</I> 始终位于调用 <TT>previous()</TT> 所返回的元素和调用 <TT>next()</TT> 所返回的元素之间。长度为 <tt>n</tt> 的列表的迭代器有 <tt>n+1</tt> 个可能的指针位置，如下面的插入符举例说明：
+ <PRE>
+
+                      Element(0)   Element(1)   Element(2)   ... Element(n-1)
+ cursor positions:  ^            ^            ^            ^                  ^
+
+ </PRE>
+ <P>
+注意，{@link #remove} 和 {@link #set(Object)} 方法<i>不是</i> 根据光标位置定义的；它们是根据对调用 {@link #next} 或 {@link #previous()} 所返回的最后一个元素的操作定义的。
+ <P>
+此接口是  <a href="{@docRoot}/../technotes/guides/collections/index.html"> Java Collections Framework </a>的成员。
+
+@author  Josh Bloch
+@version 1.23, 12/19/03
+@see Collection
+@see List
+@see Iterator
+@see Enumeration
+@see List#listIterator()
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ListIterator.hasNext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以正向遍历列表时，如果列表迭代器有多个元素，则返回 <tt>true</tt>（换句话说，如果 <tt>next</tt> 返回一个元素而不是抛出异常，则返回 <tt>true</tt>）。
+
+@return 如果以正向遍历列表，列表迭代器有多个元素，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.ListIterator.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中的下一个元素。可以重复调用此方法来迭代此列表，或混合调用 <tt>previous</tt> 来前后移动（注意交替调用 <tt>next</tt> 和 <tt>previous</tt> 将重复返回相同的元素）。
+
+@return 列表中的下一个元素。
+@exception NoSuchElementException 如果没有可迭代的下一个元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.ListIterator.hasPrevious()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果以逆向遍历列表，列表迭代器有多个元素，则返回 <tt>true</tt>。（换句话说，如果 <tt>previous</tt> 返回一个元素而不是抛出异常，则返回 <tt>true</tt>）。
+
+@return 如果以逆向遍历列表，列表迭代器有多个元素，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.ListIterator.previous()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中的前一个元素。可以重复调用此方法来迭代列表，或混合调用 <tt>next</tt> 来前后移动（注意交替调用 <tt>next</tt> 和 <tt>previous</tt> 将重复返回相同的元素）。
+
+@return 列表中的上一个元素。
+ 
+@exception NoSuchElementException 如果没有可迭代的上一个元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.ListIterator.nextIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对 <tt>next</tt> 的后续调用所返回元素的索引。（如果列表迭代器在列表的结尾，则返回列表的大小）。
+
+@return 对 <tt>next</tt> 的后续调用所返回元素的索引，如果列表迭代器在列表的结尾，则返回列表大小。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.ListIterator.previousIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对 <tt>previous</tt> 的后续调用所返回元素的索引。（如果列表迭代器在列表的开始，则返回 -1）。
+
+@return 对 <tt>previous</tt> 的后续调用所返回元素的索引，如果列表迭代器在列表的开始，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ListIterator.remove()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从列表中移除由 <tt>next</tt> 或 <tt>previous</tt> 返回的最后一个元素（可选操作）。对于每个 <tt>next</tt> 或 <tt>previous</tt> 调用，只能执行一次此调用。只有在最后一次调用 <tt>next</tt> 或 <tt>previous</tt> 之后，尚未调用 <tt>ListIterator.add</tt> 时才可以执行该调用。
+
+@exception UnsupportedOperationException 如果列表迭代器不支持 <tt>remove</tt> 操作。
+@exception IllegalStateException 既没有调用 <tt>next</tt> 也没有调用 <tt>previous</tt>，或者在最后一次调用 <tt>next</tt> 或 <tt>previous</tt> 后调用了 <tt>remove</tt> 或 <tt>add</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ListIterator.set(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定元素替换 <tt>next</tt> 或 <tt>previous</tt> 返回的最后一个元素（可选操作）。只有在最后一次调用 <tt>next</tt> 或 <tt>previous</tt> 后既没有调用 <tt>ListIterator.remove</tt> 也没有调用 <tt>ListIterator.add</tt> 时才可以进行该调用。
+
+@param e 用于替换 <tt>next</tt> 或 <tt>previous</tt> 返回的最后一个元素的元素。
+@exception UnsupportedOperationException 如果列表迭代器不支持 <tt>set</tt> 操作。
+@exception ClassCastException 如果指定元素的类不允许该元素添加到此列表。
+@exception IllegalArgumentException 如果指定元素的某个方面不允许该元素添加到此列表。
+@exception IllegalStateException 如果既没有调用 <tt>next</tt> 也没有调用 <tt>previous</tt>，或者在最后一次调用 <tt>next</tt> 或 <tt>previous</tt> 后调用了 <tt>remove</tt> 或 <tt>add</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.ListIterator.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素插入列表（可选操作）。该元素直接插入到 <tt>next</tt> 返回的下一个元素的前面（如果有），或者 <tt>previous</tt> 返回的下一个元素之后（如果有）；如果列表没有元素，那么新元素就成为列表中的唯一元素。新元素被插入到隐式光标前：不影响对 <tt>next</tt> 的后续调用，并且对 <tt>previous</tt> 的后续调用会返回此新元素（此调用把调用 <tt>nextIndex</tt> 或 <tt>previousIndex</tt> 所返回的值增加 1）。
+
+@param e 要插入的元素。
+@exception UnsupportedOperationException 如果列表迭代器不支持 <tt>add</tt> 操作。
+ 
+@exception ClassCastException 如果指定元素的类不允许该元素添加到此列表。
+ 
+@exception IllegalArgumentException 如果此元素的某个方面不允许该元素添加到此列表。
+
+<!-- END DATA -->

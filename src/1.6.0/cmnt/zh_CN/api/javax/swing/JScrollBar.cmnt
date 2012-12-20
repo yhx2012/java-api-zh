@@ -1,0 +1,466 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JScrollBar extends javax.swing.JComponent implements java.awt.Adjustable, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动条的实现。用户在滚动条内移动滑块可确定显示区域中的内容。该程序通常将显示调整为滚动条的结束代表可显示内容的结束，或内容的 100%。滚动条的开始为可显示内容的开始，或 0%。然后滑块在其边界中的位置转换为可显示内容对应的百分比。
+ <p>
+通常，随着滑块的位置在滚动条中的变化，将在基础视图上对 JViewport 的位置进行相应的更改，这样 JViewport 的内容也随之改变。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。 
+
+@see JScrollPane
+@beaninfo attribute: isContainer false description: A component that helps determine the visible content range of an area.
+
+@version 1.78 12/19/03
+@author David Kloba
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.BoundedRangeModel javax.swing.JScrollBar.model
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示滚动条的最小、最大、跨度（也叫 &quot;visibleAmount&quot;）和当前值的模型。
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JScrollBar.orientation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JScrollBar.unitIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #setUnitIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JScrollBar.blockIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #setBlockIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.event.ChangeListener javax.swing.JScrollBar.fwdAdjustmentEvents
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+来自该模型的所有更改被视为如同用户移动了滚动条滑块。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar(int orientation, int value, int extent, int min, int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定方向、值、跨度、最小值和最大值的一个滚动条。&ldquo;跨度&rdquo;是指可见区域的大小。它又被称为&ldquo;可见量&rdquo;。 
+ <p>
+注：使用 <code>setBlockIncrement</code> 将块增量设置为一个比视图的跨度稍小的大小。这样，当用户使滑块跳到一个相邻位置时，原有内容的一行或两行仍位于视图中。
+ 
+@exception IllegalArgumentException 如果 orientation 不属于 VERTICAL 或 HORIZONTAL 中的任何一个
+ 
+@see #setOrientation
+@see #setValue
+@see #setVisibleAmount
+@see #setMinimum
+@see #setMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar(int orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定方向和下列初始值的滚动条：
+ <pre>
+ minimum = 0 
+ maximum = 100 
+ value = 0
+ extent = 10
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有下列初始值的垂直滚动条：
+ <pre>
+ minimum = 0 
+ maximum = 100 
+ value = 0
+ extent = 10
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setUI(ScrollBarUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的 L&F 对象。
+
+@param ui  <code>ScrollBarUI</code> L&F 对象
+@see UIDefaults#getUI
+@since 1.4
+@beaninfo bound: true hidden: true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ScrollBarUI javax.swing.JScrollBar.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现此组件的外观的委托。
+
+@see JComponent#setUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 <code>JComponent.updateUI</code>。
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JScrollBar.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的 LookAndFeel 类的名称。
+
+@return &quot;ScrollBarUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件的方向（横向或纵向）。 
+                     
+@return VERTICAL 或 HORIZONTAL
+@see #setOrientation
+@see java.awt.Adjustable#getOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setOrientation(int orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将滚动条的方向设置为 VERTICAL 或 HORIZONTAL。
+ 
+@exception IllegalArgumentException 如果方向不属于 VERTICAL、HORIZONTAL 中的任何一个
+@see #getOrientation
+@beaninfo preferred: true bound: true attribute: visualUpdate true description: The scrollbar's orientation. enum: VERTICAL JScrollBar.VERTICAL HORIZONTAL JScrollBar.HORIZONTAL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.BoundedRangeModel javax.swing.JScrollBar.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回处理滚动条的四个基本属性的数据模型：minimum、maximum、value 和 extent。
+ 
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setModel(BoundedRangeModel newModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置处理滚动条的以下四个基本属性的模型：minimum、maximum、value 和 extent。
+ 
+@see #getModel
+@beaninfo bound: true expert:true description: The scrollbar's BoundedRangeModel.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getUnitIncrement(int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对一个向上/向下滚动一个单位的请求，返回滚动条值的更改量。当用户单击滚动条向上/向下箭头时，ScrollBarUI 实现通常调用此方法，并用此方法的结果来更新滚动条的值。子类可重写此方法以便计算某个值，例如，向上或向下滚动一行文本（变量 height）或在表格中滚动一行时所需的改变值。
+ <p>
+JScrollPane 组件创建的滚动条（默认）会重写此方法，还会将它委托给视口的 Scrollable 视图（如果有）。Scrollable 接口提供了此方法的一个更为特殊的版本。
+ 
+@param direction 为 -1 或 1，分别对应向上/向下
+@return unitIncrement 属性的值
+@see #setUnitIncrement
+@see #setValue
+@see Scrollable#getScrollableUnitIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setUnitIncrement(int unitIncrement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 unitIncrement 属性。
+ <p>
+注意，如果参数等于值 Integer.MIN_VALUE，大多数外观显示将不提供向右/向下滚动。
+@see #getUnitIncrement
+@beaninfo preferred:true bound: true description: The scrollbar's unit increment.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getBlockIncrement(int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对一个向上/向下滚动一个块（通常为 &quot;page&quot;）的请求，返回滚动条值的更改量。当用户通过在滚动条&ldquo;滑块&rdquo;的上面或下面单击从而将值大幅度增大或减小时，ScrollBarUI 实现通常调用此方法。子类可重写此方法以便计算某个值，例如，在一个文本文档中向上或向下滚动一个段落时所需的改变值。
+ <p>
+JScrollPane 组件创建的滚动条（默认）会重写此方法，还会将它委托给视口的 Scrollable 视图（如果有）。Scrollable 接口提供了此方法的一个更为特殊的版本。
+ 
+@param direction 为 -1 或 1，分别对应向上/向下
+@return blockIncrement 属性的值
+@see #setBlockIncrement
+@see #setValue
+@see Scrollable#getScrollableBlockIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setBlockIncrement(int blockIncrement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 blockIncrement 属性。
+ <p>
+注意，如果参数等于值 Integer.MIN_VALUE，大多数外观显示将不提供向右/向下滚动。
+@see #getBlockIncrement()
+@beaninfo preferred: true bound: true description: The scrollbar's block increment.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getUnitIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供与 java.awt.Scrollbar 向后兼容。
+@see Adjustable#getUnitIncrement
+@see #getUnitIncrement(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getBlockIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供与 java.awt.Scrollbar 向后兼容。
+@see Adjustable#getBlockIncrement
+@see #getBlockIncrement(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回滚动条的值。
+@return 模型的 value 属性
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setValue(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置滚动条的值。此方法只将值转发给模型。
+
+@see #getValue
+@see BoundedRangeModel#setValue
+@beaninfo preferred: true description: The scrollbar's current value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getVisibleAmount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回滚动条的跨度，即它的 &quot;visibleAmount&quot;。在许多滚动条的外观实现中，滚动条&ldquo;滑块&rdquo;或 &quot;thumb&quot; 的大小与此跨度成正比。
+ 
+@return 模型的 extent 属性的值
+@see #setVisibleAmount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setVisibleAmount(int extent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型的 extent 属性。
+ 
+@see #getVisibleAmount
+@see BoundedRangeModel#setExtent
+@beaninfo preferred: true description: The amount of the view that is currently visible.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getMinimum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回滚动条支持的最小值（通常为 0）。
+
+@return 模型的 minimum 属性的值
+@see #setMinimum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setMinimum(int minimum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型的 minimum 属性。
+
+@see #getMinimum
+@see BoundedRangeModel#setMinimum
+@beaninfo preferred: true description: The scrollbar's minimum value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollBar.getMaximum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动条的最大值为最大跨度。
+
+@return 模型的 maximum 属性值
+@see #setMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setMaximum(int maximum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型的 maximum 属性。注意，滚动条的值只能设置为最大跨度。
+ 
+
+@see #getMaximum
+@see BoundedRangeModel#setMaximum
+@beaninfo preferred: true description: The scrollbar's maximum value. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JScrollBar.getValueIsAdjusting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果滚动条滑块被拖动，则返回 True。
+ 
+@return 模型的 valueIsAdjusting 属性
+@see #setValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setValueIsAdjusting(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型的 valueIsAdjusting 属性。当开始拖动滑块时，滚动条外观实现应将此属性设置为 true，拖动停止时，将此属性设置为 false。在 valueIsAdjusting 为 true 时，滚动条模型不生成 ChangeEvent。
+ 
+
+@see #getValueIsAdjusting
+@see BoundedRangeModel#setValueIsAdjusting
+@beaninfo expert: true description: True if the scrollbar thumb is being dragged.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setValues(int newValue, int newExtent, int newMin, int newMax)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制参数满足以下常规约束后设置四个 BoundedRangeModel 属性：
+ <pre>
+ minimum &lt;= value &lt;= value+extent &lt;= maximum
+ </pre>
+ <p>
+ 
+@see BoundedRangeModel#setRangeProperties
+@see #setValue
+@see #setVisibleAmount
+@see #setMinimum
+@see #setMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.addAdjustmentListener(AdjustmentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个 AdjustmentListener。每当滚动条模型发生更改时，都会通知调整侦听器。为与 java.awt.Scrollbar 向后兼容而提供调整事件。
+ <p>
+注意，AdjustmentEvent 类型属性将一直有一个占位值 AdjustmentEvent.TRACK，因为对 BoundedRangeModels 值的所有更改都被认为是等价的。要更改 BoundedRangeModel 的值，只需要设置它的 value 属性，即 model.setValue(123)。未提供任何关于更改起源的信息，如它是一个块减小的更改之类。这里对更改的起源将不赘述。
+
+@param l 要添加的 AdjustmentLister
+@see #removeAdjustmentListener
+@see BoundedRangeModel#addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.removeAdjustmentListener(AdjustmentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除一个 AdjustmentEvent 侦听器。
+
+@param l 要移除的 AdjustmentLister
+@see #addAdjustmentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.AdjustmentListener[] javax.swing.JScrollBar.getAdjustmentListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 addAdjustmentListener() 添加到此 JScrollBar 中的 <code>AdjustmentListener</code> 组成的数组。
+
+@return 如果有侦听器，则返回所有已添加的 <code>AdjustmentListener</code>；如果未添加任何侦听器，则返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JScrollBar.fireAdjustmentValueChanged(int id, int type, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 通知侦听器该滚动条的模型已更改。
+ 
+ @see #addAdjustmentListener
+ @see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JScrollBar.getMinimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动条沿其滚动轴具有弹性，沿另一个轴具有刚性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JScrollBar.getMaximumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动条沿其滚动轴具有弹性，沿另一个轴具有刚性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollBar.setEnabled(boolean x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用该组件以便滑块位置能够改变。如果被禁用，滑块位置将不能改变。
+
+@param x boolean 值，它为 true 时，启用该组件，它为 false 时，禁用该组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JScrollBar.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JScrollBar 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return 此 JScrollBar 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JScrollBar.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JScrollBar 相关联的 AccessibleContext。对于 JScrollBar，AccessibleContext 采取 AccessibleJScrollBar 的形式。必要时创建新的 AccessibleJScrollBar 实例。
+
+@return 一个 AccessibleJScrollBar，它充当此 JScrollBar 的 AccessibleContext 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JScrollBar.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 中更多序列化的信息，请参阅 JComponent 中的 readObject() 和 writeObject()。
+
+<!-- END DATA -->

@@ -1,0 +1,155 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.TrustAnchor extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个信任定位点或最受信任的证书颁发机构 (CA)。
+ <p>
+此类表示&ldquo;最受信任的 CA&rdquo;，该 CA 用作验证 X.509 证书路径的信任定位点。最受信任的 CA 包括该 CA 的公钥、该 CA 的名称，以及可能使用此密钥所验证的路径集上的所有限制。可以受信任的 <code>X509Certificate</code> 形式或以单个参数的形式来指定这些参数。
+ <p>
+<b>并发访问</b>
+ <p>
+<p>所有 <code>TrustAnchor</code> 对象必须是不可变的和线程安全的。也就是说，多个线程在单个 <code>TrustAnchor</code> 对象（或多个对象）上并发调用此类中所定义的各种方法不会产生什么恶果。要求 <code>TrustAnchor</code> 对象是不可变的并且是线程安全的就允许将其传递到各种代码片断中，而无需担心并列的访问。此规定适用于此类的所有公共字段和方法，以及由子类添加或重写的所有公共字段和方法。 
+
+@see PKIXParameters#PKIXParameters(Set)
+@see PKIXBuilderParameters#PKIXBuilderParameters(Set, CertSelector)
+
+@version     1.10 12/19/03
+@since       1.4
+@author      Sean Mullan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.TrustAnchor(X509Certificate trustedCert, byte[] nameConstraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定 <code>X509Certificate</code> 和可选 nameConstraints 的 <code>TrustAnchor</code> 实例，在验证 X.509 证书路径时，该 nameConstraints 用作额外的限制条件。
+ <p>
+以 byte 数组的形式指定该 nameConstraints。此 byte 数组应该包含 DER 编码形式的 nameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。此结构的 ASN.1 定义如下。
+
+ <pre><code>
+  NameConstraints ::= SEQUENCE {
+       permittedSubtrees       [0]     GeneralSubtrees OPTIONAL,
+       excludedSubtrees        [1]     GeneralSubtrees OPTIONAL }
+
+  GeneralSubtrees ::= SEQUENCE SIZE (1..MAX) OF GeneralSubtree
+
+  GeneralSubtree ::= SEQUENCE {
+       base                    GeneralName,
+       minimum         [0]     BaseDistance DEFAULT 0,
+       maximum         [1]     BaseDistance OPTIONAL }
+
+  BaseDistance ::= INTEGER (0..MAX)
+
+  GeneralName ::= CHOICE {
+       otherName                       [0]     OtherName,
+       rfc822Name                      [1]     IA5String,
+       dNSName                         [2]     IA5String,
+       x400Address                     [3]     ORAddress,
+       directoryName                   [4]     Name,
+       ediPartyName                    [5]     EDIPartyName,
+       uniformResourceIdentifier       [6]     IA5String,
+       iPAddress                       [7]     OCTET STRING,
+       registeredID                    [8]     OBJECT IDENTIFIER}
+ </code></pre>
+ <p>
+注意，为了防止后续修改，将复制所提供的 nameConstraints byte 数组。
+
+@param trustedCert 受信任的 <code>X509Certificate</code>
+@param nameConstraints 一个 byte 数组，包含为检查 nameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码。只包括该扩展的值，不包括 OID 或关键程度标志。指定 <code>null</code> 可省略该参数。
+@throws IllegalArgumentException 如果无法解码该 nameConstraints
+@throws NullPointerException 如果指定的 <code>X509Certificate</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.TrustAnchor(X500Principal caPrincipal, PublicKey pubKey, byte[] nameConstraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>TrustAnchor</code> 实例，其中以 X500Principal 和公钥的形式指定最受信任的 CA。nameConstraints 是可选的参数，在验证 X.509 证书路径时，将其用作额外的限制条件。
+ <p>
+以 byte 数组的形式指定该 nameConstraints。此 byte 数组包含 DER 编码形式的 nameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。{@link #TrustAnchor(X509Certificate, byte[]) TrustAnchor(X509Certificate trustedCert, byte[] nameConstraints) } 的文档中提供了此结构的 ASN.1 符号。
+ <p>
+注意，为了防止后续修改，将复制此处所提供的 nameConstraints byte 数组。
+
+@param caPrincipal 最受信任的 CA 的名称，以 X500Principal 形式提供
+@param pubKey 最受信任的 CA 的公钥
+@param nameConstraints 一个 byte 数组，包含为检查 nameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码。只包括该扩展的值，不包括 OID 或关键程度标志。指定 <code>null</code> 可省略该参数。
+@throws NullPointerException 如果指定的 <code>caPrincipal</code> 或 <code>pubKey</code> 参数为 <code>null</code>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.TrustAnchor(String caName, PublicKey pubKey, byte[] nameConstraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>TrustAnchor</code> 实例，其中以不同的名称和公钥的形式指定最受信任的 CA。nameConstraints 是可选的参数，在验证 X.509 证书路径时，将其用作额外的限制条件。
+ <p>
+以 byte 数组的形式指定该 nameConstraints。此 byte 数组包含 DER 编码形式的 nameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。{@link #TrustAnchor(X509Certificate, byte[]) TrustAnchor(X509Certificate trustedCert, byte[] nameConstraints) } 的文档中提供了此结构的 ASN.1 符号。
+ <p>
+注意，为了防止后续修改，将复制此处所提供的 nameConstraints byte 数组。
+
+@param caName 最受信任的 CA 的 X.500 区分名，以 RFC 2253 <code>String</code> 格式提供
+@param pubKey 最受信任的 CA 的公钥
+@param nameConstraints 一个 byte 数组，包含为检查 nameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码。只包括该扩展的值，不包括 OID 或关键程度标志。指定 <code>null</code> 可省略该参数。
+@throws IllegalArgumentException 如果指定的 <code>caName</code> 参数是空 <code>(caName.length() == 0)</code>，或者格式不正确，或者无法解码该 nameConstraints
+@throws NullPointerException 如果指定的 <code>caName</code> 或 <code>pubKey</code> 参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.X509Certificate java.security.cert.TrustAnchor.getTrustedCert()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最受信任的 CA 证书。
+
+@return 受信任的 <code>X509Certificate</code>，如果信任定位点未被指定为受信任的证书，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.security.auth.x500.X500Principal java.security.cert.TrustAnchor.getCA()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 X500Principal 的形式返回最受信任的 CA 的名称。
+
+@return 最受信任的 CA 的 X.500 区分名，如果信任定位点未被指定为受信任公钥和名称或 X500Principal 对，则返回 <code>null</code>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.cert.TrustAnchor.getCAName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 RFC 2253 <code>String</code> 格式返回最受信任的 CA 的名称。
+
+@return 最受信任的 CA 的 X.500 区分名，如果信任定位点未被指定为受信任公钥和名称或 X500Principal 对，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.PublicKey java.security.cert.TrustAnchor.getCAPublicKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最受信任的 CA 的公钥。
+
+@return 最受信任的 CA 的公钥，如果信任定位点未被指定为受信任公钥和名称或 X500Principal 对，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] java.security.cert.TrustAnchor.getNameConstraints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 nameConstraints 参数。指定的 nameConstraints 是与此信任定位点相关联的，并且在验证 X.509 证书路径时，将其用作额外的限制条件。 
+ <p>
+以 byte 数组的形式返回该 nameConstraints。此 byte 数组包含 DER 编码形式的 nameConstraints，因为它们将出现在 RFC 2459 和 X.509 内所定义的 NameConstraints 结构中。{@link #TrustAnchor(X509Certificate, byte[]) TrustAnchor(X509Certificate trustedCert, byte[] nameConstraints) } 的文档中提供了此结构的 ASN.1 符号。
+ <p>
+注意，为了保护后续的修改，将复制返回的 byte 数组。
+
+@return 一个 byte 数组，包含为检查 nameConstraints 所使用的 NameConstraints 扩展的 ASN.1 DER 编码，如果未设置，则返回 <code>null</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.TrustAnchor.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 <code>TrustAnchor</code> 的格式化字符串。
+
+@return 描述此 <code>TrustAnchor</code> 的格式化字符串
+
+<!-- END DATA -->

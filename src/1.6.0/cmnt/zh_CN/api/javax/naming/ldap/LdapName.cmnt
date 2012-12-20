@@ -1,0 +1,352 @@
+<!-- BEGIN KEY -->
+public class javax.naming.ldap.LdapName extends java.lang.Object implements javax.naming.Name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示 <a href="http://ietf.org//rfc/rfc2253.txt">RFC 2253</a> 指定的标识名。标识名（即 DN）由名为<em>相对标识名</em>（即 RDN）的一列有序组件组成。RFC 2253 中描述了 DN 的语法细节。
+<p>
+此类对 RFC 2253 中存在的一些歧义解释如下：
+ <ul>
+<li> RFC 2253 未定义术语&ldquo;空白&rdquo;。在其位置使用 ASCII 空白字符 0x20 (&quot; &quot;)。
+<li> 空白在 ','、';'、'=' 和 '+' 的两边都允许使用。这种空白可以被此代码接受，但不是此代码生成的，在比较名称时将被忽略。
+<li> 包含 '=' 或非先导 '#' 字符（取消转义）的 AttributeValue 字符串是可以接受的。
+ </ul>
+<p>
+传递给 <code>LdapName</code> 或由它返回的字符串名称使用完整的 Unicode 字符集。它们也可能包含一些编码为 UTF-8 的字符，用三字符的子字符串（如 &quot;\\B4&quot;）表示其中每个八位组。但是，它们不能包含编码为 UTF-8 并使用该字符串中的单个字符表示每个八位组的字符：因为这可能会使含义不明确。
+<p>
+<code>LdapName</code> 将恰当地解析所有有效名称，但是在解析无效名称时不会尝试检测所有可能的错误情况。在接受无效名称时，它显得很&ldquo;大方&rdquo;。名称的&ldquo;有效性&rdquo;在将名称提供给 LDAP 服务器时最终确定，服务器将基于名称的模式信息和互操作性考虑之类的因素来决定接受还是拒绝该名称。
+<p>
+在测试名称的相等性时，属性类型（二进制和字符串值）不区分大小写。值不同但使用等效的引用、转义或 UTF8 十六进制编码的字符串视为相等。多值 RDN 中组件的顺序（如 &quot;ou=Sales+cn=Bob&quot;）无关紧要。
+ <p>
+LDAP 名称的组件（即 RDN）已经编号。带有 n 个 RDN 的 LDAP 名称的索引范围从 0 到 n-1。可将该范围写为 [0,n)。最右边的 RDN 位于索引 0 处，最左边的 RDN 位于索引 n-1 处。例如，标识名：&quot;CN=Steve Kille, O=Isode Limited, C=GB&quot; 按以下顺序进行编号，范围为从 0 到 2：{C=GB, O=Isode Limited, CN=Steve Kille}。空 LDAP 名称由空 RDN 列表表示。
+<p>
+<tt>LdapName</tt> 的实例的并发多线程只读访问不必是同步的。
+<p>
+除非另有说明，否则将 null 参数传递给此类中的构造方法或方法的行为都会导致抛出 NullPointerException。
+
+@author Scott Seligman
+@version 1.8 05/11/17
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.LdapName(String name) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定标识名构造 LDAP 名称。
+
+@param name  此为根据在 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 中定义的规则格式化的非 null 标识名。
+
+@throws InvalidNameException 如果检测到违反语法的情况。
+@see Rdn#escapeValue(Object value)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.LdapName(java.util.List<javax.naming.ldap.Rdn> rdns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定已解析 RDN 组件的情况下构造 LDAP 名称。
+ <p>
+列表中 RDN 的索引遵从类描述中描述的 RDN 编号方式。
+
+@param rdns 形成此 LDAP 名称的非 null <tt>Rdn</tt> 列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.LdapName.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 LDAP 名称中的组件数。
+@return 此 LDAP 名称中的非负组件数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 确定此 LDAP 名称是否为空。空名称是没有任何组件的名称。
+@return 如果此 LDAP 名称为空，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<java.lang.String> javax.naming.ldap.LdapName.getAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以字符串枚举的形式检索此名称的组件。在此枚举上更新此名称的结果是不确定的。如果该名称没有组件，则返回空（非 null）枚举。枚举返回组件的顺序与根据类描述中的描述对组件进行编号的顺序相同。
+
+@return 此 LDAP 名称组件所组成的非 null 枚举。每个枚举元素都属于 String 类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.LdapName.get(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以字符串形式检索此 LDAP 名称的组件。
+@param posn 要检索的从 0 开始的组件索引。该索引必须在范围 [0,size()) 内。
+@return 位于索引 posn 处的非 null 组件。
+@exception IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.Rdn javax.naming.ldap.LdapName.getRdn(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 Rdn 形式检索此 LDAP 名称的 RDN。
+@param	posn 要检索的从 0 开始的 RDN 索引。该索引必须在范围 [0,size()) 内。
+@return 位于索引 posn 处的非 null RDN。
+@exception IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.getPrefix(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个名称，其组件由此 LDAP 名称中组件的前缀组成。对此名称进行的后续更改不会影响返回的名称，反之亦然。
+@param  posn	从 0 开始的组件索引，在该索引处停止。该索引必须在范围 [0,size()] 内。
+@return	由索引范围在 [0,posn) 之间的组件组成的 <tt>LdapName</tt> 实例。如果 posn 为零，则返回空 LDAP 名称。
+@exception IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.getSuffix(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个名称，其组件由此 LDAP 名称中组件的后缀组成。对此名称进行的后续更改不会影响返回的名称，反之亦然。
+
+@param  posn	从 0 开始的组件索引，在该索引处开始。该索引必须在范围 [0,size()] 内。
+@return	由索引范围在 [posn,size()) 之间的组件组成的 <tt>LdapName</tt> 实例。如果 posn 等于 size()，则返回一个空 LDAP 名称。
+@exception IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.startsWith(Name n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此 LDAP 名称是否从某一指定 LDAP 名称前缀开始。如果名称 <tt>n</tt> 等于 <tt>getPrefix(n.size())</tt>，则该名称是前缀，换句话说，此 LDAP 名称从 'n' 开始。如果 n 为 null 或者不是按照类描述中的描述进行格式化的 RFC2253，则返回 false。
+
+@param n 要检查的 LDAP 名称。
+@return 如果 <tt>n</tt> 是此 LDAP 名称的前缀，则返回 true，否则返回 false。
+@see #getPrefix(int posn)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.startsWith(java.util.List<javax.naming.ldap.Rdn> rdns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定的 RDN 序列是否形成此 LDAP 名称的前缀。如果此 LdapName 至少等于 rdns 的长度，则返回 true，对于范围 [0, rdns.size()) 中的每个位置 p，组件 getRdn(p) 都匹配 rdns.get(p)。否则返回 false。如果 rdns 为 null，则返回 false。
+
+@param rdns 要检查的 <tt>Rdn</tt> 的序列。
+@return 如果 <tt>rdns</tt> 形成此 LDAP 名称的前缀，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.endsWith(Name n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此 LDAP 名称是否以某一指定 LDAP 名称后缀结尾。如果名称 <tt>n</tt> 等于 <tt>getSuffix(size()-n.size())</tt>，则该名称是后缀，换句话说，此 LDAP 名称以 'n' 结尾。如果 n 为 null 或者不是按照类描述中的描述进行格式化的 RFC2253，则返回 false。
+
+@param n 要检查的 LDAP 名称。
+@return 如果 <tt>n</tt> 是此名称的后缀，则返回 true，否则返回 false。
+@see #getSuffix(int posn)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.endsWith(java.util.List<javax.naming.ldap.Rdn> rdns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定的 RDN 序列是否形成此 LDAP 名称的后缀。如果此 LdapName 至少等于 rdns 的长度，则返回 true，对于范围 [size() - rdns.size(), size()) 中的每个位置 p，组件 getRdn(p) 都匹配 rdns.get(p)。否则返回 false。如果 rdns 为 null，则返回 false。
+
+@param rdns 要检查的 <tt>Rdn</tt> 的序列。
+@return 如果 <tt>rdns</tt> 形成此 LDAP 名称的后缀，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.addAll(Name suffix) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序将名称的组件添加到此名称的末尾。
+
+@param	suffix 要添加的非 null 组件。
+@return  已更新的名称（而不是新实例）。
+
+@throws	InvalidNameException 如果 <tt>suffix</tt> 不是一个有效的 LDAP 名称，或者添加组件将违反此 LDAP 名称的语法规则。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.addAll(java.util.List<javax.naming.ldap.Rdn> suffixRdns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序将名称的 RDN 添加到此名称的末尾。
+
+@param	suffixRdns 要添加的非 null 后缀 <tt>Rdn</tt>。
+@return  已更新的名称（而不是新实例）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.addAll(int posn, Name suffix) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序将名称的组件添加到此名称中的指定位置。此 LDAP 名称位于第一个新组件的索引（如果有）处或这之后的组件被上移（远离索引 0），以容纳新组件。
+
+
+@param suffix	要添加的非 null 组件。
+@param posn	在其所在位置处添加新组件的索引。该索引必须在范围 [0,size()] 内。
+
+@return  更新的名称（而不是新实例）。
+
+@throws	InvalidNameException 如果 <tt>suffix</tt> 不是一个有效的 LDAP 名称，或者添加组件将违反此 LDAP 名称的语法规则。
+@throws	IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.addAll(int posn, java.util.List<javax.naming.ldap.Rdn> suffixRdns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序将名称的 RDN 添加到此名称中的指定位置。此 LDAP 名称位于第一个新 RDN 的索引（如果有）处或这之后的 RDN 被上移（远离索引 0），以容纳新 RDN。
+
+
+@param suffixRdns	要添加的非 null 后缀 <tt>Rdn</tt>。
+@param posn		在其所在位置处添加后缀 RDN 的索引。该索引必须在范围 [0,size()] 内。
+
+@return  更新的名称（而不是新实例）。
+@throws	IndexOutOfBoundsException.如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.add(String comp) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个组件添加到此 LDAP 名称的末尾。
+
+@param comp	要添加的非 null 组件。
+@return	更新的 LdapName，而不是新实例。不能为 null。
+@exception	InvalidNameException 如果在该名称末尾添加 comp 违反该名称的语法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.add(Rdn comp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个 RDN 添加到此 LDAP 名称的末尾。
+
+
+@param comp	要添加的非 null RDN。
+
+@return	更新的 LdapName，而不是新实例。不能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.add(int posn, String comp) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个组件添加到此 LDAP 名称中的指定位置。此 LDAP 名称位于新组件的索引（如果有）处或这之后的组件被上移（远离索引 0）一位，以容纳新组件。
+
+
+@param  comp	要添加的非 null 组件。
+@param posn	在其所在位置处添加新组件的索引。该索引必须在范围 [0,size()] 内。
+@return	更新的 LdapName，而不是新实例。不能为 null。
+@exception	IndexOutOfBoundsException 如果 posn 超出指定范围。
+@exception	InvalidNameException 如果在指定位置添加 comp 违反该名称的语法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Name javax.naming.ldap.LdapName.add(int posn, Rdn comp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将单个 RDN 添加到此 LDAP 名称中的指定位置。此 LDAP 名称位于新 RDN 的索引（如果有）处或这之后的 RDN 被上移（远离索引 0）一位，以容纳新 RDN。
+
+@param  comp	要添加的非 null RDN。
+@param posn	在其所在位置处添加新 RDN 的索引。该索引必须在范围 [0,size()] 内。
+@return	更新的 LdapName，而不是新实例。不能为 null。
+@exception	IndexOutOfBoundsException 如果 posn 超出指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.ldap.LdapName.remove(int posn) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 LDAP 名称中移除一个组件。移除此名称位于指定位置处的组件。索引大于此位置的组件（如果有）都被下移（朝向索引 0）一位。
+
+@param posn	要移除的组件的索引。该索引必须在范围 [0,size()) 内。
+@return	移除的组件（一个 String）。
+
+@throws	IndexOutOfBoundsException 如果 posn 超出指定范围。
+@throws	InvalidNameException 如果删除组件将违反该名称的语法规则。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<javax.naming.ldap.Rdn> javax.naming.ldap.LdapName.getRdns()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索相对标识名列表。列表的内容不可修改。返回列表中 RDN 的索引遵从类描述中描述的 RDN 编号方式。如果名称没有组件，则返回空列表。
+
+@return	作为 RDN 列表的名称，这些 RDN 是 {@link Rdn Rdn} 类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.ldap.LdapName.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成此名称的新副本。对此名称的组件进行的后续更改不会影响新副本，反之亦然。
+
+@return 此 LDAP 名称的副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.LdapName.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个此 LDAP 名称的字符串表示形式，该表示形式使用 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 定义并在类描述中描述的格式。如果名称没有组件，则返回空字符串。
+
+@return LdapName 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.LdapName.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定两个 LDAP 名称是否相等。如果 obj 为 null 或者不是 LDAP 名称，则返回 false。
+ <p>
+如果一个 LDAP 名称中的每个 RDN 都等于另一个 LDAP 名称中的相应 RDN，则两个 LDAP 名称相等。这意味着两个 LDAP 名称有相同数量的 RDN，并且每个 RDN 与另一个名称中相应 RDN 的 equals() 测试都返回 true。有关 RDN 相等性的定义，请参阅 {@link Rdn#equals(Object obj)}。
+
+
+@param  obj	要与之比较的对象（可能为 null）。
+@return  如果 obj 等于此 LDAP 名称，则返回 true，否则返回 false。
+@see #hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.LdapName.compareTo(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此 LdapName 与指定 Object 的顺序。根据此 Name 小于、等于还是大于指定 Object 分别返回负整数、零或正整数。
+ <p>
+如果 obj 为 null 或者不是一个 LdapName 实例，则抛出 ClassCastException。
+ <p>
+LDAP 名称的排序遵从字符串比较的字典规则，并将此扩展到应用于 LDAP 名称中的所有 RDN。按照 RDN 的指定顺序将它们排列起来，并按字典顺序进行比较。有关 RDN 比较规则，请参见 {@link Rdn#compareTo(Object obj) Rdn.compareTo(Object obj)}。
+ <p>
+如果此 LDAP 名称按字典顺序小于 obj，则返回一个负数。如果此 LDAP 名称按字典顺序大于 obj，则返回一个正数。
+@param obj 要与之比较的非 null LdapName 实例。
+
+@return  根据此 Name 小于、等于还是大于指定 obj 分别返回负整数、零或正整数。
+@exception ClassCastException 如果 obj 为 null 或者不是一个 LdapName。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.LdapName.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算此 LDAP 名称的哈希码。该哈希码是此名称各个 RDN 哈希码的总和。
+
+@return 表示此名称的哈希码的 int。
+@see #equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.ldap.LdapName.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅序列化未解析的 DN，以更紧密并避免任何实现依赖关系。
+
+@serialData	The DN string
+
+<!-- END DATA -->

@@ -1,0 +1,413 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JFormattedTextField extends javax.swing.JTextField
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JFormattedTextField</code> 扩展了 <code>JTextField</code>，添加了对格式化任意值的支持，以及一旦用户编辑了文本就检索特定对象的支持。以下代码说明了如何配置 <code>JFormattedTextField</code> 来编辑日期：
+ <pre>
+   JFormattedTextField ftf = new JFormattedTextField();
+   ftf.setValue(new Date());
+ </pre>
+ <p>
+一旦创建了 <code>JFormattedTextField</code>，就可以通过添加 <code>PropertyChangeListener</code> 的方式来侦听编辑更改，并且使用属性名 <code>value</code> 来侦听 <code>PropertyChangeEvent</code>。
+ <p>
+<code>JFormattedTextField</code> 允许配置在失去焦点时应该采取的措施。可能的值为：
+ <table summary="Possible JFormattedTextField configurations and their descriptions">
+<tr><th><p align="left">值</p></th><th><p align="left">描述</p></th></tr>
+ <tr><td>JFormattedTextField.REVERT
+<td>恢复显示以匹配 <code>getValue</code>，这可能丢失当前的编辑内容。
+        <tr><td>JFormattedTextField.COMMIT
+<td>提交当前值。如果 <code>AbstractFormatter</code> 不认为所编辑的值是合法值，则抛出 <code>ParseException</code>，然后不更改该值并保留已编辑的值。
+        <tr><td>JFormattedTextField.COMMIT_OR_REVERT
+<td>与 <code>COMMIT</code> 类似，但是如果该值不是合法的，则其行为类似于 <code>REVERT</code>。
+        <tr><td>JFormattedTextField.PERSIST
+<td>不执行任何操作，不获取新的 <code>AbstractFormatter</code> 也不更新该值。
+ </table>
+默认值为 <code>JFormattedTextField.COMMIT_OR_REVERT</code>，有关此内容的更多信息，请参阅 {@link #setFocusLostBehavior}。
+ <p>
+<code>JFormattedTextField</code> 允许焦点离开，即使当前编辑的值是无效的也是如此。要在 <code>JFormattedTextField</code> 处于无效编辑状态时锁定焦点，可以附加一个 <code>InputVerifier</code>。以下代码片断显示了这种 <code>InputVerifier</code> 的可能实现：
+ <pre>
+ public class FormattedTextFieldVerifier extends InputVerifier {
+     public boolean verify(JComponent input) {
+         if (input instanceof JFormattedTextField) {
+             JFormattedTextField ftf = (JFormattedTextField)input;
+             AbstractFormatter formatter = ftf.getFormatter();
+             if (formatter != null) {
+                 String text = ftf.getText();
+                 try {
+                      formatter.stringToValue(text);
+return true;
+                  } catch (ParseException pe) {
+                      return false;
+                  }
+              }
+          }
+return true;
+      }
+      public boolean shouldYieldFocus(JComponent input) {
+          return verify(input);
+      }
+  }
+ </pre>
+ <p>
+或者，也可以调用 <code>commitEdit</code>，这也会提交该值。
+ <p>
+<code>JFormattedTextField</code> 本身不执行格式化，而是通过从 <code>JFormattedTextField.AbstractFormatterFactory</code> 实例获得的 <code>JFormattedTextField.AbstractFormatter</code> 实例完成格式化。通过 <code>install</code> 方法的方式使 <code>JFormattedTextField.AbstractFormatter</code> 的实例处于激活状态时会通知它们，此时 <code>JFormattedTextField.AbstractFormatter</code> 可以安装其所需的任何内容，通常是 <code>DocumentFilter</code>。类似地，当 <code>JFormattedTextField</code> 不再需要 <code>AbstractFormatter</code> 时，它会调用 <code>uninstall</code>。
+ <p>
+<code>JFormattedTextField</code> 通常在获得或丢失焦点时查询 <code>AbstractFormatterFactory</code> 以找到 <code>AbstractFormat</code>。但根据焦点丢失策略也可以更改此行为。如果焦点丢失策略是 <code>JFormattedTextField.PERSIST</code> 并且已编辑了 <code>JFormattedTextField</code>，则在值提交之前不会查询 <code>AbstractFormatterFactory</code>。类似地，如果焦点丢失策略是 <code>JFormattedTextField.COMMIT</code> 并且从 <code>stringToValue</code> 中抛出异常，则丢失或获得焦点时不查询 <code>AbstractFormatterFactory</code>。
+ <p>
+<code>JFormattedTextField.AbstractFormatter</code> 还负责确定何时将值提交给 <code>JFormattedTextField</code>。某些 <code>JFormattedTextField.AbstractFormatter</code> 在每次编辑时都提供新值，而其他的则从不提交该值。可以强行从当前的 <code>JFormattedTextField.AbstractFormatter</code> 获得当前值，方法是调用 <code>commitEdit</code>。每当在 <code>JFormattedTextField</code> 中按下了 return 键，就调用 <code>commitEdit</code>。
+ <p>
+如果尚未显式地设置 <code>AbstractFormatterFactory</code>，则在调用 <code>setValue</code> 后（假定 value 是非 null 的），根据 value 类型的 <code>Class</code> 设置该值。例如，在以下代码中将创建一个合适的 <code>AbstractFormatterFactory</code> 和 <code>AbstractFormatter</code>，以处理数字的格式化：
+ <pre>
+   JFormattedTextField tf = new JFormattedTextField();
+   tf.setValue(new Number(100));
+ </pre>
+ <p>
+<strong>警告：</strong>由于 <code>AbstractFormatter</code> 通常在 <code>Document</code> 上安装一个 <code>DocumentFilter</code>，在 <code>JFormattedTextField</code> 上安装一个 <code>NavigationFilter</code>，所以您不应安装自己的过滤器。如果您安装了，则会看到奇怪的行为，因为将无法强制执行 <code>AbstractFormatter</code> 的编辑策略。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.22 12/19/03
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JFormattedTextField.COMMIT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识丢失焦点时，应该调用 <code>commitEdit</code> 的常量。如果在提交新值的过程中抛出 <code>ParseException</code>，则将保留无效值。 
+
+@see #setFocusLostBehavior
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JFormattedTextField.COMMIT_OR_REVERT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识丢失焦点时，应该调用 <code>commitEdit</code> 的常量。如果在提交新值的过程中抛出 <code>ParseException</code>，则将恢复原值。 
+
+@see #setFocusLostBehavior
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JFormattedTextField.REVERT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识丢失焦点时，应该将编辑的值恢复为 <code>JFormattedTextField</code> 上所设当前值的常量。
+
+@see #setFocusLostBehavior
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JFormattedTextField.PERSIST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识丢失焦点时，应该保留编辑值的常量。
+
+@see #setFocusLostBehavior
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.JFormattedTextField.AbstractFormatterFactory javax.swing.JFormattedTextField.factory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于获得 AbstractFormatter 实例的 Factory。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.JFormattedTextField.AbstractFormatter javax.swing.JFormattedTextField.format
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+负责格式化当前值的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object javax.swing.JFormattedTextField.value
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最后的有效值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JFormattedTextField.editValid
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所编辑的值有效时为 True。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.swing.JFormattedTextField.focusLostBehavior
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+丢失焦点时的行为。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JFormattedTextField.edited
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示已编辑当前值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.event.DocumentListener javax.swing.JFormattedTextField.documentListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于设置脏态 (dirty state)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object javax.swing.JFormattedTextField.mask
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+屏蔽它用于设置 AbstractFormatterFactory。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.ActionMap javax.swing.JFormattedTextField.textFormatterActionMap
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 要添加 TextFormatter Action 的 ActionMap。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JFormattedTextField.composedTextExists
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示输入法撰写文本是否在该文档中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.JFormattedTextField.FocusLostHandler javax.swing.JFormattedTextField.focusLostHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+FOCUS_LOST 事件的处理程序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个没有 <code>AbstractFormatterFactory</code> 的 <code>JFormattedTextField</code>。使用 <code>setMask</code> 或 <code>setFormatterFactory</code> 配置 <code>JFormattedTextField</code> 以编辑特定的值类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定值的 JFormattedTextField。这将根据 <code>value</code> 的类型创建一个 <code>AbstractFormatterFactory</code>。
+
+@param value JFormattedTextField 的初始值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField(Format format)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>JFormattedTextField</code>。<code>format</code> 包装在一个适当的 <code>AbstractFormatter</code> 中，然后该 AbstractFormatter 包装在一个 <code>AbstractFormatterFactory</code> 中。
+
+@param format 用于查找 AbstractFormatter 的 Format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField(JFormattedTextField.AbstractFormatter formatter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定 <code>AbstractFormatter</code> 的 <code>JFormattedTextField</code>。该 <code>AbstractFormatter</code> 被放置在 <code>AbstractFormatterFactory</code> 中。
+
+@param formatter 进行格式化所使用的 AbstractFormatter。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField(JFormattedTextField.AbstractFormatterFactory factory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定 <code>AbstractFormatterFactory</code> 的 <code>JFormattedTextField</code>。
+
+@param factory 用于进行格式化的 AbstractFormatterFactory。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField(JFormattedTextField.AbstractFormatterFactory factory, Object currentValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定 <code>AbstractFormatterFactory</code> 和初始值的 <code>JFormattedTextField</code>。
+
+@param factory 用于进行格式化的 <code>AbstractFormatterFactory</code>。
+@param currentValue 要使用的初始值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JFormattedTextField.setFocusLostBehavior(int behavior)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置丢失焦点时的行为。这是 <code>JFormattedTextField.COMMIT_OR_REVERT</code>、<code>JFormattedTextField.REVERT</code>、<code>JFormattedTextField.COMMIT</code> 或 <code>JFormattedTextField.PERSIST</code> 之一。注意，某些 <code>AbstractFormatter</code> 可能在出现更改时即进行下一步操作，所以该值无效。
+ <p>
+如果传入的对象不是上述值之一，则将抛出 <code>IllegalArgumentException</code>。
+ <p>
+此属性的默认值为 <code>JFormattedTextField.COMMIT_OR_REVERT</code>。
+
+@param behavior 标识丢失焦点时的行为
+@throws IllegalArgumentException 如果 behavior 不是某个已知值
+@beaninfo enum: COMMIT         JFormattedTextField.COMMIT COMMIT_OR_REVERT JFormattedTextField.COMMIT_OR_REVERT REVERT         JFormattedTextField.REVERT PERSIST        JFormattedTextField.PERSIST description: Behavior when component loses focus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JFormattedTextField.getFocusLostBehavior()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回丢失焦点时的行为。这是 <code>COMMIT_OR_REVERT</code>、<code>COMMIT</code>、<code>REVERT</code> 或 <code>PERSIST</code> 之一。注意，某些 <code>AbstractFormatter</code> 可能在出现更改时即进行下一步操作，所以该值无效。
+
+@return 返回丢失焦点时的行为
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JFormattedTextField.setFormatterFactory(JFormattedTextField.AbstractFormatterFactory tf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>AbstractFormatterFactory</code>。<code>AbstractFormatterFactory</code> 能够返回 <code>AbstractFormatter</code> 的实例，它可用于格式化要显示的某个值，以及强制执行编辑策略。
+ <p>
+如果尚未通过此方法（或构造方法）显式地设置 <code>AbstractFormatterFactory</code>，则根据该值的 <code>Class</code> 使用 <code>AbstractFormatterFactory</code>，然后使用 <code>AbstractFormatter</code>。<code>NumberFormatter</code> 用于 <code>Number</code>，<code>DateFormatter</code> 用于 <code>Dates</code>，其他值将使用 <code>DefaultFormatter</code>。
+ <p>
+这是一个 JavaBeans 绑定 (bound) 属性。
+
+@param tf 用于查找 <code>AbstractFormatter</code> 实例的 <code>AbstractFormatterFactory</code>
+@beaninfo bound: true attribute: visualUpdate true description: AbstractFormatterFactory, responsible for returning an AbstractFormatter that can format the current value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField.AbstractFormatterFactory javax.swing.JFormattedTextField.getFormatterFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的 <code>AbstractFormatterFactory</code>。
+
+@see #setFormatterFactory
+@return 用于确定 <code>AbstractFormatter</code> 的 <code>AbstractFormatterFactory</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JFormattedTextField.setFormatter(JFormattedTextField.AbstractFormatter format)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前的 <code>AbstractFormatter</code>。
+ <p>
+通常不应调用此方法，而是设置 <code>AbstractFormatterFactory</code> 或设置值。当 <code>JFormattedTextField</code> 的状态更改并且需要重置该值时，<code>JFormattedTextField</code> 将调用此方法。<code>JFormattedTextField</code> 传入从 <code>AbstractFormatterFactory</code> 所获得的 <code>AbstractFormatter</code>。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@see #setFormatterFactory
+@param format 进行格式化所使用的 AbstractFormatter
+@beaninfo bound: true attribute: visualUpdate true description: TextFormatter, responsible for formatting the current value
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField.AbstractFormatter javax.swing.JFormattedTextField.getFormatter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于格式化和分析当前值的 <code>AbstractFormatter</code>。
+
+@return 用于进行格式化的 AbstractFormatter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JFormattedTextField.setValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置值，该值由从当前 <code>AbstractFormatterFactory</code> 获得的 <code>AbstractFormatter</code> 进行格式化。如果尚未指定任何 <code>AbstractFormatterFactory</code>，则此方法会试图根据 <code>value</code> 的类型创建它。
+ <p>
+此属性的默认值为 null。
+ <p>
+这是一个 JavaBeans 绑定属性。
+
+@param value 要显示的当前值
+@beaninfo bound: true attribute: visualUpdate true description: The value to be formatted.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JFormattedTextField.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最后一个有效值。根据 <code>AbstractFormatter</code> 的编辑策略，此方法可能不会返回当前值。可通过调用 <code>commitEdit</code> 后调用 <code>getValue</code> 来获得当前编辑的值。
+
+@return 最后一个有效值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JFormattedTextField.commitEdit() throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制从 <code>AbstractFormatter</code> 获得当前值并将其设置为当前值。 如果当前没有已安装的 <code>AbstractFormatter</code>，则此方法无效。
+
+@throws ParseException 如果 <code>AbstractFormatter</code> 无法格式化当前值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JFormattedTextField.isEditValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果所编辑的当前值有效，则返回 true。此值由当前的 <code>AbstractFormatter</code> 进行管理，并且没有针对它的公共 setter。
+
+@return 如果所编辑的当前值有效，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JFormattedTextField.invalidEdit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户输入无效值时调用。这就使得组件可以提供反馈。默认的实现是发出蜂鸣声。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JFormattedTextField.processInputMethodEvent(InputMethodEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理所有的输入法事件，如 <code>InputMethodEvent.INPUT_METHOD_TEXT_CHANGED</code> 或 <code>InputMethodEvent.CARET_POSITION_CHANGED</code>。
+
+@param e <code>InputMethodEvent</code>
+@see InputMethodEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JFormattedTextField.processFocusEvent(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理所有的焦点事件，如 <code>FocusEvent.FOCUS_GAINED</code> 或 <code>FocusEvent.FOCUS_LOST</code>。
+
+@param e <code>FocusEvent</code>
+@see FocusEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Action[] javax.swing.JFormattedTextField.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器的命令列表。这是嵌入的 UI 所支持的命令列表，该 UI 通过编辑器本身支持的命令集进行扩充。这些命令对于绑定到事件是很有用的，例如在 keymap 中。
+
+@return 命令列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JFormattedTextField.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 UI 的类 ID。
+
+@return 字符串 &quot;FormattedTextFieldUI&quot;
+@see JComponent#getUIClassID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JFormattedTextField.setDocument(Document doc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该编辑器与某个文本文档关联。使用当前已注册的工厂构建一个文档视图，重新确认后由编辑器显示该文档。PropertyChange 事件 (&quot;document&quot;) 被传播到每个侦听器。
+
+@param doc 要显示/编辑的文档
+@see #getDocument
+@beaninfo description: the text document model bound: true expert: true
+
+<!-- END DATA -->

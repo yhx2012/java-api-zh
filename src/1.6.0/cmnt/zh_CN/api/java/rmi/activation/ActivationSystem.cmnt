@@ -1,0 +1,160 @@
+<!-- BEGIN KEY -->
+public interface java.rmi.activation.ActivationSystem extends java.rmi.Remote
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ActivationSystem</code> 为注册组和在那些组中要被激活的&ldquo;可激活&rdquo;对象提供一种方式。<code>ActivationSystem</code> 与 <code>Activator</code> 紧密协作，通过 <code>ActivationSystem</code> 和 <code>ActivationMonitor</code> 来激活注册的对象，<code>ActivationMonitor</code> 获取有关活动的和不活动的对象以及不活动组的信息。
+
+@author 	Ann Wollrath
+@version	1.18, 12/19/03
+@see		Activator
+@see		ActivationMonitor
+@since	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.rmi.activation.ActivationSystem.SYSTEM_PORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找激活系统的端口。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationID java.rmi.activation.ActivationSystem.registerObject(ActivationDesc desc) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>registerObject</code> 方法用于注册一个激活描述符 <code>desc</code>，并且为可激活的远程对象获取一个激活标识符。<code>ActivationSystem</code> 为描述符 <code>desc</code> 指定的对象创建一个 <code>ActivationID</code>（激活标识符），并且在稳定的存储器中记录激活描述符及其关联的标识符，以便将来使用。当 <code>Activator</code> 接收一个针对指定标识符的 <code>activate</code> 请求时，激活器为指定的标识符查找激活描述符（前面已注册），并且使用该信息来激活对象。 <p>
+
+@param desc 对象的激活描述符
+@return 能用于激活对象的激活 id
+@exception ActivationException 如果注册失败（如，数据库更新失败等）。
+@exception UnknownGroupException 如果在 <code>desc</code> 中引用的组未通过此系统注册
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationSystem.unregisterObject(ActivationID id) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除前面通过 <code>ActivationSystem</code> 注册的激活 id 和描述符；该对象无法再通过对象的激活 id 被激活。
+
+@param id 对象的激活 id（来自前面的注册）
+@exception ActivationException 如果取消注册失败（如，数据库更新失败等）。
+@exception UnknownObjectException 如果对象未知（未注册）
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationGroupID java.rmi.activation.ActivationSystem.registerGroup(ActivationGroupDesc desc) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册激活组。一个激活组必须在对象能在该组中注册之前通过 <code>ActivationSystem</code> 来注册。
+
+@param desc 组描述符
+@return 该组的标识符
+@exception ActivationException 如果组注册失败
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationMonitor java.rmi.activation.ActivationSystem.activeGroup(ActivationGroupID id, ActivationInstantiator group, long incarnation) throws java.rmi.activation.UnknownGroupException, java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过回调来通知激活系统该组现在是活动的。此调用由 <code>ActivationGroup.createGroup</code> 方法在内部进行，以通知 <code>ActivationSystem</code> 该组现在是活动的。
+
+@param id 激活组的标识符
+@param group 组的初始化程序
+@param incarnation 组的代号
+@return 激活组的监视器
+@exception UnknownGroupException 如果组未注册
+@exception ActivationException 如果该指定 <code>id</code> 的组已经是活动的，并且该组不等于指定 <code>group</code>，或者该组与指定组 <code>group</code> 具有不同的 <code>incarnation</code>
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationSystem.unregisterGroup(ActivationGroupID id) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除激活组。一个激活组进行此回调，以通知激活器该组应当被移除（销毁）。如果此调用成功完成，则对象无法再在该组中注册或激活。该组及其相关对象的所有信息都将从系统中移除。
+
+@param id 激活组的标识符
+@exception ActivationException 如果取消注册失败（如，数据库更新失败等）。
+@exception UnknownGroupException 如果组未注册
+@exception RemoteException 如果远程过程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationSystem.shutdown() throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此激活系统。销毁由此激活守护程序生成的所有组，并退出激活守护程序。
+@exception RemoteException 如果联络/关闭激活守护程序失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc java.rmi.activation.ActivationSystem.setActivationDesc(ActivationID id, ActivationDesc desc) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为具有激活标识符 <code>id</code> 的对象设置激活描述符 <code>desc</code>。此更改将在该对象的后续激活中生效。
+
+@param id 可激活对象的激活标识符
+@param desc 可激活对象的激活描述符
+@exception UnknownGroupException 与 <code>desc</code> 关联的组不是一个注册组
+@exception UnknownObjectException 激活 <code>id</code> 未被注册
+@exception ActivationException 一般失败（如，不能更新日志）
+@exception RemoteException 如果远程调用失败
+@return 激活描述符的前一个值
+@see #getActivationDesc
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationGroupDesc java.rmi.activation.ActivationSystem.setActivationGroupDesc(ActivationGroupID id, ActivationGroupDesc desc) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为具有激活组标识符 <code>id</code> 的对象设置激活组描述符 <code>desc</code>。此更改将在该组的后续激活中生效。
+ 
+@param id 激活组的激活组标识符
+@param desc 激活组的激活组描述符
+@exception UnknownGroupException 与 <code>id</code> 关联的组不是一个注册组
+@exception ActivationException 一般失败（如，不能更新日志）
+@exception RemoteException 如果远程调用失败
+@return 激活组描述符的前一个值
+@see #getActivationGroupDesc
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationDesc java.rmi.activation.ActivationSystem.getActivationDesc(ActivationID id) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为具有该激活标识符 <code>id</code> 的对象返回激活描述符。
+ 
+@param id 可激活对象的激活标识符
+@exception UnknownObjectException 如果 <code>id</code> 未被注册
+@exception ActivationException 一般失败
+@exception RemoteException 如果远程调用失败
+@return 激活描述符
+@see #setActivationDesc
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationGroupDesc java.rmi.activation.ActivationSystem.getActivationGroupDesc(ActivationGroupID id) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为具有该激活组标识符 <code>id</code> 的组返回激活组描述符。 
+ 
+@param id 该组的激活组标识符
+@exception UnknownGroupException 如果 <code>id</code> 未被注册
+@exception ActivationException 一般失败
+@exception RemoteException 如果远程调用失败
+@return 激活组描述符
+@see #setActivationGroupDesc
+@since 1.2
+
+<!-- END DATA -->

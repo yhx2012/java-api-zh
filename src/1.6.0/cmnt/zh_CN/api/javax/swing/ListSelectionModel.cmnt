@@ -1,0 +1,258 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.ListSelectionModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示任何组件的当前选择状态，该组件显示一个具有稳定索引的值列表。该选择被建模为一组区间，每个区间表示一个选定列表元素的连续范围。修改该组选定区间的方法都采用一对索引：index0 和 index1，这对索引表示一个闭区间，即该区间同时包括 index0 和 index1。
+
+@version 1.21 12/19/03
+@author Hans Muller
+@author Philip Milne
+@see DefaultListSelectionModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.ListSelectionModel.SINGLE_SELECTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+selectionMode 属性的值：一次选择一个列表索引。
+ 
+@see #setSelectionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+selectionMode 属性的值：一次选择一个连续的索引范围。
+ 
+@see #setSelectionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+selectionMode 属性的值：一次选择一个或多个连续的索引范围。
+ 
+@see #setSelectionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.setSelectionInterval(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将选择更改为在 {@code index0} 和 {@code index1} 之间（包括两者）。{@code index0} 不必小于等于 {@code index1}。
+ <p>
+在 {@code SINGLE_SELECTION} 选择模式中，只使用第二个索引。
+ <p>
+如果这表示对当前选择的更改，则通知每个 {@code ListSelectionListener} 该更改。
+ 
+@param index0 区间的一端。
+@param index1 区间的另一端
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.addSelectionInterval(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将选择更改为当前选择与 {@code index0} 和 {@code index1} 之间（包括两者）索引的并集。{@code index0} 不必小于等于 {@code index1}。
+ <p>
+在 {@code SINGLE_SELECTION} 选择模式中，这等效于调用 {@code setSelectionInterval}，并且只使用第二个索引。在 {@code SINGLE_INTERVAL_SELECTION} 选择模式中，此方法行为类似于 {@code setSelectionInterval}，除非给定区间紧接现有选择或与现有选择重叠从而可用于增大该选择。
+ <p>
+如果这表示对当前选择的更改，则通知每个 {@code ListSelectionListener} 该更改。
+ 
+@param index0 区间的一端。
+@param index1 区间的另一端
+@see #addListSelectionListener
+@see #setSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.removeSelectionInterval(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将选择更改为当前选择与 {@code index0} 和 {@code index1} 之间（包括两者）索引的差集。{@code index0} 不必小于等于 {@code index1}。
+ <p>
+在 {@code SINGLE_INTERVAL_SELECTION} 选择模式中，如果移除操作会生成两个不相交的选择，那么移除操作将延伸到选择的较大端。例如，如果选择是 {@code 0-10}，提供的索引是 {@code 5,6}（按任意顺序），则所得选择是 {@code 0-4}。
+ <p>
+如果这表示对当前选择的更改，则通知每个 {@code ListSelectionListener} 该更改。
+ 
+@param index0 区间的一端。
+@param index1 区间的另一端
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.ListSelectionModel.getMinSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第一个选择的索引，如果选择为空，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.ListSelectionModel.getMaxSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最后选择的索引，如果选择为空，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.ListSelectionModel.isSelectedIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果选择了指定的索引，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.ListSelectionModel.getAnchorSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从对 setSelectionInterval()、addSelectionInterval() 或 removeSelectionInterval() 的最近调用中返回第一个索引参数。最近的 index0 被认为是  &quot;anchor&quot;，最近的 index1 被认为是 &quot;lead&quot;。一些界面特别地显示这些索引，例如，Windows95 显示带有黄色点式轮廓的 lead 索引。
+ 
+@see #getLeadSelectionIndex
+@see #setSelectionInterval
+@see #addSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.setAnchorSelectionIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 anchor 选择索引。 
+ 
+@see #getAnchorSelectionIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.ListSelectionModel.getLeadSelectionIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从对 setSelectionInterval()、addSelectionInterval() 或 removeSelectionInterval() 的最近调用中返回第二个索引参数。
+ 
+@see #getAnchorSelectionIndex
+@see #setSelectionInterval
+@see #addSelectionInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.setLeadSelectionIndex(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 lead 选择索引。 
+ 
+@see #getLeadSelectionIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.clearSelection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该选择更改为空集。如果这表示对当前选择的更改，则通知每个 ListSelectionListener。
+ 
+@see #addListSelectionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.ListSelectionModel.isSelectionEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果没有选择索引，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.insertIndexInterval(int index, int length, boolean before)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在 index 之前/之后开始插入 length 个索引。通常调用此方法来同步选择模型与数据模型中的相应更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.removeIndexInterval(int index0, int index1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从选择模型中移除区间 index0、index1（包括）中的索引。通常调用此方法来同步选择模型与数据模型中的相应更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.setValueIsAdjusting(boolean valueIsAdjusting)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@code valueIsAdjusting} 属性，指示即将进行的选择更改是否应该被视为单个更改的一部分。此属性的值用于初始化生成 {@code ListSelectionEvent} 的 {@code valueIsAdjusting} 属性。
+ <p>
+例如，如果选择被更新以响应一个用户的拖动，那么在拖动开始时，此属性被设置为 {@code true}；在拖动结束时被设置为 {@code false}。在拖动期间，侦听器接收 {@code valueIsAdjusting} 属性设置为 {@code true} 的事件。在拖动的最后，当更改终止时，侦听器接收一个值设置为 {@code false} 的事件。如果只在更改已终止时希望更新，则侦听器可以使用此模式。
+ <p>
+将此属性设置为 {@code true} 将开始一系列将被视为单个更改一部分的更改。当该属性更改回 {@code false} 时，发送一个表现整个选择更改特征的事件（如果有），该事件的 {@code valueIsAdjusting} 属性设置为 {@code false}。
+ 
+ @param valueIsAdjusting 属性的新值
+ @see #getValueIsAdjusting
+ @see javax.swing.event.ListSelectionEvent#getValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.ListSelectionModel.getValueIsAdjusting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果选择在进行一系列更改，则返回 {@code true}。
+
+ @return 如果选择在进行一系列更改，则返回 true 
+ @see #setValueIsAdjusting
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.setSelectionMode(int selectionMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置选择模式。以下列表描述了接受的选择模式：
+ <ul>
+ <li>{@code ListSelectionModel.SINGLE_SELECTION} - 一次只能选择一个列表索引。在此模式中，{@code setSelectionInterval} 和 {@code addSelectionInterval} 是等效的，两者都使用第二个参数（“lead”）所表示的索引来替换当前选择。
+ <li>{@code ListSelectionModel.SINGLE_INTERVAL_SELECTION} - 一次只能选择一个连续索引区间。在此模式中，{@code addSelectionInterval} 行为类似于 {@code setSelectionInterval}（替换当前选择），除非给定区间紧接现有选择或与现有选择重叠从而可用于增大该选择。
+ <li>{@code ListSelectionModel.MULTIPLE_INTERVAL_SELECTION} - 在此模式中，对选择内容无任何限制。
+ </ul>
+ 
+ @see #getSelectionMode
+ @throws IllegalArgumentException 如果选择模式不是允许的模式之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.ListSelectionModel.getSelectionMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前选择模式。
+
+@return 当前选择模式
+@see #setSelectionMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.addListSelectionListener(ListSelectionListener x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将侦听器添加到每次在选择发生更改时都得到通知的列表。
+ 
+@param x ListSelectionListener
+@see #removeListSelectionListener
+@see #setSelectionInterval
+@see #addSelectionInterval
+@see #removeSelectionInterval
+@see #clearSelection
+@see #insertIndexInterval
+@see #removeIndexInterval
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.ListSelectionModel.removeListSelectionListener(ListSelectionListener x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将侦听器从每次在选择发生更改时都得到通知的列表中移除。
+ 
+@param x ListSelectionListener
+@see #addListSelectionListener
+
+<!-- END DATA -->

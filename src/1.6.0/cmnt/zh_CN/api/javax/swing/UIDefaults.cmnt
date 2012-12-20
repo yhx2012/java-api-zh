@@ -1,0 +1,437 @@
+<!-- BEGIN KEY -->
+public class javax.swing.UIDefaults extends java.util.Hashtable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Swing 组件的默认值表。应用程序可以通过 <code>UIManager</code> 设置/获取默认值。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。 
+
+@see UIManager
+@version 1.58 05/05/04
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Map javax.swing.UIDefaults.resourceCache
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 ResourceBundle 从 Locale 映射到缓存的 Map。执行此方法以避免在请求某个值时抛出异常。对此方法的访问应该在锁定 UIDefaults（如 synchronized(this)）时完成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.UIDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空默认值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.UIDefaults(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个带有指定初始容量和加载因子的空默认值表。
+
+ @param initialCapacity   默认值表的初始容量
+ @param loadFactor        默认值表的加载因子
+ @see java.util.Hashtable
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.UIDefaults(java.lang.Object[] keyValueList)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个使用指定键/值对初始化的默认值表。例如：
+ <pre>
+        Object[] uiDefaults = {
+             &quot;Font&quot;, new Font(&quot;Dialog&quot;, Font.BOLD, 12),
+            &quot;Color&quot;, Color.red,
+&quot;five&quot;, new Integer(5)
+        }
+        UIDefaults myDefaults = new UIDefaults(uiDefaults);
+ </pre>
+@param keyValueList  包含键/值对的对象数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.UIDefaults.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回键的值。如果该值为 <code>UIDefaults.LazyValue</code>，则使用 <code>LazyValue.createValue()</code> 计算其实际值，替换表项并返回实际值。如果该值为 <code>UIDefaults.ActiveValue</code>，则不替换表项，而是使用每个 <code>get()</code> 调用的 <code>ActiveValue.createValue()</code> 来计算该值。如果未在表中找到该键，则在此对象维护的资源包中搜索它。使用由 <code>getDefaultLocale</code> 返回的语言环境首先搜索最近添加的资源包。<code>LazyValues</code> 和 <code>ActiveValues</code> 在资源包中不受支持。
+
+@param key 所需的键
+@return <code>key</code> 的值
+@see LazyValue
+@see ActiveValue
+@see java.util.Hashtable#get
+@see #getDefaultLocale
+@see #addResourceBundle
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.UIDefaults.get(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与给定语言环境相关的那些键的值。如果该值为 <code>UIDefaults.LazyValue</code>，则使用 <code>LazyValue.createValue()</code> 计算其实际值、替换表项并返回实际值。如果该值为 <code>UIDefaults.ActiveValue</code>，则不替换表项，而是使用每个 <code>get()</code> 调用的 <code>ActiveValue.createValue()</code> 来计算该值。如果未在表中找到该键，则在由此对象维护的资源包中搜索它。使用给定的语言环境首先搜索最近添加的资源包。<code>LazyValues</code> 和 <code>ActiveValues</code> 在资源包中不受支持。
+
+@param key 所需的键
+@param l 所需的 <code>locale</code>
+@return <code>key</code> 的值
+@see LazyValue
+@see ActiveValue
+@see java.util.Hashtable#get
+@see #addResourceBundle
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.UIDefaults.put(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>key</code> 值设置为所有语言环境的 <code>value</code>。如果 <code>key</code> 为一个字符串且新值不等于旧值，则触发一个 <code>PropertyChangeEvent</code>。如果值为 <code>null</code>，则从表中移除该键。
+
+@param key    使用其值检索与之相关的数据值的惟一 <code>Object</code>
+@param value  要以数据形式在该键下存储的新 <code>Object</code>
+@return 以前的 <code>Object</code> 值，或 <code>null</code>
+@see #putDefaults
+@see java.util.Hashtable#put
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.UIDefaults.putDefaults(java.lang.Object[] keyValueList)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有键/值对放入数据库中，并无条件地生成一个 <code>PropertyChangeEvent</code>。事件 oldValue 和 newValue 将为 <code>null</code>，而其 <code>propertyName</code> 将为&ldquo;UIDefaults&rdquo;。为所有语言环境添加键/值对。
+
+@param keyValueList  键/值对数组
+@see #put
+@see java.util.Hashtable#put
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.UIDefaults.getFont(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Font</code>，则返回该 Font，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Font</code>，则返回该 <code>Font</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.UIDefaults.getFont(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Font</code>，则返回它，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Font</code>，则返回该 <code>Font</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.UIDefaults.getColor(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Color</code>，则返回它，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Color</code>，则返回该 <code>Color</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.UIDefaults.getColor(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Color</code>，则返回它，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Color</code>，则返回该 <code>Color</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.UIDefaults.getIcon(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Icon</code>，则返回该 Icon，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Icon</code>，则返回该 <code>Icon</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.UIDefaults.getIcon(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Icon</code>，则返回该 Icon，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Icon</code>，则返回该 <code>Icon</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.border.Border javax.swing.UIDefaults.getBorder(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Border</code>，则返回该 Border，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Border</code>，则返回该 <code>Border</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.border.Border javax.swing.UIDefaults.getBorder(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Border</code>，则返回该 Border，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Border</code>，则返回该 <code>Border</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.UIDefaults.getString(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>String</code>，则返回该 String，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>String</code>，则返回该 <code>String</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.UIDefaults.getString(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>String</code>，则返回该 String，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的 <code>Locale</code>
+@return 如果给定 <code>Locale</code> 的 <code>key</code> 的值为一个 <code>String</code>，则返回该 <code>String</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.UIDefaults.getInt(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Integer</code>，则返回该整数值，否则返回 0。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Integer</code>，则返回其值，否则返回 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.UIDefaults.getInt(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Integer</code>，则返回其整数值，否则返回 0。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Integer</code>，则返回其值，否则返回 0
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.UIDefaults.getBoolean(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 是 boolean 值，则返回该 boolean 值，否则返回 false。
+
+@param key 指定所需 boolean 值的键的 <code>Object</code>
+@return 如果 <code>key</code> 值是 boolean 值，则返回该 boolean 值，否则返回 false。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.UIDefaults.getBoolean(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值是 boolean 值，则返回该 boolean 值，否则返回 false。
+
+@param key 一个指定所需 boolean 值的键的 <code>Object</code>
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值是 boolean 值，则返回该 boolean 值，否则返回 false。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Insets javax.swing.UIDefaults.getInsets(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Insets</code>，则返回它，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Insets</code>，则返回该 <code>Insets</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Insets javax.swing.UIDefaults.getInsets(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Insets</code>，则返回该 Insets，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Insets</code>，则返回该 <code>Insets</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.UIDefaults.getDimension(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>key</code> 值为一个 <code>Dimension</code>，则返回该 Dimension，否则返回 <code>null</code>。
+@param key 所需的键
+@return 如果 <code>key</code> 的值为一个 <code>Dimension</code>，则返回该 <code>Dimension</code> 对象；否则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.UIDefaults.getDimension(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Locale</code> 的 <code>key</code> 值为一个 <code>Dimension</code>，则返回该 Dimension，否则返回 <code>null</code>。
+@param key 所需的键
+@param l 所需的语言环境
+@return 如果 <code>key</code> 和 <code>Locale</code> 的值为一个 <code>Dimension</code>，则返回该 <code>Dimension</code> 对象；否则返回 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<? extends javax.swing.plaf.ComponentUI> javax.swing.UIDefaults.getUIClass(String uiClassID, ClassLoader uiClassLoader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>get(uidClassID)</code> 的值必须为一个类的 <code>String</code> 名称，该类实现相应的 <code>ComponentUI</code> 类。如果以前未加载该类，若提供非 <code>null</code> 类加载器，则此方法会使用 <code>uiClassLoader.loadClass()</code> 查找该类，否则使用 <code>classForName()</code> 查找。
+ <p>
+如果 <code>uiClassID</code> 的映射关系存在，或者无法找到指定类，则返回 <code>null</code>。
+ <p>
+此方法由 <code>getUI</code> 使用，通常不必直接调用该方法。
+
+@param uiClassID  一个包含类 ID 的字符串
+@param uiClassLoader 将加载该类的对象
+@return <code>Class.forName(get(uidClassID))</code> 的值
+@see #getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<? extends javax.swing.plaf.ComponentUI> javax.swing.UIDefaults.getUIClass(String uiClassID)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的 L&F 类。
+
+@param uiClassID 一个包含类 ID 的字符串
+@return 由 <code>getUIClass(uiClassID, null)</code> 返回的类对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.UIDefaults.getUIError(String msg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果由于某种原因导致 <code>getUI()</code> 失败，则它会在返回 <code>null</code> 之前调用此方法。子类在这里也可以选择执行差不多的操作。
+
+@param msg 要打印的消息字符串
+@see #getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ComponentUI javax.swing.UIDefaults.getUI(JComponent target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个指定组件的 <code>ComponentUI</code> 实现。换句话说，创建 <code>target</code> 的特定于外观的委托对象。此操作分以下两步进行：
+ <ul>
+<li> 查找由 <code>target.getUIClassID()</code> 返回的值下的 <code>ComponentUI</code> 实现类的名称。
+<li> 使用该实现类的静态 <code>createUI()</code> 方法构造一个外观代理。
+ </ul>
+@param target  需要 UI 的 <code>JComponent</code>
+@return 该 <code>ComponentUI</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.UIDefaults.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向侦听器列表添加一个 <code>PropertyChangeListener</code>。该侦听器是为所有属性注册的。
+ <p>
+每更改一个默认值时，都将触发一个 <code>PropertyChangeEvent</code>。
+
+@param listener  要添加的 <code>PropertyChangeListener</code>
+@see java.beans.PropertyChangeSupport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.UIDefaults.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除一个 <code>PropertyChangeListener</code>。此方法移除了一个为所有属性注册的 <code>PropertyChangeListener</code>。
+
+@param listener  要移除的 <code>PropertyChangeListener</code>
+@see java.beans.PropertyChangeSupport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] javax.swing.UIDefaults.getPropertyChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 addPropertyChangeListener() 添加到此 UIDefaults 的所有 <code>PropertyChangeListener</code> 组成的数组。
+
+@return 添加的所有 <code>PropertyChangeListener</code>，如果没有添加侦听器，则返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.UIDefaults.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告绑定属性更改。如果 oldValue 和 newValue 不相等，且 <code>PropertyChangeEvent</code>x 侦听器列表不为空，则对每个侦听器触发一个 <code>PropertyChange</code>。
+
+@param propertyName 已更改的属性的编程名称
+@param oldValue  属性的旧值
+@param newValue  属性的新值
+@see java.beans.PropertyChangeSupport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.UIDefaults.addResourceBundle(String bundleName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个资源包添加到从中搜索本地化值的资源包的列表中。按添加时的反向顺序搜索资源包。换句话说，就是搜索最近刚添加的包。
+
+@param bundleName  要添加的资源包的基本名称
+@see java.util.ResourceBundle
+@see #removeResourceBundle
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.UIDefaults.removeResourceBundle(String bundleName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从在其中搜索本地化默认的资源包列表中移除一个资源包。
+
+@param bundleName  要移除的资源包的基本名称
+@see java.util.ResourceBundle
+@see #addResourceBundle
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.UIDefaults.setDefaultLocale(Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置默认语言环境。通过不带 locale 参数的 <code>get</code> 方法，使用默认语言环境检索本地化值。从版本 1.4 开始，Swing UI 对象应该使用其组件的语言环境而不是使用默认语言环境检索本地化值。默认的语言环境可以与 1.4 以前的行为兼容。
+
+@param l 新的默认语言环境
+@see #getDefaultLocale
+@see #get(Object)
+@see #get(Object,Locale)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale javax.swing.UIDefaults.getDefaultLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该默认语言环境。通过不带 locale 参数的 <code>get</code> 方法，使用默认语言环境检索本地化值。从版本 1.4 开始，Swing UI 对象应该使用其组件的语言环境而不是使用默认语言环境检索本地化值。默认的语言环境可以与 1.4 以前的行为兼容。
+
+@return 该默认语言环境
+@see #setDefaultLocale
+@see #get(Object)
+@see #get(Object,Locale)
+@since 1.4
+
+<!-- END DATA -->

@@ -1,0 +1,796 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.datatype.XMLGregorianCalendar extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>W3C XML 模式 1.0 日期/时间数据类型的表示形式。明确地说，这些日期/时间数据类型是 XML 名称空间 <code>&quot;http://www.w3.org/2001/XMLSchema&quot;</code> 中定义的 <a href="#DATETIME"><code>dateTime</code></a>、<a href="#TIME"><code>time</code></a>、<a href="#DATE"><code>date</code></a>、<a href="#GYEARMONTH"><code>gYearMonth</code></a>、<a href="#GMONTHDAY"><code>gMonthDay</code></a>、<a href="#GYEAR"><code>gYear</code></a> <a href="#GMONTH"><code>gMonth</code></a> 和 <a href="#GDAY"><code>gDay</code></a>。在 <a href="http://www.w3.org/TR/xmlschema-2/#dateTime">W3C XML 模式 1.0 第二部分 3.2.7-14 节</a>中以标准形式定义了这些数据类型。</p>
+
+<p>下表定义了 XML 模式 1.0 日期/时间数据类型字段和此类的字段之间的映射关系。还总结了 <a href="http://www.w3.org/TR/xmlschema-2/#isoformats">W3C XML 模式 1.0 第二部分的附录 D <i>ISO 8601 Date and Time Formats</i></a> 中定义的日期和时间字段的值约束。</p>
+ 
+ <a name="datetimefieldmapping"/>
+ <table border="2" rules="all" cellpadding="2">
+   <thead>
+     <tr>
+       <th align="center" colspan="3">
+XML 模式 1.0 和 Java 表示形式之间的日期/时间数据类型字段映射关系
+       </th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<th>XML 模式 1.0<br/> 数据类型<br/>字段</th>
+<th>相关的 <br/>XMLGregorianCalendar<br/>Accessor(s)</th>
+<th>值范围</th>
+     </tr>
+
+     <tr>
+       <td><a name="datetimefield-year"/>year</td>
+<td> {@link #getYear()} + {@link #getEon()} 或 <br/> {@link #getEonAndYear}
+       </td>
+<td> <code>getYear()</code> 是 -(10^9-1) 到 (10^9)-1 或 {@link DatatypeConstants#FIELD_UNDEFINED} 之间的值。<br/>{@link #getEon()} 是以十亿年为单位的高顺序年值。<br/> <code>getEon()</code> 是大于或等于 (10^9) 或者小于或等于 -(10^9) 的值。null 值指示字段未定义。</br>若 <a href="http://www.w3.org/2001/05/xmlschema-errata#e2-63">XML 模式 1.0 勘误表</a>说明 year 0 是 XML 模式以后版本中的一个有效词汇值，那么此类允许将 year 字段设置为0。否则，完全按照勘误表和 [ISO-8601-1988] 中的描述处理 year 字段值。注意，W3C XML 模式 1.0 验证不允许 year 字段具有 0 值。
+            </td>
+     </tr>
+     
+     <tr>
+       <td><a name="datetimefield-month"/>month</td>
+       <td> {@link #getMonth()} </td>
+<td> 1 到 12 或 {@link DatatypeConstants#FIELD_UNDEFINED} </td>
+     </tr>
+    
+     <tr>
+       <td><a name="datetimefield-day"/>day</td>
+       <td> {@link #getDay()} </td>
+<td> 与 month 无关，最大范围是 1 到 31 或 {@link DatatypeConstants#FIELD_UNDEFINED}。<br/>相对于 month 字段的值说明的标准化值约束位于 <a href="http://www.w3.org/TR/xmlschema-2/#isoformats">W3C XML 模式 1.0 第二部分附录 D</a> 中。
+       </td> 
+     </tr>
+     <tr>
+     <td><a name="datetimefield-hour"/>hour</td>
+     <td>{@link #getHour()}</td>
+       <td>
+0 到 24 或 {@link DatatypeConstants#FIELD_UNDEFINED}。对于值 24，根据 <a href="http://www.w3.org/2001/05/xmlschema-errata#e2-45">XML 模式勘误表</a>，minute 和 second 字段必须为 0。
+       </td>
+     </tr>
+     
+     <tr>
+       <td><a name="datetimefield-minute"/>minute</td>
+       <td> {@link #getMinute()} </td>
+<td> 0 到 59 或 {@link DatatypeConstants#FIELD_UNDEFINED} </td>
+     </tr>
+     
+     <tr>
+       <td><a name="datetimefield-second"/>second</td>
+       <td>
+{@link #getSecond()} + {@link #getMillisecond()}/1000 或<br/> {@link #getSecond()} + {@link #getFractionalSecond()}
+       </td>
+       <td>
+{@link #getSecond()} 范围是 0 到 60 或 {@link DatatypeConstants#FIELD_UNDEFINED}。<br/><i>（注：60 仅允许闰秒。）</i><br/>在定义 {@link #getSecond()} 时，{@link #getFractionalSecond()} 在范围 0.0 到 1.0 上允许无限精度。<br/><code>FractionalSecond</code> 是可选的，并且当它未定义时，值为 <code>null</code>。<br />{@link #getMillisecond()} 是值 {@link #getFractionalSecond()} 的有用毫秒精度。
+       </td>
+     </tr>
+     <tr>
+       <td><a name="datetimefield-timezone"/>timezone</td>
+       <td> {@link #getTimezone()} </td>
+<td> 分钟数或 {@link DatatypeConstants#FIELD_UNDEFINED}。从 -14 小时（-14 * 60 分钟）到 14 小时（14 * 60 分钟）的值范围。
+       </td>
+     </tr>
+   </tbody>
+  </table>
+
+<p>通过此类的工厂方法、{@link DatatypeFactory}、设置方法和解析方法检查上面表中为字段列出的所有最大值空间约束。若参数的值超出字段的值约束，或者复合值组成一个无效 XMLGregorianCalendar 实例（例如，如果指定六月的第 31 日），则抛出 <code>IllegalArgumentException</code>。
+ </p>
+ 
+<p>为此类定义以下操作：
+ <ul>
+<li>用于独立日期/时间字段的 accessors/mutators</li>
+<li>此类与 W3C XML 模式 1.0 词汇表示形式、{@link #toString()}、{@link DatatypeFactory#newXMLGregorianCalendar(String lexicalRepresentation)} 之间的转换</li>
+<li>此类与 {@link GregorianCalendar}、{@link #toGregorianCalendar(java.util.TimeZone timezone, java.util.Locale aLocale, XMLGregorianCalendar defaults)}、{@link DatatypeFactory} 之间的转换</li>
+<li>部分顺序关系比较器方法 {@link #compare(XMLGregorianCalendar xmlGregorianCalendar)}</li>
+<li>相对于 {@link #compare(XMLGregorianCalendar xmlGregorianCalendar)} 定义的 {@link #equals(Object)}。</li>
+<li><a href="http://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes">W3C XML 模式 1.0 第二部分的附录 E  <i>Adding durations to dateTimes</i></a> 中定义的 {@link Duration} 实例的其他操作。
+   </li>
+ </ul>
+ </p>
+ 
+@author <a href="mailto:Joseph.Fialli@Sun.com">Joseph Fialli</a>
+@author <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
+@author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a>
+@author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
+@version $Revision: 1.4 $, $Date: 2006-09-18 09:03:05 $
+@see Duration
+@see DatatypeFactory
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.datatype.XMLGregorianCalendar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 默认的无参数构造方法。
+
+ <p>注：总是使用 {@link DatatypeFactory} 来构造 <code>XMLGregorianCalendar</code> 实例。无法保证该类上的构造方法生成具有一致状态且可在以后移除的对象。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>取消设置所有未定义的字段。</p>
+
+<p>将所有 int 字段设置为 {@link DatatypeConstants#FIELD_UNDEFINED}，并将引用字段设置为 null。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此 <code>XMLGregorianCalendar</code> 重设为其原始值。</p>
+ 
+<p>将 <code>XMLGregorianCalendar</code> 重置为与使用 {@link DatatypeFactory#newXMLGregorianCalendar()}、{@link DatatypeFactory#newXMLGregorianCalendar(String lexicalRepresentation)}、{@link DatatypeFactory#newXMLGregorianCalendar( BigInteger year, int month, int day, int hour, int minute, int second, BigDecimal fractionalSecond, int timezone)}、{@link DatatypeFactory#newXMLGregorianCalendar( int year, int month, int day, int hour, int minute, int second, int millisecond, int timezone)}、{@link DatatypeFactory#newXMLGregorianCalendar(GregorianCalendar cal)}、{@link DatatypeFactory#newXMLGregorianCalendarDate( int year, int month, int day, int timezone)}、{@link DatatypeFactory#newXMLGregorianCalendarTime( int hours, int minutes, int seconds, int timezone)}、{@link DatatypeFactory#newXMLGregorianCalendarTime( int hours, int minutes, int seconds, BigDecimal fractionalSecond, int timezone)} 或 {@link DatatypeFactory#newXMLGregorianCalendarTime( int hours, int minutes, int seconds, int milliseconds, int timezone)} 创建时相同的值。
+ </p>
+ 
+<p><code>reset()</code> 的设计目的是允许重用现有的 <code>XMLGregorianCalendar</code>，从而节省与创建新 <code>XMLGregorianCalendar</code> 相关的资源。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setYear(BigInteger year)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置 XSD <code>dateTime</code> year 字段的低和高顺序组件。</p>
+ 
+<p>通过使用参数值 <code>null</code> 调用设置方法取消设置此字段。</p>
+
+@param year <a href="#datetimefield-year">日期/时间字段映射表中 year 字段</a>中总结的值约束。     
+
+@throws IllegalArgumentException 如果 <code>year</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setYear(int year)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置 XSD <code>dateTime</code> year 字段的年。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+<p>注：如果 <code>year</code> 参数的绝对值小于 10^9，则通过此方法将 XSD year 字段的 eon 组件设置为 <code>null</code>。</p>
+
+@param year <a href="#datetimefield-year">日期/时间字段映射表中 year 字段</a>中总结的值约束。如果 year 是 {@link DatatypeConstants#FIELD_UNDEFINED}，那么将 eon 设置为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setMonth(int month)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置月。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param month <a href="#datetimefield-month">日期/时间映射表的 month 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>month</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setDay(int day)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置月中的日。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param day <a href="#datetimefield-day">日期/时间字段映射表的 day 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>day</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setTimezone(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置时区偏移量中的分钟数。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param offset <a href="#datetimefield-timezone">日期/时间字段映射表的 timezone 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>offset</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.datatype.XMLGregorianCalendar.setTime(int hour, int minute, int second)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将时间设置为一个单元。</p>
+
+@param hour <a href="#datetimefield-hour">日期/时间字段映射表的 hour 字段</a>中总结的值约束。
+@param minute <a href="#datetimefield-minute">日期/时间字段映射表的 minute 字段</a>中总结的值约束。
+@param second <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+
+
+@see #setTime(int, int, int, BigDecimal)
+
+@throws IllegalArgumentException 如果任何参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setHour(int hour)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置小时。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param hour <a href="#datetimefield-hour">日期/时间字段映射表的 hour 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>hour</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setMinute(int minute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置分。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param minute <a href="#datetimefield-minute">日期/时间字段映射表的 minute 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>minute</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setSecond(int second)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置秒。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param second <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>second</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setMillisecond(int millisecond)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置毫秒。</p>
+
+<p>通过使用 {@link DatatypeConstants#FIELD_UNDEFINED} 的参数值调用设置方法取消设置此字段。</p>
+
+@param millisecond <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>millisecond</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.setFractionalSecond(BigDecimal fractional)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置小数秒。</p>
+
+<p>通过使用参数值 <code>null</code> 调用设置方法取消设置此字段。</p>
+
+@param fractional <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+
+@throws IllegalArgumentException 如果 <code>fractional</code> 参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.datatype.XMLGregorianCalendar.setTime(int hour, int minute, int second, BigDecimal fractional)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将时间设置为一个单元，包括可选无限精度小数秒。</p>
+
+@param hour <a href="#datetimefield-hour">日期/时间字段映射表的 hour 字段</a>中总结的值约束。
+@param minute <a href="#datetimefield-minute">日期/时间字段映射表的 minute 字段</a>中总结的值约束。
+@param second <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+@param fractional 值 <code>null</code> 指示不设置此可选字段。
+
+@throws IllegalArgumentException 如果任何参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.datatype.XMLGregorianCalendar.setTime(int hour, int minute, int second, int millisecond)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将时间设置为一个单元，包括可选的毫秒。</p>
+
+@param hour <a href="#datetimefield-hour">日期/时间字段映射表的 hour 字段</a>中总结的值约束。
+@param minute <a href="#datetimefield-minute">日期/时间字段映射表的 minute 字段</a>中总结的值约束。
+@param second <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结的值约束。
+@param millisecond {@link DatatypeConstants#FIELD_UNDEFINED} 的值指示未设置此可选字段。 
+
+@throws IllegalArgumentException 如果任何参数超出<a href="#datetimefieldmapping">日期/时间映射表</a>中指定字段的值约束。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.math.BigInteger javax.xml.datatype.XMLGregorianCalendar.getEon()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回 <code>year</code> XML 模式 1.0 日期时间数据类型字段的高顺序组件。如果未定义 year 字段的此可选部分，则返回 <code>null</code>。</p>
+ 
+<p><a href="#datetimefield-year">日期/时间字段映射表中 year 字段</a>中总结了此值的值约束。</p>
+@return 此 <code>XMLGregorianCalendar</code> 的 eon。返回的值是 10^9 的整数倍数。
+ 
+@see #getYear()
+@see #getEonAndYear()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getYear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回 <code>year</code> 或 {@link DatatypeConstants#FIELD_UNDEFINED} XML 模式 1.0 日期时间数据类型字段的低顺序组件。</p>
+ 
+<p><a href="#datetimefield-year">日期/时间字段映射表中 year 字段</a>中总结了此值的值约束。</p>
+ 
+@return 此 <code>XMLGregorianCalendar</code> 的年。
+ 
+@see #getEon()
+@see #getEonAndYear()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.math.BigInteger javax.xml.datatype.XMLGregorianCalendar.getEonAndYear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回 <code>year</code> XML 模式 1.0 的日期时间数据类型字段。</p>
+ 
+<p><a href="#datetimefield-year">日期/时间字段映射表中 year 字段</a>中总结了此值的值约束。</p>
+ 
+@return 当同时定义了 <code>eon</code> 和 <code>BigInteger.valueOf(year)</code> 两个字段时，返回它们的总和。只定义了 <code>year</code> 时，返回 <code>year</code>。当 <code>eon</code> 和 <code>year</code> 都未定义时，返回 <code>null</code>。
+ 
+@see #getEon()
+@see #getYear()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getMonth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回月数或 {@link DatatypeConstants#FIELD_UNDEFINED}。</p>
+ 
+<p><a href="#datetimefield-month">日期/时间映射表的 month 字段</a>中总结了此值的值约束。</p>
+ 
+@return 此 <code>XMLGregorianCalendar</code> 的年。
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getDay()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回月中的日或 {@link DatatypeConstants#FIELD_UNDEFINED}。</p>
+
+<p><a href="#datetimefield-day">日期/时间字段映射表的 day 字段</a>中总结了此值的值约束。</p>
+ 
+@see #setDay(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getTimezone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回以分为单位的时区偏移量，如果未定义此可选字段，则返回 {@link DatatypeConstants#FIELD_UNDEFINED}。
+
+<p><a href="#datetimefield-timezone">日期/时间字段映射表的 timezone 字段</a>中总结了此值的值约束。</p>
+ 
+
+@see #setTimezone(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getHour()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回时或 {@link DatatypeConstants#FIELD_UNDEFINED}。如果未定义此字段，则返回 {@link DatatypeConstants#FIELD_UNDEFINED}。
+
+<p><a href="#datetimefield-hour">日期/时间字段映射表的 hour 字段</a>中总结了此值的值约束。</p>
+
+@see #setTime(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getMinute()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回分或 {@link DatatypeConstants#FIELD_UNDEFINED}。</p>
+如果未定义此字段，则返回 {@link DatatypeConstants#FIELD_UNDEFINED}。
+
+<p><a href="#datetimefield-minute">日期/时间字段映射表的 minute 字段</a>中总结了此值的值约束。</p>
+
+@see #setTime(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.getSecond()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回秒或 {@link DatatypeConstants#FIELD_UNDEFINED}。</p>
+ 
+<p>如果未定义此字段，则返回 {@link DatatypeConstants#FIELD_UNDEFINED}。当未定义此字段时，不得定义由 {@link #getFractionalSecond()} 和 {@link #getMillisecond()} 表示的可选 xs:dateTime 小数 seconds 字段。</p>
+ 
+<p><a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结此值的值约束。</p>
+ 
+@return 此 <code>XMLGregorianCalendar</code> 的秒。
+ 
+
+@see #getFractionalSecond()
+@see #getMillisecond()
+@see #setTime(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.XMLGregorianCalendar.getMillisecond()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回 {@link #getFractionalSecond()} 的毫秒精度。</p>
+ 
+<p>此方法表示由 {@link #getFractionalSecond()} 返回的无限精度小数秒值的有用存取程序。返回的值是 {@link #getFractionalSecond()} 的毫秒值的下舍入值。当 {@link #getFractionalSecond()} 返回 <code>null</code> 时，此方法必须返回 {@link DatatypeConstants#FIELD_UNDEFINED}。</p>
+
+<p><a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中总结此值的值约束。</p>
+ 
+@return 此 <code>XMLGregorianCalendar</code> 的毫秒。
+ 
+
+@see #getFractionalSecond()
+@see #setTime(int, int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.math.BigDecimal javax.xml.datatype.XMLGregorianCalendar.getFractionalSecond()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>返回小数秒。</p>
+ 
+<p>当未定义此可选字段时，返回 <code>null</code>。</p>
+ 
+<p>在 <a href="#datetimefield-second">日期/时间字段映射表的 second 字段</a>中详细描述了值约束。</p>
+ 
+<p>当 {@link #getSecond()} 表示的 xs:dateTime 秒字段未返回 {@link DatatypeConstants#FIELD_UNDEFINED} 时，此可选字段只能有一个已定义的值。</p>
+
+@return 此 <code>XMLGregorianCalendar</code> 的小数秒。
+ 
+
+@see #getSecond()
+@see #setTime(int, int, int, BigDecimal)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.XMLGregorianCalendar.compare(XMLGregorianCalendar xmlGregorianCalendar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>根据 <a href="http://www.w3.org/TR/xmlschema-2/#dateTime-order">W3C XML 模式 1.0 第二部分 3.2.7.3 小节 <i>Order relation on dateTime</i></a> 中定义的部分顺序关系，比较 W3C XML 模式 1.0 日期/时间数据类型的两个实例。</p>
+
+<p>在<a href="#datetimefieldmapping">日期/时间映射表</a>中定义了到此类的存取程序的 <code>xsd:dateTime</code> 数据类型字段映射。</p>
+ 
+@param xmlGregorianCalendar 要比较的 <code>XMLGregorianCalendar</code> 实例
+ 
+@return <code>此</code> <code>XMLGregorianCalendar</code> 与 <code>xmlGregorianCalendar</code> 之间的关系：{@link DatatypeConstants#LESSER}、{@link DatatypeConstants#EQUAL}、{@link DatatypeConstants#GREATER} 或 {@link DatatypeConstants#INDETERMINATE}。
+
+@throws NullPointerException 如果 <code>xmlGregorianCalendar</code> 为 null。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.datatype.XMLGregorianCalendar javax.xml.datatype.XMLGregorianCalendar.normalize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此实例标准化为 UTC。</p>
+
+<p>2000-03-04T23:00:00+03:00 标准化为 2000-03-04T20:00:00Z</p>
+<p>实现 W3C XML 模式 第二部分 3.2.7.3 (A) 节。</p>
+ 
+@return 标准化为 UTC 的<code>此</code> <code>XMLGregorianCalendar</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.datatype.XMLGregorianCalendar.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此日历与指定的对象进行比较。当且仅当该参数不为 null，并且是表示与该对象相同时点的 <code>XMLGregorianCalendar</code> 对象时，结果才为 <code>true</code>。</p>
+ 
+@param obj 要比较的对象。
+
+@return 当 <code>obj</code> 是 <code>XMLGregorianCalendar</code> 的实例，并且 {@link #compare(XMLGregorianCalendar obj)} 返回 {@link DatatypeConstants#EQUAL} 时，返回 <code>true</code>，否则返回 <code>false</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.XMLGregorianCalendar.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回与 equals 方法的定义一致的哈希码。</p>
+ 
+@return 此对象的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String javax.xml.datatype.XMLGregorianCalendar.toXMLFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回 <code>this</code> 实例的词汇表示形式。在 <a href="http://www.w3.org/TR/xmlschema-2/#dateTime-order">XML 模式 1.0 第二部分 3.2.[7-14].1 小节 &quot;<i>Lexical Representation</i>&quot;.</a> 中指定了该格式。</p>
+ 
+<p>{@link #getXMLSchemaType()} 确定特定目标词汇表示形式的格式。</p>
+ 
+@return XML，此 <code>XMLGregorianCalendar</code> 的 <code>String</code> 表示形式
+ 
+@throws IllegalStateException 如果设置字段的组合与定义的八个 XML 模式内置日期/时间数据类型之一不匹配。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.namespace.QName javax.xml.datatype.XMLGregorianCalendar.getXMLSchemaType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此实例映射到的 XML 模式日期/时间类型的名称。该类型根据设置的字段来计算。</p>
+
+ <table border="2" rules="all" cellpadding="2">
+   <thead>
+     <tr>
+       <th align="center" colspan="7">
+XML 模式 1.0 日期/时间数据类型的必需字段。<br/><i>（对于所有日期/时间数据类型，时区是可选的）</i>
+       </th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>数据类型</td>
+       <td>year</td>
+       <td>month</td>
+       <td>day</td>
+       <td>hour</td>
+       <td>minute</td>
+       <td>second</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#DATETIME}</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#DATE}</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#TIME}</td>
+       <td></td>
+       <td></td>
+       <td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#GYEARMONTH}</td>
+<td>X</td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#GMONTHDAY}</td>
+       <td></td>
+<td>X</td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#GYEAR}</td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#GMONTH}</td>
+       <td></td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#GDAY}</td>
+       <td></td>
+       <td></td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+   </tbody>
+ </table>
+ 
+@throws java.lang.IllegalStateException 如果设置字段的组合与定义的八个 XML 模式内置日期/时间数据类型之一不匹配。
+@return 以下类常量之一：{@link DatatypeConstants#DATETIE}、{@link DatatypeConstants#TIME}、{@link DatatypeConstants#DATE}、{@link DatatypeConstants#GYEARMONTH}、{@link DatatypeConstants#GMONTHDAY}、{@link DatatypeConstants#GYEAR}、{@link DatatypeConstants#GMONTH} 或 {@link DatatypeConstants#GDAY}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.datatype.XMLGregorianCalendar.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此 <code>XMLGregorianCalendar</code> <code>Object</code> 的 <code>String</code> 表示形式。</p>
+ 
+<p>结果是 {@link #toXMLFormat()} 生成的词汇表示形式。</p>
+ 
+@return 此 <code>XMLGregorianCalendar</code> 的非 <code>null</code> 有效 <code>String</code> 表示形式。
+ 
+@throws IllegalStateException 如果设置字段的组合与定义的八个 XML 模式内置日期/时间数据类型之一不匹配。
+ 
+
+@see #toXMLFormat() 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.datatype.XMLGregorianCalendar.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过 <code>getXMLSchemaType()</code> 约束来验证实例。
+@return 如果数据值有效，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.XMLGregorianCalendar.add(Duration duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将 <code>duration</code> 添加到此实例。</p>
+ 
+<p>计算方式在 <a href="http://www.w3.org/TR/xmlschema-2/#adding-durations-to-dateTimes">XML 模式 1.0 第二部分附录 E <i>Adding durations to dateTimes</i>&gt;</a> 中指定。<a href="#datetimefieldmapping">日期/时间字段映射表</a>定义了从 XML 模式 1.0 <code>dateTime</code> 字段到此类的这些字段的表示形式的映射。</p>
+ 
+@param duration 添加到此 <code>XMLGregorianCalendar</code> 的持续时间。
+ 
+@throws NullPointerException  当 <code>duration</code> 参数为 <code>null</code> 时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.GregorianCalendar javax.xml.datatype.XMLGregorianCalendar.toGregorianCalendar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此 <code>XMLGregorianCalendar</code> 转换为 {@link GregorianCalendar}。</p>
+ 
+<p>当 <code>this</code> 实例具有未定义的字段时，此转换依赖于其相应字段的 <code>java.util.GregorianCalendar</code> 默认值。 XML 模式 1.0 日期/时间数据类型和 <code>java.util.GregorianCalendar</code> 之间的显著差异是时区值对于日期/时间数据类型是可选的，并且它是 <code>java.util.GregorianCalendar</code> 的必需字段。有关如何确定默认的 <code>java.util.TimeZone.getDefault()</code>，请参阅 javadoc。要显式指定 <code>TimeZone</code> 实例，请参阅 {@link #toGregorianCalendar(TimeZone, Locale, XMLGregorianCalendar)}。</p>
+ 
+ <table border="2" rules="all" cellpadding="2">
+   <thead>
+     <tr>
+       <th align="center" colspan="2">
+从此类到 <code>java.util.GregorianCalendar</code> 的逐字段转换
+       </th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td><code>java.util.GregorianCalendar</code> 字段</td>
+<td><code>javax.xml.datatype.XMLGregorianCalendar</code> 字段</td>
+     </tr>
+     <tr>
+       <td><code>ERA</code></td>
+       <td>{@link #getEonAndYear()}<code>.signum() &lt; 0 ? GregorianCalendar.BC : GregorianCalendar.AD</code></td>
+     </tr>
+     <tr>
+       <td><code>YEAR</code></td>
+       <td>{@link #getEonAndYear()}<code>.abs().intValue()</code><i>*</i></td>
+     </tr>
+     <tr>
+       <td><code>MONTH</code></td>
+       <td>{@link #getMonth()} - {@link DatatypeConstants#JANUARY} + {@link GregorianCalendar#JANUARY}</td>
+     </tr>
+     <tr>
+       <td><code>DAY_OF_MONTH</code></td>
+       <td>{@link #getDay()}</td>
+     </tr>
+     <tr>
+       <td><code>HOUR_OF_DAY</code></td>
+       <td>{@link #getHour()}</td>
+     </tr>
+     <tr>
+       <td><code>MINUTE</code></td>
+       <td>{@link #getMinute()}</td>
+     </tr>
+     <tr>
+       <td><code>SECOND</code></td>
+       <td>{@link #getSecond()}</td>
+     </tr>
+     <tr>
+       <td><code>MILLISECOND</code></td>
+<td>从 {@link #getFractionalSecond()}<i>*</i> 获取毫秒顺序 </td>
+     </tr>
+     <tr>
+       <td><code>GregorianCalendar.setTimeZone(TimeZone)</code></td>
+<td>格式化为自定义时区 id 的 {@link #getTimezone()}</td>
+     </tr>
+   </tbody>
+ </table>
+<i>*</i> 由于源数据类型具有比目标数据类型更高的精度，在转换过程中指定可能丢失的精度。
+ 
+<p>要确保转换实现中的一致性，应使用以下方式实例化新的 <code>GregorianCalendar</code>。
+ <ul>
+<li>使用以上定义的 <code>timeZone</code> 值，创建一个新的 <code>java.util.GregorianCalendar(timeZone,Locale.getDefault())</code>。
+   </li>
+<li>通过调用 {@link java.util.GregorianCalendar#clear()} 初始化所有 GregorianCalendar 字段。</li>
+<li>通过调用 <code>GregorianCalendar.setGregorianChange( new Date(Long.MIN_VALUE))</code> 获取纯阳历。</li>
+<li>使用方法 <code>Calendar.set(int,int)</code> 设置其字段 ERA、YEAR、MONTH、DAY_OF_MONTH、HOUR_OF_DAY、MINUTE、SECOND 和 MILLISECOND</li>
+ </ul>
+ </p>
+ 
+
+@see #toGregorianCalendar(java.util.TimeZone, java.util.Locale, XMLGregorianCalendar)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.GregorianCalendar javax.xml.datatype.XMLGregorianCalendar.toGregorianCalendar(TimeZone timezone, Locale aLocale, XMLGregorianCalendar defaults)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将此 <code>XMLGregorianCalendar</code> 以及提供的参数转换为 {@link GregorianCalendar} 实例。</p>
+ 
+<p> 由于 XML 模式 1.0 日期/时间日期类型没有时区 id 或夏令时 id 的概念，所以此转换操作允许用户使用 <code>timezone</code> 参数显式指定一个 id。</p>
+ 
+<p>要计算返回值的 <code>TimeZone</code> 字段，
+ <ul>
+<li>当参数 <code>timeZone</code> 为非 null 时，它是时区字段。</li>
+<li>当 <code>this.getTimezone() != FIELD_UNDEFINED</code> 时，使用 <code>this.getTimezone()</code> 创建带有自定义时区 id 的 <code>java.util.TimeZone</code>。</li>
+<li>当 <code>defaults.getTimezone() != FIELD_UNDEFINED</code> 时，使用 <code>this.getTimezone()</code> 创建带有自定义时区 id 的 <code>defaults.getTimezone()</code>。</li>
+<li>另外,对主机使用 <code>GregorianCalendar</code> 默认时区值按 <code>java.util.TimeZone.getDefault()</code> 指定的方式定义。</li></p>
+ 
+<p>要确保转换实现中的一致性，应使用以下方式实例化新的 <code>GregorianCalendar</code>。
+ <ul>
+<li>使用上面指定的时区设置和 <code>Locale</code> 参数创建新的 <code>java.util.GregorianCalendar(TimeZone, Locale)</code>。 
+   </li>
+<li>通过调用 {@link GregorianCalendar#clear()} 初始化所有 GregorianCalendar 字段</li>
+<li>通过调用 <code>GregorianCalendar.setGregorianChange( new Date(Long.MIN_VALUE))</code> 获取纯阳历。</li>
+<li>使用方法 <code>Calendar.set(int,int)</code> 设置其字段 ERA、YEAR、MONTH、DAY_OF_MONTH、HOUR_OF_DAY、MINUTE、SECOND 和 MILLISECOND</li>
+ </ul>
+ 
+@param timezone 提供时区。<code>null</code> 是一个合法值。
+@param aLocale  提供明确的语言环境。如果值为 <code>null</code>，则使用默认 GregorianCalendar 语言环境。
+@param defaults 当此实例的相应字段为 FIELD_UNDEFINED 或 null 时，它提供要使用的默认字段值。如果 <code>defaults</code> 为 <code>null</code> 或指定 <code>defaults</code> 中的字段未定义，则仅使用 <code>java.util.GregorianCalendar</code> 默认值。
+@return 此实例的 java.util.GregorianCalendar 转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.TimeZone javax.xml.datatype.XMLGregorianCalendar.getTimeZone(int defaultZoneoffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此类的 <code>java.util.TimeZone</code>。</p>
+ 
+<p>如果未定义此实例的时区字段，则返回使用时区偏移量的自定义时区 id 初始化的 TimeZone。如果未定义时区字段，则尝试传入的 defaultZoneoffset。如果 defaultZoneoffset 为 FIELD_UNDEFINED，则返回此主机的默认时区。（与 java.util.GregorianCalendar 相同的默认值）。</p>
+
+@param defaultZoneoffset 如果此时区偏移量为 {@link DatatypeConstants#FIELD_UNDEFINED}，则为默认时区偏移量。
+
+@return 为其返回 TimeZone。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.datatype.XMLGregorianCalendar.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>创建并返回此对象的一个副本。</p>
+ 
+@return 此 <code>Object</code> 的副本。
+
+<!-- END DATA -->

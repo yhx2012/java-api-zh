@@ -1,0 +1,819 @@
+<!-- BEGIN KEY -->
+public abstract class java.net.URLConnection extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抽象类 <code>URLConnection</code> 是所有类的超类，它代表应用程序和 URL 之间的通信链接。此类的实例可用于读取和写入此 URL 引用的资源。通常，创建一个到 URL 的连接需要几个步骤：
+ <p>
+ <center><table border=2 summary="Describes the process of creating a connection to a URL: openConnection() and connect() over time.">
+ <tr><th><code>openConnection()</code></th>
+     <th><code>connect()</code></th></tr>
+<tr><td>对影响到远程资源连接的参数进行操作。</td>
+<td>与资源交互；查询头字段和内容。</td></tr>
+ </table>
+----------------------------&gt; <br>时间</center>
+
+ <ol>
+<li>通过在 URL 上调用 <code>openConnection</code> 方法创建连接对象。
+<li>处理设置参数和一般请求属性。
+<li>使用 <code>connect</code> 方法建立到远程对象的实际连接。
+<li>远程对象变为可用。远程对象的头字段和内容变为可访问。
+ </ol>
+ <p>
+使用以下方法修改设置参数：
+ <ul>
+   <li><code>setAllowUserInteraction</code>
+   <li><code>setDoInput</code>
+   <li><code>setDoOutput</code>
+   <li><code>setIfModifiedSince</code>
+   <li><code>setUseCaches</code>
+ </ul>
+ <p>
+使用以下方法修改一般请求属性：
+ <ul>
+   <li><code>setRequestProperty</code>
+ </ul>
+ <p>
+使用 <code>setDefaultAllowUserInteraction</code> 和 <code>setDefaultUseCaches</code> 可设置 <code>AllowUserInteraction</code> 和 <code>UseCaches</code> 参数的默认值。
+ <p>
+上面每个 <code>set</code> 方法都有一个用于获取参数值或一般请求属性值的对应 <code>get</code> 方法。适用的具体参数和一般请求属性取决于协议。 
+ <p>
+在建立到远程对象的连接后，以下方法用于访问头字段和内容：
+ <ul>
+   <li><code>getContent</code>
+   <li><code>getHeaderField</code>
+   <li><code>getInputStream</code>
+   <li><code>getOutputStream</code>
+ </ul>
+ <p>
+某些头字段需要经常访问。以下方法：
+ <ul>
+   <li><code>getContentEncoding</code>
+   <li><code>getContentLength</code>
+   <li><code>getContentType</code>
+   <li><code>getDate</code>
+   <li><code>getExpiration</code>
+   <li><code>getLastModifed</code>
+ </ul>
+ <p>
+提供对这些字段的便捷访问。<code>getContent</code> 方法使用 <code>getContentType</code> 方法以确定远程对象类型；子类重写 <code>getContentType</code> 方法很容易。 
+ <p>
+一般情况下，所有的预连接参数和一般请求属性都可忽略：预连接参数和一般请求属性默认为敏感值。对于此接口的大多数客户端而言，只有两个需要的方法：<code>getInputStream</code> 和 <code>getContent</code>，它们通过便捷方法镜像到 <code>URL</code> 类中。
+ <p>
+有关 <code>http</code> 连接的请求属性和头字段的更多信息，可从以下位置找到：
+ <blockquote><pre>
+ <a href="http://www.ietf.org/rfc/rfc2068.txt">http://www.ietf.org/rfc/rfc2068.txt</a>
+ </pre></blockquote>
+
+有关 <code>fileNameMap</code> 的注意事项：在 JDK 1.1.6 以前的版本中，<code>URLConnection</code> 的 <code>fileNameMap</code> 字段是公共的。在 JDK 1.1.6 及以后的版本中，<code>fileNameMap</code> 字段是私有的；对其添加了 accessor 方法和 mutator 方法 {@link #getFileNameMap() getFileNameMap} 及 {@link #setFileNameMap(java.net.FileNameMap) setFileNameMap} 以便访问。<a href=
+ "http://java.sun.com/products/jdk/1.2/compatibility.html">Compatibility</a> 页中也对此更改进行了介绍。
+
+完成请求后，在一个 <tt>URLConnection</tt> 的 <tt>InputStream</tt> 或 <tt>OutputStream</tt> 上调用 <tt>close()</tt> 方法可以释放与此实例相关的网络资源，除非特定的协议规范为其指定了其他行为。
+
+@author  James Gosling
+@version 1.102, 05/18/04
+@see     java.net.URL#openConnection()
+@see     java.net.URLConnection#connect()
+@see     java.net.URLConnection#getContent()
+@see     java.net.URLConnection#getContentEncoding()
+@see     java.net.URLConnection#getContentLength()
+@see     java.net.URLConnection#getContentType()
+@see     java.net.URLConnection#getDate()
+@see     java.net.URLConnection#getExpiration()
+@see     java.net.URLConnection#getHeaderField(int)
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+@see     java.net.URLConnection#getInputStream()
+@see     java.net.URLConnection#getLastModified()
+@see     java.net.URLConnection#getOutputStream()
+@see     java.net.URLConnection#setAllowUserInteraction(boolean)
+@see     java.net.URLConnection#setDefaultUseCaches(boolean)
+@see     java.net.URLConnection#setDoInput(boolean)
+@see     java.net.URLConnection#setDoOutput(boolean)
+@see     java.net.URLConnection#setIfModifiedSince(long)
+@see     java.net.URLConnection#setRequestProperty(java.lang.String, java.lang.String)
+@see     java.net.URLConnection#setUseCaches(boolean)
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.URL java.net.URLConnection.url
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+URL 表示此连接要在互联网上打开的远程对象。 
+ <p>
+使用 <code>getURL</code> 方法可访问此字段的值。 
+ <p>
+此变量的默认值为 <code>URLConnection</code> 构造方法中的 URL 参数的值。 
+
+@see     java.net.URLConnection#getURL()
+@see     java.net.URLConnection#url
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.net.URLConnection.doInput
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此变量由 <code>setDoInput</code> 方法设置。其值由 <code>getDoInput</code> 方法返回。 
+ <p>
+URL 连接可用于输入和/或输出。将 <code>doInput</code> 标志设置为 <code>true</code>，指示应用程序要从 URL 连接读取数据。 
+ <p>
+此字段的默认值为 <code>true</code>。 
+
+@see     java.net.URLConnection#getDoInput()
+@see     java.net.URLConnection#setDoInput(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.net.URLConnection.doOutput
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此变量由 <code>setDoOutput</code> 方法设置。其值由 <code>getDoOutput</code> 方法返回。 
+ <p>
+URL 连接可用于输入和/或输出。将 <code>doOutput</code> 标志设置为 <code>true</code>，指示应用程序要将数据写入 URL 连接。 
+ <p>
+此字段的默认值为 <code>false</code>。 
+
+@see     java.net.URLConnection#getDoOutput()
+@see     java.net.URLConnection#setDoOutput(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.net.URLConnection.allowUserInteraction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 <code>true</code>，则在允许用户交互（例如弹出一个验证对话框）的上下文中对此 <code>URL</code> 进行检查。如果为 <code>false</code>，则不允许有任何用户交互。 
+ <p>
+使用 <code>setAllowUserInteraction</code> 方法可对此字段的值进行设置。其值由 <code>getAllowUserInteraction</code> 方法返回。其默认值为上一次调用 <code>setDefaultAllowUserInteraction</code> 方法所用的参数的值。 
+
+@see     java.net.URLConnection#getAllowUserInteraction()
+@see     java.net.URLConnection#setAllowUserInteraction(boolean)
+@see     java.net.URLConnection#setDefaultAllowUserInteraction(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.net.URLConnection.useCaches
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 <code>true</code>，则只要有条件就允许协议使用缓存。如果为 <code>false</code>，则该协议始终必须获得此对象的新副本。 
+ <p>
+此字段由 <code>setUseCaches</code> 方法设置。其值由 <code>getUseCaches</code> 方法返回。
+ <p>
+其默认值为上一次调用 <code>setDefaultUseCaches</code> 方法时给定的值。 
+
+@see     java.net.URLConnection#setUseCaches(boolean)
+@see     java.net.URLConnection#getUseCaches()
+@see     java.net.URLConnection#setDefaultUseCaches(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long java.net.URLConnection.ifModifiedSince
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+有些协议支持跳过对象获取，除非该对象在某个特定时间点之后又进行了修改。 
+ <p>
+一个非零值给定一个时间，它表示距离格林威治标准时间 1970 年 1 月 1 日的毫秒数。只有在该时间之后又进行了修改时，才获取该对象。 
+ <p>
+此变量由 <code>setIfModifiedSince</code> 方法设置。其值由 <code>getIfModifiedSince</code> 方法返回。
+ <p>
+此字段的默认值为 <code>0</code>，表示必须一直进行获取。 
+
+@see     java.net.URLConnection#getIfModifiedSince()
+@see     java.net.URLConnection#setIfModifiedSince(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.net.URLConnection.connected
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 <code>false</code>，则此连接对象尚未创建到指定 URL 的通信链接。如果为 <code>true</code>，则已经建立了通信链接。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.URLConnection(URL url)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个到指定 URL 的 URL 连接。不会创建到 URL 所引用的对象的连接。 
+
+@param   url   指定的 URL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.net.FileNameMap java.net.URLConnection.getFileNameMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从数据文件加载文件名映射（一个 mimetable）。它首先尝试加载由 &quot;content.types.user.table&quot; 属性定义的特定于用户的表。如果加载失败，它会尝试加载位于 java 主目录下的 lib/content-types.properties 中的默认内置表。
+
+@return FileNameMap
+@since 1.2
+@see #setFileNameMap(java.net.FileNameMap)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.net.URLConnection.setFileNameMap(FileNameMap map)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 FileNameMap。
+ <p>
+如果有安全管理器，此方法首先调用安全管理器的 <code>checkSetFactory</code> 方法以确保允许该操作。这可能会导致抛出 SecurityException 异常。
+
+@param map 要设置的 FileNameMap
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkSetFactory</code> 方法不允许进行此操作。
+@see        SecurityManager#checkSetFactory
+@see #getFileNameMap()
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.net.URLConnection.connect() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。 
+ <p>
+如果在已打开连接（此时 <code>connected</code> 字段的值为 <code>true</code>）的情况下调用 <code>connect</code> 方法，则忽略该调用。 
+ <p>
+URLConnection 对象经历两个阶段：首先创建对象，然后建立连接。在创建对象之后，建立连接之前，可指定各种选项（例如，doInput 和 UseCaches）。连接后再进行设置就会发生错误。连接后才能进行的操作（例如 getContentLength），如有必要，将隐式执行连接。
+
+@throws SocketTimeoutException 如果在建立连接之前超时期满
+@exception  IOException  如果打开连接时发生 I/O 错误。
+@see java.net.URLConnection#connected
+@see #getConnectTimeout()
+@see #setConnectTimeout(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setConnectTimeout(int timeout)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一个指定的超时值（以毫秒为单位），该值将在打开到此 URLConnection 引用的资源的通信链接时使用。如果在建立连接之前超时期满，则会引发一个 java.net.SocketTimeoutException。超时时间为零表示无穷大超时。
+
+<p> 此方法的一些非标准实现可能忽略指定的超时。要查看连接超时设置，请调用 getConnectTimeout()。
+
+@param timeout 一个指定连接超时值的 <code>int</code>，以毫秒为单位
+@throws IllegalArgumentException 如果超时参数为负
+
+@see #getConnectTimeout()
+@see #connect()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.URLConnection.getConnectTimeout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回连接超时设置。
+ <p>
+返回 0 表明该选项被禁用（即超时为无穷大）。
+
+@return 一个指示连接超时值的 <code>int</code>，以毫秒为单位
+@see #setConnectTimeout(int)
+@see #connect()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setReadTimeout(int timeout)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将读超时设置为指定的超时值，以毫秒为单位。用一个非零值指定在建立到资源的连接后从 Input 流读入时的超时时间。如果在数据可读取之前超时期满，则会引发一个 java.net.SocketTimeoutException。超时时间为零表示无穷大超时。
+
+<p> 此方法的一些非标准实现会忽略指定的超时。要查看读入超时设置，请调用 getReadTimeout()。
+
+@param timeout 一个指定要使用的超时值的 <code>int</code>，以毫秒为单位
+@throws IllegalArgumentException 如果超时参数为负
+
+@see #getReadTimeout()
+@see InputStream#read()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.URLConnection.getReadTimeout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回读入超时设置。返回 0 表明该选项被禁用（即超时为无穷大）。
+
+@return 一个指示读入超时值的 <code>int</code>，以毫秒为单位
+
+@see #setReadTimeout(int)
+@see InputStream#read()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.net.URLConnection.getURL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>URLConnection</code> 的 <code>URL</code> 字段的值。
+
+@return  此 <code>URLConnection</code> 的 <code>URL</code> 字段的值。
+@see     java.net.URLConnection#url
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.URLConnection.getContentLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>content-length</code> 头字段的值。
+
+@return  此连接的 URL 引用的资源的内容长度，或者如果内容长度未知，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getContentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>content-type</code> 头字段的值。
+
+@return  该 URL 引用的资源的内容类型，或者如果类型为未知，则返回 <code>null</code>。
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getContentEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>content-encoding</code> 头字段的值。
+
+@return  该 URL 引用的资源的内容编码，或者如果编码为未知，则返回 <code>null</code>。
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.URLConnection.getExpiration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>expires</code> 头字段的值。 
+
+@return  此 URL 引用的资源的期满日期，或者如果为未知，则返回 0。该值为距离格林威治标准时间 1970 年 1 月 1 日的毫秒数。
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.URLConnection.getDate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>date</code> 头字段的值。 
+
+@return  该 URL 引用的资源的发送日期，或者如果为未知，则返回 <code>0</code>。返回的值为距离格林威治标准时间 1970 年 1 月 1 日的毫秒数。
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.URLConnection.getLastModified()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>last-modified</code> 头字段的值。结果为距离格林威治标准时间 1970 年 1 月 1 日的毫秒数。
+
+@return  此 <code>URLConnection</code> 引用的资源的上次修改日期，或者如果为未知，则返回 0。
+@see     java.net.URLConnection#getHeaderField(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getHeaderField(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定的头字段的值。
+ <p>
+如果调用的连接多次使用不同的值设置了头字段，则只返回最后一次设置的值。
+ 
+@param   name   头字段的名称。
+@return  指定的头字段的值，或者如果头中没有这样一个字段，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.util.List<java.lang.String>> java.net.URLConnection.getHeaderFields()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回头字段的不可修改的 Map。Map 键是表示 response-header 字段名称的 String。每个 Map 值为一个不可修改的 String 的列表，它们代表相应的字段值。
+
+@return 头字段的 Map
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.URLConnection.getHeaderFieldInt(String name, int Default)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回解析为数字的指定字段的值。
+ <p>
+有些连接类型（例如 <code>http-ng</code>）具有预解析头，所以存在这种形式的 <code>getHeaderField</code>。用于这种连接类型的类可重写此方法从而缩短解析过程。 
+
+@param   name   头字段的名称。
+@param   Default   默认值。
+@return  指定字段的值，解析为整数。如果该字段缺少或有错误，则返回 <code>Default</code> 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.URLConnection.getHeaderFieldDate(String name, long Default)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回解析为日期的指定字段的值。结果为指定字段表示的距离格林威治标准时间 1970 年 1 月 1 日的毫秒数。 
+ <p>
+有些连接类型（例如 <code>http-ng</code>）具有预解析头，所以存在这种形式的 <code>getHeaderField</code>。用于该类型的连接可重写此方法和缩短解析过程。 
+
+@param   name   头字段的名称。
+@param   Default   默认值。
+@return  字段的值，解析为日期。如果该字段缺少或有错误，则返回 <code>Default</code> 参数的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getHeaderFieldKey(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第 <code>n</code> 个头字段的键。如果少于 <code>n+1</code> 个字段，则返回 <code>null</code>。 
+
+@param   n   一个索引，n&gt;=0
+@return  对应第 <code>n</code> 个头字段的键，或者如果少于 <code>n+1</code> 个字段，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getHeaderField(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第 <code>n</code> 个头字段的值。如果少于 <code>n+1</code> 个字段，则返回 <code>null</code>。 
+ <p>
+此方法可与 {@link #getHeaderFieldKey(int) getHeaderFieldKey} 方法配合使用，以迭代消息中的所有头。 
+
+@param   n   一个索引，n&gt;=0
+@return  第 <code>n</code> 个头字段的值，或者如果少于 <code>n+1</code> 个字段，则返回 <code>null</code> 
+@see     java.net.URLConnection#getHeaderFieldKey(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.net.URLConnection.getContent() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 URL 连接的内容。 
+ <p>
+此方法首先通过调用 <code>getContentType</code> 方法确定对象的内容类型。如果这是该应用程序第一次遇到的特定内容类型，则会创建适用于该类型的内容处理程序： 
+ <ol>
+<li>如果该应用程序已使用 <code>setContentHandlerFactory</code> 方法建立了内容处理程序工厂实例，则调用此实例的 <code>createContentHandler</code> 方法，内容类型为其中的一个参数；结果为该内容类型的内容处理程序。
+<li>如果尚未建立任何内容处理程序工厂，或者如果工厂的 <code>createContentHandler</code> 方法返回 <code>null</code>，则应用程序会加载以下名称的类：
+     <blockquote><pre>
+         sun.net.www.content.&lt;<i>contentType</i>&gt;
+     </pre></blockquote>
+其中，&lt;<i>contentType</i>&gt; 取自 content-type 字符串，将所有的斜杠字符用<code>句点</code> ('.')替换，所有其他非字母数字字符用下划线 '<code>_</code>'替换。字母数字字符特指 26 个大写 ASCII 字母 '<code>A</code>' 到 '<code>Z</code>'，26 个小写 ASCII 字母 '<code>a</code>' 到 '<code>z</code>'以及 10 个 ASCII 数字 '<code>0</code>' 到 '<code>9</code>'。如果指定的类不存在，或者不是 <code>ContentHandler</code> 的子类，则抛出一个 <code>UnknownServiceException</code>。
+ </ol>
+
+@return     获取的对象。应使用 <code>instanceof</code> 运算符来确定返回的对象的具体类型。
+@exception  IOException              如果获取内容时发生 I/O 错误。
+@exception  UnknownServiceException  如果协议不支持内容类型。
+@see        java.net.ContentHandlerFactory#createContentHandler(java.lang.String)
+@see        java.net.URLConnection#getContentType()
+@see        java.net.URLConnection#setContentHandlerFactory(java.net.ContentHandlerFactory)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.net.URLConnection.getContent(java.lang.Class[] classes) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 URL 连接的内容。 
+
+@param classes 指示请求的类型的 <code>Class</code> 数组
+@return     获取的第一个与类数组中指定的类型相匹配的对象。如果请求的类型都不支持，则返回 null。应使用 <code>instanceof</code> 运算符来确定返回的对象的具体类型。
+@exception  IOException              如果获取内容时发生 I/O 错误。
+@exception  UnknownServiceException  如果协议不支持内容类型。
+@see        java.net.URLConnection#getContent()
+@see        java.net.ContentHandlerFactory#createContentHandler(java.lang.String)
+@see        java.net.URLConnection#getContent(java.lang.Class[])
+@see        java.net.URLConnection#setContentHandlerFactory(java.net.ContentHandlerFactory)
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Permission java.net.URLConnection.getPermission() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回一个权限对象，其代表建立此对象表示的连接所需的权限。如果建立连接不需要任何权限，则此方法返回 null。默认情况下，此方法返回 <code>java.security.AllPermission</code>。子类应重写此方法并返回一个权限对象，该对象最能代表用于建立到 URL 的连接所需的权限。例如表示 <code>file:</code>URL 的 <code>URLConnection</code> 将返回 <code>java.io.FilePermission</code> 对象。
+
+<p>返回的权限可能取决于连接的状态。例如，连接之前的权限可能不同于连接之后的权限。例如，一个 HTTP 服务器（如 foo.com）可能将连接重定向到一台不同的主机（如 bar.com）。在连接之前，连接返回的权限将代表连接到 foo.com 所需的权限，而连接之后返回的权限将是连接到 bar.com 所需的权限。
+ 
+<p>使用权限通常有两个目的：保护通过 URLConnection 获取的对象的缓存；检查接收方的权限以了解特定的 URL。第一种情况下，应在获取对象<em>之后</em> 再获取权限。例如，在一个 HTTP 连接中，这将代表连接到最终将从该主机获取数据的主机的权限。第二种情况下，应在连接<em>之前</em> 对权限进行获取和检查。
+
+@return 代表建立此 URLConnection 表示的连接所需的权限的权限对象。 
+
+@exception IOException 如果计算权限需要网络或文件 I/O 并且在计算过程中出现异常。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.net.URLConnection.getInputStream() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从此打开的连接读取的输入流。
+
+在读取返回的输入流时，如果在数据可供读取之前达到读入超时时间，则会抛出 SocketTimeoutException。
+
+@return     从此打开的连接读入的输入流。
+@exception  IOException              如果在创建输入流时发生 I/O 错误。
+@exception  UnknownServiceException  如果协议不支持输入。
+@see #setReadTimeout(int)
+@see #getReadTimeout()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStream java.net.URLConnection.getOutputStream() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回写入到此连接的输出流。
+
+@return     写入到此连接的输出流。
+@exception  IOException              如果在创建输出流时发生 I/O 错误。
+@exception  UnknownServiceException  如果协议不支持输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 URL 连接的 <code>String</code> 表示形式。
+
+@return  此 <code>URLConnection</code> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setDoInput(boolean doinput)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>URLConnection</code> 的 <code>doInput</code> 字段的值设置为指定的值。 
+ <p>
+URL 连接可用于输入和/或输出。如果打算使用 URL 连接进行输入，则将 DoInput 标志设置为 true；如果不打算使用，则设置为 false。默认值为 true。
+
+@param   doinput   新值。
+@throws IllegalStateException 如果已连接
+@see     java.net.URLConnection#doInput
+@see #getDoInput()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.URLConnection.getDoInput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>URLConnection</code> 的 <code>doInput</code> 标志的值。
+
+@return  此 <code>URLConnection</code> 的 <code>doInput</code> 标志的值。
+@see     #setDoInput(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setDoOutput(boolean dooutput)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>URLConnection</code> 的 <code>doOutput</code> 字段的值设置为指定的值。 
+ <p>
+URL 连接可用于输入和/或输出。如果打算使用 URL 连接进行输出，则将 DoOutput 标志设置为 true；如果不打算使用，则设置为 false。默认值为 false。
+
+@param   dooutput   新值。
+@throws IllegalStateException 如果已连接
+@see #getDoOutput()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.URLConnection.getDoOutput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>URLConnection</code> 的 <code>doOutput</code> 标志的值。
+
+@return  此 <code>URLConnection</code> 的 <code>doOutput</code> 标志的值。
+@see     #setDoOutput(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setAllowUserInteraction(boolean allowuserinteraction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>URLConnection</code> 的 <code>allowUserInteraction</code> 字段的值。 
+
+@param   allowuserinteraction   新值。
+@throws IllegalStateException 如果已连接
+@see     #getAllowUserInteraction()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.URLConnection.getAllowUserInteraction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的 <code>allowUserInteraction</code> 字段的值。
+
+@return  此对象的 <code>allowUserInteraction</code> 字段的值。
+@see     #setAllowUserInteraction(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.net.URLConnection.setDefaultAllowUserInteraction(boolean defaultallowuserinteraction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将未来的所有 <code>URLConnection</code> 对象的 <code>allowUserInteraction</code> 字段的默认值设置为指定的值。 
+
+@param   defaultallowuserinteraction   新值。
+@see     #getDefaultAllowUserInteraction()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.net.URLConnection.getDefaultAllowUserInteraction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>allowUserInteraction</code> 字段的默认值。
+ <p>
+默认值为 &quot;sticky&quot;，它是所有 URLConnection 的其中一种静态状态。此标志适用于下一个及后续创建的所有 URLConnection。
+
+@return  <code>allowUserInteraction</code> 字段的默认值。
+@see     #setDefaultAllowUserInteraction(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setUseCaches(boolean usecaches)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>URLConnection</code> 的 <code>useCaches</code> 字段的值设置为指定的值。 
+ <p>
+有些协议用于文档缓存。有时候能够进行&ldquo;直通&rdquo;并忽略缓存尤其重要，例如浏览器中的&ldquo;重新加载&rdquo;按钮。如果连接中的 UseCaches 标志为 true，则允许连接使用任何可用的缓存。如果为 false，则忽略缓存。默认值来自 DefaultUseCaches，它默认为 true。
+
+@param usecaches 一个指示是否允许缓存的 <code>boolean</code> 值
+@throws IllegalStateException 如果已连接
+@see #getUseCaches()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.URLConnection.getUseCaches()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>URLConnection</code> 的 <code>useCaches</code> 字段的值。
+
+@return  此 <code>URLConnection</code> 的 <code>useCaches</code> 字段的值。
+@see #setUseCaches(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setIfModifiedSince(long ifmodifiedsince)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>URLConnection</code> 的 <code>ifModifiedSince</code> 字段的值设置为指定的值。
+
+@param   ifmodifiedsince   新值。
+@throws IllegalStateException 如果已连接
+@see     #getIfModifiedSince()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.URLConnection.getIfModifiedSince()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的 <code>ifModifiedSince</code> 字段的值。
+
+@return  此对象的 <code>ifModifiedSince</code> 字段的值。
+@see #setIfModifiedSince(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.URLConnection.getDefaultUseCaches()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>URLConnection</code> 的 <code>useCaches</code> 标志的默认值。
+ <p>
+默认值为 &quot;sticky&quot;，它是所有 URLConnection 的一个静态状态。此标志适用于下一个及后续创建的所有 URLConnection。
+
+@return  <code>URLConnection</code> 的 <code>useCaches</code> 标志的默认值。
+@see     #setDefaultUseCaches(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setDefaultUseCaches(boolean defaultusecaches)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>useCaches</code> 字段的默认值设置为指定的值。 
+
+@param   defaultusecaches   新值。
+@see     #getDefaultUseCaches()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.setRequestProperty(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一般请求属性。如果已存在具有该关键字的属性，则用新值改写其值。
+
+<p> 注：HTTP 要求所有能够合法拥有多个具有相同键的实例的请求属性，使用以逗号分隔的列表语法，这样可实现将多个属性添加到一个属性中。
+
+@param   key     用于识别请求的关键字（例如，&quot;<code>accept</code>&quot;）。
+@param   value   与该键关联的值。
+@throws IllegalStateException 如果已连接
+@throws NullPointerException 如果键为 <CODE>null</CODE>
+@see #getRequestProperty(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.URLConnection.addRequestProperty(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加由键值对指定的一般请求属性。此方法不会改写与相同键关联的现有值。
+
+@param   key     用于识别请求的关键字（例如，&quot;<code>accept</code>&quot;）。
+@param   value   与该键关联的值。
+@throws IllegalStateException 如果已连接
+@throws NullPointerException 如果键为 null
+@see #getRequestProperties()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.URLConnection.getRequestProperty(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此连接指定的一般请求属性值。
+
+@param key 用于识别请求的关键字（例如，&quot;accept&quot;）。
+@return  此连接指定的一般请求属性值。如果键为 null，则返回 null。
+@throws IllegalStateException 如果已连接
+@see #setRequestProperty(java.lang.String, java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.util.List<java.lang.String>> java.net.URLConnection.getRequestProperties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个由此连接的一般请求属性构成的不可修改的 Map。Map 键是一些表示 request-header 字段名称的 String。每个 Map 值为一个不可修改的 String 的列表，它代表相应的字段值。
+
+@return  此连接的一般请求属性的 Map。
+@throws IllegalStateException 如果已连接
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.net.URLConnection.setDefaultRequestProperty(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置一般请求属性的默认值。创建 <code>URLConnection</code> 时，用这些属性进行初始化。 
+
+@param   key     用于识别请求的关键字（例如，&quot;<code>accept</code>&quot;）。
+@param   value  与该键关联的值。
+
+
+@see java.net.URLConnection#setRequestProperty(java.lang.String,java.lang.String) 
+
+@deprecated 应在获得 URLConnection 的适当实例后使用特定 setRequestProperty 方法的实例。调用此方法没有任何作用。
+
+@see #getDefaultRequestProperty(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.URLConnection.getDefaultRequestProperty(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认请求属性的值。为每个连接都设置了默认请求属性。 
+
+@param key 用于识别请求的关键字（例如，&quot;accept&quot;）。
+@return  指定的键的默认请求属性的值。
+
+
+@see java.net.URLConnection#getRequestProperty(java.lang.String)
+
+@deprecated 应在获得 URLConnection 的适当实例后使用特定 getRequestProperty 方法的实例。
+
+@see #setDefaultRequestProperty(java.lang.String, java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.net.URLConnection.setContentHandlerFactory(ContentHandlerFactory fac)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置应用程序的 <code>ContentHandlerFactory</code>。一个应用程序最多只能调用一次该方法。 
+ <p>
+<code>ContentHandlerFactory</code> 实例用于根据内容类型构造内容处理程序。 
+ <p>
+如果有安全管理器，此方法首先调用安全管理器的 <code>checkSetFactory</code> 方法以确保允许该操作。这可能会导致 SecurityException 异常。
+
+@param      fac   需要的工厂。
+@exception  Error  如果已经定义了工厂。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkSetFactory</code> 方法不允许进行此操作。
+@see        java.net.ContentHandlerFactory
+@see        java.net.URLConnection#getContent()
+@see        SecurityManager#checkSetFactory
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.URLConnection.guessContentTypeFromName(String fname)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 URL 的指定 &quot;file&quot; 部分尝试确定对象的内容类型。重写 <code>getContentType</code> 方法的子类可使用该便捷方法。 
+
+@param   fname   文件名。
+@return  基于文件名对对象的内容类型的猜测。
+@see     java.net.URLConnection#getContentType()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.net.URLConnection.guessContentTypeFromStream(InputStream is) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据输入流的开始字符尝试确定输入流的类型。此方法可供重写 <code>getContentType</code> 方法的子类使用。 
+ <p>
+理想情况下，将不需要此例程。但是许多 <code>http</code> 服务器返回不正确的内容类型；另外，还存在许多非标准扩展。通过对字节直接观察来确定内容类型比相信 <code>http</code> 服务器声明的内容类型更准确。
+
+@param      is   支持标记的输入流。
+@return     对内容类型的猜测，如果无法确定，则返回 <code>null</code>。
+@exception  IOException  如果在读取输入流时发生 I/O 错误。
+@see        java.io.InputStream#mark(int)
+@see        java.io.InputStream#markSupported()
+@see        java.net.URLConnection#getContentType()
+
+<!-- END DATA -->

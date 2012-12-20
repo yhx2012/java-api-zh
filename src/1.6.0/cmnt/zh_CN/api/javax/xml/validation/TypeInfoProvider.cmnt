@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.validation.TypeInfoProvider extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供了对 {@link ValidatorHandler} 所确定的类型信息的访问。 
+ 
+ <p>
+某些模式语言（例如 W3C XML Schema）鼓励验证器报告它分配给每个属性/元素的&ldquo;类型&rdquo;。那些希望访问此类型信息的应用程序可以调用此&ldquo;接口&rdquo;上的方法来访问这样的类型信息。
+  
+ <p>
+此&ldquo;接口&rdquo;的实现可以通过 {@link ValidatorHandler#getTypeInfoProvider()} 方法获取。
+
+@author  <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
+@version $Revision: 1.5 $, $Date: 2006-10-23 09:14:17 $
+@see org.w3c.dom.TypeInfo
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.validation.TypeInfoProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+派生类的构造方法。
+ 
+ <p>
+构造方法不执行任何动作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.w3c.dom.TypeInfo javax.xml.validation.TypeInfoProvider.getElementTypeInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回当前元素的不可变的 {@link TypeInfo} 对象。</p>
+ 
+ <p>
+该方法只能由 {@link org.xml.sax.ContentHandler}（应用程序将其设置为 {@link ValidatorHandler}）的 startElement 事件或 endElement 事件调用。</p>
+
+ <p>当正在执行 W3C XML 模式验证时，在元素具有 union 类型的情况下，对 startElement 事件调用 <code>getElementTypeInfo()</code> 所返回的 {@link TypeInfo} 将是 union 类型。endElement 事件的调用所返回的 <code>TypeInfo</code> 将是实际用来验证元素的数字类型。</p>
+ 
+@throws IllegalStateException 如果从其他 {@link org.xml.sax.ContentHandler} 方法调用了此方法。
+@return 表示当前元素类型的不可变的 {@link TypeInfo} 对象。注意，调用者保持对所获得的 {@link TypeInfo} 的引用时间可能要长于回调作用时间。否则，如果由于某种原因验证器不能确定当前元素的类型（例如，如果验证器正从较早的错误中恢复），则此方法返回 null。
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.w3c.dom.TypeInfo javax.xml.validation.TypeInfoProvider.getAttributeTypeInfo(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定的当前元素属性的不可变的 {@link TypeInfo} 对象。
+ 
+ <p>
+该方法只能由 {@link org.xml.sax.ContentHandler}（应用程序将其设置为 {@link ValidatorHandler}）的 startElement 事件调用。</p>
+ 
+@param index 属性的索引。传递给 <code>startElement</code> 回调的 {@link org.xml.sax.Attributes} 对象的相同索引。
+ 
+@throws IndexOutOfBoundsException 如果索引无效。
+@throws IllegalStateException 如果从其他 {@link org.xml.sax.ContentHandler} 方法调用了此方法。
+ 
+@return 表示指定属性类型的不可变的 {@link TypeInfo} 对象。注意，调用者保持对所获得的 {@link TypeInfo} 的引用时间可能要长于回调作用时间。否则，如果验证器无法确定类型，则此方法返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.validation.TypeInfoProvider.isIdAttribute(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定属性确定为 ID，则返回 <code>true</code>。
+ 
+ <p>
+属性如何&ldquo;确定为 ID&rdquo;的准确方式取决于模式语言。在 W3C XML 模式中，这意味着实际的属性类型为内置的 ID 类型或其派生类型。
+ 
+ <p>
+{@link javax.xml.parsers.DocumentBuilder} 使用此信息来正确地实现 {@link org.w3c.dom.Attr#isId()}。
+ 
+ <p>
+该方法只能由 {@link org.xml.sax.ContentHandler}（应用程序将其设置为 {@link ValidatorHandler}）的 startElement 事件调用。
+ 
+@param index 属性的索引。传递给 <code>startElement</code> 回调的 {@link org.xml.sax.Attributes} 对象的相同索引。
+ 
+@throws IndexOutOfBoundsException 如果索引无效。
+@throws IllegalStateException 如果从其他 {@link org.xml.sax.ContentHandler} 方法调用了此方法。
+ 
+@return 如果指定属性的类型为 ID，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.validation.TypeInfoProvider.isSpecified(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果属性是通过验证器添加的，则返回 <code>false</code>。
+ 
+ <p>
+此方法为 {@link javax.xml.parsers.DocumentBuilder} 提供了所需的信息，以确定 DOM 树应从 {@link org.w3c.dom.Attr#getSpecified()} 方法返回的内容。
+ 
+ <p>
+该方法只能由 {@link org.xml.sax.ContentHandler}（应用程序将其设置为 {@link ValidatorHandler}）的 startElement 事件调用。
+ 
+ <p>
+验证器的通用指导原则是：如果属性最初就在管线中存在，则返回 true，如果它是通过验证器添加的，则返回 false。
+ 
+@param index 属性的索引。传递给 <code>startElement</code> 回调的 {@link org.xml.sax.Attributes} 对象的相同索引。
+ 
+@throws IndexOutOfBoundsException 如果索引无效。
+@throws IllegalStateException 如果从其他 {@link org.xml.sax.ContentHandler} 方法调用了此方法。
+ 
+@return 如果在验证器处理输入之前属性已存在，则返回 <code>true</code>，如果属性是通过验证器添加的，则返回 <code>false</code>。
+
+<!-- END DATA -->

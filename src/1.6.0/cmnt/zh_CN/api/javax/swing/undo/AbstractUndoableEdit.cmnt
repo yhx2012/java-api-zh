@@ -1,0 +1,178 @@
+<!-- BEGIN KEY -->
+public class javax.swing.undo.AbstractUndoableEdit extends java.lang.Object implements javax.swing.undo.UndoableEdit, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>UndoableEdit</code> 的抽象实现，实现对该接口中所有布尔方法的简单响应。 
+
+@version 1.29 12/19/03
+@author Ray Ryan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.String javax.swing.undo.AbstractUndoableEdit.UndoName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>getUndoPresentationName</code> 返回的字符串；从 Java 2 平台 v1.3.1 开始，不再使用此字段。此值现在已本地化，并且来源于默认表，键为 <code>AbstractUndoableEdit.undoText</code>。
+
+@see javax.swing.UIDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.String javax.swing.undo.AbstractUndoableEdit.RedoName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>getRedoPresentationName</code> 返回的字符串；从 Java 2 平台 v1.3.1 开始，不再使用此段落。此值现在已本地化，并且来源于默认表，键为 <code>AbstractUndoableEdit.redoText</code>。
+
+@see javax.swing.UIDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.undo.AbstractUndoableEdit.hasBeenDone
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认情况下为 true；如果撤消此编辑，则变为 false，如果重新编辑，则又变为 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.undo.AbstractUndoableEdit.alive
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此编辑未接收 <code>die</code>；则为 ture，默认为 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.AbstractUndoableEdit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>AbstractUndoableEdit</code>，其将 <code>hasBeenDone</code> 和 <code>alive</code> 默认为 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.die()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>alive</code> 设置为 false。注意，这是一种单向操作；终止的编辑不能重新使启用。将 <code>undo</code> 或 <code>redo</code> 发送到一个终止的编辑将导致抛出异常。
+
+<p>通常，一个编辑与另一编辑的 <code>addEdit</code> 或 <code>replaceEdit</code> 方法合并，或离开 <code>UndoManager</code> 队列时，该方法会被终止。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.undo() throws javax.swing.undo.CannotUndoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>canUndo</code> 返回 <code>false</code>，则抛出 <code>CannotUndoException</code>。将 <code>hasBeenDone</code> 设置为 <code>false</code>。子类应该重写以撤消此编辑所表示的操作。重写应该从调用超类开始。
+
+@exception CannotUndoException 如果 <code>canUndo</code> 返回 <code>false</code>
+@see	#canUndo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.canUndo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此编辑为 <code>alive</code> 并且 <code>hasBeenDone</code> 为 <code>true</code>，则返回 true。
+
+@return 如果此编辑为 <code>alive</code> 并且 <code>hasBeenDone</code> 为 <code>true</code>，则返回 true
+
+@see   #die
+@see	#undo
+@see	#redo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.redo() throws javax.swing.undo.CannotRedoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>canRedo</code> 返回 false，则抛出 <code>CannotRedoException</code>。将 <code>hasBeenDone</code> 设置为 <code>true</code>。子类应该重写以重新执行此编辑所表示的操作。重写应该从调用超类开始。
+
+@exception CannotRedoException 如果 <code>canRedo</code> 返回 <code>false </code>
+@see	#canRedo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.canRedo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此编辑为 <code>alive</code> 并且 <code>hasBeenDone</code> 为 <code>false</code>，则返回 <code>true</code>。
+
+@return 如果此编辑为 <code>alive</code> 并且 <code>hasBeenDone</code> 为 <code>false</code>，则返回 <code>true</code>
+@see   #die
+@see	#undo
+@see	#redo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.addEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此默认实现返回 false。 
+
+@param anEdit 要添加的编辑
+@return false
+
+@see UndoableEdit#addEdit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.replaceEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此默认实现返回 false。 
+
+@param anEdit 要替换的编辑
+@return false
+
+@see UndoableEdit#replaceEdit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.isSignificant()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此默认实现返回 true。 
+
+@return true
+@see UndoableEdit#isSignificant
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此默认实现返回 &quot;&quot;。由 <code>getUndoPresentationName</code> 和 <code>getRedoPresentationName</code> 使用以构造它们返回的字符串。子类应该重写以返回此编辑所表示的操作的适当描述。
+
+@return 空字符串 &quot;&quot;
+
+@see	#getUndoPresentationName
+@see	#getRedoPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getUndoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索默认表中 <code>AbstractUndoableEdit.undoText</code> 键的值，并返回该值，后跟一个空格和 <code>getPresentationName</code>。如果 <code>getPresentationName</code> 返回 &quot;&quot;，则单独返回默认值。
+
+@return 默认表中 <code>AbstractUndoableEdit.undoText</code> 键的值，如果 <code>getPresentationName</code> 不为 &quot;&quot;，则后跟一个空格和 <code>getPresentationName</code>，否则，单独返回默认值。
+@see #getPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getRedoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索默认表中 <code>AbstractUndoableEdit.redoText</code> 键的值，并返回该值，后跟一个空格和 <code>getPresentationName</code>。如果 <code>getPresentationName</code> 返回 &quot;&quot;，则单独返回默认值。
+
+@return 默认表中 <code>AbstractUndoableEdit.redoText</code> 键的值，如果 <code>getPresentationName</code> 不为 &quot;&quot;，则后跟一个空格和 <code>getPresentationName</code>，否则，只返回默认值。
+@see #getPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回显示和标识此对象属性的字符串。
+
+@return 此对象的字符串表示形式
+
+<!-- END DATA -->

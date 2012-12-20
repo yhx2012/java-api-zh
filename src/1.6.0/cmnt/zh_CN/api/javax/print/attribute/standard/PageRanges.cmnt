@@ -1,0 +1,131 @@
+<!-- BEGIN KEY -->
+public final class javax.print.attribute.standard.PageRanges extends javax.print.attribute.SetOfIntegerSyntax implements javax.print.attribute.DocAttribute, javax.print.attribute.PrintRequestAttribute, javax.print.attribute.PrintJobAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+PageRanges 类是打印属性类，它是一个整数集，标识 Printer 对象为所要打印的每个文档的每份副本所使用的打印流页范围。对于那些标识为文档中不存在的页，将不会打印任何内容。该属性与<I>打印流</I> 页相关，而与应用程序编号的页无关（例如，某些字处理应用程序的标题或脚注中的页数）。 
+ <P>
+在大多数情况下，要打印的准确页数由设备驱动程序生成，因此不需要此属性。但是当打印已经格式化过的存档文档时，最终用户可以选择只打印该文档中所包含的页子集。在这种情况下，如果将页范围指定为 <CODE>&quot;<I>n</I>-<I>m</I>&quot;</CODE>，则要打印的第一页将为页 <I>n</I>。将打印文档中后面所有的页，包括页 <I>m</I>。 
+ <P>
+如果没有为打印作业指定 PageRanges 属性，则将打印文档的中所有页。换句话说，PageRanges 属性的默认值始终是 <CODE>{{1, Integer.MAX_VALUE}}</CODE>。 
+ <P>
+多文档打印作业（一个作业带有多个文档）的 PageRanges 属性的效果取决于是为所有的文档指定了相同的页范围，还是为不同的文档指定了不同的页范围，以及 {@link MultipleDocumentHandling MultipleDocumentHandling} 属性的值（可能是默认值）。 
+ <UL>
+ <LI>
+如果为所有的文档指定了相同的页范围，则 {@link MultipleDocumentHandling MultipleDocumentHandling} 的任何值都有意义，因此打印机的处理取决于 {@link MultipleDocumentHandling MultipleDocumentHandling} 的值： 
+ <UL>
+ <LI>
+SINGLE_DOCUMENT -- 所有输入文档都将合并到一个输出文档中。将打印该输出文档指定的页范围。 
+ <P>
+ <LI>
+SINGLE_DOCUMENT_NEW_SHEET -- 所有的输入文档都将合并到一个输出文档中，并且始终在新的介质纸张上开始每个输入文档的第一个印张。将打印该输出文档指定的页范围。 
+ <P>
+ <LI>
+SEPARATE_DOCUMENTS_UNCOLLATED_COPIES -- 对于每个单独的输入文档，都将打印指定的页范围。 
+ <P>
+ <LI>
+SEPARATE_DOCUMENTS_COLLATED_COPIES -- 对于每个单独的输入文档，都将打印指定的页范围。 
+ </UL> 
+ <UL>
+ <LI>
+SEPARATE_DOCUMENTS_UNCOLLATED_COPIES -- 对于每个单独的输入文档，将打印出其自己指定的页范围。 
+ <P>
+ <LI>
+SEPARATE_DOCUMENTS_COLLATED_COPIES -- 对于每个单独的输入文档，将打印出其自己指定的页范围。 
+ </UL>
+ </UL>
+ <P>
+<B>IPP 兼容性：</B> PageRanges 属性的规范数组形式提供了要包括在内的所有页范围的下边界和上边界，以及 IPP &quot;page-ranges&quot; 属性。有关规范数组形式的解释，请参阅类 {@link javax.print.attribute.SetOfIntegerSyntax SetOfIntegerSyntax}。由 <CODE>getName()</CODE> 返回的类别名称提供了 IPP 属性名称。 
+ <P>
+
+@author  David Mendenhall
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.standard.PageRanges(int[][] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定成员的新 PageRanges 属性。以&ldquo;数组形式&rdquo;指定这些成员，有关数组形式的解释，请参阅类 {@link javax.print.attribute.SetOfIntegerSyntax SetOfIntegerSyntax}。 
+
+@param members 以数组形式设置的成员。
+
+@exception NullPointerException （未经检查的异常）如果 <CODE>members</CODE> 为 null，或者 <CODE>members</CODE> 的任何元素为 null。
+@exception IllegalArgumentException （未经检查的异常）如果没有任何 <CODE>members</CODE> 元素是长度为一或长度为二的数组。如果 <CODE>members</CODE> 是长度为零的数组，或者集合中的任何成员都小于 1，则也会抛出此异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.standard.PageRanges(String members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定成员（字符串形式）的新 PageRanges 属性。有关语法的解释，请参阅类 {@link javax.print.attribute.SetOfIntegerSyntax SetOfIntegerSyntax}。
+
+@param members 以字符串形式设置的成员。
+
+@exception NullPointerException （未经检查的异常）如果 <CODE>members</CODE> 为 null，或者 <CODE>members</CODE> 的任何元素为 null。
+@exception IllegalArgumentException （未经检查的异常）如果 <CODE>members</CODE> 没有遵守正确的语法。如果构造的整数集为零长度的数组，或者集合中的任何成员小于 1，则也会抛出此异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.standard.PageRanges(int member)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包括单个整数的新 PageRanges 属性。也就是说只打印一页。 
+
+@param member 设置的成员。
+
+@exception IllegalArgumentException （未经检查的异常）如果 <CODE>member</CODE> 小于 1。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.standard.PageRanges(int lowerBound, int upperBound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包括单一整数范围的新 PageRanges 属性。也就是说只打印那些在一个范围中的页。 
+
+@param lowerBound 范围的下边界。
+@param upperBound 范围的上边界。
+
+@exception IllegalArgumentException （未经检查的异常）如果指定了 null 范围，或者指定了非 null 的范围，但 <CODE>lowerBound</CODE> 小于 1。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.standard.PageRanges.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 PageRanges 属性是否等效于传入的对象。若要等效，以下所有条件都必须为 true： 
+ <OL TYPE=1>
+ <LI>
+<CODE>object</CODE> 不为 null。
+ <LI>
+<CODE>object</CODE> 是类 PageRanges 的一个实例。
+ <LI>
+此 PageRanges 属性的成员和 <CODE>object</CODE> 的成员相同。 
+ </OL>
+
+@param object 要比较的对象。
+
+@return 如果 <CODE>object</CODE> 等效于此 PageRanges 属性，则返回 True，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.PageRanges.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于类 PageRanges，该类别就是类 PageRanges 本身。 
+
+@return 打印属性类（类别），这是类 {@link java.lang.Class java.lang.Class} 的一个实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.PageRanges.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别的名称，此属性值是该类别的一个实例。 
+ <P>
+对于类 PageRanges，该类别名称是 <CODE>&quot;page-ranges&quot;</CODE>。 
+
+@return 属性类别名称。
+
+<!-- END DATA -->

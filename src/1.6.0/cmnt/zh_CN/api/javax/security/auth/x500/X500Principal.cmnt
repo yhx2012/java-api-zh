@@ -1,0 +1,240 @@
+<!-- BEGIN KEY -->
+public final class javax.security.auth.x500.X500Principal extends java.lang.Object implements java.security.Principal, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p> 此类表示一个 X.500 <code>Principal</code>。<code>X500Principal</code> 由标识名（例如，&quot;CN=Duke, OU=JavaSoft, O=Sun Microsystems, C=US&quot;）表示。
+
+<p> 可以通过使用标识名的字符串表示形式或通过使用标识名的 ASN.1 DER 编码的字节表示形式对此类进行实例化。<a href="http://www.ietf.org/rfc/rfc2253.txt">RFC 2253</a> 中定义了标识名的字符串表示形式的当前规范。但是此类接受 RFC 2253 和 <a href="http://www.ietf.org/rfc/rfc1779.txt">RFC 1779</a> 的字符串格式，也识别属性类别关键字，该关键字的 OID（对象标识符）是在 <a href="http://www.ietf.org/rfc/rfc2459.txt">RFC 2459</a> 中定义的。
+
+<p> 此 <code>X500Principal</code> 的字符串表示形式可以通过调用 <code>getName</code> 方法获得。
+
+<p> 注意，<code>X509Certificate</code> 的 <code>getSubjectX500Principal</code> 和 <code>getIssuerX500Principal</code> 方法返回表示证书的发行者和主体字段的 X500Principals。
+
+@version 1.21, 12/19/03
+@see java.security.cert.X509Certificate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.security.auth.x500.X500Principal.RFC1779
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识名的 RFC 1779 字符串格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.security.auth.x500.X500Principal.RFC2253
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识名的 RFC 2253 字符串格式。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.security.auth.x500.X500Principal.CANONICAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识名的规范化字符串格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 X.500 标识名（例：&quot;CN=Duke、 OU=JavaSoft、 O=Sun Microsystems、 C=US&quot;）的字符串表示形式创建 <code>X500Principal</code>。 标识名必须使用 RFC 1779 或 RFC 2253（任何一种格式都是可接受的）中定义的语法指定。 
+
+<p>此构造方法识别在 RFC 1779 和 RFC 2253（列出在 {@link #getName(String format) getName(String format)} 中）中定义的属性类别关键字，以及 T、DNQ 或 DNQUALIFIER、SURNAME、GIVENNAME、INITIALS、GENERATION、EMAILADDRESS 和 SERIALNUMBER 关键字（它们的 OID 定义在 RFC 2459 及其后续文档中）。其他任何属性类型都必须指定为 OID。
+
+@param name RFC 1779 或 RFC 2253 格式的 X.500 标识名
+@exception NullPointerException 如果 <code>name</code> 为 <code>null</code>
+@exception IllegalArgumentException 如果错误地指定了 <code>name</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal(String name, java.util.Map<java.lang.String, java.lang.String> keywordMap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 X.500 标识名（例：“CN=Duke、OU=JavaSoft、O=Sun Microsystems、C=US”）的字符串表示形式创建 <code>X500Principal</code>。 标识名必须使用 RFC 1779 或 RFC 2253（任何一种格式都是可接受的）中定义的语法指定。 
+
+<p> 此构造方法识别 {@link #X500Principal(String)} 中指定的属性类型关键字，也识别在 <code>keywordMap</code> 参数列出的其他关键字。keywordMap 中的关键字项优先于 <code>X500Principal(String)</code> 所识别的默认关键字。关键字必须全部用大写指定，否则它们将被忽略。忽略错误地指定的关键字；但是，如果该名称中的关键字映射到错误地指定的 OID，则抛出 <code>IllegalArgumentException</code>。允许两个不同的关键字映射到同一个 OID。  
+
+ @param name RFC 1779 或 RFC 2253 格式的 X.500 标识名
+ @param keywordMap 属性类型关键字映射，其中每个关键字是一个映射到 String 形式的相应对象标识符的关键字 String（由句点分隔的非负整数序列）。映射可以为空但不能为 <code>null</code>。
+ @exception NullPointerException 如果 <code>name</code> 或 <code>keywordMap</code> 为 <code>null</code>
+ @exception IllegalArgumentException 如果错误地指定了 <code>name</code> 或者 <code>name</code> 中的关键字映射到没有以正确形式存在的 OID
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal(byte[] name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 ASN.1 DER 编码格式的标识名创建 <code>X500Principal</code>。此结构的 ASN.1 表示如下所示。
+ <pre><code>
+ Name ::= CHOICE {
+   RDNSequence }
+
+ RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+
+ RelativeDistinguishedName ::=
+   SET SIZE (1 .. MAX) OF AttributeTypeAndValue
+
+ AttributeTypeAndValue ::= SEQUENCE {
+   type     AttributeType,
+   value    AttributeValue }
+
+ AttributeType ::= OBJECT IDENTIFIER
+
+ AttributeValue ::= ANY DEFINED BY AttributeType
+ ....
+ DirectoryString ::= CHOICE {
+       teletexString           TeletexString (SIZE (1..MAX)),
+       printableString         PrintableString (SIZE (1..MAX)),
+       universalString         UniversalString (SIZE (1..MAX)),
+       utf8String              UTF8String (SIZE (1.. MAX)),
+       bmpString               BMPString (SIZE (1..MAX)) }
+ </code></pre>
+
+@param name 包含 ASN.1 DER 编码格式的标识名的字节数组
+@throws IllegalArgumentException 如果出现编码错误（不正确的 DN 格式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal(InputStream is)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据包含 ASN.1 DER 编码格式的标识名的 <code>InputStream</code> 创建 <code>X500Principal</code>。{@link #X500Principal(byte[] name) X500Principal(byte[] name)} 的文档中提供了此结构的 ASN.1 表示法。
+
+<p> 输入流的读取位置位于已编码标识名后的下一个可用字节处。
+
+@param is 包含 ASN.1 DER 编码格式的标识名的 <code>InputStream</code>
+
+@exception NullPointerException 如果 <code>InputStream</code> 为 <code>null</code>
+@exception IllegalArgumentException 如果出现编码错误（不正确的 DN 格式）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.x500.X500Principal.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 RFC 2253 中所定义格式的 X.500 标识名的字符串表示形式。 
+
+<p>此方法等效于调用 <code>getName(X500Principal.RFC2253)</code>。
+
+@return 此 <code>X500Principal</code> 的标识名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.x500.X500Principal.getName(String format)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用指定格式的 X.500 标识名的字符串表示形式。该格式的有效值是 &quot;RFC1779&quot;、&quot;RFC2253&quot; 和 &quot;CANONICAL&quot;（不区分大小写）。
+
+<p> 如果将格式指定为 &quot;RFC1779&quot;，则此方法指定 RFC 1779（CN、L、ST、O、OU、C 和 STREET）中定义的属性类型关键字。其他任何属性类型都被指定为 OID。
+
+<p> 如果将格式指定为 &quot;RFC2253&quot;，则此方法指定 RFC 2253（CN、L、ST、O、OU、C、STREET、DC 和 UID）中定义的属性类型关键字。其他任何属性类型都被指定为 OID。在进行严格的读取时，RFC 2253 只指定 UTF-8 字符串表示形式。此方法返回的 String 是通过解码此 UTF-8 表示形式得到的 Unicode 字符串。
+
+<p> 如果将格式指定为 &quot;CANONICAL&quot;，则此方法返回遵循 RFC 2253 的字符串表示形式，该表示形式具有如下的附加规范要求：
+
+ <p><ol>
+<li> 从编码为点号分隔的十进制 OID 的属性类型中移除前导零。
+<li> 类型 PrintableString 和 UTF8String 的 DirectoryString 属性值不是以十六进制形式输出的
+<li> 除了类型 PrintableString 和 UTF8String 以外的其他类型的 DirectoryString 属性值是以十六进制形式输出的
+<li> 从非十六进制属性值（除非该值完全由空白字符组成）中移除前导和尾部空白字符
+<li> 一个或多个空白字符的内部子字符串被转换成非十六进制属性值中的单个空格。
+<li> 包括一个以上的 Attribute Value Assertion (AVA) 的相对标识名是按如下顺序输出的：包含标准关键字的 AVA 的字母排序，后跟包含 OID 关键字的 AVA 的数字排序
+<li> 属性值中的唯一被转义字符是 RFC 2253 的 2.4 小节中声明必须被转义的那些字符（使用正斜杠字符将它们转义）。
+<li> 可以使用 <code>String.toUpperCase(Locale.US)</code> 将整个名称转换为大写的。
+<li> 可以使用 <code>String.toLowerCase(Locale.US)</code> 将整个名称转换为小写的。
+<li> 最后使用标准化形式 KD 将名称标准化，Unicode Standard 和 UAX #15 中描述了该形式
+ </ol>
+
+<p> 其他标准格式可能在以后引入。
+
+@param format 要使用的格式
+
+@return 使用特定格式的此 <code>X500Principal</code> 的字符串表示形式
+@throws IllegalArgumentException 如果指定格式无效或者为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.x500.X500Principal.getName(String format, java.util.Map<java.lang.String, java.lang.String> oidMap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回使用指定格式的 X.500 标识名的字符串表示形式。该格式的有效值有 "RFC1779" 和 "RFC2253"（不区分大小写）。不允许 "CANONICAL" 并会抛出 <code>IllegalArgumentException</code>。 
+
+ <p>此方法返回使用 {@link #getName(String)} 中指定格式的 String，并发出 <code>oidMap</code> 中列出的 OID 的其他属性类型关键字。oidMap 中的 OID 项优先于 <code>getName(String)</code> 所识别的默认 OID。忽略错误地指定的 OID；但是，如果该名称中的 OID 映射到错误地指定的关键字，则抛出 <code>IllegalArgumentException</code>。
+
+ <p> 其他标准格式可能在以后引入。
+
+ <p> 警告：其他实现可能无法识别其他属性类型关键字；因此，如果不确定其他实现是否识别这些关键字，请不要使用此方法。
+
+ @param format 要使用的格式
+ @param oidMap OID 映射，其中每个关键字是一个 String 形式的对象标识符（由句点分隔的非负整数序列），它映射到相应的属性类型关键字 String。映射可以为空但不能为 <code>null</code>。
+ @return 使用指定格式的此 <code>X500Principal</code> 的字符串表示形式
+ @throws IllegalArgumentException 如果指定格式无效、为 null 或者名称的 OID 映射到错误地指定的关键字
+ @throws NullPointerException 如果 <code>oidMap</code> 为 <code>null</code>
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.security.auth.x500.X500Principal.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ASN.1 DER 编码形式的标识名。{@link #X500Principal(byte[] name) X500Principal(byte[] name)} 的文档中提供了此结构的 ASN.1 表示法。
+
+<p>注意，返回的字节数组被复制，以防止后续修改。
+
+@return 包含 ASN.1 DER 编码格式的标识名的字节数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.x500.X500Principal.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>X500Principal</code> 的用户友好的字符串表示形式。
+
+@return 此 <code>X500Principal</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.x500.X500Principal.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定的 <code>Object</code> 与此 <code>X500Principal</code> 的相等性。
+
+<p> 需要特别说明的是，如果 <code>Object</code> <i>o</i> 是一个 <code>X500Principal</code>，并且此对象和 <i>o</i> 二者的规范字符串表示形式（通过 <code>getName(X500Principal.CANONICAL)</code> 方法获得）是相等的，此方法返回 <code>true</code>。
+
+<p> 此实现与 RFC 2459 的要求是兼容的。
+
+@param o 将与此 <code>X500Principal</code> 进行相等性比较的对象。
+
+@return 如果指定的 <code>Object</code> 等于此 <code>X500Principal</code>，则返回 <code>true</code>;否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.x500.X500Principal.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>X500Principal</code> 的哈希码。
+
+<p> 哈希码是通过以下方式计算的：<code>getName(X500Principal.CANONICAL).hashCode()</code>
+
+@return 此 <code>X500Principal</code> 的哈希码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.x500.X500Principal.readObject(ObjectInputStream s) throws java.io.IOException, java.io.NotActiveException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流读取此对象（即将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.x500.X500Principal.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 X500Principal 对象保存到流中。
+
+@serialData 此 <code>X500Principal</code> 通过写出它的 DER 编码格式（<code>getEncoded</code> 的值被序列化）来获得序列化。
+
+<!-- END DATA -->

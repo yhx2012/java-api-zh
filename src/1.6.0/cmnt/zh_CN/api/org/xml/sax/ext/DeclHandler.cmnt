@@ -1,0 +1,87 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.ext.DeclHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 DTD 声明事件的 SAX2 扩展处理程序。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>这是 SAX2 的一个可选扩展处理程序，以提供有关 XML 文档中 DTD 声明的更完整信息。不需要 XML 阅读器识别此处理程序，它不是仅核心 SAX2 分发的一部分。</p>
+
+<p>注意，已经通过 {@link org.xml.sax.DTDHandler DTDHandler} 接口报告与数据相关的 DTD 声明（未解析的实体和注释）。</p>
+
+<p>如果将声明处理程序与词法处理程序一起使用，则在 {@link org.xml.sax.ext.LexicalHandler#startDTD startDTD} 和 {@link org.xml.sax.ext.LexicalHandler#endDTD endDTD} 事件之间将发生所有事件。</p>
+
+<p>要为 XML 阅读器设置 DeclHandler，使用带有属性名称 <code>http://xml.org/sax/properties/declaration-handler</code> 的 {@link org.xml.sax.XMLReader#setProperty setProperty} 方法以及将此接口（或 null）实现为该值的对象。如果阅读器不报告声明事件，则尝试注册处理程序时，它将抛出 {@link org.xml.sax.SAXNotRecognizedException SAXNotRecognizedException}。</p>
+
+@since SAX 2.0 (extensions 1.0)
+@author David Megginson
+@version 2.0.1 (sax2r2)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.DeclHandler.elementDecl(String name, String model) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告元素类型声明。
+
+<p>内容模型将由字符串 &quot;EMPTY&quot;、字符串 &quot;ANY&quot; 或用括号括起来的组组成，可以选择后面跟随一个出现指示符。将使模型标准化，以便完全解析所有的参数实体，并移除所有的空白，并将包括括号。其他标准化（例如，移除多余的括号或简化出现指示符）是由解析器决定的。</p>
+
+@param name 元素类型名称。
+@param model 作为标准化字符串的内容模型。
+@exception SAXException 应用程序可能引发一个异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.DeclHandler.attributeDecl(String eName, String aName, String type, String mode, String value) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告属性类型声明。
+
+<p>将仅报告属性的有效（第一个）声明。类型将是以下字符串之一：&quot;CDATA&quot;、&quot;ID&quot;、&quot;IDREF&quot;、&quot;IDREFS&quot;、&quot;NMTOKEN&quot;、&quot;NMTOKENS&quot;、&quot;ENTITY&quot;、&quot;ENTITIES&quot;、移除所有空格的带有分隔符 &quot;|&quot; 的加上括号的标记组，或后跟一个空格再跟随移除所有空白的加上括号的标记组的单词 &quot;NOTATION&quot;。</p>
+
+<p>值将是报告给应用程序、被适当标准化的值，它带有实体和扩展的字符引用。  </p>
+
+@param eName 关联元素的名称。
+@param aName 属性的名称。
+@param type 表示属性类型的字符串。
+@param mode 表示属性默认模式（&quot;#IMPLIED&quot;、&quot;#REQUIRED&quot; 或 &quot;#FIXED&quot;）的字符串，如果不应用上述模式，则为 null。
+@param value 表示属性的默认值的字符串，如果不存在，则为 null。
+@exception SAXException 应用程序可能引发一个异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.DeclHandler.internalEntityDecl(String name, String value) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告内部实体声明。
+
+<p>将仅报告每个实体的有效（第一个）声明。将扩展值中的所有参数实体，但不扩展常规实体。</p>
+
+@param name 实体的名称。如果是参数实体，则名称以 &quot;%&quot; 开头。
+@param value 实体的替换文本。
+@exception SAXException 应用程序可能引发一个异常。
+@see #externalEntityDecl
+@see org.xml.sax.DTDHandler#unparsedEntityDecl
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.DeclHandler.externalEntityDecl(String name, String publicId, String systemId) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告解析的外部实体声明。
+
+<p>将仅报告每个实体的有效（第一个）声明。</p>
+
+<p>如果系统标识符是 URL，则解析器必须在将它传递给应用程序之前完全解析它。</p>
+
+@param name 实体的名称。如果是参数实体，则名称以 &quot;%&quot; 开头。
+@param publicId 实体的公共标识符，如果没有给定，则为 null。
+@param systemId 实体的系统标识符。
+@exception SAXException 应用程序可能引发一个异常。
+@see #internalEntityDecl
+@see org.xml.sax.DTDHandler#unparsedEntityDecl
+
+<!-- END DATA -->

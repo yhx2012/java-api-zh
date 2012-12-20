@@ -1,0 +1,116 @@
+<!-- BEGIN KEY -->
+public class javax.management.StandardEmitterMBean extends javax.management.StandardMBean implements javax.management.NotificationEmitter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>一个其管理接口由 Java 接口上的反射确定并且可以发送通知的 MBean。</p>
+
+<p>以下示例显示了如何使用公共构造方法 {@link #StandardEmitterMBean(Object, Class, NotificationEmitter) 
+ StandardEmitterMBean(implementation, mbeanInterface, emitter)} 创建一个 MBean，使之能使用实现类名称 <i>Impl</i>、接口 <i>Intf</i>（对于当前标准 MBean）定义的管理接口，以及接口 {@link NotificationEmitter} 的实现来发送消息。该示例使用类 {@link NotificationBroadcasterSupport} 作为接口 {@link NotificationEmitter} 的实现。</p>
+
+     <pre>
+     MBeanServer mbs;
+     ...
+     final String[] types = new String[] {"sun.disc.space","sun.disc.alarm"};
+     final MBeanNotificationInfo info = new MBeanNotificationInfo(
+                                          types,
+                                          Notification.class.getName(),
+                                          "Notification about disc info.");
+     final NotificationEmitter emitter = 
+                    new NotificationBroadcasterSupport(info);
+
+     final Intf impl = new Impl(...);
+     final Object mbean = new StandardEmitterMBean(
+                                     impl, Intf.class, emitter);
+     mbs.registerMBean(mbean, objectName);
+     </pre>
+
+@see StandardMBean
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.StandardEmitterMBean(T implementation, java.lang.Class<T> mbeanInterface, NotificationEmitter emitter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个 MBean，其管理接口由 {@code mbeanInterface} 使用给定实现指定，并且其中的通知由给定的 {@code NotificationEmitter} 处理。结果 MBean 通过将其方法转发给 {@code emitter} 来实现 {@code NotificationEmitter} 接口。这是合法的，并且在将 {@code implementation} 和 {@code emitter} 用于相同对象时很有用。</p>
+ 
+<p>如果 {@code emitter} 是 {@code NotificationBroadcasterSupport} 的实例，则该 MBean 的 {@link #sendNotification sendNotification} 方法将调用 {@code emitter.}{@link NotificationBroadcasterSupport#sendNotification sendNotification}。</p>
+
+<p>由新 MBean 上的 {@link #getNotificationInfo()} 返回的数组是进行构造时由 {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} 返回的数组的副本。如果由 {@code emitter.getNotificationInfo()} 返回的数组之后发生变化，那么这种变化不会影响到此对象的 {@code getNotificationInfo()}。</p>
+
+@param implementation MBean 接口的实现。
+@param mbeanInterface  Standard MBean 接口。
+@param emitter  将处理通知的对象。
+
+@throws IllegalArgumentException  如果 {@code mbeanInterface} 不遵守管理接口的 JMX 设计模式，或者给定的 {@code implementation} 没有实现指定的接口，抑或 {@code emitter} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.StandardEmitterMBean(T implementation, java.lang.Class<T> mbeanInterface, boolean isMXBean, NotificationEmitter emitter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个 MBean，其管理接口由 {@code mbeanInterface} 使用给定实现指定，并且其中的通知由给定的 {@code NotificationEmitter} 处理。此构造方法可以用于构造 Standard MBean 或 MXBean。结果 MBean 通过将其方法转发给 {@code emitter} 来实现 {@code NotificationEmitter} 接口。这是合法的，并且在将 {@code implementation} 和 {@code emitter} 用于相同对象时很有用。</p>
+ 
+<p>如果 {@code emitter} 是 {@code NotificationBroadcasterSupport} 的实例，则该 MBean 的 {@link #sendNotification sendNotification} 方法将调用 {@code emitter.}{@link NotificationBroadcasterSupport#sendNotification sendNotification}。</p>
+
+<p>由新 MBean 上的 {@link #getNotificationInfo()} 返回的数组是进行构造时由 {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} 返回的数组的副本。如果由 {@code emitter.getNotificationInfo()} 返回的数组之后发生变化，那么这种变化不会影响到此对象的 {@code getNotificationInfo()}。</p>
+
+@param implementation MBean 接口的实现。
+@param mbeanInterface  Standard MBean 接口。
+@param isMXBean  如果为 true，则 {@code mbeanInterface} 参数会对 MXBean 接口进行命名，并且结果 MBean 是一个 MXBean。
+@param emitter  将处理通知的对象。
+
+@throws IllegalArgumentException  如果 {@code mbeanInterface} 不遵守管理接口的 JMX 设计模式，或者给定的 {@code implementation} 没有实现指定的接口，抑或 {@code emitter} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.management.StandardEmitterMBean(java.lang.Class<?> mbeanInterface, NotificationEmitter emitter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个 MBean，其管理接口由 {@code mbeanInterface} 指定，并且其中的通知由给定的 {@code NotificationEmitter} 处理。结果 MBean 通过将其方法转发给 {@code emitter} 来实现 {@code NotificationEmitter} 接口。</p>
+ 
+<p>如果 {@code emitter} 是 {@code NotificationBroadcasterSupport} 的实例，则该 MBean 的 {@link #sendNotification sendNotification} 方法将调用 {@code emitter.}{@link NotificationBroadcasterSupport#sendNotification sendNotification}。</p>
+
+<p>由新 MBean 上的 {@link #getNotificationInfo()} 返回的数组是进行构造时由 {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} 返回的数组的副本。如果由 {@code emitter.getNotificationInfo()} 返回的数组之后发生变化，那么这种变化不会影响到此对象的 {@code getNotificationInfo()}。</p>
+
+<p>此构造方法必须从实现给定 {@code mbeanInterface} 的子类调用。</p>
+
+@param mbeanInterface  StandardMBean 接口。
+@param emitter  将处理通知的对象。
+
+@throws IllegalArgumentException  如果 {@code mbeanInterface} 不遵守管理接口的 JMX 设计模式，或者给定的 {@code this} 没有实现指定的接口，抑或 {@code emitter} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.management.StandardEmitterMBean(java.lang.Class<?> mbeanInterface, boolean isMXBean, NotificationEmitter emitter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个 MBean，其管理接口由 {@code mbeanInterface} 指定，并且其中的通知由给定的 {@code NotificationEmitter} 处理。此构造方法可以用于构造 Standard MBean 或 MXBean。结果 MBean 通过将其方法转发给 {@code emitter} 来实现 {@code NotificationEmitter} 接口。</p>
+ 
+<p>如果 {@code emitter} 是 {@code NotificationBroadcasterSupport} 的实例，则该 MBean 的 {@link #sendNotification sendNotification} 方法将调用 {@code emitter.}{@link NotificationBroadcasterSupport#sendNotification sendNotification}。</p>
+
+<p>由新 MBean 上的 {@link #getNotificationInfo()} 返回的数组是进行构造时由 {@code emitter.}{@link NotificationBroadcaster#getNotificationInfo getNotificationInfo()} 返回的数组的副本。如果由 {@code emitter.getNotificationInfo()} 返回的数组之后发生变化，那么这种变化不会影响到此对象的 {@code getNotificationInfo()}。</p>
+
+<p>此构造方法必须从实现给定 {@code mbeanInterface} 的子类调用。</p>
+
+@param mbeanInterface  StandardMBean 接口。
+@param isMXBean  如果为 true，则 {@code mbeanInterface} 参数会对 MXBean 接口进行命名，并且结果 MBean 是一个 MXBean。
+@param emitter  将处理通知的对象。
+
+@throws IllegalArgumentException  如果 {@code mbeanInterface} 不遵守管理接口的 JMX 设计模式，或者给定的 {@code this} 没有实现指定的接口，抑或 {@code emitter} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.StandardEmitterMBean.sendNotification(Notification n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>发送通知。</p>
+
+<p>如果构造方法的 {@code emitter} 参数是一个 {@code NotificationBroadcasterSupport} 实例，则此方法将调用 {@code emitter.}{@link NotificationBroadcasterSupport#sendNotification sendNotification}。</p>
+
+@param n  要发送的通知。
+
+@throws ClassCastException  如果构造方法的 {@code emitter} 参数不是 {@code NotificationBroadcasterSupport}。
+
+<!-- END DATA -->

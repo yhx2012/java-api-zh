@@ -1,0 +1,609 @@
+<!-- BEGIN KEY -->
+public class java.math.BigInteger extends java.lang.Number implements java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不可变的任意精度的整数。所有操作中，都以二进制补码形式表示 BigInteger（如 Java 的基本整数类型）。BigInteger 提供所有 Java 的基本整数操作符的对应物，并提供 java.lang.Math 的所有相关方法。另外，BigInteger 还提供以下运算：模算术、GCD 计算、质数测试、素数生成、位操作以及一些其他操作。
+ <p>
+算术运算的语义完全模仿 Java 整数算术运算符的语义，如 <i>The Java Language Specification</i> 中所定义的。例如，以零作为除数的除法抛出 <tt>ArithmeticException</tt>，而负数除以正数的除法则产生一个负（或零）的余数。Spec 中关于溢出的细节都被忽略了，因为 BigIntegers 所设置的实际大小能适应操作结果的需要。
+ <p>
+位移操作的语义扩展了 Java 的位移操作符的语义以允许产生负位移距离。带有负位移距离的右移操作会导致左移操作，反之亦然。忽略无符号的右位移运算符（&gt;&gt;&gt;），因为该操作与由此类提供的&ldquo;无穷大的词大小&rdquo;抽象结合使用时毫无意义。
+ <p>
+逐位逻辑运算的语义完全模仿 Java 的逐位整数运算符的语义。在执行操作之前，二进制运算符（<tt>and</tt>、<tt>or</tt>、<tt>xor</tt>）对两个操作数中的较短操作数隐式执行符号扩展。
+ <p>
+比较操作执行有符号的整数比较，类似于 Java 的关系运算符和相等性运算符执行的比较。
+ <p>
+提供的模算术操作用来计算余数、求幂和乘法可逆元。这些方法始终返回非负结果，范围在 <tt>0</tt> 和 <tt>(modulus - 1)</tt>（包括）之间。
+ <p>
+位操作对其操作数的二进制补码表示形式的单个位进行操作。如有必要，操作数会通过扩展符号来包含指定的位。单一位操作不能产生与正在被操作的 BigInteger 符号不同的 BigInteger，因为它们仅仅影响单个位，并且此类提供的&ldquo;无穷大词大小&rdquo;抽象可保证在每个 BigInteger 前存在无穷多的&ldquo;虚拟符号位&rdquo;数。
+ <p>
+为了简洁明了，在整个 BigInteger 方法的描述中都使用了伪代码。伪代码表达式 <tt>(i + j)</tt> 是&ldquo;其值为 BigInteger <tt>i</tt> 加 BigInteger <tt>j</tt> 的 BigInteger&rdquo;的简写。伪代码表达式 <tt>(i == j)</tt> 是&ldquo;当且仅当 BigInteger <tt>i</tt> 表示与 BigInteger <tt>j</tt> 相同的值时，才为 <tt>true</tt>&rdquo;的简写。可以类似地解释其他伪代码表达式。
+ <p>
+当为任何输入参数传递 null 对象引用时，此类中的所有方法和构造方法都将抛出 <CODE>NullPointerException</CODE>。
+
+@see     BigDecimal
+@version 1.68, 04/29/04
+@author  Josh Bloch
+@author  Michael McCloskey
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.ZERO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+BigInteger 的常量 0。
+
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.ONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+BigInteger 的常量 1。
+
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.BigInteger java.math.BigInteger.TEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+BigInteger 的常量 10。
+
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.math.BigInteger.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+BigInteger 的可序列化字段。
+ 
+@serialField signum  int 此 BigInteger 的正负号。
+@serialField magnitude int[] 此 BigInteger 的大小数组。
+@serialField bitCount  int 此 BigInteger 中的位数
+@serialField bitLength int 此 BigInteger 最小的二进制补码表示形式的位数
+@serialField lowestSetBit int 二进制补码表示形式的最低设置位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(byte[] val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将包含 BigInteger 的二进制补码表示形式的 byte 数组转换为 BigInteger。输入数组假定为 <i>big-endian</i> 字节顺序：最高有效字节在第零个元素中。
+
+@param  val BigInteger 的 big-endian 二进制补码表示形式。
+@throws NumberFormatException <tt>val</tt> 为零字节长。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int signum, byte[] magnitude)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 BigInteger 的符号-数量表示形式转换为 BigInteger。该符号表示为一个正负号整数值：-1 表示负，0 表示零，1 表示正。该大小是一个 <i>big-endian</i> 字节顺序的 byte 数组：最高有效字节在第零个元素中。允许零长度数量数组，这会导致 BigInteger 的值为 0，无论其正负号是 -1、0 还是 1。
+
+@param  signum 该数的正负号（-1 表示负，0 表示零，1 表示正）。
+@param  magnitude 该数的大小的 big-endian 二进制表示形式。
+@throws NumberFormatException <tt>signum</tt> 不是三个合法值之一（-1、0 和 1），或者 <tt>signum</tt> 是 0 并且 <tt>magnitude</tt> 包含一个或多个非零字节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(String val, int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定基数的 BigInteger 的字符串表示形式转换为 BigInteger。该字符串表示形式包括一个可选的减号，后跟一个或多个指定基数的数字。字符到数字的映射由 <tt>Character.digit</tt> 提供。该字符串不能包含任何其他字符（例如，空格）。
+
+@param val BigInteger 的字符串表示形式。
+@param radix 要在解释 <tt>val</tt> 时使用的基数。
+@throws NumberFormatException <tt>val</tt> 不是指定基数的 BigInteger 的有效表示形式，或者 <tt>radix</tt> 超出从 {@link Character#MIN_RADIX} 到 {@link Character#MAX_RADIX}（包括）的范围。
+@see    Character#digit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(String val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 BigInteger 的十进制字符串表示形式转换为 BigInteger。该字符串表示形式包括一个可选的减号，后跟一个或多个十进制数字序列。字符到数字的映射由 <tt>Character.digit</tt> 提供。该字符串不能包含任何其他字符（例如，空格）。
+
+@param val BigInteger 的十进制字符串表示形式。
+@throws NumberFormatException <tt>val</tt> 不是 BigInteger 的有效表示形式。
+@see    Character#digit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int numBits, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个随机生成的 BigInteger，它是在 <tt>0</tt> 到 <tt>(2<sup>numBits</sup> - 1)</tt>（包括）范围内均匀分布的值。该分布的均匀性假定 <tt>rnd</tt> 中提供了一个随机位的公平源 (fair source)。注意，此构造方法始终构造一个非负 BigInteger。
+
+@param  numBits 新 BigInteger 的最大 bitLength。
+@param  rnd 计算新 BigInteger 时使用的随机源。
+@throws IllegalArgumentException 如果 <tt>numBits</tt> 为负。
+@see #bitLength()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger(int bitLength, int certainty, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个随机生成的正 BigInteger，它可能是一个具有指定 bitLength 的素数。<p>
+
+相对于此构造方法，建议优先使用 {@link #probablePrime probablePrime} 方法，必须指定一个确定数的情况除外。
+
+@param  bitLength 返回的 BigInteger 的 bitLength。
+@param  certainty 调用方允许的不确定性的度量。新的 BigInteger 表示素数的概率超出 <tt>(1 - 1/2<sup>certainty</sup></tt>)。此构造方法的执行时间与此参数的值是成比例的。
+@param  rnd 随机比特源，用这些随机比特选择用来进行质数测试的候选数。
+@throws ArithmeticException <tt>bitLength &lt; 2</tt>。
+@see    #bitLength()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.math.BigInteger java.math.BigInteger.probablePrime(int bitLength, Random rnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回有可能是素数的、具有指定长度的正 BigInteger。此方法返回的 BigInteger 是合数的概率不超出 2<sup>-100</sup>。
+
+@param  bitLength 返回的 BigInteger 的 bitLength。
+@param  rnd 随机比特源，用这些随机比特选择用来进行质数测试的候选数。
+@return 可能是素数的 <tt>bitLength</tt> 个位的 BigInteger
+@throws ArithmeticException <tt>bitLength &lt; 2</tt>。
+@see    #bitLength()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.nextProbablePrime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回大于此 <code>BigInteger</code> 的可能为素数的第一个整数。此方法返回的数是合数的概率不超出 2<sup>-100</sup>。此方法在执行以下搜索时将始终不会跳过素数：如果它返回 <tt>p</tt>，则不存在 <tt>this &lt; q &lt; p</tt> 的素数 <tt>q</tt>。
+
+@return 返回大于此 <code>BigInteger</code> 的可能为素数的第一个整数。
+@throws ArithmeticException <tt>this &lt; 0</tt>。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.math.BigInteger java.math.BigInteger.valueOf(long val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值等于指定 <code>long</code> 的值的 BigInteger。提供的此&ldquo;静态工厂方法&rdquo;优先于 (<code>long</code>) 构造方法，因为前者允许重用经常使用的 BigInteger。
+
+@param  val 要返回的 BigInteger 的值。
+@return  具有指定值的 BigInteger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.add(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this + val)</tt> 的 BigInteger。
+
+@param  val 将添加到此 BigInteger 中的值。
+@return <tt>this + val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.subtract(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this - val)</tt> 的 BigInteger。
+
+@param  val 从此 BigInteger 中减去的值。
+@return <tt>this - val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.multiply(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this * val)</tt> 的 BigInteger。
+
+@param  val 要乘以此 BigInteger 的值。
+@return <tt>this * val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.divide(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this / val)</tt> 的 BigInteger。
+
+@param  val 此 BigInteger 要除以的值。
+@return <tt>this / val</tt>
+@throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger[] java.math.BigInteger.divideAndRemainder(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含 <tt>(this / val)</tt> 后跟 <tt>(this % val)</tt> 的两个 BigInteger 的数组。
+
+@param  val 此 BigInteger 要除以的值和计算所得的余数。
+@return 两个 BigInteger 的数组：商 <tt>(this / val)</tt> 是初始元素，余数 <tt>(this % val)</tt> 是最终元素。
+@throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.remainder(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this % val)</tt> 的 BigInteger。
+
+@param  val 此 BigInteger 要除以的值和计算所得的余数。
+@return <tt>this % val</tt>
+@throws ArithmeticException <tt>val==0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.pow(int exponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this<sup>exponent</sup>)</tt> 的 BigInteger。注意，<tt>exponent</tt> 是一个整数而不是 BigInteger。
+
+@param  exponent 此 BigInteger 的指数。
+@return <tt>this<sup>exponent</sup></tt>
+@throws ArithmeticException <tt>exponent</tt> 为负。（这会导致该运算产生一个非整数值。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.gcd(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 BigInteger，其值是 <tt>abs(this)</tt> 和 <tt>abs(val)</tt> 的最大公约数。如果 <tt>this==0 &amp;&amp; val==0</tt>，则返回 0 。
+
+@param  val 要一起计算最大公约数的值。
+@return <tt>GCD(abs(this), abs(val))</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.abs()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值是此 BigInteger 的绝对值的 BigInteger。 
+
+@return <tt>abs(this)</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.negate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值是 <tt>(-this)</tt> 的 BigInteger。
+
+@return <tt>-this</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.signum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的正负号函数。
+
+@return 当此 BigInteger 的值为负、零或正时，返回 -1、0 或 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.mod(BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this mod m</tt>) 的 BigInteger。此方法不同于 <tt>remainder</tt>，因为它始终返回一个 <i>非负</i> BigInteger。
+
+@param  m 模数。
+@return <tt>this mod m</tt>
+@throws ArithmeticException <tt>m &lt;= 0</tt>
+@see    #remainder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.modPow(BigInteger exponent, BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this<sup>exponent</sup> mod m)</tt> 的 BigInteger。（与 <tt>pow</tt> 不同，此方法允许使用负指数。）
+
+@param  exponent 该指数。
+@param  m 模数。
+@return <tt>this<sup>exponent</sup> mod m</tt>
+@throws ArithmeticException <tt>m &lt;= 0</tt>
+@see    #modInverse
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.modInverse(BigInteger m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this<sup>-1</sup> mod m)</tt> 的 BigInteger。
+
+@param  m 模数。
+@return <tt>this<sup>-1</sup> mod m</tt>.
+@throws ArithmeticException <tt> m &lt;= 0</tt>，或者此 BigInteger 没有乘法可逆元 mod m（即此 BigInteger 不是 m 的<i>相对素数</i>）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.shiftLeft(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this &lt;&lt; n)</tt> 的 BigInteger。位移距离 <tt>n</tt> 可以为负，在此情况下，此方法执行右移操作。（计算 <tt>floor(this * 2<sup>n</sup>)</tt>。）
+
+@param  n 以位为单位的位移距离。
+@return <tt>this &lt;&lt; n</tt>
+@see #shiftRight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.shiftRight(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this &gt;&gt; n)</tt> 的 BigInteger。执行符号扩展。位移距离 <tt>n</tt> 可以为负，在此情况下，此方法执行左移操作。（计算 <tt>floor(this / 2<sup>n</sup>)</tt>。） 
+
+@param  n 以位为单位的位移距离。
+@return <tt>this &gt;&gt; n</tt>
+@see #shiftLeft
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.and(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this &amp; val)</tt> 的 BigInteger。（当且仅当 this 和 val 同时为负时，此方法返回一个负 BigInteger。）
+
+@param val 要与此 BigInteger 执行 AND（与）运算的值。
+@return <tt>this &amp; val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.or(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this | val)</tt> 的 BigInteger。（当且仅当 this 和 val 之一为负时，此方法返回一个负 BigInteger。） 
+
+@param val 要与此 BigInteger 执行或运算的值。
+@return <tt>this | val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.xor(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this ^ val)</tt> 的 BigInteger。（当且仅当 this 和 val 中只有一个为负时，此方法返回一个负 BigInteger。）
+
+@param val 要与此 BigInteger 执行异或运算的值。
+@return <tt>this ^ val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.not()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(~this)</tt> 的 BigInteger。（当且仅当此 BigInteger 为非负时，此方法返回一个负值。）
+
+@return <tt>~this</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.andNot(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <tt>(this &amp; ~val)</tt> 的 BigInteger。此方法等效于 <tt>and(val.not())</tt>，提供此方法是为了更方便地进行屏蔽操作。（当且仅当 <tt>this</tt> 为负且 <tt>val</tt> 为正时，此方法返回一个负 BigInteger。）
+
+@param val 要进行求补且与此 BigInteger 执行与运算的值。
+@return <tt>this &amp; ~val</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.testBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当设置了指定的位时，返回 <tt>true</tt>。（计算 <tt>((this &amp; (1&lt;&lt;n)) != 0)</tt>。）
+
+@param  n 要测试的位的索引。
+@return 当且仅当设置了指定的位时，返回 <tt>true</tt>。
+@throws ArithmeticException <tt>n</tt> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.setBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值与设置了指定位的此 BigInteger 等效的 BigInteger。（计算 <tt>(this | (1&lt;&lt;n))</tt>。）
+
+@param  n 要设置的位的索引。
+@return <tt>this | (1&lt;&lt;n)</tt>
+@throws ArithmeticException <tt>n</tt> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.clearBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值与清除了指定位的此 BigInteger 等效的 BigInteger。（计算 <tt>(this &amp; ~(1&lt;&lt;n))</tt>。）
+
+@param  n 要清除的位的索引。
+@return <tt>this &amp; ~(1&lt;&lt;n)</tt>
+@throws ArithmeticException <tt>n</tt> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.flipBit(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值与对此 BigInteger 进行指定位翻转后的值等效的 BigInteger。（计算 <tt>(this ^ (1&lt;&lt;n))</tt>。）
+
+@param  n 要翻转的位的索引。
+@return <tt>this ^ (1&lt;&lt;n)</tt>
+@throws ArithmeticException <tt>n</tt> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.getLowestSetBit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 最右端（最低位）1 比特的索引（即从此字节的右端开始到本字节中最右端 1 比特之间的 0 比特的位数）。如果此 BigInteger 不包含一位，则返回 -1。（计算 <tt>(this==0? -1 : log<sub>2</sub>(this &amp; -this))</tt>。)
+
+@return 此 BigInteger 中最右端的一比特位的索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.bitLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的最小的二进制补码表示形式的位数，<i>不包括</i> 符号位。对于正 BigInteger，这等于常规二进制表示形式中的位数。（计算 <tt>(ceil(log<sub>2</sub>(this &lt; 0 ? -this : this+1)))</tt>。)
+
+@return 返回此 BigInteger 的最小的二进制补码表示形式中的位数，<i>不包括</i> 符号位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.bitCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的二进制补码表示形式中与符号不同的位的数量。此方法在实现 BigInteger 上的位向量样式设置时非常有用。
+
+@return 返回此 BigInteger 的二进制补码表示形式中与符号位不同的位的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.isProbablePrime(int certainty)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 BigInteger 可能为素数，则返回 <tt>true</tt>，如果它一定为合数，则返回 <tt>false</tt>。如果 <tt>certainty</tt> <tt> &lt;= 0</tt>，则返回 <tt>true</tt>。
+
+@param  certainty 调用方允许的不确定性的度量。如果该调用返回 <tt>true</tt>，则此 BigInteger 是素数的概率超出 <tt>(1 - 1/2<sup>certainty</sup>)</tt>。此方法的执行时间与此参数的值是成比例的。
+@return 如果此 BigInteger 可能为素数，则返回 <tt>true</tt>，如果它一定为合数，则返回 <tt>false</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.compareTo(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 BigInteger 与指定的 BigInteger 进行比较。对于针对六个布尔比较运算符 (&lt;, ==, &gt;, &gt;=, !=, &lt;=) 中的每一个运算符的各个方法，优先提供此方法。执行这些比较的建议语句是：<tt>(x.compareTo(y)</tt> &lt;<i>op</i>&gt; <tt>0)</tt>，其中 &lt;<i>op</i>&gt; 是六个比较运算符之一。
+
+@param  val 将此 BigInteger 与之比较的 BigInteger。
+@return  当此 BigInteger 在数值上小于、等于或大于 <tt>val</tt> 时，返回 -1，0，或 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.math.BigInteger.equals(Object x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此 BigInteger 与指定的 Object 的相等性。
+
+@param  x 将此 BigInteger 与之比较的 Object。
+@return 当且仅当指定的 Object 是一个其值在数字上等于此 BigInteger 的 BigInteger 时，返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.min(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 和 <tt>val</tt> 的最小值。
+
+@param  val 要计算最小值的值。
+@return 其值为此 BigInteger 和 <tt>val</tt> 中的较小值的 BigInteger。如果它们相等，可能返回其中之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.math.BigInteger.max(BigInteger val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 和 <tt>val</tt> 的最大值。
+
+@param  val 要计算最大值的值。
+@return 其值为此 BigInteger 和 <tt>val</tt> 中较大值的 BigInteger。如果它们相等，可能返回其中之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的哈希码。
+
+@return 此 BigInteger 的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.math.BigInteger.toString(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的给定基数的字符串表示形式。如果该基数超出从 {@link Character#MIN_RADIX} 到 {@link Character#MAX_RADIX}（包括）这一范围，则其默认值为 10（<tt>Integer.toString</tt> 就是这种情况）。使用由 <tt>Character.forDigit</tt> 提供的从数字到字符的映射，并在需要时在前面加一个负号。（此表示形式与 {@link #BigInteger(String, int) (String, <code>int</code>)} 构造方法兼容。）
+
+@param  radix  字符串表示形式的基数。
+@return 此 BigInteger 给定基数的字符串表示形式。
+@see    Integer#toString
+@see    Character#forDigit
+@see    #BigInteger(java.lang.String, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.math.BigInteger.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 BigInteger 的十进制字符串表示形式。使用由 <tt>Character.forDigit</tt> 提供的从数字到字符的映射，并在需要时在前面加一个负号。（此表示形式与 {@link #BigInteger(String) (String)} 构造方法兼容，并允许使用 Java 的 + 运算符将字符串连接。）
+
+@return 此 BigInteger 的十进制字符串表示形式。
+@see    Character#forDigit
+@see    #BigInteger(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.math.BigInteger.toByteArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 byte 数组，该数组包含此 BigInteger 的二进制补码表示形式。该 byte 数组将为 <i>big-endian</i> 字节顺序：最高有效字节在第零个元素中。此数组将包含表示此 BigInteger 所需的最小数量的字节，至少包括一个符号位，即 <tt>(ceil((this.bitLength() + 1)/8))</tt>。（此表示形式与 {@link #BigInteger(byte[]) (byte[])} 构造方法兼容。）
+
+@return 一个包含此 BigInteger 的二进制补码表示形式的 byte 数组。
+@see    #BigInteger(byte[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.math.BigInteger.intValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 BigInteger 转换为 <code>int</code>。此转换类似于 <a  href="http://java.sun.com/docs/books/jls/html/">Java Language Specification</a> 中定义的从 <code>long</code> 到 <code>int</code> 的<a  href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>基本收缩转换</i></a>：如果此 BigInteger 太长而不适合用 <code>int</code> 表示，则仅返回 32 位的低位字节。注意，此转换会丢失关于该 BigInteger 值的总大小的信息，并返回带有相反符号的结果。
+
+@return 转换为 <code>int</code> 的此 BigInteger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.math.BigInteger.longValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 BigInteger 转换为 <code>long</code>。此转换类似于 <a  href="http://java.sun.com/docs/books/jls/html/">Java Language Specification</a> 中定义的从 <code>long</code> 到 <code>int</code> 的<a  href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>基本收缩转换</i></a>：如果此 BigInteger 太长而不适合用 <code>long</code> 表示，则仅返回 64 位的低位字节。注意，此转换会丢失关于该 BigInteger 值的总大小的信息，并返回带有相反符号的结果。
+
+@return 转换为 <code>long</code> 的此 BigInteger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.math.BigInteger.floatValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 BigInteger 转换为 <code>float</code>。此转换类似于 <a  href="http://java.sun.com/docs/books/jls/html/">Java Language Specification</a> 中定义的从 <code>double</code> 到 <code>float</code> 的<a  href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>基本收缩转换</i></a>：如果此 BigInteger 的数量太大，不能表示为 <code>float</code>，则将其适当地转换为 {@link Float#NEGATIVE_INFINITY} 或 {@link Float#POSITIVE_INFINITY}。注意，即使在返回值是有限的情况下，此转换也可以丢失关于 BigInteger 值的精度的信息。
+
+@return 转换为 <code>float</code> 的此 BigInteger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.math.BigInteger.doubleValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 BigInteger 转换为 <code>double</code>。此转换类似于 <a  href="http://java.sun.com/docs/books/jls/html/">Java Language Specification</a> 中定义的从 <code>double</code> 到 <code>float</code> 的<a  href="http://java.sun.com/docs/books/jls/second_edition/html/conversions.doc.html#25363"><i>基本收缩转换</i></a>：如果此 BigInteger 的数量太大，不能表示为 <code>double</code>，则将其适当地转换为 {@link Double#NEGATIVE_INFINITY} 或 {@link Double#POSITIVE_INFINITY}。注意，即使在返回值是有限的情况下，此转换也可以丢失关于 BigInteger 值的精度的信息。
+
+@return 转换为 <code>double</code> 的此 BigInteger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.math.BigInteger.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构 <tt>BigInteger</tt> 实例（也就是将其反序列化）。由于历史原因，该大小作为一个 byte 数组读入，但它被转换为一个 int 数组，并丢弃 byte 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.math.BigInteger.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <tt>BigInteger</tt> 实例保存到流。由于历史原因，BigInteger 的大小被序列化为一个 byte 数组。
+ 
+@serialData 将写入两个必需字段和一些过时字段，以便与较旧版本兼容。
+
+<!-- END DATA -->

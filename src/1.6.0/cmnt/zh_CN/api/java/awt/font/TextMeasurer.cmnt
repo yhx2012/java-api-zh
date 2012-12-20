@@ -1,0 +1,87 @@
+<!-- BEGIN KEY -->
+public final class java.awt.font.TextMeasurer extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>TextMeasurer</code> 类提供换行所需的基本操作：测量到给定的 advance，确定字符范围的 advance，并为字符范围生成一个 <code>TextLayout</code>。该类还提供了段落增量编辑的方法。
+ <p>
+<code>TextMeasurer</code> 对象是使用表示单个文本段落的 {@link java.text.AttributedCharacterIterator AttributedCharacterIterator} 构造的。<code>AttributedCharacterIterator</code> 的 {@link AttributedCharacterIterator#getBeginIndex() getBeginIndex} 方法返回的值定义了第一个字符的绝对索引。<code>AttributedCharacterIterator</code> 的 {@link AttributedCharacterIterator#getEndIndex() getEndIndex} 方法返回的值定义了最后一个字符后的索引。这些值定义了调用 <code>TextMeasurer</code> 的时使用的索引范围。例如，要通过调用获取文本范围的 advance 或文本范围的换行，则必须使用开始索引值和结束索引值之间的索引。调用 {@link #insertChar(java.text.AttributedCharacterIterator, int) insertChar} 和 {@link #deleteChar(java.text.AttributedCharacterIterator, int) deleteChar} 重置 <code>TextMeasurer</code> 要使用在这些调用中传入的 <code>AttributedCharacterIterator</code> 的开始索引和结束索引。
+ <p>
+大多数客户端将使用更方便的 <code>LineBreakMeasurer</code>，它实现了标准的换行策略（在每一行上放置尽可能多的适合的单词）。 
+
+@author John Raley
+@version 1.31, 04/20/01
+@see LineBreakMeasurer
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextMeasurer(AttributedCharacterIterator text, FontRenderContext frc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从源文本构造 <code>TextMeasurer</code>。源文本应为一个整段。
+@param text 源段落。不能为 null。
+@param frc 关于需要正确测量文本的图形设备的信息。不能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextMeasurer.getLineBreakIndex(int start, float maxAdvance)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回不能置于文本行上的第一个字符，该文本行从 <code>start</code> 开始并可能测量到图形宽度的 <code>maxAdvance</code>。
+
+@param start 从此处开始测量的字符索引。<code>start</code> 是一个绝对索引，而不是相对于段落开始处的相对索引
+@param maxAdvance 文本行必须符合的图形宽度
+@return 置于从 <code>start</code> 开始、不长于 <code>maxAdvance</code> 文本行上的最后一个字符后的索引
+@throws IllegalArgumentException 如果 <code>start</code> 小于段落的开始位置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextMeasurer.getAdvanceBetween(int start, int limit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从 <code>start</code> 开始并包括一直到 <code>limit</code> 的字符的行的图形宽度。<code>start</code> 和 <code>limit</code> 是绝对索引，不是相对于段落开始处的相对索引。
+
+@param start 开始测量的字符索引
+@param limit 停止测量的字符索引
+@return 从 <code>start</code> 处开始并包括一直到 <code>limit</code> 的字符的行的图形宽度
+@throws IndexOutOfBoundsException 如果 <code>limit</code> 小于 <code>start</code>
+@throws IllegalArgumentException 如果 <code>start</code> 或 <code>limit</code> 不在段落开始处和段落结束处之间。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextLayout java.awt.font.TextMeasurer.getLayout(int start, int limit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定字符范围上的 <code>TextLayout</code>。
+
+@param start 第一个字符的索引
+@param limit 最后一个字符之后的索引。必须大于 <code>start</code>
+@return 从 <code>start</code> 开始（不包括）直到 <code>limit</code> 的字符的 <code>TextLayout</code>
+@throws IndexOutOfBoundsException 如果 <code>limit</code> 小于 <code>start</code>
+@throws IllegalArgumentException 如果 <code>start</code> 或 <code>limit</code> 不在段落开始处和段落结束处之间。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.font.TextMeasurer.insertChar(AttributedCharacterIterator newParagraph, int insertPos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在将单个字符插入当前由此 <code>TextMeasurer</code> 表示的段落中后，更新该 <code>TextMeasurer</code>。在此调用后，该 <code>TextMeasurer</code> 等效于从文本创建的新 <code>TextMeasurer</code>；不过，更新现有 <code>TextMeasurer</code> 通常比重新创建一个新 <code>TextMeasurer</code> 效率更高。
+
+@param newParagraph 执行插入后段落的文本。不能为 null。
+@param insertPos 插入字符在文本中的位置。不能小于 <code>newParagraph</code> 的开始，且必须小于 <code>newParagraph</code> 的结束。
+@throws IndexOutOfBoundsException 如果 <code>insertPos</code> 小于 <code>newParagraph</code> 的开始或者大于或等于 <code>newParagraph</code> 的结束
+@throws NullPointerException 如果 <code>newParagraph</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.font.TextMeasurer.deleteChar(AttributedCharacterIterator newParagraph, int deletePos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从当前由此 <code>TextMeasurer</code> 表示的段落中删除一个字符后，更新 <code>TextMeasurer</code>。在此调用后，该 <code>TextMeasurer</code> 等效于从文本创建的新 <code>TextMeasurer</code>；不过，更新现有 <code>TextMeasurer</code> 通常比重新创建一个新 <code>TextMeasurer</code> 效率更高。
+
+@param newParagraph 执行删除后的段落文本。不能为 null。
+@param deletePos 所移除字符在文本中的位置。不能小于 <code>newParagraph</code> 的开始，而且不能大于 <code>newParagraph</code> 的结束。
+@throws IndexOutOfBoundsException 如果 <code>deletePos</code> 小于 <code>newParagraph</code> 的开始或大于 <code>newParagraph</code> 的结束
+@throws NullPointerException 如果 <code>newParagraph</code> 为 <code>null</code>
+
+<!-- END DATA -->

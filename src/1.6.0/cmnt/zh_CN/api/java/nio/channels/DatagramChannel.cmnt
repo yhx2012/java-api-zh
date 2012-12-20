@@ -1,0 +1,246 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.DatagramChannel extends java.nio.channels.spi.AbstractSelectableChannel implements java.nio.channels.ByteChannel, java.nio.channels.ScatteringByteChannel, java.nio.channels.GatheringByteChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对面向数据报套接字的可选择通道。
+
+
+<p> 数据报通道不是网络数据报套接字的完整抽象。必须通过调用 {@link #socket() socket} 所获得的关联 {@link java.net.DatagramSocket} 对象来完成套接字选项的绑定和操作。不可能为任意的已有数据报套接字创建通道，也不可能指定与数据报通道关联的数据报套接字所使用的 {@link java.net.DatagramSocketImpl} 对象。
+
+<p> 通过调用此类的 {@link #open open} 方法创建数据报通道。新创建的数据报通道已打开，但尚未连接。为了使用 {@link #send send} 和 {@link #receive receive} 方法，无需连接数据报通道。但是如果为了避免作为每次发送和接收操作的一部分而执行的安全检查开销，也可以通过调用数据报通道的 {@link #connect connect} 方法来建立数据报通道连接。为了使用 {@link #read(java.nio.ByteBuffer) read} 和 {@link #write(java.nio.ByteBuffer) write} 方法，必须建立数据报通道连接，因为这些方法不接受或返回套接字地址。
+
+<p> 一旦建立了连接，在断开数据报通道的连接或将其关闭之前，该数据报通道保持连接状态。可通过调用数据报通道的 {@link #isConnected isConnected} 方法来确定它是否已连接。
+
+<p> 多个并发线程可安全地使用数据报通道。尽管在任意给定时刻最多只能有一个线程进行读取和写入操作，但数据报通道支持并发的读写。  </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.32, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.DatagramChannel(SelectorProvider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel.open() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开数据报通道。
+
+<p> 通过调用系统级默认 {@link java.nio.channels.spi.SelectorProvider} 对象的 {@link java.nio.channels.spi.SelectorProvider#openDatagramChannel() openDatagramChannel} 方法来创建新的通道。该通道不会被连接。  </p>
+
+@return 新的数据报通道
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.channels.DatagramChannel.validOps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个操作集，标识此通道所支持的操作。
+
+<p> 数据报通道支持读取和写入操作，所以此方法返回 <tt>(</tt>{@link SelectionKey#OP_READ} <tt>|</tt>&nbsp;{@link SelectionKey#OP_WRITE}<tt>)</tt>。  </p>
+
+@return  有效操作集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.net.DatagramSocket java.nio.channels.DatagramChannel.socket()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此通道关联的数据报套接字。
+
+<p> 返回的对象不会声明任何在 {@link java.net.DatagramSocket} 类中未声明的公共方法。</p>
+
+@return 与此通道关联的数据报套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.channels.DatagramChannel.isConnected()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断是否已连接此通道的套接字。</p>
+
+@return 当且仅当已连接此通道的套接字时才返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel.connect(SocketAddress remote) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+连接此通道的套接字。
+
+<p> 配置该通道的套接字，以便该套接字仅和给定的远程<i>同位体</i> 地址进行数据报的接收和发送。一旦连接后，就无法和任何其他地址进行数据报的接收或发送。在显式地断开数据报套接字的连接或将其关闭之前，该套接字始终保持连接状态。
+
+<p> 此方法执行的安全检查与 {@link java.net.DatagramSocket} 类的 {@link java.net.DatagramSocket#connect connect} 方法执行的安全检查完全相同。也就是说，如果已安装了安全管理器，则此方法验证其 {@link java.lang.SecurityManager#checkAccept checkAccept} 和 {@link java.lang.SecurityManager#checkConnect checkConnect} 方法是否分别允许接收来自给定远程地址的数据报和向其发送数据报。
+
+<p> 可在任意时间调用此方法。此方法对调用它时正在进行的读取或写入操作没有任何影响。</p>
+
+@param  remote 与此通道连接的远程地址
+
+@return  此数据报通道
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行连接操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行连接操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws  SecurityException 如果已安装安全管理器并且它不允许对给定远程地址进行访问
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.DatagramChannel java.nio.channels.DatagramChannel.disconnect() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+断开此通道套接字的连接。
+
+<p> 配置该通道的套接字，只要安全管理器允许（如果已安装），该套接字就可和任何远程地址进行数据报的接收和发送。
+
+<p> 可在任意时间调用此方法。此方法对调用它时正在进行的读取或写入操作没有任何影响。
+
+<p> 如果未连接此通道的套接字，或者通道已关闭，则调用此方法无效。 </p>
+
+@return  此数据报通道
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.net.SocketAddress java.nio.channels.DatagramChannel.receive(ByteBuffer dst) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过此通道接收数据报。
+
+<p> 如果数据报直接可用，并且此通道处于阻塞模式但最终会变得可用，则将数据报复制到给定的字节缓冲区中并返回数据报的源地址。如果此通道处于非阻塞模式并且没有直接可用的数据报，则此方法直接返回 <tt>null</tt>。
+
+<p> 该数据报被传输到给定的字节缓冲区中，并从缓冲区的当前位置开始存储，如同正规的 {@link ReadableByteChannel#read(java.nio.ByteBuffer) read} 操作一样。如果缓冲区中的剩余字节空间小于保存数据报所需的空间，则丢弃余下的数据报。
+
+<p> 此方法执行的安全检查与 {@link java.net.DatagramSocket} 类的 {@link java.net.DatagramSocket#receive receive} 方法执行的安全检查完全相同。也就是说，如果该套接字未连接到特定的远程地址，并且已安装了安全管理器，则对于接收到的每个数据报，此方法都会验证安全管理器的 {@link java.lang.SecurityManager#checkAccept checkAccept} 方法是否允许使用该数据报的源地址和端口号。避免此项安全检查开销的方法是首先通过 {@link #connect connect} 方法连接该套接字。
+
+<p> 可在任意时间调用此方法。但是如果另一个线程已经在此通道上发起了一个读取操作，则在该操作完成前此方法的调用被阻塞。 </p>
+
+@param  dst 要向其中传输数据报的缓冲区
+
+@return  数据报的源地址，或者如果此通道处于非阻塞模式并且没有直接可用的数据报，则返回 <tt>null</tt>
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws  SecurityException 如果已安装安全管理器并且它不允许接受该数据报发送者所发送的数据报
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.DatagramChannel.send(ByteBuffer src, SocketAddress target) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过此通道发送数据报。
+
+<p> 如果此通道处于非阻塞模式并且底层输出缓冲区中没有足够的空间，或者如果此通道处于阻塞模式并且缓冲区中有足够的空间，则将给定缓冲区中的剩余字节以单个数据报的形式传送到给定的目标地址。
+
+<p> 从字节缓冲区传输数据报如同通过正规的 {@link WritableByteChannel#write(java.nio.ByteBuffer) write} 操作一样。
+
+<p> 此方法执行的安全检查与 {@link java.net.DatagramSocket} 类的 {@link java.net.DatagramSocket#send send} 方法执行的安全检查完全相同。也就是说，如果该套接字未连接到指定的远程地址，并且已安装了安全管理器，则对于每个发送的数据报，此方法都会验证安全管理器的 {@link java.lang.SecurityManager#checkConnect checkConnect} 方法是否允许使用该数据报的目标地址和端口号。避免此项安全检查开销的方法是首先通过 {@link #connect connect} 方法连接该套接字。
+
+<p> 可在任意时间调用此方法。但是如果另一个线程已经在此通道上发起了一个写入操作，则在该操作完成前此方法的调用被阻塞。 </p>
+
+@param  src 包含要发送的数据报的缓冲区
+
+@param  target 要将数据报发送到的地址
+
+@return 发送的字节数，可能是调用此方法时源缓冲区中剩余的字节数，或者如果此通道处于非阻塞模式并且底层输出缓冲区中没有足够的空间供数据报使用，则可能为零
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws  SecurityException 如果已安装安全管理器并且它不允许将数据报发送到给定地址
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.DatagramChannel.read(ByteBuffer dst) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此通道读取数据报。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，并且此方法仅接受来自该套接字同位体的数据报。如果数据报中的字节数大于给定缓冲区中的剩余空间，则丢弃余下的数据报。否则此方法的行为与 {@link ReadableByteChannel} 接口中指定的行为完全相同。 </p>
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.DatagramChannel.read(java.nio.ByteBuffer[] dsts, int offset, int length) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此通道读取数据报。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，并且此方法仅接受来自该套接字同位体的数据报。如果数据报中的字节数大于给定缓冲区中的剩余空间，则丢弃余下的数据报。否则此方法的行为与 {@link ScatteringByteChannel} 接口中指定的行为完全相同。  </p>
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.DatagramChannel.read(java.nio.ByteBuffer[] dsts) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此通道读取数据报。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，并且此方法仅接受来自该套接字同位体的数据报。如果数据报中的字节数大于给定缓冲区中的剩余空间，则丢弃余下的数据报。否则此方法的行为与 {@link ScatteringByteChannel} 接口中指定的行为完全相同。</p>
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.DatagramChannel.write(ByteBuffer src) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将数据报写入此通道。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，在这种情况下，此方法将数据报直接发送到套接字的同位体。否则此方法的行为与 {@link WritableByteChannel} 接口中指定的行为完全相同。  </p>
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.DatagramChannel.write(java.nio.ByteBuffer[] srcs, int offset, int length) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将数据报写入此通道。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，在这种情况下，此方法将数据报直接发送到套接字的同位体。否则此方法的行为与 {@link GatheringByteChannel} 接口中指定的行为完全相同。 </p>
+
+@return 发送的字节数，可能是调用此方法时源缓冲区中剩余的字节数，或者如果此通道处于非阻塞模式并且底层输出缓冲区中没有足够的空间供数据报使用，则可能为零
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.DatagramChannel.write(java.nio.ByteBuffer[] srcs) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将数据报写入此通道。
+
+<p> 仅在此通道的套接字已连接时才调用此方法，在这种情况下，此方法将数据报直接发送到套接字的同位体。否则此方法的行为与 {@link GatheringByteChannel} 接口中指定的行为完全相同。 </p>
+
+@return 发送的字节数，可能是调用此方法时源缓冲区中剩余的字节数，或者如果此通道处于非阻塞模式并且底层输出缓冲区中没有足够的空间供数据报使用，则可能为零
+
+@throws  NotYetConnectedException 如果未连接此通道的套接字
+
+<!-- END DATA -->

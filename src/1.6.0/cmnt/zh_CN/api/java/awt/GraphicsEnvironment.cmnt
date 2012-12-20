@@ -1,0 +1,189 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.GraphicsEnvironment extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<code>GraphicsEnvironment</code> 类描述了 Java(tm) 应用程序在特定平台上可用的 {@link GraphicsDevice} 对象和 {@link java.awt.Font} 对象的集合。此 <code>GraphicsEnvironment</code> 中的资源可以是本地资源，也可以位于远程机器上。<code>GraphicsDevice</code> 对象可以是屏幕、打印机或图像缓冲区，并且都是 {@link Graphics2D} 绘图方法的目标。每个 <code>GraphicsDevice</code> 都有许多与之相关的 {@link GraphicsConfiguration} 对象。这些对象指定了使用 <code>GraphicsDevice</code> 所需的不同配置。
+@see GraphicsDevice
+@see GraphicsConfiguration
+@version 	1.67, 02/14/06
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.GraphicsEnvironment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这是一个抽象类，不能直接将其实例化。必须从一个合适的工厂或查询方法获取实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.awt.GraphicsEnvironment java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回本地 <code>GraphicsEnvironment</code>。
+@return 本地 <code>GraphicsEnvironment</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.GraphicsEnvironment.isHeadless()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此环境是否支持显示器、键盘和鼠标。如果此方法返回 true，则从依赖于显示器、键盘或鼠标的 Toolkit 和 GraphicsEnvironment 区域抛出 HeadlessException。
+@return 如果此环境无法支持显示器、键盘和鼠标，则返回 <code>true</code>；否则返回 <code>false</code>
+@see java.awt.HeadlessException
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.GraphicsEnvironment.isHeadlessInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此图形环境是否支持显示器、键盘和鼠标。如果返回 true，则将从依赖于显示器、键盘或鼠标的图形环境区域抛出 <code>HeadlessException</code>。
+@return 如果此环境支持显示器、键盘和鼠标，则返回 <code>true</code>；否则返回 <code>false</code>
+@see java.awt.HeadlessException
+@see #isHeadless
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.GraphicsDevice[] java.awt.GraphicsEnvironment.getScreenDevices() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有屏幕 <code>GraphicsDevice</code> 对象组成的数组。
+@return 一个包含所有表示屏幕设备的 <code>GraphicsDevice</code> 对象的数组。
+@exception HeadlessException 如果 isHeadless() 返回 true
+@see #isHeadless()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.GraphicsDevice java.awt.GraphicsEnvironment.getDefaultScreenDevice() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认的屏幕 <code>GraphicsDevice</code>。
+@return 表示默认屏幕设备的 <code>GraphicsDevice</code>
+@exception HeadlessException 如果 isHeadless() 返回 true
+@see #isHeadless()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Graphics2D java.awt.GraphicsEnvironment.createGraphics(BufferedImage img)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个呈现指定 {@link BufferedImage} 的 <code>Graphics2D</code> 对象。
+@param img 指定的 <code>BufferedImage</code>
+@return 一个用于呈现指定 <code>BufferedImage</code> 的 <code>Graphics2D</code>
+@throws NullPointerException 如果 <code>img</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Font[] java.awt.GraphicsEnvironment.getAllFonts()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，它包含此 <code>GraphicsEnvironment</code> 中所有可用字体的像素级实例。典型用法就是允许用户选择特定的字体。然后，通过调用所选择实例中的 <code>deriveFont</code> 方法，应用程序可以调整字体大小和设置各种字体属性。
+ <p>
+此方法使应用程序能够最精确地控制用于呈现文本的 <code>Font</code> 实例。如果此 <code>GraphicsEnvironment</code> 中的某种字体有多个可编程的变体，则仅在数组中返回该 <code>Font</code> 的一个实例，并且其他变体必须由应用程序派生。
+ <p>
+如果此环境中的某种字体有多个可编程的变体，如 Multiple-Master 字体，则在 <code>Font</code> 数组中仅返回该字体的一个实例。其他变体必须由应用程序派生。
+
+@return <code>Font</code> 对象的数组
+@see #getAvailableFontFamilyNames
+@see java.awt.Font
+@see java.awt.Font#deriveFont
+@see java.awt.Font#getFontName
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] java.awt.GraphicsEnvironment.getAvailableFontFamilyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含此 <code>GraphicsEnvironment</code> 中所有字体系列名称的数组，它针对默认语言环境进行了本地化，由 <code>Locale.getDefault()</code> 返回。
+ <p>
+典型用法是向用户展示特定字体系列名称的选择。然后，应用程序可以在创建字体（包括样式，如粗体或斜体）时指定此名称，这为字体系统从同一字体系列的多种字体中选择与自身最匹配的字体提供了灵活性。
+
+@return 一个 <code>String</code> 数组，它包含针对默认语言环境进行了本地化的字体系列名称，如果不存在针对此语言环境的名称，则返回一个合适的替代名称。
+@see #getAllFonts
+@see java.awt.Font
+@see java.awt.Font#getFamily
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] java.awt.GraphicsEnvironment.getAvailableFontFamilyNames(Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含此 <code>GraphicsEnvironment</code> 中所有字体系列名称的数组，已针对默认语言环境对它进行了本地化。
+ <p>
+典型用法是向用户展示特定字体系列名称的选择。然后，应用程序可以在创建字体（包括样式，如粗体或斜体）时指定此名称，这为字体系统从同一字体系列的多种字体中选择与自身最匹配的字体提供了灵活性。
+
+@param l 一个表示特定地理、政治或文化领域的 {@link Locale} 对象。指定 <code>null</code> 等效于指定 <code>Locale.getDefault()</code>。
+@return 一个 <code>String</code> 数组，它包含针对指定 <code>Locale</code> 进行了本地化的字体系列名称，如果不存在用于指定语言环境的名称，则返回一个合适的替代名称。
+@see #getAllFonts
+@see java.awt.Font
+@see java.awt.Font#getFamily
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.GraphicsEnvironment.registerFont(Font font)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此 <code>GraphicsEnvironment</code> 中注册一个<i>/已创建的</i> <code>Font</code>。已创建的字体是调用 {@link Font#createFont} 返回的字体，或者由调用 {@link Font#deriveFont} 创建的字体派生的字体。对这种字体调用此方法之后，可在通过名称或系列名称构造新的 <code>Font</code> 的过程中使用它，并且可以通过此应用程序或 applet 的执行上下文中的 {@link #getAvailableFontFamilyNames} 和 {@link #getAllFonts} 对它进行枚举。这意味着 applet 无法以其他 applet 可以看见它的方式注册字体。
+ <p>
+此方法无法注册字体并因此返回 <code>false</code> 的原因是：
+ <ul>
+ <li>字体不是<i>/已创建的</i> <code>Font</code>。
+ <li>字体与此 <code>GraphicsEnvironment</code> 中的非创建性 <code>Font</code> 冲突。例如，如果该名称是系统字体的名称，或者是 {@link Font} 类的文档中所描述的逻辑字体。如果它具有与系统字体相同的系列名称，则不管字体是否发生冲突，它都与实现有关。那些针对已创建字体的异常则意味着应用程序可以替代早先使用新字体创建的字体的注册。
+ </ul>
+ @return 如果已成功在此 <code>GraphicsEnvironment</code> 中注册 <code>font</code>，则返回 true。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.GraphicsEnvironment.preferLocaleFonts()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示在逻辑字体到实际字体的映射关系中特定于语言环境的字体的首选项。调用此方法指示字体呈现主要应该使用特定于主要书写系统（由默认编码和初始默认语言环境指示的书写系统）的字体。例如，如果主要书写系统是日文，那么应该使用日文字体呈现字符（如果可能）；只有当日文字体中没有某种形状的字符时，才使用其他字体。
+ <p>
+调用此方法所导致的字体呈现行为的实际更改与实现有关；字体呈现行为可能根本不受影响，或者所请求行为与默认行为可能已经是匹配的。用轻量级组件呈现字体的行为与用同级组件呈现字体的行为可能有所不同。因为调用此方法需要不同的字体，所以客户端需要不同的规格，并且可能需要重新计算窗口的大小和布局。因此，应在初始化用户界面之前调用此方法。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.GraphicsEnvironment.preferProportionalFonts()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示在逻辑字体到实际字体的映射关系中用于均衡字体和非均衡字体（如双字节的中日韩字体）的首选项。如果默认映射关系包含均衡字体和非均衡字体，则调用此方法指示该映射关系应当使用均衡字体。
+ <p>
+调用此方法所导致的字体呈现行为的实际更改与实现有关；字体呈现行为可能根本不受影响。用轻量级组件呈现字体的行为与用同级组件呈现字体的行为可能有所不同。因为调用此方法需要不同的字体，所以客户端需要不同的规格，并且可能需要重新计算窗口的大小和布局。因此，应在初始化用户界面之前调用此方法。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.GraphicsEnvironment.getCenterPoint() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Windows 应居中的点。建议使用 getMaximumWindowBounds() 检查居中的 Windows，以确保它们适合有效的显示区域。
+@return  Windows 应居中的点
+
+@exception HeadlessException 如果 isHeadless() 返回 true
+@see #getMaximumWindowBounds
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.GraphicsEnvironment.getMaximumWindowBounds() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回居中 Windows 的最大边界。这些边界决定了本机窗口系统中的对象，如任务栏和菜单栏。返回的边界将位于单个台显示器上，只有一种情况例外：在 Windows 横跨所有显示器居中的多屏幕系统中，此方法返回整个显示区域的边界。
+ <p>
+要获取单个显示器的可用边界，请使用 <code>GraphicsConfiguration.getBounds()</code> 和 <code>Toolkit.getScreenInsets()</code>。
+@return  居中的 Windows 的最大边界
+
+@exception HeadlessException 如果 isHeadless() 返回 true
+@see #getCenterPoint
+@see GraphicsConfiguration#getBounds
+@see Toolkit#getScreenInsets
+@since 1.4
+
+<!-- END DATA -->

@@ -1,0 +1,123 @@
+<!-- BEGIN KEY -->
+public final class javax.security.auth.kerberos.ServicePermission extends java.security.Permission implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于保护 Kerberos 服务和访问这些服务所必需的证书。服务主体与访问该服务所必需的证书之间存在一对一的映射关系。因此授予访问服务主体的权限隐含了授予访问使用该服务主体建立安全上下文所必需的证书的权限。不管证书是在缓存中还是通过与 KDC 交换获得的，这一规则都适用。证书可以是票据授权票据、服务票据或密钥表中的密钥。
+ <p>
+ServicePermission 包含服务主体名称和指定可在其中使用证书的上下文的动作列表。
+ <p>
+服务主体名称是提供服务的 <code>KereberosPrincipal</code> 的规范名称，也就是说 KerberosPrincipal 表示 Kerberos 服务主体。此名称是以区分大小写的方式处理的。星号可以单独出现，表示任何服务主体。
+ <p>
+授予此权限暗示着调用者可以使用该动作指定的上下文中缓存的证书（TGT、服务票据或秘密密钥）。在证书为 TGT 的情况下，授予此权限还暗示着 TGT 可以通过 Authentication Service 交换获得。
+ <p>
+可能的动作为：
+ <p>
+ <pre>
+initiate -  允许调用者使用证书来启动带有服务主体的安全上下文。
+
+accept -  允许调用者使用证书来接受作为特定主体的安全上下文。
+
+</pre>
+
+例如，指定访问 TGT 的权限来启动安全上下文，权限的构造如下：
+ <p>
+ <pre>
+     ServicePermission(&quot;krbtgt/EXAMPLE.COM@EXAMPLE.COM&quot;, &quot;initiate&quot;);
+ </pre>
+ <p>
+为获取服务票据来启动带有 &quot;host&quot; 服务的上下文，权限的构造如下：
+ <pre>
+     ServicePermission(&quot;host/foo.example.com@EXAMPLE.COM&quot;, &quot;initiate&quot;);
+ </pre>
+ <p>
+对于 Kerberized 服务器，该动作为 &quot;accept&quot;。例如，访问和使用 Kerberized&ldquo;主机&rdquo;服务（telnet 以及类似服务）的秘密密钥的权限将被构造如下：
+ <p>
+ <pre>
+     ServicePermission(&quot;host/foo.example.com@EXAMPLE.COM&quot;, &quot;accept&quot;);
+ </pre>
+ 
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String javax.security.auth.kerberos.ServicePermission.actions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+动作字符串。 
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.kerberos.ServicePermission(String servicePrincipal, String action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定的 <code>servicePrincipal</code> 和 <code>action</code> 的新 <code>ServicePermission</code>。
+
+@param servicePrincipal 服务主体的名称。星号可以单独出现，表示任何服务主体。
+ <p>
+@param actions 动作字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.ServicePermission.implies(Permission p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 Kerberos 服务权限对象是否&ldquo;隐含&rdquo;指定的权限。
+ <P>
+如果上述条件都不为 true，则 <code>implies</code> 返回 false。
+@param p 所要检查的权限。
+
+@return 如果此对象隐含指定的权限，则返回 true；否则返回 false。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.kerberos.ServicePermission.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 ServicePermission 对象是否相等。 
+ <P>
+@param obj 要与此对象进行相等性测试的对象。
+ 
+@return 如果 <i>obj</i> 是一个 ServicePermission，并且与此 ServicePermission 对象具有相同的服务主体和动作，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.kerberos.ServicePermission.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的哈希码值。
+
+@return 此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.kerberos.ServicePermission.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回动作的规范化字符串表示形式。始终按以下顺序返回存在的动作：initiate 和 accept。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection javax.security.auth.kerberos.ServicePermission.newPermissionCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于存储 ServicePermission 对象的 PermissionCollection 对象。<br> ServicePermission 对象必须以允许将它们按任意顺序插入集合的方式来存储，但同时也允许以有效（并一致）的方式实现 PermissionCollection 的 implies 方法。
+
+@return 适合用来存储 ServicePermissions 的新的 PermissionCollection 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.kerberos.ServicePermission.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 readObject 从流中恢复 ServicePermission 的状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.kerberos.ServicePermission.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 WriteObject 将 ServicePermission 的状态保存到流中。操作已被序列化，超类负责管理名称。
+
+<!-- END DATA -->

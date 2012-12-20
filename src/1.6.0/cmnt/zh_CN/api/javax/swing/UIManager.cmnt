@@ -1,0 +1,521 @@
+<!-- BEGIN KEY -->
+public class javax.swing.UIManager extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code UIManager} 管理当前外观、可用外观集合、外观更改时被通知的 {@code PropertyChangeListeners}、外观默认值以及获取各种默认值的便捷方法。
+
+ <h3>指定外观</h3>
+
+可以通过两种不同的方式指定外观：指定外观类的完全限定名称，或者创建 {@code LookAndFeel} 的实例并将它传递给 {@code setLookAndFeel}。以下示例说明了如何将外观设置为系统外观： 
+ <pre>
+   UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+ </pre>
+ 以下示例说明了如何根据类名称设置外观：
+ <pre>
+   UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
+ </pre>
+一旦更改了外观，则强制在所有 {@code JComponent} 上调用 {@code updateUI}。{@link SwingUtilities#updateComponentTreeUI} 方法有助于方便地对包含层次结构应用 {@code updateUI}。有关详细信息，请参阅它。没有指定更改外观后不调用 {@code updateUI} 的确切行为。很有可能接收到无法预料的异常、绘制问题或更坏的情况。
+
+ <h3>默认外观</h3>
+
+ 按以下方式选择用于默认外观的类：
+ <ol>  
+<li>如果系统属性 <code>swing.defaultlaf</code> 为{@code 非 null}，则将其值用作默认外观类名称。
+<li>如果 {@link java.util.Properties} 文件 <code>swing.properties</code> 存在且包含键 <code>swing.defaultlaf</code>，则将其值用作默认外观类名称。用来检查 <code>swing.properties</code> 的位置可能随 Java 平台的实现而不同。在 Sun 的实现中，该位置位于 <code>${java.home}/lib/swing.properties</code> 中。有关更多信息，请参阅所用实现的发行说明。
+<li>否则，请使用跨平台外观。
+ </ol> 
+ <h3>默认值</h3>
+ 
+ {@code UIManager} 管理 {@code UIDefault} 的三个集合。它们分别是：
+ <ol>
+   <li>开发人员默认值。由于几乎没有异常，所以 Swing 不会更改开发人员默认值；这些适合修改并由开发人员使用。
+   <li>外观默认值。外观默认值在外观作为当前外观安装（调用 {@code setLookAndFeel()}）时由该外观提供。使用 {@code getLookAndFeelDefaults()} 方法可以获得外观默认值。
+   <li>系统默认值。系统默认值由 Swing 提供。
+ </ol>
+ 调用任何一个 {@code get} 方法都将导致检查每个默认值，按顺序返回第一个非 {@code null} 值。例如，调用 {@code UIManager.getString("Table.foreground")} 导致首先检查开发人员默认值。如果开发人员默认值包含 {@code "Table.foreground"} 的值，则返回该值，否则检查外观默认值，接着检查系统默认值。
+ <p>
+ 要重点注意的是，{@code getDefaults} 返回 {@code UIDefault} 的一个自定义实例，此解析逻辑内置于其中。例如，{@code UIManager.getDefaults().getString("Table.foreground")} 等效于 {@code UIManager.getString("Table.foreground")}。两者都使用刚才所描述的算法进行解析。在许多地方，该文档使用字默认值查阅 {@code UIDefaults} 的自定义实例，解析逻辑如前所述。 
+ <p>
+更改外观时，{@code UIManager} 只更改外观默认值；{@code UIManager} 不以任何方式更改开发人员和系统默认值。
+ <p>
+该外观定义并记录特定外观支持的默认值集合。此外，每个外观或者外观所提供的 {@code ComponentUI} 在它们生命周期中的不同时间可以访问该默认值。某些外观可以强制查找默认值，这样在安装该外观后更改默认值可能无效。其他外观可以延迟访问默认值，这样对该默认值的更改可能对现有外观产生影响。最后，其他外观可能不会以任何方式根据默认表自我配置。虽然如此，但通常是外观期望特定默认值这种情况，这样在一般情况下，某个外观提供的 {@code ComponentUI} 不会对另一个外观起作用。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.115 12/19/03
+@author Thomas Ball
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.UIManager.LookAndFeelInfo[] javax.swing.UIManager.getInstalledLookAndFeels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回表示当前可用的 {@code LookAndFeel} 实现的 {@code LookAndFeelInfo} 数组。应用程序可以使用 <code>LookAndFeelInfo</code> 对象为用户构造外观选项的菜单，或确定在启动时要设置哪个外观。要避免创建众多 {@code
+ LookAndFeel} 对象的影响，{@code LookAndFeelInfo} 维护 {@code LookAndFeel} 类的类名称，而不是实际的 {@code LookAndFeel} 实例。
+ <p>
+以下示例演示了如何根据 {@code LookAndFeelInfo} 的实例设置外观：
+ <pre>
+   UIManager.setLookAndFeel(info.getClassName());
+ </pre>
+
+ @return <code>LookAndFeelInfo</code> 对象的数组
+ @see #setLookAndFeel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.setInstalledLookAndFeels(javax.swing.UIManager.LookAndFeelInfo[] infos) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置可用外观的集合。此方法不进行检查以确保所有 {@code LookAndFeelInfos} 为{@code 非 null}，因此建议最好在 {@code infos} 数组中只提供{@code 非 null} 值。
+
+ @param infos 指定可用外观的 <code>LookAndFeelInfo</code> 对象的集合 
+ 
+ @see #getInstalledLookAndFeels
+ @throws NullPointerException 如果 {@code infos} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.installLookAndFeel(UIManager.LookAndFeelInfo info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的外观添加到可用外观的集合中。尽管此方法允许 {@code null} {@code info}，但建议最好使用{@code 非 null} 值。
+
+ @param info 命名外观并标识实现它的类的 <code>LookAndFeelInfo</code> 对象
+ @see #setInstalledLookAndFeels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.installLookAndFeel(String name, String className)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的外观添加到可用外观的集合中。此方法不以任何方式检查参数，因此建议最好提供{@code 非 null} 值。
+
+ @param name 该外观的描述性名称 
+ @param className 实现该外观的类的名称 
+ @see #setInstalledLookAndFeels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.LookAndFeel javax.swing.UIManager.getLookAndFeel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前外观或 <code>null</code>。
+
+@return 当前外观或 <code>null</code>
+@see #setLookAndFeel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.setLookAndFeel(LookAndFeel newLookAndFeel) throws javax.swing.UnsupportedLookAndFeelException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前外观设置为 {@code newLookAndFeel}。如果当前外观为{@code 非 null}，则在其上调用 {@code uninitialize}。如果 {@code newLookAndFeel} 为{@code 非 null}，则在其上调用 {@code initialize}，接着调用 {@code getDefaults}。从 {@code newLookAndFeel.getDefaults()} 返回的默认值将替换以前外观的默认值。如果 {@code newLookAndFeel} 为 {@code null}，则该外观默认值被设置为 {@code null}。
+ <p>
+{@code null} 值可用于将该外观设置为 {@code null}。由于大多数 Swing 的运行都要求 {@code LookAndFeel}，所以不建议将 {@code LookAndFeel} 设置为 {@code null}。
+ <p>
+这是一个 JavaBeans 绑定属性。 
+
+ @param newLookAndFeel 要安装的 {@code LookAndFeel} 
+ @throws UnsupportedLookAndFeelException 如果 {@code newLookAndFeel} 为{@code 非 null} 并且 {@code newLookAndFeel.isSupportedLookAndFeel()} 返回 {@code false}
+ @see #getLookAndFeel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.setLookAndFeel(String className) throws java.lang.ClassNotFoundException, java.lang.InstantiationException, java.lang.IllegalAccessException, javax.swing.UnsupportedLookAndFeelException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用当前线程的上下文类加载器加载给定类名称所指定的 {@code LookAndFeel}，并将它传递给 {@code setLookAndFeel(LookAndFeel)}。
+
+@param className  指定实现外观的类名称的字符串
+@exception ClassNotFoundException 如果无法找到 <code>LookAndFeel</code> 类
+@exception InstantiationException 如果无法创建一个该类的新实例
+@exception IllegalAccessException 如果该类或初始化程序不可访问
+@exception UnsupportedLookAndFeelException 如果 <code>lnf.isSupportedLookAndFeel()</code> 为 false
+@throws ClassCastException 如果 {@code className} 没有标识扩展 {@code LookAndFeel} 的类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.UIManager.getSystemLookAndFeelClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果有实现本机系统外观的 <code>LookAndFeel</code> 类的名称，则返回该名称；否则返回默认的跨平台 <code>LookAndFeel</code> 类的名称。可通过设置 <code>swing.systemlaf</code> 系统属性重写此值。
+ 
+@return 该 <code>LookAndFeel</code> 类的 <code>String</code>
+ 
+@see #setLookAndFeel
+@see #getCrossPlatformLookAndFeelClassName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.UIManager.getCrossPlatformLookAndFeelClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现默认的跨平台外观 -- Java Look and Feel (JLF) -- 的 <code>LookAndFeel</code> 类的名称。可通过设置 <code>swing.crossplatformlaf</code> 系统属性重写此值。
+ 
+@return  带有 JLF 实现类的字符串
+@see #setLookAndFeel
+@see #getSystemLookAndFeelClassName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.UIDefaults javax.swing.UIManager.getDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该默认值。使用类文档中指定的逻辑解析返回的默认值。 
+
+@return 包含该默认值的 <code>UIDefaults</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Font javax.swing.UIManager.getFont(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值返回一种字体。如果 {@code key} 的值不为 {@code Font}，则返回 {@code null}。 
+
+@param key  指定该字体的 <code>Object</code>
+@return <code>Font</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Font javax.swing.UIManager.getFont(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一种字体。如果 {@code key} 的值不为 {@code Font}，则返回 {@code null}。  
+
+ @param key  指定该字体的 <code>Object</code> 
+ @param l 需要该字体的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}。
+ @return <code>Font</code> 对象
+ @throws NullPointerException 如果 {@code key} 为 {@code null}
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Color javax.swing.UIManager.getColor(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值返回一种颜色。如果 {@code key} 的值不为 {@code Color}，则返回 {@code null}。  
+
+@param key  指定该颜色的 <code>Object</code>
+@return 该 <code>Color</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Color javax.swing.UIManager.getColor(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一种颜色。如果 {@code key} 的值不为 {@code Color}，则返回 {@code null}。
+
+@param key  指定该颜色的 <code>Object</code>
+@param l 需要该颜色的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Color</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Icon javax.swing.UIManager.getIcon(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个 <code>Icon</code>。如果 {@code key} 的值不为 {@code Icon}，则返回 {@code null}。  
+
+@param key  指定该图标的 <code>Object</code>
+@return 该 <code>Icon</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Icon javax.swing.UIManager.getIcon(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个 <code>Icon</code>。如果 {@code key} 的值不为 {@code Icon}，则返回 {@code null}。  
+
+@param key  指定该图标的 <code>Object</code>
+@param l 需要该图标的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Icon</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.border.Border javax.swing.UIManager.getBorder(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个边框。如果 {@code key} 的值不为 {@code Border}，则返回 {@code null}。  
+
+@param key  指定该边框的 <code>Object</code>
+@return 该 <code>Border</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.border.Border javax.swing.UIManager.getBorder(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个边框。如果 {@code key} 的值不为 {@code Border}，则返回 {@code null}。
+
+@param key  指定该边框的 <code>Object</code>
+@param l 需要该边框的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Border</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.UIManager.getString(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个字符串。如果 {@code key} 的值不为 {@code String}，则返回 {@code null}。
+
+@param key  指定该字符串的 <code>Object</code>
+@return 该 <code>String</code>
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.UIManager.getString(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个字符串。如果 {@code key} 的值不为 {@code String}，则返回 {@code null}。
+
+@param key  指定该字符串的 <code>Object</code>
+@param l 需要该字符串的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>String</code>
+@since 1.4
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.UIManager.getInt(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个整数。如果 {@code key} 的值不为 {@code Integer} 或者不存在，则返回 {@code 0}。
+
+@param key  指定该 int 值的 <code>Object</code>
+@return 该 int 值
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.UIManager.getInt(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个整数。如果 {@code key} 的值不为 {@code Integer} 或者不存在，则返回 {@code 0}。
+
+@param key  指定该 int 值的 <code>Object</code>
+@param l 需要该 int 值的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 int 值
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.swing.UIManager.getBoolean(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从与键值相关的默认值中返回一个布尔变量。如果找不到键或该键不表示布尔值，则返回 {@code false}。
+
+@param key  指定所需布尔值的键的 <code>Object</code>
+@return 对应于该键的布尔值
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.swing.UIManager.getBoolean(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从与键值和给定的 <code>Locale</code> 相关的默认值中返回一个布尔变量。如果找不到键或该键不表示布尔值，则返回 {@code false}。
+
+@param key  指定所需布尔值的键的 <code>Object</code>
+@param l 需要该布尔变量的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 对应于该键的布尔值
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Insets javax.swing.UIManager.getInsets(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个 <code>Insets</code> 对象。如果 {@code key} 的值不为 {@code Insets}，则返回 {@code null}。 
+
+@param key  指定该 <code>Insets</code> 对象的 <code>Object</code>
+@return 该 <code>Insets</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Insets javax.swing.UIManager.getInsets(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个 <code>Insets</code> 对象。如果 {@code key} 的值不为 {@code Insets}，则返回 {@code null}。 
+
+@param key  指定该 <code>Insets</code> 对象的 <code>Object</code>
+@param l 需要该对象的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Insets</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Dimension javax.swing.UIManager.getDimension(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个维数。如果 {@code key} 的值不为 {@code Dimension}，则返回 {@code null}。 
+
+@param key  指定维数对象的 <code>Object</code>
+@return 该 <code>Dimension</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Dimension javax.swing.UIManager.getDimension(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个维数。如果 {@code key} 的值不为 {@code Dimension}，则返回 {@code null}。
+
+@param key  指定该维数对象的 <code>Object</code>
+@param l 需要该对象的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Dimension</code> 对象
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.UIManager.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从默认值中返回一个对象。
+
+@param key  指定所需对象的 <code>Object</code>
+@return 该 <code>Object</code>
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.UIManager.get(Object key, Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从适合给定语言环境的默认值中返回一个对象。
+
+@param key  指定所需对象的 <code>Object</code>
+@param l 需要该对象的 <code>Locale</code>；有关如何处理 {@code null} {@code Locale} 的详细信息，请参阅 {@code UIDefaults}
+@return 该 <code>Object</code>
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.UIManager.put(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在开发人员默认值中存储一个对象。此方法是 {@code getDefaults().put(key, value)} 的一个覆盖方法。此方法仅对开发人员默认值有效，对系统默认值和外观默认值无效。 
+
+@param key    一个指定检索键的 <code>Object</code>
+@param value  要存储的 <code>Object</code>；有关如何处理 {@code null} 的详细信息，请参阅 {@code UIDefaults}
+@return 由 {@link UIDefaults#put} 返回的 <code>Object</code>
+@throws NullPointerException 如果 {@code key} 为 {@code null}
+@see UIDefaults#put
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.plaf.ComponentUI javax.swing.UIManager.getUI(JComponent target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code target} 的适当 {@code ComponentUI} 实现。通常，此方法覆盖 {@code getDefaults().getUI(target)}。但是，如果安装了辅助外观，则此方法首先在多路外观的默认值上调用 {@code getUI(target)}，如果返回值为{@code 非 null}，则返回该值。
+
+ @param target 要返回 {@code ComponentUI} 的 <code>JComponent</code> 
+ @return {@code target} 的 <code>ComponentUI</code> 对象
+ @throws NullPointerException 如果 {@code target} 为 {@code null}
+ @see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.UIDefaults javax.swing.UIManager.getLookAndFeelDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从当前外观返回 {@code UIDefaults}，{@code UIDefaults} 在安装该外观时获得。
+ <p>
+通常，开发人员应该使用从 {@code getDefaults()} 返回的 {@code UIDefaults}。因为当前外观可能期望存在特定值，所以替换从此方法返回的 {@code UIDefaults} 可能发生不可预料的结果。
+
+ @return 当前外观的 <code>UIDefaults</code> 
+ @see #getDefaults
+ @see #setLookAndFeel(LookAndFeel)
+ @see LookAndFeel#getDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.addAuxiliaryLookAndFeel(LookAndFeel laf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>LookAndFeel</code> 添加到辅助外观的列表中。这些辅助外观会告知多路外观，在创建多路 UI 时除默认的 <code>LookAndFeel</code> 类外还使用其他哪些 <code>LookAndFeel</code> 类。该项更改只有在创建新的 UI 类或在组件实例上更改默认外观时生效。
+<p>注意，这些类不同于已安装的外观。
+
+@param laf 该 <code>LookAndFeel</code> 对象
+@see #removeAuxiliaryLookAndFeel
+@see #setLookAndFeel
+@see #getAuxiliaryLookAndFeels
+@see #getInstalledLookAndFeels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.swing.UIManager.removeAuxiliaryLookAndFeel(LookAndFeel laf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从辅助外观列表移除一个 <code>LookAndFeel</code>。这些辅助外观会告知多路外观，在创建多路 UI 时除默认的 <code>LookAndFeel</code> 类外还使用其他哪些 <code>LookAndFeel</code> 类。该项更改只有在创建新的 UI 类或在组件实例上更改默认外观时生效。
+<p>注意，这些类不同于已安装的外观。
+@return 如果该 <code>LookAndFeel</code> 已从列表移除，则返回 true
+@see #removeAuxiliaryLookAndFeel
+@see #getAuxiliaryLookAndFeels
+@see #setLookAndFeel
+@see #getInstalledLookAndFeels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.LookAndFeel[] javax.swing.UIManager.getAuxiliaryLookAndFeels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回辅助外观的列表（可以为 <code>null</code>）。这些辅助的外观告知多路外观，在创建多路 UI 时除默认的 LookAndFeel 类外还使用其他哪些 <code>LookAndFeel</code> 类。  
+<p>注意，这些类不同于已安装的外观。
+
+@return 辅助 <code>LookAndFeel</code> 的列表，或返回 <code>null</code>
+@see #addAuxiliaryLookAndFeel
+@see #removeAuxiliaryLookAndFeel
+@see #setLookAndFeel
+@see #getInstalledLookAndFeels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 <code>PropertyChangeListener</code> 添加到侦听器列表。该侦听器为所有属性进行注册。
+
+@param listener  要添加的 <code>PropertyChangeListener</code>
+@see java.beans.PropertyChangeSupport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.UIManager.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除 <code>PropertyChangeListener</code>。此方法移除了一个为所有属性注册的 <code>PropertyChangeListener</code>。
+
+@param listener  要移除的 <code>PropertyChangeListener</code>
+@see java.beans.PropertyChangeSupport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.beans.PropertyChangeListener[] javax.swing.UIManager.getPropertyChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回添加到此 UIManager（具有 addPropertyChangeListener()）的所有 <code>PropertyChangeListener</code> 的数组。
+
+@return 添加的所有 <code>PropertyChangeListener</code>；如果没有添加侦听器，则返回一个空数组 
+@since 1.4
+
+<!-- END DATA -->

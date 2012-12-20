@@ -1,0 +1,336 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.ImageTypeSpecifier extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许以便捷方式指定图像格式（尤其是其 <code>SampleModel</code> 和 <code>ColorModel</code>）的类。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.ColorModel javax.imageio.ImageTypeSpecifier.colorModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将用作原型的 <code>ColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.SampleModel javax.imageio.ImageTypeSpecifier.sampleModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将用作原型的 <code>SampleModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageTypeSpecifier(ColorModel colorModel, SampleModel sampleModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+直接根据 <code>ColorModel</code> 和 <code>SampleModel</code> 构造一个 <code>ImageTypeSpecifier</code>。由调用者负责提供兼容的参数。
+
+@param colorModel 一个 <code>ColorModel</code>。
+@param sampleModel 一个 <code>SampleModel</code>。
+
+@exception IllegalArgumentException  如果任意一个参数为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>sampleModel</code> 与 <code>colorModel</code> 不兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageTypeSpecifier(RenderedImage image)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>RenderedImage</code> 构造一个 <code>ImageTypeSpecifier</code>。如果使用的是 <code>BufferedImage</code>，为了获得更精确的结果，应该使用 <code>createFromRenderedImage</code> 或 <code>createFromBufferedImageType</code> 这两个工厂方法之一。
+
+@param image 一个 <code>RenderedImage</code>。
+
+@exception IllegalArgumentException 如果该参数为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createPacked(ColorSpace colorSpace, int redMask, int greenMask, int blueMask, int alphaMask, int transferType, boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回压缩图像格式的说明符，它将使用 <code>DirectColorModel</code> 和一个压缩的 <code>SampleModel</code> 来存储压缩成单个 byte、short 或 int 值的像素。
+
+@param colorSpace  所需的 <code>ColorSpace</code>。
+@param redMask 指示红色通道位置的邻接掩码。
+@param greenMask 指示绿色通道位置的邻接掩码。
+@param blueMask 指示蓝色通道位置的邻接掩码。
+@param alphaMask 指示 alpha 通道位置的邻接掩码。
+@param transferType 所需的 <code>SampleModel</code> 传输类型。
+@param isAlphaPremultiplied 如果颜色通道将预乘以 alpha 通道，则该参数为 <code>true</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>colorSpace</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>colorSpace</code> 的类型不是 <code>TYPE_RGB</code>。
+@exception IllegalArgumentException 如果没有掩码至少有一个位集。
+@exception IllegalArgumentException 如果 <code>transferType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code> 之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createInterleaved(ColorSpace colorSpace, int[] bandOffsets, int dataType, boolean hasAlpha, boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回交错图像格式的说明符，它将使用 <code>ComponentColorModel</code> 和 <code>PixelInterleavedSampleModel</code> 来存储单个 byte、short 或 int 值形式的每个像素组件。
+
+@param   colorSpace   所需的 <code>ColorSpace</code>。
+@param bandOffsets 指示每个 band 的偏移量的 <code>int</code> 数组。
+@param dataType 所需的数据类型，它是 <code>DataBuffer</code> 类中的枚举之一。
+@param hasAlpha 如果需要 alpha 通道，则该参数为 <code>true</code>。
+@param isAlphaPremultiplied 如果颜色通道将预乘以 alpha 通道，则该参数为 <code>true</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>colorSpace</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>bandOffsets</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>dataType</code> 不是合法的 <code>DataBuffer.TYPE_*</code> 常量之一。
+@exception IllegalArgumentException 如果 <code>bandOffsets.length</code> 不等于颜色空间组件的数量；如果 <code>hasAlpha</code> 为 <code>true</code> 时，该长度不等于组件数量加 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createBanded(ColorSpace colorSpace, int[] bankIndices, int[] bandOffsets, int dataType, boolean hasAlpha, boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回带状图像格式的说明符，它将使用 <code>ComponentColorModel</code> 和 <code>BandedSampleModel</code> 来存储单独数组中的每个通道。
+
+@param colorSpace  所需的 <code>ColorSpace</code>。
+@param bankIndices 一个 <code>int</code> 数组，指示用来存储每个 band 的库。
+@param bandOffsets 一个 <code>int</code> 数组，指示其库中每个 band 的起始偏移量。
+@param dataType 所需的数据类型，它是 <code>DataBuffer</code> 类中的枚举之一。
+@param hasAlpha 如果需要 alpha 通道，则该参数为 <code>true</code>。
+@param isAlphaPremultiplied 如果颜色通道将预乘以 alpha 通道，则该参数为 <code>true</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>colorSpace</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>bankIndices</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>bandOffsets</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>bankIndices</code> 和 <code>bandOffsets</code> 的长度不同。
+@exception IllegalArgumentException 如果 <code>bandOffsets.length</code> 不等于颜色空间组件的数量；如果 <code>hasAlpha</code> 为 <code>true</code> 时，该长度不等于组件数量加 1。
+@exception IllegalArgumentException 如果 <code>dataType</code> 不是合法的 <code>DataBuffer.TYPE_*</code> 常量之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createGrayscale(int bits, int dataType, boolean isSigned)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回灰度级图像格式的说明符，它会将给定位深 (bit depth) 的像素压缩成指定数据类型的数组元素。
+
+@param bits 每个灰度值的位数（1、2、4、8 或 16）。
+@param dataType 所需的数据类型，它是 <code>DataBuffer</code> 类中的枚举之一。
+@param isSigned 如果要表示负值，则该参数为 <code>true</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>bits</code> 不是 1、2、4、8 或 16 之一。
+@exception IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_SHORT</code> 或 <code>DataBuffer.TYPE_USHORT</code> 之一。
+@exception IllegalArgumentException 如果 <code>bits</code> 大于给定 <code>dataType</code> 的位大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createGrayscale(int bits, int dataType, boolean isSigned, boolean isAlphaPremultiplied)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回灰度级图像格式和 alpha 图像格式的说明符，它会将给定位深的像素压缩成指定数据类型的数组元素。
+
+@param bits 每个灰度值的位数（1、2、4、8 或 16）。
+@param dataType 所需的数据类型，它是 <code>DataBuffer</code> 类中的枚举之一。
+@param isSigned 如果要表示负值，则该参数为 <code>true</code>。
+@param isAlphaPremultiplied 如果亮度通道将乘以 alpha 通道，则该参数为 <code>true</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>bits</code> 不是 1、2、4、8 或 16 之一。
+@exception IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_SHORT</code> 或 <code>DataBuffer.TYPE_USHORT</code> 之一。
+@exception IllegalArgumentException 如果 <code>bits</code> 大于给定 <code>dataType</code> 的位大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createIndexed(byte[] redLUT, byte[] greenLUT, byte[] blueLUT, byte[] alphaLUT, int bits, int dataType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回索引颜色图像格式的说明符，它将给定位深的索引值压缩成指定数据类型的数组元素。
+
+@param redLUT 一个 <code>byte</code> 数组，包含每个索引的 red 值。
+@param greenLUT 一个 <code>byte</code> 数组，包含每个索引的 green 值。
+@param blueLUT 一个 <code>byte</code> 数组，包含每个索引的 blue 值。
+@param alphaLUT 一个 <code>byte</code> 数组，包含每个索引的 alpha 值；或者为 <code>null</code>，表示创建一个完全不透明的 LUT。
+@param bits 每个索引中的位数。
+@param dataType 所需的输出类型，它是 <code>DataBuffer</code> 类中的枚举之一。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>redLUT</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>greenLUT</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>blueLUT</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>bits</code> 不是 1、2、4、8 或 16 之一。
+@exception IllegalArgumentException 如果非 <code>null</code> LUT 参数的长度不能正好满足 <code>1 &lt;&lt; bits</code>。
+@exception IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_SHORT</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code> 之一。
+@exception IllegalArgumentException 如果 <code>bits</code> 大于给定 <code>dataType</code> 的位大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createFromBufferedImageType(int bufferedImageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>ImageTypeSpecifier</code>，它将对某一标准 <code>BufferedImage</code> 类型（而不是 <code>TYPE_CUSTOM</code>）进行编码。
+
+@param bufferedImageType 表示某一标准 <code>BufferedImage</code> 类型的 int 值。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>bufferedImageType</code> 不是标准类型之一，或者它等于 <code>TYPE_CUSTOM</code>。
+
+@see java.awt.image.BufferedImage
+@see java.awt.image.BufferedImage#TYPE_INT_RGB
+@see java.awt.image.BufferedImage#TYPE_INT_ARGB
+@see java.awt.image.BufferedImage#TYPE_INT_ARGB_PRE
+@see java.awt.image.BufferedImage#TYPE_INT_BGR
+@see java.awt.image.BufferedImage#TYPE_3BYTE_BGR
+@see java.awt.image.BufferedImage#TYPE_4BYTE_ABGR
+@see java.awt.image.BufferedImage#TYPE_4BYTE_ABGR_PRE
+@see java.awt.image.BufferedImage#TYPE_USHORT_565_RGB
+@see java.awt.image.BufferedImage#TYPE_USHORT_555_RGB
+@see java.awt.image.BufferedImage#TYPE_BYTE_GRAY
+@see java.awt.image.BufferedImage#TYPE_USHORT_GRAY
+@see java.awt.image.BufferedImage#TYPE_BYTE_BINARY
+@see java.awt.image.BufferedImage#TYPE_BYTE_INDEXED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.imageio.ImageTypeSpecifier javax.imageio.ImageTypeSpecifier.createFromRenderedImage(RenderedImage image)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>ImageTypeSpecifier</code>，它将对 <code>RenderedImage</code>（可能是 <code>BufferedImage</code>）的布局进行编码。
+
+@param image 一个 <code>RenderedImage</code>。
+
+@return 具有所需特征的 <code>ImageTypeSpecifier</code>。
+
+@exception IllegalArgumentException 如果 <code>image</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageTypeSpecifier.getBufferedImageType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 int 值，它包含某一来自 <code>BufferedImage</code> 的描述图像的枚举常量值。
+
+@return 表示 <code>BufferedImage</code> 类型的 <code>int</code>。
+
+@see java.awt.image.BufferedImage
+@see java.awt.image.BufferedImage#TYPE_CUSTOM
+@see java.awt.image.BufferedImage#TYPE_INT_RGB
+@see java.awt.image.BufferedImage#TYPE_INT_ARGB
+@see java.awt.image.BufferedImage#TYPE_INT_ARGB_PRE
+@see java.awt.image.BufferedImage#TYPE_INT_BGR
+@see java.awt.image.BufferedImage#TYPE_3BYTE_BGR
+@see java.awt.image.BufferedImage#TYPE_4BYTE_ABGR
+@see java.awt.image.BufferedImage#TYPE_4BYTE_ABGR_PRE
+@see java.awt.image.BufferedImage#TYPE_USHORT_565_RGB
+@see java.awt.image.BufferedImage#TYPE_USHORT_555_RGB
+@see java.awt.image.BufferedImage#TYPE_BYTE_GRAY
+@see java.awt.image.BufferedImage#TYPE_USHORT_GRAY
+@see java.awt.image.BufferedImage#TYPE_BYTE_BINARY
+@see java.awt.image.BufferedImage#TYPE_BYTE_INDEXED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageTypeSpecifier.getNumComponents()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象指定的颜色组件的数量。该数量等于 <code>ColorModel.getNumComponents</code> 返回的值。
+
+@return  图像中的组件数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageTypeSpecifier.getNumBands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象指定的 band 数。该数量等于 <code>SampleModel.getNumBands</code> 返回的值。
+
+@return  图像中的 band 数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageTypeSpecifier.getBitsPerBand(int band)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来表示给定 band 样本的位数。
+
+@param band 将被查询的 band 的索引（int 值形式）。
+
+@return 指定位数的 int 值。
+
+@exception IllegalArgumentException 如果 <code>band</code> 为负或大于最大 band 索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel javax.imageio.ImageTypeSpecifier.getSampleModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此对象中封装的设置返回一个 <code>SampleModel</code>。<code>SampleModel</code> 的宽度和高度将被设置为任意值。
+
+@return 具有任意维数的 <code>SampleModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel javax.imageio.ImageTypeSpecifier.getSampleModel(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此对象中封装的设置值返回一个 <code>SampleModel</code>。<code>SampleModel</code> 的宽度和高度将被设置为所提供的值。
+
+@param width 返回的 <code>SampleModel</code> 的所需宽度。
+@param height 返回的 <code>SampleModel</code> 的所需高度。
+
+@return 具有给定维数的 <code>SampleModel</code>。
+
+@exception IllegalArgumentException 如果 <code>width</code> 或 <code>height</code> 为负数或零。
+@exception IllegalArgumentException 如果 <code>width</code> 和 <code>height</code> 的值大于 <code>Integer.MAX_VALUE</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorModel javax.imageio.ImageTypeSpecifier.getColorModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象指定的 <code>ColorModel</code>。
+
+@return 一个 <code>ColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage javax.imageio.ImageTypeSpecifier.createBufferedImage(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此对象中包含的规范创建一个具有给定宽度和高度的 <code>BufferedImage</code>。
+
+@param width 返回的 <code>BufferedImage</code> 的所需宽度。
+@param height 返回的 <code>BufferedImage</code> 的所需高度。
+
+@return 一个新的 <code>BufferedImage</code>
+
+@exception IllegalArgumentException 如果 <code>width</code> 或 <code>height</code> 为负数或零。
+@exception IllegalArgumentException 如果 <code>width</code> 和 <code>height</code> 的值大于 <code>Integer.MAX_VALUE</code>，或者存储图像所需的数组元素数大于 <code>Integer.MAX_VALUE</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageTypeSpecifier.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定 <code>Object</code> 是一个 <code>ImageTypeSpecifier</code> 并且具有与此对象相同的 <code>SampleModel</code> 和 <code>ColorModel</code>，则返回 <code>true</code>。
+
+@param o 将用于相等性比较的 <code>Object</code>。
+
+@return 如果给定对象是一个等价的 <code>ImageTypeSpecifier</code>，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageTypeSpecifier.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 ImageTypeSpecifier 的哈希码。
+
+@return  此 ImageTypeSpecifier 的哈希码
+
+<!-- END DATA -->

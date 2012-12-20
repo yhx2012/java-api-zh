@@ -1,0 +1,135 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.ext.LexicalHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于词法事件的 SAX2 扩展处理程序。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>这是 SAX2 的可选扩展处理程序，以提供关于 XML 文档的词汇信息，例如，注释和 CDATA 节边界。不需要 XML 阅读器识别此处理程序，它不是仅核心 SAX2 分发的一部分。</p>
+
+<p>词汇处理程序中的事件应用于整个文档，不是仅应用于文档元素，并且所有词汇处理程序事件必须在内容处理程序的 startDocument 和 endDocument 事件之间出现。</p>
+
+<p>要为 XML 阅读器设置 LexicalHandler，使用带有属性名称 <code>http://xml.org/sax/properties/lexical-handler</code> 的 {@link org.xml.sax.XMLReader#setProperty setProperty} 方法以及将此接口（或 null）实现为该值的对象。如果阅读器不报告词汇事件，则尝试注册处理程序时，它将抛出 {@link org.xml.sax.SAXNotRecognizedException SAXNotRecognizedException}。</p>
+
+@since SAX 2.0 (extensions 1.0)
+@author David Megginson
+@version 2.0.1 (sax2r2)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.startDTD(String name, String publicId, String systemId) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告 DTD 声明的开始（如果存在）。
+
+<p>此方法主要用于报告 DOCTYPE 声明的开始；如果文档没有任何 DOCTYPE 声明，则不调用此方法。</p>
+
+<p>通过 {@link org.xml.sax.DTDHandler DTDHandler} 或 {@link org.xml.sax.ext.DeclHandler DeclHandler} 事件报告的所有声明必须在 startDTD 和 {@link #endDTD endDTD} 事件之间出现。可以假设声明属于内部 DTD 子集，除非它们在 {@link #startEntity startEntity} 和 {@link #endEntity endEntity} 事件之间出现。也应该在 startDTD 和 endDTD 事件之间，以事件出现的原始顺序（逻辑）报告 DTD 的注释和处理指令；但是，它们不需要出现在相对于 DTDHandler 或 DeclHandler 事件的正确位置。</p>
+
+<p>注意，start/endDTD 事件将出现在 ContentHandler 的 start/endDocument 事件中，并在第一个 {@link org.xml.sax.ContentHandler#startElement startElement} 事件之前。</p>
+
+@param name 文档类型名称。
+@param publicId 用于外部 DTD 子集的已声明的公共标识符，如果没有声明，则为 null。
+@param systemId 用于外部 DTD 子集的已声明的系统公共标识符，如果没有声明，则为 null。（注意，这不能根据文档基 URI 解析）
+@exception SAXException 应用程序可能引发一个异常。
+@see #endDTD
+@see #startEntity
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.endDTD() throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告 DTD 声明的结束。
+
+<p>此方法主要用于报告 DOCTYPE 声明的结束；如果文档没有任何 DOCTYPE 声明，则不调用此方法。</p>
+
+@exception SAXException 应用程序可能引发一个异常。
+@see #startDTD
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.startEntity(String name) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告一些内部和外部 XML 实体的开始。
+
+<p>参数实体（包括外部 DTD 子集）的报告是可选的，报告 LexicalHandler 事件的 SAX2 驱动程序不能实现它；可以使用 <code
+ >http://xml.org/sax/features/lexical-handler/parameter-entities</code> 功能查询或控制参数实体的报告。</p>
+
+<p>使用其正规名称报告常规实体，参数实体具有置于其名称前的 &quot;%&quot;，并且外部 DTD 子集具有伪实体名 &quot;[dtd]&quot;。</p>
+
+<p>在 SAX2 驱动程序提供这些事件时，所有其他事件必须在开始/结束实体事件中正确嵌套。不存在对来自 {@link org.xml.sax.ext.DeclHandler DeclHandler} 或 {@link org.xml.sax.DTDHandler DTDHandler} 的事件进行正确排序的 附加要求。</p>
+
+<p>注意，跳过的实体将通过 {@link org.xml.sax.ContentHandler#skippedEntity skippedEntity} 事件（是 ContentHandler 接口的一部分）报告。</p>
+
+<p>由于 SAX 使用的流事件模型，不能在任何环境下报告某些实体边界：</p>
+
+ <ul>
+<li>属性值中的常规实体</li>
+<li>声明中的参数实体</li>
+ </ul>
+
+<p>将默认扩展上述实体，而不指示原始实体边界的位置。</p>
+
+<p>还要注意，不报告字符引用（实际上它不是实体）的边界。</p>
+
+<p>必须正确嵌套所有 start/endEntity 事件。
+
+@param name 实体的名称。如果是参数实体，则名称将以 &quot;%&quot; 开头，如果是外部 DTD 子集，则将是 &quot;[dtd]&quot;。
+@exception SAXException 应用程序可能引发一个异常。
+@see #endEntity
+@see org.xml.sax.ext.DeclHandler#internalEntityDecl
+@see org.xml.sax.ext.DeclHandler#externalEntityDecl 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.endEntity(String name) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告实体的结束。
+
+@param name 正在结束的实体名称。
+@exception SAXException 应用程序可能引发一个异常。
+@see #startEntity
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.startCDATA() throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告 CDATA 节的开始。
+
+<p>通过常规 {@link org.xml.sax.ContentHandler#characters characters} 事件报告 CDATA 节的内容；此事件仅用于报告边界。</p>
+
+@exception SAXException 应用程序可能引发一个异常。
+@see #endCDATA
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.endCDATA() throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告 CDATA 节的结束。
+
+@exception SAXException 应用程序可能引发一个异常。
+@see #startCDATA
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ext.LexicalHandler.comment(char[] ch, int start, int length) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告文档的任何位置的 XML 注释。
+
+<p>此回调将用于文档元素内外的注释，包括外部 DTD 子集中的注释（如果读取）。必须在 start/endDTD 和 start/endEntity 事件内部正确嵌套 DTD 中的注释（如果已使用）。</p>
+
+@param ch 保存注释中的字符的数组。
+@param start 数组中的开始位置。
+@param length 使用的数组中的字符数。
+@exception SAXException 应用程序可能引发一个异常。
+
+<!-- END DATA -->

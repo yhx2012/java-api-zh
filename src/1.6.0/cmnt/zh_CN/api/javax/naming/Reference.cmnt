@@ -1,0 +1,243 @@
+<!-- BEGIN KEY -->
+public class javax.naming.Reference extends java.lang.Object implements java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示对存在于命名/目录系统以外的对象的引用。
+<p>
+Reference 提供一种记录关于没有直接绑定到命名/目录系统的对象的地址信息的方式。
+<p>
+Reference 由有序地址列表和有关将被引用的对象的类信息组成。列表中的每个地址都标识一个用于相同概念上的对象的通信端点。&ldquo;通信端点&rdquo;是指示如何与对象进行联系的信息。例如，它可以是一个网络地址、本地机器内存中的一个位置、同一台机器上的另一个进程等等。列表中地址的顺序对于解释引用的对象工厂而言可能很重要。
+<p> 
+出现多个地址的原因有很多，比如重复或者对象在多于一种的通信机制上提供接口。该地址的索引从零开始。
+<p>
+Reference 还包含信息，该信息有助于创建此 Reference 所引用的对象的实例。它包含该对象的类名称，以及用来创建该对象的工厂的类名称和位置。类工厂位置是以空格分隔的 URL 列表，这些 URL 表示用来加载该工厂的类路径。当需要加载工厂类（或任何它所依赖的类或资源）时，将（依次）使用每个 URL 来尝试加载该类。
+<p>
+Reference 实例与多个线程的并发访问不同步。需要并发地访问单个 Reference 的线程应该在它们之间实现同步并提供所需的锁定。
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.10 05/11/17
+
+@see RefAddr
+@see StringRefAddr
+@see BinaryRefAddr
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.naming.Reference.className
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含此 Reference 所引用的对象类的完全限定名称。
+@serial
+@see java.lang.Class#getName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector<javax.naming.RefAddr> javax.naming.Reference.addrs
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含此 Reference 中所包含的地址。由构造方法初始化。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.naming.Reference.classFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含用来创建此 Reference 所引用的对象实例的工厂类名称。被初始化为 null。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.naming.Reference.classFactoryLocation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含工厂类的位置。被初始化为 null。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Reference(String className)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用类名称 'className' 构造对某个对象的新引用。类工厂和类工厂位置都被设置为 null。新创建的引用不包含任何地址。
+
+@param className 此引用所引用对象的非 null 类名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Reference(String className, RefAddr addr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用类名称 'className' 和一个地址构造对某个对象的新引用。类工厂和类工厂位置都被设置为 null。
+
+@param className 此引用所引用对象的非 null 类名称。
+@param addr 对象的非 null 地址。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Reference(String className, String factory, String factoryLocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用类名称 'className' 以及对象工厂的类名称和位置创建对某个对象的新引用。
+
+@param className 此引用所引用对象的非 null 类名称。
+@param factory	对象工厂的类名称（可能为 null）。
+@param factoryLocation 加载工厂的、可能为 null 的位置（例如 URL）
+@see javax.naming.spi.ObjectFactory
+@see javax.naming.spi.NamingManager#getObjectInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Reference(String className, RefAddr addr, String factory, String factoryLocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用类名称 'className'、对象工厂的类名称和位置以及对象的地址创建该对某个对象的新引用。
+
+@param className 此引用所引用对象的非 null 类名称。
+@param factory	对象工厂的类名称（可能为 null）。
+@param factoryLocation	加载工厂的、可能为 null 的位置（例如 URL）
+@param addr	对象的非 null 地址。
+@see javax.naming.spi.ObjectFactory
+@see javax.naming.spi.NamingManager#getObjectInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Reference.getClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此引用所引用对象的类名称。
+
+@return 该对象的非 null 完全限定类名称。（例如 &quot;java.lang.String&quot;）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Reference.getFactoryClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此引用所引用对象的工厂的类名称。
+
+@return 该工厂的完全限定类名称（可能为 null）。（例如 &quot;java.lang.String&quot;）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Reference.getFactoryClassLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此引用所引用对象的工厂的位置。如果是一个代码基，则它是一个以空格分隔的有序 URL 列表，该列表列出了应该加载工厂类定义的位置。
+
+@return 包含用来加载工厂类的地址的字符串（可能为 null）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.RefAddr javax.naming.Reference.get(String addrType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索地址类型为 'addrType' 的第一个地址。String.compareTo() 用于测试地址类型的相等性。
+
+@param addrType 用来查找地址的非 null 地址类型。
+@return 此引用中地址类型为 'addrType 的地址；如果不存在这样的地址，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.RefAddr javax.naming.Reference.get(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索索引 posn 处的地址。
+@param posn 要检索的地址的索引。
+@return 索引 posn（从 0 开始）处的地址。必须在范围 [0,getAddressCount()) 内。
+@exception ArrayIndexOutOfBoundsException 如果 posn 不在指定的范围内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<javax.naming.RefAddr> javax.naming.Reference.getAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此索引中的地址所组成的枚举。当在此引用中添加、更改或移除地址时，对此枚举的影响是不确定的。
+
+@return 此引用中的地址 (<tt>RefAddr</tt>) 所组成的非 null 枚举。如果此索引中没有任何地址，则返回一个不带任何元素的枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.Reference.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此引用中的地址数。
+ 
+@return 此引用中的非负地址数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Reference.add(RefAddr addr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将地址添加到地址列表的末尾。
+
+@param addr 要添加的非 null 地址。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Reference.add(int posn, RefAddr addr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将地址添加到地址列表中的索引 posn 处。索引 posn 或大于该索引的所有地址都将在该列表中上移（远离索引 0）一位。
+
+@param posn 列表中要插入 addr 的索引（从 0 开始）。
+@param addr 要插入的非 null 地址。
+@exception ArrayIndexOutOfBoundsException 如果 posn 并不在指定的范围内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Reference.remove(int posn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从地址列表中删除索引 posn 处的地址。索引大于 posn 的所有地址都将在该列表中下移（朝向索引 0）一位。
+
+@param posn 要删除的地址的索引（从 0 开始）。
+@return 移除的地址。
+@exception ArrayIndexOutOfBoundsException 如果 posn 不在指定的范围内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.Reference.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此引用中删除所有地址。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.Reference.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定 obj 是否是一个与此引用具有相同地址（按相同顺序）的引用。可以使用 RefAddr.equals() 检查该地址。除了具有相同地址之外，Reference 还应该与此引用具有相同的类名称。不检查类工厂和类工厂位置。如果 obj 为 null 或者不是一个 Reference 实例，则返回 null。
+
+@param obj 要检查的对象（可能为 null）。
+@return 如果 obj 等于此引用，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.Reference.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算此引用的哈希码。该哈希码是其地址的哈希玛的总和。
+
+@return 此引用 int 形式的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.Reference.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成此引用的字符串表示形式。该字符串由此引用所引用的类名称及其每个地址的字符串表示形式组成。此表示形式只用于显示，不会被解析。
+
+@return  此引用的非 null 字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.Reference.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用地址的类名称列表、类工厂名称和类工厂位置创建此引用的副本。对新创建副本的更改不会影响此 Reference，反之亦然。
+
+<!-- END DATA -->

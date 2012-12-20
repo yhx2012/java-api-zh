@@ -1,0 +1,414 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.BoxView extends javax.swing.text.CompositeView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个视图，它通过沿某轴平铺将其子级排列到框形状中。此框与 TeX 中的框有些类似，它需要处理子级的对齐方式，还要考虑到子级的灵活性等等。这是一个构造块，可用于表示类似线、段落、列表、列、页面等的集合。子级平铺时沿用的轴被视为主轴。与它垂直的轴为辅轴。
+ <p>
+每个轴的布局分别由 <code>layoutMajorAxis</code> 和 <code>layoutMinorAxis</code> 方法单独处理。子类可通过重新实现这些方法来更改该布局算法。需要时将根据是否有缓存布局信息以及此缓存是否有效来调用这些方法。通常情况下，当沿轴的给定大小发生更改，或者调用了 <code>layoutChanged</code> 对布局强制更新时，此方法被调用。<code>layoutChanged</code> 方法使缓存布局信息无效（如果有）。发布到父视图的要求是通过 <code>calculateMajorAxisRequirements</code> 和  <code>calculateMinorAxisRequirements</code> 进行计算的。如果布局算法已更改，这些方法按道理都需要重新实现。
+
+@author  Timothy Prinzing
+@version 1.61 03/05/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.BoxView(Element elem, int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>BoxView</code>。
+
+@param elem 此视图负责的元素
+@param axis <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code> 之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.BoxView.getAxis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取平铺轴属性。这是子视图平铺沿用的轴。
+
+@return 框的主轴，可以是 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.setAxis(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置平铺轴属性。这是子视图平铺沿用的轴。
+
+@param axis <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code> 之一
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.layoutChanged(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使沿某轴的布局变得无效。如果任何一个子视图的首选项发生更改，将自动使所沿轴的布局变得无效。有些情况下，如果首选项未更改，则可能需要重新计算布局。调用此方法可将布局标记为无效。下次在此视图（通常在绘制中）上调用 <code>setSize</code> 方法时，布局将被更新。
+
+@param axis <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code> 之一
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.BoxView.isLayoutValid(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+确定沿给定轴的布局是否有效。
+
+@param axis <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code> 之一
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.paintChild(Graphics g, Rectangle alloc, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制一个子级。默认情况下，这就是它所执行的所有功能，但是子类可使用此方法绘制与该子级有关的组件。
+
+@param g 图像上下文
+@param alloc 分配的要向其绘制的区域
+@param index 子级的索引，该索引 &gt;= 0 &amp;&amp; &lt; getViewCount()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.replace(int index, int length, javax.swing.text.View[] elems)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使布局变得无效并调整所需/分配的缓存大小。旧布局中的子级分配仍可被访问，但是新的子级将都有一个值为 0 的偏移量和区域。
+
+@param index 要插入新视图的子视图的开始索引；其值 &gt;= 0 且 &lt;= getViewCount
+@param length 要移除的现有子视图数；其值 &gt;= 0 且 &lt;= (getViewCount() - offset)
+@param elems 要添加的子视图；此值可以为 <code>null</code>，表示没有要添加的子级（对移除有用）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.forwardUpdate(DocumentEvent.ElementChange ec, DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>DocumentEvent</code> 转发给需要接收模型更改通知的子视图。如果有一个子级更改了它的要求并且在转发前分配为有效，则框中从开始子级到框结束部分将被重新绘制。
+
+@param ec 此视图负责的元素发生的更改（如果未发生更改，则为 <code>null</code>）
+@param e 来自相关文档的更改信息
+@param a 视图的当前分配
+@param f 重新构造时需要使用的工厂（如果视图有子级）
+@see #insertUpdate
+@see #removeUpdate
+@see #changedUpdate
+@since 1.3     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.preferenceChanged(View child, boolean width, boolean height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这由子级来调用，以表明它的首选项区域已更改。实现此方法可丢弃缓存布局信息，以便在子级下次需要分配时执行新的计算。
+
+@param child 子视图
+@param width 如果应更改宽度首选项，则为 true
+@param height 如果应更改高度首选项，则为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.BoxView.getResizeWeight(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取调整的权重。对于小于等于 0 的值，无法调整大小。
+
+@param axis 可以是 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return 权重
+@exception IllegalArgumentException 如果轴无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.setSize(float width, float height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的大小。如果视图缓存了任何布局信息，此方法将对视图布局。实现此方法以调用布局方法，调用参数为 insets 内部的大小。
+
+@param width 宽度 &gt;= 0
+@param height 高度 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.BoxView.paint(Graphics g, Shape allocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用该面给定的呈现面和区域呈现 <code>BoxView</code>。只呈现与给定 <code>Graphics</code> 边界相交的子级。
+
+@param g 要使用的呈现面
+@param allocation 要呈现的已分配区域
+@see View#paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.BoxView.getChildAllocation(int index, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定子视图的分配。这有助于获得各个视图所处的位置。实现此方法，如果布局为无效，则返回 <code>null</code>，否则执行超类行为。
+
+@param index 子级的索引，该索引 &gt;= 0 &amp;&amp; &lt; getViewCount()
+@param a  对此视图的分配
+@return 对此子级的分配；或者，如果 <code>a</code> 为 <code>null</code> 则返回 <code>null</code>；如果布局无效，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.BoxView.modelToView(int pos, Shape a, Position.Bias b) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从文档模型的坐标空间到映射到它的视图的坐标空间的映射。这确保在调用超类之前分配有效。
+
+@param pos 要转换的位置，其值 &gt;= 0
+@param a 分配的要在其中呈现的区域
+@return 给定位置的边界框
+@exception BadLocationException  如果给定位置在所关联的文档中不是一个有效位置
+@see View#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.BoxView.viewToModel(float x, float y, Shape a, javax.swing.text.Position.Bias[] bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从视图坐标空间到模型逻辑坐标空间的映射。
+
+@param x   要转换的视图位置的 x 坐标，其值 &gt;= 0
+@param y   要转换的视图位置的 y 坐标，其值 &gt;= 0
+@param a 分配的要在其中呈现的区域
+@return 模型中最能代表视图中给定点的位置，其值 &gt;= 0
+@see View#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.BoxView.getAlignment(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴所需的调整值。实现此方法可提供要将所有子级沿垂直平铺轴的轴按对齐点排列所需的总调整值。要平铺的轴将请求居中（即 0.5f）。
+
+@param axis 可以是 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return 所需的调整值，该值 &gt;= 0.0f &amp;&amp; &lt;= 1.0f；它应该是一个介于 0.0 和 1.0 之间的值，0 表示在原点对齐，1.0 表示在离开原点的整个区域对齐；调整值为 0.5 表示视图居中
+@exception IllegalArgumentException 如果轴无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.BoxView.getPreferredSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的首选区域。
+
+@param axis 可以为 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return   视图可能要在其中呈现的区域，其值 &gt;= 0；通常会告知该视图在返回的区域中呈现，但不保证一定如此；父级可选择重新调整视图大小或拆分视图
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.BoxView.getMinimumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最小区域。
+
+@param axis 可以为 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return   视图可能要在其中呈现的区域，其值 &gt;= 0；通常会告知该视图在返回的区域中呈现，但不保证一定如此；父级可选择重新调整视图大小或拆分视图
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.BoxView.getMaximumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最大区域。
+
+@param axis 可以为 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return   视图可能要在其中呈现的区域，其值 &gt;= 0；通常会告知该视图在返回的区域中呈现，但不保证一定如此；父级可选择重新调整视图大小或拆分视图
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.BoxView.isAllocationValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子级分配是否仍有效。
+
+@return 如果分配仍有效，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.BoxView.isBefore(int x, int y, Rectangle innerAlloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定一个点是否位于分配区域的前面。
+
+@param x X 坐标，该坐标 &gt;= 0
+@param y Y 坐标，该坐标 &gt;= 0
+@param innerAlloc 已分配区域；这是 insets 内部的区域
+@return 如果该点位于区域的前面，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.BoxView.isAfter(int x, int y, Rectangle innerAlloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定一个点是否位于分配区域的后面。
+
+@param x X 坐标，该坐标 &gt;= 0
+@param y Y 坐标，该坐标 &gt;= 0
+@param innerAlloc 已分配区域；这是 insets 内部的区域
+@return 如果该点位于区域的后面，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.BoxView.getViewAtPoint(int x, int y, Rectangle alloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定坐标处的子视图。
+
+@param x X 坐标，该坐标 &gt;= 0
+@param y Y 坐标，该坐标 &gt;= 0
+@param alloc 父级在入口处的内部分配，在出口处应将更改为子级的分配
+@return 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.childAllocation(int index, Rectangle alloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为子视图分配一个区域。  
+
+@param index 要为子视图分配的索引，该索引 &gt;= 0 &amp;&amp; &lt; getViewCount()
+@param alloc 分配的区域
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.layout(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行对框的布局
+
+@param width  insets 的内部宽度，该宽度 &gt;= 0
+@param height  insets 的内部高度，该高度 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.BoxView.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回框的当前宽度。这是上次为其分配的宽度。
+@return 框的当前宽度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.BoxView.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回框的当前高度。这是上次为其分配的高度。
+@return 框的当前高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.layoutMajorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行对框的主轴的布局（即它所代表的轴）。布局的结果（每个子级的偏移量和区域）存储在给定的数组中，它表示沿主轴对子级的分配。
+
+@param targetSpan 分配给视图的总区域，将用于布置子级
+@param axis 要布置的轴
+@param offsets 每个子视图相对于视图原点的偏移量；这是一个返回值，由此方法的实现填充
+@param spans 每个子视图的区域；这是一个返回值，由此方法的实现填充
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行对框的辅轴的布局（即与它所代表的轴垂直的轴）。布局的结果（每个子级的偏移量和区域）存储在给定的数组中，它表示沿辅轴对子级的分配。
+
+@param targetSpan 分配给视图的总区域，将用于布置子级
+@param axis 要布置的轴
+@param offsets 每个子视图相对于视图原点的偏移量；这是一个返回值，由此方法的实现填充
+@param spans 每个子视图的区域；这是一个返回值，由此方法的实现填充
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SizeRequirements javax.swing.text.BoxView.calculateMajorAxisRequirements(int axis, SizeRequirements r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算主轴 <code>axis</code> 的大小要求。
+
+@param axis 所考察的轴
+@param r <code>SizeRequirements</code> 对象；如果为 <code>null</code>，将创建一个对象
+@return 新初始化的 <code>SizeRequirements</code> 对象
+@see javax.swing.SizeRequirements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SizeRequirements javax.swing.text.BoxView.calculateMinorAxisRequirements(int axis, SizeRequirements r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算辅轴 <code>axis</code> 的大小要求。
+
+@param axis 所考察的轴
+@param r <code>SizeRequirements</code> 对象；如果为 <code>null</code>，将创建一个对象
+@return 新初始化的 <code>SizeRequirements</code> 对象
+@see javax.swing.SizeRequirements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.BoxView.baselineLayout(int targetSpan, int axis, int[] offsets, int[] spans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定的 <code>targetSpan</code> 区域，即我们将使用的区域的宽度（或高度），计算每个子视图在此 <code>BoxView</code> 中的位置和扩展。
+
+@param targetSpan 分配给视图的总区域，将用于布置子级
+@param axis 所考察的轴，可以是 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@param offsets 一个空数组，由此方法用指定每个子视图位置的值填充
+@param spans  一个空数组，由此方法用指定每个子视图扩展的值填充
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SizeRequirements javax.swing.text.BoxView.baselineRequirements(int axis, SizeRequirements r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过检查每个子视图的大小计算此 <code>BoxView</code> 的大小要求。
+
+@param axis 所考察的轴
+@param r <code>SizeRequirements</code> 对象；如果为 <code>null</code>，将创建一个对象
+@return 新初始化的 <code>SizeRequirements</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.BoxView.getOffset(int axis, int childIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取特定子级当前布局的偏移量。
+@param axis 所考察的轴
+@param childIndex 所请求子级的索引
+@return 指定子级的偏移量（位置）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.BoxView.getSpan(int axis, int childIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取特定子级的当前布局的区域。
+@param axis 所考察的轴
+@param childIndex 所请求子级的索引
+@return 指定子级的区域（宽度或高度）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.BoxView.flipEastAndWestAtEnds(int position, Position.Bias bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定下一个视图的放置方向。假定 View 的索引为 n。通常情况下，这些 <code>View</code> 从按左到右布置，这样位于它东面的 <code>View</code> 的索引为 n + 1，位于它西面的 <code>View</code> 的索引为 n - 1。在某些情况下（例如双向文本中）有可能位于它东面的 <code>View</code> 索引不是 n + 1，而是 n - 1，位于它西面的 <code>View</code> 索引不是 n - 1，而是 n + 1。在这种情况下，此方法返回 true，表明这些 <code>View</code> 按降序布置。否则该方法返回 false，表明这些视图 <code>View</code> 按升序布置。
+ <p>
+如果接收者沿 <code>Y_AXIS</code> 布置它的 <code>View</code>，这将返回在负责呈现 <code>position</code> 和 <code>bias</code> 的 <code>View</code> 上调用相同的方法所返回的值。否则将返回 false。
+
+@param position 模型中的位置
+@param bias 可以是 <code>Position.Bias.Forward</code> 或 <code>Position.Bias.Backward</code>
+@return 如果围绕 <code>View</code> 的负责呈现 <code>position</code> 和 <code>bias</code> 的 <code>View</code> 按降序布置则返回 true；否则返回 false
+
+<!-- END DATA -->

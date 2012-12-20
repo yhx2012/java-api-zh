@@ -1,0 +1,407 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.soap.SOAPFault extends javax.xml.soap.SOAPBodyElement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SOAPBody</code> 对象中的元素，包含错误和/或状态信息。此信息可能与 <code>SOAPMessage</code> 对象中的错误相关，也可能与和消息本身的内容无关的问题相关。与消息本身无关的问题通常是处理过程中的错误，如无法与上游服务器通信。
+ <P>
+<code>SOAPFault</code> 具有 SOAP 1.1 或 SOAP 1.2 规范中定义的子元素，具体取决于创建 <code>MessageFactory</code> 实例时指定的 <code>protocol</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultCode(Name faultCodeQName) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的错误代码设置此 <code>SOAPFault</code> 对象。
+
+<P> 给出有关错误信息的错误代码是在 SOAP 1.1 规范中定义的。错误代码是强制性的 (mandatory)，必须是 <code>QName</code> 类型。此方法提供设置错误代码的便捷方式。例如，
+
+ <PRE>
+SOAPEnvelope se = ...;
+// Create a qualified name in the SOAP namespace with a localName
+// of &quot;Client&quot;.Note that prefix parameter is optional and is null
+// here which causes the implementation to use an appropriate prefix.
+Name qname = se.createName(&quot;Client&quot;, null,
+SOAPConstants.URI_NS_SOAP_ENVELOPE);
+SOAPFault fault = ...;
+fault.setFaultCode(qname);
+ </PRE>
+相比 {@link #setFaultCode(String)} 方法，最好优先使用此方法。
+
+@param faultCodeQName 给出要设置的错误代码的 <code>Name</code> 对象。它必须是限定于名称空间的。
+@see #getFaultCodeAsName
+
+@exception SOAPException 如果在将 <i>faultcode</i> 元素添加到底层 XML 树时出现错误。
+
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultCode(QName faultCodeQName) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的错误代码设置此 <code>SOAPFault</code> 对象。相比 {@link #setFaultCode(Name)} 方法，最好优先使用此方法。
+
+@param faultCodeQName 提供要设置的错误代码的 <code>QName</code> 对象。它必须是限定于名称空间的。
+@see #getFaultCodeAsQName
+
+@exception SOAPException 如果在将 <code>faultcode</code> 元素添加到底层 XML 树时出现错误。
+
+@see #setFaultCode(Name)
+@see #getFaultCodeAsQName()
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultCode(String faultCode) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的错误代码设置此 <code>SOAPFault</code> 对象。
+ <P>
+给出有关错误信息的错误代码是在 SOAP 1.1 规范中定义的。此元素在 SOAP 1.1 中是强制性的。因为错误代码要求是 QName，所以最好使用此方法的 {@link #setFaultCode(Name)} 形式。
+
+@param faultCode 提供要设置的错误代码的 <code>String</code>。它必须是 &quot;prefix:localName&quot; 形式，其中前缀是用名称空间声明定义的。
+@see #setFaultCode(Name)
+@see #getFaultCode
+@see SOAPElement#addNamespaceDeclaration
+
+@exception SOAPException 如果在将 <code>faultCode</code> 添加到底层 XML 树时出现错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.Name javax.xml.soap.SOAPFault.getFaultCodeAsName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 SAAJ <code>Name</code> 对象形式获取此 <code>SOAPFault</code> 对象的强制性 SOAP 1.1 错误代码。SOAP 1.1 规范要求 &quot;faultcode&quot; 元素的值为 QName 类型。此方法以 SAAJ Name 对象的形式返回 QName 形式的元素内容。应该使用此方法来代替 <code>getFaultCode</code> 方法，因为它允许应用程序方便地访问名称空间名，而不需要其他解析。
+
+@return 表示错误代码的 <code>Name</code>
+@see #setFaultCode(Name)
+ 
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.soap.SOAPFault.getFaultCodeAsQName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>QName</code> 对象形式获取此 <code>SOAPFault</code> 对象的错误代码。
+
+@return 表示错误代码的 <code>QName</code>
+ 
+@see #setFaultCode(QName)
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPFault.getFaultSubcodes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>QNames</code> 迭代器形式获取此 <code>SOAPFault</code> 的 Subcode。 
+
+@return 访问 <code>QNames</code> 序列的 <code>Iterator</code> 此 <code>Iterator</code> 不应支持可选的 <code>remove</code> 方法。Subcode 返回的顺序反映了 Subcode 在错误代码中从上到下的层次结构。
+ 
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Subcode。 
+ 
+@since SAAJ 1.3 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.removeAllFaultSubcodes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此 <code>SOAPFault</code> 可能包含的任何 Subcode。在调用 <code>appendFaultSubcode</code> 之前，对 <code>getFaultSubcodes</code> 的后续调用将返回空迭代器。
+
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Subcode。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.appendFaultSubcode(QName subcode) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Subcode 添加到此 <code>SOAPFault</code> 包含的 Subcode 序列的末尾。SOAP 1.2 中引入的 Subcode 由递归子元素序列表示，该序列由 SOAP Fault 的强制 Code 子元素排列形成。 
+  
+@param subcode 包含 Subcode 值的 QName。
+ 
+@exception SOAPException 如果在设置 Subcode 时出现错误
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Subcode。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SOAPFault</code> 对象的错误代码。
+
+@return 带有错误代码的 <code>String</code>
+@see #getFaultCodeAsName
+@see #setFaultCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultActor(String faultActor) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的错误参与者 (actor) 设置此 <code>SOAPFault</code> 对象。
+ <P>
+错误参与者是消息路径中导致发生错误的接收方。
+ <P>
+如果此 <code>SOAPFault</code> 支持 SOAP 1.2，则此调用等效于 {@link #setFaultRole(String)}
+
+@param faultActor 一个 <code>String</code>，标识导致此 <code>SOAPFault</code> 对象的参与者
+@see #getFaultActor
+
+@exception SOAPException 如果在将 <code>faultActor</code> 添加到底层 XML 树时出现错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultActor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SOAPFault</code> 对象的错误参与者。
+<P>
+如果此 <code>SOAPFault</code> 支持 SOAP 1.2，那么此调用等效于 {@link #getFaultRole()}。
+
+@return 一个 <code>String</code>，给出消息路径中导致此 <code>SOAPFault</code> 对象的参与者
+@see #setFaultActor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultString(String faultString) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>SOAPFault</code> 对象的错误字符串设定为给定字符串。
+ <P>
+如果此 <code>SOAPFault</code> 是支持 SOAP 1.2 的消息的一部分，则此调用等效于： 
+ <pre>
+addFaultReasonText(faultString, Locale.getDefault());
+ </pre>
+
+@param faultString 一个 <code>String</code>，给出对错误的解释
+@see #getFaultString
+
+@exception SOAPException 如果在将 <code>faultString</code> 添加到底层 XML 树时出现错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultString(String faultString, Locale locale) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>SOAPFault</code> 对象的错误字符串设定为给定字符串，并本地化为给定语言环境。
+ <P>
+如果此 <code>SOAPFault</code> 是支持 SOAP 1.2 的消息的一部分，则此调用等效于： 
+ <pre>
+addFaultReasonText(faultString, locale);
+ </pre>
+
+@param faultString 一个 <code>String</code>，给出对错误的解释
+@param locale 一个 {@link java.util.Locale Locale} 对象，指示 <code>faultString</code> 的本地语言
+@see #getFaultString
+
+@exception SOAPException 如果在将 <code>faultString</code> 添加到底层 XML 树时出现错误。
+ 
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SOAPFault</code> 对象的错误字符串。 
+ <P>
+如果此 <code>SOAPFault</code> 是支持 SOAP 1.2 的消息的一部分，则此调用等效于： 
+ <pre>
+String reason = null;
+try {
+reason = (String) getFaultReasonTexts().next();
+} catch (SOAPException e) {}
+return reason;
+ </pre>
+
+@return 一个 <code>String</code>，给出对错误的解释
+@see #setFaultString(String)
+@see #setFaultString(String, Locale)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale javax.xml.soap.SOAPFault.getFaultStringLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>SOAPFault</code> 对象错误字符串的语言环境。 
+ <P>
+如果此 <code>SOAPFault</code> 是支持 SOAP 1.2 的消息的一部分，则此调用等效于： 
+ <pre>
+Locale locale = null;
+try {
+locale = (Locale) getFaultReasonLocales().next();
+} catch (SOAPException e) {}
+return locale;
+ </pre>
+ 
+@return 一个 <code>Locale</code> 对象，指示默认字符串的本地语言，如果没有指定语言环境，则返回 <code>null</code>
+@see #setFaultString(String, Locale)
+ 
+@since SAAJ 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.soap.SOAPFault.hasDetail()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>SOAPFault</code> 有一个 <code>Detail</code> 子元素，则返回 true，否则返回 false。与 <code>(getDetail()!=null)</code> 等效。
+ 
+@return 如果此 <code>SOAPFault</code> 有一个 <code>Detail</code> 子元素，则返回 true，否则返回 false。
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.Detail javax.xml.soap.SOAPFault.getDetail()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SOAPFault</code> 对象的可选 detail 元素。
+ <P>
+<code>Detail</code> 对象携带了特定于应用程序的错误信息，如果该错误信息是 SOAP 1.1 Fault，则其范围限于 <code>SOAPBodyElement</code> 对象中的错误。 
+
+@return 带有特定于应用程序的错误信息的 <code>Detail</code> 对象（如果存在）；如果不存在此类对象，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.soap.Detail javax.xml.soap.SOAPFault.addDetail() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建可选的 <code>Detail</code> 对象，并将其设置为此 <code>SOAPFault</code> 对象的 <code>Detail</code> 对象。
+ <P>
+当错误已包含详细信息时，添加详细信息是非法的。因此，此方法应该在移除了现有的详细信息之后调用。
+
+@return 新的 <code>Detail</code> 对象
+
+@exception SOAPException 如果此 <code>SOAPFault</code> 对象已包含一个有效的 <code>Detail</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPFault.getFaultReasonLocales() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Iterator</code>，它可以在与 Reason Text 项关联的 <code>Locale</code> 独特序列上进行迭代。这些 <code>Locale</code> 都可以用于对 <code>getFaultReasonText</code> 的调用，以便获取 Reason Text 字符串的本地化版本。
+ 
+@return 一个 <code>Iterator</code>，可在与 Reason Text 项关联的 <code>Locale</code> 对象序列上进行迭代。
+ 
+@exception SOAPException 如果检索错误 Reason 语言环境时出现错误。
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Reason。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.soap.SOAPFault.getFaultReasonTexts() throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Iterator</code>，它可以在包含此 <code>SOAPFault</code> 所有 Reason Text 项的 <code>String</code> 对象序列上进行迭代。 
+
+@return 一个 <code>Iterator</code>，可在 env:Fault/env:Reason/env:Text 项上进行迭代。 
+ 
+@exception SOAPException 如果检索错误 Reason 文本时出现错误。
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Reason。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultReasonText(Locale locale) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与给定 <code>Locale</code> 关联的 Reason Text。如果存在一个以上这种 Reason Text，则返回第一个与 Text 匹配的 Reason Text。
+ 
+@param locale 本地化 Reason Text 时需要的 <code>Locale</code>
+ 
+@return 与 <code>locale</code> 关联的 Reason Text
+ 
+@see #getFaultString
+ 
+@exception SOAPException 如果针对指定语言环境检索错误 Reason 文本时出现错误。
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Reason。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.addFaultReasonText(String text, Locale locale) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+追加或替换包含指定文本消息的 Reason Text 项，以及从 <code>locale</code> 派生的 <i>xml:lang</i>。如果已经存在带有此 <i>xml:lang</i> 的 Reason Text 项，则其文本值将被 <code>text</code> 替换。<code>locale</code> 参数不应为 <code>null</code>。
+ <P>
+代码示例：
+
+ <PRE>
+SOAPFault fault = ...;
+fault.addFaultReasonText(&quot;Version Mismatch&quot;, Locale.ENGLISH);
+ </PRE>
+
+@param text 原因消息字符串
+@param locale 表示消息语言环境的 Locale 对象
+
+@exception SOAPException 如果在添加 Reason 文本时出现错误，或者传递的 <code>locale</code> 为 <code>null</code>。
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Reason。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SOAPFault</code> 对象的可选 Node 元素值。Node 元素在 SOAP 1.2 中是可选的。
+
+@return String 形式的 env:Fault/env:Node 元素的内容，如果没有此类内容，则返回 <code>null</code>
+ 
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Node。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultNode(String uri) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建或替换此 <code>SOAPFault</code> 对象的任何现有 Node 元素。Node 元素在 SOAP 1.2 中是可选的。
+
+@exception SOAPException  如果在设置此 <code>SOAPFault</code> 对象的 Node 时出现错误。
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Node。 
+ 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.soap.SOAPFault.getFaultRole()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SOAPFault</code> 对象的可选 Role 元素值。Role 元素在 SOAP 1.2 中是可选的。
+
+@return String 形式的 env:Fault/env:Role 元素的内容，如果没有此类内容，则返回 <code>null</code>
+ 
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Role。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.soap.SOAPFault.setFaultRole(String uri) throws javax.xml.soap.SOAPException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建或替换此 <code>SOAPFault</code> 对象的任何现有 Role 元素。Role 元素在 SOAP 1.2 中是可选的。
+
+@param uri Role 的 URI
+ 
+@exception SOAPException  如果在设置此 <code>SOAPFault</code> 对象的 Role 时出现错误。
+ 
+@exception UnsupportedOperationException 如果此消息不支持 SOAP 1.2 定义的 Fault Role。 
+ 
+@since SAAJ 1.3
+
+<!-- END DATA -->

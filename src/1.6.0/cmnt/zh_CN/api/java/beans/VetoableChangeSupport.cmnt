@@ -1,0 +1,175 @@
+<!-- BEGIN KEY -->
+public class java.beans.VetoableChangeSupport extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这是一个实用工具类，支持约束 (constrained) 属性的 bean 可以使用此类。可以使用此类的实例作为 bean 的成员字段，并将各种工作委托给它。
+
+此类是可序列化的。在对它进行序列化时，它将保存（并恢复）本身可序列化的所有侦听器。在序列化期间，将跳过所有不可序列化的侦听器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Hashtable java.beans.VetoableChangeSupport.children
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+管理特定属性的侦听器的哈希表。将属性名称映射到 VetoableChangeSupport 对象。
+@serial
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object java.beans.VetoableChangeSupport.source
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将作为所有已生成事件的&ldquo;源&rdquo;而提供的对象。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.beans.VetoableChangeSupport.vetoableChangeSupportSerializedDataVersion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+内部版本号
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.VetoableChangeSupport(Object sourceBean)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>VetoableChangeSupport</code> 对象。
+
+@param sourceBean  作为所有事件的源提供的 bean。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.VetoableChangeSupport.addVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向侦听器列表添加一个 VetoableListener。该侦听器是为所有属性注册的。同一侦听器对象可以被添加多次，并且它们被调用的次数将与添加它们的次数相同。如果 <code>listener</code> 为 null，则不会抛出任何异常并且不执行任何操作。
+
+@param listener  要添加的 VetoableChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.VetoableChangeSupport.removeVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除一个 VetoableChangeListener。此方法移除了一个为所有属性注册的 VetoableChangeListener。如果将 <code>listener</code> 多次添加到同一事件源，则在被移除之后，它获得的通知将减少一次。如果 <code>listener</code> 为 null，或者从未被添加，则不会抛出任何异常并且不执行任何操作。
+
+@param listener  要移除的 VetoableChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.VetoableChangeListener[] java.beans.VetoableChangeSupport.getVetoableChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 VetoableChangeListener 的列表。如果已添加指定 vetoable 更改侦听器，则将返回 VetoableChangeListenerProxy 包装器
+ <p>
+@return 如果已添加指定的属性更改侦听器,则返回 VetoableChangeListener 和 VetoableChangeListenerProxy 的列表，。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.VetoableChangeSupport.addVetoableChangeListener(String propertyName, VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为特定属性添加一个 VetoableChangeListener。该侦听器只在调用 fireVetoableChange 为特定属性命名时调用。可以多次添加同一侦听器对象。对于每个属性，该侦听器被调用的次数与为该属性添加此侦听器的次数相同。如果 <code>propertyName</code> 或 <code>listener</code> 为 null，则不会抛出异常并且不执行操作。
+
+@param propertyName 要侦听的属性的名称。
+@param listener  要添加的 VetoableChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.VetoableChangeSupport.removeVetoableChangeListener(String propertyName, VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为特定属性移除一个 VetoableChangeListener。如果将 <code>listener</code> 多次添加到指定属性的同一事件源，则在被移除之后，它获得的通知将减少一次。如果 <code>propertyName</code> 为 null，则不会抛出任何异常并且不执行任何操作。如果 <code>listener</code> 为 null，或者从不为指定属性添加了侦听器，则不抛出任何异常并且不执行任何操作。
+
+@param propertyName 已被侦听的属性的名称。
+@param listener  要移除的 VetoableChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.VetoableChangeListener[] java.beans.VetoableChangeSupport.getVetoableChangeListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定属性相关联的所有侦听器组成的数组。
+
+@param propertyName  将被侦听的属性的名称
+@return 与指定属性相关联的所有 <code>VetoableChangeListener</code>。如果没有添加此类侦听器，或者 <code>propertyName</code> 为 null，则返回一个空数组。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.VetoableChangeSupport.fireVetoableChange(String propertyName, Object oldValue, Object newValue) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向所有已注册的侦听器报告 vetoable 属性更新。如果任何人禁止更改，则触发一个新的事件，该事件将每个人的属性还原为旧值，然后再次抛出 PropertyVetoException。
+ <p>
+如果新属性和旧属性相等并且是非 null 的，则不会触发事件。
+
+@param propertyName 将更改属性的编程名称。
+@param oldValue 属性的旧值。
+@param newValue 属性的新值。
+@exception PropertyVetoException 如果接收方希望回滚属性更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.VetoableChangeSupport.fireVetoableChange(String propertyName, int oldValue, int newValue) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向所有已注册的侦听器报告一个 int vetoable 属性更新。如果新属性和旧属性相等，则不会触发事件。
+ <p>
+这只是一个用来包装获取 Object 值的更一般 fireVetoableChange 方法的便捷包装器。
+
+@param propertyName 将更改属性的编程名称。
+@param oldValue 属性的旧值。
+@param newValue 属性的新值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.VetoableChangeSupport.fireVetoableChange(String propertyName, boolean oldValue, boolean newValue) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向所有已注册的侦听器报告一个 boolean vetoable 属性更新。如果新属性和旧属性相等，则不会触发事件。
+ <p>
+这只是一个用来包装获取 Object 值的更一般 fireVetoableChange 方法的便捷包装器。
+
+@param propertyName 将更改属性的编程名称。
+@param oldValue 属性的旧值。
+@param newValue 属性的新值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.VetoableChangeSupport.fireVetoableChange(PropertyChangeEvent evt) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对所有已注册侦听器激发一个 vetoable 属性更新。如果任何人禁止更改，则触发一个新的事件，该事件将每个人的属性还原为旧值，然后再次抛出 PropertyVetoException。
+ <p>
+如果新属性和旧属性相等并且是非 null 的，则不会触发事件。
+
+@param evt  要激发的 PropertyChangeEvent。
+@exception PropertyVetoException 如果接收方希望回滚属性更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.beans.VetoableChangeSupport.hasListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否存在特定属性的侦听器，包括那些已在所有属性上注册的侦听器。如果 <code>propertyName</code> 为 null，则只检查所有属性上注册的侦听器。
+
+@param       propertyName   属性名。
+@return 如果存在给定属性的一个或多个侦听器，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.beans.VetoableChangeSupport.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serialData Null terminated list of <code>VetoableChangeListeners</code>.
+ <p>
+在进行序列化时，跳过不可序列化的侦听器，只序列化可序列化的侦听器。
+
+<!-- END DATA -->

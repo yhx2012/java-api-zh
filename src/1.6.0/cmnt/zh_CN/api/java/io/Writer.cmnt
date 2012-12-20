@@ -1,0 +1,199 @@
+<!-- BEGIN KEY -->
+public abstract class java.io.Writer extends java.lang.Object implements java.lang.Appendable, java.io.Closeable, java.io.Flushable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符流的抽象类。子类必须实现的方法仅有 write(char[], int, int)、flush() 和 close()。但是，多数子类将重写此处定义的一些方法，以提供更高的效率和/或其他功能。
+
+@see Writer
+@see   BufferedWriter
+@see   CharArrayWriter
+@see   FilterWriter
+@see   OutputStreamWriter
+@see     FileWriter
+@see   PipedWriter
+@see   PrintWriter
+@see   StringWriter
+@see Reader
+
+@version 	1.29, 05/11/17
+@author	Mark Reinhold
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.io.Writer.lock
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于同步针对此流的操作的对象。为了提高效率，字符流对象可以使用其自身以外的对象来保护关键部分。因此，子类应使用此字段中的对象，而不是 <tt>this</tt> 或者同步的方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.Writer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的字符流 writer，其关键部分将同步 writer 自身。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.Writer(Object lock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的字符流 writer，其关键部分将同步给定的对象。
+
+@param lock  要同步的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Writer.write(int c) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入单个字符。要写入的字符包含在给定整数值的 16 个低位中，16 高位被忽略。
+
+<p> 用于支持高效单字符输出的子类应重写此方法。
+
+@param c  指定要写入字符的 int。
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Writer.write(char[] cbuf) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符数组。
+
+@param  cbuf  要写入的字符数组
+
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.io.Writer.write(char[] cbuf, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符数组的某一部分。
+
+@param  cbuf  字符数组
+
+@param  off   开始写入字符处的偏移量
+
+@param  len   要写入的字符数
+
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Writer.write(String str) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符串。
+
+@param  str  要写入的字符串
+
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Writer.write(String str, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写入字符串的某一部分。
+
+@param  str  字符串
+
+@param  off  相对初始写入字符的偏移量
+
+@param  len  要写入的字符数
+
+@throws  IndexOutOfBoundsException  如果 <tt>off</tt> 或 <tt>len</tt> 为负，或者 <tt>off+len</tt> 为负或大于给定字符串的长度
+
+@throws  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Writer java.io.Writer.append(CharSequence csq) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符序列添加到此 writer。
+
+<p> 以 <tt>out.append(csq)</tt> 的形式调用此方法，行为与以下调用完全相同：
+
+ <pre>
+     out.write(csq.toString()) </pre>
+
+<p> 可能不添加整个序列，也可能添加，具体取决于字符序列 <tt>csq</tt> 的 <tt>toString</tt> 规范。例如，调用一个字符缓冲区的 <tt>toString</tt> 方法将返回一个子序列，其内容取决于缓冲区的位置和限制。
+
+@param  csq 要添加的字符串序列。如果 <tt>csq</tt> 为 <tt>null</tt>，则向此 writer 添加四个字符 <tt>&quot;null&quot;</tt>。
+
+@return  此 writer
+
+@throws  IOException 如果发生 I/O 错误
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Writer java.io.Writer.append(CharSequence csq, int start, int end) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符序列的子序列添加到此 writer.<tt>Appendable</tt>。
+
+<p> 当 <tt>csq</tt> 不为 <tt>null</tt> 时，以 <tt>out.append(csq, start, end)</tt> 的形式调用此方法，行为与以下调用完全相同：
+
+ <pre>
+     out.write(csq.subSequence(start, end).toString()) </pre>
+
+@param  csq 要添加子序列的字符序列。如果 <tt>csq</tt> 为 <tt>null</tt>，则添加四个字符 <tt>&quot;null&quot;</tt>，就好像 <tt>csq</tt> 包含这些字符一样。
+
+@param  start 子序列中第一个字符的索引
+
+@param  end 子序列中最后一个字符后面的字符的索引
+
+@return  此 writer
+
+@throws  IndexOutOfBoundsException 如果 <tt>start</tt> 或 <tt>end</tt> 为负，而 <tt>start</tt> 大于 <tt>end</tt> 或者 <tt>end</tt> 大于 <tt>csq.length()</tt>
+
+@throws  IOException 如果发生 I/O 错误
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Writer java.io.Writer.append(char c) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符添加到此 writer。
+
+<p> 以 <tt>out.append(c)</tt> 的形式调用此方法，行为与以下调用完全相同：
+
+ <pre>
+     out.write(c) </pre>
+
+@param  c 要添加的 16 位字符
+
+@return  此 writer
+
+@throws  IOException 如果发生 I/O 错误
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.io.Writer.flush() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新该流的缓冲。如果该流已保存缓冲区中各种 write() 方法的所有字符，则立即将它们写入预期目标。然后，如果该目标是另一个字符或字节流，则将其刷新。因此，一次 flush() 调用将刷新 Writer 和 OutputStream 链中的所有缓冲区。
+
+<p> 如果此流的预期目标是由底层操作系统提供的一个抽象（如一个文件），则刷新该流只能保证将以前写入到流的字节传递给操作系统进行写入，但不保证能将这些字节实际写入到物理设备（如磁盘驱动器）。
+
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.io.Writer.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此流，但要先刷新它。在关闭该流之后，再调用 write() 或 flush() 将导致抛出 IOException。关闭以前关闭的流无效。
+
+@throws  IOException 如果发生 I/O 错误
+
+<!-- END DATA -->

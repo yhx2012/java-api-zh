@@ -1,0 +1,37 @@
+<!-- BEGIN KEY -->
+public interface java.sql.Wrapper
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在相关实例实际上是代理类时提供获取委托实例能力的 JDBC 类的接口。
+ <p>
+许多 JDBC 驱动程序实现使用包装器模式提供超越传统 JDBC API 的扩展，传统 JDBC API 是特定于数据源的。开发人员可能希望访问那些被包装（代理）为代表实际资源代理类实例的资源。此接口描述访问那些由代理代表的包装资源的标准机制，以允许对资源代理的直接访问。
+ 
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T java.sql.Wrapper.unwrap(java.lang.Class<T> iface) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个对象，该对象实现给定接口，以允许访问非标准方法或代理未公开的标准方法。
+ 
+如果接收者实现了该接口，那么结果是接收者或接收者代理。如果接收者是包装器且包装对象实现了该接口，那么结果是包装对象或包装对象的代理。否则，返回以递归方式对包装对象调用 <code>unwrap</code> 的结果或该结果的代理。如果接收者不是包装器且未实现该接口，则抛出 <code>SQLException</code>。
+
+@param iface 定义结果必须实现的接口的 Class。
+@return 实现接口的对象。可以是实际实现对象的代理。
+@throws java.sql.SQLException 如果未找到实现接口的对象。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Wrapper.isWrapperFor(java.lang.Class<?> iface) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果调用此方法的对象实现接口参数，或者是实现接口参数的对象的直接或间接包装器，则返回 true。否则返回 false。如果调用此方法的对象实现了接口，则返回 true；如果它是包装器，则返回以递归方式对包装对象调用 <code>isWrapperFor</code> 的结果。如果调用此方法的对象未实现该接口且不是包装器，则返回 false。此方法相比 <code>unwrap</code> 而言，应作为低成本操作实现，以便调用者可以使用此方法避免调用可能失败的昂贵的 <code>unwrap</code>。如果此方法返回 true，那么使用相同的参数调用 <code>unwrap</code> 应该会成功。
+
+@param iface 定义接口的 Class。
+@return 如果调用此方法的对象实现了接口，或者直接或间接包装实现了接口的对象，则返回 true。
+@throws java.sql.SQLException  如果在确定调用此方法的对象是否是使用给定接口的对象的包装器时发生错误。
+@since 1.6
+
+<!-- END DATA -->

@@ -1,0 +1,81 @@
+<!-- BEGIN KEY -->
+public interface javax.annotation.processing.ProcessingEnvironment
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注释处理工具框架将{@linkplain Processor#init 提供一个具有实现此接口的对象的注释 processor}，因此 processor 可以使用该框架提供的设施来编写新文件、报告错误消息并查找其他实用工具。
+
+<p>第三方可能希望提供能包装此接口设施对象的增值包装器，例如，允许多个 processor 协同写出单个源文件的 {@code Filer} 扩展。为了实现这一点，对于在其副作用可通过 API 相互可见的上下文中运行的 processor，工具基础设施必须提供相应的设施对象，这些对象是 {@code .equals}、作为 {@code .equals} 的 {@code Filer} 等等。此外，必须能够配置工具调用，使得从运行注释 processor 的角度来看，至少已选定的帮助 (helper) 类子集可视为由相同的类加载器加载。（因为设施对象管理共享状态，所以包装器类的实现必须知道以前是否包装过相同的基本设施对象。）
+ 
+@author Joseph D. Darcy
+@author Scott Seligman
+@author Peter von der Ah&eacute;
+@version 1.5 06/07/17
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.lang.String> javax.annotation.processing.ProcessingEnvironment.getOptions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回传递给注释处理工具的特定于 processor 的选项。选项是以从选项名称到选项值的映射形式返回的。对于不包含任何值的选项，映射中的对应值为 {@code null}。
+
+<p>关于如何传入特定于 processor 的选项的详细信息，请参阅特定工具基础设施的文档。例如，命令行实现可以通过使用已知字符串（如 {@code &quot;-A&quot;}）作为特定于 processor 的选项的前缀来区分它们；其他工具实现可能遵守不同的约定或提供替换机制。除了特定于 processor 的选项外，给定实现还可以提供特定于实现的方式来查找传递给该工具的选项。
+
+@return 传递给工具的特定于 processor 的选项
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.annotation.processing.Messager javax.annotation.processing.ProcessingEnvironment.getMessager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来报告错误、警报和其他通知的 Messager。
+
+@return  Messager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.annotation.processing.Filer javax.annotation.processing.ProcessingEnvironment.getFiler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来创建新源、类或辅助文件的 Filer。
+
+@return Filer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.util.Elements javax.annotation.processing.ProcessingEnvironment.getElementUtils()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来在元素上进行操作的某些实用工具方法的实现。
+
+@return 元素实用工具
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.util.Types javax.annotation.processing.ProcessingEnvironment.getTypeUtils()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来在类型上进行操作的某些实用工具方法的实现。
+
+@return 类型实用工具
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.SourceVersion javax.annotation.processing.ProcessingEnvironment.getSourceVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回任何生成的{@linkplain Filer#createSourceFile 源}和{@linkplain Filer#createClassFile 类}文件应该符合的源版本。
+
+@return 生成的源和类文件应该符合的源版本
+@see Processor#getSupportedSourceVersion
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale javax.annotation.processing.ProcessingEnvironment.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前语言环境；如果没有有效的语言环境，则返回 {@code null}。该语言环境可用来提供本地化的{@linkplain Messager 消息}。
+
+@return 当前语言环境；如果没有有效的语言环境，则返回 {@code null}
+
+<!-- END DATA -->

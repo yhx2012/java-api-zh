@@ -1,0 +1,273 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.PixelGrabber extends java.lang.Object implements java.awt.image.ImageConsumer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+PixelGrabber 类实现可以附加在 Image 或 ImageProducer 对象上获得图像像素子集的 ImageConsumer。下面是一个示例：
+ <pre>
+
+ public void handlesinglepixel(int x, int y, int pixel) {
+	int alpha = (pixel &gt;&gt; 24) &amp; 0xff;
+	int red   = (pixel &gt;&gt; 16) &amp; 0xff;
+	int green = (pixel &gt;&gt;  8) &amp; 0xff;
+	int blue  = (pixel      ) &amp; 0xff;
+	// Deal with the pixel as necessary...
+ }
+
+ public void handlepixels(Image img, int x, int y, int w, int h) {
+	int[] pixels = new int[w * h];
+	PixelGrabber pg = new PixelGrabber(img, x, y, w, h, pixels, 0, w);
+	try {
+	    pg.grabPixels();
+	} catch (InterruptedException e) {
+	    System.err.println(&quot;interrupted waiting for pixels!&quot;);
+	    return;
+	}
+	if ((pg.getStatus() &amp; ImageObserver.ABORT) != 0) {
+	    System.err.println(&quot;image fetch aborted or errored&quot;);
+	    return;
+	}
+	for (int j = 0; j &lt; h; j++) {
+	    for (int i = 0; i &lt; w; i++) {
+		handlesinglepixel(x+i, y+j, pixels[j * w + i]);
+	    }
+	}
+ }
+
+ </pre>
+
+@see ColorModel#getRGBdefault
+
+@version 	1.27, 02/14/06
+@author 	Jim Graham
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.PixelGrabber(Image img, int x, int y, int w, int h, int[] pix, int off, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 PixelGrabber 对象，以从指定图像将像素矩形部分 (x, y, w, h) 抓取到给定的数组中。以默认的 RGB ColorModel 形式将像素存储到数组中。像素 (i, j)（(i, j) 处于矩形 (x, y, w, h) 内）的 RGB 数据存储在数组中的 <tt>pix[(j - y) * scansize + (i - x) + off]</tt> 位置处。
+@see ColorModel#getRGBdefault
+@param img 从中检索像素的图像
+@param x 从图像中进行检索的像素矩形左上角 x 坐标，其相对于默认（未缩放）图像大小
+@param y 从图像中进行检索的像素矩形左上角 y 坐标 
+@param w 要检索的像素矩形的宽度 
+@param h 要检索的像素矩形的高度
+@param pix 用于保存从图像中检索的 RGB 像素的整数数组 
+@param off 数组中存储第一个像素的偏移量
+@param scansize 数组中一行像素到下一行像素之间的距离
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.PixelGrabber(ImageProducer ip, int x, int y, int w, int h, int[] pix, int off, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 PixelGrabber 对象，以从指定 ImageProducer 所生成的图像中将像素矩形部分 (x, y, w, h) 抓取到给定的数组中。以默认的 RGB ColorModel 形式将像素存储到数组中。像素 (i, j)（(i, j) 处于矩形 (x, y, w, h) 内）的 RGB 数据存储在数组中的 <tt>pix[(j - y) * scansize + (i - x) + off]</tt> 位置处。
+@param ip 生成图像的 <code>ImageProducer</code>，从该图像中检索像素
+@param x 从图像中进行检索的像素矩形左上角 x 坐标，其相对于默认（未缩放）图像大小
+@param y 从图像中进行检索的像素矩形左上角 y 坐标
+@param w 要检索的像素矩形的宽度
+@param h 要检索的像素矩形的高度
+@param pix 用于保存从图像中检索的 RGB 像素的整数数组
+@param off 数组中存储第一个像素的偏移量
+@param scansize 数组中一行像素到下一行像素之间的距离
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.PixelGrabber(Image img, int x, int y, int w, int h, boolean forceRGB)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 PixelGrabber 对象，以从指定的图像中抓取像素矩形部分 (x, y, w, h)。如果每次调用 setPixels 都使用相同的 ColorModel，则像素以原 ColorModel 形式存储，否则像素将以默认 RGB ColorModel 形式存储。如果 forceRGB 参数为 true，则像素将总是以默认 RGB ColorModel 形式存储。无论是哪种情况，PixelGrabber 都会分配一个缓冲区来保存这些像素。如果 (w &lt; 0) 或 (h &lt; 0)，则它们默认为传递信息时保存的源数据的宽度和高度。
+@param img 要从中检索图像数据的图像
+@param x 从图像中进行检索的像素矩形左上角 x 坐标，其相对于默认（未缩放）图像大小
+@param y 从图像中进行检索的像素矩形左上角 y 坐标
+@param w 要检索的像素矩形的宽度 
+@param h 要检索的像素矩形的高度
+@param forceRGB 如果总是应该将像素转换为默认 RGB ColorModel，则为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.PixelGrabber.startGrabbing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求 PixelGrabber 开始获取像素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.PixelGrabber.abortGrabbing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求 PixelGrabber 中止获取图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.PixelGrabber.grabPixels() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求 Image 或 ImageProducer 开始传递像素，并等待传递完相关矩形中的所有像素。
+@return 如果成功抓取了像素，则返回 true；在中止、有错误或超时的情况下返回 false 
+@exception InterruptedException 另一个线程中断了此线程。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.awt.image.PixelGrabber.grabPixels(long ms) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求 Image 或 ImageProducer 开始传递像素，并等待传递完相关矩形中的所有像素，或者等待到用完超时期。根据 <code>ms</code> 值的不同，此方法的行为如下：
+ <ul>
+<li> 如果 <code>ms</code> == 0，则等待到传递完所有像素
+<li> 如果 <code>ms</code> &gt; 0，则传递所有像素，直到超时为止。
+<li> 如果 <code>ms</code> &lt; 0，则若抓取了所有像素，便返回 <code>true</code>；否则返回 <code>false</code> 且不等待。
+ </ul>
+@param ms 在超时前等待获取图像像素的毫秒数 
+@return 如果成功抓取了像素，则返回 true；在中止、有错误或超时的情况下返回 false
+@exception InterruptedException 另一个线程中断了此线程。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.awt.image.PixelGrabber.getStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素的状态。返回表示可用像素信息的 ImageObserver 标志。
+@return 所有相关 ImageObserver 标志的按位或
+@see ImageObserver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.awt.image.PixelGrabber.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取（调整图像宽度后的）像素缓冲区的宽度。如果未指定要抓取的像素矩形的宽度，则只有在为图像传递尺寸后此信息才有效。
+@return 像素缓冲区的最终宽度；如果宽度未知，则为 -1 
+@see #getStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.awt.image.PixelGrabber.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取（调整图像高度后的）像素缓冲区的高度。如果未指定要抓取的像素矩形的高度，则只有在为图像传递尺寸后此信息才有效。
+@return 像素缓冲区的最终高度；如果高度未知，则为 -1 
+@see #getStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.awt.image.PixelGrabber.getPixels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取像素缓冲区。如果没有使用保存像素的显式像素缓冲区来构造 PixelGrabber，则在知道图像数据的大小和格式前，此方法将返回 null。因为当源图像使用多个 ColorModel 来传递数据时，PixelGrabber 随时都可能回退到以默认 RGB ColorModel 方式存储数据，所以在图像抓取完成前，此方法返回的数组对象可能随时间的推移而更改。
+@return  byte 数组或 int 数组
+@see #getStatus
+@see #setPixels(int, int, int, int, ColorModel, byte[], int, int)
+@see #setPixels(int, int, int, int, ColorModel, int[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.image.ColorModel java.awt.image.PixelGrabber.getColorModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取该数组中所存储像素的 ColorModel。如果使用显式像素缓冲区构造此 PixelGrabber，则此方法将始终返回默认的 RGB ColorModel；否则，在知道 ImageProducer 使用的 ColorModel 前，此方法可能返回 null。因为当源图像使用多个 ColorModel 来传递数据时，PixelGrabber 随时都可能回退到以默认 RGB ColorModel 形式存储数据，所以在图像抓取完成前，此方法返回的 ColorModel 对象可能随时间的推移而更改，且可能无法反映 ImageProducer 用来传递像素的任何 ColorModel 对象。
+@return 存储像素所用的 ColorModel 对象
+@see #getStatus
+@see ColorModel#getRGBdefault
+@see #setColorModel(ColorModel)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setDimensions(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setDimensions 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param width 尺寸的宽度
+@param height 尺寸的高度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setHints(int hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setHints 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param hints 用于处理像素的提示集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setProperties(java.util.Hashtable<?, ?> props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setProperties 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param props 属性列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setColorModel(ColorModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setColorModel 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param model 指定的 <code>ColorModel</code>
+@see #getColorModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setPixels(int srcX, int srcY, int srcW, int srcH, ColorModel model, byte[] pixels, int srcOff, int srcScan)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setPixels 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param srcX 要设置的像素区域左上角的 X 坐标
+@param srcY 要设置的像素区域左上角的 Y 坐标
+@param srcW 像素区域的宽度
+@param srcH 像素区域的高度
+@param model 指定的 <code>ColorModel</code>
+@param pixels 像素数组
+@param srcOff  像素数组中的偏移量
+@param srcScan 像素数组中一行像素到下一行的距离
+@see #getPixels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.PixelGrabber.setPixels(int srcX, int srcY, int srcW, int srcH, ColorModel model, int[] pixels, int srcOff, int srcScan)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+setPixels 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param srcX 要设置的像素区域左上角的 X 坐标
+@param srcY 要设置的像素区域左上角的 Y 坐标
+@param srcW 像素区域的宽度
+@param srcH 像素区域的高度
+@param model 指定的 <code>ColorModel</code>
+@param pixels 像素数组
+@param srcOff  像素数组中的偏移量
+@param srcScan 像素数组中一行像素到下一行的距离
+@see #getPixels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.image.PixelGrabber.imageComplete(int status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageComplete 方法是 ImageConsumer API 的一部分，此类必需实现 ImageConsumer API 来检索像素。
+ <p>
+注：此方法应该由要从中抓取像素的 Image 的 ImageProducer 调用。使用此类检索图像像素的开发人员应该避免直接调用此方法，因为该调用操作可能导致检索请求像素时出现问题。
+@param status 正在加载的图像的状态
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.awt.image.PixelGrabber.status()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素的状态。返回表示可用像素信息的 ImageObserver 标志。此方法和 {@link #getStatus() getStatus} 具有相同的实现，但是优先使用 <code>getStatus</code> 方法，因为它遵循检索信息方法的命名约定，即 &quot;getXXX&quot; 的形式。
+@return 所有相关 ImageObserver 标志的按位或
+@see ImageObserver
+@see #getStatus()
+
+<!-- END DATA -->

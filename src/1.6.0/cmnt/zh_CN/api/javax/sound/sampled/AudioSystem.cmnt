@@ -1,0 +1,497 @@
+<!-- BEGIN KEY -->
+public class javax.sound.sampled.AudioSystem extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>AudioSystem</code> 类充当取样音频系统资源的入口点。此类允许查询和访问安装在系统上的混频器。<code>AudioSystem</code> 包括许多在不同格式间转换音频数据的方法，以及在音频文件和流之间进行转换的方法。它还提供不用显式处理混频器即可直接从 <code>AudioSystem</code> 获得 <code>{@link Line}</code> 的方法。
+
+<p>属性可用于指定特定行类型的默认混频器。系统属性和属性文件都要考虑。在 Sun 引用实现中，属性文件是 JRE 目录中的 &quot;lib/sound.properties&quot;。如果存在作为系统属性的属性并且存在于属性文件中，则优先使用系统属性。如果未指定任何属性，则在可用的设备中选择适当的默认值。属性文件的语法在 {@link java.util.Properties#load(InputStream) Properties.load} 中指定。下表列出了可用的属性键和获得它们的方法：
+
+ <table border=0>
+  <tr>
+<th>属性键</th>
+<th>接口</th>
+<th>起作用的方法</th>
+  </tr>
+  <tr>
+   <td><code>javax.sound.sampled.Clip</code></td>
+   <td>{@link Clip}</td>
+   <td>{@link #getLine}, {@link #getClip}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.sampled.Port</code></td>
+   <td>{@link Port}</td>
+   <td>{@link #getLine}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.sampled.SourceDataLine</code></td>
+   <td>{@link SourceDataLine}</td>
+   <td>{@link #getLine}, {@link #getSourceDataLine}</td>
+  </tr>
+  <tr>
+   <td><code>javax.sound.sampled.TargetDataLine</code></td>
+   <td>{@link TargetDataLine}</td>
+   <td>{@link #getLine}, {@link #getTargetDataLine}</td>
+  </tr>
+ </table>
+
+属性值由提供者类名称和混频器名称组成，通过哈希标记 (&quot;#&quot;) 进行分隔。提供者类名称是具体 {@link javax.sound.sampled.spi.MixerProvider mixer provider} 类的完全限定名。混频器名称是与由 <code>Mixer.Info</code> 的 <code>getName</code> 方法返回的 <code>String</code> 匹配。可以省略类名称或混频器名称。如果只指定类名称，则尾部哈希标记是可选的。
+
+<p>如果指定了提供者类，并且可以从已安装的提供者成功地检索到它，则可从该提供者检索 <code>Mixer.Info</code> 对象的列表。否则，当这些混频器不提供后续匹配时，从包含所有可用 <code>Mixer.Info</code> 对象的 {@link #getMixerInfo} 中检索列表。
+
+<p>如果指定了混频器名称，则搜索所产生的 <code>Mixer.Info</code> 对象的列表：返回第一个具有匹配名称且其 <code>Mixer</code> 提供相应行接口的对象。如果未找到匹配的 <code>Mixer.Info</code> 对象，或未指定混频器名称，则返回得到的列表中提供相应行接口的第一个混频器。
+
+例如，在调用 <code>getLine</code> 请求 <code>Clip</code> 实例时，值为 <code>&quot;com.sun.media.sound.MixerProvider#SunClip&quot;</code> 的属性 <code>javax.sound.sampled.Clip</code> 将具有以下结果：如果在已安装的混频器提供者列表中存在类 <code>com.sun.media.sound.MixerProvider</code>，则返回第一个具有名称 <code>&quot;SunClip&quot;</code> 的混频器中的第一个 <code>Clip</code>。如果无法找到，则返回指定提供者的第一个混频器中的第一个 <code>Clip</code>，不管名称如何。如果不存在，则返回所有混频器（由 <code>getMixerInfo</code> 返回）列表中具有名称 <code>&quot;SunClip&quot;</code> 的第一个 <code>Mixer</code> 中的第一个 <code>Clip</code>；或者，如果这个也找不到，则返回可以从所有混频器列表中找到的第一个 <code>Mixer</code> 的第一个 <code>Clip</code>。如果还是失败，则抛出 <code>IllegalArgumentException</code>。
+
+@author Kara Kytle
+@author Florian Bomers
+@author Matthias Pfisterer
+@author Kevin P. Smith
+@version 1.83, 06/04/07
+
+@see AudioFormat
+@see AudioInputStream
+@see Mixer
+@see Line
+@see Line.Info
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sound.sampled.AudioSystem.NOT_SPECIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+代表未知数字值的整数。此值只适用于通常不采用负值的有符号的量。示例包括文件大小、帧大小、缓冲区大小和样本速率。许多 Java Sound 构造方法接受这些参数的 <code>NOT_SPECIFIED</code> 值。据文档记录，其他方法可能也接受或返回此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Mixer.Info[] javax.sound.sampled.AudioSystem.getMixerInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得混频器信息对象的数组，该数组表示当前安装在系统上的音频混频器的集合。
+@return  当前安装的混频器的信息对象的数组。如果系统上没有混频器可用，则返回长度为 0 的数组。
+@see #getMixer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Mixer javax.sound.sampled.AudioSystem.getMixer(Mixer.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得请求的音频混频器。
+@param  info  表示所需混频器的 <code>Mixer.Info</code> 对象，或者为 <code>null</code>，表示系统默认混频器
+@return  请求的混频器
+@throws  SecurityException  如果因为安全限制请求的混频器不可用
+@throws  IllegalArgumentException  如果信息对象不表示安装在系统上的混频器
+@see #getMixerInfo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Line.Info[] javax.sound.sampled.AudioSystem.getSourceLineInfo(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于已安装混频器所支持特定类型的全部源行的信息。
+@param  info  指定请求其信息的行种类的 <code>Line.Info</code> 对象
+@return  <code>Line.Info</code> 对象的数组，这些对象描述与请求的类型匹配的源行。如果所有的匹配源行都不受支持，则返回长度为 0 的数组。
+
+@see Mixer#getSourceLineInfo(Line.Info)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Line.Info[] javax.sound.sampled.AudioSystem.getTargetLineInfo(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于已安装混频器所支持特定类型的全部目标行的信息。
+@param  info  指定请求其信息的行种类的 <code>Line.Info</code> 对象
+@return  <code>Line.Info</code> 对象的数组，这些对象描述与请求的类型匹配的目标行。如果所有的匹配目标行都不受支持，则返回长度为 0 的数组。
+
+@see Mixer#getTargetLineInfo(Line.Info)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.sampled.AudioSystem.isLineSupported(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示系统是否支持与指定 <code>Line.Info</code> 对象匹配的行。如果所有已安装的混频器都支持行，则说明行受支持。
+@param  info  描述查询其支持的行的 <code>Line.Info</code> 对象 
+@return  如果至少支持一个匹配行，则返回 <code>true</code>；否则返回 <code>false</code>
+
+@see Mixer#isLineSupported(Line.Info)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Line javax.sound.sampled.AudioSystem.getLine(Line.Info info) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定 <code>Line.Info</code> 对象中的描述匹配的行。
+
+<p>如果请求 <code>DataLine</code>，且 <code>info</code> 是 <code>DataLine.Info</code> 的实例（至少指定一种完全限定的音频格式），则上一个数据行将用作返回的 <code>DataLine</code> 的默认格式。
+
+<p>如果定义了系统属性 <code>javax.sound.sampled.Clip</code>、<code>javax.sound.sampled.Port</code>、<code>javax.sound.sampled.SourceDataLine</code> 和 <code>javax.sound.sampled.TargetDataLine</code>，或在文件 &quot;sound.properties&quot; 中定义它们，则使用它们检索默认行。有关详细信息，请参阅{@link AudioSystem 类描述}。
+
+如果未设置相应属性，或尚未安装属性中请求的混频器，或不提供请求的行，则在所有安装的混频器中查询请求的行类型。从提供请求的行类型的第一个混频器中返回行。
+
+@param  info  描述所需种类的行的 <code>Line.Info</code> 对象
+@return  请求的种类的行
+
+@throws  LineUnavailableException  如果由于资源限制匹配行不可用 
+@throws  SecurityException  如果由于安全限制匹配行不可用 
+@throws  IllegalArgumentException  如果系统不是通过所有安装的混频器至少支持一个匹配 <code>Line.Info</code> 对象的行
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Clip javax.sound.sampled.AudioSystem.getClip() throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得可用于回放音频文件或音频流的剪辑。返回的剪辑将通过默认系统混频器提供；如果不可能，则通过安装在系统中的支持 <code>Clip</code> 对象的任何其他混频器提供。
+
+<p>返回的剪辑必须用 <code>open(AudioFormat)</code> 或 <code>open(AudioInputStream)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+<p>如果定义了系统属性 <code>javax.sound.sampled.Clip</code>，或在文件 &quot;sound.properties&quot; 中定义了它，则使用它检索默认剪辑。有关详细信息，请参阅{@link AudioSystem 类描述}。
+
+@return  所需的剪辑对象
+
+@throws  LineUnavailableException  如果由于资源限制剪辑对象不可用 
+@throws  SecurityException  如果由于安全限制剪辑对象不可用 
+@throws  IllegalArgumentException  如果不是通过所有安装的混频器至少支持一个剪辑实例
+
+@see #getClip(Mixer.Info)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.Clip javax.sound.sampled.AudioSystem.getClip(Mixer.Info mixerInfo) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定混频器获得可用于回放音频文件或音频流的剪辑。
+
+<p>返回的剪辑必须用 <code>open(AudioFormat)</code> 或 <code>open(AudioInputStream)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+@param  mixerInfo  表示所需混频器的 <code>Mixer.Info</code> 对象，或者为 <code>null</code>，表示系统默认混频器
+@return  指定混频器中的剪辑对象
+
+@throws  LineUnavailableException  如果由于资源限制此混频器不提供剪辑 
+@throws  SecurityException  如果由于安全限制此混频器不提供剪辑 
+@throws  IllegalArgumentException  如果系统不是通过所有安装的混频器至少支持一个剪辑
+
+@see #getClip()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.SourceDataLine javax.sound.sampled.AudioSystem.getSourceDataLine(AudioFormat format) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个源数据行，该行可用于以 <code>AudioFormat</code> 对象指定的格式回放音频数据。返回的行将通过默认系统混频器提供，如果有可能，则通过安装在系统中的支持匹配 <code>SourceDataLine</code> 对象的任何其他混频器提供。
+
+<p>返回的行应该用 <code>open(AudioFormat)</code> 或 <code>open(AudioFormat, int)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+<p>返回的 <code>SourceDataLine</code> 的默认音频格式将使用 <code>format</code> 进行初始化。
+
+<p>如果定义了系统属性 <code>javax.sound.sampled.SourceDataLine</code>，或在文件 &quot;sound.properties&quot; 中定义了它，则使用它检索默认的源数据行。有关详细信息，请参阅{@link AudioSystem 类描述}。
+
+@param  format  指定返回行的受支持格式的 <code>AudioFormat</code> 对象，或者为 <code>null</code>，表示任何音频格式
+@return  所需的 <code>SourceDataLine</code> 对象
+
+@throws  LineUnavailableException  如果由于资源限制匹配的源数据行不可用 
+@throws  SecurityException 如果由于安全限制匹配的源数据行不可用 
+@throws  IllegalArgumentException  如果系统不是通过所有安装的混频器至少支持一个支持指定音频格式的源数据行
+
+@see #getSourceDataLine(AudioFormat, Mixer.Info)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.SourceDataLine javax.sound.sampled.AudioSystem.getSourceDataLine(AudioFormat format, Mixer.Info mixerinfo) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个源数据行，该行可用于以 <code>AudioFormat</code> 对象（通过由 <code>Mixer.Info</code> 对象指定的混频器提供）指定的格式回放音频数据。
+
+<p>返回的行应该用 <code>open(AudioFormat)</code> 或 <code>open(AudioFormat, int)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+<p>返回的 <code>SourceDataLine</code> 的默认音频格式将使用 <code>format</code> 进行初始化。
+
+@param  format  指定返回行的受支持音频格式的 <code>AudioFormat</code> 对象，或者为 <code>null</code>，表示任何音频格式
+@param  mixerinfo  表示所需混频器的 <code>Mixer.Info</code> 对象，或者为<code>null</code>，表示系统默认混频器
+@return  所需的 <code>SourceDataLine</code> 对象
+
+@throws  LineUnavailableException  如果由于资源限制指定混频器中的匹配源数据行不可用 
+@throws  SecurityException  如果由于安全限制指定混频器中的匹配源数据行不可用 
+@throws  IllegalArgumentException  如果指定的混频器不至少支持一个支持指定音频格式的源数据行
+
+@see #getSourceDataLine(AudioFormat)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.TargetDataLine javax.sound.sampled.AudioSystem.getTargetDataLine(AudioFormat format) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个目标数据行，该行可用于以 <code>AudioFormat</code> 对象指定的格式记录音频数据。返回的行将通过默认系统混频器提供，如果有可能，则通过安装在系统中的支持匹配 <code>TargetDataLine</code> 对象的任何其他混频器提供。
+
+<p>返回的行应该用 <code>open(AudioFormat)</code> 或 <code>open(AudioFormat, int)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+<p>返回的 <code>TargetDataLine</code> 的默认音频格式将使用 <code>format</code> 进行初始化。
+
+@param  format  指定返回行的受支持格式的 <code>AudioFormat</code> 对象，或者为 <code>null</code>，表示任何音频格式
+@return  所需的 <code>TargetDataLine</code> 对象
+
+@throws  LineUnavailableException  如果由于资源限制匹配的目标数据行不可用 
+@throws  SecurityException 如果由于安全限制匹配的目标数据行不可用 
+@throws  IllegalArgumentException  如果系统不是通过所有安装的混频器至少支持一个支持指定音频格式的目标数据行
+
+@see #getTargetDataLine(AudioFormat, Mixer.Info)
+@see AudioPermission
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.TargetDataLine javax.sound.sampled.AudioSystem.getTargetDataLine(AudioFormat format, Mixer.Info mixerinfo) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个目标数据行，该可用于以 <code>AudioFormat</code> 对象（该对象通过由 <code>Mixer.Info</code> 对象指定的混频器提供）指定的格式记录音频数据。
+
+<p>返回的行应该用 <code>open(AudioFormat)</code> 或 <code>open(AudioFormat, int)</code> 方法打开。
+
+<p>这是在内部使用 <code>getMixer</code> 和 <code>getLine</code> 的高级方法。
+
+<p>返回的 <code>TargetDataLine</code> 的默认音频格式将使用 <code>format</code> 进行初始化。
+
+<p>如果定义了系统属性 <code>javax.sound.sampled.TargetDataLine</code>，或在文件 &quot;sound.properties&quot; 中定义了它，则使用它检索默认的源数据行。有关详细信息，请参阅{@link AudioSystem 类描述}。
+
+@param  format  指定返回行的受支持音频格式的 <code>AudioFormat</code> 对象，或者为 <code>null</code>，表示任何音频格式
+@param  mixerinfo  表示所需混频器的 <code>Mixer.Info</code> 对象，或者为<code>null</code>，表示系统默认混频器
+@return  所需的 <code>TargetDataLine</code> 对象
+
+@throws  LineUnavailableException  如果由于资源限制指定混频器中的匹配目标数据行不可用 
+@throws  SecurityException  如果由于安全限制指定混频器中的匹配目标数据行不可用 
+@throws  IllegalArgumentException  如果指定的混频器不至少支持一个支持指定音频格式的目标数据行
+
+@see #getTargetDataLine(AudioFormat)
+@see AudioPermission
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFormat.Encoding[] javax.sound.sampled.AudioSystem.getTargetEncodings(AudioFormat.Encoding sourceEncoding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用已安装的格式转换器集合获得系统可以从具有指定编码的音频输入流中获得的编码。
+@param  sourceEncoding  查询其转换支持的编码 
+@return  编码的数组。如果不支持 <code>sourceEncoding</code>，则返回长度为 0 的数组。否则，数组长度将至少为 1，表示 <code>sourceEncoding</code>（不转换）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFormat.Encoding[] javax.sound.sampled.AudioSystem.getTargetEncodings(AudioFormat sourceFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用已安装的格式转换器集合，获得系统可以从具有指定格式的音频输入流中获得的编码。
+@param  sourceFormat  查询其转换的音频格式 
+@return  编码的数组。如果不支持 <code>sourceFormat</code>，则返回长度为 0 的数组。否则，数组长度将至少为 1，表示 <code>sourceFormat</code> 的编码（不转换）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.sampled.AudioSystem.isConversionSupported(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否可以从具有指定格式的音频输入流获得指定编码的音频输入流。
+@param  targetEncoding  转换后所需的编码 
+@param  sourceFormat  转换前的音频格式 
+@return  如果支持转换，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioInputStream javax.sound.sampled.AudioSystem.getAudioInputStream(AudioFormat.Encoding targetEncoding, AudioInputStream sourceStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过转换提供的音频输入流，获得所指示编码的音频输入流。
+@param  targetEncoding  转换后所需的编码 
+@param  sourceStream  要转换的流 
+@return  所指示编码的音频输入流 
+@throws  IllegalArgumentException  如果不支持转换 
+@see #getTargetEncodings(AudioFormat.Encoding)
+@see #getTargetEncodings(AudioFormat)
+@see #isConversionSupported(AudioFormat.Encoding, AudioFormat)
+@see #getAudioInputStream(AudioFormat, AudioInputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFormat[] javax.sound.sampled.AudioSystem.getTargetFormats(AudioFormat.Encoding targetEncoding, AudioFormat sourceFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用已安装的格式转换器，获得具有特定编码的格式，以及系统可以从指定格式的流中获得的格式。
+@param  targetEncoding  转换后所需的编码 
+@param  sourceFormat 转换前的音频格式 
+@return  格式的数组。如果不支持任何指定编码的格式，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.sampled.AudioSystem.isConversionSupported(AudioFormat targetFormat, AudioFormat sourceFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否可从另一指定格式的音频输入流获得指定格式的音频输入流。
+@param  targetFormat  转换后所需的音频格式 
+@param  sourceFormat  转换前的音频格式 
+@return  如果支持转换，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioInputStream javax.sound.sampled.AudioSystem.getAudioInputStream(AudioFormat targetFormat, AudioInputStream sourceStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过转换提供的音频输入流，获得所指示格式的音频输入流。
+@param  targetFormat  转换后所需的音频格式 
+@param  sourceStream  要转换的流 
+@return  所指示格式的音频输入流 
+@throws  IllegalArgumentException  如果不支持转换 
+@#see #getTargetEncodings(AudioFormat)
+@see #getTargetFormats(AudioFormat.Encoding, AudioFormat)
+@see #isConversionSupported(AudioFormat, AudioFormat)
+@see #getAudioInputStream(AudioFormat.Encoding, AudioInputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFileFormat javax.sound.sampled.AudioSystem.getAudioFileFormat(InputStream stream) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得提供的音频输入流的音频文件格式。该流必须指向有效的音频文件数据。此方法的实现可能需要多个解析器来检查流，以确定这些解析器是否支持它。这些解析器必须能够标记流，读取足够多的数据来确定它们是否支持流，并且如果不支持，则将流的阅读指针重新设置到其初始位置。如果输入流不支持这些操作，则此方法可能会失败，并抛出 <code>IOException</code>。
+@param  stream  应该从中提取文件格式信息的输入流 
+@return  描述流的音频文件格式的 <code>AudioFileFormat</code> 对象 
+@throws  UnsupportedAudioFileException  如果流不指向系统识别的有效音频文件数据 
+@throws  IOException  如果发生输入/输出异常 
+@see  InputStream#markSupported 
+@see  InputStream#mark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFileFormat javax.sound.sampled.AudioSystem.getAudioFileFormat(URL url) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 URL 的音频文件格式。该 URL 必须指向有效的音频文件数据。
+@param  url  应该从中提取文件格式信息的 URL 
+@return  描述音频文件格式的 <code>AudioFileFormat</code> 对象 
+@throws  UnsupportedAudioFileException  如果该 URL 不指向系统识别的有效音频文件数据 
+@throws  IOException  如果发生输入/输出异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFileFormat javax.sound.sampled.AudioSystem.getAudioFileFormat(File file) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 <code>File</code> 的音频文件格式。该 <code>File</code> 必须指向有效的音频文件数据。
+@param  file  应该从中提取文件格式信息的 <code>File</code> 
+@return  描述音频文件格式的 <code>AudioFileFormat</code> 对象 
+@throws  UnsupportedAudioFileException  如果 <code>File</code> 不指向系统识别的有效文件数据 
+@throws  IOException  如果发生 I/O 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioInputStream javax.sound.sampled.AudioSystem.getAudioInputStream(InputStream stream) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从提供的输入流获得音频输入流。该流必须指向有效的音频文件数据。此方法的实现可能需要多个解析器来检查流，以确定这些解析器是否支持它。这些解析器必须能够标记流，读取足够多的数据来确定它们是否支持流，并且如果不支持，则将流的阅读指针重新设置到其初始位置。如果输入流不支持这些操作，则此方法可能会失败，并抛出 <code>IOException</code>。
+@param  stream  应该从中构造 <code>AudioInputStream</code> 的输入流 
+@return  基于输入流中包含的音频文件数据的 <code>AudioInputStream</code> 对象。
+@throws  UnsupportedAudioFileException  如果流不指向系统识别的有效音频文件数据 
+@throws  IOException  如果发生 I/O 异常 
+@see  InputStream#markSupported 
+@see  InputStream#mark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioInputStream javax.sound.sampled.AudioSystem.getAudioInputStream(URL url) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从提供的 URL 获得音频输入流。该 URL 必须指向有效的音频文件数据。
+@param  url  应该为其构造 <code>AudioInputStream</code> 的 URL 
+@return  基于由 URL 指向的音频文件数据的 <code>AudioInputStream</code> 对象 
+@throws  UnsupportedAudioFileException  如果 URL 不指向系统识别的有效音频文件数据 
+@throws  IOException  如果发生 I/O 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioInputStream javax.sound.sampled.AudioSystem.getAudioInputStream(File file) throws javax.sound.sampled.UnsupportedAudioFileException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从提供的 <code>File</code> 获得音频输入流。该 <code>File</code> 必须指向有效的音频文件数据。
+@param  file  应该为其构造 <code>AudioInputStream</code> 的 <code>File</code> 
+@return  基于由 <code>File</code> 指向的音频文件数据的 <code>AudioInputStream</code> 对象 
+@throws  UnsupportedAudioFileException  如果 <code>File</code> 不指向系统识别的有效音频文件数据
+@throws  IOException  如果发生 I/O 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFileFormat.Type[] javax.sound.sampled.AudioSystem.getAudioFileTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得由系统为其提供文件写入支持的文件类型。
+@return  唯一文件类型的数组。如果不支持任何文件类型，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.sampled.AudioSystem.isFileTypeSupported(AudioFileFormat.Type fileType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示系统是否提供指定文件类型的文件写入支持。
+@param  fileType 查询其写入功能的文件类型
+@return  如果支持文件类型，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.sound.sampled.AudioFileFormat.Type[] javax.sound.sampled.AudioSystem.getAudioFileTypes(AudioInputStream stream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得系统可从指定音频输入流写入的文件类型。
+@param  stream  查询其音频文件类型支持的音频输入流 
+@return  文件类型的数组。如果不支持任何文件类型，则返回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.sound.sampled.AudioSystem.isFileTypeSupported(AudioFileFormat.Type fileType, AudioInputStream stream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否可以从指示的音频输入流写入指定文件类型的音频文件。
+@param  fileType  查询其写入功能的文件类型 
+@param  stream  查询其文件写入支持的流 
+@return  如果此音频输入流支持文件类型，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.sound.sampled.AudioSystem.write(AudioInputStream stream, AudioFileFormat.Type fileType, OutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定文件类型的音频文件的字节流写入所提供的输出流。有些文件类型需要将长度写入文件标题；此类文件不能从前往后写入，除非预先知道长度。如果音频文件类型中的长度为 <code>AudioSystem.NOT_SPECIFIED</code>，则尝试写入此类型的文件将失败，并抛出 IOException。
+
+@param  stream  包含要写入文件的音频数据的音频输入流 
+@param  fileType  要写入的音频文件的种类 
+@param  out  应将文件数据写入其中的流 
+@return  写入输出流的字节数 
+@throws  IOException  如果发生输入/输出异常 
+@throws  IllegalArgumentException  如果系统不支持文件类型 
+@see #isFileTypeSupported
+@see	#getAudioFileTypes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.sound.sampled.AudioSystem.write(AudioInputStream stream, AudioFileFormat.Type fileType, File out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将表示指定文件类型的音频文件的字节流写入所提供的外部文件。
+@param  stream  包含要写入文件的音频数据的音频输入流 
+@param  fileType  要写入的音频文件的种类 
+@param  out  应将文件数据写入其中的外部文件 
+@return  写入文件的字节数 
+@throws  IOException  如果发生 I/O 错误 
+@throws  IllegalArgumentException  如果系统不支持文件类型 
+@see #isFileTypeSupported
+@see	#getAudioFileTypes
+
+<!-- END DATA -->

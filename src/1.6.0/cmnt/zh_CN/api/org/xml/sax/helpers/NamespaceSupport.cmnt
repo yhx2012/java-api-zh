@@ -1,0 +1,258 @@
+<!-- BEGIN KEY -->
+public class org.xml.sax.helpers.NamespaceSupport extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+封装名称空间逻辑，以便由使用 SAX 的应用程序使用，或由 SAX 驱动程序内部使用。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）位于公共域中，对该模块<strong>不提供担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>此类封装名称空间处理的逻辑：它可以跟踪当前对每个上下文强制使用的声明，并自动将限定的 XML 名称处理为其名称空间的一部分；它还可以反过来用于从名称空间生成 XML qname。</p>
+
+<p>名称空间支持对象是可重用的，但是在每个会话之间必须调用 reset 方法。</p>
+
+<p>下面是一个简单的会话：</p>
+
+ <pre>
+String parts[] = new String[3];
+ NamespaceSupport support = new NamespaceSupport();
+
+ support.pushContext();
+ support.declarePrefix(&quot;&quot;, &quot;http://www.w3.org/1999/xhtml&quot;);
+ support.declarePrefix(&quot;dc&quot;, &quot;http://www.purl.org/dc#&quot;);
+
+ parts = support.processName(&quot;p&quot;, parts, false);
+ System.out.println(&quot;Namespace URI: &quot; + parts[0]);
+ System.out.println(&quot;Local name: &quot; + parts[1]);
+ System.out.println(&quot;Raw name: &quot; + parts[2]);
+
+ parts = support.processName(&quot;dc:title&quot;, parts, false);
+ System.out.println(&quot;Namespace URI: &quot; + parts[0]);
+ System.out.println(&quot;Local name: &quot; + parts[1]);
+ System.out.println(&quot;Raw name: &quot; + parts[2]);
+
+ support.popContext();
+ </pre>
+
+<p>注意，对于多数元素不包含名称空间声明的使用情况，必须优化此类：例如，如果对每个上下文都重复相同的前缀/URI 映射，则此类将会产生某种程度的低效率。</p>
+
+<p>虽然 SAX 驱动程序（解析器）可以选择使用此类来实现名称空间处理，但是不要求它们这样做。如果应用程序要使用名称空间信息，则它们必须跟踪名称空间信息本身。
+
+@since SAX 2.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String org.xml.sax.helpers.NamespaceSupport.XMLNS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为常量的 XML 名称空间 URI。值是 <code>http://www.w3.org/XML/1998/namespace</code>，在 &quot;Namespaces in XML&quot; * 推荐标准中定义。
+
+<p>这是自动映射到 &quot;xml&quot; 前缀的名称空间 URI。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String org.xml.sax.helpers.NamespaceSupport.NSDECL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为常量的名称空间声明 URI。值是 <code>http://www.w3.org/xmlns/2000/</code>，在 &quot;Namespaces in XML&quot; 推荐标准的向后兼容勘误表中定义。因为勘误表晚于 SAX2，SAX2 默认为原始的推荐标准，并且通常不使用此 URI。
+ 
+<p>这是可以选择应用到 <em>xmlns</em> 和 <em>xmlns:*</em> 属性的名称空间 URI，使用它声明名称空间。</p>
+
+@since SAX 2.1alpha
+@see #setNamespaceDeclUris
+@see #isNamespaceDeclUris
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.helpers.NamespaceSupport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的名称空间支持对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.NamespaceSupport.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重设此名称空间支持对象，以便重新使用。
+
+<p>在为新的会话重用名称空间支持对象之前，有必要调用此方法。如果要支持名称空间声明 URI，则还必须将标志设置为非默认值。
+ </p>
+
+@see #setNamespaceDeclUris
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.NamespaceSupport.pushContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+开始新的名称空间上下文。新的上下文将自动继承其父上下文的声明，但是它还将跟踪在此上下文中所做的声明。
+
+<p>事件回调代码应对每个元素启动一次新的上下文。这意味着已准备好在两个位置中的任何一个位置调用它。对于不包括名称空间声明的元素，<em>ContentHandler.startElement()</em> 回调是正确的位置。对于具有此类声明的元素，它在第一个 <em>ContentHandler.startPrefixMapping()</em> 回调中完成。可以使用布尔标志跟踪是否已启动上下文。当调用这些方法中的任何一个方法时，它会检查该标志以查看是否需要启动新的上下文。如果是，它会启动上下文，并设置标志。在 <em>ContentHandler.startElement()</em> 设置标志后，它总是清除该标志。
+
+<p>通常，SAX 驱动程序会在每个 XML 元素的开始处推送新的上下文。然后，它们执行属性上的第一个传递，以处理所有的名称空间声明，进行 <em>ContentHandler.startPrefixMapping()</em> 回调。然后，进行第二个传递，以便为所有属性和元素名称确定限定名称空间的名称。最后，<em>ContentHandler.startElement()</em> 回调的所有信息都是可用的，这样就可以完成。
+
+<p>名称空间支持对象总是以已经有效的基本上下文开始：在此上下文中，仅声明 &quot;xml&quot; 前缀。</p>
+
+@see org.xml.sax.ContentHandler
+@see #popContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.NamespaceSupport.popContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+恢复到以前的名称空间上下文。
+
+<p>通常，应在每个 XML 元素的结束处弹出上下文。弹出上下文后，恢复以前有效的所有名称空间前缀映射。</p>
+
+<p>弹出上下文后，不得尝试声明其他名称空间前缀，除非首先推送另一个上下文。</p>
+
+@see #pushContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.xml.sax.helpers.NamespaceSupport.declarePrefix(String prefix, String uri)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+声明名称空间前缀。在引用前缀之前，必须对它们进行声明。例如，SAX 驱动程序（解析器）将在下面两个过程中扫描元素的属性：第一个是名称空间声明，然后是第二个过程，它使用 {@link #processName processName()} 根据（潜在预定义的）前缀解释前缀。
+
+<p>此方法在当前名称空间上下文中声明前缀；在弹出此上下文之前，前缀仍保持有效，除非它在后代上下文中映像。</p>
+
+<p>要声明默认元素名称空间，请使用空字符串作为前缀。</p>
+
+<p>注意，在此库中存在不对称：即使声明了默认元素名称空间，{@link #getPrefix getPrefix} 也不会返回 &quot;&quot; 前缀。要检查默认名称空间，必须使用 {@link #getURI getURI} 显式查找它。存在此不对称使查找属性名称的前缀更容易，其中不允许默认的前缀。</p>
+
+@param prefix 要声明的前缀，或指示默认元素名称空间的空字符串。这不能有值&ldquo;xml&rdquo;或&ldquo;xmlns&rdquo;。
+@param uri 与前缀关联的名称空间 URI。
+@return 如果前缀是合法的，则返回 true；否则，返回 false
+
+@see #processName
+@see #getURI
+@see #getPrefix
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] org.xml.sax.helpers.NamespaceSupport.processName(String qName, java.lang.String[] parts, boolean isAttribute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link #declarePrefix declarePrefix()} 处理完当前上下文中的所有声明之后，处理原始 XML 限定名称。
+
+<p>此方法通过移除前缀，并在当前声明的前缀之中查找它来处理当前上下文中的原始 XML 限定名称。返回值将是调用者提供的数组，按以下方式填写：</p>
+
+ <dl>
+ <dt>parts[0]</dt>
+<dd>名称空间 URI，如果没有正在使用的，则为空字符串。</dd>
+ <dt>parts[1]</dt>
+<dd>本地名称（不带前缀）。</dd>
+ <dt>parts[2]</dt>
+<dd>最初的原始名称。</dd>
+ </dl>
+
+<p>将内部化数组中的所有字符串。如果原始名称具有没有声明的前缀，那么返回值将为 null。</p>
+
+<p>注意，处理属性名称与处理元素名称不同：未加前缀的元素名称将接收默认名称空间（如果有），而未加前缀的属性名称将不接收。</p>
+
+@param qName 要处理的 XML 限定名称。
+@param parts 调用者提供的数组，至少能够保存三个成员。
+@param isAttribute 指示这是属性名称 (true) 或元素名称 (false) 的标志。
+@return 提供的数组，它持有三个内部化字符串，表示名称空间 URI（或空字符串）、本地名称和 XML 限定名称；如果存在未声明的前缀，则返回 null。
+@see #declarePrefix
+@see java.lang.String#intern
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.NamespaceSupport.getURI(String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找前缀，并获取当前映射的名称空间 URI。
+
+<p>此方法查找当前上下文中的前缀。对于默认名称空间，使用空字符串 (&quot;&quot;)。</p>
+
+@param prefix 要查找的前缀。
+@return 关联的名称空间 URI，如果此上下文中未声明前缀，则返回 null。
+@see #getPrefix
+@see #getPrefixes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration org.xml.sax.helpers.NamespaceSupport.getPrefixes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有前缀的枚举，其声明在当前上下文中是活动的。这包括来自没有被重写的父上下文的声明。
+
+<p><strong>注：</strong>如果存在默认前缀，则在此枚举中将不返回它；使用带有参数 &quot;&quot; 的 {@link #getURI getURI} 检查默认前缀。</p>
+
+@return 前缀的枚举（永远不为空）。
+@see #getDeclaredPrefixes
+@see #getURI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.NamespaceSupport.getPrefix(String uri)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回映射到名称空间 URI 的前缀之一。
+
+<p>如果当前有多个前缀映射到同一 URI，则此方法将进行任意选择；如果需要所有前缀，则改用 {@link #getPrefixes} 方法。</p>
+
+<p><strong>注：</strong>这将永不返回空（默认）前缀；要检查默认前缀，请使用带有参数 &quot;&quot; 的 {@link #getURI getURI} 方法。</p>
+
+@param uri 名称空间 URI
+@return 当前映射到所提供的 URI 的前缀之一，如果没有映射内容，或者将 URI 分配到默认名称空间，则返回 null
+@see #getPrefixes(java.lang.String)
+@see #getURI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration org.xml.sax.helpers.NamespaceSupport.getPrefixes(String uri)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 URI 的 所有前缀的枚举，给定 URI 的声明在当前上下文中是活动的。这包括来自没有被重写的父上下文的声明。
+
+<p>此方法返回映射到特定名称空间 URI 的前缀。将包括前缀：xml。如果仅需要映射到名称空间 URI 的一个前缀，并且不关心获取哪一个前缀，请改用 {@link #getPrefix getPrefix} 方法。</p>
+
+<p><strong>注：</strong>此枚举中<em>永不</em> 包括空的（默认）前缀；要检查是否存在默认名称空间，请使用带有参数 &quot;&quot; 的 {@link #getURI getURI} 方法。</p>
+
+@param uri 名称空间 URI。
+@return 前缀的枚举（永不为空）。
+@see #getPrefix
+@see #getDeclaredPrefixes
+@see #getURI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration org.xml.sax.helpers.NamespaceSupport.getDeclaredPrefixes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此上下文中声明的所有前缀的枚举。
+
+<p>此枚举中将包括空的（默认）前缀；注意，此行为与 {@link #getPrefix} 和 {@link #getPrefixes} 的行为不同。</p>
+
+@return 此上下文中声明的所有前缀的枚举。
+@see #getPrefixes
+@see #getURI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.NamespaceSupport.setNamespaceDeclUris(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+控制是否通过 {@link #processName processName()} 将名称空间声明属性放置到 {@link #NSDECL NSDECL} 名称空间中。在推送任何上下文之前，这是唯一可更改的。
+
+@since SAX 2.1alpha
+
+@exception IllegalStateException 当推送任何上下文之后尝试设置它时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.xml.sax.helpers.NamespaceSupport.isNamespaceDeclUris()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将名称空间声明属性放置到名称空间中，则返回 true。此行为不是默认的行为。
+
+@since SAX 2.1alpha
+
+<!-- END DATA -->

@@ -1,0 +1,282 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.spi.ServiceRegistry extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于服务提供者实例的注册表。
+
+<p> <i>服务</i> 是一组熟知的接口和类（通常为抽象类）。<i>服务提供者</i> 是服务的具体实现。提供者中的类通常实现由服务自身定义的类的接口或子类。
+
+<p> 服务提供者存储在一个或多个<i>类别</i> 中，每个类别都由所有成员都必须实现的（由一个 <code>Class</code> 对象描述）一个接口的类定义。类别集可动态更改。
+ 
+<p> 只能注册给定叶类的单一实例（即，由 <code>getClass()</code> 返回的实际类，相对于继承的类或接口而言）。即，假定 <code>com.mycompany.mypkg.GreenServiceProvider</code> 类实现 <code>com.mycompany.mypkg.MyService</code> 接口。如果注册了 <code>GreenServiceProvider</code> 实例，则其将存储在由 <code>MyService</code> 类定义的类别中。如果注册了 <code>GreenServiceProvider</code> 的新实例，它将替换以前的实例。在实践中，服务提供者对象通常只有一个，所有此行为是适当的。
+
+<p> 为声明服务提供者，在每个 JAR 文件都有的 <code>META-INF</code> 目录中加入一个 <code>services</code> 子目录。此目录针对每个在 JAR 文件中具有一个或多个实现类的服务提供者接口都包含一个文件。例如，假设 JAR 文件包含了一个名称为 <code>com.mycompany.mypkg.MyServiceImpl</code> 的类，它实现 <code>javax.someapi.SomeService</code> 接口，则此 JAR 将包含一个名称如下所示的文件：<pre>
+ META-INF/services/javax.someapi.SomeService </pre>
+ 
+包含行：
+
+ <pre>
+ com.mycompany.mypkg.MyService
+ </pre>
+
+<p> 服务提供者类应为轻量级的，可快速加载。这些接口的实现应避免复杂化其他类和本地代码的依赖关系。更复杂的服务的常用模式是为重量级服务注册一个轻量级的代理。
+
+<p> 只要具有适当的运行时权限，应用程序即可根据需要定制注册表的内容。
+
+<p> 有关声明服务提供者和通用 JAR 格式的更详细的信息，请参见 <a  href="../../../../technotes/guides/jar/jar.html">JAR File Specification</a>。
+
+@see RegisterableService
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.spi.ServiceRegistry(java.util.Iterator<java.lang.Class<?>> categories)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 <code>categories</code> 参数的一组类别构造 <code>ServiceRegistry</code> 实例。
+
+@param categories 包含将用于定义类别的 <code>Class</code> 对象的 <code>Iterator</code>。
+
+@exception IllegalArgumentException 如果 <code>categories</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<T> javax.imageio.spi.ServiceRegistry.lookupProviders(java.lang.Class<T> providerClass, ClassLoader loader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的类加载器搜索特定服务类的实现。
+
+<p> 此方法根据类注释的描述将给定服务类的名称转换为一个提供者配置文件名，然后使用给定类加载器的 <code>getResources</code> 方法查找所有可用的具有此名称的文件。然后读取并分析这些文件以生成一个提供者类名称列表。返回的迭代器使用给定的类加载器查找并实例化列表中的每个元素。
+
+<p> 由于能将扩展安装到一个运行的 Java 虚拟机中，此方法在每次调用时可能返回不同的结果。
+
+@param providerClass 指示所检测的服务提供者的类或接口的 <code>Class</code> 对象。
+
+@param loader 将用于加载提供者配置文件和实例化提供者类的类加载器，如果将使用系统类加载器（或，系统类加载器失败时使用引导类加载器），则为 <code>null</code>。
+ 
+@return 以任意顺序生成给定服务的提供者对象的 <code>Iterator</code>。如果提供者配置文件违反指定的格式，或者无法找到和实例化提供者类，则迭代器将抛出一个 <code>Error</code>。
+
+@exception IllegalArgumentException 如果 <code>providerClass</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Iterator<T> javax.imageio.spi.ServiceRegistry.lookupProviders(java.lang.Class<T> providerClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用上下文类加载器定位和递增地实例化给定服务的可用的提供者。此便捷方法等效于：
+
+ <pre>
+   ClassLoader cl = Thread.currentThread().getContextClassLoader();
+   return Service.providers(service, cl);
+ </pre>
+
+@param providerClass 指示所检测的服务提供者的类或接口的 <code>Class</code> 对象。
+
+@return 以任意顺序生成给定服务的提供者对象的 <code>Iterator</code>。如果提供者配置文件违反指定的格式，或者无法找到和实例化提供者类，则迭代器将抛出一个 <code>Error</code>。
+
+@exception IllegalArgumentException 如果 <code>providerClass</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<java.lang.Class<?>> javax.imageio.spi.ServiceRegistry.getCategories()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指示当前类别集的 <code>Class</code> 对象的 <code>Iterator</code>。如果不存在任何类别，则此迭代器将为空。
+
+@return 包含 <code>Class</code> 对象的 <code>Iterator</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ServiceRegistry.registerServiceProvider(T provider, java.lang.Class<T> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个服务提供者对象添加到注册表。此提供者与给定的类别关联。
+
+<p> 如果 <code>provider</code> 实现了 <code>RegisterableService</code> 接口，则将调用其 <code>onRegistration</code> 方法。每次将提供者从某个类别注销时都将调用其 <code>onDeregistration</code> 方法，例如，移除类别或垃圾回收注册表时都要调用该方法。
+
+@param provider 要注册的服务提供者对象。
+@param category 要在其中注册提供者的类别。
+
+@return 如果相同的类别中以前未注册相同类的提供者，则返回 true。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+@exception ClassCastException 如果提供者未实现由 <code>category</code> 定义的 <code>Class</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.registerServiceProvider(Object provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个服务提供者对象添加到注册表。此提供者与注册表中出现的实现了其 <code>Class</code> 的每个类别关联。
+
+<p> 如果 <code>provider</code> 实现了 <code>RegisterableService</code> 接口，则将对其注册的每个类别调用一次 <code>onRegistration</code> 方法。每次当提供者从类别注销或注册表终止时，将调用提供者的 <code>onDeregistration</code> 方法。
+
+@param provider 要注册的服务提供者对象。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.registerServiceProviders(java.util.Iterator<?> providers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一组取自 <code>Iterator</code> 的服务提供者对象添加到注册表。每个提供者与注册表中出现的实现了其 <code>Class</code> 的每个类别关联。
+
+<p> 对于实现了 <code>RegisterableService</code> 接口的每个 <code>providers</code> 项，将对其注册的每个类别调用一次 <code>onRegistration</code> 方法。每次当提供者从类别注销或注册表终止时，将调用提供者的 <code>onDeregistration</code> 方法。
+
+@param providers 包含要注册的服务提供者对象的迭代器。
+
+@exception IllegalArgumentException 如果 <code>providers</code> 为 <code>null</code>，或包含一个 <code>null</code> 项。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ServiceRegistry.deregisterServiceProvider(T provider, java.lang.Class<T> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定的类别中移除服务提供者对象。如果以前未注册提供者，则不执行任何操作并返回 <code>false</code>。否则，返回 <code>true</code>。如果注册了与 <code>provider</code> 具有相同的类但又不等于（使用 <code>==</code>）<code>provider</code> 的对象，则不注销此对象。
+
+<p> 如果 <code>provider</code> 实现了 <code>RegisterableService</code> 接口，则将调用其 <code>onDeregistration</code> 方法。
+
+@param provider 要注销的服务提供者对象。
+@param category 要从其注销提供者的类别。
+
+@return 如果提供者以前已注册在相同的类别中，则返回 <code>true</code>，否则返回 <code>false</code>。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+@exception ClassCastException 如果提供者未实现由 <code>category</code> 定义的类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.deregisterServiceProvider(Object provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从包含它的所有类别中移除服务提供者对象。
+
+@param provider 要注销的服务提供者对象。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ServiceRegistry.contains(Object provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前注册了 <code>provider</code>，则返回 <code>true</code>。
+
+@param provider 要查询的服务提供者对象。
+
+@return 如果给定的提供者已注册，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<T> javax.imageio.spi.ServiceRegistry.getServiceProviders(java.lang.Class<T> category, boolean useOrdering)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含给定类别中的所有已注册的服务提供者的 <code>Iterator</code>。如果 <code>useOrdering</code> 为 <code>false</code>，则迭代器将以任意顺序返回所有的服务提供者对象。否则，排序将遵照已设置的任何配对顺序。如果配对顺序的图形包含圆，则将不返回任何属于圆的提供者。
+
+@param category 将从其检索的类别。
+@param useOrdering 如果在对返回对象排序时应考虑配对顺序，则为 <code>true</code>。
+
+@return 包含给定类别的服务提供者的 <code>Iterator</code>（有可能按顺序返回）。
+
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<T> javax.imageio.spi.ServiceRegistry.getServiceProviders(java.lang.Class<T> category, ServiceRegistry.Filter filter, boolean useOrdering)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Iterator</code>，其包含给定类别中满足由指定的 <code>ServiceRegistry.Filter</code> 对象的 <code>filter</code> 方法定义的条件的服务提供者对象。
+
+<p> <code>useOrdering</code> 参数使用与 <code>getServiceProviders(Class, boolean)</code> 相同的规则控制着结果的排序。
+
+@param category 将从其检索的类别。
+@param filter 将调用其 <code>filter</code> 方法的 <code>ServiceRegistry.Filter</code> 的实例。
+@param useOrdering 如果在对返回对象排序时应考虑配对顺序，则为 <code>true</code>。
+
+@return 包含给定类别的服务提供者的 <code>Iterator</code>（有可能按顺序返回）。
+
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T javax.imageio.spi.ServiceRegistry.getServiceProviderByClass(java.lang.Class<T> providerClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前注册的属于给定类类型的服务提供者对象。任何给定时间最多只允许注册给定类的一个对象。如果没有注册的对象具有需要的类类型，则返回 <code>null</code>。
+
+@param providerClass 需要的服务提供者对象的 <code>Class</code>。
+
+@return 当前注册的具有所需 <code>Class</code> 类型的服务提供者对象，如果没有，则返回 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>providerClass</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ServiceRegistry.setOrdering(java.lang.Class<T> category, T firstProvider, T secondProvider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定类别中的两个服务提供者对象设置配对排序。如果其中一个或两个对象当前都未在给定的类别中注册，或者需要的排序已设置，则不执行任何操作并返回 <code>false</code>。如果提供者以前以相反的顺序排序，则将此排序移除。
+
+<p> 此排序将由 <code>getServiceProviders</code> 方法在其 <code>useOrdering</code> 参数为 <code>true</code> 时使用。
+
+@param category 指示将在其中建立首选项的类别的 <code>Class</code> 对象。
+@param firstProvider 首选提供者。
+@param secondProvider 与其比较而言，<code>firstProvider</code> 为首选提供者。
+
+@return 如果建立了以前取消设置的排序，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果提供者为 <code>null</code> 或为相同的对象。
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ServiceRegistry.unsetOrdering(java.lang.Class<T> category, T firstProvider, T secondProvider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定类别中的两个服务提供者对象设置配对排序。如果其中一个或两个对象当前都未在给定的类别中注册，或者它们之间当前未设置任何排序，则不执行任何操作并返回 <code>false</code>。
+
+<p> 此排序将由 <code>getServiceProviders</code> 方法在其 <code>useOrdering</code> 参数为 <code>true</code> 时使用。
+
+@param category 指示将在其中取消建立首选项的类别的 <code>Class</code> 对象。
+@param firstProvider 以前的首选提供者。
+@param secondProvider 与其比较而言，<code>firstProvider</code> 为以前的首选提供者。
+
+@return 如果取消建立以前设置的排序，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果提供者为 <code>null</code> 或为相同的对象。
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.deregisterAll(java.lang.Class<?> category)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注销给定类别下当前注册的所有服务提供者对象。
+
+@param category 将清空的类别。
+
+@exception IllegalArgumentException 如果没有与 <code>category</code> 对应的类别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.deregisterAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从所有类别注销所有当前注册的服务提供者。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.spi.ServiceRegistry.finalize() throws java.lang.Throwable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在垃圾回收前终止此对象。调用 <code>deregisterAll</code> 方法注销所有当前注册的服务提供者。不应该从应用程序代码中调用此方法。
+
+@exception Throwable 如果在超类终止过程中发生错误。
+
+<!-- END DATA -->

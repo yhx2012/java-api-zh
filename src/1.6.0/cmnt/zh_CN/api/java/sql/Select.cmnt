@@ -1,0 +1,276 @@
+<!-- BEGIN KEY -->
+public interface class java.sql.Select implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ Annotation used to decorate a method in a Query interface with a SQL statement
+ that can return a result set from the underlying data store.  The 
+ <code>Select</code> annotation must not be used in-conjunction with a SQL statement
+ that returns an update count.
+ <p> 
+
+A Query interface may contain zero, one or more methods decorated with an <code>Select</code>
+annotation.
+ <p>
+  The following provides an example of using the <code>Select</code> annotation.
+<p>
+ <pre>
+ // Define DataSet type
+ public class Mammal {
+     public String name;
+     public String description;
+     public int age;
+ }
+ // Define the interface containing the methods representing SQL statements
+ // that can be invoked.
+ 
+ interface MyQueries extends BaseQuery {    
+    <code>@Select</code>("select name, description, age from mammal")
+    DataSet&lt;Mammal&gt; getAllMammals();
+ 
+    <code>@</code>Update("delete from mammal")
+    int deleteAllMammals();
+ }
+ </pre>
+
+ To invoke the <code>getAllMammals()</code> method, an instance of
+ the <code>MyQueries</code> interface must be created by invoking either the
+ <code>Connnection.createQueryObject</code> or <code>DataSource.createQueryObject</code>
+ method.
+ 
+ <pre>
+ MyQueries mq = con.createQueryObject(MyQueries.class);
+ Dataset&lt;Mammal&gt; rows = mq.getAllMammals();
+ </pre>
+ <p>
+ 
+<h4>Using a Parameterized sql annotation element</h4>
+
+ The <code>sql</code> annotation element allows developers to specify parameter markers
+ similar to <code>PreparedStatements</code>.  Parameter markers are defined as:
+ <ul>
+ <li>A String  value designated by a question mark(?) prefix follwed by an
+ integer.
+ <li>The numbering for parameter markers starts at 1.  For example ?1.
+ <li>The number of distinct parameter marks must not exceed the number of
+ method parameters for the method that was decorated by the <code>Select</code> 
+ annotation.  If this occurs, a <code>SQLRuntimeException</code> will be thrown.
+ <li>A parameter marker may be specfied more than once in a <code>sql</code> 
+ annotation element.
+ </ul>
+<p>
+ <pre>
+ interface MyQueries extends BaseQuery {    
+ 
+    <code>@Select</code>(sql="select name, description from mammal where weight > ?1")
+     DataSet&lt;Mammal&gt; getBigMammals(int weight);
+ }
+ </pre>
+
+ <p>
+ 
+ <pre>
+ MyQueries mq = con.createQueryObject(MyQueries.class);
+ DataSet&lt;Mammal&gt; rows = mq.getBigMammals(200);
+ </pre>
+ 
+ <p>
+ When the <code>getBigMammals()</code> method is invoked, the value specified
+  for the parameter <i>weight</i> will be used as the value for the parameter 
+  marker.
+ <p>
+   
+ <h4>connected annotation element</h4>
+ 
+ By default, a method decorated by a <code>Select</code> annotation returns a 
+ <code>DataSet</code> instance that is <i>connected</i> to the underlying data store.
+ The returned  <code>DataSet</code> is treated similar to a <a href="ResultSet.html">
+ <code>ResultSet</code></a> object. Any modifications to the <code>DataSet</code> are
+  propagated to the data source if the <code>DataSet</code> is updatable.
+ <p>
+ If the <code>connected</code> annotation element is set to <code>false</code>, the returned
+ <code>DataSet</code> instance is considered to be <i>disconnected</i>. The <code>DataSet</code>
+ is then treated similar to a <a href="../../javax/sql/rowset/CachedRowSet.html">
+ <code>CachedRowSet</code></a> and any modifications to the <code>DataSet</code>
+ are <i>not</i> propogated to the data source until the <code>DataSet.sync</code>
+ method is called.
+<p>
+ 
+ <h4>allColumsMapped annoation element</h4>
+
+ The <code>allColumnsMapped</code> annotation element is used to specify whether
+ all of the columns that are returned by a method decorated by a 
+ <code>Select</code> annotation must be present in the <i>data class</i> for a
+ <code>DataSet</code>. The returned columns are mapped by matching their column names
+ to the field names in the <i>data class</i> for a <code>DataSet</code>.
+
+ If the <code>allColumnsMapped</code> annotation element is set to <code>false</code>,
+ then any columns returned by a method decorated by a <code>Select</code> annotation
+ that are not contained in the <i>data class</i> will be ignored.
+ 
+ <p>
+ Consider the following example:
+ 
+ <pre>
+ public class Mammal {
+     public String firstName;
+     public String lastName;
+     public String address;
+     public String description;
+ }
+ public class MammalFail {
+     public String name;
+     public String description;
+     public int age;
+ }
+
+ interface Queries {
+     <code>@Select</code>(sql="select * from Mammal", allColumnsMapped=true)
+     DataSet&lt;Mammal&gt; getAllMammals();
+     <code>@Select</code>(sql="select * from Mammal", allColumnsMapped=true)
+     DataSet&lt;MammalFail&gt; getAllMammals2();
+ }
+ </pre>
+ The Mammal table contains the following columns and data:
+ <p>
+ <pre>
+ -----------------------------------------------------------
+ |firstName | lastName  | address           | description    |
+ ===========================================================
+ | homer    | simpson   | Springfield       | Average Joe    | 
+ -----------------------------------------------------------
+ | fred     | flintsone | San Francisco, CA | stoneage human |
+ -----------------------------------------------------------
+ | wombat   | jones     | Aspen, CO         | wombat         |
+ ============================================================
+ </pre>
+ 
+ The call to the <code>getAllMammals</code> method will <b>succeed</b> because the <i>data class</i>
+ Mammal contains a field for every column in the result set that is returned by the
+ query specified in the <code>sql</code> annotation element.
+ <p>
+ 
+ The call to the <code>getAllMammals2</code> method will result in a <code>SQLRuntimeException</code>
+ being thrown because the <i>data class</i> MammalFail does not contain a field
+ for every column in the result set that is returned by the query specified in
+ the <code>sql</code> annotation element. The fields firstName, lastName and  address
+ would need to be added to the <i>data class</i> MammalFail in order for 
+ the call to the <code>getAllMammals2</code> method to succeed.
+ <p>
+ 
+ @since 1.6
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.Select.sql()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The SQL command to execute.  The SQL command that is specified can return
+ a result set.  The SQL command must not return an update count.
+
+ <p><B>Note</B>: If the <code>sql</code> and the <code>value</code> annotation
+ element are specified at the same time, a <code>SQLRuntimeException</code> will
+ be thrown. 
+ @return a <code>String</code> representation of the SQL command.
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Select.readOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines if the returned <code>DataSet</code> is updatable. 
+ <p>
+ 
+ @return <code>true</code> if the returned <code>DataSet</code> cannot be modified; 
+     <code>false</code> otherwise
+ @since 1.6
+ @see DataSet#isReadOnly
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Select.connected()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines whether the returned <code>DataSet</code> is connected to the
+ underlying data store.
+ <p>
+ 
+ @return <code>true</code> if the returned <code>DataSet</code> is connected 
+ to the underlying data store; <code>false</code> otherwise. 
+ @since 1.6
+ @see DataSet#isConnected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Select.allColumnsMapped()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines whether all of the columns that are returned as part of a
+ result set for the SQL command specified in the <code>sql</code> annotation
+ element, are required to be present in the <i>data class</i> for a <code>DataSet</code>.
+
+ @return <code>false</code> if the <i>data class</i> for a <code>DataSet</code>
+ does not require a field for each column returned in result set; <code>true</code>
+ if there must be a field present in the <i>data class</i> for every 
+ column returned in a result set.
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.Select.value()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The SQL command to execute.  The SQL command that is specified can return
+ a result set.  The SQL command must not return an update count.
+
+ <p><B>Note</B>: If the <code>sql</code> and the <code>value</code> annotation
+ element are specified at the same time, a <code>SQLRuntimeException</code> will
+ be thrown. 
+ @return a <code>String</code> representation of the SQL command.
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Select.scrollable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Determines whether a connected <code>DataSet</code> is scrollable.
+ If the <code>DataSet</code> is scrollable, it has a <code>ResultSet</code>
+ type of <code>TYPE_SCROLL_INSENSITVE</code>.  If the <code>DataSet</code> is
+ not scrollable, the <code>ResultSet</code> type is specified to be
+ <code>TYPE_FORWARD_ONLY</code>.
+ <p>
+ If the <code>DataSet</code> is disconnected, the <code>scrollable</code>
+ annotation element is ignored.
+ <p>
+ 
+ @return <code>true</code> if the connected <code>DataSet</code> is scrollable; 
+  <code>false</code> otherwise. 
+ @since 1.6
+ @see DataSet#isScrollable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.Select.tableName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Specifies the name of the table from where this data is to be written back to. 
+ <p>
+ This annotation element is required when the <code>DataSet</code> 
+  is in disconnected mode and the 
+  contents of the <code>DataSet</code> can be written back to the database.
+ <p>
+<B>Note</B>: If the <code>connected</code> annotation element is set 
+ to <code>false</code>, the <code>readOnly</code> annotation element 
+ is set to <code>false</code> and the <code>tableName</code>  annotation 
+ element is not specified, a <code>SQLRuntimeException</code> will
+ be thrown. 
+ <p>
+ @return name of the table from which the data in the DataSet can be 
+ be written back to.
+ @since 1.6
+
+<!-- END DATA -->

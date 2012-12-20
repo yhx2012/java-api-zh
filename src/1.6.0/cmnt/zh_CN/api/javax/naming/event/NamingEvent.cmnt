@@ -1,0 +1,198 @@
+<!-- BEGIN KEY -->
+public class javax.naming.event.NamingEvent extends java.util.EventObject
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示命名/目录服务触发的事件。
+<p>
+<tt>NamingEvent</tt> 的状态包括
+ <ul>
+<li>事件源：触发此事件的 <tt>EventContext</tt>。
+<li>事件类型。
+<li>新绑定：关于更改后对象的信息。
+<li>旧绑定：关于更改前对象的信息。
+<li>更改信息：关于触发此事件的更改的信息；通常是特定于服务提供者或特定于服务器的信息。
+ </ul>
+ <p>
+注意，事件源始终是注册了侦听器的那个 <tt>EventContext</tt> <em>实例</em>。此外，<tt>NamingEvent</tt> 中绑定的名称始终相对于该实例。例如，假定侦听器进行以下注册：
+<blockquote><pre>
+	NamespaceChangeListener listener = ...;
+	src.addNamingListener(&quot;x&quot;, SUBTREE_SCOPE, listener);
+</pre></blockquote>
+以后删除名为 &quot;x/y&quot; 的对象时，相应的 <tt>NamingEvent</tt> (<tt>evt</tt>) 必须包含：
+<blockquote><pre>
+	evt.getEventContext() == src
+	evt.getOldBinding().getName().equals(&quot;x/y&quot;)
+</pre></blockquote>
+
+当多个线程并发访问同一个 <tt>EventContext</tt> 时必须谨慎。有关线程问题的更多信息，请参阅<a href=package-summary.html#THREADING>包描述</a>。
+ 
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.11 05/11/17
+
+@see NamingListener
+@see EventContext
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.NamingEvent.OBJECT_ADDED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示已经添加了新对象的命名事件类型。此常量的值为 <tt>0</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.NamingEvent.OBJECT_REMOVED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示已经移除了某个对象的命名事件类型。此常量的值为 <tt>1</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.NamingEvent.OBJECT_RENAMED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示已经重命名了某个对象的命名事件类型。注意，有些服务可能为单个逻辑重命名操作触发多个事件。例如，重命名操作可能通过添加具有新名称的绑定并移除旧绑定来实现。
+<p>
+如果新名称或旧名称在侦听器注册的范围之外，则 <tt>NamingEvent</tt> 中的新/旧绑定为 null。
+<p>
+重命名名称空间树中的内部节点后，应该使用作为侦听器范围一部分的顶层节点生成重命名事件。对这一点的支持程度是特定于提供者的。例如，服务可能为所有已更改内部节点的子代都生成重命名通知，相应的提供者可能无法阻止将这些通知传播到侦听器。
+<p>
+此常量的值为 <tt>2</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.NamingEvent.OBJECT_CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示已经更改了某个对象的命名事件类型。更改可能包括对象的属性，也可能包括对象本身。注意，有些服务可能为单个修改触发多个事件。例如，修改可能通过首先移除旧绑定，然后添加包含相同名称但不同对象的新绑定来实现。
+<p>
+此常量的值为 <tt>3</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object javax.naming.event.NamingEvent.changeInfo
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含关于生成此事件的更改的信息。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.naming.event.NamingEvent.type
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含此事件的类型。
+@see #OBJECT_ADDED
+@see #OBJECT_REMOVED
+@see #OBJECT_RENAMED
+@see #OBJECT_CHANGED
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Binding javax.naming.event.NamingEvent.oldBinding
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含关于更改前对象的信息。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.naming.Binding javax.naming.event.NamingEvent.newBinding
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含关于更改后对象的信息。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.event.NamingEvent(EventContext source, int type, Binding newBd, Binding oldBd, Object changeInfo)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <tt>NamingEvent</tt> 的实例。
+<p>
+<tt>newBd</tt> 和 <tt>oldBd</tt> 中的名称将相对于事件源 <tt>source</tt> 进行解析。
+
+对于 <tt>OBJECT_ADDED</tt> 事件类型，<tt>newBd</tt> 不得为 null。对于 <tt>OBJECT_REMOVED</tt> 事件类型，<tt>oldBd</tt> 不得为 null。对于 <tt>OBJECT_CHANGED</tt> 事件类型，<tt>newBd</tt> 和 <tt>oldBd</tt> 不得为 null。对于 <tt>OBJECT_RENAMED</tt> 事件类型，如果新绑定或旧绑定在已注册侦听器的范围之外，则 <tt>newBd</tt> 和 <tt>oldBd</tt> 中的一个可以为 null。
+
+@param source 触发此事件的非 null 上下文。
+@param type 事件的类型。
+@param newBd 更改前的绑定（可能为 null）。请参阅方法描述。
+@param oldBd 更改后的绑定（可能为 null）。请参阅方法描述。
+@param changeInfo 包含关于更改的信息的对象（可能为 null）。
+@see #OBJECT_ADDED
+@see #OBJECT_REMOVED
+@see #OBJECT_RENAMED
+@see #OBJECT_CHANGED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.event.NamingEvent.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此事件的类型。
+@return 此事件的类型。
+@see #OBJECT_ADDED
+@see #OBJECT_REMOVED
+@see #OBJECT_RENAMED
+@see #OBJECT_CHANGED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.event.EventContext javax.naming.event.NamingEvent.getEventContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索触发此事件的事件源。此操作与 <tt>EventObject.getSource()</tt> 返回相同的对象。
+<p>
+如果将此方法的结果用于访问事件源，例如，查找对象或获取其属性，则需要将其锁定，因为不保证 <tt>Context</tt> 的实现是线程安全的（也不保证 <tt>EventContext</tt> 是 <tt>Context</tt> 的子接口）。有关线程问题的更多信息，请参阅<a href=package-summary.html#THREADING>包描述</a>。
+
+@return 触发此事件的非 null 上下文。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Binding javax.naming.event.NamingEvent.getOldBinding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索更改前对象的绑定。
+<p>
+如果对象存在于相对源上下文 (<tt>getEventContext()</tt>) 进行更改之前，则绑定必须为非 null。即对于 <tt>OBJECT_REMOVED</tt> 和 <tt>OBJECT_CHANGED</tt> 它必须为非 null。对于 <tt>OBJECT_RENAMED</tt>，如果重命名前对象在注册侦听器关注的范围之外，则它为 null；如果对象在重命名前在该范围之内，则它为非 null。
+<p>
+绑定中的名称将相对于事件源 <tt>getEventContext()</tt> 进行解析。如果这类信息不可用，则 <tt>Binding.getObject()</tt> 返回的对象为 null。
+
+@return 更改前对象的绑定（可能为 null）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.Binding javax.naming.event.NamingEvent.getNewBinding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索更改后对象的绑定。
+<p>
+如果对象存在于相对源上下文 (<tt>getEventContext()</tt>) 进行更改之后，则绑定必须为非 null。即对于 <tt>OBJECT_ADDED</tt> 和 <tt>OBJECT_CHANGED</tt> 它必须为非 null。对于 <tt>OBJECT_RENAMED</tt>，如果重命名后对象在注册侦听器关注的范围之外，则它为 null；如果对象在重命名后在该范围之内，则它为非 null。
+<p>
+绑定中的名称将相对于事件源 <tt>getEventContext()</tt> 进行解析。如果这类信息不可用，则 <tt>Binding.getObject()</tt> 返回的对象为 null。
+
+@return 更改后对象的绑定（可能为 null）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.event.NamingEvent.getChangeInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此事件的更改信息。更改信息的值是特定于服务的。例如，它可以是用于标识服务器上更改日志中所做更改的 ID。
+
+@return 此事件的更改信息（可能为 null）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.event.NamingEvent.dispatch(NamingListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对此事件调用适当的侦听器方法。此方法的默认实现处理以下事件类型：<tt>OBJECT_ADDED</TT>、<TT>OBJECT_REMOVED</TT>、<TT>OBJECT_RENAMED</TT> 和 <TT>OBJECT_CHANGED</TT>。
+<p>
+侦听器方法与此方法在同一个线程中执行。有关线程问题的更多信息，请参阅<a href=package-summary.html#THREADING>包描述</a>。
+@param listener 非 null 侦听器。
+
+<!-- END DATA -->

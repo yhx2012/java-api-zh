@@ -1,0 +1,183 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.ScheduledThreadPoolExecutor extends java.util.concurrent.ThreadPoolExecutor implements java.util.concurrent.ScheduledExecutorService
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link ThreadPoolExecutor}，它可另行安排在给定的延迟后运行命令，或者定期执行命令。需要多个辅助线程时，或者要求 {@link ThreadPoolExecutor} 具有额外的灵活性或功能时，此类要优于 {@link java.util.Timer}。
+
+<p> 一旦启用已延迟的任务就执行它，但是有关何时启用，启用后何时执行则没有任何实时保证。按照提交的先进先出 (FIFO) 顺序来启用那些被安排在同一执行时间的任务。
+
+<p>虽然此类继承自 {@link ThreadPoolExecutor}，但是几个继承的调整方法对此类并无作用。特别是，因为它作为一个使用 <tt>corePoolSize</tt> 线程和一个无界队列的固定大小的池，所以调整 <tt>maximumPoolSize</tt> 没有什么效果。
+
+<p><b>扩展注意事项：</b>此类重写 {@link AbstractExecutorService} 的 <tt>submit</tt> 方法，以生成内部对象控制每个任务的延迟和调度。若要保留功能性，子类中任何进一步重写的这些方法都必须调用超类版本，超类版本有效地禁用附加任务的定制。但是，此类提供替代受保护的扩展方法 <tt>decorateTask</tt>（为 <tt>Runnable</tt> 和 <tt>Callable</tt> 各提供一种版本），可定制用于通过 <tt>execute</tt>、<tt>submit</tt>、<tt>schedule</tt>、<tt>scheduleAtFixedRate</tt> 和 <tt>scheduleWithFixedDelay</tt> 进入的执行命令的具体任务类型。默认情况下，<tt>ScheduledThreadPoolExecutor</tt> 使用一个扩展 {@link FutureTask} 的任务类型。但是，可以使用下列形式的子类修改或替换该类型。
+
+ <pre>
+ public class CustomScheduledExecutor extends ScheduledThreadPoolExecutor {
+
+   static class CustomTask&lt;V&gt; implements RunnableScheduledFuture&lt;V&gt; { ... }
+
+   protected &lt;V&gt; RunnableScheduledFuture&lt;V&gt; decorateTask(
+                Runnable r, RunnableScheduledFuture&lt;V&gt; task) {
+       return new CustomTask&lt;V&gt;(r, task);
+   }
+
+   protected &lt;V&gt; RunnableScheduledFuture&lt;V&gt; decorateTask(
+                Callable&lt;V&gt; c, RunnableScheduledFuture&lt;V&gt; task) {
+       return new CustomTask&lt;V&gt;(c, task);
+   }
+   // ... add constructors, etc.
+ }
+ </pre>
+@since 1.5
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ScheduledThreadPoolExecutor(int corePoolSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定核心池大小创建一个新 ScheduledThreadPoolExecutor。
+ 
+@param corePoolSize 池中所保存的线程数（包括空闲线程）
+@throws IllegalArgumentException 如果 <tt>corePoolSize &lt; 0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的初始参数创建一个新 ScheduledThreadPoolExecutor。
+ 
+@param corePoolSize 池中所保存的线程数（包括空闲线程）
+@param threadFactory 执行程序创建新线程时使用的工厂
+@throws IllegalArgumentException 如果 <tt>corePoolSize &lt; 0</tt>
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ScheduledThreadPoolExecutor(int corePoolSize, RejectedExecutionHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定初始参数创建一个新 ScheduledThreadPoolExecutor。
+ 
+@param corePoolSize 池中所保存的线程数（包括空闲线程）
+@param handler 由于超出线程范围和队列容量而使执行被阻塞时所使用的处理程序
+@throws IllegalArgumentException 如果 <tt>corePoolSize &lt; 0</tt>
+@throws NullPointerException 如果处理程序为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ScheduledThreadPoolExecutor(int corePoolSize, ThreadFactory threadFactory, RejectedExecutionHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定初始参数创建一个新 ScheduledThreadPoolExecutor。
+ 
+@param corePoolSize 池中所保存的线程数（包括空闲线程）
+@param threadFactory 执行程序创建新线程时使用的工厂
+@param handler 由于超出线程范围和队列容量而使执行被阻塞时所使用的处理程序
+@throws IllegalArgumentException 如果 <tt>corePoolSize &lt; 0</tt>
+@throws NullPointerException 如果 threadFactory 或处理程序为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.RunnableScheduledFuture<V> java.util.concurrent.ScheduledThreadPoolExecutor.decorateTask(Runnable runnable, java.util.concurrent.RunnableScheduledFuture<V> task)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 修改或替换用于执行 runnable 的任务。此方法可重写用于管理内部任务的具体类。默认实现只返回给定任务。
+
+ @param runnable 所提交的 Runnable
+ @param task 执行 runnable 所创建的任务
+ @return 可以执行 runnable 的任务
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.RunnableScheduledFuture<V> java.util.concurrent.ScheduledThreadPoolExecutor.decorateTask(java.util.concurrent.Callable<V> callable, java.util.concurrent.RunnableScheduledFuture<V> task)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 修改或替换用于执行 callable 的任务。此方法可重写用于管理内部任务的具体类。默认实现返回给定任务。
+
+ @param callable 所提交的 Callable
+ @param task 执行 callable 所创建的任务 
+ @return 可以执行 callable 的任务
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ScheduledThreadPoolExecutor.execute(Runnable command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用所要求的零延迟执行命令。这在效果上等同于调用 <tt>schedule(command, 0, anyUnit)</tt>。注意，对由 <tt>shutdownNow</tt> 所返回的队列和列表的检查将访问零延迟的 {@link ScheduledFuture}，而不是 <tt>command</tt> 本身。
+
+@param command 要执行的任务。
+@throws 由 <tt>RejectedExecutionHandler</tt> 随意决定的 RejectedExecutionException，如果由于执行程序已关闭而无法接受要执行的任务 。
+@throws NullPointerException 如果 command 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ScheduledThreadPoolExecutor.setContinueExistingPeriodicTasksAfterShutdownPolicy(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置有关在此执行程序已 <tt>shutdown</tt> 的情况下是否继续执行现有定期任务的策略。在这种情况下，仅在执行 <tt>shutdownNow</tt> 时，或者在执行程序已关闭、将策略设置为 <tt>false</tt> 后才终止这些任务。此值默认为 false。
+
+@param value 如果为 true，则在关闭后继续执行；否则不执行。
+@see #getContinueExistingPeriodicTasksAfterShutdownPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ScheduledThreadPoolExecutor.getContinueExistingPeriodicTasksAfterShutdownPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取有关在此执行程序已 <tt>shutdown</tt> 的情况下、是否继续执行现有定期任务的策略。在这种情况下，仅在执行 <tt>shutdownNow</tt> 时，或者在执行程序已关闭时将策略设置为 <tt>false</tt> 后才终止这些任务。此值默认为 false。
+
+@return 如果关闭后继续执行，则返回 true。
+@see #setContinueExistingPeriodicTasksAfterShutdownPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ScheduledThreadPoolExecutor.setExecuteExistingDelayedTasksAfterShutdownPolicy(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置有关在此执行程序已 <tt>shutdown</tt> 的情况下是否继续执行现有延迟任务的策略。在这种情况下，仅在执行 <tt>shutdownNow</tt> 时，或者在执行程序已关闭、将策略设置为 <tt>false</tt> 后才终止这些任务。此值默认为 true。
+
+@param value 如果为 true，则在关闭后执行；否则不执行。
+@see #getExecuteExistingDelayedTasksAfterShutdownPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ScheduledThreadPoolExecutor.getExecuteExistingDelayedTasksAfterShutdownPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取有关在此执行程序已 <tt>shutdown</tt> 的情况下是否继续执行现有延迟任务的策略。在这种情况下，仅在执行 <tt>shutdownNow</tt> 时，或者在执行程序已关闭时将策略设置为 <tt>false</tt> 后才终止这些任务。此值默认为 true。
+
+@return 如果关闭后执行，则返回 true
+@see #setExecuteExistingDelayedTasksAfterShutdownPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ScheduledThreadPoolExecutor.shutdown()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在以前已提交任务的执行中发起一个有序的关闭，但是不接受新任务。如果已将 <tt>ExecuteExistingDelayedTasksAfterShutdownPolicy</tt> 设置为 <tt>false</tt>，则取消尚未超出其延迟的现有延迟任务。并且除非已将 <tt>ContinueExistingPeriodicTasksAfterShutdownPolicy</tt> 设置为 <tt>true</tt>，否则将取消现有定期任务的后续执行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.Runnable> java.util.concurrent.ScheduledThreadPoolExecutor.shutdownNow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试停止所有正在执行的任务、暂停等待任务的处理，并返回等待执行的任务列表。 
+  
+<p>虽然尽最大努力，但并不保证可以停止处理正在执行的任务。此实现通过 {@link Thread#interrupt} 取消任务,所以任何无法响应中断的任务都可能永远无法终止。
+
+@return 从未开始执行的任务列表。此列表中的每个元素都是一个 {@link ScheduledFuture}，包括用 <tt>execute</tt> 所提交的那些任务，出于安排的目的，这些任务用作零延迟 <tt>ScheduledFuture</tt> 的基础。 
+@throws SecurityException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.BlockingQueue<java.lang.Runnable> java.util.concurrent.ScheduledThreadPoolExecutor.getQueue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此执行程序使用的任务队列。此队列中的每个元素都是一个 {@link ScheduledFuture}，包括用 <tt>execute</tt> 所提交的那些任务，出于安排的目的，这些任务用作零延迟 <tt>ScheduledFuture</tt> 的基础。<em>无法</em> 保证对此队列进行迭代的迭代器会以任务执行的顺序遍历各任务。
+
+@return 任务队列。
+
+<!-- END DATA -->

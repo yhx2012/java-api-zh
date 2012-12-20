@@ -1,0 +1,214 @@
+<!-- BEGIN KEY -->
+public class java.util.logging.LogManager extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存在一个单一的全局 LogManager 对象，它可用于维护 Logger 和日志服务的一组共享状态。
+ <p>
+此 LogManager 对象：
+ <ul>
+<li> 管理 Logger 对象的层次结构名称空间。所有指定的 Logger 均存储在此名称空间中。
+<li> 管理一组日志控制属性。这些是供 Handler 及其他日志对象用于自我配置的简单键-值对。
+ </ul>
+ <p>
+可以使用 LogManager.getLogManager() 获取全局 LogManager 对象。LogManager 对象是在类初始化过程中创建的，过后便不能更改。
+ <p>
+在启动时，使用 java.util.logging.manager 系统属性定位 LogManager 类。
+ <p>
+默认情况下，LogManager 从 JRE 目录的属性文件 &quot;lib/logging.properties&quot; 中读取其初始配置。如果编辑该属性文件，则可更改此 JRE 的所有用户的默认日志配置。
+ <p>
+另外，LogManager 使用两个可选的允许更好地控制初始配置读取的系统属性：
+ <ul>
+ <li>&quot;java.util.logging.config.class&quot;
+ <li>&quot;java.util.logging.config.file&quot;
+ </ul>
+这两个属性可以通过 Preferences API 来设置，既可作为 "java" 命令的命令行属性定义，也可作为传递到 JNI_CreateJavaVM 的系统属性定义。
+ <p>
+如果设置了 &quot;java.util.logging.config.class&quot; 属性，则会把属性值当作类名。给定的类将会被加载，并会实例化一个对象，该对象的构造方法负责读取初始配置。（此对象可以使用其他系统属性来控制自己的配置。）此备用配置类可使用 <tt>readConfiguration(InputStream)</tt> 来定义 LogManager 中的属性。
+ <p>
+如果<b>未</b>设置 &quot;java.util.logging.config.class&quot; 属性，则会使用 &quot;java.util.logging.config.file&quot; 系统属性来指定一个属性文件（以 java.util.Properties 格式）。从此文件读取初始日志配置。
+ <p>
+如果这两个属性都没有定义，则如上所述，LogManager 将从 JRE 目录的属性文件 &quot;lib/logging.properties&quot; 中读取其初始配置。
+ <p>
+Logger 和 Handler 的属性名称是以圆点分隔的 Logger 或 Handler 的名称开头。
+ <p>
+全局日志属性可以包括：
+ <ul>
+<li>属性 &quot;handlers&quot;。该属性为 handler 类定义类名的空白或逗号分隔列表，以便作为处理程序在根 Logger（该 Logger 名为 &quot;&quot;）中加载和注册。每个类名必须用于具有默认构造方法的 Handler 类。注意，刚开始使用这些 Handler 时，它们可能是以延迟方式创建的。
+
+<li>属性 &quot;&lt;logger&gt;.handlers&quot;。该属性为 handler 类定义空白分隔或逗号分隔的列表，以便作为处理程序加载和注册到指定的 logger。每个类名必须用于一个具有默认构造方法的 Handler 类。注意，刚开始使用这些 Handler 时，它们可能是以延迟方式创建的。
+
+<li>属性 &quot;&lt;logger&gt;.useParentHandlers&quot;。该属性定义一个 boolean 值。默认情况下，每个 logger 除了自己处理日志消息外，还可能调用其父级来处理，这往往也会导致根 logger 来处理消息。将此属性设置为 false 时，需要为此 logger 配置 Handler，否则不传递任何消息。
+
+<li>属性 &quot;config&quot;。此属性允许运行任意配置代码。该属性定义类名的空白或逗号分隔的列表。为每个指定类创建新实例。每个类的默认构造方法都可以执行任意代码来更新日志配置，如设置 logger 级别、添加处理程序、添加过滤器，等等。
+ </ul>
+ <p>
+注意，在 LogManager 配置期间加载的所有类，其搜索顺序是先从系统类路径中搜索，然后才从用户类中搜索。这包括 LogManager 类、任何 config 类和任何 handler 类。
+ <p>
+Logger 是按其圆点分隔的名称被组织到命名层次结构中的。因此，&quot;a.b.c&quot; 是 &quot;a.b&quot; 的子级，但 &quot;a.b1&quot; 和 a.b2&quot; 属于同一级。
+ <p>
+假定所有以 &quot;.level&quot; 结尾的名称的属性为 Logger 定义日志级别。因此，&quot;foo.level&quot; 就为名称为 &quot;foo&quot; 的 logger 定义了日志级别，进而为指定层次结构中它的所有子级也逐个定义了日志级别。日志级别是按其在属性文件中的定义顺序应用的。因此，树中子节点的级别设置应该迟于其父级设置。属性名 &quot;.level&quot; 可用于设置树的根级。
+ <p> 
+LogManager 对象上的所有方法都是多线程安全的。
+
+@version 1.46, 06/07/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.logging.LogManager.LOGGING_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link LoggingMXBean} 的 {@link javax.management.ObjectName} 的字符串表示形式。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.logging.LogManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+受保护的构造方法。保护此构造方法以便容器应用程序（如 J2EE 容器）可以子类化对象。此构造方法不是公共的，因为只有一个 LogManager 对象，其值是通过调用 Logmanager.getLogManager 来获取的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.logging.LogManager java.util.logging.LogManager.getLogManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回全局 LogManager 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.addPropertyChangeListener(PropertyChangeListener l) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加重读日志属性时调用的事件侦听器。添加同一个事件侦听器的多个实例将在属性事件侦听器表中产生多个条目。
+
+@param l  事件侦听器
+@exception SecurityException 如果存在安全管理器，且调用者不具有 LoggingPermission(&quot;control&quot;)。
+@exception NullPointerException 如果 PropertyChangeListener 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.removePropertyChangeListener(PropertyChangeListener l) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除属性更改事件的事件侦听器。如果通过多次调用 <CODE>addPropertyChangeListener</CODE> 在侦听器表中添加同一个侦听器实例，则需要调用相同数目的 <CODE>removePropertyChangeListener</CODE> 将该侦听器的所有实例从侦听器表中移除。
+ <P>
+如果未找到给定的侦听器，则默认返回。
+ 
+@param l 事件侦听器（可以为 null）
+@exception  SecurityException 如果存在安全管理器，且调用者不具有 LoggingPermission(&quot;control&quot;)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.logging.LogManager.addLogger(Logger logger)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的 logger。如果已经注册了具有相同名称的 logger，则不执行任何操作而返回 false。
+ <p>
+Logger 工厂方法调用此方法来注册每个新创建的 Logger。
+ <p>
+此应用程序应该保留其自身对 Logger 对象的引用，以避免自己被作为无用信息收集。LogManager 仅可能保留弱引用。
+
+@param   logger 新 logger。
+@return  如果成功注册参数 logger，则返回 true；如果该名称的 logger 已经存在，则返回 false。
+@exception NullPointerException 如果 logger 名称为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.logging.Logger java.util.logging.LogManager.getLogger(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找指定 logger 的方法。
+ <p>
+注意，由于不受信任的代码可能使用任意名称创建 logger，不能依赖于此方法为安全性敏感的日志查找 Logger。
+ <p>
+@param name logger 的名称
+@return  匹配 logger；如果未找到，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Enumeration<java.lang.String> java.util.logging.LogManager.getLoggerNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取已知 logger 名称的枚举。
+ <p>
+注：加载新类时可能动态添加 Logger。此方法仅报告当前已注册的 logger。
+ <p>
+@return  logger 名称字符串的枚举
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.readConfiguration() throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新初始化日志属性并重新读取日志配置。
+ <p>
+使用与启动时相同的规则查找配置属性。因此，通常从启动时使用过的文件重新读取日志属性。
+ <P>
+如果目标 Logger 存在，则使用 Logger.setLevel() 来应用新配置文件中的所有日志级别定义。
+ <p>
+读取这些属性后将激发 PropertyChangeEvent。
+ 
+@exception  SecurityException 如果安全管理器存在并且调用者不具有 LoggingPermission(&quot;control&quot;)。
+@exception  IOException 如果读取配置时存在 IO 问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.reset() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置日志配置。
+ <p>
+对于所有指定的 logger，重置操作移除并关闭全部 Handler（除了根 logger 之外），并将级别设置为 null。根 logger 的级别设置为 Level.INFO。
+
+@exception SecurityException 如果安全管理器存在并且调用者不具有 LoggingPermission(&quot;control&quot;)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.readConfiguration(InputStream ins) throws java.io.IOException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定流重新初始化并重新读取日志配置，该配置为 java.util.Properties 格式。读取这些属性后将激发 PropertyChangeEvent。
+ <p>
+如果目标 Logger 存在，则使用 Logger.setLevel() 来应用新配置文件中的所有日志级别定义。
+ 
+@param ins 从中读取属性的流
+@exception SecurityException 如果存在安全管理器，且调用者不具有 LoggingPermission(&quot;control&quot;)。
+@exception IOException 如果从流读取时存在问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogManager.getProperty(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取日志属性的值。如果未找到属性，则此方法返回 null。
+@param name 属性名
+@return  属性值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogManager.checkAccess() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查使用当前上下文来修改日志配置是否受信任。此操作需要 LoggingPermission(&quot;control&quot;)。
+ <p>
+如果此检查失败，则抛出 SecurityException；否则，正常返回。
+
+@exception  SecurityException  如果安全管理器存在并且调用者不具有 LoggingPermission(&quot;control&quot;)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.util.logging.LoggingMXBean java.util.logging.LogManager.getLoggingMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回管理 logger 的 <tt>LoggingMXBean</tt>。<tt>LoggingMXBean</tt> 还可以从{@link java.lang.management.ManagementFactory#getPlatformMBeanServer 平台的 <tt>MBeanServer</tt>} 方法得到。
+
+@return {@link LoggingMXBean} 对象。
+
+@see java.lang.management.ManagementFactory
+@since 1.5
+
+<!-- END DATA -->
+
+

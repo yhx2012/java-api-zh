@@ -1,0 +1,242 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.transform.TransformerFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>TransformerFactory 实例可用于创建 {@link javax.xml.transform.Transformer} 和 {@link javax.xml.transform.Templates} 对象。</p>
+
+<p>确定要创建的哪一个 Factory 实现被命名为 <code>&quot;javax.xml.transform.TransformerFactory&quot;</code> 的系统属性。此属性命名了 <code>TransformerFactory</code> 抽象类的一个具体子类。如果未定义此属性，则使用平台默认的属性。</p>
+
+@author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a>
+@author <a href="mailto:Neeraj.Bajaj@sun.com">Neeraj Bajaj</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.transform.TransformerFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认构造方法受到有意保护。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.transform.TransformerFactory javax.xml.transform.TransformerFactory.newInstance() throws javax.xml.transform.TransformerFactoryConfigurationError
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获取 <code>TransformerFactory</code> 的新实例。此静态方法创建新的工厂实例。此方法使用以下顺序的查找程序来确定要加载的 <code>TransformerFactory</code> 实现类：</p>
+ <ul>
+ <li>
+使用 <code>javax.xml.transform.TransformerFactory</code> 系统属性。
+ </li>
+ <li>
+使用 JRE 文件夹中的属性文件 &quot;lib/jaxp.properties&quot;。此配置文件格式为标准的 <code>java.util.Properties</code> 且包含实现类的完全限定名，其中实现类的键是上述定义的系统属性。
+ 
+JAXP 实现只读取一次 jaxp.properties 文件，然后缓存其值供以后使用。如果首次尝试读取文件时，文件不存在，则不会再次尝试检查该文件是否存在。首次读取 jaxp.properties 后，其中的属性值不能再更改。
+ </li>
+ <li>
+如果 Services API（在 JAR 规范中进行了详细描述）可用，可以使用它来确定类名称。Services API 将查找在运行时可用的 jar 文件中 <code>META-INF/services/javax.xml.transform.TransformerFactory</code> 中的类名称。
+ </li>
+ <li>
+平台默认的 <code>TransformerFactory</code> 实例。
+ </li>
+ </ul>
+
+<p>在应用程序已获取对 <code>TransformerFactory</code> 的引用后，它可以使用工厂来配置和获取转换器实例。</p>
+
+@return 新的 TransformerFactory 实例，永远不能为 null。
+
+@throws TransformerFactoryConfigurationError 如果实现不可用或不能被实例化。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.transform.TransformerFactory javax.xml.transform.TransformerFactory.newInstance(String factoryClassName, ClassLoader classLoader) throws javax.xml.transform.TransformerFactoryConfigurationError
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>根据类名称获得一个新 <code>TransformerFactory</code> 实例。当类路径中有多个提供者时此功能很有用。它给了应用程序更多的控制权，因为它能指定应该加载哪个提供者。</p>
+
+ <p>在应用程序已获取对 <code>TransformerFactory</code> 的引用后，它可以使用工厂来配置和获取转换器实例。</p>
+
+ <h2>疑难解答提示</h2>
+ <p>设置 <code>jaxp.debug</code> 系统属性将导致此方法将许多调试消息打印到 <code>System.err</code>，以说明其执行的操作以及在何处查找这些操作。</p>
+ 
+ <p>如有问题，请尝试：</p>
+ <pre>
+ java -Djaxp.debug=1 YourProgram ....
+ </pre>
+ 
+ @param factoryClassName 完全限定工厂类名称，提供 <code>javax.xml.transform.TransformerFactory</code> 的实现。
+
+ @param classLoader 用来加载工厂类的 <code>ClassLoader</code>。如果为 <code>null</code>，则使用当前 <code>Thread</code> 的上下文 classLoader 来加载工厂类。
+
+ @return 新 TransformerFactory 实例，永远不能为 null。
+
+ @throws TransformerFactoryConfigurationError 
+                    如果 <code>factoryClassName</code> 为 <code>null</code>，或者不能加载或实例化工厂类。
+
+ @see #newInstance()
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.Transformer javax.xml.transform.TransformerFactory.newTransformer(Source source) throws javax.xml.transform.TransformerConfigurationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将 <code>Source</code> 处理为 <code>Transformer</code> <code>Object</code>。<code>Source</code> 是遵守 <a href="http://www.w3.org/TR/xslt">XSL Transformations (XSLT) Version 1.0</a> 的 XSLT 文档。必须注意的是，在多个 <code>Thread</code> 并发运行中不能使用此 <code>Transformer</code>。不同 <code>Thread</code> 可以并发使用不同的 <code>TransformerFactories</code>。</p>
+
+@param 用于创建 <code>Transformer</code> 的 XSLT 文档的源 <code>Source</code>。XML <code>Source</code> 的示例包括 {@link javax.xml.transform.dom.DOMSource DOMSource}、{@link javax.xml.transform.sax.SAXSource SAXSource} 和 {@link javax.xml.transform.stream.StreamSource StreamSource}。
+
+@return 可用于在单个 <code>Thread</code> 中执行转换的 <code>Transformer</code> 对象，永远不能返回 <code>null</code>。
+
+@throws TransformerConfigurationException 如果当解析 <code>Source</code> 时发生错误，或不能创建 <code>Transformer</code> 实例。
+ 
+@see <a href="http://www.w3.org/TR/xslt">XSL Transformations (XSLT) Version 1.0</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.Transformer javax.xml.transform.TransformerFactory.newTransformer() throws javax.xml.transform.TransformerConfigurationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>创建执行从 <code>Source</code> 到 <code>Result</code> 的复制的新 <code>Transformer</code>。即 &quot;<em>identity transform</em>&quot;。</p>
+
+@return 可用于在单个进程中执行转换的 Transformer 对象，永远不能返回 null。
+
+@throws TransformerConfigurationException 当不能创建 <code>Transformer</code> 实例时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.Templates javax.xml.transform.TransformerFactory.newTemplates(Source source) throws javax.xml.transform.TransformerConfigurationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Source 处理为 Templates 对象，后者是源的编译后表示形式。然后此 Templates 对象可由多个线程并发使用。创建 Templates 对象允许 TransformerFactory 执行转换指令的详细性能优化，而不影响运行时转换。
+
+@param source 保持 URL、输入流等的对象。
+
+@return 可用于转换目的的 Templates 对象，永远不能返回 <code>null</code>。
+
+@throws TransformerConfigurationException 当对构造 Templates 对象进行解析失败时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.Source javax.xml.transform.TransformerFactory.getAssociatedStylesheet(Source source, String media, String title, String charset) throws javax.xml.transform.TransformerConfigurationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>通过与给定标准匹配的 <a href="http://www.w3.org/TR/xml-stylesheet/">xml 样式表的处理指令</a> 获取与 XML <code>Source</code> 文档关联的样式表规范（或多个规范）。注意，可能返回几个样式表，在这种情况下它们作为导入列表或单个样式表中的层叠列表来使用。</p>
+
+@param source XML 源文档。
+@param media 要匹配的介质属性。可以为 null，此时将使用首选的 template（即 alternate = no）。
+@param title 要匹配的标题属性值。可以为 null。
+@param charset 要匹配的字符集属性值。可以为 null。
+
+@return 适合传递给 <code>TransformerFactory</code> 的 <code>Source</code> <code>Object</code>。
+ 
+@throws TransformerConfigurationException 如果 <code>source</code> 的解析过程中发生错误，则抛出 <code>Exception</code>。
+ 
+
+@see <a href="http://www.w3.org/TR/xml-stylesheet/">与 1.0 版本的 XML 文档关联的样式表</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.transform.TransformerFactory.setURIResolver(URIResolver resolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在转换过程中默认用于解析 document()、xsl:import 或 xsl:include 中所使用的 URI 的对象。
+
+@param resolver 实现 URIResolver 接口的对象，或为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.URIResolver javax.xml.transform.TransformerFactory.getURIResolver()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在转换过程中默认用于解析 document()、xsl:import 或 xsl:include 中所使用的 URI 的对象。
+
+@return 通过 setURIResolver 设置的 URIResolver。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.transform.TransformerFactory.setFeature(String name, boolean value) throws javax.xml.transform.TransformerConfigurationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置通过此工厂创建的此 <code>TransformerFactory</code> 和 <code>Transformer</code> 或 <code>Template</code> 的功能。</p>
+ 
+ <p>
+功能名称是完全限定的 {@link java.net.URI}。实现可以定义它们自己的功能。如果它创建的此 <code>TransformerFactory</code> 或 <code>Transformer</code> 或 <code>Template</code> 不支持该功能，则抛出 {@link TransformerConfigurationException}。<code>TransformerFactory</code> 可以公开功能值，但不能更改其状态。
+ </p>
+ 
+<p>所有实现必须支持 {@link javax.xml.XMLConstants#FEATURE_SECURE_PROCESSING} 功能。当功能为以下情况时：</p>
+ <ul>
+   <li>
+<code>true</code>: 实现将限制 XML 处理遵守实现限制，并且实现方式为实现所定义的安全方式。示例包括解析用户定义的样式表和函数。如果出于安全原因使 XML 处理受到限制，则将通过对注册的 {@link ErrorListener#fatalError(TransformerException exception)} 的调用来报告此情况。参见 {@link  #setErrorListener(ErrorListener listener)}。
+   </li>
+   <li>
+<code>false</code>: 实现将根据 XML 规范来处理 XML，而不管可能的实现限制。
+   </li>
+ </ul>
+ 
+@param name 功能名称。
+@param value 功能状态为 <code>true</code> 或 <code>false</code>。
+  
+@throws TransformerConfigurationException 如果它创建的此 <code>TransformerFactory</code> 或 <code>Transformer</code> 或 <code>Template</code> 不支持此功能。
+@throws NullPointerException 如果 <code>name</code> 参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.transform.TransformerFactory.getFeature(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找功能值。
+
+ <p>
+功能名称为完全限定的 {@link java.net.URI}。实现可以定义其自己的功能。如果其创建的 <code>TransformerFactory</code> 或 <code>Transformer</code> 或 <code>Template</code> 不支持该功能，则返回 <code>false</code>。<code>TransformerFactory</code> 可以公开功能值，但不能更改其状态。
+ </p>
+ 
+@param name 功能名称。
+ 
+@return 功能的当前状态，<code>true</code> 或 <code>false</code>。
+ 
+@throws NullPointerException 如果 <code>name</code> 参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.transform.TransformerFactory.setAttribute(String name, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许用户设置底层实现上的指定属性。此上下文中的属性定义为实现所提供的一个选项。如果底层实现不识别该属性，则抛出 <code>IllegalArgumentException</code>。
+
+@param name 属性名称。
+@param value 属性值。
+
+@throws IllegalArgumentException 当实现不能识别属性时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.transform.TransformerFactory.getAttribute(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许用户在底层实现上检索指定属性。如果底层实现不识别该属性，则抛出 <code>IllegalArgumentException</code>。
+ 
+@param name 属性名称。
+@param value 属性值。
+
+@throws IllegalArgumentException 当实现不能识别属性时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.transform.TransformerFactory.setErrorListener(ErrorListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 TransformerFactory 的错误事件侦听器，它将用于转换指令的处理，而不用于转换本身。如果 <code>ErrorListener</code> 侦听器为 <code>null</code>，则抛出 <code>IllegalArgumentException</code>。
+
+@param listener 新错误侦听器。
+
+@throws IllegalArgumentException 当 <code>listener</code> 为 <code>null</code> 时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.transform.ErrorListener javax.xml.transform.TransformerFactory.getErrorListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 TransformerFactory 的错误事件处理程序。
+
+@return 当前错误处理程序，它永远不应为 null。
+
+<!-- END DATA -->

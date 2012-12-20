@@ -1,0 +1,126 @@
+<!-- BEGIN KEY -->
+public interface java.beans.BeanInfo
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+希望提供有关其 bean 的显式信息的 bean 实现者可以提供某个 BeanInfo 类，该类实现此 BeanInfo 接口并提供有关其 bean 的方法、属性、事件等显式信息。
+ <p>
+bean 实现者不必提供一组完整的显式信息。可以挑选出希望提供的信息，其余部分将通过使用 bean 类方法的低级别反射和应用标准设计模式的自动分析来获得。
+ <p>
+有机会提供大量不同的信息作为各种 XyZDescriptor 类的一部分。但不必惊慌，真正需要的只是提供各种构造方法所需的最少核心信息。
+ <P>
+请参见 SimpleBeanInfo 类，它提供了用于 BeanInfo 类的一个便捷 "noop" 基类，可以为那些想要返回显式信息的特定位置重写该基类。
+ <P>
+要学习有关 bean 的所有行为，请参见 Introspector 类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.beans.BeanInfo.ICON_COLOR_16x16
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 16 x 16 彩色图标的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.beans.BeanInfo.ICON_COLOR_32x32
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 32 x 32 彩色图标的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.beans.BeanInfo.ICON_MONO_16x16
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 16 x 16 单色图标的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.beans.BeanInfo.ICON_MONO_32x32
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 32 x 32 单色图标的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.BeanDescriptor java.beans.BeanInfo.getBeanDescriptor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 beans <code>BeanDescriptor</code>。
+ 
+@return  提供有关 bean 的全面信息的 BeanDescriptor，比如其 displayName、customizer 等等。如果该信息应该通过自动分析获得，则可能返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.EventSetDescriptor[] java.beans.BeanInfo.getEventSetDescriptors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 beans <code>EventSetDescriptor</code>。
+ 
+@return  描述由此 bean 激发事件种类的 EventSetDescriptor 数组。如果该信息应该通过自动分析获得，则可能返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.beans.BeanInfo.getDefaultEventIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+bean 可能有一个“默认”事件，即使用 bean 时通常最有可能由用户使用的事件。
+@return 位于由 getEventSetDescriptors 返回的 EventSetDescriptor 数组中的默认事件的索引。
+<P>	如果没有默认事件，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.PropertyDescriptor[] java.beans.BeanInfo.getPropertyDescriptors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 beans <code>PropertyDescriptor</code>。
+ 
+@return 描述受此 bean 支持的可编辑属性的 PropertyDescriptor 数组。如果该信息应该通过自动分析获得，则可能返回 null。
+ <p>
+如果某个属性已建立索引，则结果数组中该属性的条目将属于 PropertyDescriptor 的 IndexedPropertyDescriptor 子类。getPropertyDescriptors 的客户端可以使用 "instanceof" 来检查给定 PropertyDescriptor 是否是一个 IndexedPropertyDescriptor。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.beans.BeanInfo.getDefaultPropertyIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+bean 可能有一个“默认”属性，即通常最有可能由自定义 bean 的用户一开始就选择更新的属性。
+@return  位于由 getPropertyDescriptors 返回的 PropertyDescriptor 数组中的默认属性的索引。
+<P>	如果没有默认属性，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.MethodDescriptor[] java.beans.BeanInfo.getMethodDescriptors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 beans <code>MethodDescriptor</code>。
+ 
+@return 描述受此 bean 支持的扩展可见方法的 MethodDescriptor 数组。如果该信息应该通过自动分析获得，则可能返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.BeanInfo[] java.beans.BeanInfo.getAdditionalBeanInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法允许 BeanInfo 对象返回提供关于当前 bean 额外信息的 BeanInfo 对象组成的任意集合。
+ <P>
+如果不同 BeanInfo 对象提供的信息之间有冲突和重叠，则当前 BeanInfo 优先于 getAdditionalBeanInfo 对象，数组中后面的元素优先于前面的元素。
+
+@return BeanInfo 对象数组。可能返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Image java.beans.BeanInfo.getIcon(int iconKind)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回一个图像对象，可用该对象表示工具框、工具栏等中的 bean。图标图像通常是 GIF，但将来可能包括其他格式。
+ <p>
+bean 不需要提供图标，并且可能从此方法返回 null。
+ <p>
+有四种可能的图标风格（16x16 彩色、32x32 彩色、16x16 单色、32x32 单色）。如果 bean 选择只支持一个图标，则建议支持 16x16 彩色。
+ <p>
+建议该图标有一个“透明的”背景，这样就可以将它们呈现在现有的背景上。
+
+@param  iconKind  所请求图标的种类。此参数应该是以下常数值之一：ICON_COLOR_16x16、ICON_COLOR_32x32、ICON_MONO_16x16 和 ICON_MONO_32x32。
+@return  表示所请求图标的图像对象。如果没有合适的图标可用，则可能返回 null。
+
+<!-- END DATA -->

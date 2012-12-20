@@ -1,0 +1,61 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.keyinfo.RetrievalMethod extends javax.xml.crypto.URIReference, javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>RetrievalMethod</code> 元素的表示形式。<code>RetrievalMethod</code> 对象用于传送对存储在另一个位置上的 <code>KeyInfo</code> 信息的引用。XML Schema Definition 的定义如下： 
+
+  <pre>
+   &lt;element name="RetrievalMethod" type="ds:RetrievalMethodType"/&gt;
+   &lt;complexType name="RetrievalMethodType"&gt;
+     &lt;sequence&gt;
+       &lt;element name="Transforms" type="ds:TransformsType" minOccurs="0"/&gt; 
+     &lt;/sequence&gt;  
+     &lt;attribute name="URI" type="anyURI"/&gt;
+     &lt;attribute name="Type" type="anyURI" use="optional"/&gt;
+   &lt;/complexType&gt;
+ </pre>
+
+通过调用 {@link KeyInfoFactory} 类的一个 {@link KeyInfoFactory#newRetrievalMethod newRetrievalMethod} 方法，并向其传递标识 KeyInfo 位置的 URI、可选的标识 KeyInfo 类型的类型 URI 和可选的 {@link Transform} 列表，可以创建 <code>RetrievalMethod</code> 实例，例如：
+ <pre>
+KeyInfoFactory factory = KeyInfoFactory.getInstance(&quot;DOM&quot;);
+RetrievalMethod rm = factory.newRetrievalMethod
+(&quot;#KeyValue-1&quot;, KeyValue.DSA_TYPE, Collections.singletonList(Transform.BASE64));
+ </pre>
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+@see KeyInfoFactory#newRetrievalMethod(String)
+@see KeyInfoFactory#newRetrievalMethod(String, String, List)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.keyinfo.RetrievalMethod.getTransforms()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个{@link java.util.Collections#unmodifiableList 不可修改的列表}，由此 <code>RetrievalMethod</code> 的 {@link Transform} 组成。
+
+@return 不可修改的 <code>Transform</code> 对象列表（可以为空，但不能为 <code>null</code>）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.keyinfo.RetrievalMethod.getURI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已引用的 <code>KeyInfo</code> 信息的 URI。
+
+@return 已引用 <code>KeyInfo</code> 信息（RFC 2396 格式）的 URI（不能为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.crypto.Data javax.xml.crypto.dsig.keyinfo.RetrievalMethod.dereference(XMLCryptoContext context) throws javax.xml.crypto.URIReferenceException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消引用此 <code>RetrievalMethod</code> 引用的 <code>KeyInfo</code> 信息，并应用指定的 <code>Transform</code>。
+
+@param context  <code>XMLCryptoContext</code>，包含用来取消引用 URI 的其他有用信息。上下文的 <code>baseURI</code> 和 <code>dereferencer</code> 参数（如果已指定）用于解析和取消引用此 <code>RetrievalMethod</code>
+@return 表示此 <code>RetrievalMethod</code> 引用的 <code>KeyInfo</code> 信息的原始内容的 <code>Data</code> 对象。调用者负责将返回的数据转换成适当的 <code>KeyInfo</code> 对象。
+@throws NullPointerException 如果 <code>context</code> 为 <code>null</code>
+@throws URIReferenceException 如果在取消引用时发生错误
+
+<!-- END DATA -->

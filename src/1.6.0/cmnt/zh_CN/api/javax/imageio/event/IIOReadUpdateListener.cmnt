@@ -1,0 +1,135 @@
+<!-- BEGIN KEY -->
+public interface javax.imageio.event.IIOReadUpdateListener extends java.util.EventListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 <code>ImageReader</code> 实现用于通知其图像和缩略图的调用者相关像素更新的接口。
+ 
+@see javax.imageio.ImageReader#addIIOReadUpdateListener
+@see javax.imageio.ImageReader#removeIIOReadUpdateListener
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.passStarted(ImageReader source, BufferedImage theImage, int pass, int minPass, int maxPass, int minX, int minY, int periodX, int periodY, int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告当前的读操作将开始逐步传递 (progressive pass)。读取支持逐步编码的图像时，支持逐步编码的格式 Reader 应该在完成每个传递时使用此方法通知客户端。
+
+<p> <code>minX</code>、<code>minY</code>、<code>width</code> 和 <code>height</code> 参数指示对将通过传递更新的区域的估计。如果传递交错进行，即仅更新所选行或列，则 <code>periodX</code> 和 <code>periodY</code> 参数将指示二次抽样的进行程度。<code>bands</code> 的值指示可能受影响的 band 集合。
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theImage 将被更新的 <code>BufferedImage</code>。
+@param pass 将要开始的传递的编号（从 0 开始）。
+@param minPass 将要解码的第一个传递的索引。
+@param maxPass 将要解码的最后一个传递的索引。
+@param minX 最左边的更新像素列的 X 坐标。
+@param minY 最上边的更新像素行的 Y 坐标。
+@param periodX 更新像素之间的水平间隔；值 1 表示没有间距。
+@param periodY 更新像素之间的垂直间隔；值 1 表示没有间距。
+@param bands 指示可能更新的 band 集合的 <code>int</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.imageUpdate(ImageReader source, BufferedImage theImage, int minX, int minY, int width, int height, int periodX, int periodY, int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告已更新图像的给定区域。应用程序可能选择重新显示指定区域，例如，为了提供逐步显示效果或执行其他增量处理。
+
+<p> 注意，不同的图像格式 reader 可能产生以多种不同顺序排列的解码像素。多数 reader 将生成以简单的从上到下、从左到右顺序排列的像素，而另一此则可能使用交错、平铺等多种传递。例如，调用时更新顺序甚至会由于网络速度的不同而相同。调用此方法并不能保证所有指定的像素都已经实际被更新，只保证在指定像素的某个子区域发生了更新。
+
+<p> 特定的 <code>ImageReader</code> 实现可以选择提供更新的频率。每次更新都指定自上次更新以来已经更新了图像的给定区域。区域由其空间边界框（<code>minX</code>、<code>minY</code>、<code>width</code> 和 <code>height</code>）、X 和 Y 子二次抽样因子（<code>periodX</code> 和 <code>periodY</code>）以及更新的 band 集合（<code>bands</code>）来描述。例如，更新：
+
+ <pre>
+ minX = 10
+ minY = 20
+ width = 3
+ height = 4
+ periodX = 2
+ periodY = 3
+ bands = { 1, 3 }
+ </pre>
+
+指示以下像素的 band 1 和 band 3 已更新：
+
+ <pre>
+ (10, 20) (12, 20) (14, 20)
+ (10, 23) (12, 23) (14, 23)
+ (10, 26) (12, 26) (14, 26)
+ (10, 29) (12, 29) (14, 29)
+ </pre>
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theImage 将被更新的 <code>BufferedImage</code>。
+@param minX 最左边的更新像素列的 X 坐标。
+@param minY 最上边的更新像素行的 Y 坐标。
+@param width 水平更新的像素数。
+@param height 垂直更新的像素数。
+@param periodX 更新像素之间的水平间隔；值 1 表示没有间距。
+@param periodY 更新像素之间的垂直间隔；值 1 表示没有间距。
+@param bands 指示要更新的 band 的 <code>int</code> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.passComplete(ImageReader source, BufferedImage theImage)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告当前读操作已经完成一个逐步传递。读取逐步编码的图像时，支持逐步编码格式的 Reader 应该在完成每个传递时使用此方法通知客户端。
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theImage 将被更新的 <code>BufferedImage</code>。
+
+@see javax.imageio.ImageReadParam#setSourceProgressivePasses(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.thumbnailPassStarted(ImageReader source, BufferedImage theThumbnail, int pass, int minPass, int maxPass, int minX, int minY, int periodX, int periodY, int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告当前的缩略图读操作将开始逐步传递。读取逐步编码的缩略图像时，支持逐步编码格式的 Reader 应该在完成每个传递时使用此方法通知客户端。
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theThumbnail 将被更新的 <code>BufferedImage</code> 缩略图。
+@param pass 将要开始的传递的编号（从 0 开始）。
+@param minPass 将要解码的第一个传递的索引。
+@param maxPass 将要解码的最后一个传递的索引。
+@param minX 最左边的更新像素列的 X 坐标。
+@param minY 最上边的更新像素行的 Y 坐标。
+@param periodX 更新像素之间的水平间隔；值 1 表示没有间距。
+@param periodY 更新像素之间的垂直间隔；值 1 表示没有间距。
+@param bands 指示可能更新的 band 集合的 <code>int</code> 数组。
+
+@see #passStarted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.thumbnailUpdate(ImageReader source, BufferedImage theThumbnail, int minX, int minY, int width, int height, int periodX, int periodY, int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告已更新缩略图图像的给定区域。应用程序可能选择重新显示指定区域，例如，为了提供逐步显示效果或执行其他增量处理。
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theThumbnail 将被更新的 <code>BufferedImage</code> 缩略图。
+@param minX 最左边的更新像素列的 X 坐标。
+@param minY 最上边的更新像素行的 Y 坐标。
+@param width 水平更新的像素数。
+@param height 垂直更新的像素数。
+@param periodX 更新像素之间的水平间隔；值 1 表示没有间距。
+@param periodY 更新像素之间的垂直间隔；值 1 表示没有间距。
+@param bands 指示要更新的 band 的 <code>int</code> 数组。
+
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.event.IIOReadUpdateListener.thumbnailPassComplete(ImageReader source, BufferedImage theThumbnail)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告当前缩略图读操作已经完成一个逐步传递。读取逐步编码的缩略图像时，具有支持逐步编码格式的 Reader 应该在完成每个传递时使用此方法通知客户端。
+
+@param source 调用此方法的 <code>ImageReader</code> 对象。
+@param theThumbnail 将被更新的 <code>BufferedImage</code> 缩略图。
+
+@see #passComplete
+
+<!-- END DATA -->

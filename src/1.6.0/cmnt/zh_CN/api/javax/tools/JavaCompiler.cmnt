@@ -1,0 +1,170 @@
+<!-- BEGIN KEY -->
+public interface javax.tools.JavaCompiler extends javax.tools.Tool, javax.tools.OptionChecker
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从程序中调用 Java&trade; 编程语言编译器的接口。
+
+<p>编译过程中，编译器可能生成诊断信息（例如，错误消息）。如果提供了诊断侦听器，那么诊断信息将被提供给该侦听器。如果没有提供侦听器，那么除非另行指定，否则诊断信息将被格式化为未指定的格式，并被写入到默认输出 {@code System.err}。即使提供了诊断侦听器，某些诊断信息也可能不适合 {@code Diagnostic}，并将被写入到默认输出。
+
+<p>编译器工具具有关联的标准文件管理器，此文件管理器是工具本地的（或内置的）。可以通过调用 {@linkplain #getStandardFileManager getStandardFileManager} 获取该标准文件管理器。
+
+<p>只要满足下面方法详细描述中的任意附加需求，编译器工具就必须与文件管理器一起运行。如果没有提供文件管理器，则编译器工具将使用标准文件管理器，比如 {@linkplain #getStandardFileManager getStandardFileManager} 返回的标准文件管理器。
+
+<p>实现此接口的实例必须符合 Java Language Specification 并遵照 Java Virtual Machine 规范生成类文件。{@linkplain Tool} 接口中定义了这些规范的版本。  
+
+此外，支持 {@link javax.lang.model.SourceVersion#RELEASE_6 SourceVersion.RELEASE_6} 或更高版本的此接口的实例还必须支持{@linkplain javax.annotation.processing 注释处理}。
+
+<p>编译器依赖于两种服务：{@linkplain DiagnosticListener 诊断侦听器}和{@linkplain JavaFileManager 文件管理器}。虽然此包中的大多数类和接口都定义了编译器（和一般工具）的 API，但最好不要在应用程序中使用接口 {@linkplain DiagnosticListener}、{@linkplain JavaFileManager}、{@linkplain FileObject} 和 {@linkplain JavaFileObject}。应该实现这些接口，用于为编译器提供自定义服务，从而定义编译器的 SPI。
+
+<p>此包中有很多类和接口，它们被设计用于简化 SPI 的实现，以自定义编译器行为：
+
+ <dl>
+<dt>{@link StandardJavaFileManager}</dt>
+   <dd>
+
+实现此接口的每个编译器都提供一个标准的文件管理器，以便在常规{@linkplain java.io.File 文件}上进行操作。StandardJavaFileManager 接口定义了从常规文件创建文件对象的其他方法。
+
+<p>标准文件管理器有两个用途：
+
+     <ul>
+<li>自定义编译器如何读写文件的基本构建块</li>
+<li>在多个编译任务之间共享</li>
+     </ul>
+
+<p>重新使用文件管理器可能会减少扫描文件系统和读取 jar 文件的开销。标准文件管理器必须与多个顺序编译共同工作，尽管这样做并不能减少开销，下例是建议的编码模式：
+
+     <pre>
+Files[] files1 = ...; // input for first compilation task
+Files[] files2 = ...; // input for second compilation task
+
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
+
+{@code Iterable<? extends JavaFileObject>} compilationUnits1 =
+fileManager.getJavaFileObjectsFromFiles({@linkplain java.util.Arrays#asList Arrays.asList}(files1));
+compiler.getTask(null, fileManager, null, null, null, compilationUnits1).call();
+
+{@code Iterable<? extends JavaFileObject>} compilationUnits2 =
+fileManager.getJavaFileObjects(files2); // use alternative method
+// reuse the same file manager to allow caching of jar files
+compiler.getTask(null, fileManager, null, null, null, compilationUnits2).call();
+
+fileManager.close();</pre>
+
+   </dd>
+
+<dt>{@link DiagnosticCollector}</dt>
+   <dd>
+用于将诊断信息收集在一个列表中，例如：
+     <pre>
+{@code Iterable<? extends JavaFileObject>} compilationUnits = ...;
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+{@code DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();}
+StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
+compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits).call();
+
+for (Diagnostic diagnostic :diagnostics.getDiagnostics())
+System.out.format(&quot;Error on line %d in %d%n&quot;,
+diagnostic.getLineNumber()
+diagnostic.getSource().toUri());
+
+fileManager.close();</pre>
+   </dd>
+
+   <dt>
+{@link ForwardingJavaFileManager}、{@link ForwardingFileObject} 和 {@link ForwardingJavaFileObject}
+   </dt>
+   <dd>
+
+子类化不可用于重写标准文件管理器的行为，因为标准文件管理器是通过调用编译器上的方法创建的，而不是通过调用构造方法创建的。应该使用转发（或委托）。允许自定义行为时，这些类使得将多个调用转发到给定文件管理器或文件对象变得容易。例如，考虑如何将所有的调用记录到 {@linkplain JavaFileManager#flush}：
+
+     <pre>
+final {@linkplain java.util.logging.Logger Logger} logger = ...;
+{@code Iterable<? extends JavaFileObject>} compilationUnits = ...;
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+StandardJavaFileManager stdFileManager = compiler.getStandardFileManager(null, null, null);
+JavaFileManager fileManager = new ForwardingJavaFileManager(stdFileManager) {
+public void flush() {
+logger.entering(StandardJavaFileManager.class.getName(), &quot;flush&quot;);
+super.flush();
+logger.exiting(StandardJavaFileManager.class.getName(), &quot;flush&quot;);
+           }
+       };
+compiler.getTask(null, fileManager, null, null, null, compilationUnits).call();</pre>
+   </dd>
+
+<dt>{@link SimpleJavaFileObject}</dt>
+   <dd>
+
+此类提供基本文件对象实现，该实现可用作创建文件对象的构建块。例如，下例显示了如何定义表示存储在字符串中的源代码的文件对象：
+
+     <pre>
+       /**
+* A file object used to represent source coming from a string.
+{@code *}/
+public class JavaSourceFromString extends SimpleJavaFileObject {
+           /**
+* The source code of this &quot;file&quot;.
+{@code *}/
+final String code;
+
+           /**
+* Constructs a new JavaSourceFromString.
+* {@code @}param name the name of the compilation unit represented by this file object
+* {@code @}param code the source code for the compilation unit represented by this file object
+{@code *}/
+JavaSourceFromString(String name, String code) {
+super({@linkplain java.net.URI#create URI.create}(&quot;string:///&quot; + name.replace('.','/') + Kind.SOURCE.extension),
+Kind.SOURCE);
+this.code = code;
+           }
+
+{@code @}Override
+public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+return code;
+           }
+       }</pre>
+   </dd>
+ </dl>
+
+@author Peter von der Ah&eacute;
+@author Jonathan Gibbons
+@see DiagnosticListener
+@see Diagnostic
+@see JavaFileManager
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.JavaCompiler.CompilationTask javax.tools.JavaCompiler.getTask(Writer out, JavaFileManager fileManager, javax.tools.DiagnosticListener<? super javax.tools.JavaFileObject> diagnosticListener, java.lang.Iterable<java.lang.String> options, java.lang.Iterable<java.lang.String> classes, java.lang.Iterable<? extends javax.tools.JavaFileObject> compilationUnits)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定组件和参数创建编译任务的 future。该编译可能没有完成，正如 CompilationTask 接口中所述。
+
+<p>如果提供了文件管理器，则它必须能够处理 {@link StandardLocation} 中定义的所有位置。
+
+@param out 用于来自编译器的其他输出的 Writer；如果为 {@code null}，则使用 {@code System.err}
+@param fileManager 文件管理器；如果为 {@code null}，则使用编译器的标准文件管理器
+@param diagnosticListener 诊断侦听器；如果为 {@code null}，则使用编译器的默认方法报告诊断信息
+@param options 编译器选项；{@code null} 表示没有选项
+@param classes 类名称（用于注释处理），{@code null} 表示没有类名称
+@param compilationUnits 要编译的编译单元；{@code null} 表示没有编译单元
+@return 表示编译的对象
+@throws RuntimeException 如果在用户提供的组件中发生不可恢复的错误。{@linkplain Throwable#getCause() cause} 为用户代码中的错误。
+@throws IllegalArgumentException 如果给定的任一编译单元具有不同于 {@linkplain JavaFileObject.Kind#SOURCE source} 的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.StandardJavaFileManager javax.tools.JavaCompiler.getStandardFileManager(javax.tools.DiagnosticListener<? super javax.tools.JavaFileObject> diagnosticListener, Locale locale, Charset charset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此工具获取一个标准文件管理器实现的新实例。文件管理器将使用给定的诊断侦听器来生成所有非致命诊断信息。将用适当的异常来指示致命错误。
+
+<p>如果调用 {@code flush} 或 {@code close} 后访问标准文件管理器，则它将被自动重新打开。标准文件管理器必须与其他工具一起使用。
+
+@param diagnosticListener 用于非致命诊断信息的诊断侦听器；如果为 {@code null}，则使用编译器的默认方法来报告诊断信息
+@param locale 格式化诊断信息时要应用的语言环境；如果为 {@code null}，则使用{@linkplain Locale#getDefault() 默认语言环境}。
+@param charset 用于解码字节的字符集；如果为 {@code null}，则使用平台默认的字符集
+@return 标准文件管理器
+
+<!-- END DATA -->

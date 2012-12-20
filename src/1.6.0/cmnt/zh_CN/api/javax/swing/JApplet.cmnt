@@ -1,0 +1,347 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JApplet extends java.applet.Applet implements javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.TransferHandler.HasGetTransferHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>java.applet.Applet</code> 的扩展版，它添加了对 JFC/Swing 组件架构的支持。有关使用 <code>JApplet</code> 的面向任务的文档，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/components/applet.html">How to Make Applets</a> 一节。
+ <p>
+<code>JApplet</code> 类与 <code>java.applet.Applet</code> 轻微不兼容。<code>JApplet</code> 包含一个 <code>JRootPane</code> 作为其唯一子类。<code>contentPane</code> 应该是 <code>JApplet</code> 任何子类的父类。作为一个便捷的 <code>add</code> 方法及其变体，<code>remove</code> 和 <code>setLayout</code> 被重写，其可以在必要时转发给 <code>contentPane</code>。这意味着您可以编写：
+ <pre>
+       applet.add(child);
+ </pre>
+
+并且可以将子类添加到 <code>contentPane</code> 中。<code>contentPane</code> 始终是非 <code>null</code> 的。试图将它设置为 <code>null</code> 会导致 <code>JApplet</code> 抛出异常。默认 <code>contentPane</code> 将在其上设置 <code>BorderLayout</code> 管理器。有关添加、移除和设置 <code>JApplet</code> 的 <code>LayoutManager</code> 的细节，请参阅 {@link javax.swing.RootPaneContainer}。
+ <p>
+有关 <code>contentPane</code>、<code>glassPane</code> 和 <code>layeredPane</code> 属性的完整描述，请参阅 <code>JRootPane</code> 文档。
+ <p>
+ <strong>警告：</strong> Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see javax.swing.RootPaneContainer
+@beaninfo attribute: isContainer true attribute: containerDelegate getContentPane description: Swing's Applet subclass.
+
+@version 1.65 12/19/03
+@author Arnaud Weber
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane javax.swing.JApplet.rootPane
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #getRootPane
+@see #setRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JApplet.rootPaneCheckingEnabled
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则对 <code>add</code> 和 <code>setLayout</code> 的调用将转发给 <code>contentPane</code>。该值最初为 false，但在构造 <code>JApplet</code> 时被设置为 true。
+
+@see #isRootPaneCheckingEnabled
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.TransferHandler javax.swing.JApplet.transferHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 此 applet 的 <code>TransferHandler</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JApplet() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 swing applet 实例。
+ <p>
+此构造方法将组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 返回的值。 
+
+@exception HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane javax.swing.JApplet.createRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法调用此方法创建默认 rootPane。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setTransferHandler(TransferHandler newHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置 {@code transferHandler} 属性，该属性是支持将数据传输到此组件的机制。如果该组件不支持数据传输操作，请使用 {@code null}。
+ <p>
+ 如果系统属性 {@code suppressSwingDropSupport} 为 {@code false}（默认值），并且此组件上的当前放置目标为 {@code null} 或者不是用户设置的放置目标，那么此方法将按以下方式更改放置目标：如果 {@code newHandler} 为 {@code null}，它将清除放置目标。如果不为 {@code null}，则它将安装一个新的 {@code DropTarget}。
+ <p>
+ 注：当用于 {@code JApplet} 时，{@code TransferHandler} 只提供数据导入功能，与数据导出有关的方法当前用于 {@code JComponent}。
+ <p>
+ 有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">
+ How to Use Drag and Drop and Data Transfer</a> 一节。 
+ 
+ @param newHandler 新的 {@code TransferHandler}
+
+ @see TransferHandler
+ @see #getTransferHandler
+ @see java.awt.Component#setDropTarget
+ @since 1.6
+
+ @beaninfo
+        bound: true
+       hidden: true
+  description: Mechanism for transfer of data into the component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler javax.swing.JApplet.getTransferHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取 <code>transferHandler</code> 属性。
+
+ @return <code>transferHandler</code> 属性的值
+
+ @see TransferHandler
+ @see #setTransferHandler
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.update(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用 <code>paint(g)</code>。重写此方法以防止不必要地调用清除了背景。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setJMenuBar(JMenuBar menuBar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 applet 的菜单栏。
+@param menuBar 将放置在 applet 中的菜单栏
+
+@see #getJMenuBar
+
+@beaninfo hidden: true description: The menubar for accessing pulldown menus from this applet.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JMenuBar javax.swing.JApplet.getJMenuBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 applet 上的菜单栏设置。
+
+@see #setJMenuBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JApplet.isRootPaneCheckingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否将对 <code>add</code> 和 <code>setLayout</code> 的调用转发给 <code>contentPane</code>。
+
+@return 如果转发 <code>add</code> 和 <code>setLayout</code>，则返回 true；否则返回 false
+
+@see #addImpl
+@see #setLayout
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JApplet.setRootPaneCheckingEnabled(boolean enabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否将对 <code>add</code> 和 <code>setLayout</code> 的调用转发给 <code>contentPane</code>。
+ 
+@param enabled  如果转发 <code>add</code> 和 <code>setLayout</code>，则该参数为 true；如果应该直接在 <code>JApplet</code> 上进行这两个操作，则该参数为 false。
+
+@see #addImpl
+@see #setLayout
+@see #isRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+@beaninfo hidden: true description: Whether the add and setLayout methods are forwarded
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JApplet.addImpl(Component comp, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的子 <code>Component</code>。重写此方法，以有条件地将调用转发给 <code>contentPane</code>。默认情况下，子组件被添加到 <code>contentPane</code> 而不是窗体中，有关细节，请参阅 {@link javax.swing.RootPaneContainer}。
+ 
+@param comp 要添加子组件的组件
+@param constraints 要遵从的约束条件
+@param index 索引
+@exception IllegalArgumentException 如果 <code>index</code> 无效
+@exception IllegalArgumentException 如果将容器的父容器添加到该容器中
+@exception IllegalArgumentException 如果将窗口添加到容器中
+ 
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.remove(Component comp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从容器中移除指定的组件。如果 <code>comp</code> 不是 <code>rootPane</code>，则此方法会将调用转发给 <code>contentPane</code>。如果 <code>comp</code> 不是 <code>JFrame</code> 或 <code>contentPane</code> 的子组件，则此方法不执行任何操作。
+
+@param comp 要移除的组件
+@throws NullPointerException 如果 <code>comp</code> 为 null
+@see #add
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setLayout(LayoutManager manager)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>LayoutManager</code>。重写此方法，以有条件地将调用转发给 <code>contentPane</code>。有关更多信息，请参阅 {@link javax.swing.RootPaneContainer}。
+
+@param manager <code>LayoutManager</code>
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JRootPane javax.swing.JApplet.getRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 applet 的 rootPane 对象。
+
+@see #setRootPane
+@see RootPaneContainer#getRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JApplet.setRootPane(JRootPane root)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 rootPane 属性。此方法由构造方法调用。
+@param root 此 applet 的 rootPane 对象 
+
+@see #getRootPane
+
+@beaninfo hidden: true description: the RootPane object for this applet.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.JApplet.getContentPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 applet 的 contentPane 对象。
+
+@see #setContentPane
+@see RootPaneContainer#getContentPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setContentPane(Container contentPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 contentPane 属性。此方法由构造方法调用。
+@param contentPane 此 applet 的 contentPane 对象 
+
+@exception java.awt.IllegalComponentStateException （运行时异常）如果内容窗格参数为 null
+@see #getContentPane
+@see RootPaneContainer#setContentPane
+
+@beaninfo hidden: true description: The client area of the applet where child components are normally inserted.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JLayeredPane javax.swing.JApplet.getLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 applet 的 layeredPane 对象。
+
+@exception java.awt.IllegalComponentStateException （运行时异常）如果分层窗格参数为 null
+@see #setLayeredPane
+@see RootPaneContainer#getLayeredPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setLayeredPane(JLayeredPane layeredPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 layeredPane 属性。此方法由构造方法调用。
+@param layeredPane 此 applet 的 layeredPane 对象 
+
+@see #getLayeredPane
+@see RootPaneContainer#setLayeredPane
+
+@beaninfo hidden: true description: The pane which holds the various applet layers.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JApplet.getGlassPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 applet 的 glassPane 对象。
+
+@see #setGlassPane
+@see RootPaneContainer#getGlassPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.setGlassPane(Component glassPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 glassPane 属性。此方法由构造方法调用。
+@param glassPane 此 applet 的 glassPane 对象 
+
+@see #getGlassPane
+@see RootPaneContainer#setGlassPane
+
+@beaninfo hidden: true description: A transparent pane used for menu rendering.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics javax.swing.JApplet.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JApplet.repaint(long time, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 在 <code>time</code> 毫秒内重绘此组件的指定矩形区域。有关如何处理重绘的详细信息，请参阅 <code>RepaintManager</code>。
+ 
+ @param     time   更新前等待的最长时间（以毫秒为单位）
+ @param     x    <i>x</i> 坐标
+ @param     y    <i>y</i> 坐标
+ @param     width    宽度
+ @param     height   高度
+ @see       RepaintManager
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JApplet.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JApplet 的字符串表示形式。此方法仅在进行调试时使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可以为空，但不可以为 <code>null</code>。
+ 
+@return 此 JApplet 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JApplet.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JApplet 关联的 AccessibleContext。对于 JApplet，AccessibleContext 采取 AccessibleJApplet 的形式。如有必要，可创建一个新的 AccessibleJApplet 实例。
+
+@return 一个 AccessibleJApplet，它充当此 JApplet 的 AccessibleContext  
+
+<!-- END DATA -->

@@ -1,0 +1,75 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.ListCellRenderer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识可用作&ldquo;橡皮图章&rdquo;以绘制 JList 中单元格的组件。例如，要将 JLabel 用作 ListCellRenderer，则需要编写：
+ <pre>
+ class MyCellRenderer extends JLabel implements ListCellRenderer {
+     public MyCellRenderer() {
+         setOpaque(true);
+     }
+
+     public Component getListCellRendererComponent(JList list,
+                                                   Object value,
+                                                   int index,
+                                                   boolean isSelected,
+                                                   boolean cellHasFocus) {
+
+         setText(value.toString());
+
+         Color background;
+         Color foreground;
+
+         // check if this cell represents the current DnD drop location
+         JList.DropLocation dropLocation = list.getDropLocation();
+         if (dropLocation != null
+                 && !dropLocation.isInsert()
+                 && dropLocation.getIndex() == index) {
+
+             background = Color.BLUE;
+             foreground = Color.WHITE;
+
+         // check if this cell is selected
+         } else if (isSelected) {
+             background = Color.RED;
+             foreground = Color.WHITE;
+
+         // unselected, and not the DnD drop location
+         } else {
+             background = Color.WHITE;
+             foreground = Color.BLACK;
+         };
+
+         setBackground(background);
+         setForeground(foreground);
+
+         return this;
+     }
+ }
+ </pre>
+
+@see JList
+@see DefaultListCellRenderer
+
+@version 1.17 12/19/03
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.ListCellRenderer.getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已配置用于显示指定值的组件。然后调用该组件的 <code>paint</code> 方法来&ldquo;呈现&rdquo;单元格。如果由于列表单元格没有固定的大小而有必要计算该列表的尺寸，则调用此方法来生成一个可在其上调用 <code>getPreferredSize</code> 的组件。
+
+@param list 正在绘制的 JList。
+@param value 由 list.getModel().getElementAt(index) 返回的值。
+@param index 单元格索引。
+@param isSelected 如果选择了指定的单元格，则为 true。
+@param cellHasFocus 如果指定的单元格拥有焦点，则为 true。
+@return 其 paint() 方法将呈现指定值的组件。
+
+@see JList
+@see ListSelectionModel
+@see ListModel
+
+<!-- END DATA -->

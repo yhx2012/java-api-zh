@@ -1,0 +1,267 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.MultiPixelPackedSampleModel extends java.awt.image.SampleModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MultiPixelPackedSampleModel</code> 类表示单 band 图像，能够将多个单样本像素打包到一个数据元素中。像素不能跨越数据元素。数据类型可以是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT 或 DataBuffer.TYPE_INT。每个像素必须是位数的 2 的次幂，像素数的 2 的次幂也必须正好能放入一个数据元素。像素位的间距等于每个像素的位数。扫描行间距在数据元素中，最后几个数据元素可以由未使用的像素填充。数据位的偏移量是从 {@link DataBuffer} 起始处到第一个像素的位偏移量，必须是像素位间距的倍数。
+ <p>
+以下代码说明了如何从 <code>DataBuffer</code> <code>data</code> 中提取像素 <code>x,&#xA0;y</code> 的位并将像素数据存储到 <code>dataType</code> 类型的数据元素中：
+ <pre>
+      int dataElementSize = DataBuffer.getDataTypeSize(dataType);
+      int bitnum = dataBitOffset + x*pixelBitStride;
+      int element = data.getElem(y*scanlineStride + bitnum/dataElementSize);
+      int shift = dataElementSize - (bitnum &amp; (dataElementSize-1))
+                  - pixelBitStride;
+      int pixel = (element &gt;&gt; shift) &amp; ((1 &lt;&lt; pixelBitStride) - 1);
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MultiPixelPackedSampleModel(int dataType, int w, int h, int numberOfBits)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定数据类型、宽度、高度和每像素位数的 <code>MultiPixelPackedSampleModel</code>。
+@param dataType  存储样本的数据类型
+@param w	所描述的图像数据区域的宽度，以像素为单位 
+@param h	所描述的图像数据区域的高度，以像素为单位 
+@param numberOfBits 每个像素的位数
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.MultiPixelPackedSampleModel(int dataType, int w, int h, int numberOfBits, int scanlineStride, int dataBitOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定数据类型、宽度、高度、每像素位数、扫描行间距和数据位偏移量的 <code>MultiPixelPackedSampleModel</code>。
+@param dataType  存储采用的数据类型
+@param w	所描述的图像数据区域的宽度，以像素为单位 
+@param h	所描述的图像数据区域的高度，以像素为单位
+@param numberOfBits 每个像素的位数
+@param scanlineStride 图像数据的行间距
+@param dataBitOffset 所描述的图像数据区域的数据位偏移量 
+@exception RasterFormatException 如果每像素位数不是 2 的次幂，或者像素数的 2 的次幂不能放入一个数据元素。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是 <code>DataBuffer.TYPE_BYTE</code>、<code>DataBuffer.TYPE_USHORT</code> 或 <code>DataBuffer.TYPE_INT</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.MultiPixelPackedSampleModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定宽度和高度的新 <code>MultiPixelPackedSampleModel</code>。这个新 <code>MultiPixelPackedSampleModel</code> 具有与此 <code>MultiPixelPackedSampleModel</code> 相同的存储数据类型和每像素位数。
+@param w 指定的宽度
+@param h 指定的高度
+@return 一个 {@link SampleModel}，具有指定宽度和高度，并且具有与此 <code>MultiPixelPackedSampleModel</code> 相同的存储数据类型和每像素位数。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.DataBuffer java.awt.image.MultiPixelPackedSampleModel.createDataBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建一个与此 <code>MultiPixelPackedSampleModel</code> 对应的 <code>DataBuffer</code>。该 <code>DataBuffer</code> 对象的数据类型和大小与此 <code>MultiPixelPackedSampleModel</code> 一致。<code>DataBuffer</code> 具有单个存储单元。
+@return 数据类型和大小与此 <code>MultiPixelPackedSampleModel</code> 相同的 <code>DataBuffer</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getNumDataElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回通过 {@link #getDataElements} 和 {@link #setDataElements} 方法传输一个像素所需的数据元素数。对于 <code>MultiPixelPackedSampleModel</code>，该值是一。
+@return 数据元素数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.MultiPixelPackedSampleModel.getSampleSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回所有 band 的每样本位数。
+@return 每个样本的位数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getSampleSize(int band)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回指定 band 的每样本位数。
+@param band 指定的 band
+@return 指定 band 的每样本位数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getOffset(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回数据数组元素中像素 (x,&nbsp;y) 的偏移量。
+@param x 指定像素的 X 坐标
+@param y 指定像素的 Y 坐标
+@return 指定像素的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getBitOffset(int x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数据元素中存储扫描行第 <code>x</code> 个像素的偏移量(以位为单位)。此偏移量对于所有扫描行都相同。
+@param x 指定的像素
+@return 指定像素的位偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getScanlineStride()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回扫描行的间距。
+@return 此 <code>MultiPixelPackedSampleModel</code> 的扫描行间距。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getPixelBitStride()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回像素位间距，以位为单位。此值与每像素位数相同。
+@return 此 <code>MultiPixelPackedSampleModel</code> 的 <code>pixelBitStride</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getDataBitOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回数据位的偏移量（以位为单位）。
+@return 此 <code>MultiPixelPackedSampleModel</code> 的 <code>dataBitOffset</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getTransferType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回通过 <code>getDataElements</code> 和 <code>setDataElements</code> 方法传输像素所使用的 TransferType。该 TransferType 可能与存储 DataType 相同，也可能不同。TransferType 是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT 或 DataBuffer.TYPE_INT 之一。
+@return transfertype。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.MultiPixelPackedSampleModel.createSubsetSampleModel(int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有此 <code>MultiPixelPackedSampleModel</code> band 子集的新 <code>MultiPixelPackedSampleModel</code>。因为 <code>MultiPixelPackedSampleModel</code> 只有一个 band，所以 bands 参数的长度必须为 1，指示第 0 个 band。
+@param bands 指定的 band
+@return 具有此 <code>MultiPixelPackedSampleModel</code> band 子集的新 <code>SampleModel</code>。
+@exception RasterFormatException 如果请求的 band 数不是 1。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.MultiPixelPackedSampleModel.getSample(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以 <code>int</code> 形式返回指定 band 中对应于 (x,&nbsp;y) 处像素的样本。如果坐标超出了范围，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x 指定像素的 X 坐标
+@param y 指定像素的 Y 坐标
+@param b	返回的 band，假定为 0
+@param data  包含图像数据的 <code>DataBuffer</code> 
+@return 包含指定像素样本的指定 band
+@exception ArrayIndexOutOfBoundException 如果指定的坐标超出了范围。
+@see #setSample(int, int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MultiPixelPackedSampleModel.setSample(int x, int y, int b, int s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用输入的 <code>int</code>，设置指定 band 中对应于 <code>DataBuffer</code> (x,y) 处像素的样本。如果坐标超出了范围，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x 指定像素的 X 坐标
+@param y 指定像素的 Y 坐标
+@param b 返回的 band，假定为 0
+@param s  <code>int</code> 形式的输入样本
+@param data 存储图像数据的 <code>DataBuffer</code>  
+@exception ArrayIndexOutOfBoundsException 如果坐标超出了范围。
+@see #getSample(int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.MultiPixelPackedSampleModel.getDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回 TransferType 类型基本数组中单个像素的数据。对于 <code>MultiPixelPackedSampleModel</code>，该数组有一个元素，类型为可保存单个像素的 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT 或 DataBuffer.TYPE_INT 中的最小值。通常，<code>obj</code> 作为 <code>null</code> 传入，从而 <code>Object</code> 将被自动创建，并具有正确的基本数据类型。
+ <p>
+以下代码说明了如何将一个像素的数据从 <code>DataBuffer</code> <code>db1</code>（其存储布局由 <code>MultiPixelPackedSampleModel</code> <code>mppsm1</code> 描述）传输到 <code>DataBuffer</code> <code>db2</code>（其存储布局由 <code>MultiPixelPackedSampleModel</code> <code>mppsm2</code> 描述）。该传输通常比使用 <code>getPixel</code> 或 <code>setPixel</code> 更为高效。
+ <pre>
+ 	     MultiPixelPackedSampleModel mppsm1, mppsm2;
+	     DataBufferInt db1, db2;
+ 	     mppsm2.setDataElements(x, y, mppsm1.getDataElements(x, y, null,
+                              db1), db2);
+ </pre>
+如果两个 <code>SampleModel</code> 具有相同的 band 数，相应的 band 具有相同的每样本位数，并且 TransferType 也相同，则使用 <code>getDataElements</code> 或 <code>setDataElements</code> 在两个 <code>DataBuffer/SampleModel</code> 对之间进行传输是合法的。
+ <p>
+如果 <code>obj</code> 不为 <code>null</code>，则它应是一个 TransferType 类型的基本数组。否则将抛出 <code>ClassCastException</code>。如果坐标超出了范围，或者 <code>obj</code> 不为 <code>null</code> 并且其大小不足以保存该像素数据，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x         指定像素的 X 坐标
+@param y         指定像素的 Y 坐标
+@param obj       一个基本数组，像素数据将返回到该数组中；或者为 <code>null</code>。
+@param data 包含图像数据的 <code>DataBuffer</code>。
+@return 包含指定像素数据的 <code>Object</code>。
+@exception ClassCastException 如果 <code>obj</code> 不是 TransferType 类型的基本数组，或者不为 <code>null</code>
+@exception ArrayIndexOutOfBoundsException 如果坐标超出了范围，或者 <code>obj</code> 不为 <code>null</code> 或其大小不足以保存该像素数据
+@see #setDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.MultiPixelPackedSampleModel.getPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>int</code> 数组第一个元素中的指定单个 band 像素。如果坐标超出了范围，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param iArray 包含要返回像素的数组，或者为 <code>null</code>
+@param data 存储图像数据的 <code>DataBuffer</code> 
+@return 包含指定像素的数组。
+@exception ArrayIndexOutOfBoundsException 如果坐标超出了范围范围
+@see #setPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MultiPixelPackedSampleModel.setDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 TransferType 类型基本数组设置指定 <code>DataBuffer</code> 中单个像素的数据。对于 <code>MultiPixelPackedSampleModel</code>，只有数组的第一个元素才保存有效数据，类型必须为可以保存单个像素的 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT 或 DataBuffer.TYPE_INT 的最小值。
+ <p>
+以下代码说明了如何将一个像素的数据从 <code>DataBuffer</code> <code>db1</code>（其存储布局由 <code>MultiPixelPackedSampleModel</code> <code>mppsm1</code> 所描述）传输到 <code>DataBuffer</code> <code>db2</code>（其存储布局由 <code>MultiPixelPackedSampleModel</code> <code>mppsm2</code> 所描述）。该传输通常比使用 <code>getPixel</code> 或 <code>setPixel</code> 更为高效。
+ <pre>
+ 	     MultiPixelPackedSampleModel mppsm1, mppsm2;
+	     DataBufferInt db1, db2;
+ 	     mppsm2.setDataElements(x, y, mppsm1.getDataElements(x, y, null,
+                              db1), db2);
+ </pre>
+如果两个 <code>SampleModel</code> 对象具有相同的 band 数，相应的 band 具有相同的每样本位数，并且 TransferType 也相同，则使用 <code>getDataElements</code> 或 <code>setDataElements</code> 在两个 <code>DataBuffer/SampleModel</code> 对之间进行传输是合法的。
+ <p>
+<code>obj</code> 必须是 TransferType 类型的基本数组。否则将抛出 <code>ClassCastException</code>。如果坐标超出了范围，或者 <code>obj</code> 大小不足以保存该像素数据，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param obj 包含像素数据的基本数组
+@param data 包含图像数据的 <code>DataBuffer</code> 
+@see #getDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.MultiPixelPackedSampleModel.setPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 <code>int</code> 数组设置 <code>DataBuffer</code> 中的某个像素。如果坐标超出了范围，则抛出 <code>ArrayIndexOutOfBoundsException</code>。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param iArray  <code>int</code> 数组中的输入像素
+@param data 包含图像数据的 <code>DataBuffer</code> 
+@see #getPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->

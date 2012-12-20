@@ -1,0 +1,308 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.DefaultRowSorter extends javax.swing.RowSorter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RowSorter</code> 的一个实现，它围绕基于网格的数据模型提供排序和过滤操作。除了创建和安装 <code>RowSorter</code> 之外，几乎不需要直接与它交互。有关 <code>JTable</code> 的 <code>RowSorter</code> 具体实现，请参阅 {@link javax.swing.table.TableRowSorter TableRowSorter}。
+ <p>
+排序操作依次根据当前的 <code>SortKey</code> 完成。如果两个对象相等（<code>Comparator</code> 对于列返回 0），则使用下一个 <code>SortKey</code>。如果没有剩余的 <code>SortKey</code> 或者顺序为 <code>UNSORTED</code>，则使用模型中行的顺序。
+ <p>
+每一列的排序操作通过 <code>Comparator</code> 来完成，可以使用 <code>setComparator</code> 方法来指定 <code>Comparator</code>。如果尚未指定 <code>Comparator</code>，则先对底层对象调用 <code>toString</code>，再对其结果调用 <code>Collator.getInstance()</code>，使用所返回的 <code>Comparator</code>。<code>Comparator</code> 不传递 <code>null</code>。<code>null</code> 值被视为在非 <code>null</code> 值之前出现，两个 <code>null</code> 值被认为是相等的。
+ <p>
+如果指定的 <code>Comparator</code> 将其参数强制转换为一个模型没有提供的类型，则对数据进行排序时将抛出 <code>ClassCastException</code>。
+ <p>
+除了排序操作，<code>DefaultRowSorter</code> 还提供过滤行的能力。过滤操作通过用 <code>setRowFilter</code> 方法指定的 <code>RowFilter</code> 来完成。如果没有指定过滤器，则包含所有行。
+ <p>
+默认情况下，行是未排序的（与模型相同），每一列都是可排序的。默认的 <code>Comparator</code> 记录在子类中（例如，{@link javax.swing.table.TableRowSorter TableRowSorter}）。
+ <p>
+如果底层模型结构更改（调用了 <code>modelStructureChanged</code> 方法），则以下内容被重置为默认值：按列的 <code>Comparator</code>、当前排序顺序、每一列是否都是可排序的。要找到默认的 <code>Comparator</code>，请参阅具体实现（例如，{@link javax.swing.table.TableRowSorter TableRowSorter}）。默认的排序顺序是未排序的（与模型相同），默认情况下列是可排序的。
+ <p>
+如果底层模型结构更改（调用了 <code>modelStructureChanged</code> 方法），则以下内容被重置为默认值：按列的 <code>Comparator</code>、当前排序顺序、某一列是否是可排序的。
+ <p>
+<code>DefaultRowSorter</code> 是一个抽象类。通过调用 {@code setModelWrapper}，具体子类必须提供对底层数据的访问。调用构造方法之后<b>必须</b>立即调用 {@code setModelWrapper} 方法，最好是从子类的构造方法中进行调用。如果使用 {@code DefaultRowSorter} 时没有指定 {@code ModelWrapper}，则会导致不确定的行为。
+ <p>
+<code>DefaultRowSorter</code> 有两种形式的类型参数。第一种类型参数对应于模型的类，例如 <code>DefaultTableModel</code>。第二种类型参数对应于传递给 <code>RowFilter</code> 的标识符的类。有关类型参数的详细信息，请参阅 <code>TableRowSorter</code> 和 <code>RowFilter</code>。
+
+@param <M> 模型的类型
+@param <I> 传递给 <code>RowFilter</code> 的标识符类型
+@version 1.20 06/23/06
+@see javax.swing.table.TableRowSorter
+@see javax.swing.table.DefaultTableModel
+@see java.text.Collator
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.DefaultRowSorter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空 <code>DefaultRowSorter</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.swing.DefaultRowSorter.setModelWrapper(javax.swing.DefaultRowSorter.ModelWrapper<M, I> modelWrapper)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型包装器，它提供将要进行排序和过滤的数据。
+
+@param modelWrapper 负责提供要进行排序和过滤的数据的模型包装器
+@throws IllegalArgumentException 如果 {@code modelWrapper} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.DefaultRowSorter.ModelWrapper<M, I> javax.swing.DefaultRowSorter.getModelWrapper()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回模型包装器，它提供将要进行排序和过滤的数据。
+
+@return 负责提供要进行排序和过滤的数据的模型包装器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final M javax.swing.DefaultRowSorter.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回底层模型。
+
+@return 底层模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setSortable(int column, boolean sortable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定列是否可排序。只有调用 <code>toggleSortOrder</code> 时才检查指定的值。通过直接设置排序键，仍然可以对已标记为不可排序的列进行排序。默认值为 true。
+
+@param column 要启用排序或禁用排序的列，就底层模型而言
+@param sortable 指定的列是否可排序
+@throws IndexOutOfBoundsException 如果 <code>column</code> 超出模型的范围
+@see #toggleSortOrder
+@see #setSortKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.DefaultRowSorter.isSortable(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的列可排序，则返回 true；否则返回 false。
+
+@param column 要检查排序的列，就底层模型而言
+@return 如果该列可排序，则返回 true
+@throws IndexOutOfBoundsException 如果 <code>column</code> 超出底层模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setSortKeys(java.util.List<? extends javax.swing.RowSorter.SortKey> sortKeys)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置排序键。此方法创建所提供 {@code List} 的一个副本；对所提供 {@code List} 的后续更改不影响此 {@code DefaultRowSorter}。如果排序键已更改，则此方法触发一个排序。 
+
+@param sortKeys 新的 <code>SortKey</code>；<code>null</code> 是指定一个空列表的简单表示方法，表示视图应该是未排序的。
+@throws IllegalArgumentException 如果 <code>sortKey</code> 中的任一值为 null，或者有超出模型范围的列索引
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.swing.RowSorter.SortKey> javax.swing.DefaultRowSorter.getSortKeys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前排序键。此方法返回一个无法修改的{@code 非 null List}。如果需要更改排序键，可创建所返回 {@code List} 的一个副本，更改该副本并使用新列表调用 {@code setSortKeys}。
+
+@return 当前排序顺序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setMaxSortKeys(int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置排序键的最大数量。排序键的数量决定了排序时如何解决相等的值。例如，假定创建了一个表格行排序器并对其调用 <code>setMaxSortKeys(2)</code>。用户单击列 1 表头，使表格行按照列 1 中的项进行排序。然后，用户单击列 2 的表头，使表格按照列 2 中的项进行排序；如果列 2 中的所有项都相等，则按照列 1 中的项对那些特定行进行排序。在这种情况下，我们说行首先在列 2 上进行排序，其次在列 1 上进行排序。如果用户单击列 3 的表头，则首先在列 3 上对项进行排序，其次在列 2 上进行排序。由于排序键的最大数量已经通过 <code>setMaxSortKeys</code> 被设置为 2，所以列 1 不再影响顺序。
+ <p>
+排序键的最大数量由 <code>toggleSortOrder</code> 强制指定。可以通过直接调用 <code>setSortKeys</code> 指定更多的排序键，并且这些排序键都将被遵守。但是，如果之后调用了 <code>toggleSortOrder</code>，则将强制指定排序键的最大数量。默认值为 3。
+
+@param max 排序键的最大数量
+@throws IllegalArgumentException 如果 <code>max</code> &lt; 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.DefaultRowSorter.getMaxSortKeys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回排序键的最大数量。
+
+@return 排序键的最大数量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setSortsOnUpdates(boolean sortsOnUpdates)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则指定应该在底层模型更新（调用了 <code>rowsUpdated</code>）时进行排序。例如，如果为 true 并且用户编辑了一个条目，则该项在视图中的位置可能改变。默认值为 false。
+
+@param sortsOnUpdates 是否在发生更新事件时进行排序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.DefaultRowSorter.getSortsOnUpdates()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果底层模型更新时应该进行排序，则返回 true；否则返回 false。
+
+@return 模型更新时是否进行排序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setRowFilter(javax.swing.RowFilter<? super M, ? super I> filter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用于确定哪些行（如果有）应该在视图中隐藏的过滤器。过滤器在排序之前应用。<code>null</code> 值表示应该包括模型中的所有值。
+<p>
+将包装底层模型的 <code>Entry</code> 传递给 <code>RowFilter</code> 的 <code>include</code> 方法。<code>Entry</code> 的列数对应于 <code>ModelWrapper</code> 的列数。标识符也取自该 <code>ModelWrapper</code>。
+ <p>
+此方法将触发排序。
+
+@param filter 用于确定应该包括哪些条目的过滤器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.RowFilter<? super M, ? super I> javax.swing.DefaultRowSorter.getRowFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于确定哪些行（如果有）应该在视图中隐藏的过滤器。
+
+@return 过滤器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.toggleSortOrder(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定列已经是主要排序列，则反转排序顺序（将升序变为降序，或将降序变为升序）；否则，使指定列成为主要排序列，并使用升序排序顺序。如果指定列不可排序，则此方法没有任何效果。
+
+@param column 要变为主要排序列的列索引，就底层模型而言
+@throws IndexOutOfBoundsException {@inheritDoc}
+@see #setSortable(int,boolean)
+@see #setMaxSortKeys(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.DefaultRowSorter.convertRowIndexToView(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.DefaultRowSorter.convertRowIndexToModel(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.sort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据当前正在排序的列的排序键以及与此排序器关联的过滤器（如果有）对视图中的行进行排序和过滤。空 <code>sortKeys</code> 列表表示视图应该未排序，与模型相同。
+
+@see #setRowFilter
+@see #setSortKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.DefaultRowSorter.useToString(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回排序过程中进行比较之前是否要将值转换为字符串。如果为 true，则将使用 <code>ModelWrapper.getStringValueAt</code>；否则，将使用 <code>ModelWrapper.getValueAt</code>。由子类（比如 <code>TableRowSorter</code>）决定是否在其 <code>ModelWrapper</code> 实现中遵守此值。
+
+@param column 要测试的列的索引，就底层模型而言
+@throws IndexOutOfBoundsException 如果 <code>column</code> 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.setComparator(int column, java.util.Comparator<?> comparator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置对指定列进行排序时要使用的 <code>Comparator</code>。此方法不会触发排序。如果想要在设置比较器之后进行排序，则需要显式地调用 <code>sort</code>。
+
+@param column 要应用 <code>Comparator</code> 的列的索引，就底层模型而言
+@param comparator 要使用的 <code>Comparator</code>
+@throws IndexOutOfBoundsException 如果 <code>column</code> 超出底层模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Comparator<?> javax.swing.DefaultRowSorter.getComparator(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定列的 <code>Comparator</code>。如果没有为列指定 <code>Comparator</code>，则此方法将返回 <code>null</code>。
+
+@param column 要获取 <code>Comparator</code> 的列，就底层模型而言
+@return 指定列的 <code>Comparator</code>
+@throws IndexOutOfBoundsException 如果 <code>column</code> 超出底层模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.DefaultRowSorter.getViewRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.DefaultRowSorter.getModelRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.modelStructureChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.allRowsChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.rowsInserted(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.rowsDeleted(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.rowsUpdated(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.DefaultRowSorter.rowsUpdated(int firstRow, int endRow, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->

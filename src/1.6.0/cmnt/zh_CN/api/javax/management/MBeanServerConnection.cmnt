@@ -1,0 +1,479 @@
+<!-- BEGIN KEY -->
+public interface javax.management.MBeanServerConnection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示了与 MBean 服务器（无论是本地的还是远程的）进行通信的一种方式。表示本地 MBean 服务器的 {@link MBeanServer} 接口扩展了此接口。
+
+@since 1.5
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServerConnection.createMBean(String className, ObjectName name) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在 MBean 服务器中实例化并注册一个 MBean。MBean 服务器将使用其{@link javax.management.loading.ClassLoaderRepository 默认的 Loader Repository} 来加载 MBean 的类。对象名与该 MBean 相关联。如果给定的对象名为 null，则该 MBean 必须提供自己的名称，方法是实现 {@link javax.management.MBeanRegistration MBeanRegistration} 接口并从 {@link MBeanRegistration#preRegister preRegister} 方法中返回名称。</p>
+
+<p>此方法等效于 {@link #createMBean(String,ObjectName,Object[],String[]) createMBean(className, name, (Object[]) null, (String[]) null)}。</p>
+
+@param className 要实例化的 MBean 的类名。
+@param name 该 MBean 的对象名。可以为 null。	 
+
+@return 一个 <CODE>ObjectInstance</CODE>，包含新实例化的 MBean 的 <CODE>ObjectName</CODE> 和 Java 类名。如果包含的 <code>ObjectName</code> 是 <code>n</code>，则所包含的 Java 类名是 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@exception ReflectionException 包装在试图调用 MBean 的构造方法时所出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception InstanceAlreadyExistsException 如果该 MBean 已经处于 MBean 服务器的控制之下。
+@exception MBeanRegistrationException 如果 MBean 的 <CODE>preRegister</CODE>（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。不注册该 MBean。
+@exception MBeanException 如果 MBean 的构造方法已经抛出异常
+@exception NotCompliantMBeanException 如果此类不是符合 JMX 的 MBean
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null，传入参数中的 <CODE>ObjectName</CODE> 包含一个模式或者没有为该 MBean 指定 <CODE>ObjectName</CODE>。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServerConnection.createMBean(String className, ObjectName name, ObjectName loaderName) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在 MBean 服务器中实例化并注册一个 MBean。通过其对象名标识使用的类加载器。对象名与该 MBean 相关联。如果加载器的对象名为 null，则将使用加载 MBean 服务器的 ClassLoader。如果给定的 MBean 对象名为 null，则该 MBean 必须提供自己的名称，方法是实现 {@link javax.management.MBeanRegistration MBeanRegistration} 接口并从 {@link MBeanRegistration#preRegister preRegister} 方法中返回名称。</p>
+
+<p>此方法等效于 {@link #createMBean(String,ObjectName,ObjectName,Object[],String[]) createMBean(className, name, loaderName, (Object[]) null, (String[]) null)}。</p>
+
+@param className 要实例化的 MBean 的类名。
+@param name 该 MBean 的对象名。可以为 null。
+@param loaderName 要使用的类加载器的对象名。
+
+@return 一个 <CODE>ObjectInstance</CODE>，包含新实例化的 MBean 的 <CODE>ObjectName</CODE> 和 Java 类名。如果包含的 <code>ObjectName</code> 是 <code>n</code>，则所包含的 Java 类名是 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@exception ReflectionException 包装在试图调用 MBean 的构造方法时所出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception InstanceAlreadyExistsException 如果该 MBean 已经处于 MBean 服务器的控制之下。
+@exception MBeanRegistrationException 如果 MBean 的 <CODE>preRegister</CODE>（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。不注册该 MBean。
+@exception MBeanException 如果 MBean 的构造方法已经抛出异常。
+@exception NotCompliantMBeanException 如果此类不是符合 JMX 的 MBean。
+@exception InstanceNotFoundException 如果未在 MBean 服务器中注册指定的类加载器。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null，传入参数中的 <CODE>ObjectName</CODE> 包含一个模式或者没有为该 MBean 指定 <CODE>ObjectName</CODE>。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServerConnection.createMBean(String className, ObjectName name, java.lang.Object[] params, java.lang.String[] signature) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 MBean 服务器中实例化并注册一个 MBean。MBean 服务器将使用其{@link javax.management.loading.ClassLoaderRepository 默认的 Loader Repository} 来加载 MBean 的类。对象名与该 MBean 相关联。如果给定的对象名为 null，则该 MBean 必须提供自己的名称，方法是实现 {@link javax.management.MBeanRegistration MBeanRegistration} 接口并从 {@link MBeanRegistration#preRegister preRegister} 方法中返回名称。
+
+@param className 要实例化的 MBean 的类名。
+@param name 该 MBean 的对象名。可以为 null。
+@param params 一个数组，包含要调用的构造方法的参数。
+@param signature 一个数组，包含要调用的构造方法的签名。
+
+@return 一个 <CODE>ObjectInstance</CODE>，包含新实例化的 MBean 的 <CODE>ObjectName</CODE> 和 Java 类名。如果包含的 <code>ObjectName</code> 是 <code>n</code>，则所包含的 Java 类名是 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@exception ReflectionException 包装在试图调用 MBean 的构造方法时所出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception InstanceAlreadyExistsException 如果该 MBean 已经处于 MBean 服务器的控制之下。
+@exception MBeanRegistrationException 如果 MBean 的 <CODE>preRegister</CODE>（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。不注册该 MBean。
+@exception MBeanException 如果 MBean 的构造方法已经抛出异常
+@exception NotCompliantMBeanException 如果此类不是符合 JMX 的 MBean
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null，传入参数中的 <CODE>ObjectName</CODE> 包含一个模式或者没有为该 MBean 指定 <CODE>ObjectName</CODE>。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServerConnection.createMBean(String className, ObjectName name, ObjectName loaderName, java.lang.Object[] params, java.lang.String[] signature) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 MBean 服务器中实例化并注册一个 MBean。通过其对象名标识使用的类加载器。对象名与该 MBean 相关联。如果未指定加载器的对象名，则将使用加载 MBean 服务器的 ClassLoader。如果给定的 MBean 对象名为 null，则该 MBean 必须提供自己的名称，方法是实现 {@link javax.management.MBeanRegistration MBeanRegistration} 接口并从 {@link MBeanRegistration#preRegister preRegister} 方法中返回名称。
+
+@param className 要实例化的 MBean 的类名。
+@param name 该 MBean 的对象名。可以为 null。
+@param params 一个数组，包含要调用的构造方法的参数。
+@param signature 一个数组，包含要调用的构造方法的签名。
+@param loaderName 要使用的类加载器的对象名。
+
+@return 一个 <CODE>ObjectInstance</CODE>，包含新实例化的 MBean 的 <CODE>ObjectName</CODE> 和 Java 类名。如果包含的 <code>ObjectName</code> 是 <code>n</code>，则所包含的 Java 类名是 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@exception ReflectionException 包装在试图调用 MBean 的构造方法时所出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception InstanceAlreadyExistsException 如果该 MBean 已经处于 MBean 服务器的控制之下。
+@exception MBeanRegistrationException 如果 MBean 的 <CODE>preRegister</CODE>（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。不注册该 MBean。
+@exception MBeanException 如果 MBean 的构造方法已经抛出异常
+@exception NotCompliantMBeanException 如果此类不是符合 JMX 的 MBean
+@exception InstanceNotFoundException 如果未在 MBean 服务器中注册指定的类加载器。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null，传入参数中的 <CODE>ObjectName</CODE> 包含一个模式或者没有为该 MBean 指定 <CODE>ObjectName</CODE>。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.unregisterMBean(ObjectName name) throws javax.management.InstanceNotFoundException, javax.management.MBeanRegistrationException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 MBean 服务器中注销一个 MBean。通过 MBean 的对象名来标识 MBean。一旦调用了该方法，就无法再通过 MBean 的对象名来访问该 MBean。
+
+@param name 要注销的 MBean 的对象名。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception MBeanRegistrationException 如果 MBean 的 preDeregister（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null，或者试图注销的 MBean 是 {@link javax.management.MBeanServerDelegate MBeanServerDelegate} MBean。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServerConnection.getObjectInstance(ObjectName name) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得向 MBean 服务器注册的给定 MBean 的 <CODE>ObjectInstance</CODE>。
+
+@param name MBean 的对象名。
+
+@return 与 <VAR>name</VAR> 所指定的 MBean 相关联的 <CODE>ObjectInstance</CODE>。包含的 <code>ObjectName</code> 是 <code>name</code>， 且所包含的类名是 <code>{@link #getMBeanInfo getMBeanInfo(name)}.getClassName()</code>。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<javax.management.ObjectInstance> javax.management.MBeanServerConnection.queryMBeans(ObjectName name, QueryExp query) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 MBean 服务器所控制的 MBean。此方法允许获得下列任意内容：所有 MBean、由与 <CODE>ObjectName</CODE> 和/或 Query 表达式相匹配的模式所指定的一组 MBean、一个特定的 MBean。当对象名为 null 并且未指定域和键属性时，会选中所有对象（如果指定了查询，则进行过滤）。它返回已选中 MBean 的 <CODE>ObjectInstance</CODE> 对象集（包含 <CODE>ObjectName</CODE> 和 Java 类名）
+
+@param name 对象名模式，标识要检索的 MBean。如果为 null 或未指定域和键属性，则检索所有已注册的 MBean。
+@param query 应用到所选 MBean 的查询表达式。如果为 null，则不对所选的 MBean 应用查询表达式。
+
+@return 包含所选的 MBean 的 <CODE>ObjectInstance</CODE> 对象的集合。如果没有满足该查询的 MBean，则返回一个空列表。
+
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<javax.management.ObjectName> javax.management.MBeanServerConnection.queryNames(ObjectName name, QueryExp query) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 MBean 服务器所控制的 MBean 的名称。此方法允许获得下列任意内容：所有 MBean 的名称、由与 <CODE>ObjectName</CODE> 和/或 Query 表达式相匹配的模式所指定的一组 MBean 的名称、一个特定 MBean 的名称（等效于测试是否已注册某个 MBean）。当对象名为 null 并且未指定域和键属性时，会选中所有对象（如果指定了查询，则进行过滤）。它返回已选中的 MBean 的 ObjectNames 集合。
+
+@param name 对象名模式，标识要检索的 MBean 名称。如果为 null 或未指定域和键属性，则检索所有已注册的 MBean 的名称。
+@param query 应用到所选 MBean 的查询表达式。如果为 null，则不对选中 MBean 应用查询表达式。
+
+@return 一个集合，包含已选中 MBean 的 ObjectNames。如果没有满足该查询的 MBean，则返回一个空列表。
+
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.MBeanServerConnection.isRegistered(ObjectName name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查某个 MBean（通过其对象名标识）是否已向 MBean 服务器注册。
+
+@param name 要检查的 MBean 的对象名。
+
+@return 如果已在 MBean 服务器中注册了该 MBean，则返回 True；否则返回 false。
+
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Integer javax.management.MBeanServerConnection.getMBeanCount() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 服务器中已注册的 MBean 数目。
+
+@return 已注册的 MBean 数。
+
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServerConnection.getAttribute(ObjectName name, String attribute) throws javax.management.MBeanException, javax.management.AttributeNotFoundException, javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 MBean 的特定属性值。通过 MBean 的对象名来标识 MBean。
+
+@param name MBean 的对象名，要通过该对象名检索 MBean 的属性。
+@param attribute 指定要检索的属性名的 String。
+
+@return	检索到的属性值。
+
+@exception AttributeNotFoundException 如果指定的属性在 MBean 中是不可访问的。
+@exception MBeanException 包装 MBean 的获取方法所抛出的异常。
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception ReflectionException 包装试图调用设置方法时所抛出的 <CODE>java.lang.Exception</CODE>。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null 或者参数中的属性为 null。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #setAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.MBeanServerConnection.getAttributes(ObjectName name, java.lang.String[] attributes) throws javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定 MBean 的多个属性值。通过 MBean 的对象名来标识 MBean。
+
+@param name MBean 的对象名，通过该对象名检索该 MBean 的属性。
+@param attributes 要检索的属性列表。
+
+@return 检索到的属性列表。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception ReflectionException 试图调用 Dynamic MBean 的 getAttributes 方法时抛出的异常。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null 或者参数中的属性为 null。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #setAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.setAttribute(ObjectName name, Attribute attribute) throws javax.management.InstanceNotFoundException, javax.management.AttributeNotFoundException, javax.management.InvalidAttributeValueException, javax.management.MBeanException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定 MBean 的特定属性值。通过 MBean 的对象名来标识 MBean。
+
+@param name 要设置其属性的 MBean 的名称。
+@param attribute 要设置的属性的标识及其要设置成的值。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception AttributeNotFoundException 如果指定的属性在 MBean 中是不可访问的。
+@exception InvalidAttributeValueException 如果为该属性指定的值无效。
+@exception MBeanException 包装 MBean 的设置方法所抛出的异常。
+@exception ReflectionException 包装试图调用设置方法时所抛出的 <CODE>java.lang.Exception</CODE>。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null 或者参数中的属性为 null。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #getAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.MBeanServerConnection.setAttributes(ObjectName name, AttributeList attributes) throws javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定 MBean 的多个属性值。通过 MBean 的对象名来标识 MBean。
+
+@param name 要设置其属性的 MBean 的对象名。
+@param attributes 属性列表：要设置的属性的标识及其要设置成的值。
+
+@return 已设置的属性的列表，以及它们的新值。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception ReflectionException 试图调用 Dynamic MBean 的 getAttributes 方法时抛出的异常。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果参数中的对象名为 null 或者参数中的属性为 null。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #getAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServerConnection.invoke(ObjectName name, String operationName, java.lang.Object[] params, java.lang.String[] signature) throws javax.management.InstanceNotFoundException, javax.management.MBeanException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 MBean 上调用某个操作。
+
+@param name MBean 的对象名，要在该 MBean 上调用方法。
+@param operationName 要调用的操作名。
+@param params 一个数组，包含调用操作时要设置的参数
+@param signature 包含操作签名的数组。用于加载类对象的类加载器与用于加载 MBean（要在其上调用操作）的类加载器相同。
+
+@return 该操作返回的对象，表示在指定 MBean 上调用该操作的结果。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception MBeanException 包装在 MBean 上调用的方法所抛出的异常。
+@exception ReflectionException 包装试图调用该方法时所抛出的 <CODE>java.lang.Exception</CODE>。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.MBeanServerConnection.getDefaultDomain() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对 MBean 命名时使用的默认域。如果用户未指定域，则将默认域名用作 MBean 的 ObjectName 的域部分。
+
+@return 默认域。
+
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.management.MBeanServerConnection.getDomains() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回其中所有 MBean 当前已注册的域的列表。当且仅当至少有一个已注册的 MBean 并且其 ObjectName 的 {@link ObjectName#getDomain() getDomain()} 等于某个字符串时，返回的数组中才有该字符串。返回数组中各个字符串的顺序是未定义的。</p>
+
+@return 域列表。
+
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.addNotificationListener(ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>向已注册的 MBean 添加一个侦听器。</p>
+
+<P> MBeanServer 将 MBean 发出的通知转发到该侦听器。如果通知源是对 MBean 对象的引用，则 MBean 服务器将根据 MBean 的 ObjectName 替换它。否则不更改通知源。
+
+@param name MBean 的名称，将在该 MBean 上添加侦听器。
+@param listener 侦听器对象，它将处理已注册的 MBean 所发出的通知。
+@param filter 过滤器对象。如果 filter 为 null，则处理通知前不执行过滤。
+@param handback 发出通知时要发送到侦听器的上下文。
+
+@exception InstanceNotFoundException 如果提供的 MBean 与任何已注册 MBean 都不匹配。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #removeNotificationListener(ObjectName, NotificationListener)
+@see #removeNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.addNotificationListener(ObjectName name, ObjectName listener, NotificationFilter filter, Object handback) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>向已注册的 MBean 添加一个侦听器。</p>
+
+<p>MBeanServer 将 MBean 发出的通知转发到该侦听器。如果通知源是对 MBean 对象的引用，则 MBean 服务器将根据 MBean 的 ObjectName 替换它。否则不更改通知源。</p>
+
+<p>接收通知的侦听器对象是在调用此方法时使用给定名称注册的。即使之后注销了该侦听器，它也将继续接收通知。</p>
+
+@param name MBean 的名称，将在该 MBean 上添加侦听器。
+@param listener 侦听器的对象名，它将处理已注册的 MBean 所发出的通知。
+@param filter 过滤器对象。如果 filter 为 null，则处理通知前不执行过滤。
+@param handback 发出通知时要发送到侦听器的上下文。
+
+@exception InstanceNotFoundException 如果通知侦听器或者通知广播器的 MBean 名与任何已注册的 MBean 都不匹配。
+@exception RuntimeOperationsException 包装 {@link IllegalArgumentException}。如果 <code>listener</code> 指定的 MBean 存在但是未实现 {@link NotificationListener} 接口。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #removeNotificationListener(ObjectName, ObjectName)
+@see #removeNotificationListener(ObjectName, ObjectName, NotificationFilter, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.removeNotificationListener(ObjectName name, ObjectName listener) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从已注册的 MBean 中移除一个侦听器。
+
+<P> 如果可能使用不同过滤器或回调多次注册了该侦听器，则此方法将移除所有这些注册关系。
+
+@param name MBean 的名称，将移除该 MBean 上的侦听器。
+@param listener 要移除的侦听器的对象名。
+
+@exception InstanceNotFoundException 如果提供的 MBean 与任何已注册 MBean 都不匹配。
+@exception ListenerNotFoundException 如果该侦听器未在 MBean 中注册。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #addNotificationListener(ObjectName, ObjectName, NotificationFilter, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.removeNotificationListener(ObjectName name, ObjectName listener, NotificationFilter filter, Object handback) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>从已注册的 MBean 中移除一个侦听器。</p>
+
+<p>该 MBean 必须具有一个与给定 <code>listener</code>、<code>filter</code> 和 <code>handback</code> 参数完全匹配的侦听器。如果存在多个这样的侦听器，则只移除一个。</p>
+
+<p>当且仅当 <code>filter</code> 和 <code>handback</code> 在要移除的侦听器中为 null 时，这两个参数才可以为 null。</p>
+
+@param name MBean 的名称，将移除该 MBean 上的侦听器。
+@param listener 要移除的侦听器的对象名。
+@param filter 添加侦听器时所指定的过滤器。
+@param handback 添加侦听器时所指定的回调。
+
+@exception InstanceNotFoundException 如果提供的 MBean 与任何已注册 MBean 都不匹配。
+@exception ListenerNotFoundException 如果侦听器未在 MBean 中注册，或者没有用给定的过滤器和回调注册它。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #addNotificationListener(ObjectName, ObjectName, NotificationFilter, Object)
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.removeNotificationListener(ObjectName name, NotificationListener listener) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>从已注册的 MBean 中移除一个侦听器。</p>
+
+<P> 如果可能使用不同过滤器或回调多次注册了该侦听器，则此方法将移除所有这些注册关系。
+
+@param name MBean 的名称，将移除该 MBean 上的侦听器。
+@param listener 要移除的侦听器。
+
+@exception InstanceNotFoundException 如果提供的 MBean 与任何已注册 MBean 都不匹配。
+@exception ListenerNotFoundException 如果该侦听器未在 MBean 中注册。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.MBeanServerConnection.removeNotificationListener(ObjectName name, NotificationListener listener, NotificationFilter filter, Object handback) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>从已注册的 MBean 中移除一个侦听器。</p>
+
+<p>该 MBean 必须具有一个与给定 <code>listener</code>、<code>filter</code> 和 <code>handback</code> 参数完全匹配的侦听器。如果存在多个这样的侦听器，则只移除一个。</p>
+
+<p>当且仅当 <code>filter</code> 和 <code>handback</code> 在要移除的侦听器中为 null 时，这两个参数才可以为 null。</p>
+
+@param name MBean 的名称，将移除该 MBean 上的侦听器。
+@param listener 要移除的侦听器。
+@param filter 添加侦听器时所指定的过滤器。
+@param handback 添加侦听器时所指定的回调。
+
+@exception InstanceNotFoundException 如果提供的 MBean 与任何已注册 MBean 都不匹配。
+@exception ListenerNotFoundException 如果侦听器未在 MBean 中注册，或者没有用给定的过滤器和回调注册它。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see #addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanInfo javax.management.MBeanServerConnection.getMBeanInfo(ObjectName name) throws javax.management.InstanceNotFoundException, javax.management.IntrospectionException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法发现了 MBean 为管理而公开的属性和操作。
+
+@param name 要分析的 MBean 名称
+
+@return 一个 <CODE>MBeanInfo</CODE> 实例，允许检索此 MBean 的所有属性和操作。
+
+@exception IntrospectionException 如果在 introspection 期间出现异常。
+@exception InstanceNotFoundException 如果未找到指定的 MBean。
+@exception ReflectionException 试图调用 Dynamic MBean 的 getMBeanInfo 方法时抛出的异常。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.MBeanServerConnection.isInstanceOf(ObjectName name, String className) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>如果指定的 MBean 是指定类的一个实例，则返回 true；否则返回 false。</p>
+
+<p>如果 <code>name</code> 不是 MBean 的名称，则此方法抛出 {@link InstanceNotFoundException}。</p>
+
+<p>否则，假定<br> X 是 <code>name</code> 所命名的 MBean、<br> L 是 X 的 ClassLoader、<br>N 是 X 的 {@link MBeanInfo} 中的类名。</p>
+
+<p>如果 N 等于 <code>className</code>，则结果为 true。</p>
+
+<p>如果 L 成功加载了 <code>className</code>，并且 X 是此类的一个实例，则结果为 true。
+
+<p>如果 L 成功加载了 N 和 <code>className</code>，并且由于第一个类而使第二个类是可分配的，则结果为 true。</p>
+
+<p>否则结果为 false。</p>
+ 
+@param name MBean 的 <CODE>ObjectName</CODE>。
+@param className 类名。
+
+@return 如果根据上述规则，指定的 MBean 是指定类的实例，则返回 true；否则返回 false。
+
+@exception InstanceNotFoundException 如果指定的 MBean 未在该 MBean 服务器中注册。
+@exception IOException 如果与 MBean 服务器通信时出现通信问题。
+
+@see Class#isInstance
+
+<!-- END DATA -->

@@ -1,0 +1,153 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.RescaleOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将每个像素的样本值乘以一个缩放因子，然后加上一个偏移量，此类对源图像中数据进行逐像素重缩放。缩放后的样本值被限制在目标图像中的最小/最大可表示形式。
+ <p>
+重缩放操作的伪代码如下：
+ <pre>
+for each pixel from Source object {
+    for each band/component of the pixel {
+        dstElement = (srcElement*scaleFactor) + offset
+    }
+}
+ </pre>
+ <p>
+对于 Raster，重缩放在 band 上运行。缩放常量集合的数量可能为 1，在这种情况下，对所有 band 都应用相同的常量，或者该数量必须等于 Source Raster band 的数量。
+ <p>
+对于 BufferedImage，重缩放在颜色和 alpha 分量上进行。缩放常量集合的数量可能为 1，在这种情况下，对所有颜色（但不包括 alpha）分量应用相同的常量。否则，缩放常量集合的数量必须等于 Source 颜色分量，在这种情况下，不对 alpha 分量（如果存在）执行重缩放。如果这两种情况都不适用，则缩放常量集合的数量必须等于 Source 颜色分量加上 alpha 分量的数量，在这种情况下，要对所有颜色和 alpha 分量都执行重缩放。
+ <p>
+无论所 band 数据是否自左乘 alpha，对于 BufferedImage 源执行重缩放的方式都是相同的。也就是说，无论数据是否自左乘 alpha，在 BufferedImage 源的原始数据的每个 band 上都执行重缩放。如果需要将颜色转换到目标 ColorModel，则该步骤要考虑源和目标的自左乘状态。
+ <p>
+不能重缩放具有 IndexColorModel 的图像。
+ <p>
+如果在构造方法中定义了 RenderingHints 对象，当需要颜色转换时，可以使用颜色呈现提示和抖动提示。
+ <p>
+注意，允许进行 in-place 操作（也就是说，源和目标可以是相同的对象）。
+@version 10 Feb 1997
+@see java.awt.RenderingHints#KEY_COLOR_RENDERING
+@see java.awt.RenderingHints#KEY_DITHERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RescaleOp(float[] scaleFactors, float[] offsets, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有所希望的缩放因子和偏移量的新 RescaleOp。scaleFactor 和 offset 数组的长度必须满足上述类注释中规定的限制。RenderingHints 参数可以为 null。
+@param scaleFactors 指定的缩放因子
+@param offsets 指定的偏移量
+@param hints 指定的 <code>RenderingHints</code> 或 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RescaleOp(float scaleFactor, float offset, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有所希望的缩放因子和偏移量的新 RescaleOp。scaleFactor 和 offset 在源 Raster 中将应用于所有 band，在 BufferedImage 中将应用于所有颜色（但不包括 alpha）分量。RenderingHints 参数可以为 null。
+@param scaleFactor 指定的缩放因子
+@param offset 指定的偏移量
+@param hints 指定的 <code>RenderingHints</code> 或 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float[] java.awt.image.RescaleOp.getScaleFactors(float[] scaleFactors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回给定数组中的缩放因子。为方便起见，也返回数组。如果 scaleFactors 为 null，则分配一个新数组。
+@param scaleFactors 包含此 <code>RescaleOp</code> 的缩放因子的数组
+@return 此 <code>RescaleOp</code> 的缩放因子。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float[] java.awt.image.RescaleOp.getOffsets(float[] offsets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定数组中的偏移量。为方便起见，也返回数组。如果 offset 为 null，则分配一个新数组。
+@param offsets 包含此 <code>RescaleOp</code> 的偏移量的数组
+@return 此 <code>RescaleOp</code> 的偏移量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.RescaleOp.getNumFactors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 RescaleOp 中使用的缩放因子和偏移量的数量。
+@return 此 <code>RescaleOp</code> 的缩放因子和偏移量的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.RescaleOp.filter(BufferedImage src, BufferedImage dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对源 BufferedImage 进行重缩放。如果源图像中的颜色模型与目标图像中的不同，则在目标中转换像素。如果目标图像为 null，则使用源 ColorModel 创建一个 BufferedImage。如果此对象中缩放因子/偏移量的数量不符合上述类注释中规定的限制，或者源图像有一个 IndexColorModel，则可能抛出 IllegalArgumentException。
+@param src 要过滤的 <code>BufferedImage</code>
+@param dst 过滤操作的目标或 <code>null</code>
+@return 过滤的 <code>BufferedImage</code>。
+@throws IllegalArgumentException 如果 <code>src</code> 的 <code>ColorModel</code> 是一个 <code>IndexColorModel</code>，或者此 <code>RescaleOp</code> 中缩放因子和偏移量的数量不符合上述类注释中规定的限制。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.RescaleOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对源 Raster 中的像素数据进行重缩放。如果目标 Raster 为 null，则创建一个新 Raster。源和目标必须具有相同的 band 数。否则抛出 IllegalArgumentException。注意，此对象中缩放因子/偏移量的数量必须满足上述类注释中规定的限制。否则抛出 IllegalArgumentException。
+@param src 要过滤的 <code>Raster</code>
+@param dst 过滤操作的目标或 <code>null</code>
+@return 过滤的 <code>WritableRaster</code>。
+@throws IllegalArgumentException 如果 <code>src</code> 和 <code>dst</code> 没有相同的 band 数，或者此 <code>RescaleOp</code> 中缩放因子和偏移量的数量不符合上述类注释中规定的限制。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.RescaleOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回重缩放后的目标图像的边界框。因为这不是一个几何操作，所以边界框不会改变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.RescaleOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回重缩放后的目标 Raster 的边界框。因为这不是一个几何操作，所以边界框不会改变。
+@param src 重缩放后的目标 <code>Raster</code>
+@return 指定 <code>Raster</code> 的边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.RescaleOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有正确大小和 band 数的经检查的目标图像。
+@param src       过滤操作的源图像。
+@param destCM    目标的 ColorModel。如果为 null，则使用源的 ColorModel。
+@return 经检查的目标图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.RescaleOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给出源的情况下，创建一个具有正确大小和 band 数的经检查的目标 <code>Raster</code>。
+@param src       源 <code>Raster</code>
+@return 经检查的目标 <code>Raster</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.RescaleOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+给定源中的一个点，返回对应目标点的位置。如果 dstPt 为非 null，则使用它保存返回值。因为这不是一个几何操作，所以 srcPt 将等于 dstPt。
+@param srcPt 源图像中的一个点
+@param dstPt 目标点或 <code>null</code>
+@return 目标点的位置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.RescaleOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此操作的呈现提示。
+@return 此 <code>RescaleOp</code> 的呈现提示。
+
+<!-- END DATA -->

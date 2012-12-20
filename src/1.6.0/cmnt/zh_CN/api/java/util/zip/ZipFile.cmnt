@@ -1,0 +1,145 @@
+<!-- BEGIN KEY -->
+public class java.util.zip.ZipFile extends java.lang.Object implements java.util.zip.ZipConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于从 ZIP 文件读取条目。
+
+<p> 除非另有说明，将 <tt>null</tt> 参数传入此类中的构造方法或方法将导致抛出 {@link NullPointerException}。
+
+@version   1.67, 05/05/04
+@author    David Connelly
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.ZipFile.OPEN_READ
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开 ZIP 文件进行阅读的模式标志。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.ZipFile.OPEN_DELETE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开 ZIP 文件并将其标记为删除的模式标志。在打开文件和关闭文件之间的某个时间，该文件将被删除，但是其内容仍可通过 <tt>ZipFile</tt> 对象访问，直到调用关闭方法或虚拟机退出为止。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.ZipFile(String name) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开 ZIP 文件进行阅读。
+ 
+<p>首先，如果存在安全管理器，则使用 <code>name</code> 作为其参数调用其 <code>checkRead</code> 方法，以确保允许阅读。
+ 
+@param name ZIP 文件的名称
+@throws ZipException 如果发生 ZIP 格式错误
+@throws IOException 如果发生 I/O 错误
+@throws SecurityException 如果存在安全管理器，并且其 <code>checkRead</code> 方法不允许对该文件进行阅读访问。
+@see SecurityManager#checkRead(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.ZipFile(File file, int mode) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开新的 <code>ZipFile</code> 以使用指定模式从指定 <code>File</code> 对象读取。模式参数必须为 <tt>OPEN_READ</tt> 或 <tt>OPEN_READ | OPEN_DELETE</tt>。
+ 
+<p>首先，如果存在安全管理器，则使用 <code>name</code> 作为其参数调用其 <code>checkRead</code> 方法，以确保允许阅读。
+
+@param file 要打开进行阅读的 ZIP 文件
+@param mode 要用于打开文件的模式
+@throws ZipException 如果发生 ZIP 格式错误
+@throws IOException 如果发生 I/O 错误
+@throws SecurityException 如果存在安全管理器，并且其 <code>checkRead</code> 方法不允许对该文件进行读取访问，或者当设置了 <tt>OPEN_DELETE</tt> 标志时，其 <code>checkDelete</code> 方法不允许删除该文件。
+@throws IllegalArgumentException 如果 <tt>mode</tt> 参数无效
+@see SecurityManager#checkRead(java.lang.String)
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.ZipFile(File file) throws java.util.zip.ZipException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开供阅读的 ZIP 文件，由指定的 File 对象给出。
+@param file 要打开供阅读的 ZIP 文件
+@throws ZipException 如果发生 ZIP 错误
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.ZipEntry java.util.zip.ZipFile.getEntry(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定名称的 ZIP 文件条目；如果未找到，则返回 null。
+
+@param name 条目名称
+@return ZIP 文件条目；如果未找到，则返回 null
+@throws IllegalStateException 如果已关闭该 ZIP
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.util.zip.ZipFile.getInputStream(ZipEntry entry) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回输入流以读取指定 ZIP 文件条目的内容。
+
+<p> 关闭此 ZIP 文件将依次关闭调用此方法返回的所有输入流。
+
+@param entry ZIP 文件条目
+@return 读取指定 ZIP 文件条目内容的输入流。
+@throws ZipException 如果发生 ZIP 格式错误
+@throws IOException 如果发生 I/O 错误
+@throws IllegalStateException 如果已关闭 ZIP 文件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.zip.ZipFile.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ZIP 文件的路径名。
+@return ZIP 文件的路径名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<? extends java.util.zip.ZipEntry> java.util.zip.ZipFile.entries()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ZIP 文件条目的枚举。
+@return ZIP 文件条目的枚举
+@throws IllegalStateException 如果已关闭 ZIP 文件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.ZipFile.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ZIP 文件中的条目数。
+@return ZIP 文件中的条目数
+@throws IllegalStateException 如果已关闭 ZIP 文件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.zip.ZipFile.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭 ZIP 文件。
+<p> 关闭此 ZIP 文件将关闭以前调用 {@link #getInputStream getInputStream} 方法返回的所有输入流。
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.zip.ZipFile.finalize() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确保不再引用此 ZIP 文件时调用它的 <code>close</code> 方法。
+
+ <p>
+由于不确定 GC 何时调用此方法，因此强烈建议应用程序一完成访问此 <code>ZipFile</code> 就调用 <code>close</code> 方法。这可防止不定期地保持系统资源。
+ 
+@throws IOException 如果发生 I/O 错误
+@see    java.util.zip.ZipFile#close()
+
+<!-- END DATA -->

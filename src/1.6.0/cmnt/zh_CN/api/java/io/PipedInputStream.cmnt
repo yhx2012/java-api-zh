@@ -1,0 +1,168 @@
+<!-- BEGIN KEY -->
+public class java.io.PipedInputStream extends java.io.InputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+管道输入流应该连接到管道输出流；管道输入流提供要写入管道输出流的所有数据字节。通常，数据由某个线程从 <code>PipedInputStream</code> 对象读取，并由其他线程将其写入到相应的 <code>PipedOutputStream</code>。不建议对这两个对象尝试使用单个线程，因为这样可能死锁线程。管道输入流包含一个缓冲区，可在缓冲区限定的范围内将读操作和写操作分离开。
+如果向连接管道输出流提供数据字节的线程不再存在，则认为该管道<a name=BROKEN><i>已损坏</i>。
+
+@author  James Gosling
+@version 1.35, 12/19/03
+@see     java.io.PipedOutputStream
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.io.PipedInputStream.PIPE_SIZE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+管道循环输入缓冲区的默认大小。
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected byte[] java.io.PipedInputStream.buffer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+放置传入数据的循环缓冲区。
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.PipedInputStream.in
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+循环缓冲区中位置的索引，当从连接的管道输出流中接收到下一个数据字节时，会将其存储到该位置。<code>in&lt;0</code> 意味着缓冲区为空，<code>in==out</code> 意味着缓冲区已满。
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.PipedInputStream.out
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+循环缓冲区中位置的索引，此管道输入流将从该位置读取下一个数据字节。
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedInputStream(PipedOutputStream src) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>PipedInputStream</code>，使其连接到管道输出流 <code>src</code>。写入 <code>src</code> 的数据字节可用作此流的输入。
+
+@param      src   要连接的流。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedInputStream(PipedOutputStream src, int pipeSize) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>PipedInputStream</code>，使其连接到管道输出流 <code>src</code>，并对管道缓冲区使用指定的管道大小。 
+写入 <code>src</code> 的数据字节可用作此流的输入。
+
+ @param      src   要连接的流。
+ @param      pipeSize 管道缓冲区的大小。
+ @exception  IOException 如果发生 I/O 错误。
+ @exception  IllegalArgumentException 如果 <code>pipeSize <= 0</code>。
+ @since	   1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedInputStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建尚未{@linkplain #connect(java.io.PipedOutputStream)
+ 连接}的 <code>PipedInputStream</code>。在使用前必须将其{@linkplain java.io.PipedOutputStream#connect(
+ java.io.PipedInputStream) 连接}到 <code>PipedOutputStream</code>。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedInputStream(int pipeSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个尚未{@linkplain #connect(java.io.PipedOutputStream) 连接}的 <code>PipedInputStream</code>，并对管道缓冲区使用指定的管道大小。在使用前必须将其{@linkplain java.io.PipedOutputStream#connect(
+ java.io.PipedInputStream) 连接}到 <code>PipedOutputStream</code>。
+
+
+ @param      pipeSize 管道缓冲区的大小。
+ @exception  IllegalArgumentException 如果 <code>pipeSize <= 0</code>。
+ @since	   1.6
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PipedInputStream.connect(PipedOutputStream src) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使此管道输入流连接到管道输出流 <code>src</code>。如果此对象已经连接到其他某个管道输出流，则抛出 <code>IOException</code>。
+ <p>
+如果 <code>src</code> 为未连接的管道输出流，<code>snk</code> 为未连接的管道输入流，则可以通过以下任一调用使其连接：
+ <p>
+ <pre><code>snk.connect(src)</code> </pre>
+ <p>
+或：
+ <p>
+ <pre><code>src.connect(snk)</code> </pre>
+ <p>
+这两个调用的效果相同。
+
+@param      src   要连接的管道输出流。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.io.PipedInputStream.receive(int b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收数据字节。如果不存在可用的输入，此方法将发生阻塞。
+@param b 将接收的字节
+@exception IOException 如果管道<a href=#BROKEN><code>损坏</code></a>、{@link #connect(java.io.PipedOutputStream) 未连接}、关闭，或者发生 I/O 错误。
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.PipedInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取此管道输入流中的下一个数据字节。返回 <code>0</code> 到 <code>255</code> 范围内的 <code>int</code> 字节值。在输入数据可用、检测到流的末尾或者抛出异常前，此方法一直阻塞。
+
+@return     下一个数据字节；如果已到达流末尾，则返回 <code>-1</code>。
+@exception  IOException  如果管道{@link #connect(java.io.PipedOutputStream) 未连接}、<a href=#BROKEN><code>损坏</code></a>、关闭，或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.PipedInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将最多 <code>len</code> 个数据字节从此管道输入流读入 byte 数组。如果已到达数据流的末尾，或者 <code>len</code> 超出管道缓冲区大小，则读取的字节数将少于 <code>len</code>。如果 <code>len </code> 为 0，则不读取任何字节并返回 0；否则，在至少 1 个输入字节可用、检测到流末尾、抛出异常前，该方法将一直阻塞。
+
+@param      b     读入数据的缓冲区。
+@param      off   目标数组 <code>b</code> 中的初始偏移量。
+@param      len   读取的最多字节数。
+@return     读入缓冲区的总字节数；如果由于已到达流末尾而不再有数据，则返回 <code>-1</code>。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+@exception  IndexOutOfBoundsException 如果 <code>off</code> 为负，<code>len</code> 为负，或者 <code>len</code> 大于 <code>b.length - off</code>
+@exception  IOException 如果管道<a href=#BROKEN><code>损坏</code></a>、{@link #connect(java.io.PipedOutputStream) 未连接}、关闭，或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.PipedInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可以不受阻塞地从此输入流中读取的字节数。
+
+@return     可以不受阻塞地从此输入流读取的字节数；如果已经调用 {@link #close()} 方法关闭此输入流、管道{@link #connect(java.io.PipedOutputStream) 未连接}或已<a href=#BROKEN><code>损坏</code></a>，则返回 {@code 0}。
+@exception  IOException  如果发生 I/O 错误。
+@since   JDK1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PipedInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此管道输入流并释放与该流相关的所有系统资源。
+
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->

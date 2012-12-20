@@ -1,0 +1,65 @@
+<!-- BEGIN KEY -->
+public abstract class javax.sound.midi.SoundbankResource extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SoundbankResource</code> 表示存储在 <code>{@link Soundbank}</code> 中的任何音频资源。常见的音库资源包括：
+ <ul>
+<li>乐器。可通过多种方式指定乐器。但是，所有的音库都有定义乐器的某些机制。定义过程中，它们可能引用音库中存储的其他资源。每个乐器都有一个 <code>Patch</code>，它指定在 MIDI 消息中可通过其引用的 MIDI 程序和库。乐器信息可存储在 <code>{@link Instrument}</code> 对象中。
+<li>音频采样。采样通常是一个采样音频波表，包含持续几分之一秒或最多几秒的短声音录音。这些音频采样可由 <code>{@link Synthesizer}</code> 使用来合成声音，以便作为对 MIDI 命令的响应，或者提取出来供应用程序使用。（此术语反映了乐师使用&ldquo;采样&rdquo;一词统指一系列连续的音频采样或帧，而不是单一的瞬间采样）。音频采样的数据类将是一个对象，它封装了音频采样数据本身和有关如何解释该数据的信息（音频数据的格式），例如 <code>{@link javax.sound.sampled.AudioInputStream}</code>。	</li>
+<li>嵌入式 sequence。音库可包含内置存储在一个数据对象（如 <code>{@link Sequence}</code>）中的乐曲数据。
+ </ul>  
+ <p>
+使用波表合成或相关技巧合成的合成器在合成音符时回放采样中的音频，通常是在模仿原先录制的实际乐器时。但是，在 <code>Instruments</code> 和 <code>Soundbank</code> 中的采样之间不必有一一对应关系。单个 <code>Instrument</code> 可使用多个 SoundbankResource（通常用于具有不相似的音高或亮度的音符）。同样，多个 <code>Instrument</code> 可使用同一个采样。
+
+@version 1.16, 05/11/17
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.midi.SoundbankResource(Soundbank soundBank, String name, java.lang.Class<?> dataClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的音库和波表索引构造一个新的 <code>SoundbankResource</code>。（设置 <code>SoundbankResource</code> 的名称、采样音频数据和乐器是子类的任务）。
+@param soundBank 包含此 <code>SoundbankResource</code> 的音库
+@param name 采样的名称
+@param dataClass 用于表示采样数据的类
+
+@see #getSoundbank
+@see #getName
+@see #getDataClass
+@see #getData
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Soundbank javax.sound.midi.SoundbankResource.getSoundbank()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得包含此 <code>SoundbankResource</code> 的音库。
+@return 存储此 <code>SoundbankResource</code> 的音库
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.sound.midi.SoundbankResource.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得资源的名称。这通常应该是资源的描述性字符串。
+@return 乐器的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> javax.sound.midi.SoundbankResource.getDataClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此采样所使用的表示其数据的类。由 <code>getData</code> 返回的对象将是此类。如果此 <code>SoundbankResource</code> 对象不支持对其数据的直接访问，则返回 <code>null</code>。
+@return 用于表示采样数据的类，如果数据不可访问，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.sound.midi.SoundbankResource.getData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得存储在此 <code>SoundbankResource</code> 中的采样音频。返回的对象类型取决于具体类的实现，可使用 <code>getDataClass</code> 查询对象类型。
+@return 包含采样音频数据的对象
+@see #getDataClass
+
+<!-- END DATA -->

@@ -1,0 +1,71 @@
+<!-- BEGIN KEY -->
+javax.xml.transform
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>此包定义了用于处理转换指令，以及执行从源到结果的转换的一般 API。这些接口不依赖于 SAX 或 DOM 标准，且尽可能少地进行有关转换的源和结果的细节的假定。它通过定义 {@link javax.xml.transform.Source} 和 {@link javax.xml.transform.Result} 接口来实现这一点。
+</p>
+
+<p>为了定义具体的用户类，API 定义了根级接口规范。这些接口可以在 {@link javax.xml.transform.sax}、{@link javax.xml.transform.dom} 和 {@link javax.xml.transform.stream} 中找到。
+</p>
+
+<h3>创建对象</h3>
+
+<p>API 从静态函数 {@link javax.xml.transform.TransformerFactory#newInstance} 创建具体 {@link javax.xml.transform.TransformerFactory} 对象。
+</p>
+
+<h3>输入和输出规范</h3>
+
+<p>此 API 定义了两个接口对象，它们称为 {@link javax.xml.transform.Source} 和 {@link javax.xml.transform.Result}。为将 Source 和 Result 对象传递到接口，必须使用具体类。为每个对象定义了三个具体表示形式：{@link javax.xml.transform.stream.StreamSource} 和 {@link javax.xml.transform.stream.StreamResult}、{@link javax.xml.transform.sax.SAXSource} 和 {@link javax.xml.transform.sax.SAXResult}、{@link javax.xml.transform.dom.DOMSource} 和 {@link javax.xml.transform.dom.DOMResult}。这些对象中的每一个对象均定义了一个 FEATURE 字符串，可以将它传递到 {@link javax.xml.transform.TransformerFactory#getFeature} 中以查看是否支持给定类型的 Source 或 Result 对象。例如，要测试是否支持 DOMSource 和 StreamResult，可以使用以下测试。
+</p>
+
+<pre>
+<code>
+TransformerFactory tfactory = TransformerFactory.newInstance();
+if (tfactory.getFeature(DOMSource.FEATURE) &amp;&amp; tfactory.getFeature(StreamResult.FEATURE)) {
+...
+}
+</code>
+</pre>
+
+<h3>
+<a name="qname-delimiter">Qualified Name 表示形式</a>
+</h3>
+
+<p>当处理 XML 对象时，<a href="http://www.w3.org/TR/REC-xml-names">Namespaces</a> 存在某些问题。XML 中出现的 Qualified Names 标记为带前缀的名称。但前缀本身不保持标识。而由它们在上下文中所映射到的 URI 来保持标识。因此，当在 Java 程序中传递像 &quot;xyz:foo&quot; 这样的 Qualified Name 时，必须提供将 &quot;xyz&quot; 映射到名称空间的方式。
+</p>
+
+<p>一种解决方案是创建一个保持名称空间以及前缀和本地名称的 &quot;QName&quot; 对象，但这不总是最佳解决方案，例如，当要将唯一字符串用作字典中的键时就是如此。没有字符串表示形式还将导致难以在 XML 文档的上下文之外指定名称空间的标识。
+</p>
+
+<p>为了将名称空间的值传递给转换，例如当设置 {@link javax.xml.transform.Transformer} 上的属性或参数时，此规范定义 String &quot;qname&quot; 对象参数作为两部分字符串来传递，即用花括号（{}）括起来的名称空间 URI，后跟本地名称。如果 qname 有 null URI，则 String 对象只包含本地名称。应用程序可以通过测试安全地检查非 null URI，以查看名称的首字符是否为 '{' 字符。
+</p>
+
+<p>例如，如果 URI 和本地名称是从通过 &lt;xyz:foo xmlns:xyz=&quot;http://xyz.foo.com/yada/baz.html&quot;/&gt; 定义的元素获取的，则 Qualified Name 将为 &quot;{http://xyz.foo.com/yada/baz.html}foo&quot;。注意不使用前缀。
+</p>
+
+<h3>结果树序列化</h3>
+
+<p>结果树到流的序列化可以通过 {@link javax.xml.transform.Transformer#setOutputProperties} 和 {@link javax.xml.transform.Transformer#setOutputProperty} 方法来控制。这些属性只应用于流结果，当结果为 DOM 树或 SAX 事件流时，它们无效。</p>
+
+<p>可以从 {@link javax.xml.transform.OutputKeys} 类引用匹配 <a href="http://www.w3.org/TR/xslt#output">XSLT specification for xsl:output attributes</a> 的字符串。也可以指定其他字符串。如果转换器不识别输出键，则抛出 {@link java.lang.IllegalArgumentException}，除非键名称为 <a href="#qname-delimiter">namespace qualified</a>。虽然某些实现可能会忽略名称空间限定的输出键名称，但它们总是允许的。</p>
+
+<p>如果只需从源到结果的简单标识转换，则 {@link javax.xml.transform.TransformerFactory} 提供一个不带参数的 {@link javax.xml.transform.TransformerFactory#newTransformer()} 方法。此方法创建一个将源有效复制到结果的 Transformer。此方法可用于从 SAX 事件创建 DOM，或从 DOM 或 SAX 事件创建 XML。</p>
+
+<h3>异常和错误报告</h3>
+
+<p>转换 API 抛出三种类型的特殊异常。
+@link javax.xml.transform.TransformerFactoryConfigurationError} 与 {@link javax.xml.parsers.FactoryConfigurationError} 类似，当 TransformerFactory 存在配置问题时抛出。当找不到或不能实例化通过 &quot;javax.xml.transform.TransformerFactory&quot; 系统属性指定的转换工厂类时，通常抛出此错误。</p>
+
+<p>如果由于任何原因不能创建 Transformer，则可能抛出 {@link javax.xml.transform.TransformerConfigurationException}。如果转换指令中有语法错误，例如调用了 {@link javax.xml.transform.TransformerFactory#newTransformer}，则可能抛出 TransformerConfigurationException。</p>
+
+<p>{@link javax.xml.transform.TransformerException} 是转换过程中出现的通用异常。转换器异常可能包装了另一个异常，且如果在其上调用了任何 {@link javax.xml.transform.TransformerException#printStackTrace()} 方法，则它将生成一个从最近开始的堆栈转储列表。转换器异常还提供了一个 {@link javax.xml.transform.SourceLocator} 对象，它指示在源树或转换指令中发生错误的位置。可以调用 {@link javax.xml.transform.TransformerException#getMessageAndLocation()} 来获取带有位置信息的错误消息，也可以调用 {@link javax.xml.transform.TransformerException#getLocationAsString()} 仅获取位置字符串。</p>
+
+<p>转换警告和错误被发送到 {@link javax.xml.transform.ErrorListener}，此时应用程序可以决定报告错误或警告，对于非致命错误也可以决定抛出 <code>Exception</code>。<code>ErrorListener</code> 可以通过 {@link javax.xml.transform.TransformerFactory#setErrorListener} 来设置，以报告与转换指令中的语法错误有关的错误，也可以通过 {@link javax.xml.transform.Transformer#setErrorListener} 来设置，以报告在转换中发生的错误。无论是通过应用程序设置，还是通过处理器提供的默认实现来设置，两个对象上的 <code>ErrorListener</code> 总有效且为非 <code>null</code>。处理器所提供的默认实现将向 <code>System.err</code> 报告所有警告和错误，且不抛出任何 <code>Exception</code>。<em>强烈</em> 推荐应用程序注册并使用 <code>ErrorListener</code>，以确保警告和错误的正确行为。
+</p>
+
+<h3>转换中的 URI 解析</h3>
+
+<p>API 为调用 URI 的应用程序提供了解析从 stylesheet 指令或转换中引用的 URI 的方式。这可以通过创建实现 {@link javax.xml.transform.URIResolver} 接口的类来完成（使用它的一个方法 {@link javax.xml.transform.URIResolver#resolve} 来完成），并使用此类为转换指令或通过 {@link javax.xml.transform.TransformerFactory#setURIResolver} 或 {@link javax.xml.transform.Transformer#setURIResolver} 进行的转换设置 URI。<code>URIResolver.resolve</code> 方法带有两个 String 参数，stylesheet 指令中或作为转换过程的一部分构建的 URI，以及基本 URI，如果需要绝对 URI，通过基本 URI 可以将第一个参数设置为绝对的。转换器必须能够使用返回的 {@link javax.xml.transform.Source} 对象，正如其实现特性中所指定的。</p>
+
+<!-- END DATA -->

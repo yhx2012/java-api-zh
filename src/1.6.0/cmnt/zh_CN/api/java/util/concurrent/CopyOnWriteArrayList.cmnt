@@ -1,0 +1,397 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.CopyOnWriteArrayList extends java.lang.Object implements java.util.List, java.util.RandomAccess, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link java.util.ArrayList} 的一个线程安全的变体，其中所有可变操作（<tt>add</tt>、<tt>set</tt> 等等）都是通过对底层数组进行一次新的复制来实现的。
+
+<p> 这一般需要很大的开销，但是当遍历操作的数量大大超过可变操作的数量时，这种方法可能比其他替代方法<em>更</em> 有效。在不能或不想进行同步遍历，但又需要从并发线程中排除冲突时，它也很有用。&ldquo;快照&rdquo;风格的迭代器方法在创建迭代器时使用了对数组状态的引用。此数组在迭代器的生存期内不会更改，因此不可能发生冲突，并且迭代器保证不会抛出 <tt>ConcurrentModificationException</tt>。创建迭代器以后，迭代器就不会反映列表的添加、移除或者更改。在迭代器上进行的元素更改操作（<tt>remove</tt>、<tt>set</tt> 和
+ <tt>add</tt>）不受支持。这些方法将抛出 <tt>UnsupportedOperationException</tt>。
+
+<p>允许使用所有元素，包括 <tt>null</tt>。
+
+ <p>内存一致性效果：当存在其他并发 collection 时，将对象放入 {@code CopyOnWriteArrayList} 之前的线程中的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 随后通过另一线程从 {@code CopyOnWriteArrayList} 中访问或移除该元素的操作。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@since 1.5
+@author Doug Lea
+@param <E> 此 collection 中所保存元素的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.CopyOnWriteArrayList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.CopyOnWriteArrayList(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个按 collection 的迭代器返回元素的顺序包含指定 collection 元素的列表。
+@param c 最初保存元素的 collection
+@throws NullPointerException 如果指定 collection 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.CopyOnWriteArrayList(E[] toCopyIn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个保存给定数组的副本的列表。
+
+@param toCopyIn 数组（将此数组的副本用作内部数组）
+@throws NullPointerException 如果指定数组为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中的元素数。
+
+@return  此列表中的元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此列表不包含任何元素，则返回 <tt>true</tt>。
+
+@return 如果此列表不包含任何元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此列表包含指定的元素，则返回 <tt>true</tt>。更确切地讲，当且仅当此列表包含至少一个满足 <tt>(o==null ? e==null : o.equals(e))</tt> 的元素 <tt>e</tt> 时，返回 <tt>true</tt>。
+
+@param o 测试是否存在于此列表中的元素。
+@return 如果此列表包含指定元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.indexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.indexOf(E e, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第一次出现的指定元素在此列表中的索引，从 <tt>index</tt> 开始向前搜索，如果没有找到该元素，则返回 -1。更确切地讲，返回满足 <tt>(i&nbsp;&gt;=&nbsp;index&nbsp;&amp;&amp;&nbsp;(e==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;e.equals(get(i))))</tt> 的最低索引 <tt>i</tt>，如果不存在这样的索引，则返回 -1。
+
+@param e 要搜索的元素
+@param index 搜索开始处的索引
+@return 此列表中 <tt>index</tt> 或其后的位置上第一次出现该元素的位置索引；如果未找到该元素，则返回 <tt>-1</tt>。
+@throws IndexOutOfBoundsException 如果指定索引为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.lastIndexOf(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.lastIndexOf(E e, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最后一次出现的指定元素在此列表中的索引，从 <tt>index</tt> 开始向后搜索，如果没有找到该元素，则返回 -1。更确切地讲，返回满足 <tt>(i&nbsp;&lt;=&nbsp;index&nbsp;&amp;&amp;&nbsp;(e==null&nbsp;?&nbsp;get(i)==null&nbsp;:&nbsp;e.equals(get(i))))</tt> 的最高索引 <tt>i</tt>，如果不存在这样的索引，则返回 -1。
+
+@param e 要搜索的元素
+@param index 开始向后搜索处的索引
+@return 此列表中小于等于 <tt>index</tt> 的位置上最后一次出现该元素的位置索引；如果未找到该元素，则返回 -1。
+@throws IndexOutOfBoundsException 如果指定索引大于等于此列表的当前大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.util.concurrent.CopyOnWriteArrayList.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表的浅表副本。（这些元素本身未被复制。）
+
+@return 此列表的一个副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.concurrent.CopyOnWriteArrayList.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个按恰当顺序（从第一个元素到最后一个元素）包含此列表中所有元素的数组。
+<p>由于此列表并不维护对返回数组的任何引用，因而它将是“安全的”。（换句话说，此方法必须分配一个新数组）。因此，调用者可以随意修改返回的数组。
+
+ <p>此方法充当基于数组的 API 与基于 collection 的 API 之间的桥梁。
+
+@return 返回包含此列表所有元素的数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.util.concurrent.CopyOnWriteArrayList.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以恰当顺序（从第一个元素到最后一个元素）包含列表所有元素的数组；返回数组的运行时类型是指定数组的运行时类型。如果指定数组能容纳列表，则则将该队列返回此处。否则，将分配一个具有指定数组的运行时类型和此列表的大小的新数组。
+
+ <p>如果指定的数组能容纳列表，并有剩余的空间（即数组的元素比列表多），那么会将紧接列表尾部的元素设置为 <tt>null</tt>。（<i>仅</i> 当调用者知道此列表不包含任何 null 元素时，才可使用此方法来确定此列表的长度。）
+
+ <p>像 {@link #toArray()} 方法一样，此方法充当基于数组的 API 与基于 collection 的 API 之间的桥梁。更进一步说，此方法允许对输出数组的运行时类型进行精确控制，在某些情况下，这可以用来节省分配开销。
+
+ <p>假定 <tt>x</tt> 是只包含字符串的一个已知列表。以下代码用来将该列表转储到一个新分配的 <tt>String</tt> 数组：
+
+ <pre>
+     String[] y = x.toArray(new String[0]);</pre>
+
+注意，<tt>toArray(new Object[0])</tt> 和 <tt>toArray()</tt> 在功能上是相同的。
+
+
+@param a 要存储列表元素的数组（如果该数组足够大）；否则，将分配一个具有相同运行时类型的新数组。
+@return 包含此列表所有元素的数组
+@throws ArrayStoreException 如果指定数组的运行时类型不是此列表每个元素的运行时类型的超类型
+@throws NullPointerException 如果指定数组为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.CopyOnWriteArrayList.get(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.CopyOnWriteArrayList.set(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的元素替代此列表指定位置上的元素。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素添加到此列表的尾部。
+
+@param e 要添加到此列表的元素。
+@return <tt>true</tt>（根据 {@link Collection#add} 的规定）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.CopyOnWriteArrayList.add(int index, E element)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此列表的指定位置上插入指定元素。将当前在该位置上的元素（如果有）以及所有后续元素向右移（其索引加 1）。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.CopyOnWriteArrayList.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此列表指定位置上的元素。将所有后续元素都向左移（其索引减 1）。返回从此列表中移除的元素。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表移除第一次出现的指定元素（如果存在）。 如果列表不包含这样的元素，则不更改列表。更确切地讲，移除具有满足 <tt>(o==null ? get(i)==null : o.equals(get(i)))</tt> 的最低索引 <tt>i</tt> 的元素（如果存在这样的元素）。如果此列表包含指定元素（或者此列表由于调用而发生更改），则返回 <tt>true</tt>。
+
+@param o 要从此列表移除的元素（如果存在）
+@return 如果此列表包含指定的元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.addIfAbsent(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加元素（如果不存在）。
+@param e 要添加到此列表中的元素（如果不存在）
+@return 如果已添加该元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.containsAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此列表包含指定 collection 的所有元素，则返回 <tt>true</tt>。
+
+@param c 将被检查是否包含于此列表的 collection
+@return 如果此列表包含指定 collection 的所有元素，则返回 <tt>true</tt>
+@throws NullPointerException 如果指定 collection 为 null
+@see #contains(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表移除所有包含在指定 collection 中的元素。在此类中，这是一个开销很大的操作，因为它需要一个内部临时数组。
+
+@param c 包含将从此列表中移除的元素的 collection
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws ClassCastException 如果此列表的元素与指定 collection 不兼容（可选）
+@throws NullPointerException 如果此列表包含一个 null 元素，并且指定 collection 不允许使用 null 元素（可选），或者指定 collection 为 null
+@see #remove(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.retainAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只保留此列表中包含在指定 collection 中的元素。换句话说，从此列表中移除所有未包含在指定 collection 中的元素。
+
+@param c 包含保留在此列表中的元素的 collection
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws ClassCastException 如果此列表的元素的类与指定 collection 不兼容（可选）
+@throws NullPointerException 如果此列表包含一个 null 元素，并且指定 collection 不允许使用 null 元素（可选），或者指定 collection 为 null
+@see #remove(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.addAllAbsent(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照指定 collection 的迭代器返回元素的顺序，将指定 collection 中尚未包含在此列表中的所有元素添加列表的尾部。
+
+@param c 包含要添加到此列表中的元素的 collection
+@return 添加的元素数量
+@throws NullPointerException 如果指定 collection 为 null
+@see #addIfAbsent(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.CopyOnWriteArrayList.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表移除所有元素。此调用返回之后，该列表将为空。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.addAll(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照指定 collection 的迭代器返回元素的顺序，将指定 collection 中的所有元素添加此列表的尾部。
+
+@param c 包含将插入此列表中的元素的 collection
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws NullPointerException 如果指定 collection 为 null
+@see #add(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.addAll(int index, java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定位置开始，将指定 collection 的所有元素插入此列表。将当前在该位置上的元素（如果有）以及所有后续元素都向右移（其索引加 1）。新元素将按指定 collection 的迭代器返回的顺序出现在列表中。
+
+@param index 插入指定 collection 中第一个元素的索引
+@param c 包含将添加到此列表中的元素的 collection
+@return 如果此列表由于调用而发生更改，则返回 <tt>true</tt>
+@throws NullPointerException {@inheritDoc}
+@throws NullPointerException 如果指定 collection 为 null
+@see #add(int,Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.concurrent.CopyOnWriteArrayList.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表的字符串表示形式。该字符串表示形式由列表元素的字符串表示形式组成，这些元素按其迭代器返回的顺序排序，并用方括号 (<tt>"[]"</tt>) 括起来。相邻元素由字符 <tt>", "</tt>（逗号加空格）分隔。通过 {@link String#valueOf(Object)} 可以将元素转换成字符串。
+
+@return 此列表的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CopyOnWriteArrayList.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此列表的相等性。如果指定对象与此对象是同一对象，或者它也是一个 {@link List}，并且在指定列表上迭代的{@linkplain List#iterator() 迭代器}所返回的元素的序列与在此列表上迭代的迭代器所返回的元素序列相同，则返回 {@code true}。如果两个序列具有相同的长度，并且对应元素在序列的同一位置上，则认为两个序列是<em>相等的</em>。满足 {@code (e1==null ? e2==null : e1.equals(e2))} 的两个元素 {@code e1} 和 {@code e2} 视为<em>相等</em>。
+
+ @param o 将与此列表进行相等性比较的对象
+ @return 如果指定的对象与此列表相等，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CopyOnWriteArrayList.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表的哈希码值。
+
+<p> 此实现使用了 {@link List#hashCode} 中的定义。
+@return 此列表的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.concurrent.CopyOnWriteArrayList.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以恰当顺序在此列表元素上进行迭代的迭代器。
+
+<p>构造该迭代器时，所返回的迭代器提供了列表状态的一个快照。遍历该迭代器时不需要执行任何同步。该迭代器<em>不</em> 支持 <tt>remove</tt> 方法。
+
+@return 以恰当顺序在此列表元素上进行迭代的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ListIterator<E> java.util.concurrent.CopyOnWriteArrayList.listIterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+<p>在构造该迭代器时，返回的迭代器提供了列表状态的一个快照。遍历该迭代器时不需要执行任何同步。该迭代器<em>不</em> 支持 <tt>remove</tt>、<tt>set</tt> 或者 <tt>add</tt> 方法。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ListIterator<E> java.util.concurrent.CopyOnWriteArrayList.listIterator(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+<p>在构造该迭代器时，返回的迭代器提供了列表状态的一个快照。遍历该迭代器时不需要执行任何同步。该迭代器<em>不</em> 支持 <tt>remove</tt>、<tt>set</tt> 或者 <tt>add</tt> 方法。
+
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<E> java.util.concurrent.CopyOnWriteArrayList.subList(int fromIndex, int toIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中 <tt>fromIndex</tt>（包括）和 <tt>toIndex</tt>（不包括）之间部分的视图。返回的列表受此列表的支持，因此返回列表中的更改将反映在此列表中，反之亦然。当支持可变操作时，它们对于 CopyOnWriteArrayLists 可能不是很有用。
+ <p>
+如果通过返回列表以外的其他任何方式<i>从结构上修改</i> 底层实现列表（即此列表），则此方法返回的列表语义将是不确定的。（从结构上修改是指更改列表的大小，或者以其他方式打乱列表，使正在进行的迭代生成错误的结果。）
+
+@param fromIndex subList 的低端点（包括）
+@param toIndex subList 的高端点（不包括）
+@return 此列表中指定范围的视图
+@throws IndexOutOfBoundsException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.CopyOnWriteArrayList.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构列表（也就是将其反序列化）。
+@param s 流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.CopyOnWriteArrayList.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将列表状态保存到流中（也就是将其序列化）。
+
+@serialData 发出支持列表的数组的长度（一个 int 值），后跟以适当顺序排列的所有数组元素（均为对象）。
+@param s 流
+
+<!-- END DATA -->

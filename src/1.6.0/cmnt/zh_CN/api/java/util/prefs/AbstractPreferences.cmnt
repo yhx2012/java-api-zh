@@ -1,0 +1,608 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.prefs.AbstractPreferences extends java.util.prefs.Preferences
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供了 {@link Preferences} 类的骨干实现，从而大大简化了实现此类的任务。
+
+<p><strong>此类仅供 <tt>Preferences</tt> 实现者使用。<tt>Preferences</tt> 设施的普通用户无需参考此文档。{@link Preferences} 文档已经足够了。</strong>
+
+<p>实现者必须重写九个抽象服务提供者接口 (SPI) 方法：{@link #getSpi(String)}、{@link #putSpi(String,String)}、{@link #removeSpi(String)}、{@link #childSpi(String)}、{@link #removeNodeSpi()}、{@link #keysSpi()}、{@link #childrenNamesSpi()}、{@link #syncSpi()} 和 {@link #flushSpi()}。所有的具体方法都精确指定它们如何在这些 SPI 方法上实现。如果出于某种考虑（如性能）对默认实现不满意，则实现者可能决定重写一个或多个具体方法。
+
+<p>SPI 方法按异常行为可分为三个组。<tt>getSpi</tt> 方法应该永远不抛出异常，但是对性能丝毫不会产生影响，因为 {@link #get(String,String)} 会拦截此方法所抛出的任何异常，并对调用者返回指定的默认值。<tt>removeNodeSpi、keysSpi、childrenNamesSpi、syncSpi</tt> 和 <tt>flushSpi</tt> 方法被指定抛出 {@link BackingStoreException}；如果实现无法执行操作，则需要抛出此经过检查的异常。该异常向外传播，导致相应的 API 方法失败。
+
+<p>其余的 SPI 方法 {@link #putSpi(String,String)}、{@link #removeSpi(String)} 和 {@link #childSpi(String)} 具有更加复杂的异常行为。未指定它们抛出 <tt>BackingStoreException</tt>，因为即使内部存储不可用，它们通常也遵守其协定。之所以这样是因为它们不返回任何信息，并且在进行对 {@link Preferences#flush()} 或 {@link Preferences#sync()} 的后续调用之前，不要求其结果是持久的。一般而言，这些 SPI 方法不应抛出异常。在某些实现中，可能存在这些调用甚至无法对后续处理的请求操作进行排队的情形。即使在这些情形下，最好的做法也是忽略该调用并返回，而不是抛出异常。但是，在这些情形下，所有 <tt>flush()</tt> 和 <tt>sync</tt> 的后续调用应该返回 <tt>false</tt>，因为返回 <tt>true</tt> 意味着以前的所有操作都已成功地成为持久性操作。
+
+<p>有一种情况下 <tt>putSpi、removeSpi 和 childSpi</tt> <i>应该</i> 抛出异常：如果调用者在底层操作系统上不具备执行请求操作的足够权限。例如，如果非特权用户尝试修改系统首选项，则在大多数系统上都会发生这种情况。（这要求特权随实现而变化。在有些实现中，需要修改文件系统中某些目录内容的特权；而在另外一些实现中，则需要修改注册表中某些键的内容。）在上述任何情形下，通常让程序继续执行并不合乎需要，就好像这些操作在以后会成为持久操作一样。虽然在这些情形下不要求实现抛出异常，但还是鼓励这样做。{@link SecurityException} 就是合适的选择。
+
+<p>大多数 SPI 方法都要求实现在首选项节点上读取或写入信息。实现者需要注意一种情况，即另一个 VM 当前可能已经从内部存储删除了此节点。如果该节点已经删除了，则实现有责任重新创建它。
+
+<p>实现注意事项：在 Sun 的默认 <tt>Preferences</tt> 实现中，用户的身份是从底层操作系统继承的，在虚拟机的生命周期中不能更改。在服务器端的 <tt>Preferences</tt> 实现中，用户身份可以随请求而更改，并通过使用静态 {@link ThreadLocal} 实例隐式传递给 <tt>Preferences</tt> 方法。<i>大力</i> 提倡这种实现的设计者在访问首选项时确定用户（例如，使用 {@link #get(String,String)} 或 {@link #put(String,String)} 方法），而不是将用户与每个 <tt>Preferences</tt> 实例永久关联。后一种行为与通常的 <tt>Preferences</tt> 用法有冲突，将带来很大的混乱。
+
+@author  Josh Bloch
+@version 1.20, 01/12/04
+@see     Preferences
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.prefs.AbstractPreferences.newNode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果在创建此对象前内部存储中不存在此节点，则该字段为 <tt>true</tt>。该字段被初始化为 false，但是子类构造方法可以将其设置为 true（并且以后不应再修改）。此字段指示创建完成时是否激活节点更改事件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Object java.util.prefs.AbstractPreferences.lock
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用其监视器锁定此节点的对象。使用此对象（优先于节点本身）来减少由于锁定节点而有意或无意拒绝服务的可能性。为了避免死锁，<i>永远</i> 不要让保持该节点后代上的锁定的线程锁定节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.prefs.AbstractPreferences(AbstractPreferences parent, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的父节点和与其父节点相关的指定名称创建首选项节点。
+
+@param parent 此首选项节点的父节点；如果此首选项是根，则为 null。
+@param name 此首选项节点相对于其父节点的名称，如果此首选项是根，则为 <tt>""</tt>。
+@throws IllegalArgumentException 如果 <tt>name</tt> 包含一个斜杠 (<tt>'/'</tt>) 或者 <tt>parent</tt> 为 <tt>null</tt> 且名称不是 <tt>""</tt>。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.put(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#put(String,String)} 中的规范实现 <tt>put</tt> 方法。
+
+<p>此实现检查键和值是否合法，获取此首选项节点的锁定，检查该节点是否未被移除，调用 {@link #putSpi(String,String)}，并且如果存在首选项更改侦听器，则将由事件指派线程所处理的通知事件加入队列。
+
+@param key 指定的 value 将要关联的键。
+@param value 指定的 key 将要关联的值。
+@throws NullPointerException 如果 key 或 value 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>，或者 <tt>value.length</tt> 超过 <tt>MAX_VALUE_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.prefs.AbstractPreferences.get(String key, String def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#get(String,String)} 中的规范实现 <tt>get</tt> 方法。
+
+<p>此实现首先检查 <tt>key</tt> 是否为 <tt>null</tt>；如果是，则抛出 <tt>NullPointerException</tt>。然后，它获取此首选项节点的锁，检查该节点是否未被移除，调用 {@link #getSpi(String)} 并返回结果，除非 <tt>getSpi</tt> 调用返回 <tt>null</tt> 或抛出异常，在这种情况下此调用返回 <tt>def</tt>。
+
+@param key 要返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值时所要返回的值。
+@return 与 <tt>key</tt> 相关联的值；如果没有与 <tt>key</tt> 相关联的值，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。（默认值 <tt>null</tt> <i>是</i> 允许的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.remove(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#remove(String)} 中的规范实现 <tt>remove(String)</tt> 方法。
+
+<p>此实现获取首选项节点的锁，检查该节点是否未被移除，调用 {@link #removeSpi(String)}，并且如果存在首选项更改侦听器，则将由事件指派线程所处理的通知事件加入队列。
+
+@param key 从首选项节点中移除其映射关系的键。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.clear() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#clear()} 中的规范实现 <tt>clear</tt> 方法。
+
+<p>此实现获取首选项节点的锁，调用 {@link #keys()} 以获取键的数组，并且对每个键调用 {@link #remove(String)}，从而在数组上进行迭代。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putInt(String key, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putInt(String,int)} 中的规范实现 <tt>putInt</tt> 方法。
+
+<p>此实现使用 {@link Integer#toString(int)} 将 <tt>value</tt> 转换为一个字符串，并在结果上调用 {@link #put(String,String)}。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.prefs.AbstractPreferences.getInt(String key, int def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getInt(String,int)} 中的规范实现 <tt>getInt</tt> 方法。
+
+<p>此实现调用 {@link #get(String,String) <tt>get(key, null)</tt>}。如果返回值为非 null，则实现尝试使用 {@link Integer#parseInt(String)} 将其转换为 <tt>int</tt>。如果尝试成功，则此方法返回得到的值。否则返回 <tt>def</tt>。
+
+@param key 要作为 int 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或无法将该关联值解释为 int 时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 int 值；如果该关联值不存在或无法被解释为 int，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putLong(String key, long value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putLong(String,long)} 中的规范实现 <tt>putLong</tt> 方法。
+
+<p>此实现使用 {@link Long#toString(long)} 将 <tt>value</tt> 转换为字符串，并在结果上调用 {@link #put(String,String)}。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.prefs.AbstractPreferences.getLong(String key, long def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getLong(String,long)} 中的规范实现 <tt>getLong</tt> 方法。
+
+<p>此实现调用 {@link #get(String,String) <tt>get(key, null)</tt>}。如果返回值为非 null，则实现尝试尝试使用 {@link Long#parseLong(String)} 将其转换为 <tt>long</tt>。如果尝试成功，则此方法返回得到的值。否则返回 <tt>def</tt>。
+
+@param key 要作为 long 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或者无法将该关联值解释为 long 时要返回的值。
+@return 由与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 long 值；如果该关联值不存在或无法被解释为 long，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已使用 {@link #removeNode()} 方法移除此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putBoolean(String key, boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putBoolean(String,boolean)} 中的规范实现 <tt>putBoolean</tt> 方法。
+
+<p>此实现使用 {@link String#valueOf(boolean)} 将 <tt>value</tt> 转换为字符串，并在结果上调用 {@link #put(String,String)}。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.prefs.AbstractPreferences.getBoolean(String key, boolean def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getBoolean(String,boolean)} 中的规范实现 <tt>getBoolean</tt> 方法。
+
+<p>此实现调用 {@link #get(String,String) <tt>get(key, null)</tt>}。如果返回值为非 null，则使用 {@link String#equalsIgnoreCase(String)} 将其与 <tt>"true"</tt> 相比较。如果比较返回 <tt>true</tt>，则此调用返回 <tt>true</tt>。否则，再次使用 {@link String#equalsIgnoreCase(String)} 将初始值与 <tt>"false"</tt> 相比较。如果比较返回 <tt>true</tt>，则此调用返回 <tt>false</tt>。否则此调用返回 <tt>def</tt>。
+
+@param key 要作为 boolean 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或无法将该关联值解释为 boolean 时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 boolean 值；如果该关联值不存在或无法被解释为 boolean，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putFloat(String key, float value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putFloat(String,float)} 中的规范实现 <tt>putFloat</tt> 方法。
+
+<p>此实现使用 {@link Float#toString(float)} 将 <tt>value</tt> 转换为字符串，并在结果上调用 {@link #put(String,String)}。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.util.prefs.AbstractPreferences.getFloat(String key, float def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getFloat(String,float)} 中的规范实现 <tt>getFloat</tt> 方法。
+
+<p>此实现调用 {@link #get(String,String) <tt>get(key, null)</tt>}。如果返回值为非 null，则实现尝试使用 {@link Float#parseFloat(String)} 将其转换为 <tt>float</tt>。如果尝试成功，则此方法返回得到的值。否则返回 <tt>def</tt>。
+
+@param key 要作为 float 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或无法将该关联值解释为 float 时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 float 值；如果该关联值不存在或无法被解释为 float，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putDouble(String key, double value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putDouble(String,double)} 中的规范实现 <tt>putDouble</tt> 方法。
+
+<p>此实现使用 {@link Double#toString(double)} 将 <tt>value</tt> 转换为字符串，并在结果上调用 {@link #put(String,String)}。
+
+@param key 要与字符串形式的 value 相关联的键。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 <tt>key.length()</tt> 超过 <tt>MAX_KEY_LENGTH</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.util.prefs.AbstractPreferences.getDouble(String key, double def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getDouble(String,double)} 中的规范实现 <tt>getDouble</tt> 方法。
+
+<p>此实现调用 {@link #get(String,String) <tt>get(key, null)</tt>}。如果返回值为非 null，则实现尝试使用 {@link Double#parseDouble(String)} 将其转换为 <tt>double</tt>。如果尝试成功，则此方法返回得到的值。否则返回 <tt>def</tt>。
+
+@param key 要作为 double 返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或无法将该关联值解释为 double 时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的 double 值；如果该关联值不存在或无法被解释为 double，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.putByteArray(String key, byte[] value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#putByteArray(String,byte[])} 中的规范实现 <tt>putByteArray</tt> 方法。
+
+@param key 要与字符串形式的 value 相关联的键。。
+@param value 要与 key 相关联的字符串形式的值。
+@throws NullPointerException 如果 key 或 value 为 <tt>null</tt>。
+@throws IllegalArgumentException 如果 key.length() 超过 MAX_KEY_LENGTH 或者 value.length 超过 MAX_VALUE_LENGTH*3/4。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.util.prefs.AbstractPreferences.getByteArray(String key, byte[] def)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#getByteArray(String,byte[])} 中的规范实现 <tt>getByteArray</tt> 方法。
+
+@param key 要作为字节数组返回其关联值的键。
+@param def 此首选项节点不具有与 <tt>key</tt> 相关联的值或无法将该关联值解释为字节数组时要返回的值。
+@return 与此首选项节点的 <tt>key</tt> 相关联的字符串所表示的字节数组值；如果该关联值不存在或无法被解释为字节数组，则返回 <tt>def</tt>。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws NullPointerException 如果 <tt>key</tt> 为 <tt>null</tt>。（值 <tt>null</tt> 用于 <tt>def</tt> <i>是</i> 允许的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.util.prefs.AbstractPreferences.keys() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#keys()} 中的规范实现 <tt>keys</tt> 方法。
+
+<p>此实现获取首选项节点的锁，检查该节点是否未被移除并调用 {@link #keysSpi()}。
+
+@return 在此首选项节点中具有关联值的键数组。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.util.prefs.AbstractPreferences.childrenNames() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#childrenNames()} 中的规范实现 <tt>children</tt> 方法。
+
+<p>此实现获取首选项节点的锁，检查该节点是否未被移除，构造已初始化为已缓存的子节点名称（此节点“子缓存”中的子节点）的 <tt>TreeSet</tt>，调用 {@link #childrenNamesSpi()} 并将所有返回的子名称添加到该 set 中。使用 <tt>toArray</tt> 方法将树 set 的元素转储到 <tt>String</tt> 数组中，并返回此数组。
+
+@return 此首选项节点的子节点名称。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #cachedChildren()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.util.prefs.AbstractPreferences[] java.util.prefs.AbstractPreferences.cachedChildren()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的所有已知未移除子节点。
+
+@return 此节点的所有已知未移除子节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.prefs.Preferences java.util.prefs.AbstractPreferences.parent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#parent()} 中的规范实现 <tt>parent</tt> 方法。
+
+<p>此实现获取首选项节点的锁，检查该节点是否未被移除，并返回传递给此节点构造方法的父值。
+
+@return 首选项节点的父节点。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.prefs.Preferences java.util.prefs.AbstractPreferences.node(String path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#node(String)} 中的规范实现 <tt>node</tt> 方法。
+
+<p>此实现获取首选项节点的锁并检查该节点是否未被移除。如果 <tt>path</tt> 为 <tt>""</tt>，则返回此节点；如果 <tt>path</tt> 为 <tt>"/"</tt>，则返回此节点的根。如果 <tt>path</tt> 中的第一个字符不是 <tt>'/'</tt>，则此实现将 <tt>path</tt> 分解为标记，并从此节点到指定节点递归式遍历此路径，在遍历的每一个步骤都要“使用”<tt>path</tt> 中的名称和斜杠。在每一个步骤，都要锁定当前节点并为指定节点检查该节点的子缓存。如果未找到，则该名称已经过检查，以确保其长度不超过 <tt>MAX_NAME_LENGTH</tt>。然后，调用 {@link #childSpi(String)} 方法并将结果存储在此节点的子缓存中。如果新创建的 <tt>Preferences</tt> 对象的 {@link #newNode} 字段为 <tt>true</tt>，并且存在任一节点更改侦听器，则将由事件指派线程所处理的通知事件加入队列。 
+
+<p>没有其他的标记时，此方法将返回在子缓存中找到的最后一个值或 <tt>childSpi</tt> 返回的值。如果在遍历过程中，连续出现两个 <tt>"/"</tt> 标记或者最后一个标记是 <tt>"/"</tt>（而不是名称），则抛出适当的 <tt>IllegalArgumentException</tt>。
+
+<p> 如果 <tt>path</tt> 的第一个字符是 <tt>'/'</tt>（指示绝对路径名），则在将 <tt>path</tt> 分解为标记前，删除此首选项节点的锁，此方法从根（不是从此节点）开始递归式遍历此路径。该递归在其他方面与对相对路径名的描述相同。根据 {@link #lock locking invariant}，从根节点开始遍历前删除此节点上的锁，这对于避免可能发生的死锁是至关重要的。
+
+@param path 要返回的首选项节点的路径名。
+@return 指定的首选项节点。
+@throws IllegalArgumentException 如果路径名无效（即它包含多个连续的斜杠字符，或者以斜杠字符结束并且大于一个 long 字符）。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.prefs.AbstractPreferences.nodeExists(String path) throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#nodeExists(String)} 中的规范实现 <tt>nodeExists</tt> 方法。
+
+<p>此实现非常类似于 {@link #node(String)}，不同之处是使用了 {@link #getChild(String)} 而没有使用 {@link #childSpi(String)}。
+
+@param path 要检查其是否存在的节点的路径名。
+@return 如果指定的节点存在，则返回 true。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalArgumentException 如果路径名无效（即它包含多个连续的斜杠字符，或者以斜杠字符结束并且大于一个 long 字符）。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先），并且 <tt>pathname</tt> 不是空字符串 (<tt>""</tt>)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.removeNode() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 {@link Preferences#removeNode()} 中的规范实现 <tt>removeNode()</tt> 方法。
+
+<p>此实现检查此节点是否为根；如果是，则抛出适当的异常。然后，它锁定此节点的父节点，并调用递归帮助器方法来遍历以此节点为根的子树。递归方法锁定其所调用的节点，检查它是否未被删除，然后确保已缓存其所有子节点：调用 {@link #childrenNamesSpi()} 方法并检查每个返回的子节点名称是否已包含在子缓存中。如果没有缓存子节点，则会调用 {@link #childSpi(String)} 方法为其创建一个 <tt>Preferences</tt> 实例并将此实例置于子缓存中。然后，帮助器方法在其子缓存所包含的每个节点上递归式自我调用。下一步，它调用 {@link #removeNodeSpi()}，将其自身标记为已移除，并从其父节点的子缓存中自我移除。最后，如果存在任何节点更改侦听器，则其会将由事件指派线程所处理的通知事件加入队列。
+
+<p>注意，始终使用所有祖先来调用帮助器方法，直到锁定“未被移除的最近祖先”为止。
+
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@throws UnsupportedOperationException 如果在根节点上调用此方法。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.prefs.AbstractPreferences.name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#name()} 中的规范实现 <tt>name</tt> 方法。
+
+<p>此实现仅返回传递给此节点构造方法的名称。
+
+@return 此首选项节点的名称（相对于其父节点）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.prefs.AbstractPreferences.absolutePath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#absolutePath()} 中的规范实现 <tt>absolutePath</tt> 方法。
+
+<p>此实现仅返回构造此节点时计算出的绝对路径名（基于传递给此节点构造方法的名称和传递给此节点祖先构造方法的名称）。
+
+@return 此首选项节点的绝对路径名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.prefs.AbstractPreferences.isUserNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#isUserNode()} 中的规范实现 <tt>isUserNode</tt> 方法。
+
+<p>此实现将此节点的根节点（在 private 字段中存储）与 {@link Preferences#userRoot()} 返回的值相比较。如果两个对象引用相同，则此方法返回 true。
+
+@return 如果此首选项节点位于用户首选项树中，则返回 <tt>true</tt>；如果其位于系统首选项树中，则返回 <tt>false</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.util.prefs.AbstractPreferences.putSpi(String key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的键-值关联置于此首选项节点中。保证 <tt>key</tt> 和 <tt>value</tt> 均为非 null，并且具有合法的长度。此外，还要保证此节点未被移除。（实现者不必检查这些事情。）
+
+<p>利用此节点上保持的锁定调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String java.util.prefs.AbstractPreferences.getSpi(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此首选项节点上的指定键相关联的值；如果不存在此键的关联值或此时无法确定该关联值，则返回 <tt>null</tt>。保证 <tt>key</tt> 为非 null。此外，还要保证此节点未被移除。（实现者不必检查这两件事。） 
+
+<p> 一般而言，此方法在任何情形下也不应抛出异常。但是，如果它确实抛出了异常，则该异常将被解释为 <tt>null</tt>，并按 <tt>null</tt> 返回值对待。
+
+<p>利用此节点上保持的锁定调用此方法。
+
+@return 与此首选项节点上的指定键相关联的值；如果不存在此键的关联值或此时无法确定该关联值，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.util.prefs.AbstractPreferences.removeSpi(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此首选项节点上指定键的关联值（如果有）。保证 <tt>key</tt> 为非 null。此外，还要保证此节点未被移除。（实现者不必检查这两件事。）
+
+<p>利用此节点上保持的锁定调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.util.prefs.AbstractPreferences.removeNodeSpi() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+移除此首选项节点，该首选项节点及其所包含的所有首选项都将失效。进行此调用时，指定子节点不具有任何子节点（即 {@link Preferences#removeNode()} 方法以自下向上的方式重复调用此方法，在移除节点本身之前首先移除该节点的所有子节点）。
+
+<p>使用此节点及其父节点上保持的锁调用此方法（对 {@link Preferences#removeNode()} 的一次调用即可移除所有祖先）。
+
+<p>在此节点（或祖先）上调用 <tt>flush</tt> 方法之前对节点的移除不必是持久的。
+
+<p>如果此节点抛出 <tt>BackingStoreException</tt>，则该异常将会传播到封闭的 {@link #removeNode()} 调用之外。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String[] java.util.prefs.AbstractPreferences.keysSpi() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此首选项节点中具有关联值的所有键。（如果此节点不具有任何首选项，则返回数组的大小将为 0。）保证此节点未被移除。
+
+<p>利用此节点上保持的锁调用此方法。
+
+<p>如果此节点抛出 <tt>BackingStoreException</tt>，则该异常将会传播到封闭的 {@link #keys()} 调用之外。
+
+@return 在此首选项节点中具有关联值的键数组。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String[] java.util.prefs.AbstractPreferences.childrenNamesSpi() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点的子节点名称。（如果此节点不具有任何子节点，则返回数组的大小将为 0。）此方法不必返回任何已缓存节点的名称，但是这样做也没有什么坏处。
+
+<p>利用此节点上保持的锁调用此方法。
+
+<p>如果此节点抛出 <tt>BackingStoreException</tt>，则该异常将会传播到封闭的 {@link #childrenNames()} 调用之外。
+
+@return 包含此首选项节点的子节点名称的数组。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.prefs.AbstractPreferences java.util.prefs.AbstractPreferences.getChild(String nodeName) throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果指定的子节点存在，则返回该子节点；如果它不存在，则返回 <tt>null</tt>。保证 <tt>nodeName</tt> 为非 null、非空、不包含斜杠字符 ('/')，并且长度不超过 {@link #MAX_NAME_LENGTH} 个字符。此外，还要保证此节点未被移除。（如果选择重写此方法，则实现者不必检查这些事情。）
+
+<p>最后，保证最后一次将指定节点移除后此方法的以前调用或 {@link #childSpi} 未曾返回它。换句话说，缓存的值始终在首选项中使用，以调用此方法。（如果选择重写此方法，则实现者不必维护它自己以前返回的子节点缓存。）
+
+<p>此实现获取首选项节点的锁，调用 {@link #childrenNames()} 以获取此节点的子节点的名称数组，并在该数组上迭代，将每个子节点的名称与指定节点名称进行比较。如果子节点名称正确，则调用 {@link #childSpi(String)} 方法并返回得到的节点。如果迭代完成时没有找到指定的名称，则返回 <tt>null</tt>。
+
+@param nodeName 要搜索的子节点的名称。
+@return 如果指定的子节点存在，则返回该子节点；如果它不存在，则返回 null。
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.util.prefs.AbstractPreferences java.util.prefs.AbstractPreferences.childSpi(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此首选项节点的指定子节点；如果该子节点尚未存在，则创建它。保证 <tt>name</tt> 为非 null、非空、不包含斜杠字符 ('/')，并且长度不超过 {@link #MAX_NAME_LENGTH} 个字符。此外，还要保证此节点未被移除。（实现者不必检查这些事情。）
+
+<p>最后，保证最后一次将指定节点移除后此方法的以前调用或 {@link #getChild(String)} 未曾返回它。换句话说，缓存的值始终在首选项中使用，以调用此方法。子类不必维护它们自己以前返回的子节点缓存。
+
+<p>实现者必须确保返回的节点没有被移除。如果以前移除了此节点的名称相同的子节点，则实现者必须返回一个新构建的 <tt>AbstractPreferences</tt> 节点；一旦移除，<tt>AbstractPreferences</tt> 节点便无法“再生”。
+ 
+<p>如果此方法导致创建了节点，则在此节点或其祖先之一（或子节点）上调用 <tt>flush</tt> 方法之前，不保证该节点是持久的。
+
+<p>利用此节点上保持的锁调用此方法。
+
+@param name 要返回的子节点的名称（相对于此首选项节点）。
+@return 指定的子节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.prefs.AbstractPreferences.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此首选项节点的绝对路径名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.sync() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#sync()} 中的规范实现 <tt>sync</tt> 方法。
+
+<p>此实现调用锁定此节点的递归帮助器方法，针对该方法调用 syncSpi() ，解除此节点的锁，并在每个“缓存子节点”上递归式调用这一方法。缓存子节点是此节点的子节点，已在此 VM 中创建并且后来没有被移除。实际上，此方法对以此节点为根的“缓存子树”进行深度优先遍历，针对该 subTree 中的每个节点调用 syncSpi()，这时只有该节点是锁定的。注意，是自上向下调用 syncSpi() 的。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@throws IllegalStateException 如果已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）。
+@see #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.util.prefs.AbstractPreferences.syncSpi() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法是在此节点被锁定的情况下调用的。根据协定，此方法用于同步存储在此节点上的所有缓存首选项与存储在内部存储中的所有缓存首选项。（内部存储中不存在此节点是完全可能的，或者因为另一个 VM 删除了它或者因为还没有创建它。）注意，此方法<i>不</i> 应同步此节点的所有子节点中的首选项。如果内部存储自然地同步了整个子树，则鼓励实现者重写 sync()，而不是仅仅重写此方法。
+
+<p>如果此节点抛出 <tt>BackingStoreException</tt>，则该异常将会传播到封闭的 {@link #sync()} 调用之外。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.flush() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#flush()} 中的规范实现 <tt>flush</tt> 方法。
+
+<p>此实现调用锁定此节点的递归帮助器方法，针对该方法调用 flushSpi()，解除此节点的锁，并在每个“缓存子节点”上递归式调用这一方法。缓存子节点是此节点的子节点，已在此 VM 中创建并且后来没有被移除。实际上，此方法对以此节点为根的“缓存子树”进行深度优先遍历，针对该 subTree 中的每个节点调用 flushSpi()，这时只有该节点是锁定的。注意，是自上向下调用 flushSpi() 的。
+
+<p> 如果在已经使用 {@link #removeNode()} 方法移除的节点上调用此方法，则会在此节点（而非其他节点）上调用 flushSpi()。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+@see #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.util.prefs.AbstractPreferences.flushSpi() throws java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法是在此节点被锁定的情况下调用的。根据协定，此方法用于强制执行从此首选项节点到内部存储内容的缓存更改，以保证其持久性。（内部存储中不存在此节点是完全可能的，或者因为另一个 VM 删除了它或者因为还没有创建它。）注意，此方法<i>不</i> 应刷新此节点的所有子节点中的首选项。如果内部存储自然地刷新了整个子树，则鼓励实现者重写 flush()，而不是仅仅重写此方法。
+
+<p>如果此节点抛出 <tt>BackingStoreException</tt>，则该异常将会传播到封闭的 {@link #flush()} 调用之外。
+
+@throws BackingStoreException 如果由于内部存储的故障或未能通信而无法完成此操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.prefs.AbstractPreferences.isRemoved()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当已经使用 {@link #removeNode()} 方法移除此节点（或其祖先）时才返回 <tt>true</tt>。此方法在返回用于跟踪此状态的 private 字段内容前锁定此节点。
+
+@return 当且仅当已经使用 {@link #removeNode()} 方法移除了此节点（或其祖先）时才返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.exportNode(OutputStream os) throws java.io.IOException, java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#exportNode(OutputStream)} 中的规范实现 <tt>exportNode</tt> 方法。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@throws IOException 如果写入指定的输出流导致一个 <tt>IOException</tt>。
+@throws BackingStoreException 如果无法从内部存储读取首选项数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.prefs.AbstractPreferences.exportSubtree(OutputStream os) throws java.io.IOException, java.util.prefs.BackingStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link Preferences#exportSubtree(OutputStream)} 中的规范实现 <tt>exportSubtree</tt> 方法。
+
+@param os 根据其内容发出 XML 文档的输出流。
+@throws IOException 如果写入指定的输出流导致一个 <tt>IOException</tt>。
+@throws BackingStoreException 如果无法从内部存储读取首选项数据。
+
+<!-- END DATA -->

@@ -1,0 +1,173 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.GapContent extends javax.swing.text.GapVector implements javax.swing.text.AbstractDocument.Content, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+AbstractDocument.Content 接口的一个实现，使用类似于 emacs 使用的间隙缓冲区来实现。基础存储是一个 unicode 字符数组，在数组的某个位置存在间隙。将该间隙移动到要进行更改的位置，以便利用一般行为，让多数更改都在原来的位置上进行。在间隙边界发生更改通常很容易，而且移动间隙通常比直接移动数组内容来适应更改要更容易。
+ <p>
+跟踪更改的位置也通常容易维护。Position 实现（标记）存储数组索引，并可方便地根据当前间隙位置计算连续位置。更改只需要更新移动间隙时新旧间隙边界之间的标记，因此更新标记通常会相当容易。该标记是按顺序存储的，所以可以使用二分查找法快速找到。这提高了添加标记的成本，但降低了保持标记更新的成本。
+
+@author  Timothy Prinzing
+@version 1.21 12/03/01
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.GapContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的 GapContent 对象。初始大小默认为 10。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.GapContent(int initialLength)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定初始大小的新 GapContent 对象。初始大小不允许小于 2，以便留出空间供再次包含间隙和拆分操作。
+
+@param initialLength 初始大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object javax.swing.text.GapContent.allocateArray(int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个存储适当类型项的数组（由子类确定）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.GapContent.getArrayLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取分配的数组的长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.GapContent.length()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回内容的长度。
+
+@return 长度，该值 &gt;= 1
+@see AbstractDocument.Content#length
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.UndoableEdit javax.swing.text.GapContent.insertString(int where, String str) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在内容中插入字符串。
+
+@param where 起始位置，该值 &gt;= 0 且 &lt; length()
+@param str 要插入的非 null 字符串
+@return 撤消的 UndoableEdit 对象
+@exception BadLocationException 如果指定位置无效
+@see AbstractDocument.Content#insertString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.UndoableEdit javax.swing.text.GapContent.remove(int where, int nitems) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除部分内容。
+
+@param where 起始位置，该值 &gt;= 0 且 where + nitems &lt; length()
+@param nitems 要移除的字符数，该值 &gt;= 0
+@return 撤消的 UndoableEdit 对象
+@exception BadLocationException 如果指定位置无效
+@see AbstractDocument.Content#remove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.GapContent.getString(int where, int len) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索部分内容。
+
+@param where 起始位置，该值 &gt;= 0
+@param len 要检索的长度，该值 &gt;= 0
+@return 一个表示该内容的字符串
+@exception BadLocationException 如果指定位置无效
+@see AbstractDocument.Content#getString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.GapContent.getChars(int where, int len, Segment chars) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索部分内容。如果所需内容跨越间隙，则要复制该内容。如果所需内容未跨越间隙，则由于它是连续的，所以返回实际的存储而不用复制。
+
+@param where 起始位置，该值 &gt;= 0，where + len &lt;= length()
+@param len 要检索的字符数，该值 &gt;= 0
+@param chars 要在其中返回字符的 Segment 对象
+@exception BadLocationException 如果指定位置无效
+@see AbstractDocument.Content#getChars
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Position javax.swing.text.GapContent.createPosition(int offset) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在内容中创建一个位置，使其在内容发生变化时能跟踪内容的更改。
+
+@param offset 要跟踪的偏移量，该值 &gt;= 0
+@return 位置
+@exception BadLocationException 如果指定位置无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftEnd(int newSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+扩大间隙、移动任何必要的数据和更新适当的标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGap(int newGapStart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将间隙的起始点移动到新位置，而不更改间隙的大小。这会移动数组中的数据和更新相应的标记。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.resetMarksAtZero()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新设置具有 0 偏移量的所有标记，使其也有零索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGapStartDown(int newGapStart)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整间隙，使其结尾向后扩展。此操作不移动任何数据，但它一定会更新受边界更改影响的所有标记。从旧间隙起始点向后到新间隙起始点的所有标记都合并到了间隙的结尾（其位置已被移除）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.shiftGapEndUp(int newGapEnd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整间隙，使其结尾向前扩展。此操作不移动任何数据，但它一定会更新受边界更改影响的所有标记。从旧间隙结尾点向前到新间隙结尾点的所有标记都合并到了间隙的结尾（其位置已被移除）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector javax.swing.text.GapContent.getPositionsInRange(java.util.Vector v, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含 UndoPosRef 实例的 Vector，其 Position 的范围从 <code>offset</code> 到 <code>offset</code> + <code>length</code>。如果 <code>v</code> 不为 null，则在此处放置匹配的 Position。返回具有结果 Position 的向量。
+
+@param v 要使用的 Vector，其位置是向量为 null 时创建的新位置
+@param offset 起始偏移量，该值 &gt;= 0
+@param length 长度，该值 &gt;= 0
+@return 实例的集合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.GapContent.updateUndoPositions(java.util.Vector positions, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新设置处在 <code>positions</code> 的所有 UndoPosRef 实例的位置。
+ <p>
+这里指的是内部用法，通常不适合子类。
+
+@param positions 重新设置 UndoPosRef 实例的位置
+
+<!-- END DATA -->

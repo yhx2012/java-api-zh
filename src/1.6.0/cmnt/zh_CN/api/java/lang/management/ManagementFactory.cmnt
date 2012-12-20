@@ -1,0 +1,376 @@
+<!-- BEGIN KEY -->
+public class java.lang.management.ManagementFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>ManagementFactory</tt> 类是一种工厂类，用于获取 Java 平台的管理 Bean。此类由静态方法组成，每种静态方法都会返回一个或多个表示 Java 虚拟机组件的管理接口的<a href="#MXBean">平台 MXBean</a>。
+
+<p>
+应用程序可以采用以下方式访问平台 MXBean：
+<ul>
+<li><i>直接访问 MXBean 接口</i>
+     <ol type="a">
+<li>通过静态工厂方法获取 MXBean 实例，从本地访问正在运行的虚拟机的 MXBean。
+         </li>
+<li>构造一个 MXBean 代理实例，以通过调用 {@link #newPlatformMXBeanProxy newPlatfromMXBeanProxy} 将方法调用转发到给定的 {@link MBeanServer MBeanServer}。构造代理通常是为了远程访问另一个正在运行的虚拟机的 MXBean。
+         </li> 
+     </ol></li>
+<li><i>通过 MBeanServer 间接地访问 MXBean 接口</i>
+     <ol type="a">
+<li>通过{@link #getPlatformMBeanServer 平台 MBeanServer} 本地访问 MXBean 或通过特定的 <tt>MBeanServerConnection</tt> 远程访问 MXBean。MXBean 的属性和操作仅使用 <em>JMX 开放类型</em>，包括在 {@link javax.management.openmbean.OpenType OpenType} 中定义的基本数据类型 {@link javax.management.openmbean.CompositeData CompositeData} 和 {@link javax.management.openmbean.TabularData TabularData}。映射关系在下面指定。
+        </li>
+     </ol></li>
+ </ul>
+
+<h4><a name="MXBean">平台 MXBean</a></h4>
+平台 MXBean 是一种<i>管理 Bean</i>，它符合 JMX Instrumentation Specification，仅使用以下所描述的一组基本数据类型。有关细节，请参阅 <a href="../../../javax/management/MXBean.html#MXBean-spec"> MXBean 规范</a>。JMX 管理应用程序和平台 <tt>MBeanServer</tt> 可以进行互操作，而无需 MXBean 特定数据类型的类。JMX 连接器服务器和连接器客户机之间传送的数据类型为{@linkplain javax.management.openmbean.OpenType 开放类型}，而这就允许不同版本进行互操作。
+ <p>
+平台 MXBean 接口仅使用以下数据类型：
+ <ul>
+<li>基本类型，如 <tt>int</tt>、<tt>long</tt>、<tt>boolean</tt> 等等</li>
+<li>基本类型的包装器类（如 {@link java.lang.Integer Integer}、{@link java.lang.Long Long}、{@link java.lang.Boolean Boolean} 等等）和 {@link java.lang.String String}</li>
+<li>{@link java.lang.Enum Enum} 类</li>
+<li>仅定义获取方法和具有 {@link javax.management.openmbean.CompositeData CompositeData} 参数的静态 <tt>from</tt> 方法的类，以便将输入的 <tt>CompositeData</tt> 转换为该类的实例
+       </li> 
+<li>{@link java.util.List List&lt;E&gt;} 其中 <tt>E</tt> 为基本类型、包装类、枚举类或支持从 <tt>CompositeData</tt> 转换到此类的类
+       </li> 
+<li>{@link java.util.Map Map&lt;K,V&gt;} 其中 <tt>K</tt> 和 <tt>V</tt> 为基本类型、包装类、枚举类或支持从 <tt>CompositeData</tt> 转换到此类的类
+       </li> 
+ </ul> 
+ 
+ <p>
+当通过 <tt>MBeanServer</tt> 访问平台 MXBean 的属性或操作时，将按以下方式对数据类型进行映射：
+ <ul>
+<li>基本类型或包装器类映射到相同的类型。
+       </li>
+<li>{@link Enum} 映射到 <tt>String</tt>（其值为枚举常数的名称）。
+<li>仅定义获取方法和具有 {@link javax.management.openmbean.CompositeData CompositeData} 参数的 <tt>from</tt> 方法的类映射到 {@link javax.management.openmbean.CompositeData CompositeData}。
+       </li>
+<li><tt>Map&lt;K,V&gt;</tt> 映射到 {@link javax.management.openmbean.TabularData TabularData}，后者的行类型为 {@link javax.management.openmbean.CompositeType CompositeType}，此类型具有两个项，其名称分别为 <i>"key"</i> 和 <i>"value"</i>，项类型分别为 <tt>K</tt> 和 <tt>V</tt> 对应的映射类型，<i>"key"</i> 为索引。
+       </li>
+<li><tt>List&lt;E&gt;</tt> 映射到数组，该数组中的元素类型为 <tt>E</tt> 的映射类型。
+       </li>
+<li>元素类型为 <tt>E</tt> 的数组映射到具有相同维数的数组，该数组的元素类型为 <tt>E</tt> 的映射类型。</li>
+ </ul> 
+
+平台 MXBean 的 {@link javax.management.MBeanInfo MBeanInfo} 将属性和操作的数据类型描述为上述指定要映射到的基本类型或开放类型。 
+ 
+ <p>
+例如，{@link MemoryMXBean} 接口具有以下获取和设置方法：
+ 
+ <blockquote><pre>
+ public MemoryUsage getHeapMemoryUsage();
+ public boolean isVerbose();
+ public void setVerbose(boolean value);
+ </pre></blockquote>
+
+<tt>MemoryMXBean</tt> 的 <tt>MBeanInfo</tt> 中的这些属性的名称和类型如下：
+
+ <blockquote>
+ <table border>
+ <tr>
+   <th>属性名称</th>
+   <th>类型</th>
+   </tr>
+ <tr>
+  <td><tt>HeapMemoryUsage</tt></td>
+  <td>{@link MemoryUsage#from CompositeData representing MemoryUsage}</td>
+ </tr>
+ <tr>
+  <td><tt>Verbose</tt></td>
+  <td><tt>boolean</tt></td>
+ </tr>
+ </table>
+ </blockquote>
+
+<h4><a name="MXBeanNames">MXBean 名称</a></h4>
+Java 虚拟机的每个平台 MXBean 都具有唯一的 {@link javax.management.ObjectName ObjectName}，以在平台 <tt>MBeanServer</tt> 中注册。Java 虚拟机具有以下管理接口的单一实例：
+
+ <blockquote>
+ <table border>
+ <tr>
+ <th>管理接口</th>
+ <th>对象名称</th>
+ </tr>
+ <tr>
+ <td> {@link ClassLoadingMXBean} </td>
+ <td> {@link #CLASS_LOADING_MXBEAN_NAME <tt>java.lang:type=ClassLoading</tt>}</td>
+ </tr>
+ <tr>
+ <td> {@link MemoryMXBean} </td>
+ <td> {@link #MEMORY_MXBEAN_NAME <tt>java.lang:type=Memory</tt>}</td>
+ </tr>
+ <tr>
+ <td> {@link ThreadMXBean} </td>
+ <td> {@link #THREAD_MXBEAN_NAME <tt>java.lang:type=Threading</tt>}</td>
+ </tr>
+ <tr>
+ <td> {@link RuntimeMXBean} </td>
+ <td> {@link #RUNTIME_MXBEAN_NAME <tt>java.lang:type=Runtime</tt>}</td>
+ </tr>
+ <tr>
+ <td> {@link OperatingSystemMXBean} </td>
+ <td> {@link #OPERATING_SYSTEM_MXBEAN_NAME <tt>java.lang:type=OperatingSystem</tt>}</td>
+ </tr>
+ </table>
+ </blockquote>
+
+ <p>
+Java 虚拟机具有以下管理接口的零个或一个实例：
+
+ <blockquote>
+ <table border>
+ <tr>
+ <th>管理接口</th>
+ <th>对象名称</th>
+ </tr>
+ <tr>
+ <td> {@link CompilationMXBean} </td>
+ <td> {@link #COMPILATION_MXBEAN_NAME <tt>java.lang:type=Compilation</tt>}</td>
+ </tr>
+ </table>
+ </blockquote>
+
+ <p>
+Java 虚拟机可能具有以下管理接口的一个或多个实例。 
+ <blockquote>
+ <table border>
+ <tr>
+<th>管理接口</th>
+<th>对象名称</th>
+ </tr>
+ <tr>
+ <td> {@link GarbageCollectorMXBean} </td>
+ <td> {@link #GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE <tt>java.lang:type=GarbageCollector</tt>}<tt>,name=</tt><i>collector's name</i></td>
+ </tr>
+ <tr>
+ <td> {@link MemoryManagerMXBean} </td>
+ <td> {@link #MEMORY_MANAGER_MXBEAN_DOMAIN_TYPE <tt>java.lang:type=MemoryManager</tt>}<tt>,name=</tt><i>manager's name</i></td>
+ </tr>
+ <tr>
+ <td> {@link MemoryPoolMXBean} </td>
+ <td> {@link #MEMORY_POOL_MXBEAN_DOMAIN_TYPE <tt>java.lang:type=MemoryPool</tt>}<tt>,name=</tt><i>pool's name</i></td>
+ </tr>
+ </table>
+ </blockquote>
+
+@see <a href="../../../javax/management/package-summary.html">JMX Specification.</a>
+@see <a href="package-summary.html#examples">Access Management Metrics</a>
+@see java.util.logging.LoggingMXBean
+@see javax.management.MXBean
+
+@author  Mandy Chung
+@version 1.24, 03/08/06 
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.CLASS_LOADING_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link ClassLoadingMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.COMPILATION_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link CompilationMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.MEMORY_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link MemoryMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link OperatingSystemMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.RUNTIME_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link RuntimeMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.THREAD_MXBEAN_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link ThreadMXBean} 的 <tt>ObjectName</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.GARBAGE_COLLECTOR_MXBEAN_DOMAIN_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link GarbageCollectorMXBean} 的 <tt>ObjectName</tt> 中的域名和类型键属性。<tt>GarbageCollectorMXBean</tt> 的唯一 <tt>ObjectName</tt> 可以通过在此字符串后添加 "<tt>,name=</tt><i>collector's name</i>" 形成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.MEMORY_MANAGER_MXBEAN_DOMAIN_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link MemoryManagerMXBean} 的 <tt>ObjectName</tt> 中的域名和类型键属性。<tt>MemoryManagerMXBean</tt> 的唯一 <tt>ObjectName</tt> 可以通过在此字符串后添加 "<tt>,name=</tt><i>manager's name</i>" 形成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.lang.management.ManagementFactory.MEMORY_POOL_MXBEAN_DOMAIN_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link MemoryPoolMXBean} 的 <tt>ObjectName</tt> 中的域名和类型键属性。<tt>MemoryPoolMXBean</tt> 的唯一 <tt>ObjectName</tt> 可以通过在此字符串后添加 "<tt>,name=</tt><i>pool's name</i>" 形成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.ClassLoadingMXBean java.lang.management.ManagementFactory.getClassLoadingMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机的类加载系统的管理 Bean。
+
+@return Java 虚拟机的 {@link ClassLoadingMXBean} 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.MemoryMXBean java.lang.management.ManagementFactory.getMemoryMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机的内存系统的管理 Bean。
+
+@return Java 虚拟机的 {@link MemoryMXBean} 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.ThreadMXBean java.lang.management.ManagementFactory.getThreadMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机的线程系统的管理 Bean。
+
+@return Java 虚拟机的 {@link ThreadMXBean} 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.RuntimeMXBean java.lang.management.ManagementFactory.getRuntimeMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机的运行时系统的管理 Bean。
+
+@return Java 虚拟机的 {@link RuntimeMXBean} 对象。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.CompilationMXBean java.lang.management.ManagementFactory.getCompilationMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机的编译系统的管理 Bean。如果 Java 虚拟机没有编译系统，此方法将返回 <tt>null</tt>。
+
+@return Java 虚拟机的 {@link CompilationMXBean} 对象，或者，如果 Java 虚拟机没有编译系统，则返回 <tt>null</tt>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.OperatingSystemMXBean java.lang.management.ManagementFactory.getOperatingSystemMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回运行 Java 虚拟机的操作系统的管理 Bean。
+
+@return Java 虚拟机的 {@link OperatingSystemMXBean} 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.List<java.lang.management.MemoryPoolMXBean> java.lang.management.ManagementFactory.getMemoryPoolMXBeans()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机中的 {@link MemoryPoolMXBean} 对象列表。Java 虚拟机可以有一个或多个内存池。可以在运行期间添加或删除内存池。
+
+@return <tt>MemoryPoolMXBean</tt> 对象列表。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.List<java.lang.management.MemoryManagerMXBean> java.lang.management.ManagementFactory.getMemoryManagerMXBeans()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机中的 {@link MemoryManagerMXBean} 对象列表。Java 虚拟机可以有一个或多个内存管理器。可以在运行期间添加或删除内存管理器。
+
+@return <tt>MemoryManagerMXBean</tt> 对象列表。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.List<java.lang.management.GarbageCollectorMXBean> java.lang.management.ManagementFactory.getGarbageCollectorMXBeans()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机中的 {@link GarbageCollectorMXBean} 对象列表。Java 虚拟机可以有一个或多个 <tt>GarbageCollectorMXBean</tt> 对象。可以在运行期间添加或删除 <tt>GarbageCollectorMXBean</tt>。
+
+@return <tt>GarbageCollectorMXBean</tt> 对象列表。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized javax.management.MBeanServer java.lang.management.ManagementFactory.getPlatformMBeanServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回平台 {@link javax.management.MBeanServer MBeanServer}。第一次调用此方法时，将首先通过调用 {@link javax.management.MBeanServerFactory#createMBeanServer
+ MBeanServerFactory.createMBeanServer} 方法创建平台 <tt>MBeanServer</tt>，然后通过使用类描述中定义的 <a href="#MXBeanNames">MXBean 名称</a>在此平台 <tt>MBeanServer</tt> 中注册平台 MXBean。在后续的调用中，此方法将直接返回最初创建的平台 <tt>MBeanServer</tt>。
+ <p>
+动态创建和销毁的 MXBean（如内存{@link MemoryPoolMXBean 池}和{@link MemoryManagerMXBean 管理器}）将自动注册到平台 <tt>MBeanServer</tt> 和从中注销。
+ <p>
+如果设置了系统属性 <tt>javax.management.builder.initial</tt>，将由指定的 {@link javax.management.MBeanServerBuilder} 进行平台 <tt>MBeanServer</tt> 创建。
+ <p>
+建议也将此平台用于注册平台 MXBean 之外的其他应用程序管理 Bean。这将允许所有 MBean 通过同一个 <tt>MBeanServer</tt> 发布，从而能够更方便地进行网络发布和发现。应该避免平台 MXBean 的名称冲突。
+
+@return 平台 <tt>MBeanServer</tt>；将在第一次调用此方法时注册到平台 <tt>MBeanServer</tt> 中的平台 MXBean。
+
+@exception SecurityException 如果安全管理器和调用方不具有 {@link javax.management.MBeanServerFactory#createMBeanServer} 所需要的权限。
+ 
+@see javax.management.MBeanServerFactory
+@see javax.management.MBeanServerFactory#createMBeanServer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T java.lang.management.ManagementFactory.newPlatformMXBeanProxy(MBeanServerConnection connection, String mxbeanName, java.lang.Class<T> mxbeanInterface) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于给定 <a href="#MXBeanNames">MXBean 名称</a>的平台 MXBean 接口的代理，以便通过给定 <tt>MBeanServerConnection</tt> 转发其方法调用。
+
+<p>此方法等效于：
+ <blockquote>
+ {@link java.lang.reflect.Proxy#newProxyInstance Proxy.newProxyInstance}<tt>(mxbeanInterface.getClassLoader(), new Class[] { mxbeanInterface }, handler)</tt>
+ </blockquote>
+
+其中 <tt>handler</tt> 是一个 {@link java.lang.reflect.InvocationHandler InvocationHandler}，对 MXBean 接口的方法调用将调度到其上。此 <tt>handler</tt> 会在将 MXBean 数据类型的输入参数转发到 <tt>MBeanServer</tt> 之前将其转换为其映射的开放类型，并将通过 <tt>MBeanServer</tt> 的 MXBean 方法调用的返回值由开放类型转换为在 MXBean 接口中声明的对应返回类型。
+
+ <p>
+如果 MXBean 是通知发出者（即它实现了 {@link javax.management.NotificationEmitter NotificationEmitter}），则 <tt>mxbeanInterface</tt> 和 <tt>NotificationEmitter</tt> 都将由此代理实现。
+
+ <p>
+<b>注：</b>
+<ol>
+<li>使用 MXBean 代理可以方便地远程访问正在运行的虚拟机的平台 MXBean。所有对 MXBean 代理的方法调用都被转发到 <tt>MBeanServerConnection</tt>，当连接器服务器出现通信问题时，可能在其中抛出 {@link java.io.IOException IOException}。如果使用代理远程访问平台 MXBean 的应用程序要访问 <tt>MBeanServerConnector</tt> 接口，则应该准备捕获 <tt>IOException</tt>。</li>
+ 
+<li>当客户端应用程序设计为远程访问正在运行的虚拟机（其版本与该应用程序运行其上的虚拟机版本不同）的 MXBean 时，应当准备捕获 {@link java.io.InvalidObjectException InvalidObjectException}，当 MXBean 代理接收到一个枚举常数的名称，而该名称客户端应用程序中加载的枚举类又缺少此枚举常数时，将抛出此异常。</li>
+
+<li>{@link javax.management.MBeanServerInvocationHandler MBeanServerInvocationHandler} 或其 {@link javax.management.MBeanServerInvocationHandler#newProxyInstance newProxyInstance} 方法不能用于为平台 MXBean 创建代理。<tt>MBeanServerInvocationHandler</tt> 创建的代理对象不会处理<a href="#MXBean">类规范</a>中描述的平台 MXBean 的属性。
+</li>
+ </ol>
+ 
+@param connection 要转发到的目标 <tt>MBeanServerConnection</tt>。
+@param mxbeanName 要转发到的 <tt>connection</tt> 的平台 MXBean。<tt>mxbeanName</tt> 的格式必须为 {@link ObjectName ObjectName} 的格式。
+@param mxbeanInterface 要由代理实现的 MXBean 接口。
+
+@throws IllegalArgumentException 如果
+<ul>
+<li><tt>mxbeanName</tt> 没有采用有效的 {@link ObjectName ObjectName} 格式，或者</li>
+<li><tt>connection</tt> 中指定的 MXBean 不是由平台提供的 MXBean，或者</li>
+<li>指定的 MXBean 未在 <tt>MBeanServerConnection</tt> 中注册，或者</li>
+<li>指定的 MXBean 不是给定 <tt>mxbeanInterface</tt> 的实例</li>
+</ul>
+
+@throws java.io.IOException 如果在访问 <tt>MBeanServerConnection</tt> 时出现通信问题。
+
+<!-- END DATA -->

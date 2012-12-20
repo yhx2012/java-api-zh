@@ -1,0 +1,720 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.text.View extends java.lang.Object implements javax.swing.SwingConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+<code>View</code> 类是 text 包极为重要的一部分。顾名思义，其表示文本模型的一个视图或者文本模型的一部分。负责文本组件外观的正是此类。View 无意成为用户必须学习的全新内容，相反其更像是一个轻量级组件。
+ <p>
+在默认情况下，视图是很轻量的。它包含一个对父视图的引用，由此能获取许多内容而无需保持状态，它还包含一个对模型 (<code>Element</code>) 某部分的引用。视图无需精确地表示模型中的元素，而只是使用一个典型而便利的映射。视图可以选择性地维护一对 Position 对象，从而维护其在模型中的位置（即表示一个元素段）。这通常是将视图拆分为片的格式化的结果。与元素坚固联系的便利之处在于使其更容易地构建工厂来生成视图，还能使其在模型更改时更容易地跟踪视图片，并且视图一定会更改视图来反映该模型。因此，简单的视图直接表示一个 Element，而复杂的视图并不如此。
+<p>
+视图具有以下责任：
+  <dl>
+
+<dt><b>参与布局。</b>
+    <dd>
+<p>视图有一个 <code>setSize</code> 方法，该方法如同 <code>Component</code> 中的 <code>doLayout</code> 和 <code>setSize</code> 组合而成。视图有一个 <code>preferenceChanged</code> 方法，该方法与 <code>Component</code> 中的 <code>invalidate</code> 类似，但该方法可以仅使一个轴无效并标识请求更改的子级。
+<p>View 根据三个值（即最小跨距、首选跨距、最大跨距）来表示其所需的大小。视图中的布局可以在独立于每一个轴来完成。对于一个运行正常的 View 实现，将满足：最小跨距 &lt;= 首选跨距 &lt;= 最大跨距。
+    </p>
+<p align=center><img src="doc-files/View-flexibility.jpg" 
+                     alt="以上文本是对此图像的描述。">
+<p>布局最小值的设置方法有：
+    <ul>
+    <li><a href="#getMinimumSpan(int)">getMinimumSpan</a>
+    <li><a href="#getPreferredSpan(int)">getPreferredSpan</a>
+    <li><a href="#getMaximumSpan(int)">getMaximumSpan</a>
+    <li><a href="#getAlignment(int)">getAlignment</a>
+    <li><a href="#preferenceChanged(javax.swing.text.View, boolean, boolean)">preferenceChanged</a>
+    <li><a href="#setSize(float, float)">setSize</a>
+    </ul>
+
+<p>方法 <code>setSize</code> 应当准备好被多次调用（即使在大小没有更改时也可能调用此方法）。通常调用 <code>setSize</code> 方法来确保试图在视图上执行需要更新布局的操作之前，已经完成了 View 布局。应该<em>始终</em> 将视图的大小设置为该视图所指定的最小跨距和最大跨距之间的某个值。此外，如果视图已经更改了其需要的布局值，并且希望其父级遵守该值，则必须一直在其父级上调用 <code>preferenceChanged</code> 方法。在发送了 <code>preferenceChanged</code> 之前，父 View 无需识别更改。如果需要的话，此类允许父 View 实现缓存子级的需求。调用序列如下所示：
+    </p>
+    <p align=center>
+<img src="doc-files/View-layout.jpg" 
+       alt="父视图和子视图间的示例调用序列： 
+       setSize, getMinimum, getPreferred, getMaximum, getAlignment, setSize">
+<p>确切的调用序列取决于父视图的布局功能（如果该视图具有任何子级）。在决定提供给每个子级的内容之前，视图可能收集子级的优先权，或者其可能一次一个地迭代更新子级。
+    </p>
+
+<dt><b>呈现模型的一部分。</b>
+    <dd>
+<p>这在 paint 方法中完成，该方法与组件的 paint 方法非常类似。期望 View 潜在地组装一个相当大的树。对于呈现，<code>View</code> 具有如下语义：
+    </p>
+    <ul>
+<li>视图在绘制时从其父级获取分配，因此如果分配的区域与其准备处理的区域不同，其必须准备重新执行布局。
+<li>坐标系统与承载 <code>Component</code>（即由 <a href="#getContainer">getContainer</a> 方法返回的 <code>Component</code>）相同。这意味着子视图与父级处于同一个坐标系统中，除非父级显式地改变了坐标系统。要安排重绘本身，视图可以在承载 <code>Component</code> 上调用 repaint。
+<li>在默认情况下<em>不剪贴</em> 子级。允许视图只在真正需要剪贴的时候进行剪贴才更有效率。
+<li>给定的 <code>Graphics</code> 对象没有以任何方式初始化。视图应该设置任何所需的设置。
+<li><code>View</code> 本身是透明的。虽然视图可以呈现在其整个分配中，但通常视图不这么做。通过向下遍历 <code>View</code> 实现树来执行呈现。每个 <code>View</code> 负责呈现其子级。线程安全取决于此行为。虽然视图实现不必要在实现时考虑线程安全，但是其他确实利用了并发的视图实现可以依赖树遍历来保证线程安全。
+<li>相对于模型的视图顺序由实现来决定。尽管子视图通常将按其在模型中出现的相同顺序被排列，但它们也可能以完全不同的顺序来可视地排列。如果子级是重叠的，View 实现可能具有一个与其相关联的 Z-顺序。
+    </ul>
+<p>用于呈现的方法有：
+    <ul>
+    <li><a href="#paint(java.awt.Graphics, java.awt.Shape)">paint</a>
+    </ul>
+    <p>
+
+<dt><b>在模型和视图坐标系统间转换。</b>
+    <dd>
+<p>因为视图对象产生自一个工厂，因而不能指望其必然处于某个特定模型，所以用户必须要能够执行转换以恰当地定位模型的空间表示形式。执行此操作的方法有：
+    <ul>
+    <li><a href="#modelToView(int, javax.swing.text.Position.Bias, int, javax.swing.text.Position.Bias, java.awt.Shape)">modelToView</a>
+    <li><a href="#viewToModel(float, float, java.awt.Shape, javax.swing.text.Position.Bias[])">viewToModel</a>
+    <li><a href="#getDocument()">getDocument</a>
+    <li><a href="#getElement()">getElement</a>
+    <li><a href="#getStartOffset()">getStartOffset</a>
+    <li><a href="#getEndOffset()">getEndOffset</a>
+    </ul>
+<p>在尝试进行转换之前布局必须有效。当通过 <code>DocumentEvent</code> 从模型广播更改时，转换无效并且禁止尝试。  
+    </p>
+
+<dt><b>响应模型的更改。</b>
+    <dd>
+<p>如果总体视图由多片（如果希望更改视图并写入最小数量的新代码，这是最佳的情形）表示，而具有大量的 <code>DocumentListener</code> 是不现实的。如果每个视图都侦听模型，在任意给定的时间上，仅有少数视图可能对所广播的更改实际感兴趣。因为模型不了解视图，所以没有方法来过滤更改信息的广播。视图层次结构本身就代为负责传播更改信息。在视图层次结构的任何一层上，视图都足够了解其子级，从而能最佳地进一步分发更改信息。因此，更改从视图层次结构的根开始广播。执行此操作的方法有：
+    <ul>
+    <li><a href="#insertUpdate">insertUpdate</a>
+    <li><a href="#removeUpdate">removeUpdate</a>
+    <li><a href="#changedUpdate">changedUpdate</a>
+    </ul>    
+    <p>
+</dl>
+
+@author  Timothy Prinzing
+@version 1.70 05/18/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.BadBreakWeight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该权重指示对于格式化来说视图未处于拆分的好时机。此值指示不应该尝试将视图拆分成段，因为该视图没有写入支持分段操作。
+
+@see #getBreakWeight
+@see #GoodBreakWeight
+@see #ExcellentBreakWeight
+@see #ForcedBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.GoodBreakWeight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该权重指示视图支持拆分，但是可能存在更好时机。
+ 
+@see #getBreakWeight
+@see #BadBreakWeight
+@see #ExcellentBreakWeight
+@see #ForcedBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.ExcellentBreakWeight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该权重指示视图支持拆分，并且表示拆分的极好时机。
+
+@see #getBreakWeight
+@see #BadBreakWeight
+@see #GoodBreakWeight
+@see #ForcedBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.ForcedBreakWeight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该权重指示视图支持拆分，并且在被置入一个通过拆分其子级来格式化子级的视图时，必须拆分该视图以恰当的表示它。
+
+@see #getBreakWeight
+@see #BadBreakWeight
+@see #GoodBreakWeight
+@see #ExcellentBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.X_AXIS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于格式化/拆分操作的轴。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.View.Y_AXIS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于格式化/拆分操作的轴。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <code>View</code> 对象。
+
+@param elem 要表示的 <code>Element</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.View.getParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视图的父级。
+
+@return 父级，如果不存在则返回 <code>null</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.View.isVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指示视图是否可视的 boolean 值。在默认情况下所有视图都是可视的。
+
+@return 始终返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract float javax.swing.text.View.getPreferredSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的首选跨距。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@return 视图想要在其中呈现的跨距。通常告知视图呈现在返回的跨距中，但并不保证如此。父级可能选择调整视图大小或者拆分视图。
+@see View#getPreferredSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.View.getMinimumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最小跨距。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@return 视图能在其中呈现的最小跨距。
+@see View#getPreferredSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.View.getMaximumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴的最大跨距。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@return 视图能在其中呈现的最大跨距。
+@see View#getPreferredSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.preferenceChanged(View child, boolean width, boolean height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子视图能在父级上调用此方法来指示首选项已经更改，并且应该重新考虑布局。在默认情况下，此方法仅仅上传播到下一个父级。根视图将在相关联的文本组件上调用 <code>revalidate</code>。
+
+@param child 子视图
+@param width 如果宽度首选项更改，则该参数为 true
+@param height 如果高度首选项更改，则该参数为 true
+@see javax.swing.JComponent#revalidate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.View.getAlignment(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某个轴所需的对齐方式。返回所需的对齐方式。这应该是一个 &gt;= 0.0 并且 &lt;= 1.0 的值，其中 0 指示在起始处对齐，1.0 指示在离起始处的整个跨距的地方对齐。0.5 则指示在视图中央对齐。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@return 值 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.text.View.paint(Graphics g, Shape allocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的呈现表面和该表面上的区域来呈现。该视图可能需要进行布置和创建子视图，以使它本身能够在给定的分配区域呈现。
+
+@param g 要使用的呈现表面
+@param allocation 分配的要在其中呈现的区域
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.setParent(View parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此视图建立父视图。如果父视图运行正常，则会保证在其他任何方法之前调用此方法。这也是最后调用的一个方法，因为也调用其来指示已从层次结构中移除视图。当调用此方法来将父级设置为 null 时，此方法对每一个子级执行同样操作，传播它们已经从视图树中断开连接的通知。如果重新实现此方法，应该调用 <code>super.setParent()</code>。
+
+@param parent 新的父级，如果要从父级中移除视图，则为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getViewCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此视图中的视图数。因为默认情况下不是一个复合视图，所以此方法返回 0。
+
+@return 视图数，该值 &gt;= 0
+@see View#getViewCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.View.getView(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取第 <i>n</i> 个子视图。因为在默认情况下没有任何子级，所以此方法返回 <code>null</code>。
+
+@param n 要获取的视图的编号，该值 &gt;= 0 &amp;&amp; &lt; getViewCount()
+@return 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.removeAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有子级。此方法是 <code>replace</code> 的便捷调用。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.remove(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除给定位置处的一个子级。此方法是 <code>replace</code> 的便捷调用。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.insert(int offs, View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+插入单个子视图。此方法是 <code>replace</code> 的便捷调用。
+
+@param offs 要其前插入视图的偏移量，该值 &gt;= 0
+@param v 视图
+@see #replace
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.append(View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+追加单个子视图。此方法是 <code>replace</code> 的便捷调用。
+
+@param v 视图
+@see #replace
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.replace(int offset, int length, javax.swing.text.View[] views)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替代子视图。如果没有任何视图要移除，则此方法充当一个插入操作。如果没有任何视图要添加，则此方法充当一个移除操作。将要被移除的视图会将其父级设置为 <code>null</code>，并且移除对它们的内部引用以便能被垃圾回收。实现此方法以不执行任何操作，因为默认情况下视图没有任何子级。
+
+@param offset 子视图中插入新 views 的起始索引。这应当是一个 &gt;= 0 并且 &lt;= getViewCount 的值
+@param length 要移除的已存在的子视图数 这应当是一个 &gt;= 0 并且 &lt;= (getViewCount() - offset) 的值。
+@param views 要添加的子视图。此值可以为 <code>null</code>，指示当前不添加任何子级（移除时很有用）
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getViewIndex(int pos, Position.Bias b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示模型中给定位置的子视图索引。默认情况下，视图没有任何子级，因此实现此方法以返回 -1，指示在任何位置都没有有效的子级索引。
+
+@param pos 位置，该值 &gt;= 0
+@return 表示给定位置的视图索引，如果没有任何视图表示该位置，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.View.getChildAllocation(int index, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定子视图的分配。这使得在没有假定视图如何存储其位置的情况下，能找出各种视图的定位。因为默认情况下没有任何子视图，所以此方法返回 <code>null</code>。
+
+@param index 子级的索引，该值 &gt;= 0 &amp;&amp; &lt; <code>getViewCount()</code>
+@param a 此视图的分配
+@return 子级的分配
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getNextVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供某种途径来确定可以放置一个插入符的下一个可视表示模型位置。一些视图可能是不可视的，它们的顺序可能与模型中的顺序不同，或者它们可能不允许访问模型中的某些位置。
+
+@param pos 要转换的位置，该值 &gt;= 0
+@param a 为呈现分配的区域
+@param direction 以当前位置开始的方向，可以将它们设想为通常出现在键盘上的箭头键。它将是以下值之一：
+ <ul>
+ <li>SwingConstants.WEST
+ <li>SwingConstants.EAST
+ <li>SwingConstants.NORTH
+ <li>SwingConstants.SOUTH
+ </ul>
+@return 模型中的位置，它最能表示下一个可视位置的位置
+@exception BadLocationException
+@exception IllegalArgumentException 如果 <code>direction</code> 不具有上述合法值之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Shape javax.swing.text.View.modelToView(int pos, Shape a, Position.Bias b) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定字符提供从文档模型坐标空间到视图坐标空间的映射。  
+
+@param pos 所需字符的位置 (&gt;=0)
+@param a 包围了请求字符的视图区域
+@param b 当位置是两个视图的边界时，该参数是离由偏移量表示的前一个字符或者下一个字符的偏差；<code>b</code> 将是这些值之一：
+ <ul>
+ <li> <code>Position.Bias.Forward</code>
+ <li> <code>Position.Bias.Backward</code>
+ </ul>
+@return 在视图坐标空间中，给定位置处的字符的边界框
+@exception BadLocationException 如果给定的位置不表示关联文档中的一个有效位置
+@exception IllegalArgumentException 如果 <code>b</code> 上文列出的 <code>Position.Bias</code> 的合法值之一
+@see View#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.View.modelToView(int p0, Position.Bias b0, int p1, Position.Bias b1, Shape a) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定区域提供从文档模型坐标空间到视图坐标空间的映射。给定区域被创建为第一个和最后一个字符位置的并集。
+
+@param p0 第一个字符的位置 (&gt;=0)
+@param b0 当位置是两个视图的一个边界时，第一个字符位置离由偏移量表示的前一个字符或下一个字符的偏差；<code>b0</code> 将是这些值之一：
+ <ul>
+ <li> <code>Position.Bias.Forward</code>
+ <li> <code>Position.Bias.Backward</code>
+ </ul>
+@param p1 最后一个字符的位置 (&gt;=0)
+@param b1 第二个字符位置的偏差，由上文所示的合法值之一来定义
+@param a 包围了请求区域的视图区域
+@return 边界框，它是由第一个和最后一个字符位置指定的区域的并集
+@exception BadLocationException  如果给定的位置不表示关联文档中的一个有效位置
+@exception IllegalArgumentException 如果 <code>b0</code> 或者 <code>b1</code> 不是上文列出的 <code>Position.Bias</code> 的合法值之一
+@see View#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.text.View.viewToModel(float x, float y, Shape a, javax.swing.text.Position.Bias[] biasReturn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从视图坐标空间到模型的逻辑坐标空间的映射。将填写 <code>biasReturn</code> 参数来指示给定的点更接近于模型中的下一个字符还是前一个字符。
+
+@param x X 坐标，该值 &gt;= 0
+@param y Y 坐标，该值 &gt;= 0
+@param a 要在其中呈现的分配区域
+@return 模型中最能表示视图中给定点的位置，该值 &gt;= 0。将填写 <code>biasReturn</code> 参数来指示给定的点更接近于模型中的下一个字符还是前一个字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.insertUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知在文档中此视图负责的某个位置已插入内容。为了减少子类的负担，此功能已分散到以下子类能重新实现的调用中：
+ <ol>
+<li>如果此视图负责的元素发生任何更改，调用 <a href="#updateChildren">updateChildren</a>。如果此视图有表示子元素的子视图，则此方法应当做任何必须的操作来保证子视图正确表示模型。
+<li>要转发 DocumentEvent 到合适的子视图，调用 <a href="#forwardUpdate">forwardUpdate</a>。
+<li>要给视图一个机会来修复其布局、重新计划布局或者不做任何操作，调用 <a href="#updateLayout">updateLayout</a>。
+ </ol>
+
+@param e 来自关联文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#insertUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.removeUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+给出从文档中此视图负责的位置移除了某些内容的通知。为了减少子类的负担，此功能已分散到以下子类能重新实现的调用中：
+ <ol>
+<li>如果此视图负责的元素发生任何更改，则调用 <a href="#updateChildren">updateChildren</a>。如果此视图有表示子元素的子视图，则此方法应当做任何必须的操作来保证子视图正确表示模型。
+<li>要转发 DocumentEvent 到合适的子视图，调用 <a href="#forwardUpdate">forwardUpdate</a>。
+<li>要给视图一个机会来修复其布局、重新计划布局或者不做任何操作，调用 <a href="#updateLayout">updateLayout</a>。
+ </ol>
+
+@param e 来自关联文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#removeUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.changedUpdate(DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知文档此视图负责的位置处的属性已更改。为了减少子类的负担，此功能已分散到以下子类能重新实现的调用中：
+ <ol>
+<li>如果此视图负责的元素发生任何更改，则调用 <a href="#updateChildren">updateChildren</a>。如果此视图有表示子元素的子视图，则此方法应当做任何必须的操作来保证子视图正确表示模型。
+<li>要转发 DocumentEvent 到合适的子视图，调用 <a href="#forwardUpdate">forwardUpdate</a>。
+<li>要给视图一个机会来修复其布局、重新计划布局或者不做任何操作，调用 <a href="#updateLayout">updateLayout</a>。
+ </ol>
+
+@param e 发自关联文档的更改信息
+@param a 视图的当前分配
+@param f 视图有子级时用于重建的工厂 View#changedUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Document javax.swing.text.View.getDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与视图关联的模型。
+
+@return 视图模型，如果没有则返回 <code>null</code>
+@see View#getDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getStartOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此视图负责的模型的一部分。
+
+@return 模型中的起始偏移量，该值 &gt;= 0
+@see View#getStartOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getEndOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此视图负责的模型的一部分。
+
+@return 模型中的结尾偏移量，该值 &gt;= 0
+@see View#getEndOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.View.getElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此视图所映射的主题的结构化部分。该视图可能没有负责元素的整个部分。
+
+@return 主题
+@see View#getElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics javax.swing.text.View.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于呈现的 <code>Graphics</code>。此方法可以用来确定字符特征，并且它对于打印视图和组件视图是不同的。
+
+@return 用于呈现的 <code>Graphics</code> 对象
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.View.getAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取呈现时要使用的属性。默认情况下此方法只是返回关联元素的属性。应该使用此方法而不是直接使用元素来获得对属性的访问，从而允许特定于视图的属性被混合进来，或者允许视图具有通过子类的特定于视图的属性变换。每个视图应当记录为了呈现或布局的其能够识别的属性，并且应该总是通过此方法所返回的 <code>AttributeSet</code> 来访问它们。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.View.breakView(int axis, int offset, float pos, float len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图在给定的轴上拆分视图。此方法由试图对其子级进行格式化的视图调用。例如，一个段落的视图通常尝试将其子级置于行中，表示文本块的视图有时能被拆分成为更小的片。
+ <p>
+实现此方法以返回视图本身，这表示在不可拆分时的默认行为。如果视图确实支持拆分，返回的视图的起始偏移量应当是给定的偏移量，并且结尾偏移量应当小于或者等于要被拆分的视图的结尾偏移量。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@param offset 文档模型中拆分段将占用的位置，该值 &gt;= 0。这可能是该段返回的起始偏移量
+@param pos 拆分视图将沿轴占用的位置，该值 &gt;= 0。这对制表符计算之类的操作很有用。
+@param len 指定所需的可能的拆分沿轴的距离，该值 &gt;= 0
+@return 如果视图能被拆分，则返回表示给定跨距的视图段。如果视图不支持拆分行为，返回视图本身。
+@see ParagraphView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.View.createFragment(int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示元素某部分的视图。此方法在对视图段进行测量的格式化操作中可能很有用。如果视图不支持分段（默认），其应该返回视图本身。  
+
+@param p0 起始偏移量，该值 &gt;= 0。此值应当是一个大于等于元素起始偏移量且小于元素结尾偏移量的值。
+@param p1 结尾偏移量，该值 &gt; p0。此值应当是一个小于等于元素结尾偏移量且大于元素起始偏移量的值。
+@return 视图段，如果视图不支持拆分成段，则返回视图本身
+@see LabelView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getBreakWeight(int axis, float pos, float len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图中拆分时机的权重大小。此方法能用于确定在格式化过程中最倾向调用 <code>breakView</code> 的视图。例如，表示其中具有空格的文本的视图可能比没有空格的视图更倾向拆分。权值越高，拆分的倾向性更大。等于或者小于 <code>BadBreakWeight</code> 的值不应被考虑进行拆分。大于或者等于 <code>ForcedBreakWeight</code> 值应该被拆分。
+ <p>
+实现此方法以提供返回 <code>BadBreakWeight</code> 的默认行为，除非长度大于视图长度，在这种情况下整个视图表示一个段。除非一个视图被写入支持拆分行为，否则不倾向于试图并拆分视图。一定支持拆分的视图例子是 <code>LabelView</code>。使用拆分权值的视图示例是 <code>ParagraphView</code>。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或者 <code>View.Y_AXIS</code>
+@param pos 拆分视图开始的可能的位置，该值 &gt;= 0。这可能对于计算制表符位置很有用。
+@param len 指定自 <em>pos</em>（可能需要拆分的位置）的相对长度，该值 &gt;= 0
+@return 权值，其应当是 ForcedBreakWeight 和 BadBreakWeight 之间的某个值
+@see LabelView
+@see ParagraphView
+@see #BadBreakWeight
+@see #GoodBreakWeight
+@see #ExcellentBreakWeight
+@see #ForcedBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getResizeWeight(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定视图沿给定轴的大小可调整性。对于小于或等于 0 的值，无法调整大小。
+
+@param axis 可能是 <code>View.X_AXIS</code> 或 <code>View.Y_AXIS</code>
+@return 权重
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.View.setSize(float width, float height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的大小。如果此方法有任何布局的职责，则它将促使视图沿给定轴进行布局。
+
+@param width 宽度，该值 &gt;= 0
+@param height 高度，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.text.View.getContainer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取承载视图的容器。此方法对计划一次重绘、找出承载组件字体等操作很有用。此方法的默认实现是将查询转发给父视图。
+
+@return 容器，如果没有，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.ViewFactory javax.swing.text.View.getViewFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将提供给视图层次结构的 <code>ViewFactory</code> 实现。通常将视图提供给此方法作为参数，以便在它们最可能需要该工厂的时候根据模型更新，但是在其他时候，此方法便以足够。
+
+@return 工厂，如果没有，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.View.getToolTipText(float x, float y, Shape allocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回提定位置的工具提示文本。默认实现返回传入位置标识的子 View 的值。
+
+@since 1.4
+@see JTextComponent#getToolTipText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.getViewIndex(float x, float y, Shape allocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示视图中给定位置的子视图索引。此方法迭代所有子级，返回第一个具有包含 <code>x</code>、<code>y</code> 的边界的子级。
+
+@param x x 坐标
+@param y y 坐标
+@param allocation View 中的当前分配。
+@return 表示给定位置的视图索引，如果没有任何视图表示该位置，则返回 -1
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.View.updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新子视图以响应接收模型变化的通知，并且有一条此视图负责的元素的变化记录。实现此方法以假定子视图直接负责此视图所表示的元素的子元素。<code>ViewFactory</code> 用来为每个元素创建子视图，这些子视图将从给定的 <code>ElementChange</code> 中指定的索引开始被添加到 <code>ElementChange</code> 中。移除表示已移除指定元素的子视图数目。
+ 
+@param ec 此视图所负责的元素的更改信息。如果调用此方法，该参赛不应当为 <code>null</code>
+@param e 来自关联文档的变化信息
+@param f 用于构建子视图的工厂
+@return 子视图是否表示此视图所负责的元素的子元素。某些视图创建表示其所负责的一部分元素的子级，其应当返回 false。此信息用于确定是否应该转发添加的元素范围中的视图
+@see #insertUpdate
+@see #removeUpdate
+@see #changedUpdate
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.View.forwardUpdate(DocumentEvent.ElementChange ec, DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>DocumentEvent</code> 转发给需要被通知模型更改的子视图。如果此视图负责的元素发生了更改，则在转发时应当考虑该更改（即新子视图不应该获得通知）。
+
+@param ec 此视图所负责的元素的更改（如果没有任何更改，则为 <code>null</code>）。
+@param e 来自关联文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see #insertUpdate
+@see #removeUpdate
+@see #changedUpdate
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.View.forwardUpdateToView(View v, DocumentEvent e, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>DocumentEvent</code> 转发到给定的子视图。此方法只是根据实际类型，通过对 <code>insertUpdate</code>、<code>removeUpdate</code> 或者 <code>changedUpdate</code> 的调用来将消息传递给视图。此方法由 <a href="#forwardUpdate">forwardUpdate</a> 调用来将事件转发给需要它的子级。
+
+@param v 作为事件转发目标的子视图
+@param e 来自关联文档的更改信息
+@param a 视图的当前分配
+@param f 用于重建的工厂（如果视图有子级）
+@see #forwardUpdate
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.View.updateLayout(DocumentEvent.ElementChange ec, DocumentEvent e, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新布局，以响应从模型接受的更改通知。如果 <code>ElementChange</code> 记录不为 <code>null</code>，则实现此方法来调用 <code>preferenceChanged</code> 以重新计划一个新的布局。
+
+@param ec 此视图所负责的元素的更改（如果没有任何更改则为 <code>null</code>）
+@param e 来自关联文档的更改信息
+@param a 视图的当前分配
+@see #insertUpdate
+@see #removeUpdate
+@see #changedUpdate
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.View.modelToView(int pos, Shape a) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从文档模型坐标空间到所映射的视图坐标空间的映射。实现此方法以将偏差默认为前文提到的 <code>Position.Bias.Forward</code>。
+
+@param pos 要转换的位置，该值 &gt;= 0
+@param a 分配的要在其中呈现的区域
+@return 返回给定位置的边界框
+@exception BadLocationException  如果给定位置在所关联的文档中不是一个有效位置
+@see View#modelToView
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.View.viewToModel(float x, float y, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从视图坐标空间到该模型的逻辑坐标空间的映射。
+
+@param x X 坐标，该值 &gt;= 0
+@param y Y 坐标，该值 &gt;= 0
+@param a 分配的要在其中呈现的区域
+@return 模型中最能代表视图中给定点的位置，该值 &gt;= 0
+@see View#viewToModel
+@deprecated
+
+<!-- END DATA -->

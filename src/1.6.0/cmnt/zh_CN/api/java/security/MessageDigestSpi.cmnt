@@ -1,0 +1,115 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.MessageDigestSpi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类为 <code>MessageDigest</code> 类定义<i>服务提供者接口</i> (<b>SPI</b>)，MessageDigest 类提供信息摘要算法的功能，如 MD5 或 SHA。信息摘要是安全的单向哈希函数，它接收任意大小的数据，输出固定长度的哈希值。
+
+<p> 希望提供特定信息摘要算法的密码服务提供者必须实现此类中的所有抽象方法。
+
+<p> 实现可随意选择是否实现 Cloneable 接口。
+
+@author Benjamin Renaud 
+
+@version 1.15, 12/19/03
+
+@see MessageDigest
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.security.MessageDigestSpi.engineGetDigestLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以字节为单位的摘要长度。
+
+<p>已将此具体方法添加到以前定义的这个抽象类中。（为了向后兼容性，它不能是抽象的）。
+ 
+<p>默认行为是返回 0。
+ 
+<p>提供者可以重写此方法来返回摘要长度。
+
+@return 以字节为单位的摘要长度。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.security.MessageDigestSpi.engineUpdate(byte input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的字节更新摘要。
+
+@param input 更新所使用的字节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.security.MessageDigestSpi.engineUpdate(byte[] input, int offset, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 byte 数组，在指定的偏移量处开始更新摘要。
+
+@param input 用来更新的 byte 数组。
+
+@param offset  byte 数组中的偏移量，操作从此处开始。
+
+@param len 要使用的字节数，始于 <code>offset</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.security.MessageDigestSpi.engineUpdate(ByteBuffer input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 ByteBuffer 更新摘要。使用始于 <code>input.position()</code> 处的 <code>input.remaining()</code> 个字节更新摘要。一旦返回，该缓冲区的位置将等于它的界限；它的界限将不会更改。
+
+@param input ByteBuffer
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract byte[] java.security.MessageDigestSpi.engineDigest()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过执行诸如填充等之类的最终操作完成哈希计算。一旦 <code>engineDigest</code> 被调用，引擎应该被重置（请参见 {@link #engineReset() engineReset}）。重置由引擎实现者负责。
+
+@return 存放哈希值结果的 byte 数组。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.security.MessageDigestSpi.engineDigest(byte[] buf, int offset, int len) throws java.security.DigestException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过执行诸如填充等之类的最终操作完成哈希计算。一旦 <code>engineDigest</code> 被调用，引擎应该被重置（请参见 {@link #engineReset() engineReset}）。重置由引擎实现者负责。
+
+此方法应该是抽象的，但是为了二进制兼容性使其具体。有知识的 (Knowledgeable) 的提供者应该重写此方法。
+
+@param buf 存储摘要的输出缓冲区
+
+@param offset 输出缓冲区中的偏移量，操作从此处开始
+
+@param len 在 buf 中分配给摘要的字节数。此默认实现和 SUN 的提供者都不返回部分摘要。使用此参数仅仅是为了在 API 中保持一致性。如果此参数的值小于实际的摘要长度，该方法将抛出 DigestException。此参数的值如果大于等于实际的摘要长度，它会被忽略。
+
+@return 存储在输出缓冲区中的摘要长度。
+ 
+@exception DigestException 如果发生错误。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.security.MessageDigestSpi.engineReset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为进一步使用重置摘要。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.MessageDigestSpi.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果实现是可复制的，则返回一个副本。    
+ 
+@return 如果实现是可复制的，则返回一个副本。
+
+@exception CloneNotSupportedException 如果对一个不支持 <code>Cloneable</code> 的实现调用此方法。
+
+<!-- END DATA -->

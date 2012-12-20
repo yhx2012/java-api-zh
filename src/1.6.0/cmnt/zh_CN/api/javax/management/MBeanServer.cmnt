@@ -1,0 +1,285 @@
+<!-- BEGIN KEY -->
+public interface javax.management.MBeanServer extends javax.management.MBeanServerConnection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>这是在代理端进行 MBean 操作的接口。它包含创建、注册和删除 MBean 所需的方法，以及用于已注册 MBean 的存取方法。这是 JMX 基础设施的核心组件。</p>
+
+<p>用户代码通常不实现此接口。相反，应该使用 {@link MBeanServerFactory} 类中的某个方法获得实现此接口的对象。</p>
+
+<p>添加到 MBean 服务器中的所有 MBean 都会变成得可以管理：通过连接到该 MBeanServer 的连接器/适配器可以远程访问其属性和操作。Java 对象不能在 MBean 服务器中进行注册，除非它是兼容 JMX 的 MBean。</p>
+
+<p>在 MBean 服务器中注册或注销 MBean 时，会发出一个 {@link javax.management.MBeanServerNotification MBeanServerNotification} Notification。要将一个对象注册为 MBeanServerNotifications 的侦听器，则应该使用 {@link javax.management.MBeanServerDelegate MBeanServerDelegate} 的 <CODE>ObjectName</CODE> 作为 <CODE>ObjectName</CODE> 参数调用 MBean 服务器方法 {@link #addNotificationListener addNotificationListener}。此 <CODE>ObjectName</CODE> 是：<BR><CODE>JMImplementation:type=MBeanServerDelegate</CODE>。</p>
+
+<p>从 {@link MBeanServerFactory} 类的 {@link MBeanServerFactory#createMBeanServer(String) createMBeanServer} 或 {@link MBeanServerFactory#newMBeanServer(String) newMBeanServer} 方法所获得的对象会对其方法进行安全检查，如下所示：</p>
+
+<p>首先，如果没有安全管理器（{@link System#getSecurityManager()} 为 null），则此接口的实现可以不进行任何检查。</p>
+
+<p>假定存在安全管理器，或者实现选择进行检查，则按照以下内容进行检查；<code>className</code> 是目标 MBean 的 {@link MBeanInfo#getClassName()} 所返回的字符串。</p>
+
+<p>如果安全检查失败，则该方法将抛出 {@link SecurityException}。</p>
+
+<p>对于可抛出 {@link InstanceNotFoundException} 的方法，它会为不存在的 MBean 抛出此异常，而不管权限如何。这是因为不存在的 MBean 没有 <code>className</code>。</p>
+
+ <ul>
+
+<li><p>对于 {@link #invoke invoke} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, operationName, name, &quot;invoke&quot;)}。</p>
+
+<li><p>对于 {@link #getAttribute getAttribute} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, attribute, name, &quot;getAttribute&quot;)}。</p>
+
+<li><p>对于 {@link #getAttributes getAttributes} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;getAttribute&quot;)}。另外，对于 {@link AttributeList} 中的每个属性 <em>a</em>，如果调用者的权限没有隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, <em>a</em>, name, &quot;getAttribute&quot;)}，则 MBean 服务器的行为与所提供列表中不包含该属性时一样。</p>
+
+<li><p>对于 {@link #setAttribute setAttribute} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, attrName, name, &quot;setAttribute&quot;)}，其中 <code>attrName</code> 是 {@link Attribute#getName() attribute.getName()}。</p>
+
+<li><p>对于 {@link #setAttributes setAttributes} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;setAttribute&quot;)}。另外，对于 {@link AttributeList} 中的每个属性 <em>a</em>，如果调用者的权限并没有隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, <em>a</em>, name, &quot;setAttribute&quot;)}，则 MBean 服务器的行为与所提供列表中不包含该属性时一样。</p>
+
+<li><p>对于 <code>addNotificationListener</code> 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;addNotificationListener&quot;)}。</p>
+
+<li><p>对于 <code>removeNotificationListener</code> 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;removeNotificationListener&quot;)}。</p>
+
+<li><p>对于 {@link #getMBeanInfo getMBeanInfo} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;getMBeanInfo&quot;)}。</p>
+
+<li><p>对于 {@link #getObjectInstance getObjectInstance} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;getObjectInstance&quot;)}。</p>
+
+<li><p>对于 {@link #isInstanceOf isInstanceOf} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;isInstanceOf&quot;)}。</p>
+
+<li><p>对于 {@link #queryMBeans queryMBeans} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(null, null, name, &quot;queryMBeans&quot;)}。另外，对于与 <code>name</code> 匹配的每个 MBean，如果调用者的权限没有隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;queryMBeans&quot;)}，则 MBean 服务器的行为与该 MBean 不存在时一样。</p>
+
+<p>某些查询元素在 MBean 服务器上执行操作。如果调用者不具有针对给定 MBean 的所需权限，则查询结果中不包括该 MBean。受此影响的标准查询元素是 {@link Query#attr(String)}、{@link Query#attr(String,String)} 和 {@link Query#classattr()}。</p>
+
+<li><p>对于 {@link #queryNames queryNames} 方法，执行的检查与 <code>queryMBeans</code> 方法相同，除了在 <code>MBeanPermission</code> 对象中使用 <code>&quot;queryNames&quot;</code> 而不是 <code>&quot;queryMBeans&quot;</code>。注意，<code>&quot;queryMBeans&quot;</code> 权限隐含相应的 <code>&quot;queryNames&quot;</code> 权限。</p>
+
+<li><p>对于 {@link #getDomains getDomains} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(null, null, name, &quot;getDomains&quot;)}。另外，对于返回数组中的每个域 <var>d</var>，如果调用者的权限没有隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(null, null, new ObjectName(&quot;<var>d</var>:x=x&quot;), &quot;getDomains&quot;)}，则从数组中消除该域。其中 <code>x=x</code> 是任意<var>键=值</var> 对，需要满足 ObjectName 的构造方法的要求，但与其他内容无关。</p>
+
+<li><p>对于 {@link #getClassLoader getClassLoader} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, loaderName, &quot;getClassLoader&quot;)}。</p>
+
+<li><p>对于 {@link #getClassLoaderFor getClassLoaderFor} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, mbeanName, &quot;getClassLoaderFor&quot;)}。</p>
+
+<li><p>对于 {@link #getClassLoaderRepository getClassLoaderRepository} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(null, null, null, &quot;getClassLoaderRepository&quot;)}。</p>
+
+<li><p>对于已过时的 <code>deserialize</code> 方法，所需的权限与替换它们的方法的权限相同。</p>
+
+<li><p>对于 <code>instantiate</code> 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, null, &quot;instantiate&quot;)}。</p>
+
+<li><p>对于 {@link #registerMBean registerMBean} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;registerMBean&quot;)}。其中 <code>className</code> 是 {@link MBeanInfo#getClassName()} 为此类某个对象返回的字符串。
+
+<p>如果 <code>MBeanPermission</code> 检查成功，则验证该 MBean 的类，方法是检查其 {@link java.security.ProtectionDomain ProtectionDomain} 是否隐含 {@link MBeanTrustPermission#MBeanTrustPermission(String) MBeanTrustPermission(&quot;register&quot;)}。</p>
+
+<p>最后，如果 <code>name</code> 参数为 null，则使用 {@link MBeanRegistration#preRegister MBeanRegistration.preRegister} 返回的 <code>ObjectName</code> 进行另一次 <code>MBeanPermission</code> 检查。</p>
+
+<li><p>对于 <code>createMBean</code> 方法，调用者的权限必须隐含等效的 <code>instantiate</code>，后跟 <code>registerMBean</code> 所需的权限。</p>
+
+<li><p>对于 {@link #unregisterMBean unregisterMBean} 方法，调用者的权限必须隐含 {@link MBeanPermission#MBeanPermission(String,String,ObjectName,String) MBeanPermission(className, null, name, &quot;unregisterMBean&quot;)}。</p>
+
+ </ul>
+
+@since 1.5
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.MBeanServer.registerMBean(Object object, ObjectName name) throws javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.NotCompliantMBeanException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将某个预先存在的对象作为 MBean 注册到 MBean 服务器中。如果给定的对象名为 null，则该 MBean 必须提供自己的名称，方法是实现 {@link javax.management.MBeanRegistration MBeanRegistration} 接口并从 {@link MBeanRegistration#preRegister preRegister} 方法中返回名称。
+
+@param object 要作为 MBean 注册的 MBean。
+@param name MBean 的对象名。可以为 null。
+
+@return 一个 <CODE>ObjectInstance</CODE>，它包含新注册的 MBean 的 <CODE>ObjectName</CODE> 和 Java 类名。如果包含的 <code>ObjectName</code> 是 <code>n</code>，则包含的 Java 类名是 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@exception InstanceAlreadyExistsException 如果该 MBean 已经处于 MBean 服务器的控制之下。
+@exception MBeanRegistrationException 如果 MBean 的 <CODE>preRegister</CODE>（<CODE>MBeanRegistration</CODE> 接口）方法已经抛出异常。不要注册该 MBean。
+@exception NotCompliantMBeanException 如果此对象不是兼容 JMX 的 MBean
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的对象为 null 或者未指定对象名。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Integer javax.management.MBeanServer.getMBeanCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MBean 服务器中已注册的 MBean 的数目。
+
+@return 已注册的 MBean 数，包装在一个 Integer 中。如果调用者的权限是受限制的，则此数可能大于调用者可访问的 MBean 数。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServer.instantiate(String className) throws javax.management.ReflectionException, javax.management.MBeanException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用 MBean 服务器的 {@link javax.management.loading.ClassLoaderRepository Class Loader Repository} 中所有已注册的类加载器列表实例化一个对象。该对象的类应该具有公共构造方法。此方法返回对新创建对象的引用。新创建的对象未在该 MBean 服务器中注册。</p>
+
+<p>此方法等效于 {@link #instantiate(String,Object[],String[]) instantiate(className, (Object[]) null, (String[]) null)}。</p>
+
+@param className 要实例化的对象的类名。    
+
+@return 新实例化的对象。	 
+
+@exception ReflectionException 包装在试图调用该对象的构造方法时出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception MBeanException 如果该对象的构造方法已经抛出异常
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServer.instantiate(String className, ObjectName loaderName) throws javax.management.ReflectionException, javax.management.MBeanException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用由某个对象的 <CODE>ObjectName</CODE> 指定的类加载器来实例化该对象。如果加载器名为 null，则将使用加载 MBean 服务器的 ClassLoader。该对象的类应该具有公共构造方法。方法返回对新创建对象的引用。新创建的对象未在该 MBean 服务器中注册。</p>
+
+<p>此方法等效于 {@link #instantiate(String,ObjectName,Object[],String[]) instantiate(className, loaderName, (Object[]) null, (String[]) null)}。</p>
+
+@param className 要实例化的 MBean 的类名。
+@param loaderName 要使用的类加载器的对象名。
+
+@return 新实例化的对象。
+
+@exception ReflectionException 包装在试图调用该对象的构造方法时出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception MBeanException 如果该对象的构造方法已抛出异常。
+@exception InstanceNotFoundException 如果指定的类加载器未在该 MBeanServer 中注册。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServer.instantiate(String className, java.lang.Object[] params, java.lang.String[] signature) throws javax.management.ReflectionException, javax.management.MBeanException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用 MBean 服务器的 {@link javax.management.loading.ClassLoaderRepository Class Loader Repository} 中所有已注册的类加载器列表来实例化一个对象。该对象的类应该具有公共构造方法。该调用返回对新创建对象的引用。新创建的对象未在该 MBean 服务器中注册。</p>
+
+@param className 要实例化的对象的类名。
+@param params 一个数组，包含要调用的构造方法的参数。
+@param signature 一个数组，包含要调用的构造方法的签名。
+
+@return 新实例化的对象。	 
+
+@exception ReflectionException 包装在试图调用该对象的构造方法时出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception MBeanException 如果该对象的构造方法已经抛出异常
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.MBeanServer.instantiate(String className, ObjectName loaderName, java.lang.Object[] params, java.lang.String[] signature) throws javax.management.ReflectionException, javax.management.MBeanException, javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>实例化一个对象。用该对象的对象名标识要使用的类加载器。如果加载器的对象名为 null，则将使用加载 MBean 服务器的 ClassLoader。该对象的类应该具有公共构造方法。该调用返回对新创建对象的引用。新创建的对象未在该 MBean 服务器中注册。</p>
+
+@param className 要实例化的对象的类名。
+@param params 一个数组，包含要调用的构造方法的参数。
+@param signature 一个数组，包含要调用的构造方法的签名。
+@param loaderName 要使用的类加载器的对象名。
+
+@return 新实例化的对象。	 
+
+@exception ReflectionException 包装在试图调用该对象的构造方法时出现的 <CODE>java.lang.ClassNotFoundException</CODE> 或 <CODE>java.lang.Exception</CODE>。
+@exception MBeanException 如果该对象的构造方法已经抛出异常
+@exception InstanceNotFoundException 如果指定的类加载器未在该 MBean 服务器中注册。
+@exception RuntimeOperationsException 包装 <CODE>java.lang.IllegalArgumentException</CODE>：如果传入参数中的 className 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ObjectInputStream javax.management.MBeanServer.deserialize(ObjectName name, byte[] data) throws javax.management.InstanceNotFoundException, javax.management.OperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在 MBean 的类加载器上下文中反序列化一个字节数组。</p>
+
+@param name MBean 名，该 MBean 的类加载器应该用于反序列化。
+@param data 要被反序列化的字节数组。
+
+@return 反序列化后的对象流。
+
+@exception InstanceNotFoundException 如果未找到指定的 MBean。
+@exception OperationsException 任何常规的输入/输出相关的异常。
+
+@deprecated 使用 {@link #getClassLoaderFor getClassLoaderFor} 为反序列化获得合适的类加载器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ObjectInputStream javax.management.MBeanServer.deserialize(String className, byte[] data) throws javax.management.OperationsException, javax.management.ReflectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在给定的 MBean 类加载器上下文中反序列化一个字节数组。通过 {@link javax.management.loading.ClassLoaderRepository Class Loader Repository} 加载类 <code>className</code> 来找到该类加载器。结果类的类加载器就是要使用的类加载器。
+
+@param className 类名，该类的类加载器应该用于反序列化。
+@param data 要被反序列化的字节数组。
+
+@return 反序列化后的对象流。
+
+@exception OperationsException 任何常规的输入/输出相关的异常。
+@exception ReflectionException 如果无法由类加载器存储库加载指定的类
+
+@deprecated 使用 {@link #getClassLoaderRepository} 来获得类加载器存储库并使用它进行反序列化。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ObjectInputStream javax.management.MBeanServer.deserialize(String className, ObjectName loaderName, byte[] data) throws javax.management.InstanceNotFoundException, javax.management.OperationsException, javax.management.ReflectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在给定的 MBean 类加载器上下文中反序列化一个字节数组。该类加载器是加载名为 &quot;className&quot; 的类的类加载器。用于加载指定类的类加载器的名称是指定的。如果为 null，则使用 MBean 服务器的类加载器。</p>
+
+@param className 类名，该类的类加载器应该用于反序列化。
+@param data 将被反序列化的字节数组。
+@param loaderName 用于加载指定类的类加载器的名称。如果为 null，则使用 MBean 服务器的类加载器。
+
+@return 反序列化后的对象流。
+
+@exception InstanceNotFoundException 如果未找到指定的类加载器 MBean。
+@exception OperationsException 任何常规的输入/输出相关的异常。
+@exception ReflectionException 无法由指定类加载器加载指定的类。
+
+@deprecated 使用 {@link #getClassLoader getClassLoader} 为反序列化获得类加载器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ClassLoader javax.management.MBeanServer.getClassLoaderFor(ObjectName mbeanName) throws javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回用于加载指定 MBean 的类的 {@link java.lang.ClassLoader}。</p>
+
+@param mbeanName MBean 的 ObjectName。
+
+@return 用于该 MBean 的 ClassLoader。如果 <var>l</var> 是该 MBean 的实际 ClassLoader，且 <var>r</var> 是返回的值，则：
+
+ <ul>
+<li><var>r</var> 与 <var>l</var> 相同；或者
+<li>对于字符串 <var>s</var> 而言，<var>r</var>{@link ClassLoader#loadClass(String) .loadClass(<var>s</var>)} 的结果与 <var>l</var>{@link ClassLoader#loadClass(String) .loadClass(<var>s</var>)} 的结果相同。
+ </ul>
+
+这意味着出于安全或其他原因考虑，该 ClassLoader 可能被包装在另一个 ClassLoader 中。
+
+@exception InstanceNotFoundException 如果未找到指定的 MBean。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ClassLoader javax.management.MBeanServer.getClassLoader(ObjectName loaderName) throws javax.management.InstanceNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回指定的 {@link java.lang.ClassLoader}。</p>
+
+@param loaderName ClassLoader 的 ObjectName。可以为 null，在这种情况下，则返回该 MBean 服务器自己的  ClassLoader。
+
+@return 指定的 ClassLoader。如果 <var>l</var> 是具有该名称的实际 ClassLoader，且 <var>r</var> 是返回值，则如下所示：
+
+ <ul>
+<li><var>r</var> 与 <var>l</var> 相同；或者
+<li>对于字符串 <var>s</var> 而言，<var>r</var>{@link ClassLoader#loadClass(String) .loadClass(<var>s</var>)} 的结果与 <var>l</var>{@link ClassLoader#loadClass(String) .loadClass(<var>s</var>)} 的结果相同。
+ </ul>
+
+这意味着出于安全或其他原因考虑，该 ClassLoader 可能被包装在另一个 ClassLoader 中。
+
+@exception InstanceNotFoundException 如果未找到指定的 ClassLoader。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.loading.ClassLoaderRepository javax.management.MBeanServer.getClassLoaderRepository()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此 MBeanServer 的 ClassLoaderRepository。
+@return 此 MBeanServer 的 ClassLoaderRepository。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->

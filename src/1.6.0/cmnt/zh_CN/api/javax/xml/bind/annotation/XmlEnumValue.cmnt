@@ -1,0 +1,82 @@
+<!-- BEGIN KEY -->
+public interface class javax.xml.bind.annotation.XmlEnumValue implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 {@link Enum} 类型中的枚举常量映射到 XML 表示形式。  
+ 
+<p> <b>用法</b> </p>
+
+<p> <tt>@XmlEnumValue</tt> 注释可以与以下程序元素一起使用：  
+ <ul> 
+<li>枚举常量</li>
+ </ul>
+
+<p>有关其他公共信息，请参阅 javax.xml.bind.package javadoc 中的&ldquo;包规范&rdquo;。</p>
+
+<p>此注释以及 {@link XmlEnum} 提供枚举类型到 XML 表示形式的映射。
+
+<p>枚举类型被映射到带有 enumeration facet 的模式简单类型。模式类型派生于 <tt>@XmlEnum.value()</tt> 中指定的 Java 类型。每个枚举常量 <tt>@XmlEnumValue</tt> 都必须有一个用于 <tt>@XmlEnum.value()</tt> 类型的有效词法表示形式。
+
+<p> 在没有此注释的情况下，{@link Enum#name()} 用作 XML 表示形式。
+
+<p> <b>示例 1：</b>映射枚举常量名称 -&gt;  enumeration facet</p>
+<pre>
+     //Example: Code fragment
+     &#64;XmlEnum(String.class)
+     public enum Card { CLUBS, DIAMONDS, HEARTS, SPADES }
+
+     &lt;!-- Example: XML Schema fragment -->
+     &lt;xs:simpleType name="Card">
+       &lt;xs:restriction base="xs:string"/>
+         &lt;xs:enumeration value="CLUBS"/>
+         &lt;xs:enumeration value="DIAMONDS"/>
+         &lt;xs:enumeration value="HEARTS"/>
+         &lt;xs:enumeration value="SPADES"/>
+     &lt;/xs:simpleType>
+ </pre>
+
+<p><b>示例 2：</b>映射枚举常量名称（值） -&gt; enumeration facet</p>
+<pre>
+     //Example: code fragment
+     &#64;XmlType
+     &#64;XmlEnum(Integer.class)
+     public enum Coin { 
+         &#64;XmlEnumValue("1") PENNY(1),
+         &#64;XmlEnumValue("5") NICKEL(5),
+         &#64;XmlEnumValue("10") DIME(10),
+         &#64;XmlEnumValue("25") QUARTER(25) }
+
+     &lt;!-- Example: XML Schema fragment -->
+     &lt;xs:simpleType name="Coin">
+       &lt;xs:restriction base="xs:int">
+         &lt;xs:enumeration value="1"/>
+         &lt;xs:enumeration value="5"/>
+         &lt;xs:enumeration value="10"/>
+         &lt;xs:enumeration value="25"/>
+       &lt;/xs:restriction>
+     &lt;/xs:simpleType>
+ </pre>
+
+<p><b>示例 3：</b>映射枚举常量名称 -&gt;  enumeration facet</p>
+ 
+<pre>
+     //Code fragment
+     &#64;XmlType
+     &#64;XmlEnum(Integer.class)
+     public enum Code {
+         &#64;XmlEnumValue("1") ONE,
+         &#64;XmlEnumValue("2") TWO;
+     }
+ 
+     &lt;!-- Example: XML Schema fragment -->
+     &lt;xs:simpleType name="Code">
+       &lt;xs:restriction base="xs:int">
+         &lt;xs:enumeration value="1"/>
+         &lt;xs:enumeration value="2"/>
+       &lt;/xs:restriction>
+     &lt;/xs:simpleType>
+ </pre>
+
+@since JAXB 2.0
+
+<!-- END DATA -->

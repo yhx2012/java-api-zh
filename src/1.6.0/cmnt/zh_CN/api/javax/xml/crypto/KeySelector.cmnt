@@ -1,0 +1,46 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.crypto.KeySelector extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个选择器，可使用 {@link KeyInfo} 对象中包含的数据查找并返回某个密钥。此类实现的一个示例是：搜索与 <code>KeyInfo</code> 中所含信息相匹配的受信任密钥的 {@link java.security.KeyStore}。
+
+<p>返回的密钥是否受信任，以及用来确定的机制是特定于实现的。
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.crypto.KeySelector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的不带参数的构造方法；仅由子类调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.KeySelectorResult javax.xml.crypto.KeySelector.select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context) throws javax.xml.crypto.KeySelectorException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试查找满足指定约束的密钥。
+
+@param keyInfo 一个 <code>KeyInfo</code>（可以为 <code>null</code>）
+@param purpose 密钥的用途（{@link Purpose#SIGN}、{@link Purpose#VERIFY}、{@link Purpose#ENCRYPT} 或 {@link Purpose#DECRYPT}）
+@param method 使用此密钥的算法方法。应该只返回与算法兼容且满足指定算法的约束条件的密钥。
+@param context 可能包含对查找某一适当密钥有用的信息的 <code>XMLCryptoContext</code>。如果此密钥选择器支持解析 {@link RetrievalMethod} 类型，则选择器应该使用上下文的 <code>baseURI</code> 和 <code>dereferencer</code> 参数（如果指定）来解析 URI，并取消对 URI 的引用。
+@return 密钥选择器的结果
+@throws KeySelectorException 如果试图查找某个密钥时发生异常条件。注意，无法查找密钥不被视为异常（在这种情况下，应该返回 <code>null</code>）。但是，阻止 <code>KeySelector</code> 查找某个可能密钥的错误条件（例如：网络通讯失败）应被视为异常。
+@throws ClassCastException 如果 <code>method</code> 的数据类型不受此密钥选择器支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.KeySelector javax.xml.crypto.KeySelector.singletonKeySelector(Key key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个总是选择指定密钥的 <code>KeySelector</code>，不管传递给它的 <code>KeyInfo</code> 是什么。
+
+@param key 将存储到密钥选择器中的单独密钥
+@return 总是选择指定密钥的密钥选择器
+@throws NullPointerException 如果 <code>key</code> 为 <code>null</code>
+
+<!-- END DATA -->

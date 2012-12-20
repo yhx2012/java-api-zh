@@ -1,0 +1,81 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.ext.EntityResolver2 extends org.xml.sax.EntityResolver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+扩展的接口，用于将外部实体引用映射到输入源，或用于提供缺少的外部子集。使用 {@link XMLReader#setEntityResolver XMLReader.setEntityResolver()} 方法将此接口的实现提供给解析器。当解析器使用此接口中的方法时，将使用 {@link EntityResolver2#resolveEntity EntityResolver2.resolveEntity()} 方法（在此接口中）而<em>不是</em> 旧的 (SAX 1.0) {@link EntityResolver#resolveEntity EntityResolver.resolveEntity()} 方法。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>
+ </blockquote>
+
+<p>如果 SAX 应用程序需要此接口为外部实体定义的自定义处理，则必须确保使用 XMLReader，并将 <em>http://xml.org/sax/features/use-entity-resolver2</em>）功能标志设置为 <em>true</em>（识别该功能时，是其默认值）。如果该标志不可识别，或其值为 false，或解析器不能实现此接口，那么仅使用 {@link EntityResolver} 方法。
+ </p>
+
+<p>它支持修改实体解析的三种类别的应用程序。此接口对于<em>旧式</em> 应用程序是未知的；它们将提供 EntityResolver。由于多态性，<em>转换模式</em> 提供了 EntityResolver2，并自动获取在任何支持它的系统（解析器或其他工具）中方法的优点。<em>旧式</em> 和<em>转换模式</em> 应用程序将与任何 SAX2 解析器一起工作。<em>新式 </em>应用程序将运行失败，在支持此特定功能的 SAX2 解析器上运行除外。它们强调功能标志应有值 &quot;true&quot;，如果调用原始 SAX 1.0 式实体解析方法，则它们提供的 EntityResolver2 实现可能会抛出异常。
+ </p>
+
+@see org.xml.sax.XMLReader#setEntityResolver
+
+@since SAX 2.0 (extensions 1.1 alpha)
+@author David Brownell
+@version TBD
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource org.xml.sax.ext.EntityResolver2.getExternalSubset(String name, String baseURI) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序为不能显式定义外部子集的文档提供外部子集。这样，具有 DOCTYPE 声明的忽略外部子集的文档可以增加可供验证、实体处理和属性处理（标准化、默认和报告包括 ID 的类型）使用的声明。通过 {@link LexicalHandler#startDTD startDTD()} 方法报告此增加，就像文档文本最初就包括外部子集一样；在报告任何内部子集数据或错误之前进行此回调。</p>
+
+<p>此方法也可以与没有 DOCTYPE 声明的文档一起使用。当遇到根元素，但没有看到任何 DOCTYPE 声明时，调用此方法。如果返回该外部子集的一个值，则声明该根元素为根元素，条件是以其他方式在文档序言结尾衔接 DOCTYPE 声明无效。在该情况下，解析器回调序列逻辑上类似以下内容：</p>
+
+ <pre>
+ ... comments and PIs from the prolog (as usual)
+ startDTD (&quot;rootName&quot;, source.getPublicId (), source.getSystemId ());
+ startEntity (&quot;[dtd]&quot;);
+ ... declarations, comments, and PIs from the external subset
+ endEntity (&quot;[dtd]&quot;);
+ endDTD ();
+ ... then the rest of the document (as usual)
+ startElement (..., &quot;rootName&quot;, ...);
+ </pre>
+
+<p>注意，InputSource 不能获得进一步的解析。此方法的实现可能要调用 {@link #resolveEntity resolveEntity()} 以获得一些优点，如使用 DTD 实体的本地缓存。另外，不包括外部参数实体的（非验证）处理器永不使用此方法。 </p>
+
+<p>与 XML 处理器进行互操作时，此方法的使用包括简化数据验证，该处理器总是需要对外部实体的不合需要的网络访问，或者由于其他原因采用&ldquo;非 DTD&rdquo;策略。非验证目的包括强制文档去包括 DTD，以便能一致地处理属性。例如，XPath 处理器在它能够处理广泛使用的引用类型之前需要知道哪一个属性具有类型 &quot;ID&quot;。</p>
+ 
+<p><strong>警告：</strong>返回外部子集能修改输入文档。通过为常规实体提供定义，能使格式错误的文档看起来格式良好。
+ </p>
+
+@param name 标识文档根元素。此名称来自 DOCTYPE 声明（如果可用），或来自实际的根元素。
+@param baseURI 文档的基 URI，充当选择外部子集的附加提示。这总是一个绝对 URI，除非由于向 XMLReader 提供了一个不带 URI 的 InputSource 而使它为 null 时。
+
+@return 描述解析器使用的新外部子集的 InputSource 对象，或指示不提供任何外部子集的 null。
+
+@exception SAXException 任何 SAX 异常，可能包装另外的异常。
+@exception IOException 可能指示创建新的 InputStream 或 Reader 失败，或非法 URL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource org.xml.sax.ext.EntityResolver2.resolveEntity(String name, String publicId, String baseURI, String systemId) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序把对外部实体的引用映射到输入源，或告知解析器它应使用常规 URI 解析。仅对已正确声明的外部实体调用此方法。此方法提供比 {@link EntityResolver} 接口更多的灵活性，支持更复杂的目录方案（例如 <a href=
+        "http://www.oasis-open.org/committees/entity/spec-2001-08-06.html"
+        >OASIS XML Catalogs</a> 规范定义的目录方案）的实现。</p>
+
+<p>配置为使用此解析器方法的解析器将调用它，以确定用于由于 XML 文本中的引用而包括在内的任何外部实体的输入源。它排除文档实体和 {@link #getExternalSubset getExternalSubset()} 返回的任何外部实体。当通过使用功能标志将（非验证的）处理器配置为不包括实体（参数或常规）的类时，不为此类实体调用此方法。  </p>
+
+<p>注意，这里使用的实体命名方案与 {@link LexicalHandler} 中或 {@link org.xml.sax.ContentHandler#skippedEntity ContentHandler.skippedEntity()} 方法中使用的相同。 </p>
+
+@param name 标识正被解析的外部实体。外部子集的 &quot;[dtd]&quot;，或者以 &quot;%&quot; 开头用来指示参数实体的名称，或者常规实体的名称。在由 SAX2 解析器调用时，它永不能为 null。
+@param publicId 被引用的外部实体的公共标识符（按照 XML 规范的要求标准化），如果不提供任何内容，则为 null。
+@param baseURI 关于解释哪个相对 systemID 的 URI。这总是一个绝对 URI，除非它为 null（可能因为向 XMLReader 提供了一个不带 URI 的 InputSource）。XML 规范定义了此 URI，它是与开始相关声明的 &quot;&lt;&quot; 相关联的 URI。
+@param systemId 引用的外部实体的系统标识符；相对 URI 或绝对 URI。由 SAX2 解析器调用时，它从不能为 null；此类解析器仅解析声明的实体和任何外部子集。
+
+@return 描述解析器使用的新输入源的 InputSource 对象。返回 null 指示解析器基于基 URI 解析系统 ID，并打开到产生的 URI 的连接。
+
+@exception SAXException 任何 SAX 异常，可能包装另外的异常。
+@exception IOException 可能指示创建新的 InputStream 或 Reader 失败，或非法 URL。
+
+<!-- END DATA -->

@@ -1,0 +1,140 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.FileLock extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示文件区域锁定的标记。
+
+<p> 每次通过 {@link FileChannel} 类的 {@link FileChannel#lock(long,long,boolean) lock} 或 {@link FileChannel#tryLock(long,long,boolean) tryLock} 方法获取文件上的锁定时，就会创建一个文件锁定对象。
+
+<p> 文件锁定对象最初是有效的。通过调用 {@link #release release} 方法、关闭用于获取该锁定的通道，或者终止 Java 虚拟机（以先到者为准）来释放锁定之前，该对象一直是有效的。可通过调用锁定的 {@link #isValid isValid} 方法来测试锁定的有效性。
+
+<p> 文件锁定要么是<i>独占的</i>，要么是<i>共享的</i>。共享锁定可阻止其他并发运行的程序获取重叠的独占锁定，但是允许该程序获取重叠的共享锁定。独占锁定则阻止其他程序获取任一类型的重叠锁定。一旦释放某个锁定后，它就不会再对其他程序所获取的锁定产生任何影响。
+
+<p> 可通过调用某个锁定的 {@link #isShared isShared} 方法来确定它是独占的还是共享的。某些平台不支持共享锁定，在这种情况下，对共享锁定的请求被自动转换为对独占锁定的请求。
+
+<p> 单个 Java 虚拟机在某个特定文件上所保持的锁定是不重叠的。要测试某个候选锁定范围是否与现有锁定重叠，可使用 {@link #overlaps overlaps} 方法。
+
+<p> 文件锁定对象记录了在其文件上保持锁定的文件通道、该锁定的类型和有效性，以及锁定区域的位置和大小。只有锁定的有效性是随时间而更改的；锁定状态的所有其他方面都是不可变的。
+
+<p> 文件锁定以整个 Java 虚拟机来保持。但它们不适用于控制同一虚拟机内多个线程对文件的访问。
+
+<p> 多个并发线程可安全地使用文件锁定对象。
+
+ <a name="pdep">
+<h4> 平台依赖性 </h4>
+
+<p> 此文件锁定 API 直接映射到底层操作系统的本机锁定设施。因此，无论程序是用何种语言编写的，某个文件上所保持的锁定对于所有访问该文件的程序来说都应该是可见的。
+
+<p> 某个锁定是否实际阻止另一个程序访问该锁定区域的内容是与系统相关的，因此是未指定的。有些系统的本机文件锁定设施只是<i>劝告的</i>，意味着为了保证数据的完整性，各个程序必须遵守已知的锁定协议。其他系统本机文件锁定是<i>强制的</i>，意味着如果某个程序锁定了某个文件区域，则实际上阻止其他程序以违反该锁定的方式访问该区域。但在其他系统上，本机文件锁定是劝告的还是强制的可以以每个文件为基础进行配置。为确保平台间的一致性和正确性，强烈建议将此 API 提供的锁定作为劝告锁定来使用。
+
+<p> 在有些系统上，在某个文件区域上获取强制锁定会阻止该区域被 {@link java.nio.channels.FileChannel#map</code>映射到内存<code>}，反之亦然。组合锁定和映射的程序应该为此组合的失败做好准备。
+
+<p> 在有些系统上，关闭某个通道会释放 Java 虚拟机在底层文件上所保持的所有锁定，而不管该锁定是通过该通道获取的，还是通过同一文件上打开的另一个通道获取的。强烈建议在某个程序内使用唯一的通道来获取任意给定文件上的所有锁定。
+
+<p> 有些网络文件系统仅在锁定区域是页对齐的并且是多个底层硬件的总的页大小时，才允许文件锁定与内存映射文件一起使用。有些网络文件系统不对扩展超出某个位置（通常是 2<sup>30</sup> 或 2<sup>31</sup>）的区域实现文件锁定。通常，对驻留在网络文件系统上的文件进行锁定时应该极其小心。
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.8, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.FileLock(FileChannel channel, long position, long size, boolean shared)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。</p>
+
+@param  channel 文件通道，此锁定保持在该通道的文件上
+
+@param  position 文件中的位置，锁定区域从此位置开始；必须为非负数
+
+@param  size 锁定区域的大小；必须为非负数，并且 <tt>position</tt>&#xA0;+&#xA0;<tt>size</tt> 的和必须为非负数
+
+@param  shared 如果此锁定是共享的，则为 <tt>true</tt>，如果是独占的，则为 <tt>false</tt>
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.FileChannel java.nio.channels.FileLock.channel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文件通道，此锁定保持在该通道的文件上。</p>
+
+@return  文件通道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.FileLock.position()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文件内锁定区域中第一个字节的位置。
+
+<p> 锁定区域不必包含在实际的底层文件中，甚至不必与其重叠，所以此方法返回的值可能超出文件的当前大小。  </p>
+
+@return 位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.FileLock.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回锁定区域的大小，以字节为单位。
+
+<p> 锁定区域不必包含在实际的底层文件中，甚至不必与其重叠，所以此方法返回的值可能超出文件的当前大小。  </p>
+
+@return  锁定区域的大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.FileLock.isShared()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断此锁定是否为共享的。  </p>
+
+@return 如果是共享的，则返回 <tt>true</tt>，如果是独占的，则返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.FileLock.overlaps(long position, long size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断此锁定是否与给定的锁定区域重叠。  </p>
+
+@return  当且仅当此锁定与给定的锁定区域至少重叠一个字节时才返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.channels.FileLock.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断此锁定是否有效。
+
+<p> 在释放锁定对象或关闭与其关联的文件通道（以先到者为准）之前，该锁定对象保持有效。  </p>
+
+@return  当且仅当此锁定为有效时才返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.nio.channels.FileLock.release() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放此锁定。
+
+<p> 如果此锁定对象是有效的，则调用此方法会释放该锁定并使该对象无效。如果此锁定对象是无效的，则调用此方法无效。  </p>
+
+@throws  ClosedChannelException 如果用于获取此锁定的通道不再处于打开状态
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.nio.channels.FileLock.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此锁定的范围、类型和有效性的字符串。
+
+@return 一个描述性的字符串
+
+<!-- END DATA -->

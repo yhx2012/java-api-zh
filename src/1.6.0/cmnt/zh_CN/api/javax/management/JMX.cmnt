@@ -1,0 +1,226 @@
+<!-- BEGIN KEY -->
+public class javax.management.JMX extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+JMX API 提供的静态方法。该类没有实例。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.DEFAULT_VALUE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#defaultValue">{@code defaultValue}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.IMMUTABLE_INFO_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#immutableInfo">{@code immutableInfo}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.INTERFACE_CLASS_NAME_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#interfaceClassName">{@code interfaceClassName}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.LEGAL_VALUES_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#legalValues">{@code legalValues}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.MAX_VALUE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#maxValue">{@code maxValue}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.MIN_VALUE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#minValue">{@code minValue}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.MXBEAN_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#mxbean">{@code mxbean}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.OPEN_TYPE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#openType">{@code openType}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.JMX.ORIGINAL_TYPE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="Descriptor.html#originalType">{@code originalType}</a> 字段的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.management.JMX.newMBeanProxy(MBeanServerConnection connection, ObjectName objectName, java.lang.Class<T> interfaceClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在本地或远程 MBean Server 中为 Standard MBean 构造一个代理。</p>
+
+<p>如果 MBean 服务器 {@code mbs} 包含 {@link ObjectName} 为 {@code name} 的 MBean，并且如果该 MBean 的管理接口由 Java 接口 {@code MyMBean} 描述，则可以像下面这样为该 MBean 构造一个代理：</p>
+
+ <pre>
+MyMBean proxy = JMX.newMBeanProxy(mbs, name, MyMBean.class);
+ </pre>
+
+<p>例如，假定 {@code MyMBean} 如下所示：</p>
+
+ <pre>
+public interface MyMBean {
+public String getSomeAttribute();
+public void setSomeAttribute(String value);
+public void someOperation(String param1, int param2);
+ }
+ </pre>
+
+<p>那么可以执行：</p>
+
+ <ul>
+
+<li>将导致调用 {@code mbs.}{@link MBeanServerConnection#getAttribute getAttribute}{@code (name, &quot;SomeAttribute&quot;)} 的 {@code proxy.getSomeAttribute()}。
+
+<li>将导致调用 {@code mbs.}{@link MBeanServerConnection#setAttribute setAttribute}{@code (name, new Attribute(&quot;SomeAttribute&quot;, &quot;whatever&quot;))} 的 {@code proxy.setSomeAttribute(&quot;whatever&quot;)}。
+
+<li>将转换为对 {@code mbs.}{@link MBeanServerConnection#invoke invoke}{@code (name, &quot;someOperation&quot;, <etc>)} 的调用的 {@code proxy.someOperation(&quot;param1&quot;, 2)}。
+
+ </ul>
+
+<p>此方法返回的对象是一个其 {@code InvocationHandler} 为 {@link MBeanServerInvocationHandler} 的 {@link Proxy}。</p>
+
+<p>此方法等效于 {@link #newMBeanProxy(MBeanServerConnection, ObjectName, Class, boolean) newMBeanProxy(connection, objectName, interfaceClass, false)}。</p>
+
+@param connection 作为转发目的地的目标 MBean 服务器。
+@param objectName 作为转发目的地的 {@code connection} 中的 MBean 名。
+@param interfaceClass MBean 输出的管理接口，也由返回的代理来实现。
+
+@param <T> 让编译器知道如果 {@code interfaceClass} 参数为 {@code MyMBean.class}，则返回类型为 {@code MyMBean}。
+
+@return 新的代理实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.management.JMX.newMBeanProxy(MBeanServerConnection connection, ObjectName objectName, java.lang.Class<T> interfaceClass, boolean notificationBroadcaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在同样支持 {@link NotificationEmitter} 方法的本地或远程 MBean Server 中为 Standard MBean 构造一个代理。</p>
+
+<p>此方法的行为与 {@link #newMBeanProxy(MBeanServerConnection, ObjectName, Class)} 相同，但除此以外，如果 {@code
+notificationBroadcaster} 为 {@code
+true}，则假定 MBean 为 {@link NotificationBroadcaster} 或 {@link NotificationEmitter}，并且返回的代理将实现 {@link NotificationEmitter} 和 {@code interfaceClass}。在该代理上调用 {@link NotificationBroadcaster#addNotificationListener} 将导致对 {@link MBeanServerConnection#addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)} 的调用，对于 {@link NotificationBroadcaster} 和 {@link NotificationEmitter} 的其他方法也是如此。</p>
+
+@param connection 作为转发目的地的目标 MBean 服务器。
+@param objectName 作为转发目的地的 {@code connection} 中的 MBean 名。
+@param interfaceClass MBean 输出的管理接口，也由返回的代理来实现。
+@param notificationBroadcaster 使返回的代理实现 {@link NotificationEmitter}，方法是通过 {@code connection} 转发其方法。
+
+@param <T> 让编译器知道如果 {@code interfaceClass} 参数为 {@code MyMBean.class}，则返回类型为 {@code MyMBean}。
+
+@return 新的代理实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.management.JMX.newMXBeanProxy(MBeanServerConnection connection, ObjectName objectName, java.lang.Class<T> interfaceClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在本地或远程 MBean Server 中为 MXBean 构造一个代理。</p>
+
+<p>如果 MBean 服务器 {@code mbs} 包含 {@link ObjectName} 为 {@code name} 的 MXBean，并且如果该 MXBean 的管理接口由 Java 接口 {@code MyMXBean} 所描述，则可以像下面这样为该 MXBean 构造一个代理：</p>
+
+ <pre>
+MyMXBean proxy = JMX.newMXBeanProxy(mbs, name, MyMXBean.class);
+ </pre>
+
+<p>例如，假定 {@code MyMXBean} 如下所示：</p>
+
+ <pre>
+public interface MyMXBean {
+public String getSimpleAttribute();
+public void setSimpleAttribute(String value);
+public {@link java.lang.management.MemoryUsage} getMappedAttribute();
+public void setMappedAttribute(MemoryUsage memoryUsage);
+public MemoryUsage someOperation(String param1, MemoryUsage param2);
+ }
+ </pre>
+
+<p>那么：</p>
+
+ <ul>
+
+<li><p>{@code proxy.getSimpleAttribute()} 将导致调用 {@code mbs.}{@link MBeanServerConnection#getAttribute getAttribute}{@code (name, &quot;SimpleAttribute&quot;)}。</p>
+
+<li><p>{@code proxy.setSimpleAttribute(&quot;whatever&quot;)} 将导致调用 {@code mbs.}{@link MBeanServerConnection#setAttribute setAttribute}<code>(name, new Attribute(&quot;SimpleAttribute&quot;, &quot;whatever&quot;))</code>。<p>
+
+<p>因为 {@code String} 是一个<em>简单类型</em>（即 {@link javax.management.openmbean.SimpleType}），所以不会在 MXBean 的上下文中更改它。MXBean 代理的行为与属性 {@code SimpleAttribute} 的 Standard MBean 代理（请参阅 {@link #newMBeanProxy(MBeanServerConnection, ObjectName, Class) newMBeanProxy}）的行为相同。</p>
+
+<li><p>{@code proxy.getMappedAttribute()} 将导致调用 {@code mbs.getAttribute(&quot;MappedAttribute&quot;)}。MXBean 映射规则意味着属性 {@code MappedAttribute} 的实际类型将是 {@link javax.management.openmbean.CompositeData CompositeData}，并且这是 {@code mbs.getAttribute} 调用将返回的内容。该代理然后会使用 MXBean 映射规则将 {@code CompositeData} 转换回所期望类型的 {@code MemoryUsage}。</p>
+
+<li><p>类似地，{@code proxy.setMappedAttribute(memoryUsage)} 将在调用 {@code mbs.setAttribute} 之前将 {@code MemoryUsage} 参数转换为 {@code CompositeData}。</p>
+
+<li><p>{@code proxy.someOperation(&quot;whatever&quot;, memoryUsage)} 将 {@code MemoryUsage} 参数转换为 {@code CompositeData} 并调用 {@code mbs.invoke}。{@code mbs.invoke} 返回的值也将是 {@code CompositeData}，并且代理会使用 MXBean 映射规则将此值转换为所期望类型的 {@code MemoryUsage}。</p>
+
+ </ul>
+
+<p>此方法返回的对象是一个 {@code InvocationHandler} 为 {@link MBeanServerInvocationHandler} 的 {@link Proxy}。</p>
+
+<p>此方法等效于 {@link #newMXBeanProxy(MBeanServerConnection, ObjectName, Class, boolean) newMXBeanProxy(connection, objectName, interfaceClass, false)}。</p>
+
+@param connection 作为转发目的地的目标 MBean 服务器。
+@param objectName 作为转发目的地的 {@code connection} 中的 MBean 名。
+@param interfaceClass MXBean 接口，也由返回的代理来实现。
+
+@param <T> 让编译器知道如果 {@code interfaceClass} 参数为 {@code MyMXBean.class}，则返回类型为 {@code MyMXBean}。
+
+@return 新的代理实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.management.JMX.newMXBeanProxy(MBeanServerConnection connection, ObjectName objectName, java.lang.Class<T> interfaceClass, boolean notificationBroadcaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>在同样支持 {@link NotificationEmitter} 方法的本地或远程 MBean Server 中为 MXBean 构造一个代理。</p>
+
+<p>此方法的行为与 {@link #newMXBeanProxy(MBeanServerConnection, ObjectName, Class)} 相同，但除此以外，如果 {@code
+notificationBroadcaster} 为 {@code true}，则假定 MXBean 为 {@link NotificationBroadcaster} 或 {@link NotificationEmitter}，并且返回的代理将实现 {@link NotificationEmitter} 和 {@code interfaceClass}。在该代理上调用 {@link NotificationBroadcaster#addNotificationListener} 将导致对 {@link MBeanServerConnection#addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)} 的调用，对于 {@link NotificationBroadcaster} 和 {@link NotificationEmitter} 的其他方法也是如此。</p>
+
+@param connection 作为转发目的地的目标 MBean 服务器。
+@param objectName 作为转发目的地的 {@code connection} 中的 MBean 名。
+@param interfaceClass MXBean 接口，也由返回的代理来实现。
+@param notificationBroadcaster 使返回的代理实现 {@link NotificationEmitter}，方法是通过 {@code connection} 转发它的方法。
+
+@param <T> 让编译器知道如果 {@code interfaceClass} 参数为 {@code MyMXBean.class}，则返回类型为 {@code MyMXBean}。
+
+@return 新的代理实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.management.JMX.isMXBeanInterface(java.lang.Class<?> interfaceClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>测试某接口是否是 MXBean 接口。如果接口为已注释的 {@link MXBean @MXBean} 或 {@code @MXBean(true)}，或者接口没有 {@code @MXBean} 注释且其名称以 &quot;{@code MXBean}&quot; 结尾，则该接口为 MXBean 接口。</p>
+
+@param interfaceClass 侯选接口。
+
+@return 如果 {@code interfaceClass} 是一个接口且满足所描述的条件，则返回 true。
+
+@throws NullPointerException 如果 {@code interfaceClass} 为 null。
+
+<!-- END DATA -->

@@ -1,0 +1,116 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.Exchanger extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可以在对中对元素进行配对和交换的线程的同步点。每个线程将条目上的某个方法呈现给 {@link #exchange exchange} 方法，与伙伴线程进行匹配，并且在返回时接收其伙伴的对象。Exchanger 可能被视为  {@link SynchronousQueue} 的双向形式。Exchanger 可能在应用程序（比如遗传算法和管道设计）中很有用。
+
+<p><b>用法示例：</b>以下是重点介绍的一个类，该类使用 {@code Exchanger} 在线程间交换缓冲区，因此，在需要时，填充缓冲区的线程获取一个新腾空的缓冲区，并将填满的缓冲区传递给腾空缓冲区的线程。
+ <pre>{@code
+ class FillAndEmpty {
+   Exchanger<DataBuffer> exchanger = new Exchanger<DataBuffer>();
+   DataBuffer initialEmptyBuffer = ... a made-up type
+   DataBuffer initialFullBuffer = ...
+
+   class FillingLoop implements Runnable {
+     public void run() {
+       DataBuffer currentBuffer = initialEmptyBuffer;
+       try {
+         while (currentBuffer != null) {
+           addToBuffer(currentBuffer);
+           if (currentBuffer.isFull())
+             currentBuffer = exchanger.exchange(currentBuffer);
+         }
+       } catch (InterruptedException ex) { ... handle ... }
+     }
+   }
+
+   class EmptyingLoop implements Runnable {
+     public void run() {
+       DataBuffer currentBuffer = initialFullBuffer;
+       try {
+         while (currentBuffer != null) {
+           takeFromBuffer(currentBuffer);
+           if (currentBuffer.isEmpty())
+             currentBuffer = exchanger.exchange(currentBuffer);
+         }
+       } catch (InterruptedException ex) { ... handle ...}
+     }
+   }
+
+   void start() {
+     new Thread(new FillingLoop()).start();
+     new Thread(new EmptyingLoop()).start();
+   }
+  }
+ }</pre>
+
+<p>内存一致性效果：对于通过 {@code Exchanger} 成功交换对象的每对线程，每个线程中在 {@code exchange()} 之前的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 从另一线程中相应的 {@code exchange()} 返回的后续操作。
+
+@since 1.5
+@author Doug Lea、Bill Scherer 和 Michael Scott
+@param <V> 可以交换的对象类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Exchanger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 Exchanger。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.Exchanger.exchange(V x) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等待另一个线程到达此交换点（除非当前线程被{@linkplain Thread#interrupt 中断}），然后将给定的对象传送给该线程，并接收该线程的对象。
+
+<p>如果另一个线程已经在交换点等待，则出于线程调度目的，继续执行此线程，并接收当前线程传入的对象。当前线程立即返回，接收其他线程传递的交换对象。
+
+<p>如果还没有其他线程在交换点等待，则出于调度目的，禁用当前线程，且在发生以下两种情况之一前，该线程将一直处于休眠状态：
+ <ul>
+<li>其他某个线程进入交换点；或者
+<li>其他某个线程{@link Thread#interrupt 中断}当前线程。
+ </ul>
+<p>如果当前线程：
+ <ul>
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+<li>在等待交换时被{@linkplain Thread#interrupt 中断}，
+ </ul>
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。 
+
+@param x 要交换的对象
+@return 另一个线程提供的对象
+@throws InterruptedException 如果当前线程在等待时被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.Exchanger.exchange(V x, long timeout, TimeUnit unit) throws java.lang.InterruptedException, java.util.concurrent.TimeoutException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等待另一个线程到达此交换点（除非当前线程被{@linkplain Thread#interrupt 中断}，或者超出了指定的等待时间），然后将给定的对象传送给该线程，同时接收该线程的对象。
+
+<p>如果另一个线程已经在交换点上等待，则出于线程调度目的，继续执行此线程，并接收当前线程传入的对象。当前线程立即返回，并接收其他线程传递的交换对象。
+
+<p>如果还没有其他线程在交换点等待，则出于调度目的，禁用当前线程，且在发生以下三种情况之一前，该线程将一直处于休眠状态：
+ <ul>
+<li>其他某个线程进入交换点；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>已超出指定的等待时间。
+ </ul>
+<p>如果当前线程：
+ <ul>
+<li>在进入此方法时已经设置其中断状态；或者
+<li>在等待交换时被{@linkplain Thread#interrupt 中断}，
+ </ul>
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。 
+
+<p>如果超出指定的等待时间，则抛出 {@link TimeoutException} 异常。如果该时间小于等于零，则此方法根本不会等待。
+
+@param x 要交换的对象
+@param timeout 要等待的最长时间
+@param unit <tt>timeout</tt> 参数的时间单位
+@return 其他线程提供的对象
+@throws InterruptedException 如果当前线程在等待时被中断
+@throws TimeoutException 如果在另一个线程进入交换点之前已经到达指定的等待时间
+
+<!-- END DATA -->

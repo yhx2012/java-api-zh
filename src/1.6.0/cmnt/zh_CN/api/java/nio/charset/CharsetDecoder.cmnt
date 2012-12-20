@@ -1,0 +1,379 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.charset.CharsetDecoder extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+能够把特定 charset 中的字节序列转换成 16 位 Unicode 字符序列的引擎。
+
+ <a name="steps">
+
+<p> 输入字节序列由字节缓冲区或一系列这样的缓冲区提供。输出字符序列写入字符缓冲区或一系列这样的缓冲区。应该始终通过下面的方法调用序列使用解码器，下文称为<i>解码操作</i>：
+
+ <ol>
+
+<li><p> 通过 {@link #reset reset} 方法重置解码器，除非以前未使用过； </p></li>
+
+<li><p> 只要有其他的输入数据就应零次或多次调用 {@link #decode decode}，为 <tt>endOfInput</tt> 参数传递 <tt>false</tt>，在调用之间填充输入缓冲区并刷新输出缓冲区。 </p></li>
+
+<li><p> 最后时刻调用一次 {@link #decode decode} 方法，为 <tt>endOfInput</tt> 参数传递 <tt>true</tt>；然后 </p></li>
+
+<li><p> 调用 {@link #flush flush} 方法，这样解码器能够将任何内部状态刷新到输出缓冲区。 </p></li>
+
+ </ol>
+
+每次调用 {@link #decode decode} 方法将解码尽可能多的输入缓冲区中的字节，将得到的字符写入输出缓冲区。当需要更多的输入时、输出缓冲区没有足够的空间或出现解码错误时，{@link #decode decode} 方法返回。在每种情况下都返回用于描述终止原因的 {@link CoderResult} 对象。调用者可根据相应的状况检查此对象并填充输入缓冲区、刷新输出缓冲区或尝试从解码错误中恢复，并再次进行尝试。
+
+ <a name="ce">
+
+<p> 有两种常规解码错误类型。如果输入字节序列对此 charset 来说是不合法的，那么就认为输入是<i>错误的</i>。如果输入字节序列是合法的，但不能映射为有效的 Unicode 字符，那么就出现了<i>不可映射的字符</i>。
+
+ <a name="cae">
+
+<p> 如何处理解码错误取决于为该错误类型所请求的操作，在 {@link CodingErrorAction} 类的实例中描述了该类型的错误。可能的错误操作是{@link CodingErrorAction#IGNORE </code>忽略<code>}错误的输入、通过返回的 {@link CoderResult} 对象将错误{@link CodingErrorAction#REPORT </code>报告<code>}给调用者，或者用当前的替换字符串值{@link CodingErrorAction#REPLACE</code>替换<code>}错误的输入。
+该替换字符串的初始值是 <tt>&quot;FD&quot;</tt>；
+可通过 {@link #replaceWith(java.lang.String) replaceWith} 方法更改此值。
+
+<p> 对于错误输入和不可映射的字符错误的默认操作是{@link CodingErrorAction#REPORT </code>报告<code>}它们。可通过 {@link #onMalformedInput(CodingErrorAction) onMalformedInput} 方法更改针对错误输入的错误操作；可通过 {@link #onUnmappableCharacter(CodingErrorAction) onUnmappableCharacter} 方法更改不可映射字符错误的操作。
+
+<p> 此类设计用来处理解码过程中的许多细节问题，包括错误操作的实现。一个特定 charset 的解码器是此类的具体子类，它只需要实现抽象的 {@link #decodeLoop decodeLoop} 方法，这个方法封装了基本的解码循环。另外，维护内部状态的子类应该重写 {@link #implFlush implFlush} 和 {@link #implReset implReset} 方法。
+
+<p> 此类的实例用于多个并发线程是不安全的。  </p>
+
+@version 1.46, 06/08/07
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@since 1.4
+
+@see ByteBuffer
+@see CharBuffer
+@see Charset
+@see CharsetEncoder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.charset.CharsetDecoder(Charset cs, float averageCharsPerByte, float maxCharsPerByte)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化新的解码器。新的解码器具有给定的每字节多少个字符 (chars-per-byte) 值，它的替换值是字符串 <tt>&quot;\uFFFD&quot;</tt>。 </p>
+
+@param averageCharsPerByte 一个正的 float 值，指示为每个输入字节所生成的字符数
+
+@param maxCharsPerByte 一个正的 float 值，指示为每个输入字节所生成的最大字符数
+
+@throws IllegalArgumentException 如果参数有关的前提不成立
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.Charset java.nio.charset.CharsetDecoder.charset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建此解码器的 charset。  </p>
+
+@return 此解码器的 charset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.nio.charset.CharsetDecoder.replacement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此解码器的替换值。 </p>
+
+@return 返回此解码器的当前替换值，它永远不能为 <tt>null</tt>，也不能为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder.replaceWith(String newReplacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改此解码器的替换值。
+
+<p> 此方法调用 {@link #implReplaceWith implReplaceWith} 方法，检查新的替换值是可接受的后，传递该新替换值。  </p>
+
+@param newReplacement
+
+
+新替换值；一定不能为 <tt>null</tt> 且长度必须为非零
+
+
+@return 此解码器
+
+@throws IllegalArgumentException 如果参数有关的前提不成立
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.nio.charset.CharsetDecoder.implReplaceWith(String newReplacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此解码器替换值的更改。
+
+<p> 此方法的默认实现不执行任何操作。需要通知替换值更改的解码器应该重写此方法。  </p>
+
+@param newReplacement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.nio.charset.CodingErrorAction java.nio.charset.CharsetDecoder.malformedInputAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此解码器对错误输入错误的当前操作。  </p>
+
+@return 当前的错误输入操作，它永远不能为 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder.onMalformedInput(CodingErrorAction newAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改此解码器对错误输入错误的操作。  </p>
+
+<p> 此方法调用 {@link #implOnMalformedInput implOnMalformedInput} 方法，传递新的操作。  </p>
+
+@param newAction 新的操作；一定不能为 <tt>null</tt>
+
+@return 此解码器
+
+@throws IllegalArgumentException 如果参数有关的前提不成立
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.nio.charset.CharsetDecoder.implOnMalformedInput(CodingErrorAction newAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此解码器的错误输入操作的更改。
+
+<p> 此方法的默认实现不执行任何操作。需要通知错误输入操作更改的解码器应该重写此方法。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.nio.charset.CodingErrorAction java.nio.charset.CharsetDecoder.unmappableCharacterAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此解码器对不可映射的字符错误的当前操作。
+ </p>
+
+@return 当前的不可映射的字符操作，它永远不能为 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder.onUnmappableCharacter(CodingErrorAction newAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改此解码器对不可映射的字符错误的操作。
+
+<p> 此方法调用 {@link #implOnUnmappableCharacter implOnUnmappableCharacter} 方法，传递新的操作。  </p>
+
+@param newAction 新的操作；一定不能为 <tt>null</tt>
+
+@return 此解码器
+
+@throws IllegalArgumentException 如果参数有关的前提不成立
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.nio.charset.CharsetDecoder.implOnUnmappableCharacter(CodingErrorAction newAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此解码器的不可映射的字符操作的更改。
+
+<p> 此方法的默认实现不执行任何操作。需要通知不可映射的字符操作更改的解码器应该重写此方法。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float java.nio.charset.CharsetDecoder.averageCharsPerByte()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为每个输入字节生成的平均字符数。此试探值可用来估算给定输入序列所需的输出缓冲区大小。 </p>
+
+@return 每个输入字节生成的平均字符数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float java.nio.charset.CharsetDecoder.maxCharsPerByte()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为每个输入字节生成的最大字符数。此值可用来计算给定输入序列最坏情况下所需的输出缓冲区大小。 </p>
+
+@return 每个输入字节生成的最大字符数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CoderResult java.nio.charset.CharsetDecoder.decode(ByteBuffer in, CharBuffer out, boolean endOfInput)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定的输入缓冲区中解码尽可能多的字节，把结果写入给定的输出缓冲区。
+
+<p> 应该从各缓冲区的当前位置开始进行读取和写入。最多将读取 {@link Buffer#remaining in.remaining()} 个字节，最多将写入 {@link Buffer#remaining out.remaining()} 个字符。前移缓冲区的位置，以反映字节读取和写入字符，但是其标记和界限将无法修改。
+
+<p> 除了从输入缓冲区读取字节和向输出缓冲区写入字符，此方法还返回一个 {@link CoderResult} 对象来描述它终止的原因：
+
+ <ul>
+
+<li><p> {@link CoderResult#UNDERFLOW} 指示已解码尽可能多的输入缓冲区。如果没有进一步的输入，则调用者可以进行到<a href="#steps">解码操作</a>的下一个步骤。否则，应该使用进一步的输入再次调用此方法。  </p></li>
+
+<li><p> {@link CoderResult#OVERFLOW} 指示该输出缓冲区中没有足够空间来解码任何更多字节。应该使用具有更多{@linkplain Buffer#remaining 剩余}字符的输出缓冲区再次调用此方法。这通常是通过排空输出缓冲区的所有解码字符来完成的。  </p></li>
+
+<li><p> {@link CoderResult#malformedForLength</code>malformed-input<code>} 结果指示已检测到错误输入错误。错误的字节起始于输入缓冲区（可能向前增加）的位置；错误字节数可以通过调用结果对象的 {@link CoderResult#length() length} 方法来确定。这种情况只适用于此解码器的{@link #onMalformedInput </code>错误输入的动作<code>}是 {@link CodingErrorAction#REPORT} 的情况下；否则将像请求的那样忽略或替换错误的输入。  </p></li>
+
+<li><p> {@link CoderResult#unmappableForLength </code>unmappable-character<code>} 结果指示已检测到不可映射的字符错误。解码不可映射的字符的字节起始于输入缓冲区（可能向前增加）的位置；这种字节的数目可以通过调用结果对象的 {@link CoderResult#length() length} 方法来确定。这种情况只适用于此解码器的{@link #onUnmappableCharacter </code>不可映射的字符的动作<code>}是 {@link CodingErrorAction#REPORT}的情况下；否则将像请求的那样忽略或替换不可映射的字符。  </p></li>
+
+ </ul>
+
+在任一情况下，如果在相同的解码操作中调用此方法，则要注意保留输入缓冲区中剩余的所有字节，以便可提供给下一次调用使用。
+
+<p> <tt>endOfInput</tt> 参数通知此方法除了给定输入缓冲区包含的内容，调用者是否能提供更多的输入。如果可能提供其他的输入，则调用者应该为此参数传递 <tt>false</tt>；如果不能提供更多的输入，则调用者应该传递 <tt>true</tt>。实际上在一次调用中传递 <tt>false</tt>，但后来发现实际上没有更多的输入可用是相当普遍的，这不是错误。但关键是，在此方法的一系列调用中，最后一次调用总是传递 <tt>true</tt>，这样所有剩余的未解码输入都作为错误输入处理。
+
+<p> 此方法通过调用 {@link #decodeLoop decodeLoop} 方法、解释它的结果、处理错误情况并重新调用（如有必要）来完成其工作。  </p>
+
+@param in 输入字节缓冲区
+
+@param out 输出字符缓冲区
+
+@param endOfInput 当且仅当调用者除了给定缓冲区中的内容外不提供其他输入字节时才为 <tt>true</tt>
+
+@return 描述终止原因的 CoderResult 对象
+
+@throws IllegalStateException 如果解码操作已在进行中并且前面的步骤不是调用 {@link #reset reset} 方法，也不是为 <tt>endOfInput</tt> 参数使用 <tt>false</tt> 来调用此方法，也不是为 <tt>endOfInput</tt> 参数使用 <tt>true</tt> 来调用此方法，而是一个指示未完成解码操作的返回值
+
+@throws CoderMalfunctionError 如果对 decodeLoop 方法的调用抛出不可预料的异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CoderResult java.nio.charset.CharsetDecoder.flush(CharBuffer out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新此解码器。
+
+<p> 一些解码器维护内部状态，并且一旦读取完所有的输入序列后，可能需要向输出缓冲区写入一些最终字符。
+
+<p> 任何其他输出写入输出缓冲区时都要从缓冲区的当前位置开始。最多将写入 {@link Buffer#remaining out.remaining()} 个字符。缓冲区的位置要相应地向前移动，但是其标记和界限将无法修改。
+
+<p> 如果此方法成功完成，则它返回 {@link CoderResult#UNDERFLOW}。如果输出缓冲区没有足够的空间，则它返回 {@link CoderResult#OVERFLOW}。如果发生这种情况，那么为了完成当前的<a href="#steps">解码操作</a>，必须使用具有更多空间的输出缓冲区再次调用此方法。
+
+<p> 如果此解码器已经刷新，则调用此方法无效。
+
+<p> 此方法调用 {@link #implFlush implFlush} 方法来执行实际的刷新操作。  </p>
+
+@param out 输出字符缓冲区
+
+@return 一个 CoderResult 对象，可能是 {@link CoderResult#UNDERFLOW} 或 {@link CoderResult#OVERFLOW}
+
+@throws IllegalStateException 如果当前解码操作的前一步既不是调用 {@link #flush flush} 方法，也不是为 <tt>endOfInput</tt> 参数使用 <tt>true</tt> 来调用三参数的 {@link #decode(ByteBuffer,CharBuffer,boolean) decode} 方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.charset.CoderResult java.nio.charset.CharsetDecoder.implFlush(CharBuffer out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新此解码器。
+
+<p> 此方法的默认实现不执行任何操作，并且始终返回 {@link CoderResult#UNDERFLOW}。对于那些一旦读取完整个的输入序列后，可能需要向输出缓冲区写入最终字符的解码器而言，应该重写此方法。 </p>
+
+@param out 输出字符缓冲区
+
+@return 一个 CoderResult 对象，可能是 {@link CoderResult#UNDERFLOW} 或 {@link CoderResult#OVERFLOW}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.charset.CharsetDecoder java.nio.charset.CharsetDecoder.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置此解码器，清除所有内部状态。
+
+<p> 此方法重置与 charset 无关的状态，并且为了执行所有特定于 charset 的重置操作，还会调用 {@link #implReset() implReset} 方法。  </p>
+
+@return 此解码器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.nio.charset.CharsetDecoder.implReset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置此解码器，清除所有特定于 charset 的内部状态。
+
+<p> 此方法的默认实现不执行任何操作。维护内部状态的解码器应该重写此方法。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.nio.charset.CoderResult java.nio.charset.CharsetDecoder.decodeLoop(ByteBuffer in, CharBuffer out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个或多个字节解码为一个或多个字符。
+
+<p> 此方法封装了基本的解码循环，在用完输入、用完输出缓冲区的空间或遇到解码错误之前解码尽可能多的字节。此方法由 {@link #decode decode} 方法调用，{@link #decode decode} 方法处理结果解释和错误恢复。
+
+<p> 应该从各缓冲区的当前位置开始进行读取和写入。最多将读取 {@link Buffer#remaining in.remaining()} 个字节，最多将写入 {@link Buffer#remaining out.remaining()} 个字符。前移缓冲区的位置，以反映字节读取和写入字符，但是其标记和界限将无法修改。
+
+<p> 此方法返回一个 {@link CoderResult} 对象描述它终止的原因，其方式和 {@link #decode decode} 方法的相同。大多数此方法的实现处理解码错误的方式是由 {@link #decode decode} 方法返回一个用来解释错误的相应结果对象。最优的实现可能是检查相关的错误操作并且自己实现该操作。
+
+<p> 此方法的一种实现可能在接收到足够的输入之前，通过返回 {@link CoderResult#UNDERFLOW} 来执行任意的 lookahead。  </p>
+
+@param in 输入字节缓冲区
+
+@param out 输出字符缓冲区
+
+@return 描述终止原因的 CoderResult 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.CharBuffer java.nio.charset.CharsetDecoder.decode(ByteBuffer in) throws java.nio.charset.CharacterCodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+把单个输入字节缓冲区的剩余内容解码到新分配的字符缓冲区的便捷方法。
+
+<p> 此方法实现完整的<a href="#steps">解码操作</a>；也就是说，它重置解码器，然后解码给定字节缓冲区中的字节，最后刷新此解码器。因此如果正在进行解码操作，则不应该调用此方法。  </p>
+
+@param in 输入字节缓冲区
+
+@return 新分配的字符缓冲区，包含解码操作结果。该缓冲区的位置是零，并且它的界限是在最后写入的字符之后。
+
+@throws IllegalStateException 如果已经进行解码操作
+
+@throws MalformedInputException 如果从输入缓冲区当前位置开始的字节序列对于此 charset 是不合法的，并且当前的错误输入操作是 {@link CodingErrorAction#REPORT}
+
+@throws UnmappableCharacterException 如果从输入缓冲区当前位置开始的字节序列不能映射到等同的字符序列，并且当前的不可映射的字符操作是 {@link CodingErrorAction#REPORT}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.nio.charset.CharsetDecoder.isAutoDetecting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此解码器是否实现了自动检测 charset。
+
+<p> 此方法的默认实现总是返回 <tt>false</tt>；为了返回 <tt>true</tt>，应该由自动检测解码器重写此方法。  </p>
+
+@return 当且仅当此解码器实现自动检测 charset 时才返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.nio.charset.CharsetDecoder.isCharsetDetected()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此解码器是否已经检测到了一个 charset<i>（可选操作）</i>。
+
+<p> 如果此解码器实现了自动检测 charset，那么在解码操作期间的某个点上此方法可能开始返回 <tt>true</tt>，以指示在输入字节序列中检测到一个具体的 charset。一旦发生这种情况，就可以调用 {@link #detectedCharset detectedCharset} 方法来获取检测到 charset。
+
+<p> 此方法返回 <tt>false</tt> 并不表示尚未解码任何字节。一些自动检测解码器能够解码某些（甚至全部）输入字节序列，而不是固定于某个特定的 charset。
+
+<p> 此方法的默认实现总是抛出 {@link UnsupportedOperationException}；一旦确定了输入 charset，那么为了返回 <tt>true</tt>，自动检测解码器应该重写此方法。  </p>
+
+@return 当且仅当此解码器检测到具体的 charset 时才返回 <tt>true</tt>
+
+@throws UnsupportedOperationException 如果此解码器没有实现自动检测 charset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.nio.charset.Charset java.nio.charset.CharsetDecoder.detectedCharset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此解码器检测到的 charset<i>（可选操作）</i>。
+
+<p> 如果此解码器实现自动检测 charset，那么一旦检测到该 charset，则此方法返回实际的 charset。之后，此方法在当前的解码操作过程中都返回相同的值。如果尚未读取足够的输入字节来确定实际的 charset，则此方法抛出 {@link IllegalStateException}。
+
+<p> 此方法的默认实现总是抛出 {@link UnsupportedOperationException}；为了返回适当的值，应该由自动检测解码器重写此方法。  </p>
+
+@return 此自动检测解码器检测到的 charset，如果尚未确定 charset，则返回 <tt>null</tt>
+
+@throws IllegalStateException 如果尚未读取足够的字节来确定 charset
+
+@throws UnsupportedOperationException 如果此解码器没有实现自动检测 charset
+
+<!-- END DATA -->

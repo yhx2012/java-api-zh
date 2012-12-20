@@ -1,0 +1,260 @@
+<!-- BEGIN KEY -->
+public class javax.management.monitor.CounterMonitor extends javax.management.monitor.Monitor implements javax.management.monitor.CounterMonitorMBean
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义专门用来观察计数器属性值的监视器 MBean。
+
+<P> 当计数器的值达到或超过已知比较级别阈值时，计数器监视器将发送一个{@link MonitorNotification#THRESHOLD_VALUE_EXCEEDED 阈值通知}。必须将通知标志设置为 <CODE>true</CODE>。
+
+<P> 另外，偏移量机制支持对特定计数区间的检测。如果偏移量值不为零，则每当计数器值达到比较级别而触发该阈值时，比较级别都将递增该偏移量值。这是在瞬间完成的，即在增加计数前完成。因此，对于每个级别，每当计数增加的区间等于偏移值时，阈值都将触发一个事件通知。
+
+<P> 如果计数器能够包含其最大值，则必须指定模。模是将计数器重置为零时的值。
+
+<P> 如果使用了计数器差分模式，则派生的尺度值将被视为两次连续观察到的计数器值之间的差分。如果此差分为负值，则派生的尺度值将增加该模的值。派生的尺度值 (V[t]) 是使用以下方法计算的：
+
+ <UL>
+ <LI>if (counter[t] - counter[t-GP]) is positive then V[t] = counter[t] - counter[t-GP]
+ <LI>if (counter[t] - counter[t-GP]) is negative then V[t] = counter[t] - counter[t-GP] + MODULUS
+ </UL>
+
+计数器监视器的这一实现要求 observed 属性的类型为整数（<CODE>Byte</CODE>、<CODE>Integer</CODE>、<CODE>Short</CODE> 和 <CODE>Long</CODE>）。
+
+@version     1.79     11/17/05
+@author      Sun Microsystems, Inc
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.monitor.CounterMonitor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动计数器监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止计数器监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getDerivedGauge(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象包含在所观察的 MBeans 集中，则获取此对象派生的尺度，否则将为 <code>null</code>。
+
+@param object 将返回其派生尺度的对象的名称。
+
+@return 指定对象的派生尺度。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.CounterMonitor.getDerivedGaugeTimeStamp(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象包含在所观察的 MBeans 集中，则获取此对象的派生尺度的时间戳，否则将为 <code>0</code>。
+
+@param object 将返回其派生尺度时间戳的对象的名称。
+
+@return 指定对象的派生尺度时间戳。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getThreshold(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的对象包含在观察到的 MBeans 集中，则获取指定对象的当前阈值，否则将为 <code>null</code>。
+
+@param object 将返回其阈值的对象的名称。
+
+@return 指定对象的阈值。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getInitThreshold()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察对象的公共初始阈值。
+
+@return 初始阈值。
+
+@see #setInitThreshold
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setInitThreshold(Number value) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察对象的共同初始阈值。
+
+<BR>所观察 MBeans 集中每个对象的当前阈值都将因此得到更新。
+
+@param value 初始阈值。
+@exception IllegalArgumentException 指定的阈值为 null，或者阈值小于零。
+
+@see #getInitThreshold
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getDerivedGauge()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所观察 MBeans 集中第一个对象的派生尺度。
+
+@return 派生的尺度。
+@deprecated 从 JMX 1.2 开始，由 {@link #getDerivedGauge(ObjectName)} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.CounterMonitor.getDerivedGaugeTimeStamp()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所观察 MBeans 集中第一个对象的派生尺度时间戳。
+
+@return 派生的尺度时间戳。
+@deprecated 从 JMX 1.2 开始，由 {@link #getDerivedGaugeTimeStamp(ObjectName)} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getThreshold()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所观察 MBeans 集中第一个对象的阈值。
+
+@return 阈值。
+
+@see #setThreshold
+
+@deprecated 从 JMX 1.2 开始，由 {@link #getThreshold(ObjectName)} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setThreshold(Number value) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置初始阈值。
+
+@param value 初始阈值。
+@exception IllegalArgumentException 指定的阈值为 null，或者该阈值小于零。
+
+@see #getThreshold()
+
+@deprecated 从 JMX 1.2 开始，由 {@link #setInitThreshold} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBeans 共同的偏移量值。
+
+@return 偏移量值。
+
+@see #setOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setOffset(Number value) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBeans 共同的偏移量值。
+
+@param value 偏移量值。
+@exception IllegalArgumentException 指定的偏移量值为 null，或者该偏移量值小于零。
+
+@see #getOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Number javax.management.monitor.CounterMonitor.getModulus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBeans 共同的模值。
+
+@see #setModulus
+
+@return 模值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setModulus(Number value) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBeans 共同的模值。
+
+@param value 模值。
+@exception IllegalArgumentException 指定的模为 null，或者该模小于零。
+
+@see #getModulus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.CounterMonitor.getNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBeans 共同的通知的开/关切换值。
+
+@return 如果超出阈值时计数器监视器发出通知，则返回 <CODE>true</CODE>，否则返回 <CODE>false</CODE>。
+
+@see #setNotify
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setNotify(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBeans 共同的通知的开/关切换值。
+
+@param value 通知的开/关切换值。
+
+@see #getNotify
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.CounterMonitor.getDifferenceMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取所有观察到的 MBeans 的共同的差分模式标志值。
+
+@return 如果使用了差分模式，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+@see #setDifferenceMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.CounterMonitor.setDifferenceMode(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所有观察到的 MBeans 的共同的差分模式标志值。
+
+@param value 差分模式标志值。
+
+@see #getDifferenceMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanNotificationInfo[] javax.management.monitor.CounterMonitor.getNotificationInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <CODE>NotificationInfo</CODE> 对象，它包含通知的 Java 类的名称和由计数器监视器发送的通知类型。
+
+<!-- END DATA -->

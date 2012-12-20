@@ -1,0 +1,34 @@
+<!-- BEGIN KEY -->
+public interface java.rmi.activation.ActivationInstantiator extends java.rmi.Remote
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ActivationInstantiator</code> 负责创建&ldquo;可激活&rdquo;对象的实例。一个 <code>ActivationGroup</code> 的具体子类实现了 <code>newInstance</code> 方法来处理在该组中创建对象。
+
+@author 	Ann Wollrath
+@version	1.15, 12/19/03
+@see 	ActivationGroup
+@since	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.MarshalledObject<? extends java.rmi.Remote> java.rmi.activation.ActivationInstantiator.newInstance(ActivationID id, ActivationDesc desc) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活程序调用一个初始化程序的 <code>newInstance</code> 方法，以便在该组中重建具有激活标识符 <code>id</code> 和描述符 <code>desc</code> 的对象。初始化程序负责： <ul>
+
+<li> 使用描述符的 <code>getClassName</code> 方法来确定该对象的类。
+
+<li> 从描述符获得的代码基（使用 <code>getLocation</code> 方法）加载该类。
+
+<li> 通过调用对象类的特定的&ldquo;激活&rdquo;构造方法来创建该类的实例，构造方法带有两个参数：对象的 <code>ActivationID</code> 以及包含特定于对象的初始化数据的 <code>MarshalledObject</code>，并且
+
+<li> 返回一个包含其所创建的远程对象的 stub 的 MarshalledObject。</ul>
+
+@param id 对象的激活标识符
+@param desc 对象描述符
+@return 包含了远程对象 stub 的序列化表示的编组对象
+@exception ActivationException 如果对象激活失败
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->

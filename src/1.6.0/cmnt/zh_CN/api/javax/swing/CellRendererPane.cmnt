@@ -1,0 +1,91 @@
+<!-- BEGIN KEY -->
+public class javax.swing.CellRendererPane extends java.awt.Container implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类被插入在单元格渲染器与使用它们的组件之间。它只是为了阻碍 repaint() 和 invalidate() 方法而存在，在配置渲染器时，这些方法将顺着树向上传播。此类用于 JTable、JTree 和 JList 的实现中。例如，以下是绘制 JList 中每个行的代码中使用 CellRendererPane 的方式：
+ <pre>
+   cellRendererPane = new CellRendererPane();
+   ...
+   Component rendererComponent = renderer.getListCellRendererComponent();
+   renderer.configureListCellRenderer(dataModel.getElementAt(row), row);
+   cellRendererPane.paintComponent(g, rendererComponent, this, x, y, w, h);
+ </pre>
+ <p>
+渲染器组件必须重写 isShowing() 并无条件地返回 true，以便正常运行，因为 Swing paint 在 isShowing 返回 false 时不对组件做任何操作。  
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.39 12/19/03
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.CellRendererPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 CellRendererPane 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.invalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+重写此方法是为了避免配置单元格渲染器的子级时顺着树向上传播 invalidate。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+不应调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.update(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不应调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.CellRendererPane.addImpl(Component x, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果指定组件已经是此组件的子组件，则不必再操心去做任何事，堆栈顺序对于单元格渲染器组件而言无关紧要（CellRendererPane 不管怎样都不进行绘制）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.paintComponent(Graphics g, Component c, Container p, int x, int y, int w, int h, boolean shouldValidate)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在图形对象 g 上绘制一个单元格渲染器组件 c。在绘制该组件之前，要对此方法进行 reparent 操作（如有必要），将其边界设置为 w,h 并且将图形对象（有效地）转换成 x,y。如果该对象是一个 JComponent，则暂时关闭双重缓冲。在绘制组件之后，将边界重新设置为 -w, -h, 0, 0。因此，如果该组件是最后一个被绘制的渲染器组件，那么它不会开始使用输入。Container p 是我们实际要绘制的组件，通常它等于 this.getParent()。如果 shouldValidate 为 true，则组件 c 将在绘制之前被验证。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.paintComponent(Graphics g, Component c, Container p, int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 this.paintComponent(g, c, p, x, y, w, h, false)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellRendererPane.paintComponent(Graphics g, Component c, Container p, Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用矩形的 x、y、width 和 height 字段的调用 this.paintComponent()。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.CellRendererPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 CellRendererPane 相关的 AccessibleContext。对于 CellRendererPanes，AccessibleContext 采用 AccessibleCellRendererPane 的形式。如有必要，可创建一个新的 AccessibleCellRendererPane 实例。
+
+@return 一个 AccessibleCellRendererPane，它可用作此 CellRendererPane 的 AccessibleContext
+
+<!-- END DATA -->

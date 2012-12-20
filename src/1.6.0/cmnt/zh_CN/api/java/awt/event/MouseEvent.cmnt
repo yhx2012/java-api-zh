@@ -1,0 +1,449 @@
+<!-- BEGIN KEY -->
+public class java.awt.event.MouseEvent extends java.awt.event.InputEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示组件中发生鼠标动作的事件。当且仅当动作发生时鼠标光标处于特定组件边界未被遮掩的部分上，才认为在该组件上发生了鼠标动作。对于轻量级组件，比如 Swing 的组件，当在某个组件上启用某个鼠标事件类型之后，此类鼠标事件仅被指派给该组件。通过将适当的基于鼠标的 {@code EventListener} 添加到组件（{@link MouseListener} 或 {@link MouseMotionListener}），或者通过调用带有适当掩码参数（{@code AWTEvent.MOUSE_EVENT_MASK} 或 {@code AWTEvent.MOUSE_MOTION_EVENT_MASK}）的 {@link Component#enableEvents(long)}，可以启用鼠标事件类型。如果没有对组件启用鼠标事件类型，则相应的鼠标事件将被指派给启用了鼠标事件类型的第一个祖先组件。
+
+<p>
+ 例如，如果已经将 {@code MouseListener} 添加到某一组件，或者已经调用 {@code enableEvents(AWTEvent.MOUSE_EVENT_MASK)}，则由 {@code MouseListener} 定义的所有事件都将指派给该组件。另一方面，如果没有添加 {@code MouseMotionListener} 并且没有调用带 {@code AWTEvent.MOUSE_MOTION_EVENT_MASK} 参数的 {@code enableEvents}，则鼠标移动事件不会被指派到该组件。这些鼠标移动事件将被指派给启用了鼠标移动事件的第一个祖先组件。
+ <P>
+对于以下动作，组件对象将生成此低级别事件：
+ <ul>
+<li>鼠标事件
+     <ul>
+<li>按下鼠标按键
+<li>释放鼠标按键
+<li>单击鼠标按键（按下并释放）
+<li>鼠标光标进入组件几何形状的未遮掩部分
+<li>鼠标光标离开组件几何形状的未遮掩部分
+     </ul>
+<li> 鼠标移动事件
+     <ul>
+<li>移动鼠标
+<li>拖动鼠标
+     </ul>
+ </ul>
+ <P>
+<code>MouseEvent</code> 对象被传递给每一个 <code>MouseListener</code> 或 <code>MouseAdapter</code> 对象，这些对象使用组件的 <code>addMouseListener</code> 方法注册，以接收&ldquo;感兴趣的&rdquo;鼠标事件。（<code>MouseAdapter</code> 对象实现 <code>MouseListener</code> 接口。）每个此类侦听器对象都获得包含鼠标事件的 <code>MouseEvent</code>。
+ <P>
+<code>MouseEvent</code> 对象还传递给每一个 <code>MouseMotionListener</code> 或 <code>MouseMotionAdapter</code> 对象，这些对象使用组件的 <code>addMouseMotionListener</code> 方法注册，以接收鼠标移动事件。（<code>MouseMotionAdapter</code> 对象实现 <code>MouseMotionListener</code> 接口。）每个此类侦听器对象都获得包含鼠标移动事件的 <code>MouseEvent</code>。
+ <P>
+当单击鼠标按键时，将生成事件并发送给已注册的 <code>MouseListener</code>。可以使用 {@link InputEvent#getModifiers} 和 {@link InputEvent#getModifiersEx} 方法检索模式键的状态。{@link InputEvent#getModifiers} 返回的按键掩码只反映改变了状态的按键，没有反映所有按键的当前状态。（注：由于 ALT_MASK/BUTTON2_MASK 和 META_MASK/BUTTON3_MASK 的值是重叠的，所以对于涉及修改键的鼠标事件并不总是正确的。）要获得所有按键和修改键的状态，请使用 {@link InputEvent#getModifiersEx}。{@link MouseEvent#getButton} 返回改变了状态的鼠标按键。
+ <P> 
+例如，如果按下了第一个鼠标按键，则以下列顺序发送事件：
+ <PRE>
+    <b   >id           </b   >  <b   >修饰符   </b   >    <b   >按键 </b   >    
+    <code>MOUSE_PRESSED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+    <code>MOUSE_RELEASED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+    <code>MOUSE_CLICKED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+ </PRE>
+按下多个鼠标按键时，每次按下、释放和单击按键都会生成一个独立的事件。 
+ <P> 
+例如，如果用户按下<b>按键 1</b> 后按下<b>按键 2</b>，然后以相同的顺序释放它们，则将生成下列事件序列：
+ <PRE>
+    <b   >id           </b   >  <b   >修饰符   </b   >    <b   >按键 </b   >    
+    <code>MOUSE_PRESSED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+    <code>MOUSE_PRESSED</code>: <code>BUTTON2_MASK</code> <code>BUTTON2</code>
+    <code>MOUSE_RELEASED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+    <code>MOUSE_CLICKED</code>: <code>BUTTON1_MASK</code> <code>BUTTON1</code>
+    <code>MOUSE_RELEASED</code>: <code>BUTTON2_MASK</code> <code>BUTTON2</code>
+    <code>MOUSE_CLICKED</code>: <code>BUTTON2_MASK</code> <code>BUTTON2</code>
+ </PRE>
+如果先释放<b>按键 2</b>，则先出现 <code>BUTTON2_MASK</code> 的 <code>MOUSE_RELEASED</code>/<code>MOUSE_CLICKED</code> 对，然后是 <code>BUTTON1_MASK</code> 对。
+ <p>
+
+在释放鼠标按键前，<code>MOUSE_DRAGGED</code> 事件将被传递到鼠标按键按下时所在的 <code>Component</code>（无论鼠标位置当前是否处于 <code>Component</code> 的边界内）。由于拖放实现与平台有关，所以在本机拖放操作期间可能不传递 <code>MOUSE_DRAGGED</code> 事件。在多屏幕环境中，即使鼠标位置在与 <code>Component</code> 关联的 <code>GraphicsConfiguration</code> 边界之外，也会将鼠标拖动事件传递给该 <code>Component</code>。但是，在这种情况下报告的鼠标拖动事件位置可能与实际的鼠标位置不同： 
+ <ul>
+<li>在没有虚拟设备的多屏幕环境中：<br>报告的鼠标拖动事件坐标被限制在与 <code>Component</code> 关联的 <code>GraphicsConfiguration</code> 边界内。
+<li>在具有虚拟设备的多屏幕环境中：<br>报告的鼠标拖动事件坐标被限制在与 <code>Component</code> 关联的虚拟设备边界内。   
+ </ul>
+
+@author Carl Quinn
+1.56, 07/11/06
+   
+@see MouseAdapter
+@see MouseListener
+@see MouseMotionAdapter
+@see MouseMotionListener
+@see MouseWheelListener
+@see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/mouselistener.html">Tutorial: Writing a Mouse Listener</a>
+@see <a href="http://java.sun.com/docs/books/tutorial/post1.0/ui/mousemotionlistener.html">Tutorial: Writing a Mouse Motion Listener</a>
+
+@since 1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_FIRST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于鼠标事件的 id 范围的起始编号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_LAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于鼠标事件的 id 范围的结束编号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_CLICKED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标单击&rdquo;事件。按下并释放鼠标按键时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_PRESSED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标按下&rdquo;事件。按下鼠标按键时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_RELEASED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标释放&rdquo;事件。松开鼠标按键时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_MOVED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标移动&rdquo;事件。鼠标位置改变时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_ENTERED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标进入&rdquo;事件。鼠标光标进入组件几何形状的未遮掩部分时产生此 <code>MouseEvent</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_EXITED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标离开&rdquo;事件。鼠标光标离开组件几何形状的未遮掩部分时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_DRAGGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标拖动&rdquo;事件。鼠标按键处于被按下状态中更改鼠标位置时产生此 <code>MouseEvent</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.MOUSE_WHEEL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&ldquo;鼠标滚轮&rdquo;事件。这是惟一的 <code>MouseWheelEvent</code>。带有滚轮的鼠标在滚轮旋转时产生此事件。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.NOBUTTON
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示没有鼠标按键，由 {@link #getButton} 使用。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.BUTTON1
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示鼠标按键 #1；由 {@link #getButton} 使用。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.BUTTON2
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示鼠标按键 #2；由 {@link #getButton} 使用。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.MouseEvent.BUTTON3
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示鼠标按键 #3；由 {@link #getButton} 使用。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseEvent.x
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+鼠标事件的 x 坐标。该 x 值相对于激发事件的组件。
+
+@serial
+@see #getX()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseEvent.y
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+鼠标事件的 y 坐标。该 y 值相对于激发事件的组件。
+
+@serial
+@see #getY()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.event.MouseEvent.xAbs
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 鼠标事件的 x 绝对坐标。在虚拟设备多屏幕环境中，桌面区域可以跨越多个物理屏幕设备，此坐标相对于虚拟坐标系。否则，此坐标相对于与 Component 的 GraphicsConfiguration 关联的坐标系。
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.event.MouseEvent.yAbs
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 鼠标事件的 y 绝对坐标。在虚拟设备多屏幕环境中，桌面区域可以跨越多个物理屏幕设备，此坐标相对于虚拟坐标系。否则，此坐标相对于与 Component 的 GraphicsConfiguration 关联的坐标系。
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseEvent.clickCount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示快速连续单击鼠标按键的次数。clickCount 仅对三种鼠标事件有效：<BR><code>MOUSE_CLICKED</code>、<code>MOUSE_PRESSED</code> 和 <code>MOUSE_RELEASED</code>。对于上述三种事件，<code>clickCount</code> 至少为 1。对于所有其他事件，该计数为 0。
+
+@serial
+@see #getClickCount()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.event.MouseEvent.button
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示哪个鼠标按键更改了状态（如果有的话）。
+
+惟一合法的值是下列常量：<code>NOBUTTON</code>、<code>BUTTON1</code>、<code>BUTTON2</code> 或 <code>BUTTON3</code>。
+@serial
+@see #getButton()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.event.MouseEvent.popupTrigger
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示弹出菜单是否应在某个动作发出后出现的属性。如果 <code>popupTrigger</code> = <code>false</code>，则不应出现弹出菜单。如果为 <code>true</code>，则应出现弹出菜单。
+
+@serial
+@see java.awt.PopupMenu
+@see #isPopupTrigger()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.MouseEvent(Component source, int id, long when, int modifiers, int x, int y, int clickCount, boolean popupTrigger, int button)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源组件、类型、修饰符、坐标和单击计数的 <code>MouseEvent</code> 对象。
+ <p>
+注意，传入无效 <code>id</code> 将导致不确定的行为。创建无效事件（例如使用多个旧的 _MASK，或者使用不匹配的修饰符/按键值）将导致不确定的行为。调用形式为 <tt>MouseEvent(source, id, when, modifiers, x, y, clickCount, popupTrigger, button)</tt> 的方法与调用 <tt>{@link #MouseEvent(Component, int, long, int, int, int,
+ int, int, int, boolean, int) MouseEvent}(source, id, when, modifiers,
+ x, y, xAbs, yAbs, clickCount, popupTrigger, button)</tt> 完全相同，其中 xAbs 和 yAbs 定义为屏幕上源组件的位置加上相对坐标 x 和 y。如果没有显示源组件，则 xAbs 和 yAbs 被设置为 0。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source       产生该事件的 <code>Component</code>
+@param id  标识事件的整数
+@param when    给出事件发生时间的 long int 值
+@param modifiers    事件期间按下的修改键（如 shift、ctrl、alt、meta）。应该使用扩展的 _DOWN_MASK 修饰符或旧的 _MASK 修饰符，但是在一个事件中不应混用两种模型。首选扩展的修饰符。
+@param x  鼠标位置的水平 x 坐标
+@param y    鼠标位置的垂直 y 坐标
+@param clickCount   与事件关联的鼠标单击次数
+@param popupTrigger 一个 boolean 值，如果此事件是某个弹出菜单的触发器，则为 true 
+@param button   改变了状态的鼠标按键。为 <code>NOBUTTON</code>、<code>BUTTON1</code>、<code>BUTTON2</code> 或 <code>BUTTON3</code>。
+@throws IllegalArgumentException 如果传入无效的 <code>button</code> 值
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.MouseEvent(Component source, int id, long when, int modifiers, int x, int y, int clickCount, boolean popupTrigger)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源组件、类型、修饰符、坐标和单击计数的 <code>MouseEvent</code> 对象。
+<p>注意，传入无效 <code>id</code> 将导致不确定的行为。调用形式为 <tt>MouseEvent(source, id, when, modifiers, x, y, clickCount, popupTrigger)</tt> 的方法所产生的效果与调用 <tt>{@link #MouseEvent(Component, int, long, int, int, int,
+ int, int, int, boolean, int) MouseEvent}(source, id, when, modifiers,
+ x, y, xAbs, yAbs, clickCount, popupTrigger, MouseEvent.NOBUTTON)</tt> 完全相同，其中 xAbs 和 yAbs 定义为屏幕上原点的位置加上相对坐标 x 和 y。如果没有显示原点，则 xAbs 和 yAbs 被设置为零。如果 <code>source</code> 为 <code>null</code>，则此方法将抛出 <code>IllegalArgumentException</code>。
+
+ @param source       产生该事件的 <code>Component</code>
+ @param id           标识事件的整数
+ @param when         给出事件发生时间的 long int 值
+ @param modifiers    发生事件期间按下的修改键（例如 shift、ctrl、alt 和 meta)，应该使用扩展的 _DOWN_MASK 修饰符或旧的 _MASK 修饰符，但是在一个事件中不应混用两种模型。首选扩展的修饰符。
+ @param x            鼠标位置的水平 x 坐标
+ @param y            鼠标位置的垂直 y 坐标
+ @param clickCount   与该事件有关的鼠标单击次数
+ @param popupTrigger 一个 boolean 值，如此事件是某个弹出菜单的触发器，则该参数为 true
+ @throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.MouseEvent(Component source, int id, long when, int modifiers, int x, int y, int xAbs, int yAbs, int clickCount, boolean popupTrigger, int button)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 构造一个具有指定源组件、类型、修饰符、相对坐标、绝对坐标和单击计数的 <code>MouseEvent</code> 对象。
+ <p>
+ 注意，传入无效 <code>id</code> 将导致不确定的行为。创建无效事件（比如使用多个旧的 _MASK，或者使用不匹配的修饰符/按钮值）将导致不确定的行为。即使将不一致的相对坐标值和绝对坐标值传递给构造方法，仍然会创建鼠标事件实例，并且不抛出任何异常。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source       产生该事件的 <code>Component</code>
+@param id  标识事件的整数
+@param when    给出事件发生时间的 long int 值
+@param modifiers    事件期间按下的修改键（如 shift、ctrl、alt、meta）。应该使用扩展的 _DOWN_MASK 修饰符或旧的 _MASK 修饰符，但是在一个事件中不应混用两种模型。首选扩展的修饰符。
+@param x  鼠标位置的水平 x 坐标 
+@param y  鼠标位置的垂直 y 坐标
+@param xAbs         鼠标位置的绝对水平 x 坐标
+@param yAbs         鼠标位置的绝对垂直 y 坐标
+@param clickCount   与事件关联的鼠标单击次数
+@param popupTrigger 一个 boolean 值，如果此事件是某个弹出菜单的触发器，则为 true 
+@param button       更改了状态的鼠标按键。该参数为 <code>NOBUTTON</code>、<code>BUTTON1</code>、<code>BUTTON2</code> 或 <code>BUTTON3</code>。
+ @throws IllegalArgumentException 如果传入无效的 <code>button</code> 值
+ @throws IllegalArgumentException 如果 <code>source</code> 为 null
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.event.MouseEvent.getLocationOnScreen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回事件的绝对 x, y 坐标。在虚拟设备多屏幕环境中，桌面区域可以跨越多个物理屏幕设备，这些坐标相对于虚拟坐标系。否则，这些坐标相对于与 Component 的 GraphicsConfiguration 关联的坐标系。
+
+ @return 包含绝对 x 坐标和绝对 y 坐标的 <code>Point</code> 对象。
+
+ @see java.awt.GraphicsConfiguration
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getXOnScreen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回事件的绝对水平 x 坐标。在虚拟设备多屏幕环境中，桌面区域可以跨越多个物理屏幕设备，这些坐标相对于虚拟坐标系。否则，这些坐标相对于与 Component 的 GraphicsConfiguration 关联的坐标系。
+
+ @return x  表示绝对水平位置的整数。
+
+ @see java.awt.GraphicsConfiguration
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getYOnScreen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回事件的绝对垂直 y 坐标。在虚拟设备多屏幕环境中，桌面区域可以跨越多个物理屏幕设备，这些坐标相对于虚拟坐标系。否则，这些坐标相对于与 Component 的 GraphicsConfiguration 关联的坐标系。
+
+ @return y  表示绝对垂直位置的整数。
+
+ @see java.awt.GraphicsConfiguration
+ @since 1.6 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回事件相对于源组件的水平 x 坐标。
+
+@return   一个整数 x，指示相对于组件的水平位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回事件相对于源组件的垂直 y 坐标。
+
+@return  一个整数 y，指示相对于组件的垂直位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.event.MouseEvent.getPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回事件相对于源组件的 x, y 坐标。
+
+@return 一个 <code>Point</code> 对象，包含相对于源组件的 x 和 y 坐标 
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.event.MouseEvent.translatePoint(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将事件坐标加上指定的 <code>x</code>（水平）和 <code>y</code>（垂直）偏移量，将事件的坐标平移到新位置。
+
+@param x 与当前 x 坐标位置相加的水平 x 值
+@param y 与当前 y 坐标位置相加的垂直 y 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getClickCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此事件关联的鼠标单击次数。
+
+@return 单击次数的整数值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.event.MouseEvent.getButton()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回更改了状态的鼠标按键（如果有）。
+
+@return 以下常量之一：<code>NOBUTTON</code>、<code>BUTTON1</code>、<code>BUTTON2</code> 或 <code>BUTTON3</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.event.MouseEvent.isPopupTrigger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此鼠标事件是否为该平台的弹出菜单触发事件。
+<p><b>注</b>：在不同系统上弹出菜单的触发方式不同。因此，为了正确实现跨平台功能，在 <code>mouseReleased</code> 和 <code>mousePressed</code> 中都应检查 <code>isPopupTrigger</code>。
+
+@return 一个 boolean 值，如果此事件是此平台的弹出菜单触发器，则为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.awt.event.MouseEvent.getMouseModifiersText(int modifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个描述事件期间所按下的修改键和鼠标按键（如&ldquo;Shift&rdquo;或&ldquo;Ctrl+Shift&rdquo;）的 <code>String</code>。通过更改 <code>awt.properties</code> 文件可以本地化这些字符串。
+ <p>
+注意，<code>InputEvent.ALT_MASK</code> 和 <code>InputEvent.BUTTON2_MASK</code> 具有相同的值，所以这两个修饰符都返回字符串&ldquo;Alt&rdquo;。同样，<code>InputEvent.META_MASK</code> 和 <code>InputEvent.BUTTON3_MASK</code> 具有相同的值，所以这两个修饰符都返回字符串&ldquo;Meta&rdquo;。
+
+@param modifiers 描述事件期间所按下的修改键和鼠标按键的修饰符掩码
+@return 一个 string，描述事件期间所按下的修改键和鼠标按钮的文本描述
+@see InputEvent#getModifiersExText(int)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.event.MouseEvent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此事件的参数字符串。此方法对于事件记录和调试很有用。
+
+@return 标识事件及其属性的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.event.MouseEvent.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据旧的修饰符来设置新的修饰符。
+@serial
+
+<!-- END DATA -->

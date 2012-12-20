@@ -1,0 +1,939 @@
+<!-- BEGIN KEY -->
+public class java.text.DecimalFormat extends java.text.NumberFormat
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DecimalFormat</code> 是 <code>NumberFormat</code> 的一个具体子类，用于格式化十进制数字。该类设计有各种功能，使其能够解析和格式化任意语言环境中的数，包括对西方语言、阿拉伯语和印度语数字的支持。它还支持不同类型的数，包括整数 (123)、定点数 (123.4)、科学记数法表示的数 (1.23E4)、百分数 (12%) 和金额 ($123)。所有这些内容都可以本地化。
+
+<p>要获取具体语言环境的 <code>NumberFormat</code>（包括默认语言环境），可调用 <code>NumberFormat</code> 的某个工厂方法，如 <code>getInstance()</code>。通常不直接调用 <code>DecimalFormat</code> 的构造方法，因为 <code>NumberFormat</code> 的工厂方法可能返回不同于 <code>DecimalFormat</code> 的子类。如果需要自定义格式对象，可执行：
+
+ <blockquote><pre>
+ NumberFormat f = NumberFormat.getInstance(loc);
+ if (f instanceof DecimalFormat) {
+     ((DecimalFormat) f).setDecimalSeparatorAlwaysShown(true);
+ }
+ </pre></blockquote>
+
+<p><code>DecimalFormat</code> 包含一个<em>模式</em> 和一组<em>符号</em>。可直接使用 <code>applyPattern()</code> 或间接使用 API 方法来设置模式。符号存储在 <code>DecimalFormatSymbols</code> 对象中。使用 <code>NumberFormat</code> 工厂方法时，可从已本地化的 <code>ResourceBundle</code> 中读取模式和符号。
+
+<h4>模式</h4>
+
+<code>DecimalFormat</code> 模式具有下列语法：
+ <blockquote><pre>
+<i>模式：</i>
+<i>正数模式</i>
+<i>正数模式</i>；<i>负数模式</i>
+<i>正数模式：</i>
+<i>前缀<sub>opt</sub></i> <i>数字</i><i>后缀<sub>opt</sub></i>
+<i>负数模式：</i>
+<i>前缀<sub>opt</sub></i> <i>数字</i><i>后缀<sub>opt</sub></i>
+<i>前缀：</i>
+除 \uFFFE、\uFFFF 和特殊字符以外的所有 Unicode 字符
+<i>后缀：</i>
+除 \uFFFE、\uFFFF 和特殊字符以外的所有 Unicode 字符
+<i>数字：</i>
+<i>整数</i><i>指数<sub>opt</sub></i>
+<i>整数</i>。<i>小数</i><i>指数<sub>opt</sub></i>
+<i>整数：</i>
+<i>最小整数</i>
+         #
+# <i>整数</i>
+# , <i>整数</i>
+<i>最小整数：</i>
+         0
+0 <i>最小整数</i>
+0 , <i>最小整数</i>
+<i>小数：</i>
+<i>最小小数<sub>opt</sub></i> <i>可选小数<sub>opt</sub></i>
+<i>最小小数：</i>
+0 <i>最小小数<sub>opt</sub></i>
+<i>可选小数：</i>
+# <i>可选小数<sub>opt</sub></i>
+<i>指数：</i>
+E <i>最小指数</i>
+<i>最小指数：</i>
+0 <i>最小指数<sub>opt</sub></i>
+ </pre></blockquote>
+
+<p><code>DecimalFormat</code> 模式包含正数和负数子模式，例如 <code>&quot;#,##0.00;(#,##0.00)&quot;</code>。每个子模式都有前缀、数字部分和后缀。负数子模式是可选的；如果存在，则将用已本地化的减号（在多数语言环境中是 <code>'-'</code>）作为前缀的正数子模式用作负数子模式。也就是说，单独的 <code>&quot;0.00&quot;</code> 等效于 <code>&quot;0.00;-0.00&quot;</code>。如果存在显式的负数子模式，则它仅指定负数前缀和后缀；数字位数、最小位数，其他特征都与正数模式相同。这意味着 <code>&quot;#,##0.0#;(#)&quot;</code> 的行为与 <code>&quot;#,##0.0#;(#,##0.0#)&quot;</code> 完全相同。
+
+<p>用于无穷大值、数字、千位分隔符、小数分隔符等的前缀、后缀和各种符号可设置为任意值，并且能在格式化期间正确显示。但是，必须注意不要让符号和字符串发生冲突，否则解析是不可靠的。例如，为了让 <code>DecimalFormat.parse()</code> 能够区分正数和负数，正数和负数前缀或后缀必须是不同的。（如果它们相同，则 <code>DecimalFormat</code> 的行为就如同未指定负数子模式一样。）另一个示例是小数分隔符和千位分隔符应该是不同的字符，否则将不可能进行解析。
+
+<p>分组分隔符通常用于千位，但是在某些国家/地区中它用于分隔万位。分组大小是分组字符之间的固定数字位数，例如 100,000,000 是 3，而 1,0000,0000 则是 4。如果使用具有多个分组字符的模式，则最后一个分隔符和整数结尾之间的间隔才是使用的分组大小。所以 <code>&quot;#,##,###,####&quot;</code> == <code>&quot;######,####&quot;</code> == <code>&quot;##,####,####&quot;</code>。
+
+<h4>特殊模式字符</h4>
+
+<p>模式中的很多字符都是按字面解释的；在解析期间对其进行匹配，在格式化期间则不经改变地输出。另一方面，特殊字符代表了其他字符、字符串或字符类。如果要将其作为字面量出现在前缀或后缀中，那么除非另行说明，否则必须对其加引号。
+
+<p>下列字符用在非本地化的模式中。已本地化的模式使用从此格式器的 <code>DecimalFormatSymbols</code> 对象中获得的相应字符，这些字符已失去其特殊状态。两种例外是货币符号和引号，不将其本地化。
+
+ <blockquote>
+ <table border=0 cellspacing=3 cellpadding=0 summary="Chart showing symbol,
+  location, localized, and meaning.">
+     <tr bgcolor="#ccccff">
+<th align=left>符号
+<th align=left>位置
+<th align=left>本地化？
+<th align=left>含义
+     <tr valign=top>
+          <td><code>0</code>
+<td>数字
+<td>是
+<td>阿拉伯数字
+     <tr valign=top bgcolor="#eeeeff">
+          <td><code>#</code>
+<td>数字&#x5B57;
+<td>是
+<td>阿拉伯数字，如果不存在则显示为 0
+     <tr valign=top>
+          <td><code>.</code>
+<td>数字
+<td>是
+<td>小数分隔符或货币小数分隔符
+     <tr valign=top bgcolor="#eeeeff">
+          <td><code>-</code>
+<td>数字
+<td>是
+<td>减号
+     <tr valign=top>
+          <td><code>,</code>
+<td>数字
+<td>是
+<td>分组分隔符
+     <tr valign=top bgcolor="#eeeeff">
+<td><code>E</code>
+<td>数字
+<td>是
+<td>分隔科学计数法中的尾数和指数。<em>在前缀或后缀中无需加引号。</em>
+     <tr valign=top>
+          <td><code>;</code>
+<td>子模式边界
+<td>是
+<td>分隔正数和负数子模式
+     <tr valign=top bgcolor="#eeeeff">
+          <td><code>%</code>
+<td>前缀或后缀
+<td>是
+<td>乘以 100 并显示为百分数
+     <tr valign=top>
+<td><code>\u2030</code>
+<td>前缀或后缀
+<td>是
+<td>乘以 1000 并显示为千分数
+     <tr valign=top bgcolor="#eeeeff">
+<td><code>&curren;</code> (<code>\u00A4</code>)
+<td>前缀或后缀
+<td>否
+<td>货币记号，由货币符号替换。如果两个同时出现，则用国际货币符号替换。如果出现在某个模式中，则使用货币小数分隔符，而不使用小数分隔符。
+     <tr valign=top>
+          <td><code>'</code>
+<td>前缀或后缀
+<td>否
+<td>用于在前缀或或后缀中为特殊字符加引号，例如 <code>&quot;'#'#&quot;</code> 将 123 格式化为 <code>&quot;#123&quot;</code>。要创建单引号本身，请连续使用两个单引号：<code>&quot;# o''clock&quot;</code>。
+ </table>
+ </blockquote>
+
+<h4>科学计数法</h4>
+
+<p>科学计数法中的数表示为一个尾数和一个 10 的几次幂的乘积，例如可将 1234 表示为 1.234 x 10^3。尾数的范围通常是 1.0 &lt;= x &lt; 10.0，但并非必需如此。可指示 <code>DecimalFormat</code> <em>仅通过某个模式</em> 来格式化和解析科学计数法表示的数；目前没有创建科学计数法格式的工厂方法。在这个模式中，指数字符后面紧跟着一个或多个数字字符即指示科学计数法。示例：<code>&quot;0.###E0&quot;</code> 将数字 1234 格式化为 <code>&quot;1.234E3&quot;</code>。
+
+ <ul>
+<li>指数字符后面的数字位数字符数给出了最小的指数位数。没有最大值。使用本地化的减号来格式化负数指数，<em>不</em> 使用模式中的前缀和后缀。这就允许存在诸如 <code>&quot;0.###E0 m/s&quot;</code> 等此类的模式。
+
+<li>最小和最大整数数字位数一起进行解释：
+
+ <ul>
+<li>如果最大整数数字位数大于其最小整数数字位数并且大于 1，则强制要求指数为最大整数数字位数的倍数，并将最小整数数字位数解释为 1。最常见的用法是生成<em>工程计数法</em>，其中指数是 3 的倍数，如 <code>&quot;##0.#####E0&quot;</code>。使用此模式时，数 12345 格式化为 <code>&quot;12.345E3&quot;</code>，123456 则格式化为 <code>&quot;123.456E3&quot;</code>。
+
+<li>否则通过调整指数来得到最小整数数字位数。示例：使用 <code>&quot;00.###E0&quot;</code> 格式化 0.00123 时得到 <code>&quot;12.3E-4&quot;</code>。
+ </ul>
+
+<li>尾数中的有效位数是<em>最小整数</em> 和<em>最大小数</em> 位数的和，不受最大整数位数的影响。例如，使用 <code>&quot;##0.##E0&quot;</code> 格式化 12345 得到 <code>&quot;12.3E3&quot;</code>。要显示所有位数，请将有效位数计数设置为零。有效位数不会影响解析。
+
+<li>指数模式可能不包含分组分隔符。
+ </ul>
+
+<h4>舍入</h4>
+
+<code>DecimalFormat</code> 提供 {@link java.math.RoundingMode} 中定义的舍入模式进行格式化。默认情况下，它使用 {@link java.math.RoundingMode#HALF_EVEN RoundingMode.HALF_EVEN}。
+
+<h4>阿拉伯数字</h4>
+
+为了进行格式化，<code>DecimalFormat</code> 使用 <code>DecimalFormatSymbols</code> 对象中所定义的、从已本地化的阿拉伯数字 0 开始的 10 个连续字符作为阿拉伯数字。为了进行解析，可识别 {@link Character#digit Character.digit} 所定义的这些阿拉伯数字和所有 Unicode 十进制阿拉伯数字。
+
+<h4>特殊值</h4>
+
+<p><code>NaN</code> 被格式化为一个字符串，通常具有单个字符 <code>\uFFFD</code>。此字符串由 <code>DecimalFormatSymbols</code> 对象所确定。这是唯一不使用前缀和后缀的值。
+
+<p>无穷大的值被格式化为一个字符串，通常具有单个字符 <code>\u221E</code>，具有正数或负数前缀和后缀。无穷大值的字符串由 <code>DecimalFormatSymbols</code> 对象所确定。
+
+<p>将负零（<code>&quot;-0&quot;</code>）解析为
+ <ul>
+<li>如果 <code>isParseBigDecimal()</code> 为 true，则为 <code>BigDecimal(0)</code>，
+<li>如果 <code>isParseBigDecimal()</code> 为 false 并且 <code>isParseIntegerOnly()</code> 为 true，则为 <code>Long(0)</code>，
+<li>如果 <code>isParseBigDecimal()</code> 和 <code>isParseIntegerOnly()</code> 均为 false，则为 <code>Double(-0.0)</code>。
+ </ul>
+
+<h4><a name="synchronization">同步</a></h4>
+
+ <p>
+DecimalFormat 通常不是同步的。建议为每个线程创建独立的格式实例。如果多个线程同时访问某个格式，则必须保持外部同步。
+
+<h4>示例</h4>
+
+ <blockquote><pre>
+ <strong>// Print out a number using the localized number, integer, currency,
+ // and percent format for each locale</strong>
+ Locale[] locales = NumberFormat.getAvailableLocales();
+ double myNumber = -1234.56;
+ NumberFormat form;
+ for (int j=0; j&lt;4; ++j) {
+     System.out.println(&quot;FORMAT&quot;);
+     for (int i = 0; i &lt; locales.length; ++i) {
+         if (locales[i].getCountry().length() == 0) {
+            continue; // Skip language-only locales
+         }
+         System.out.print(locales[i].getDisplayName());
+         switch (j) {
+         case 0:
+             form = NumberFormat.getInstance(locales[i]); break;
+         case 1:
+             form = NumberFormat.getIntegerInstance(locales[i]); break;
+         case 2:
+             form = NumberFormat.getCurrencyInstance(locales[i]); break;
+default:
+             form = NumberFormat.getPercentInstance(locales[i]); break;
+         }
+         if (form instanceof DecimalFormat) {
+             System.out.print(&quot;: &quot; + ((DecimalFormat) form).toPattern());
+         }
+         System.out.print(&quot; -&gt; &quot; + form.format(myNumber));
+         try {
+             System.out.println(&quot; -&gt; &quot; + form.parse(form.format(myNumber)));
+} catch (ParseException e) {}
+     }
+ }
+ </pre></blockquote>
+
+
+@see          <a href="http://java.sun.com/docs/books/tutorial/i18n/format/decimalFormat.html">Java Tutorial</a>
+@see          NumberFormat
+@see          DecimalFormatSymbols
+@see          ParsePosition
+@version      1.88 06/26/06
+@author       Mark Davis
+@author       Alan Liu
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.positivePrefix
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化正数时用作前缀的符号，例如 &quot;+&quot;。
+
+@serial
+@see #getPositivePrefix
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.positiveSuffix
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化正数时用作后缀的符号。这通常是一个空字符串。
+
+@serial
+@see #getPositiveSuffix
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.negativePrefix
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化负数时用作前缀的符号，例如 &quot;-&quot;。
+
+@serial
+@see #getNegativePrefix
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.negativeSuffix
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化负数时用作后缀的符号。这通常是一个空字符串。
+
+@serial
+@see #getNegativeSuffix
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.posPrefixPattern
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+非负数的前缀模式。此变量对应于 <code>positivePrefix</code>。
+
+<p>此模式由方法 <code>expandAffix()</code> 对 <code>positivePrefix</code> 进行扩展得到，以更新后者从而反映 <code>symbols</code> 中的改变。如果此变量为 <code>null</code>，则将 <code>positivePrefix</code> 用作字面量值，在 <code>symbols</code> 改变时不改变该值。对于从早于流版本 2 的流中恢复的 <code>DecimalFormat</code> 对象而言，此变量始终为 <code>null</code>。
+
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.posSuffixPattern
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+非负数的后缀模式。此变量对应于 <code>positiveSuffix</code>。此变量类似于 <code>posPrefixPattern</code>；有关进一步的内容，请参见该变量。
+
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.negPrefixPattern
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+负数的前缀模式。此变量对应于 <code>negativePrefix</code>。此变量类似于 <code>posPrefixPattern</code>；有关进一步的内容，请参见该变量。
+
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.DecimalFormat.negSuffixPattern
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+负数的后缀模式。此变量对应于 <code>negativeSuffix</code>。此变量类似于 <code>posPrefixPattern</code>；有关进一步的内容，请参见该变量。
+
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.multiplier
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+百分数、千分数等使用的乘数。
+
+@serial
+@see #getMultiplier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.DecimalFormat.groupingSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+数的整数部分中分组分隔符之间的数字位数。如果 <code>NumberFormat.groupingUsed</code> 为 true，则该值必须大于 0。
+
+@serial
+@see #getGroupingSize
+@see java.text.NumberFormat#isGroupingUsed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.text.DecimalFormat.decimalSeparatorAlwaysShown
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则强制小数分隔符总是出现在已格式化的数中，即使数的小数部分为零也是如此。
+
+@serial
+@see #isDecimalSeparatorAlwaysShown
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.text.DecimalFormat.parseBigDecimal
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则只要有可能，解析就返回 BigDecimal。
+
+@serial
+@see #isParseBigDecimal
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.text.DecimalFormatSymbols java.text.DecimalFormat.symbols
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此格式使用的 <code>DecimalFormatSymbols</code> 对象。它包含用于格式化数的符号，例如分组分隔符、小数分隔符等等。
+
+@serial
+@see #setDecimalFormatSymbols
+@see java.text.DecimalFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.text.DecimalFormat.useExponentialNotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 True，则在格式化数时强制使用指数（也就是科学）计数法。
+
+@serial
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte java.text.DecimalFormat.minExponentDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以科学计数法格式化数时，用于显示指数的最小数字位数。如果 <code>useExponentialNotation</code> 不为 true，则忽略此字段。
+
+@serial
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.maximumIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BigInteger</code> 或 <code>BigDecimal</code> 的整数部分中所允许的最大数字位数。<code>maximumIntegerDigits</code> 必须大于等于 <code>minimumIntegerDigits</code>。
+
+@serial
+@see #getMaximumIntegerDigits
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.minimumIntegerDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BigInteger</code> 或 <code>BigDecimal</code> 的整数部分中所允许的最小数字位数。<code>minimumIntegerDigits</code> 必须小于等于 <code>maximumIntegerDigits</code>。
+
+@serial
+@see #getMinimumIntegerDigits
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.maximumFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BigInteger</code> 或 <code>BigDecimal</code> 的小数部分中所允许的最大数字位数。<code>maximumFractionDigits</code> 必须大于等于 <code>minimumFractionDigits</code>。
+
+@serial
+@see #getMaximumFractionDigits
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.minimumFractionDigits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BigInteger</code> 或 <code>BigDecimal</code> 的小数部分中所允许的最小数字位数。<code>minimumFractionDigits</code> 必须小于等于 <code>maximumFractionDigits</code>。
+
+@serial
+@see #getMinimumFractionDigits
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.math.RoundingMode java.text.DecimalFormat.roundingMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 在此 DecimalFormat 中使用的 {@link java.math.RoundingMode}。
+
+ @serial
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.DecimalFormat.serialVersionOnStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+声明写入何种版本的内部系列版本。可能的值为：
+ <ul>
+<li><b>0</b>（默认值）：Java 2 平台 v1.2 之前的版本
+<li><b>1</b>：1.2 版本，包括两个新字段 <code>useExponentialNotation</code> 和 <code>minExponentDigits</code>。
+<li><b>2</b>：1.3 和以后版本，添加了四个新字段：<code>posPrefixPattern</code>、<code>posSuffixPattern</code>、<code>negPrefixPattern</code> 和 <code>negSuffixPattern</code>。
+<li><b>3</b>：1.5 和以后版本，添加了五个新字段：<code>maximumIntegerDigits</code>、<code>minimumIntegerDigits</code>、<code>maximumFractionDigits</code>、<code>minimumFractionDigits</code> 和 <code>parseBigDecimal</code>。
+<li><b>4</b>：1.6 和以后版本，添加了一个新字段：<code>roundingMode</code>。
+ </ul>
+@since 1.2
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.DecimalFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认模式和默认语言环境的符号创建一个 DecimalFormat。当国际化不是主要的考虑方面时，这是获取 DecimalFormat 的便捷方式。
+ <p>
+要为给定的语言环境获取标准的格式，请对 NumberFormat 使用工厂方法，如 getNumberInstance。这些工厂方法将为给定的语言环境返回最适合的 NumberFormat 子类。
+
+@see java.text.NumberFormat#getInstance
+@see java.text.NumberFormat#getNumberInstance
+@see java.text.NumberFormat#getCurrencyInstance
+@see java.text.NumberFormat#getPercentInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.DecimalFormat(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的模式和默认语言环境的符号创建一个 DecimalFormat。当国际化不是主要的考虑方面时，这是获取 DecimalFormat 的便捷方式。
+ <p>
+要为给定的语言环境获取标准的格式，请对 NumberFormat 使用工厂方法，如 getNumberInstance。这些工厂方法将为给定的语言环境返回最适合的 NumberFormat 子类。
+
+@param pattern 一个非本地化的模式字符串。
+@exception NullPointerException 如果 <code>pattern</code> 为 null
+@exception IllegalArgumentException 如果给定的 pattern 无效。
+@see java.text.NumberFormat#getInstance
+@see java.text.NumberFormat#getNumberInstance
+@see java.text.NumberFormat#getCurrencyInstance
+@see java.text.NumberFormat#getPercentInstance
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.DecimalFormat(String pattern, DecimalFormatSymbols symbols)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的模式和符号创建一个 DecimalFormat。需要完全自定义格式化的行为时使用此构造方法。
+ <p>
+要为给定的语言环境获取标准的格式，请对 NumberFormat 使用工厂方法，如 getInstance 或 getCurrencyInstance。如果只需为标准格式进行微小的调整，则可修改 NumberFormat 工厂方法所返回的格式。
+
+@param pattern 一个非本地化的模式字符串。
+@param symbols 要使用的符号集
+@exception NullPointerException 如果任意给定的参数为 null
+@exception IllegalArgumentException 如果给定的 pattern 无效
+@see java.text.NumberFormat#getInstance
+@see java.text.NumberFormat#getNumberInstance
+@see java.text.NumberFormat#getCurrencyInstance
+@see java.text.NumberFormat#getPercentInstance
+@see java.text.DecimalFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.StringBuffer java.text.DecimalFormat.format(Object number, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个数，并将所得文本追加到给定的字符串缓冲区。该数可以是 {@link java.lang.Number} 的任意子类。
+ <p>
+此实现使用所允许的最大精度。
+@param number     要格式化的数
+@param toAppendTo 将格式化的文本所要追加到的 <code>StringBuffer</code> 
+@param pos       在输入上：如果需要，是一个对齐字段。在输出上：对齐字段的偏移量。
+@return           以 <code>toAppendTo</code> 形式传入的值
+@exception        IllegalArgumentException 如果 <code>number</code> 为 null 或不是 <code>Number</code> 的一个实例。
+@exception        NullPointerException 如果 <code>toAppendTo</code> 或 <code>pos</code> 为 null
+@exception        ArithmeticException 如果需要使用设置为 RoundingMode.UNNECESSARY 的舍入模式进行舍入
+@see              java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.DecimalFormat.format(double number, StringBuffer result, FieldPosition fieldPosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个 double 值，以生成一个字符串。
+@param number    要格式化的 double 值
+@param result    将文本追加到的地方
+@param fieldPosition    在输入上：如果需要，是一个对齐字段。在输出上：对齐字段的偏移量。
+@exception ArithmeticException 如果需要使用设置为 RoundingMode.UNNECESSARY 的舍入模式进行舍入
+@return 已格式化的数字字符串
+@see java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.DecimalFormat.format(long number, StringBuffer result, FieldPosition fieldPosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个 long 值，以生成一个字符串。
+@param number    要格式化的 long 值
+@param result    将文本追加到的地方
+@param fieldPosition    在输入上：如果需要，是一个对齐字段。在输出上：对齐字段的偏移量。
+@exception       ArithmeticException 如果需要使用设置为 RoundingMode.UNNECESSARY 的舍入模式进行舍入
+@return 已格式化的数字字符串
+@see java.text.FieldPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.text.DecimalFormat.formatToCharacterIterator(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个 Object，以生成一个 <code>AttributedCharacterIterator</code>。可以使用返回的 <code>AttributedCharacterIterator</code> 来生成所得 String，并确定有关所得 String 的信息。
+ <p>
+AttributedCharacterIterator 的每个属性键都是 <code>NumberFormat.Field</code> 类型的，属性值与属性键相同。
+
+@exception NullPointerException 如果 obj 为 null。
+@exception IllegalArgumentException Format 无法格式化给定的对象时。
+@exception        ArithmeticException 如果需要使用设置为 RoundingMode.UNNECESSARY 的舍入模式进行舍入
+@param obj 要格式化的对象
+@return 描述格式化值的 AttributedCharacterIterator。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Number java.text.DecimalFormat.parse(String text, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析字符串中的文本，以生成一个 <code>Number</code>。
+ <p>
+该方法试图解析从 <code>pos</code> 所给定的索引处开始的文本。如果解析成功，则将 <code>pos</code> 的索引更新为所用最后一个字符后面的索引（不一定解析直到字符串末尾的所有字符），并返回解析后的数。可以使用更新后的 <code>pos</code> 指示下一次调用此方法的开始点。如果发生错误，则不更改 <code>pos</code> 的索引，并将 <code>pos</code> 的错误索引设置为发生错误处的字符索引，并且返回 null。
+ <p>
+返回的子类取决于 {@link #isParseBigDecimal} 的值以及所解析的字符串。
+ <ul>
+<li>如果 <code>isParseBigDecimal()</code> 为 false（默认值），则以 <code>Long</code> 对象返回多数整数值，而不管其写入方式如何：<code>&quot;17&quot;</code> 和 <code>&quot;17.000&quot;</code> 都解析成 <code>Long(17)</code>。不符合 <code>Long</code> 的值则以 <code>Double</code> 的形式返回。这包括有小数部分的值、无穷大的值、<code>NaN</code> 和值 -0.0。<code>DecimalFormat</code> <em>不</em> 根据源字符串中是否有小数分隔符来决定返回 <code>Double</code> 还是 <code>Long</code> 值。这样做会无法准确地解析导致某个 double 尾数（如 <code>&quot;-9,223,372,036,854,775,808.00&quot;</code>）溢出的整数。
+       <p>
+调用者可能使用 <code>Number</code> 的方法 <code>doubleValue</code>、<code>longValue</code> 等来获取所需类型的数值。
+<li>如果 <code>isParseBigDecimal()</code> 为 true，则以 <code>BigDecimal</code> 对象的形式返回值。这些值是由 {@link java.math.BigDecimal#BigDecimal(String)} 以和语言环境无关的格式为相应字符串所构造的那些值。特殊的情况是正负无穷大和 NaN 值，它们以 <code>Double</code> 实例的形式返回，其中保存了相应的 <code>Double</code> 常量值。
+ </ul>
+ <p>
+<code>DecimalFormat</code> 解析所有由 <code>Character.digit()</code> 所定义的、表示小数数字的 Unicode 字符。另外，<code>DecimalFormat</code> 也将 <code>DecimalFormatSymbols</code> 对象中所定义的、从已本地化的阿拉伯数字 0 开始的 10 个连续字符识别为阿拉伯数字。
+
+@param text 要解析的字符串
+@param pos  具有索引和上述错误索引信息的 <code>ParsePosition</code> 对象。
+@return     解析得到的值，如果解析失败，则为 <code>null</code>
+@exception  NullPointerException 如果 <code>text</code> 或 <code>pos</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.DecimalFormatSymbols java.text.DecimalFormat.getDecimalFormatSymbols()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回小数格式符号的一个副本，通常程序员或用户不改变此副本。
+@return 所需的 DecimalFormatSymbols 的一个副本
+@see java.text.DecimalFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols newSymbols)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置小数格式符号，通常程序员或用户不改变此符号。
+@param newSymbols 所需的 DecimalFormatSymbols
+@see java.text.DecimalFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.getPositivePrefix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取正数前缀。
+<P>示例：+123、$123、sFr123
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setPositivePrefix(String newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置正数前缀。
+<P>示例：+123、$123、sFr123
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.getNegativePrefix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取负数前缀。
+<P>示例：-123、($123)（带有负数后缀）、sFr-123
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setNegativePrefix(String newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置负数前缀。
+<P>示例：-123、($123)（带有负数后缀）、sFr-123
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.getPositiveSuffix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取正数后缀。
+<P>示例： 123%
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setPositiveSuffix(String newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置正数后缀。
+<P>示例：123%
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.getNegativeSuffix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取负数后缀。
+<P>示例：-123%、($123)（带有正数后缀）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setNegativeSuffix(String newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置负数后缀。
+<P>示例： 123%
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getMultiplier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取百分数、千分数和类似格式中使用的乘数。
+
+@see #setMultiplier(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setMultiplier(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置百分数、千分数和类似格式中使用的乘数。对于百分数格式，将该乘数设置为 100 并将后缀设置为 '%'（对于阿拉伯语，请使用阿拉伯语的百分数符号）。对于千分数格式，将该乘数设置为 1000 并将后缀设置为 '\u2030'。
+
+<P>示例：使用乘数 100 时，1.23 被格式化为 &quot;123&quot;，&quot;123&quot; 则被解析为 1.23。
+
+@see #getMultiplier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getGroupingSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回分组大小。分组大小是数的整数部分中分组分隔符之间的数字位数。例如在数 &quot;123,456.78&quot; 中，分组大小是 3。
+@see #setGroupingSize
+@see java.text.NumberFormat#isGroupingUsed
+@see java.text.DecimalFormatSymbols#getGroupingSeparator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setGroupingSize(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置分组大小。分组大小是数的整数部分中分组分隔符之间的数字位数。例如在数 &quot;123,456.78&quot; 中，分组大小是 3。<br> 传入的值被转换为 一个字节，这可能导致信息丢失。
+@see #getGroupingSize
+@see java.text.NumberFormat#setGroupingUsed
+@see java.text.DecimalFormatSymbols#setGroupingSeparator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.DecimalFormat.isDecimalSeparatorAlwaysShown()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许获取整数中小数分隔符的行为。（有小数时始终显示小数分隔符。）
+<P>示例：小数 ON： 12345 -&gt; 12345.; OFF: 12345 -&gt; 12345
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setDecimalSeparatorAlwaysShown(boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许设置整数中小数分隔符的行为。（有小数时始终显示小数分隔符。）
+<P>示例：小数 ON： 12345 -&gt; 12345.; OFF: 12345 -&gt; 12345
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.DecimalFormat.isParseBigDecimal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link #parse(java.lang.String, java.text.ParsePosition)} 方法是否返回 <code>BigDecimal</code>。默认值为 false。
+@see #setParseBigDecimal
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setParseBigDecimal(boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link #parse(java.lang.String, java.text.ParsePosition)} 方法是否返回 <code>BigDecimal</code>。
+@see #isParseBigDecimal
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.DecimalFormat.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标准重写；没有语义上的变化。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.DecimalFormat.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.toPattern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+合成一个表示此 Format 对象当前状态的模式字符串。
+@see #applyPattern
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.DecimalFormat.toLocalizedPattern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+合成一个表示此 Format 对象当前状态的、已本地化的模式字符串。
+@see #applyPattern
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.applyPattern(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的模式应用于此 Format 对象。模式是各种格式化属性的简写规范。也可以通过各种设置方法来单独改变这些属性。
+ <p>
+对此例程所设置的整数位数没有限制，因为这通常是终端用户的需要；如果想设置某个实际值，请使用 setMaximumInteger。对于负数，可使用由分号分隔的第二个模式。
+<P>示例 <code>&quot;#,#00.0#&quot;</code> -&gt; 1,234.56
+<P>这意味着最少 2 个整数位数、1 个小数位数，以及最多 2 个小数位数。
+<p>示例：<code>&quot;#,#00.0#;(#,#00.0#)&quot;</code>，括号中的内容用于负数。
+<p>在负数模式中，忽略最小和最大计数；在正数模式中假定要设置这些计数。
+
+@exception NullPointerException 如果 <code>pattern</code> 为 null
+@exception IllegalArgumentException 如果给定的 pattern 无效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.applyLocalizedPattern(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的模式应用于此 Format 对象。假定该 pattern 以本地化表示法来表示。模式是各种格式化属性的简写规范。也可以通过各种设置方法来单独改变这些属性。
+ <p>
+对此例程所设置的整数位数没有限制，因为这通常是终端用户的需要；如果想设置某个实际值，请使用 setMaximumInteger。对于负数，可使用由分号分隔的第二个模式
+<P>示例 <code>&quot;#,#00.0#&quot;</code> -&gt; 1,234.56
+<P>这意味着最少 2 个整数位数、1 个小数位数，以及最多 2 个小数位数。
+<p>示例：<code>&quot;#,#00.0#;(#,#00.0#)&quot;</code>，括号中的内容用于负数。
+<p>在负数模式中，忽略最小和最大计数；在正数模式中假定要设置这些计数。
+
+@exception NullPointerException 如果 <code>pattern</code> 为 null
+@exception IllegalArgumentException 如果给定的 pattern 无效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setMaximumIntegerDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置某个数字的整数部分中所允许的最大数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用 <code>newValue</code> 的低位部分和 309。用 0 替换负数输入值。
+@see NumberFormat#setMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setMinimumIntegerDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置某个数字的整数部分中所允许的最小数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用 <code>newValue</code> 的低位部分和 309。用 0 替换负数输入值。 
+@see NumberFormat#setMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setMaximumFractionDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置某个数的小数部分中所允许的最大数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用 <code>newValue</code> 的低位部分和 340。用 0 替换负数输入值。
+@see NumberFormat#setMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setMinimumFractionDigits(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置某个数的小数部分中所允许的最小数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用 <code>newValue</code> 的低位部分和 340。用 0 替换负数输入值。
+@see NumberFormat#setMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getMaximumIntegerDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取某个数的整数部分中所允许的最大数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用返回值的低位部分和 309。
+@see #setMaximumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getMinimumIntegerDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取某个数的整数部分中所允许的最小数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数字，则使用返回值的低位部分和 309。
+@see #setMinimumIntegerDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getMaximumFractionDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取某个数的小数部分中所允许的最大数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数，则使用返回值的低位部分和 340。
+@see #setMaximumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DecimalFormat.getMinimumFractionDigits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取某个数的小数部分中所允许的最小数字位数。如需格式化除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的数，则使用返回值的低位部分和 340。
+@see #setMinimumFractionDigits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Currency java.text.DecimalFormat.getCurrency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取格式化货币值时，此十进制格式使用的货币。通过在此数字格式的符号上调用 {@link DecimalFormatSymbols#getCurrency DecimalFormatSymbols.getCurrency} 来获取该货币。
+
+@return 此十进制格式使用的货币，或者为 <code>null</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setCurrency(Currency currency)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置格式化货币值时，此数字格式使用的货币。这不会更新该数字格式使用的最小和最大小数位数。通过在此数字格式的符号上调用 {@link DecimalFormatSymbols#setCurrency DecimalFormatSymbols.setCurrency} 来设置该货币。
+
+@param currency 此十进制格式要使用的新货币
+@exception NullPointerException 如果 <code>currency</code> 为 null
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.RoundingMode java.text.DecimalFormat.getRoundingMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取在此 DecimalFormat 中使用的 {@link java.math.RoundingMode}。
+
+ @return 用于此 DecimalFormat 的 <code>RoundingMode</code>。 
+ @see #setRoundingMode(RoundingMode)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DecimalFormat.setRoundingMode(RoundingMode roundingMode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置在此 DecimalFormat 中使用的 {@link java.math.RoundingMode}。 
+
+ @param roundingMode 要使用的 <code>RoundingMode</code>
+ @see #getRoundingMode()
+ @exception NullPointerException 如果 <code>roundingMode</code> 为 null。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.text.DecimalFormat.readObject(ObjectInputStream stream) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中读取默认的可序列化字段，并对较旧的序列化版本执行验证和调整。该验证和调整有：
+ <ol>
+ <li>
+验证超类的位数计数字段是否正确地反映了在除 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象之外的格式化数字上所施加的限制。这些限制存储在与较旧版本序列化兼容的超类中，而 <code>BigInteger</code> 和 <code>BigDecimal</code> 对象的限制也保存在此类中。在该超类中，如果最小或最大整数位数计数大于 <code>DOUBLE_INTEGER_DIGITS</code>，或者最小或最大小数位数计数大于 <code>DOUBLE_FRACTION_DIGITS</code>，则流数据无效并且此方法抛出 <code>InvalidObjectException</code>。
+ <li>
+如果 <code>serialVersionOnStream</code> 小于 4，则将 <code>roundingMode</code> 初始化为 {@link java.math.RoundingMode#HALF_EVEN
+ RoundingMode.HALF_EVEN}。此字段是版本 4 的新字段。
+ <li>
+如果 <code>serialVersionOnStream</code> 小于 3，则为最小和最大整数和小数位数调用具有相应超类 getter 值的 setter，以初始化此类中的各个字段。此类中的各个字段是版本 3 的新字段。
+ <li>
+如果 <code>serialVersionOnStream</code> 小于 1，则指示该流是用 JDK 1.1 所编写的，初始化 <code>useExponentialNotation</code> 会得到 false，因为在 JDK 1.1 中没有它。
+ <li>
+如果再次流出此对象，则可将 <code>serialVersionOnStream</code> 设置为最大的允许值，以使默认的序列化可以正常工作。
+ </ol>
+
+<p>版本早于 2 的流没有前后缀模式变量 <code>posPrefixPattern</code> 等。所以将其初始化为 <code>null</code>，这意味着前后缀字符串将采用字面量值。这正是我们想要的，因为这对应于早于版本 2 的版本行为。
+
+<!-- END DATA -->

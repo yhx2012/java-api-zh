@@ -1,0 +1,127 @@
+<!-- BEGIN KEY -->
+public class java.security.spec.PSSParameterSpec extends java.lang.Object implements java.security.spec.AlgorithmParameterSpec
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类指定 RSA-PSS 签名方案的参数规范，如 <a href="http://www.ietf.org/rfc/rfc3447.txt">PKCS#1 v2.1</a> 标准中所定义的。
+
+<p>它在 PKCS#1 标准中的 ASN.1 定义描述如下：
+ <pre>
+ RSASSA-PSS-params ::= SEQUENCE {
+   hashAlgorithm      [0] OAEP-PSSDigestAlgorithms  DEFAULT sha1,
+   maskGenAlgorithm   [1] PKCS1MGFAlgorithms  DEFAULT mgf1SHA1,
+   saltLength         [2] INTEGER  DEFAULT 20,
+   trailerField       [3] INTEGER  DEFAULT 1
+ }
+ </pre>
+其中
+ <pre>
+ OAEP-PSSDigestAlgorithms    ALGORITHM-IDENTIFIER ::= {
+   { OID id-sha1 PARAMETERS NULL   }|
+   { OID id-sha256 PARAMETERS NULL }|
+   { OID id-sha384 PARAMETERS NULL }|
+   { OID id-sha512 PARAMETERS NULL },
+   ...  -- Allows for future expansion --
+ }
+
+ PKCS1MGFAlgorithms    ALGORITHM-IDENTIFIER ::= {
+   { OID id-mgf1 PARAMETERS OAEP-PSSDigestAlgorithms },
+   ...  -- Allows for future expansion --
+ }
+ </pre>
+<p>注：PSSParameterSpec.DEFAULT 使用：消息摘要 --&ldquo;SHA-1&rdquo;掩码生成函数 (mgf) --mgf 的&ldquo;MGF1&rdquo;参数 -- MGF1ParameterSpec.SHA1 SaltLength   -- 20 TrailerField -- 1
+
+@see MGF1ParameterSpec
+@see AlgorithmParameterSpec
+@see java.security.Signature
+
+@author Valerie Peng
+
+@version 1.6 04/01/27
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.security.spec.PSSParameterSpec java.security.spec.PSSParameterSpec.DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+带所有默认值的 PSS 参数集合。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.spec.PSSParameterSpec(String mdName, String mgfName, AlgorithmParameterSpec mgfSpec, int saltLen, int trailerField)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 PKCS #1 中的定义，使用指定的消息摘要、掩码生成函数、掩码生成函数的参数、salt 长度和尾部字段值，创建一个新的 <code>PSSParameterSpec</code>。
+
+@param mdName 哈希函数的算法名称。
+@param mgfName 掩码生成函数的算法名称。
+@param mgfSpec 掩码生成函数的参数。如果指定 null，则 getMGFParameters() 将返回 null。
+@param saltLen  salt 的长度。
+@param trailerField 尾部字段的值。
+@exception NullPointerException 如果 <code>mdName</code> 或 <code>mgfName</code> 为 null。
+@exception IllegalArgumentException 如果 <code>saltLen</code> 或 <code>trailerField</code> 小于 0。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.spec.PSSParameterSpec(int saltLen)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 salt 长度和 PKCS#1 定义的其他默认值创建一个新的 <code>PSSParameterSpec</code>。
+
+@param saltLen 用于 PKCS#1 PSS 编码的 salt 长度（以比特为单位）。
+@exception IllegalArgumentException 如果 <code>saltLen</code> 小于 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.spec.PSSParameterSpec.getDigestAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回消息摘要算法名称。
+
+@return 消息摘要算法名称。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.spec.PSSParameterSpec.getMGFAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回掩码生成函数算法名称。
+
+@return 掩码生成函数算法名称。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.spec.AlgorithmParameterSpec java.security.spec.PSSParameterSpec.getMGFParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回掩码生成函数的参数。
+
+@return 掩码生成函数的参数。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.spec.PSSParameterSpec.getSaltLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 salt 长度（以比特为单位）。
+
+@return salt 长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.spec.PSSParameterSpec.getTrailerField()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回尾部字段的值，即：PKCS#1 v2.1 中的 bc。
+
+@return 尾部字段的值，即：PKCS#1 v2.1 中的 bc。
+@since 1.5
+
+<!-- END DATA -->

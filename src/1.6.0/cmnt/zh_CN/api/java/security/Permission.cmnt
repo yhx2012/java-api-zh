@@ -1,0 +1,131 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.Permission extends java.lang.Object implements java.security.Guard, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示访问系统资源的抽象类。所有权限都有一个名称（对它们的解释依赖于子类），以及用来定义特定 Permission 子类的语义的抽象方法。 
+ 
+<p>大多数 Permission 对象也包含一个 &quot;actions&quot; 列表，它告知此对象上允许的操作。例如，对于 <code>java.io.FilePermission</code> 对象，权限名称是文件（或目录）的路径名，操作列表（如 &quot;read, write&quot;）指定授予指定文件（或指定目录下的文件）的操作。对于不需要此类列表 Permission 对象（如 <code>java.lang.RuntimePermission</code>），操作列表是可选的；可以有命名的权限（如 &quot;system.exit&quot;），也可以没有。
+ 
+<p>每个子类都必须实现的重要方法是 <code>implies</code> 方法，此方法用来比较 Permission。基本上，&ldquo;权限 p1&rdquo;暗含&ldquo;权限 p2&rdquo;意味着如果授予权限 p1，则自然授予权限 p2。因此，这不是相等性测试，而是子集测试。
+ 
+<P> Permission 对象和 String 对象的相似之处在于它们一经创建便不可改变。一旦创建了权限，子类不应该提供能够更改该权限状态的方法。
+
+@see Permissions
+@see PermissionCollection
+
+@version 1.39 03/12/19
+
+@author Marianne Mueller
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Permission(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定名称的权限。
+
+@param name 将创建的 Permission 对象的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Permission.checkGuard(Object object) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为某权限实现 guard 接口。调用 <code>SecurityManager.checkPermission</code> 方法，将此权限对象作为要检查的权限传递。如果准许访问，则正常返回。否则，抛出 SecurityException。
+ 
+@param object 将被保护的对象（当前忽略）。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许访问。
+ 
+@see Guard
+@see GuardedObject
+@see SecurityManager#checkPermission
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.security.Permission.implies(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此对象的操作是否&ldquo;暗含&rdquo;指定权限的操作。
+ <P>
+Permission 子类必须实现此方法，因为它们是惟一能在 Permission 对象上施加语义的类。
+ 
+<p>AccessController 使用 <code>implies</code> 方法来确定某个所请求的权限是否暗含于另一个在当前执行上下文中已知为有效的权限中。
+
+@param permission 要依据其来检查的权限。
+
+@return  如果对象暗含指定的权限，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.security.Permission.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 Permission 对象是否相等。
+ <P>
+不要使用 <code>equals</code> 方法做访问控制的决定；使用 <code>implies</code> 方法。
+  
+@param obj 要与此对象进行相等性测试的对象。
+
+@return 如果两个 Permission 对象等价，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.security.Permission.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Permission 对象的哈希码值。
+ <P>
+Permission 对象所需的 <code>hashCode</code> 行为如下： <p>
+ <ul>
+<li>在 Java 应用程序执行期间，无论何时在同一个 Permission 对象上调用 <code>hashCode</code> 方法超过一次，它都必须始终返回相同的整数。从某一应用程序的一次执行到同一应用程序的另一次执行，该整数无需保持一致。<p>
+<li>如果根据 <code>equals</code> 方法，两个 Permission 对象是相等的，那么在两个 Permission 对象中的每个对象上调用 <code>hashCode</code> 方法必须生成相同的整数结果。
+ </ul>
+
+@return  此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.Permission.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Permission 的名称。例如，就 <code>java.io.FilePermission</code> 来说，名称将是路径名。
+
+@return 此 Permission 的名称。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.security.Permission.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 String 的形式返回操作。由于此方法是抽象的，所以子类可以推迟到需要的时候才创建一个 String 的表示形式。子类应该始终以操作所认为的规范形式返回这些操作。例如，通过以下方式创建两个 FilePermission 对象：
+ 
+ <pre>
+   perm1 = new FilePermission(p1,&quot;read,write&quot;);
+   perm2 = new FilePermission(p2,&quot;write,read&quot;); 
+ </pre>
+ 
+当调用 <code>getActions</code> 方法时，两者都返回 &quot;read,write&quot;。
+
+@return 此 Permission 的操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.security.Permission.newPermissionCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对给定 Permission 对象返回空 PermissionCollection，如果没有定义则返回 null。如果 Permission 类的子类需要在一个特定的 PermissionCollection 对象中存储其权限，以便调用 <code>PermissionCollection.implies</code> 方法时能提供正确的语义，则它们应该重写此方法。如果返回 null，那么此方法的调用方可以在任何它们选择的 PermissionCollection（使用 Hashtable 的，使用 Vector 的，等等)中随意存储此类型的权限。
+
+@return 此 Permission 类型的 PermissionCollection 对象，如果都没有定义则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Permission.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 Permission 的字符串。约定是指定类名称、权限名称和以下格式的操作：'(&quot;ClassName&quot; &quot;name&quot; &quot;actions&quot;)'。
+ 
+@return 关于此 Permission 的信息。
+
+<!-- END DATA -->

@@ -1,0 +1,75 @@
+<!-- BEGIN KEY -->
+public class javax.sql.rowset.spi.SyncProviderException extends java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 <code>SyncProvider</code> 机制发生的错误。如果在从原始数源读取或向原始数据源写入时遇到冲突，则 <code>SyncProvider</code> 抽象类扩展将创建此异常。
+ <P>
+<code>SyncProvider</code> 对象也可以创建 <code>SyncResolver</code> 对象，可能在构建时使用它初始化 <code>SyncProviderException</code> 对象，或者以后使用 <code>SyncProvider</code> 对象对它进行设置，如果它被实现做这些的话。 
+ <P>
+在 writer 完成冲突检查并找到一个或多个冲突之后，方法 <code>acceptChanges</code> 将抛出此异常。应用程序可以捕获 <code>SyncProviderException</code> 对象，并调用其 <code>getSyncResolver</code> 方法，以获取其 <code>SyncResolver</code> 对象。关于示例，请参阅 <a href="SyncResolver.html"><code>SyncResolver</code></a> 接口注释中的代码片段。此 <code>SyncResolver</code> 对象将反映生成该异常的 <code>RowSet</code> 对象，区别在于它仅包含数据源中处于冲突状态的值。<code>SyncResolver</code> 对象中的所有其他值将为 <code>null</code>。 
+ <P>
+<code>SyncResolver</code> 对象可用于检查并解析一个行中的每个冲突，然后转到下一个有冲突的行，重复该过程。
+ <P>
+<code>SyncProviderException</code> 对象可能包含（也可能不包含）对导致该异常条件的描述。可以调用继承的方法 <code>getMessage</code>，以获取该描述（如果存在）。
+ 
+@author Jonathan Bruce
+@see javax.sql.rowset.spi.SyncFactory
+@see javax.sql.rowset.spi.SyncResolver
+@see javax.sql.rowset.spi.SyncFactoryException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.sql.rowset.spi.SyncResolver javax.sql.rowset.spi.SyncProviderException.syncResolver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>getSyncResolver</code> 方法时此 <code>SyncProviderException</code> 对象将返回的 <code>javax.sql.rowset.spi.SyncResolver</code> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.spi.SyncProviderException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建不带任何详细消息的新 <code>SyncProviderException</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.spi.SyncProviderException(String msg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造带指定详细消息的 <code>SyncProviderException</code> 对象。
+
+@param msg 详细消息
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.spi.SyncProviderException(SyncResolver syncResolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造带指定 <code>SyncResolver</code> 实例的 <code>SyncProviderException</code> 对象。
+ 
+@param syncResolver 用于处理同步冲突的 <code>SyncResolver</code> 实例
+@throws IllegalArgumentException 如果 <code>SyncResolver</code> 对象为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.spi.SyncResolver javax.sql.rowset.spi.SyncProviderException.getSyncResolver()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取为此 <code>SyncProviderException</code> 对象设置的 <code>SyncResolver</code> 对象，如果没有设置，则获取包含在参考实现中的默认 <code>SyncResolver</code> 实现的实例。
+ <P>
+如果抛出 <code>SyncProviderException</code> 对象，则应用程序可以使用此方法生成 <code>SyncResolver</code> 对象，使用该对象可以解决导致抛出异常的冲突。
+
+@return  为此 <code>SyncProviderException</code> 对象设置的 <code>SyncResolver</code> 对象，如果没有设置，则返回默认 <code>SyncResolver</code> 实现的实例。另外，如果 <code>SyncResolver()</code> 或 <code>SyncResolver(String)</code> 构造方法用于实例化 <code>SyncResolver</code> 实例，则也返回默认 <code>SyncResolver</code> 实现。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.spi.SyncProviderException.setSyncResolver(SyncResolver syncResolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>SyncProviderException</code> 对象的 <code>SyncResolver</code> 对象设置为提供的对象。如果提供的参数为 <code>null</code>，则调用方法 <code>getSyncResolver</code> 将返回 <code>SyncResolver</code> 接口的默认参考实现。
+
+@param syncResolver 要设置的 <code>SyncResolver</code> 对象；不能为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>SyncResolver</code> 对象为 <code>null</code>。
+@see #getSyncResolver
+
+<!-- END DATA -->

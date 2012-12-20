@@ -1,0 +1,228 @@
+<!-- BEGIN KEY -->
+public interface class javax.xml.bind.annotation.XmlAnyElement implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 JavaBean 属性映射到 XML 信息集表示形式和/或 JAXB 元素。
+
+ <p>
+在将 xml 内容解组到 JAXB 注释类的实例中时，此注释充当 &quot;catch-all&quot; 属性。它通常注释多值的 JavaBean 属性，但它也能够出现在单值的 JavaBean 属性中。在解组过程中，与类中用于其他 JavaBean 属性的静态 @XmlElement 或 @XmlElementRef 注释不匹配的每个 xml 元素都将被添加到此 &quot;catch-all&quot; 属性中。
+
+ <p>
+<h2>用法：</h2>
+ <pre>
+ &#64;XmlAnyElement
+ public {@link Element}[] others;
+ 
+ // Collection of {@link Element} or JAXB elements.
+ &#64;XmlAnyElement(lax="true")
+ public {@link Object}[] others;
+
+ &#64;XmlAnyElement
+ private List&lt;{@link Element}> nodes;
+
+ &#64;XmlAnyElement
+ private {@link Element} node;
+ </pre>
+
+<h2>限制用法约束</h2>
+ <p>
+此注释与 {@link XmlElement}、{@link XmlAttribute}、{@link XmlValue}、{@link XmlElements}、{@link XmlID} 和 {@link XmlIDREF} 互斥。
+
+ <p>
+在类及其超类中只能有一个 {@link XmlAnyElement} 注释的 JavaBean 属性。
+
+<h2>与其他注释的关系</h2>
+ <p>
+此注释可与 {@link XmlJavaTypeAdapter} 一起使用，以便用户能够将他们自己的数据结构映射到 DOM，然后可将这些 DOM 组成 XML。
+
+ <p>
+此注释可以按如下方式与 {@link XmlMixed} 一起使用：
+ <pre>
+ // List of java.lang.String or DOM nodes.
+ &#64;XmlAnyElement &#64;XmlMixed
+ List&lt;Object> others;
+ </pre>
+
+
+<h2>将模式转换为 Java 类的示例</h2>
+
+以下模式将生成以下 Java 类：
+ <pre><xmp>
+ <xs:complexType name="foo">
+   <xs:sequence>
+     <xs:element name="a" type="xs:int" />
+     <xs:element name="b" type="xs:int" />
+     <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+   </xs:sequence>
+ </xs:complexType>
+ </xmp></pre>
+
+<pre>
+ class Foo {
+   int a;
+   int b;
+   &#64;{@link XmlAnyElement}
+   List&lt;Element> any;
+ }
+ </pre>
+
+
+它可以按如下方式解组实例：
+
+ <pre><xmp>
+ <foo xmlns:e="extra">
+   <a>1</a>
+<e:other />  // this will be bound to DOM, because unmarshalling is orderless
+   <b>3</b>
+   <e:other />
+<c>5</c>     // this will be bound to DOM, because the annotation doesn't remember namespaces.
+ </foo>
+ </xmp></pre>
+
+
+
+以下模式将生成以下 Java 类：
+ <pre><xmp>
+ <xs:complexType name="bar">
+   <xs:complexContent>
+   <xs:extension base="foo">
+     <xs:sequence>
+       <xs:element name="c" type="xs:int" />
+       <xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+     </xs:sequence>
+   </xs:extension>
+ </xs:complexType>
+ </xmp></pre>
+
+ <pre><xmp>
+class Bar extends Foo {
+int c;
+// Foo.getAny() also represents wildcard content for type definition bar.
+ }
+ </xmp></pre>
+
+
+它可以按如下方式解组实例：
+
+ <pre><xmp>
+ <bar xmlns:e="extra">
+   <a>1</a>
+<e:other />  // this will be bound to DOM, because unmarshalling is orderless
+   <b>3</b>
+   <e:other />
+<c>5</c>     // this now goes to Bar.c
+<e:other />  // this will go to Foo.any
+ </bar>
+ </xmp></pre>
+
+
+
+
+<h2>将 {@link XmlElementRef} 与 {@link XmlAnyElement} 一起使用</h2>
+ <p>
+{@link XmlAnyElement} 注释可与 {@link XmlElementRef} 一起使用，用于指派能够参与目录树的其他元素。
+
+ <p>
+以下模式将生成以下 Java 类：
+ <pre><xmp>
+ <xs:complexType name="foo">
+   <xs:choice maxOccurs="unbounded" minOccurs="0">
+     <xs:element name="a" type="xs:int" />
+     <xs:element name="b" type="xs:int" />
+     <xs:any namespace="##other" processContents="lax" />
+   </xs:choice>
+ </xs:complexType>
+ </xmp></pre>
+
+ <pre>
+ class Foo {
+   &#64;{@link XmlAnyElement}(lax="true")
+   &#64;{@link XmlElementRefs}({
+     &#64;{@link XmlElementRef}(name="a", type="JAXBElement.class")
+     &#64;{@link XmlElementRef}(name="b", type="JAXBElement.class")
+   })
+   {@link List}&lt;{@link Object}> others;
+ }
+
+ &#64;XmlRegistry
+ class ObjectFactory {
+   ...
+   &#64;XmlElementDecl(name = "a", namespace = "", scope = Foo.class)
+   {@link JAXBElement}&lt;Integer> createFooA( Integer i ) { ... }
+
+   &#64;XmlElementDecl(name = "b", namespace = "", scope = Foo.class)
+   {@link JAXBElement}&lt;Integer> createFooB( Integer i ) { ... }
+ </pre>
+
+它可以按如下方式解组实例：
+
+ <pre><xmp>
+ <foo xmlns:e="extra">
+<a>1</a>     // this will unmarshal to a {@link JAXBElement} instance whose value is 1.
+<e:other />  // this will unmarshal to a DOM {@link Element}.
+<b>3</b>     // this will unmarshal to a {@link JAXBElement} instance whose value is 1.
+ </foo>
+ </xmp></pre>
+
+
+
+
+<h2>W3C XML 模式 &quot;lax&quot; 通配符仿真</h2>
+注释的 lax 元素启用了 &quot;lax&quot; 通配符语义的仿真。例如，当按如下方式注释 Java 源代码时：
+ <pre>
+ &#64;{@link XmlRootElement}
+ class Foo {
+   &#64;XmlAnyElement(lax=true)
+   public {@link Object}[] others;
+ }
+ </pre>
+那么下列文档将按如下方式解组：
+ <pre><xmp>
+ <foo>
+   <unknown />
+   <foo />
+ </foo>
+
+Foo foo = unmarshal();
+// 1 for 'unknown', another for 'foo'
+assert foo.others.length==2;
+// 'unknown' unmarshals to a DOM element
+assert foo.others[0] instanceof Element;
+// because of lax=true, the 'foo' element eagerly
+// unmarshals to a Foo object.
+assert foo.others[1] instanceof Foo;
+ </xmp></pre>
+
+
+@author Kohsuke Kawaguchi
+@since JAXB2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.annotation.XmlAnyElement.lax()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在查看当前 {@link JAXBContext} 中的已知元素时控制解组行为。
+
+<h3>当为 false 时</h3>
+ <p>
+如果为 false，则所有与该属性匹配的元素都将被解组为 DOM，并且该属性将只包含 DOM 元素。
+
+<h3>当为 true 时</h3>
+ <p>
+如果为 true，则当某一元素与使用 {@link JAXBContext} 已知的 {@link XmlAnyElement} 标记的属性匹配时（例如，存在具有相同标记名称的带有 {@link XmlRootElement} 的类，或者存在具有相同标记名称的 {@link XmlElementDecl}），unmarshaller 会立即将此元素解组到 JAXB 对象，而不是解组到 DOM。此外，如果元素是未知的，但它有一个已知的 xsi:type，则通过使用未知的元素名称和设置为已知 xsi:type 的 JAXB 映射实例的 JAXBElement 值，unmarshaller 可立即将此元素解组到 {@link JAXBElement}。
+
+ <p>
+因此，在解组之后，属性可能变得完全不同，它可能在包含 DOM 节点的同时还包含一些 JAXB 对象。
+
+ <p>
+可以使用这种特性来仿真 W3C XML 模式的 &quot;lax&quot; 通配符语义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<? extends javax.xml.bind.annotation.DomHandler> javax.xml.bind.annotation.XmlAnyElement.value()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 {@link DomHandler}，它负责实际执行 XML 与类 DOM 数据结构之间的转换。
+
+<!-- END DATA -->

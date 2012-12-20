@@ -1,0 +1,148 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.DocumentHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收常规文档事件的通知。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>这是一个 SAX1 的主事件处理接口；在 SAX2 中，它已经被 {@link org.xml.sax.ContentHandler ContentHandler} 所取代，后者提供了名称空间支持和对跳过的实体的报告。此接口包括在 SAX2 中，仅支持以前的 SAX1 应用程序。</p>
+
+<p>在此接口中的事件顺序非常重要，它本身可镜像文档中信息的顺序。例如，在 startElement 事件与相应的 endElement 事件之间，元素的所有内容（字符数据、处理指令和/ 或子元素）都将以一定顺序出现。</p>
+
+<p>不想实施完整接口的应用程序编写者可以从 HandlerBase 派生出一个类， HandlerBase 实现默认的功能；解析器编写者可以通过实例化 HandlerBase 来获取默认的处理程序。应用程序可以使用由解析器通过 setDocumentLocator 方法提供的 Locator 接口查找任何文档事件的位置。</p>
+
+@deprecated 此接口已经被 SAX2 {@link org.xml.sax.ContentHandler ContentHandler} 接口取代，后者包括名称空间支持。
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.Parser#setDocumentHandler
+@see org.xml.sax.Locator
+@see org.xml.sax.HandlerBase
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.setDocumentLocator(Locator locator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收用来查找 SAX 文档事件起源的对象。
+
+<p>强烈建议（但并非必须）使用 SAX 解析器来提供定位器：如果使用 SAX 解析器，则必须在调用 DocumentHandler 接口中的任何其他方法之前调用此方法来为应用程序提供定位器。</p>
+
+<p>定位器允许应用程序确定任何与文档相关的事件的终止位置，即便是解析器不报告错误也是如此。通常情况下，应用程序将使用此信息报告它自己的错误（例如与应用程序的业务规则不匹配的字符内容）。由定位器返回的信息可能不足以供搜索引擎使用。</p>
+
+<p>注意，定位器仅在调用此接口中的事件时返回正确的信息。应用程序不应尝试在任何其他时间使用定位器。</p>
+
+@param locator 可以返回任何 SAX 文档事件位置的对象。
+@see org.xml.sax.Locator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.startDocument() throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收文档的开始的通知。
+
+<p>在调用此接口或 DTDHandler 中的其他任何方法（setDocumentLocator 方法除外）之前，SAX 解析器仅调用此方法一次。</p>
+
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.endDocument() throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收文档结束的通知。
+
+<p>SAX 解析器仅调用此方法一次，并且它将是解析期间最后调用的方法。直到解析器放弃解析（由于不可恢复的错误）或到达输入的结尾时，它才可以调用此方法。</p>
+
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.startElement(String name, AttributeList atts) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收元素开始的通知。
+
+<p>解析器在 XML 文档中的每个元素的开始调用此方法；对于每个 startElement() 事件都将有相应的 endElement() 事件（即使该元素为空时）。所有元素内容都将在相应的 endElement() 事件之前顺序地报告。</p>
+
+<p>如果元素名称具有名称空间前缀，则仍带上前缀。注意，所提供的属性列表仅包括具有显式值（指定的或默认的）的属性：将忽略 #IMPLIED 属性。</p>
+
+@param name 元素类型名称。
+@param atts 附加到元素的属性（如果有）。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see #endElement
+@see org.xml.sax.AttributeList 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.endElement(String name) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 接收元素结束的通知。
+
+<p>解析器会在 XML 文档中的每个元素结束时调用此方法；对于每个 endElement() 事件都将有相应的 startElement() 事件（即便是该元素为空时也是如此）。</p>
+
+<p>如果元素名称具有名称空间前缀，则仍会将该前缀附加到该名称。</p>
+
+@param name 元素类型名称
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.characters(char[] ch, int start, int length) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收字符数据的通知。
+
+<p>解析器将调用此方法来报告字符数据的每个存储块。SAX 解析器能够用单个存储块返回所有的连续字符数据，或者可以将该数据拆分成几个存储块；但是，任何单个事件中的全部字符都必须来自同一个外部实体，以便定位器能够提供有用的信息。</p>
+
+<p>应用程序不能尝试在指定的范围外从数组中读取数据。</p>
+
+<p>注意，有些解析器使用 ignorableWhitespace() 方法报告空白，而不是此方法（验证解析器必须这样做）。</p>
+
+@param ch XML 文档的字符。
+@param start 在数组中的开始位置。
+@param length 从数组中读取的字符个数。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see #ignorableWhitespace
+@see org.xml.sax.Locator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.ignorableWhitespace(char[] ch, int start, int length) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收元素内容中可忽略的空白的通知。
+
+<p>验证解析器必须使用此方法来报告每块可忽略的空白（请参阅&ldquo;W3C XML 1.0 建议书&rdquo;中的 2.10 节）：如果非验证解析器能够解析和使用内容模型，则这些非验证解析器也可以使用此方法。</p>
+
+<p>SAX 解析器能够用单个存储块返回所有的连续空白，或者可以将该数据拆分成几个存储块；但是，任何单个事件中的全部字符都必须来自同一个外部实体，以便定位器能够提供有用的信息。</p>
+
+<p>应用程序不能尝试在指定的范围外从数组中读取数据。</p>
+
+@param ch XML 文档的字符。
+@param start 在数组中的开始位置。
+@param length 从数组中读取的字符个数。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see #characters
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.DocumentHandler.processingInstruction(String target, String data) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收处理指令的通知。
+
+<p>解析器将为找到的每个处理指令调用一次此方法：注意，处理指令可以出现在主要文档元素的前面或后面。</p>
+
+<p>SAX 解析器始终不得使用此方法报告 XML 声明（XML 1.0 的 2.8 节）或文本声明（XML 1.0 的 4.3.1 节）。</p>
+
+@param target 处理指令目标。
+@param data 处理指令数据，如果未提供，则为 null。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+
+<!-- END DATA -->

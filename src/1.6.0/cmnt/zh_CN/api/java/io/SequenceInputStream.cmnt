@@ -1,0 +1,85 @@
+<!-- BEGIN KEY -->
+public class java.io.SequenceInputStream extends java.io.InputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SequenceInputStream</code> 表示其他输入流的逻辑串联。它从输入流的有序集合开始，并从第一个输入流开始读取，直到到达文件末尾，接着从第二个输入流读取，依次类推，直到到达包含的最后一个输入流的文件末尾为止。
+
+@author  Author van Hoff
+@version 1.33, 06/07/06
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.SequenceInputStream(java.util.Enumeration<? extends java.io.InputStream> e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过记住参数来初始化新创建的 <code>SequenceInputStream</code>，该参数必须是生成运行时类型为 <code>InputStream</code> 对象的 <code>Enumeration</code> 型参数。将按顺序读取由该枚举生成的输入流，以提供从此 <code>SequenceInputStream</code> 读取的字节。在用尽枚举中的每个输入流之后，将通过调用该流的 <code>close</code> 方法将其关闭。
+
+@param   e   输入流的一个枚举。
+@see     java.util.Enumeration
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.SequenceInputStream(InputStream s1, InputStream s2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过记住这两个参数来初始化新创建的 <code>SequenceInputStream</code>（将按顺序读取这两个参数，先读取 <code>s1</code>，然后读取 <code>s2</code>），以提供从此 <code>SequenceInputStream</code> 读取的字节。
+
+@param   s1   要读取的第一个输入流。
+@param   s2   要读取的第二个输入流。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.SequenceInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回不受阻塞地从当前底层输入流读取（或跳过）的字节数的估计值，方法是通过下一次调用当前底层输入流的方法。下一次调用可能是相同的或不同的线程。此方法的单个读取或跳过操作可以读取或跳过许多字节而不受阻塞，但也可能读取或跳过较少的字节。
+ <p>
+此方法仅调用当前底层输入流的 {@code available} 方法并返回结果。
+
+@return 不受阻塞地从当前底层输入流读取（或跳过）的字节数的估计值，如果此输入流已通过调用其 {@link #close()} 方法关闭，则返回 {@code 0} 
+@exception  IOException  如果发生 I/O 错误。
+
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.SequenceInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中读取下一个数据字节。返回 <code>0</code> 到 <code>255</code> 范围内的 <code>int</code> 字节。如果因为已经到达流的末尾而没有可用的字节，则返回值 <code>-1</code>。在输入数据可用、检测到流的末尾或者抛出异常之前，此方法一直阻塞。
+ <p>
+此方法尝试从当前子流读取一个字节。如果到达流的末尾，它将调用当前子流的 <code>close</code> 方法，并从下一个子流开始读取字节。
+
+@return     下一个数据字节，如果到达流的末尾，则返回 <code>-1</code>。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.SequenceInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将最多 <code>len</code> 个数据字节从此输入流读入 byte 数组。如果 <code>len</code> 不为 0，则此方法一直阻塞，直到至少 1 个输入字节可用；否则，不读取字节并返回 <code>0</code>。
+ <p>
+<code>SequenceInputStream</code> 的 <code>read</code> 方法尝试从当前子流中读取该数据。如果由于子流到达流的末尾而未能读取任何字符，那么它将调用当前子流的 <code>close</code> 方法，并从下一个子流开始读取。
+
+@param      b     读入数据的缓冲区。
+@param      off   写入数据的数组 <code>b</code> 中的初始偏移量。
+@param      len   读取的最多字节数。
+@return     读取的字节数 int。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+@exception  IndexOutOfBoundsException 如果 <code>off</code> 或 <code>len</code> 为负，或者 <code>len</code> 大于 <code>b.length - off</code>
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.SequenceInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此输入流并释放与此流关联的所有系统资源。关闭的 <code>SequenceInputStream</code> 无法执行输入操作，且无法重新打开。
+ <p>
+如果此流是根据一个枚举创建的，则其余所有元素都是从该枚举中请求的，并在 <code>close</code> 方法返回之前关闭。
+
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->

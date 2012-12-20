@@ -1,0 +1,97 @@
+<!-- BEGIN KEY -->
+public class javax.sound.midi.SysexMessage extends javax.sound.midi.MidiMessage
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示 MIDI 系统独占消息 <code>SysexMessage</code> 对象。
+ <p>
+当从 MIDI 文件中读取系统独占消息时，它通常具有已定义的长度。取自 MIDI 文件的系统独占消息的数据应存储在 <code>SysexMessage</code> 的数据数组中，如下所示：系统独占消息状态字节（0xF0 或 0xF7），所有消息数据字节和最后的独占结束标志 (0xF7)。因此，<code>SysexMessage</code> 对象报告的长度为系统独占数据的长度加上两个字节：一个字节为状态字节，另一个为独占结束标志。
+ <p>
+按照 Standard MIDI Files 规范的规定，有两个状态字节值对于从 MIDI 文件读取的 <code>SysexMessage</code> 是合法的：
+ <ul>
+<li>0xF0:系统独占消息（与 MIDI 导线协议相同）</li>
+<li>0xF7:特殊系统独占消息</li>
+ </ul>
+ <p>
+当使用 Java Sound 处理通过 MIDI 导线协议接收的系统独占数据时，它应将数据置于一个或多个 <code>SysexMessage</code> 中。在这种情况下，预先不知道系统独占数据的长度；系统独占数据的结束由 MIDI 导线字节流中的一个独占结束标志 (0xF7) 所标记。
+ <ul>
+<li>0xF0:系统独占消息（与 MIDI 导线协议相同）</li>
+<li>0xF7:独占结束 (EOX)</li>
+ </ul>
+第一个包含用于特定系统独占消息数据的 <code>SysexMessage</code> 对象应有状态值 0xF0。如果此消息包含该消息的所有系统独占数据，则它应以状态字节 0xF7 (EOX) 结束。否则，应在一个或多个 <code>SysexMessage</code> 中发送其他的系统独占数据，状态值为 0xF7。包含系统独占消息最后数据的 <code>SysexMessage</code> 应以 0xF7 (EOX) 值结束，以标记系统独占消息的结束。
+ <p>
+如果使用 MIDI 导线协议传输取自 <code>SysexMessage</code> 对象的系统独占数据，则只有初始 0xF0 状态字节、系统独占数据本身和最终的 0xF7 (EOX) 字节应该被传播；任何用于指示 <code>SysexMessage</code> 包含连续系统独占数据的 0xF7 状态字节都不应该通过 MIDI 导线协议被传播。
+
+@version 1.27, 05/11/17
+@author David Rivas
+@author Kara Kytle
+@author Florian Bomers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sound.midi.SysexMessage.SYSTEM_EXCLUSIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 SYSTEM_EXCLUSIVE 消息的状态字节（0xF0 或 240）。
+@see MidiMessage#getStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sound.midi.SysexMessage.SPECIAL_SYSTEM_EXCLUSIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 SPECIAL_SYSTEM_EXCLUSIVE 消息的状态字节（0xF7 或 247），供在 MIDI 文件中使用。它与 END_OF_EXCLUSIVE 具有相同的值，用于实时 &quot;MIDI wire&quot; 协议中。
+@see MidiMessage#getStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.SysexMessage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>SysexMessage</code>。可保证新消息的内容指定一个有效的 MIDI 消息。之后，可以使用 <code>setMessage</code> 方法之一来设置消息的内容。
+@see #setMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.midi.SysexMessage(byte[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>SysexMessage</code>。
+@param data 包含完整消息的 byte 数组。使用 <code>setMessage</code> 方法可更改消息数据。
+@see #setMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.SysexMessage.setMessage(byte[] data, int length) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为系统独占消息设置数据。数据数组的第一个字节必须是一个有效的系统独占状态字节（0xF0 或 0xF7）。
+@param data 系统独占消息数据
+@param length 数组中有效消息数据的长度，包含状态字节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.SysexMessage.setMessage(int status, byte[] data, int length) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为系统独占消息设置数据。
+@param status 消息的状态字节（0xF0 或 0xF7）
+@param data 系统独占消息数据
+@param length 数组中有效消息数据的长度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.sound.midi.SysexMessage.getData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得系统独占消息数据的副本。返回的 byte 数组不包括状态字节。
+@return 包含系统独占消息数据的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.sound.midi.SysexMessage.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个与此对象具有相同类和相同内容的新对象。
+@return 此实例的一个副本。
+
+<!-- END DATA -->

@@ -1,0 +1,103 @@
+<!-- BEGIN KEY -->
+public interface org.w3c.dom.events.Event
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Event</code> 接口用于为处理事件的处理程序提供关于事件的上下文信息。实现 <code>Event</code> 接口的对象通常作为第一个参数传递给事件处理程序。从 <code>Event</code>(包含与它们附带的事件类型直接相关的信息)派生其他接口，可以将更多特定的上下文信息传递给事件处理程序。这些派生的接口也由传递给事件侦听器的对象实现。 
+<p>另请参见 <a href='http://www.w3.org/TR/2000/REC-DOM-Level-2-Events-20001113'>Document Object Model (DOM) Level 2 Events Specification</a>。
+@since DOM Level 2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final short org.w3c.dom.events.Event.CAPTURING_PHASE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前的事件阶段是捕获阶段。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final short org.w3c.dom.events.Event.AT_TARGET
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目前事件正在目标 <code>EventTarget</code> 接受评诂。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final short org.w3c.dom.events.Event.BUBBLING_PHASE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前的事件阶段为 bubbling 阶段。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.w3c.dom.events.Event.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事件的名称（不区分大小写）。该名称必须是 XML 名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.events.EventTarget org.w3c.dom.events.Event.getTarget()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示 <code>EventTarget</code>，最初将事件指派给它。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.events.EventTarget org.w3c.dom.events.Event.getCurrentTarget()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示当前正在处理其 <code>EventListeners</code> 的 <code>EventTarget</code>。这在捕获和 bubbling 期间特别有用。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short org.w3c.dom.events.Event.getEventPhase()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示当前正在评诂哪个阶段的事件流。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.w3c.dom.events.Event.getBubbles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示事件是否是 bubbling 事件。如果事件可以 bubble，则值为 true；否则值为 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.w3c.dom.events.Event.getCancelable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示事件是否可以阻止其默认操作。如果可以阻止默认操作，则值为 true；否则值为 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long org.w3c.dom.events.Event.getTimeStamp()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指定创建事件的时间（与历元相关，以毫秒为单位）。由于有些系统不能提供此信息，<code>timeStamp</code> 的值可能不是对所有事件都可用。当不可用时，将返回值 0。历元时间的示例是系统启动时间，或者 UTC 时间 1970 年 1 月 1 日 0:0:0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.w3c.dom.events.Event.stopPropagation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>stopPropagation</code> 方法用于阻止在事件流期间事件的进一步传播。如果任何 <code>EventListener</code> 调用此方法，则该事件将终止沿着树传播。事件流停止之前，该事件将完成向当前 <code>EventTarget</code> 上的所有侦听器的指派。在事件流的任何阶段都可以使用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.w3c.dom.events.Event.preventDefault()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果事件可取消，则 <code>preventDefault</code> 方法用于表示要取消该事件，意味着作为事件结果的、通常由该实现采取的任何默认操作将不出现。在事件流的任何阶段，如果调用 <code>preventDefault</code> 方法，则取消该事件。与该事件相关联的任何默认操作都不会发生。对非可取消的事件调用此方法无效。一旦调用 <code>preventDefault</code>，在事件传播的剩余时间内它仍有效。在事件流的任何阶段都可以使用此方法。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.w3c.dom.events.Event.initEvent(String eventTypeArg, boolean canBubbleArg, boolean cancelableArg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>initEvent</code> 方法用于初始化通过 <code>DocumentEvent</code> 接口创建的 <code>Event</code> 的值。此方法只能在通过 <code>dispatchEvent</code> 方法指派 <code>Event</code> 之前调用，尽管在该阶段可以多次调用它（如有必要）。如果被多次调用，则最后一次调用优先。如果从 <code>Event</code> 接口的子类调用，则只修改在 <code>initEvent</code> 方法中指定的值，所有其他属性保持不变。
+@param eventTypeArg 指定事件类型。此类型可以是当前在此规范中定义的任何事件类型，或是一个新的事件类型。该字符串必须是 XML 名称。任何新的事件类型一定不能以字符串 &quot;DOM&quot; 的大写、小写或混合大小写版本开头。此前缀是为以后的 DOM 事件集保留的。还强烈推荐添加自己的事件的第三方使用自己的前缀以避免混淆，降低与其他新的事件发生冲突的可能性。
+@param canBubbleArg 指定该事件是否可以 bubble。
+@param cancelableArg 指定是否可以阻止事件的默认操作。
+
+<!-- END DATA -->

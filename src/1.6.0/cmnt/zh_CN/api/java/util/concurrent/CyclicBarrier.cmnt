@@ -1,0 +1,192 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.CyclicBarrier extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个同步辅助类，它允许一组线程互相等待，直到到达某个公共屏障点 (common barrier point)。在涉及一组固定大小的线程的程序中，这些线程必须不时地互相等待，此时 CyclicBarrier 很有用。因为该 barrier 在释放等待线程后可以重用，所以称它为<em>循环</em> 的 barrier。
+
+<p><tt>CyclicBarrier</tt> 支持一个可选的 {@link Runnable} 命令，在一组线程中的最后一个线程到达之后（但在释放所有线程之前），该命令只在每个屏障点运行一次。若在继续所有参与线程之前更新共享状态，此<em>屏障操作</em> 很有用。
+ 
+<p><b>示例用法：</b>下面是一个在并行分解设计中使用 barrier 的例子：
+ <pre>
+ class Solver {
+   final int N;
+   final float[][] data;
+   final CyclicBarrier barrier;
+   
+   class Worker implements Runnable {
+     int myRow;
+     Worker(int row) { myRow = row; }
+     public void run() {
+       while (!done()) {
+         processRow(myRow);
+
+         try {
+           barrier.await(); 
+         } catch (InterruptedException ex) { 
+return; 
+         } catch (BrokenBarrierException ex) { 
+return; 
+         }
+       }
+     }
+   }
+
+   public Solver(float[][] matrix) {
+     data = matrix;
+     N = matrix.length;
+     barrier = new CyclicBarrier(N, 
+                                 new Runnable() {
+                                   public void run() { 
+                                     mergeRows(...); 
+                                   }
+                                 });
+     for (int i = 0; i &lt; N; ++i) 
+       new Thread(new Worker(i)).start();
+
+     waitUntilDone();
+   }
+ }
+ </pre>
+在这个例子中，每个 worker 线程处理矩阵的一行，在处理完所有的行之前，该线程将一直在屏障处等待。处理完所有的行之后，将执行所提供的 {@link Runnable} 屏障操作，并合并这些行。如果合并者确定已经找到了一个解决方案，那么 <tt>done()</tt> 将返回 <tt>true</tt>，所有的 worker 线程都将终止。
+
+<p>如果屏障操作在执行时不依赖于正挂起的线程，则线程组中的任何线程在获得释放时都能执行该操作。为方便此操作，每次调用 {@link #await} 都将返回能到达屏障处的线程的索引。然后，您可以选择哪个线程应该执行屏障操作，例如：
+ <pre>  if (barrier.await() == 0) {
+     // log the completion of this iteration
+   }</pre>
+
+<p>对于失败的同步尝试，<tt>CyclicBarrier</tt> 使用了一种要么全部要么全不 (all-or-none) 的破坏模式：如果因为中断、失败或者超时等原因，导致线程过早地离开了屏障点，那么在该屏障点等待的其他所有线程也将通过 {@link BrokenBarrierException}（如果它们几乎同时被中断，则用 {@link InterruptedException}）以反常的方式离开。
+
+<p>内存一致性效果：线程中调用 {@code await()} 之前的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 那些是屏障操作的一部份的操作，后者依次 <i>happen-before</i> 紧跟在从另一个线程中对应 {@code await()} 成功返回的操作。
+
+@since 1.5
+@see CountDownLatch
+
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.CyclicBarrier(int parties, Runnable barrierAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <tt>CyclicBarrier</tt>，它将在给定数量的参与者（线程）处于等待状态时启动，并在启动 barrier 时执行给定的屏障操作，该操作由最后一个进入 barrier 的线程执行。
+
+@param parties 在启动 barrier 前必须调用 {@link #await} 的线程数
+@param barrierAction 在启动 barrier 时执行的命令；如果不执行任何操作，则该参数为 {@code null}
+@throws IllegalArgumentException 如果 {@code parties} 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.CyclicBarrier(int parties)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <tt>CyclicBarrier</tt>，它将在给定数量的参与者（线程）处于等待状态时启动，但它不会在启动 barrier 时执行预定义的操作。
+
+@param parties 在启动 barrier 前必须调用 {@link #await} 的线程数
+@throws IllegalArgumentException 如果 {@code parties} 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CyclicBarrier.getParties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要求启动此 barrier 的参与者数目。
+
+@return 要求启动此 barrier 的参与者数目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CyclicBarrier.await() throws java.lang.InterruptedException, java.util.concurrent.BrokenBarrierException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在所有{@linkplain #getParties 参与者}都已经在此 barrier 上调用 <tt>await</tt> 方法之前，将一直等待。
+
+<p>如果当前线程不是将到达的最后一个线程，出于调度目的，将禁用它，且在发生以下情况之一前，该线程将一直处于休眠状态：
+ <ul>
+<li>最后一个线程到达；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}另一个等待线程；或者
+<li>其他某个线程在等待 barrier 时超时；或者
+<li>其他某个线程在此 barrier 上调用 {@link #reset}。
+ </ul>
+
+<p>如果当前线程：
+ <ul>
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+<li>在等待时被{@linkplain Thread#interrupt 中断}
+ </ul>
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>如果在线程处于等待状态时 barrier 被 {@link #reset}，或者在调用 <tt>await</tt> 时 barrier {@linkplain #isBroken 被损坏}，抑或任意一个线程正处于等待状态，则抛出 {@link BrokenBarrierException} 异常。
+
+<p>如果任何线程在等待时被 {@linkplain Thread#interrupt 中断}，则其他所有等待线程都将抛出 {@link BrokenBarrierException} 异常，并将 barrier 置于损坏状态。
+
+<p>如果当前线程是最后一个将要到达的线程，并且构造方法中提供了一个非空的屏障操作，则在允许其他线程继续运行之前，当前线程将运行该操作。如果在执行屏障操作过程中发生异常，则该异常将传播到当前线程中，并将 barrier 置于损坏状态。
+
+@return 到达的当前线程的索引，其中，索引 <tt>{@link #getParties()} - 1</tt> 指示将到达的第一个线程，零指示最后一个到达的线程
+@throws InterruptedException 如果当前线程在等待时被中断
+@throws BrokenBarrierException 如果<em>另一个</em> 线程在当前线程等待时被中断或超时，或者重置了 barrier，或者在调用 {@code await} 时 barrier 被损坏，抑或由于异常而导致屏障操作（如果存在）失败。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CyclicBarrier.await(long timeout, TimeUnit unit) throws java.lang.InterruptedException, java.util.concurrent.BrokenBarrierException, java.util.concurrent.TimeoutException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在所有{@linkplain #getParties 参与者}都已经在此屏障上调用 <tt>await</tt> 方法之前将一直等待,或者超出了指定的等待时间。
+
+<p>如果当前线程不是将到达的最后一个线程，出于调度目的，将禁用它，且在发生以下情况之一前，该线程将一直处于休眠状态：
+ <ul>
+<li>最后一个线程到达；或者
+<li>超出指定的超时时间；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+<li>其他某个线程{@linkplain Thread#interrupt 中断}另一个等待线程；或者
+<li>其他某个线程在等待 barrier 时超时；或者
+<li>其他某个线程在此 barrier 上调用 {@link #reset}。
+ </ul>
+<p>如果当前线程：
+ <ul>
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+<li>在等待时被{@linkplain Thread#interrupt 中断}
+ </ul>
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>如果超出指定的等待时间，则抛出 {@link TimeoutException} 异常。如果该时间小于等于零，则此方法根本不会等待。
+
+<p>如果在线程处于等待状态时 barrier 被 {@link #reset}，或者在调用 <tt>await</tt> 时 barrier {@linkplain #isBroken 被损坏}，抑或任意一个线程正处于等待状态，则抛出 {@link BrokenBarrierException} 异常。
+
+<p>如果任何线程在等待时被{@linkplain Thread#interrupt 中断}，则其他所有等待线程都将抛出 {@link BrokenBarrierException}，并将屏障置于损坏状态。
+
+<p>如果当前线程是最后一个将要到达的线程，并且构造方法中提供了一个非空的屏障操作，则在允许其他线程继续运行之前，当前线程将运行该操作。如果在执行屏障操作过程中发生异常，则该异常将传播到当前线程中，并将 barrier 置于损坏状态。
+
+@param timeout 等待 barrier 的时间
+@param unit 超时参数的时间单位
+@return 到达的当前线程的索引，其中，索引 <tt>{@link #getParties()} - 1</tt> 指示第一个将要到达的线程，零指示最后一个到达的线程
+@throws InterruptedException 如果当前线程在等待时被中断
+@throws TimeoutException 如果超出了指定的超时时间
+@throws BrokenBarrierException 如果<em>另一个</em> 线程在当前线程等待时被中断或超时，或者重置了 barrier，或者调用 {@code await} 时 barrier 被损坏，抑或由于异常而导致屏障操作（如果存在）失败。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.CyclicBarrier.isBroken()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询此屏障是否处于损坏状态。
+
+@return 如果因为构造或最后一次重置而导致中断或超时，从而使一个或多个参与者摆脱此 barrier，或者因为异常而导致某个屏障操作失败，则返回 {@code true}；否则返回 {@code false}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.CyclicBarrier.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将屏障重置为其初始状态。如果所有参与者目前都在屏障处等待，则它们将返回，同时抛出一个 {@link BrokenBarrierException}。注意，在由于其他原因造成损坏<em>之后</em>，实行重置可能会变得很复杂；此时需要使用其他方式重新同步线程，并选择其中一个线程来执行重置。与为后续使用创建一个新 barrier 相比，这种方法可能更好一些。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.CyclicBarrier.getNumberWaiting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前在屏障处等待的参与者数目。此方法主要用于调试和断言。
+
+@return 当前阻塞在 {@link #await} 中的参与者数目。
+
+<!-- END DATA -->

@@ -1,0 +1,156 @@
+<!-- BEGIN KEY -->
+public class javax.xml.bind.JAXBElement extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>Xml 元素的 JAXB 表示形式。</p>
+
+<p>此类表示关于 Xml 元素的信息，这些信息包括模式中的元素声明，以及具有以下属性的 xml 文档中的元素实例值，如下所示：
+ <ul>
+<li>元素的 xml 标记 <b><tt>name</tt></b></li>
+<li><b><tt>value</tt></b> 表示元素实例的属性和内容模式</li>
+<li>元素声明的 <b><tt>declaredType</tt></b>（<tt>xs:element @type</tt> 属性）</li>
+<li>元素声明的 <b><tt>scope</tt></b></li>
+<li>boolean 值形式的 <b><tt>nil</tt></b> 属性。（元素实例的 <tt><b>xsi:nil</b></tt> 属性）</li>
+ </ul>
+ 
+<p><tt>declaredType</tt> 和 <tt>scope</tt> 属性是 xml 类型定义的 JAXB 类绑定。
+ </p>
+ 
+<p><b><tt>Scope</tt></b> 可以是 {@link GlobalScope}，也可以是表示包含模式元素声明的复杂类型定义的 Java 类。
+ </p>
+ 
+<p>这里有一个属性约束，即如果 <b><tt>value</tt></b> 为 <tt>null</tt>，则 <tt>nil</tt> 一定为 <tt>true</tt>。反之则不然，以支持表示包含属性的 nil 元素。如果 <tt>nil</tt> 为 true，则 <tt>value</tt> 可能为非 null，这样它可以保存与 nil 元素关联的属性值。
+ </p>
+ 
+@author Kohsuke Kawaguchi, Joe Fialli
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.xml.namespace.QName javax.xml.bind.JAXBElement.name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+xml 元素标记名称。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Class<T> javax.xml.bind.JAXBElement.declaredType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+xml 元素声明类型的 Java 数据类型绑定。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Class javax.xml.bind.JAXBElement.scope
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示此 xml 元素实例的 xml 元素声明的作用域。可以是以下值之一：全局 xml 元素声明的 {@link GlobalScope}。局部元素声明有一个被设置为包含 xml 元素声明的复杂类型定义的 Java 类表示形式的作用域。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected T javax.xml.bind.JAXBElement.value
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+xml 元素值。表示 xml 元素实例的内容模式和属性。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.xml.bind.JAXBElement.nil
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 xml 元素实例具有 xsi:nil=&quot;true&quot; 属性，则 nil 为 true。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement(QName name, java.lang.Class<T> declaredType, java.lang.Class scope, T value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个 xml 元素实例。</p>
+ 
+@param name          xml 元素标记名称的 Java 绑定
+@param declaredType  xml 元素声明类型的 Java 绑定
+@param scope xml 元素声明作用域的 Java 绑定。传递 null 与传递 <tt>GlobalScope.class</tt> 相同
+@param value 表示 xml 元素值的 Java 实例。
+@see #getScope()
+@see #isTypeSubstituted()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.JAXBElement(QName name, java.lang.Class<T> declaredType, T value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 xml 元素实例。这只是 <tt>new JAXBElement(name,declaredType,GlobalScope.class,value)</tt> 的一个便捷方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<T> javax.xml.bind.JAXBElement.getDeclaredType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 xml 元素声明的类型属性的 Java 绑定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.bind.JAXBElement.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 xml 元素标记名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.JAXBElement.setValue(T t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置此 xml 元素的内容模式和属性。</p>
+
+<p>在将此属性设置为 <tt>null</tt> 时，<tt>isNil()</tt> 一定为 <tt>true</tt>。在 {@link #isNil()} 中描述了约束的详细信息。</p>
+
+@see #isTypeSubstituted()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T javax.xml.bind.JAXBElement.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此元素的内容模式和属性值。</p>
+ 
+<p>关于此值为 <tt>null</tt> 时的属性约束的描述，请参见 {@link #isNil()}。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class javax.xml.bind.JAXBElement.getScope()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 xml 元素声明的作用域。
+
+@see #isGlobalScope()
+@return 如果此元素位于全局作用域中，则返回 <tt>GlobalScope.class</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.JAXBElement.isNil()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>如果此元素实例内容模式为 nil，则返回 <tt>true</tt>。</p>
+
+<p>当 {@link #getValue()} 为 null 时，此属性总是返回 <tt>true</tt>。注意，反之则不然，当此属性为 <tt>true</tt> 时，{@link #getValue()} 可以包含非 null 属性值。对于 nil xml 元素，包含属性是有效的。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.JAXBElement.setNil(boolean value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置此属性是否包含 nil 内容。</p>
+ 
+@see #isNil()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.JAXBElement.isGlobalScope()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 xml 元素声明是全局性的，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.JAXBElement.isTypeSubstituted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 xml 元素实例的值的类型与 xml 元素声明的声明类型不同，则返回 true。
+
+<!-- END DATA -->

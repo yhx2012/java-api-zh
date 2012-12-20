@@ -1,0 +1,134 @@
+<!-- BEGIN KEY -->
+public interface javax.naming.event.EventContext extends javax.naming.Context
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包含注册/注销侦听器的一些方法，这些侦听器在上下文中命名的对象发生更改时获得触发事件的通知。
+<p>
+<h4>目标</h4>
+<tt>addNamingListener()</tt> 方法中的名称参数被称为<em>目标</em>。目标和范围一起标识侦听器感兴趣的对象。注册不存在的感兴趣目标是可能的，但是服务提供者和底层协议/服务对这种情况的支持程度可能存在限制。 
+<p>
+如果服务仅支持注册现有目标，则试图注册不存在的目标将导致第一时间抛出 <tt>NameNotFoundException</tt>，一般是在调用 <tt>addNamingListener()</tt> 时；如果这没有发生，则侦听器将通过 <tt>NamingExceptionEvent</tt> 收到异常。
+<p>
+此外，对于仅支持注册现有目标的服务提供者而言，当以后从名称空间移除注册过侦听器的目标时，该侦听器通过 <tt>NamingExceptionEvent</tt>（包含 <tt>NameNotFoundException</tt>）获得通知。
+<p>
+应用程序可以使用 <tt>targetMustExist()</tt> 来检查 <tt>EventContext</tt> 是否支持注册不存在的目标。
+<p>
+<h4>事件源</h4>
+对其调用注册方法的 <tt>EventContext</tt> 实例是（可能）生成事件的<em>事件源</em>。源<em>不一定</em> 是目标指定的对象。仅当目标为空名称时，目标指定的对象才是源。换句话说，目标和范围参数一起用于标识侦听器感兴趣的对象，而事件源是侦听器注册的 <tt>EventContext</tt> 实例。
+<p>
+例如，假定侦听器进行以下注册：
+<blockquote><pre>
+	NamespaceChangeListener listener = ...;
+	src.addNamingListener(&quot;x&quot;, SUBTREE_SCOPE, listener);
+</pre></blockquote>
+以后删除名为 &quot;x/y&quot; 的对象时，相应的 <tt>NamingEvent</tt> (<tt>evt</tt>) 必须包含：
+<blockquote><pre>
+	evt.getEventContext() == src
+	evt.getOldBinding().getName().equals(&quot;x/y&quot;)
+</pre></blockquote>
+<p>
+此外，侦听器注册/注销是使用 <tt>EventContext</tt> <em>实例</em> 进行的，而不是使用名称空间中的相应对象。如果程序在某个时候要移除侦听器，则它需要保持对要调用 <tt>addNamingListener()</tt> 的 <tt>EventContext</tt> 实例的引用（这正如为了以后进行移除而需要保持对侦听器的引用）。不要期望它能进行 <tt>lookup()</tt> 而获取另一个可以执行注销的 <tt>EventContext</tt> 实例。
+<h4>注册的生命周期</h4>
+注册侦听器在以下情况将被注销：
+<ul>
+<li>使用 <tt>removeNamingListener()</tt> 移除。
+<li>在收集关于事件的信息时抛出异常。即当侦听器收到 <tt>NamingExceptionEvent</tt> 时。
+<li>对它注册的 <tt>EventContext</tt> 实例调用 <tt>Context.close()</tt> 时。
+ </ul>
+这时，具有未完成侦听器的 <tt>EventContext</tt> 实例将继续存在，并由服务提供者继续维护。
+
+<h4>侦听器实现</h4>
+注册/注销方法接受 <tt>NamingListener</tt> 的实例。对不同事件类型的 <tt>NamingEvent</tt> 使用不同的 <tt>NamingListener</tt> 子接口。例如，<tt>ObjectChangeListener</tt> 接口用于 <tt>NamingEvent.OBJECT_CHANGED</tt> 事件类型。要注册多个感兴趣事件类型，侦听器实现应该实现多个 <tt>NamingListener</tt> 子接口并调用一次 <tt>addNamingListener()</tt>。除了减少方法的调用次数并有可能减少侦听器的代码大小之外，这还允许某些服务提供者对注册进行优化。
+
+<h4>线程问题</h4>
+
+像通常的 <tt>Context</tt> 实例一样，不保证 <tt>EventContext</tt> 实例是线程安全的。当多个线程并发访问同一个 <tt>EventContext</tt> 时必须谨慎。有关线程问题的更多信息，请参阅<a href=package-summary.html#THREADING>包描述</a>。
+ 
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.11 03/12/19
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.EventContext.OBJECT_SCOPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量用来表示对涉及目标指定对象的事件感兴趣。
+<p>
+此常量的值为 <tt>0</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.EventContext.ONELEVEL_SCOPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量用来表示对涉及目标指定上下文中对象的事件感兴趣，不包括目标指定的上下文。
+<p>
+此常量的值为 <tt>1</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.naming.event.EventContext.SUBTREE_SCOPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该常量用来表示对涉及目标指定对象的子树中对象的事件感兴趣，包括目标指定的对象。
+<p>
+此常量的值为 <tt>2</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.event.EventContext.addNamingListener(Name target, int scope, NamingListener l) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加接收命名事件的侦听器，这些事件在目标和范围所标识的对象发生更改时触发。
+
+这些事件的事件源是此上下文。有关事件源和目标的讨论，请参阅类描述。请参阅对常量 <tt>OBJECT_SCOPE</tt>、<tt>ONELEVEL_SCOPE</tt> 和 <tt>SUBTREE_SCOPE</tt> 的描述，以了解 <tt>scope</tt> 如何影响注册。
+<p>
+<tt>target</tt> 仅在 <tt>scope</tt> 是 <tt>ONELEVEL_SCOPE</tt> 时需要指定上下文，如果 <tt>scope</tt> 既不是 <tt>OBJECT_SCOPE</tt> 也不是 <tt>SUBTREE_SCOPE</tt>，则 <tt>target</tt> 可能指定非上下文。例如，如果调用者预先不知道 <tt>target</tt> 是否是上下文，而只想注册以 <tt>target</tt> 为根的（可能退化的）子树，则使用非上下文的 <tt>SUBTREE_SCOPE</tt> 可能很有用。
+<p>
+当侦听器收到事件通知时，侦听器可以在没有执行 <tt>addNamingListener()</tt> 的某个线程中调用。当多个线程并发访问同一个 <tt>EventContext</tt> 时必须谨慎。有关线程问题的更多信息，请参阅<a href=package-summary.html#THREADING>包描述</a>。
+
+@param target 要相对于此上下文解析的非 null 名称。
+@param scope <tt>OBJECT_SCOPE</tt>、<tt>ONELEVEL_SCOPE</tt> 或 <tt>SUBTREE_SCOPE</tt> 之一。
+@param l  非 null 侦听器。
+@exception NamingException 如果在添加侦听器时遇到问题。
+@see #removeNamingListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.event.EventContext.addNamingListener(String target, int scope, NamingListener l) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加接收命名事件的侦听器，这些事件在目标名称和范围指定的对象发生更改时触发。
+
+有关详细信息，请参阅接受 <tt>Name</tt> 参数的重载方法。
+
+@param target 相对于此上下文解析的对象的非 null 字符串名称。
+@param scope <tt>OBJECT_SCOPE</tt>、<tt>ONELEVEL_SCOPE</tt> 或 <tt>SUBTREE_SCOPE</tt> 之一。
+@param l  非 null 侦听器。
+@exception NamingException 如果在添加侦听器时遇到问题。
+@see #removeNamingListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.event.EventContext.removeNamingListener(NamingListener l) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <tt>EventContext</tt> 触发的接收命名事件中移除一个侦听器。该侦听器可能在此 <tt>EventContext</tt> 中注册过一次以上，并且可能使用不同的目标/范围参数进行。调用此方法后，侦听器将不再使用作为事件源的此 <tt>EventContext</tt> 实例接收事件（已经在指派过程中那些事件除外）。如果侦听器不（或不再）在此 <tt>EventContext</tt> 实例中注册，则此方法不执行任何操作。
+
+@param l  非 null 侦听器。
+@exception NamingException 如果在移除侦听器时遇到问题。
+@see #addNamingListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.event.EventContext.targetMustExist() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定侦听器是否可以注册不存在的感兴趣目标。
+
+@return 如果目标存在，则返回 true；如果目标不必存在，则返回 false。
+@exception NamingException 如果无法确定上下文的这一行为。
+
+<!-- END DATA -->

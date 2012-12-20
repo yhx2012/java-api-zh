@@ -1,0 +1,1499 @@
+<!-- BEGIN KEY -->
+public final class java.lang.String extends java.lang.Object implements java.io.Serializable, java.lang.Comparable, java.lang.CharSequence
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>String</code> 类代表字符串。Java 程序中的所有字符串字面值（如 <code>"abc"</code> ）都作为此类的实例实现。
+ <p>
+字符串是常量；它们的值在创建之后不能更改。字符串缓冲区支持可变的字符串。因为 String 对象是不可变的，所以可以共享。例如：
+ <p><blockquote><pre>
+     String str = "abc";
+ </pre></blockquote><p>
+等效于：
+ <p><blockquote><pre>
+     char data[] = {'a', 'b', 'c'};
+     String str = new String(data);
+ </pre></blockquote><p>
+下面给出了一些如何使用字符串的更多示例：
+ <p><blockquote><pre>
+     System.out.println("abc");
+     String cde = "cde";
+     System.out.println("abc" + cde);
+     String c = "abc".substring(2,3);
+     String d = cde.substring(1, 2);
+ </pre></blockquote>
+ <p>
+<code>String</code> 类包括的方法可用于检查序列的单个字符、比较字符串、搜索字符串、提取子字符串、创建字符串副本并将所有字符全部转换为大写或小写。大小写映射基于 {@link java.lang.Character Character} 类指定的 Unicode 标准版。
+ <p>
+Java 语言提供对字符串串联符号（"+"）以及将其他对象转换为字符串的特殊支持。字符串串联是通过 <code>StringBuilder</code>（或 <code>StringBuffer</code>）类及其 <code>append</code> 方法实现的。字符串转换是通过 <code>toString</code> 方法实现的，该方法由 <code>Object</code> 类定义，并可被 Java 中的所有类继承。有关字符串串联和转换的更多信息，请参阅 Gosling、Joy 和 Steele 合著的 <i>The Java Language Specification</i>。
+
+<p> 除非另行说明，否则将 <tt>null</tt> 参数传递给此类中的构造方法或方法将抛出 {@link NullPointerException}。
+
+<p><code>String</code> 表示一个 UTF-16 格式的字符串，其中的<em>增补字符</em> 由<em>代理项对</em> 表示（有关详细信息，请参阅 <code>Character</code> 类中的 <a href="Character.html#unicode">Unicode 字符表示形式</a>）。索引值是指 <code>char</code> 代码单元，因此增补字符在 <code>String</code> 中占用两个位置。
+<p><code>String</code> 类提供处理 Unicode 代码点（即字符）和 Unicode 代码单元（即 <code>char</code> 值）的方法。
+
+@author  Lee Boynton
+@author  Arthur van Hoff
+@version 1.187, 07/13/04
+@see     java.lang.Object#toString()
+@see     java.lang.StringBuffer
+@see     java.lang.StringBuilder
+@see     java.nio.charset.Charset
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.util.Comparator<java.lang.String> java.lang.String.CASE_INSENSITIVE_ORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个对 <code>String</code> 对象进行排序的 Comparator，作用与 <code>compareToIgnoreCase</code> 相同。此比较器是可序列化的。
+ <p>
+注意，Comparator <em>不</em> 考虑语言环境，因此可能导致在某些语言环境中的排序效果不理想。java.text 包提供 <em>Collator</em> 完成与语言环境有关的排序。
+
+@see     java.text.Collator#compare(String, String)
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.lang.String.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+String 类被专门放入 Serialization Stream Protocol。
+
+String 实例最初以如下格式被写入 ObjectOutputStream：
+ <pre>
+      <code>TC_STRING</code> (utf String)
+ </pre>
+该 String 由方法 <code>DataOutput.writeUTF</code> 写入。生成一个新句柄以访问流中对此字符串实例的所有将来引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化一个新创建的 {@code String} 对象，使其表示一个空字符序列。注意，由于 String 是不可变的，所以无需使用此构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(String original)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化一个新创建的 {@code String} 对象，使其表示一个与参数相同的字符序列；换句话说，新创建的字符串是该参数字符串的副本。由于 String 是不可变的，所以无需使用此构造方法，除非需要 {@code original} 的显式副本。
+
+@param   original   一个 {@code String}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(char[] value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的 {@code String}，使其表示字符数组参数中当前包含的字符序列。该字符数组的内容已被复制；后续对字符数组的修改不会影响新创建的字符串。
+
+@param  value   字符串的初始值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(char[] value, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的 {@code String}，它包含取自字符数组参数一个子数组的字符。{@code offset} 参数是子数组第一个字符的索引，{@code count} 参数指定子数组的长度。该子数组的内容已被复制；后续对字符数组的修改不会影响新创建的字符串。
+
+@param      value    作为字符源的数组。
+@param      offset   初始偏移量。
+@param      count    长度。
+@exception  IndexOutOfBoundsException  如果 {@code offset} 和 {@code count} 参数索引字符超出 {@code value} 数组的范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(int[] codePoints, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的 {@code String}，它包含 Unicode 代码点数组参数一个子数组的字符。{@code offset} 参数是该子数组第一个代码点的索引，{@code count} 参数指定子数组的长度。将该子数组的内容转换为 {@code char}；后续对 {@code int} 数组的修改不会影响新创建的字符串。
+
+@param codePoints   作为 Unicode 代码点的源的数组。
+@param offset       初始偏移量。
+@param count        长度。
+@exception IllegalArgumentException 如果在 {@code codePoints} 中发现任何无效的 Unicode 代码点
+
+@exception  IndexOutOfBoundsException  如果 {@code offset} 和 {@code count} 参数索引字符超出 {@code codePoints} 数组的范围。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] ascii, int hibyte, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的 {@code String}，它是根据一个 8 位整数值数组的子数组构造的。
+ <p>
+ {@code offset} 参数是该子数组的第一个 byte 的索引，{@code count} 参数指定子数组的长度。
+ <p>
+ 子数组中的每个 {@code byte} 都按照上述方法转换为 {@code char}。
+
+@deprecated 该方法无法将字节正确地转换为字符。从 JDK&nbsp;1.1 开始，完成该转换的首选方法是使用带有 {@link
+ java.nio.charset.Charset}、字符集名称，或使用平台默认字符集的 {@code String} 构造方法。
+
+@param      ascii     要转换为字符的 byte。
+@param      hibyte    每个 16 位 Unicode 代码单元的前 8 位。
+@param      offset    初始偏移量。
+@param      count     长度。
+@exception  IndexOutOfBoundsException  如果 {@code offset} 或 {@code count} 参数无效。
+ @see  #String(byte[], int)
+ @see  #String(byte[], int, int, java.lang.String)
+ @see  #String(byte[], int, int, java.nio.charset.Charset)
+ @see  #String(byte[], int, int)
+ @see  #String(byte[], java.lang.String)
+ @see  #String(byte[], java.nio.charset.Charset)
+ @see  #String(byte[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] ascii, int hibyte)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的 {@code String}，它包含根据一个 8 位整数值数组构造的字符。所得字符串中的每个字符 <i>c</i> 都是根据 byte 数组中的相应组件 <i>b</i> 构造的，如下所示：
+ <blockquote><pre>
+     <b><i>c</i></b> == (char)(((hibyte &amp; 0xff) &lt;&lt; 8)
+                         | (<b><i>b</i></b> &amp; 0xff))
+ </pre></blockquote>
+
+@deprecated 该方法无法将字节正确地转换为字符。从 JDK&nbsp;1.1 开始，完成该转换的首选方法是使用带有 {@link
+ java.nio.charset.Charset}、字符集名称，或使用平台默认字符集的 {@code String} 构造方法。
+
+@param      ascii     要转换为字符的 byte。
+@param      hibyte    每个 16 位 Unicode 代码单元的前 8 位。
+ @see  #String(byte[], int, int, java.lang.String)
+ @see  #String(byte[], int, int, java.nio.charset.Charset)
+ @see  #String(byte[], int, int)
+ @see  #String(byte[], java.lang.String)
+ @see  #String(byte[], java.nio.charset.Charset)
+ @see  #String(byte[])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes, int offset, int length, String charsetName) throws java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用指定的字符集解码指定的 byte 子数组，构造一个新的 {@code String}。新 {@code String} 的长度是一个字符集函数，因此可能不等于子数组的长度。
+
+<p> 当给定 byte 在给定字符集中无效的情况下，此构造方法的行为没有指定。如果需要对解码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetDecoder} 类。
+
+@param  bytes   要解码为字符的 byte
+@param  offset  要解码的第一个 byte 的索引
+@param  length  要解码的 byte 数
+@param  charsetName  受支持 {@linkplain java.nio.charset.Charset
+         charset} 的名称
+@throws  UnsupportedEncodingException 如果指定的字符集不受支持
+@throws  IndexOutOfBoundsException 如果 {@code offset} 和 {@code length} 参数索引字符超出 {@code bytes} 数组的范围
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes, int offset, int length, Charset charset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用指定的 {@linkplain java.nio.charset.Charset charset} 解码指定的 byte 子数组，构造一个新的 {@code String}。新 {@code String} 的长度是字符集的函数，因此可能不等于子数组的长度。
+
+ <p> 此方法总是使用此字符集的默认替代字符串替代错误输入 (malformed-input) 和不可映射字符 (unmappable-character) 序列。如果需要对解码过程进行更多控制，则应该使用 {@link
+ java.nio.charset.CharsetDecoder} 类。
+
+ @param  bytes
+         要解码为字符的 byte
+
+ @param  offset
+         要解码的第一个 byte 的索引
+
+ @param  length
+         要解码的 byte 数
+
+ @param  charset
+         用来解码 {@code bytes} 的 {@linkplain java.nio.charset.Charset charset}
+
+ @throws  IndexOutOfBoundsException
+          如果 {@code offset} 和 {@code length} 参数索引字符超出 {@code bytes} 数组的边界
+
+ @since  1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes, String charsetName) throws java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用指定的 {@linkplain java.nio.charset.Charset charset} 解码指定的 byte 数组，构造一个新的 {@code String}。新 {@code String} 的长度是字符集的函数，因此可能不等于 byte 数组的长度。
+
+<p> 当给定 byte 在给定字符集中无效的情况下，此构造方法的行为没有指定。如果需要对解码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetDecoder} 类。
+
+@param  bytes   要解码为字符的 byte
+@param  charsetName  受支持的 {@linkplain java.nio.charset.Charset
+         charset} 的名称
+
+@exception  UnsupportedEncodingException 如果指定字符集不受支持
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes, Charset charset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用指定的 {@linkplain java.nio.charset.Charset charset} 解码指定的 byte 数组，构造一个新的 {@code String}。新 {@code String} 的长度是字符集的函数，因此可能不等于 byte 数组的长度。
+
+ <p> 此方法总是使用此字符集的默认替代字符串替代错误输入和不可映射字符序列。如果需要对解码过程进行更多控制，则应该使用 {@link
+ java.nio.charset.CharsetDecoder} 类。
+
+ @param  bytes
+         要解码为字符的 byte
+
+ @param  charset
+         要用来解码 {@code bytes} 的 {@linkplain java.nio.charset.Charset charset}
+
+ @since  1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用平台的默认字符集解码指定的 byte 子数组，构造一个新的 {@code String}。新 {@code String} 的长度是字符集的函数，因此可能不等于该子数组的长度。
+
+<p> 当给定 byte 在给定字符集中无效的情况下，此构造方法的行为没有指定。如果需要对解码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetDecoder} 类。
+
+
+@param  bytes   要解码为字符的 byte 
+@param  offset  要解码的第一个 byte 的索引
+@param  length  要解码的 byte 数
+@throws IndexOutOfBoundsException 如果 {@code offset} 和 {@code length} 参数索引字符超出 <code>bytes</code> 数组的范围
+@since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(byte[] bytes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过使用平台的默认字符集解码指定的 byte 数组，构造一个新的 {@code String}。新 {@code String} 的长度是字符集的函数，因此可能不等于 byte 数组的长度。
+
+<p> 当给定 byte 在给定字符集中无效的情况下，此构造方法的行为没有指定。如果需要对解码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetDecoder} 类。
+
+@param  bytes   要解码为字符的 byte 
+@since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(StringBuffer buffer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的字符串，它包含字符串缓冲区参数中当前包含的字符序列。该字符串缓冲区的内容已被复制，后续对它的修改不会影响新创建的字符串。
+
+@param   buffer   一个 {@code StringBuffer}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String(StringBuilder builder)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+分配一个新的字符串，它包含字符串生成器参数中当前包含的字符序列。该字符串生成器的内容已被复制，后续对它的修改不会影响新创建的字符串。
+
+<p>提供此构造方法是为了简化到 {@code
+ StringBuilder} 的迁移。通过 {@code
+ toString} 方法从字符串生成器中获取字符串可能运行的更快，因此通常作为首选。
+
+@param   builder   一个 {@code StringBuilder}
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.length()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此字符串的长度。长度等于字符串中 <a href="Character.html#unicode">Unicode
+ 代码单元</a>的数量。
+
+@return  此对象表示的字符序列的长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 当且仅当 {@link #length()} 为 <tt>0</tt> 时返回 <tt>true</tt>。
+
+ @return 如果 {@link #length()} 为 <tt>0</tt>，则返回 <tt>true</tt>；否则返回 <tt>false</tt>。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char java.lang.String.charAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定索引处的 <code>char</code> 值。索引范围为从 <code>0</code> 到 <code>length() - 1</code>。序列的第一个 <code>char</code> 值位于索引 <code>0</code> 处，第二个位于索引 <code>1</code> 处，依此类推，这类似于数组索引。
+
+<p>如果索引指定的 <code>char</code> 值是<a href="Character.html#unicode">代理项</a>，则返回代理项值。
+
+
+@param      index    <code>char</code> 值的索引。
+@return     此字符串指定索引处的 <code>char</code> 值。第一个 <code>char</code> 值位于索引 <code>0</code> 处。
+@exception  IndexOutOfBoundsException  如果 <code>index</code> 参数为负或小于此字符串的长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.codePointAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定索引处的字符（Unicode 代码点）。索引引用 <code>char</code> 值（Unicode 代码单元），其范围从 <code>0</code> 到 {@link #length()}<code> - 1</code>。
+
+<p> 如果给定索引指定的 <code>char</code> 值属于高代理项范围，则后续索引小于此 <code>String</code> 的长度；如果后续索引处的 <code>char</code> 值属于低代理项范围，则返回该代理项对相应的增补代码点。否则，返回给定索引处的 <code>char</code> 值。
+
+@param      index <code>char</code> 值的索引
+@return     <code>index</code> 处字符的代码点值 
+@exception  IndexOutOfBoundsException  如果 <code>index</code> 参数为负或小于此字符串的长度。
+@since      1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.codePointBefore(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定索引之前的字符（Unicode 代码点）。索引引用 <code>char</code> 值（Unicode 代码单元），其范围从 <code>1</code> 到 {@link CharSequence#length() length}。
+
+<p> 如果 <code>(index - 1)</code> 处的 <code>char</code> 值属于低代理项范围，则 <code>(index - 2)</code> 为非负；如果 <code>(index - 2)</code> 处的 <code>char</code> 值属于高低理项范围，则返回该代理项对的增补代码点值。如果 <code>index - 1</code> 处的 <code>char</code> 值是未配对的低（高）代理项，则返回代理项值。
+
+@param     index 应返回的代码点之后的索引
+@return    给定索引前面的 Unicode 代码点。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 参数小于 1 或大于此字符串的长度。
+@since     1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.codePointCount(int beginIndex, int endIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>String</code> 的指定文本范围中的 Unicode 代码点数。文本范围始于指定的 <code>beginIndex</code>，一直到索引 <code>endIndex - 1</code> 处的 <code>char</code>。因此，该文本范围的长度（用 <code>char</code> 表示）是 <code>endIndex-beginIndex</code>。该文本范围内每个未配对的代理项计为一个代码点。
+
+@param beginIndex 文本范围的第一个 <code>char</code> 的索引。
+@param endIndex 文本范围的最后一个 <code>char</code> 之后的索引。
+@return 指定文本范围中 Unicode 代码点的数量
+@exception IndexOutOfBoundsException 如果 <code>beginIndex</code> 为负，或 <code>endIndex</code> 大于此 <code>String</code> 的长度，或 <code>beginIndex</code> 大于 <code>endIndex</code>。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.offsetByCodePoints(int index, int codePointOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>String</code> 中从给定的 <code>index</code> 处偏移 <code>codePointOffset</code> 个代码点的索引。文本范围内由 <code>index</code> 和 <code>codePointOffset</code> 给定的未配对代理项各计为一个代码点。
+
+
+@param index 要偏移的索引
+@param codePointOffset 代码点中的偏移量
+@return <code>String</code> 的索引
+@exception IndexOutOfBoundsException 如果 <code>index</code> 为负或大于此 <code>String</code> 的长度；或者 <code>codePointOffset</code> 为正，且以 <code>index</code> 开头子字符串的代码点比 <code>codePointOffset</code> 少；如果 <code>codePointOffset</code> 为负，且 <code>index</code> 前面子字符串的代码点比 <code>codePointOffset</code> 的绝对值少。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.String.getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字符从此字符串复制到目标字符数组。
+ <p>
+要复制的第一个字符位于索引 <code>srcBegin</code> 处；要复制的最后一个字符位于索引 <code>srcEnd-1</code> 处（因此要复制的字符总数是 <code>srcEnd-srcBegin</code>）。要复制到 <code>dst</code> 子数组的字符从索引 <code>dstBegin</code> 处开始，并结束于索引：
+ <p><blockquote><pre>
+     dstbegin + (srcEnd-srcBegin) - 1
+ </pre></blockquote>
+
+
+@param      srcBegin   字符串中要复制的第一个字符的索引。
+@param      srcEnd     字符串中要复制的最后一个字符之后的索引。
+@param      dst        目标数组。
+@param      dstBegin   目标数组中的起始偏移量。
+@exception IndexOutOfBoundsException 如果下列任何一项为 true：
+           <ul><li><code>srcBegin</code> 为负。
+           <li><code>srcBegin</code> 大于 <code>srcEnd</code>
+           <li><code>srcEnd</code> 大于此字符串的长度
+           <li><code>dstBegin</code> 为负
+           <li><code>dstBegin+(srcEnd-srcBegin)</code> 大于 <code>dst.length</code></ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.String.getBytes(int srcBegin, int srcEnd, byte[] dst, int dstBegin)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字符从此字符串复制到目标 byte 数组中。每个 byte 接收相应字符的 8 个低位。不复制每个字符的高位，它们不参与任何方式的转换。
+<p>
+要复制的第一个字符位于索引 {@code srcBegin} 处；要复制的最后一个字符位于索引 {@code srcEnd-1} 处。要复制的字符总数为 {@code srcEnd-srcBegin}。将转换为 byte 的字符复制到 {@code
+ dst} 的子数组中，从索引 {@code dstBegin} 处开始，并结束于索引：
+ <p><blockquote><pre>
+     dstbegin + (srcEnd-srcBegin) - 1
+ </pre></blockquote>
+
+
+@deprecated 该方法无法将字符正确转换为字节。从 JDK 1.1 起，完成该转换的首选方法是通过 {@link #getBytes()} 方法，该方法使用平台的默认字符集。
+
+@param      srcBegin   字符串中要复制的第一个字符的索引
+@param      srcEnd     字符串中要复制的最后一个字符之后的索引
+@param      dst        目标数组
+@param      dstBegin   目标数组中的起始偏移量
+@exception IndexOutOfBoundsException 如果下列任何一项为 true：
+           <ul><li>{@code srcBegin} 为负
+           <li>{@code srcBegin} 大于 {@code srcEnd}
+           <li>{@code srcEnd} 大于此 String 的长度
+           <li>{@code dstBegin} 为负
+           <li>{@code dstBegin+(srcEnd-srcBegin)} 大于 {@code dst.length}</ul>
+</ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.lang.String.getBytes(String charsetName) throws java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的字符集将此 {@code String} 编码为 byte 序列，并将结果存储到一个新的 byte 数组中。
+
+<p> 当此字符串不能使用给定的字符集编码时，此方法的行为没有指定。如果需要对编码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetEncoder} 类。
+
+@param  charsetName 受支持的 {@linkplain java.nio.charset.Charset
+         charset} 名称
+
+@return 所得 byte 数组
+
+@throws  UnsupportedEncodingException 如果指定的字符集不受支持
+
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.lang.String.getBytes(Charset charset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 {@linkplain java.nio.charset.Charset charset} 将此 {@code String} 编码到 byte 序列，并将结果存储到新的 byte 数组。
+
+ <p> 此方法总是使用此字符集的默认替代 byte 数组替代错误输入和不可映射字符序列。如果需要对编码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetEncoder} 类。
+
+ @param  charset
+         用于编码 {@code String} 的 {@linkplain java.nio.charset.Charset}
+
+ @return  所得 byte 数组
+
+ @since  1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] java.lang.String.getBytes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用平台的默认字符集将此 {@code String} 编码为 byte 序列，并将结果存储到一个新的 byte 数组中。
+
+<p> 当此字符串不能使用默认的字符集编码时，此方法的行为没有指定。如果需要对编码过程进行更多控制，则应该使用 {@link java.nio.charset.CharsetEncoder} 类。
+
+@return     所得 byte 数组
+
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.equals(Object anObject)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此字符串与指定的对象比较。当且仅当该参数不为 {@code null}，并且是与此对象表示相同字符序列的 {@code
+ String} 对象时，结果才为 {@code true}。
+
+
+@param   anObject   与此 {@code String} 进行比较的对象。
+@return  如果给定对象表示的 {@code String} 与此 {@code String} 相等，则返回 {@code true}；否则返回 {@code false}。
+ @see  #compareTo(String)
+ @see  #equalsIgnoreCase(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.contentEquals(StringBuffer sb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此字符串与指定的 {@code StringBuffer} 比较。当且仅当此 {@code String} 与指定 {@code StringBuffer} 表示相同的字符序列时，结果才为 {@code true}。
+
+
+@param   sb        要与此 {@code String} 比较的 {@code StringBuffer}。
+
+@return  如果此 {@code String} 与指定 {@code StringBuffer} 表示相同的字符序列，则返回 {@code true}；否则返回 {@code false}。
+
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.contentEquals(CharSequence cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此字符串与指定的 {@code CharSequence} 比较。当且仅当此 {@code String} 与指定序列表示相同的 char 值序列时，结果才为 {@code true}。
+
+@param   cs          要与此 {@code String} 比较的序列
+@return 如果此 {@code String} 与指定序列表示相同的 char 值序列，则返回 {@code true}；否则返回 {@code false}。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.equalsIgnoreCase(String anotherString)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 {@code String} 与另一个 {@code String} 比较，不考虑大小写。如果两个字符串的长度相同，并且其中的相应字符都相等（忽略大小写），则认为这两个字符串是相等的。
+ <p>
+在忽略大小写的情况下，如果下列至少一项为 true，则认为 {@code c1} 和 {@code c2} 这两个字符相同。
+<ul><li>这两个字符相同（使用 {@code ==} 运算符进行比较）。
+<li>对每个字符应用方法 {@link java.lang.Character#toUpperCase(char)} 生成相同的结果。
+<li>对每个字符应用方法 {@link java.lang.Character#toLowerCase(char)} 生成相同的结果。</ul>
+
+
+@param   anotherString   与此 {@code String} 进行比较的 {@code String}。
+@return  如果参数不为 {@code null}，且这两个 {@code String} 相等（忽略大小写），则返回 {@code true}；否则返回 {@code
+          false}。
+@see     #equals(Object)
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.compareTo(String anotherString)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按字典顺序比较两个字符串。该比较基于字符串中各个字符的 Unicode 值。按字典顺序将此 <code>String</code> 对象表示的字符序列与参数字符串所表示的字符序列进行比较。如果按字典顺序此 <code>String</code> 对象位于参数字符串之前，则比较结果为一个负整数。如果按字典顺序此 <code>String</code> 对象位于参数字符串之后，则比较结果为一个正整数。如果这两个字符串相等，则结果为 0；<code>compareTo</code> 只在方法 {@link #equals(Object)} 返回 <code>true</code> 时才返回 <code>0</code>。
+ <p>
+这是字典排序的定义。如果这两个字符串不同，那么它们要么在某个索引处的字符不同（该索引对二者均为有效索引），要么长度不同，或者同时具备这两种情况。如果它们在一个或多个索引位置上的字符不同，假设 <i>k</i> 是这类索引的最小值；则在位置 <i>k</i> 上具有较小值的那个字符串（使用 &lt; 运算符确定），其字典顺序在其他字符串之前。在这种情况下，<code>compareTo</code> 返回这两个字符串在位置 <code>k</code> 处两个char 值的差，即值：
+ <blockquote><pre>
+ this.charAt(k)-anotherString.charAt(k)
+ </pre></blockquote>
+如果没有字符不同的索引位置，则较短字符串的字典顺序在较长字符串之前。在这种情况下，<code>compareTo</code> 返回这两个字符串长度的差，即值：
+ <blockquote><pre>
+ this.length()-anotherString.length()
+ </pre></blockquote>
+
+@param   anotherString   要比较的 <code>String</code>。
+@return  如果参数字符串等于此字符串，则返回值 <code>0</code>；如果此字符串按字典顺序小于字符串参数，则返回一个小于 <code>0</code> 的值；如果此字符串按字典顺序大于字符串参数，则返回一个大于 <code>0</code> 的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.compareToIgnoreCase(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按字典顺序比较两个字符串，不考虑大小写。此方法返回一个整数，其符号与使用规范化的字符串调用 <code>compareTo</code> 所得符号相同，规范化字符串的大小写差异已通过对每个字符调用 <code>Character.toLowerCase(Character.toUpperCase(character))</code> 消除。
+ <p>
+注意，此方法<em>不</em> 考虑语言环境，因此可能导致在某些语言环境中的排序效果不理想。java.text 包提供 <em>Collators</em> 完成与语言环境有关的排序。
+
+
+@param   str   要比较的 <code>String</code>。
+@return  根据指定 String 大于、等于还是小于此 String（不考虑大小写），分别返回一个负整数、0 或一个正整数。
+@see     java.text.Collator#compare(String, String)
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.regionMatches(int toffset, String other, int ooffset, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试两个字符串区域是否相等。
+ <p>
+将此 <tt>String</tt> 对象的一个子字符串与参数 other 的一个子字符串进行比较。如果这两个子字符串表示相同的字符序列，则结果为 true。要比较的此 <tt>String</tt> 对象的子字符串从索引 <tt>toffset</tt> 处开始，长度为 <tt>len</tt>。要比较的 other 的子字符串从索引 <tt>ooffset</tt> 处开始，长度为 <tt>len</tt>。当且仅当下列至少一项为 true 时，结果才为 <tt>false</tt> ：
+<ul><li><tt>toffset</tt> 为负。
+<li><tt>ooffset</tt> 为负。
+<li><tt>toffset+len</tt> 大于此 <tt>String</tt> 对象的长度。
+<li><tt>ooffset+len</tt> 大于另一个参数的长度。
+<li>存在某个小于 <tt>len</tt> 的非负整数 <i>k</i>，它满足：<tt>this.charAt(toffset+<i>k</i>)&nbsp;!=&nbsp;other.charAt(ooffset+<i>k</i>)</tt>
+ </ul>
+
+
+@param   toffset   字符串中子区域的起始偏移量。
+@param   other     字符串参数。
+@param   ooffset   字符串参数中子区域的起始偏移量。
+@param   len       要比较的字符数。
+@return  如果此字符串的指定子区域完全匹配字符串参数的指定子区域，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.regionMatches(boolean ignoreCase, int toffset, String other, int ooffset, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试两个字符串区域是否相等。
+ <p>
+将此 <tt>String</tt> 对象的子字符串与参数 <tt>other</tt> 的子字符串进行比较。如果这两个子字符串表示相同的字符序列，则结果为 <tt>true</tt>，当且仅当 <tt>ignoreCase</tt> 为 true 时忽略大小写。要比较的此 <tt>String</tt> 对象的子字符串从索引 <tt>toffset</tt> 处开始，长度为 <tt>len</tt>。要比较的 <tt>other</tt> 的子字符串从索引 <tt>ooffset</tt> 处开始，长度为 <tt>len</tt>。当且仅当下列至少一项为 true 时，结果才为 <tt>false</tt>：
+<ul><li><tt>toffset</tt> 为负。
+<li><tt>ooffset</tt> 为负。
+<li><tt>toffset+len</tt> 大于此 <tt>String</tt> 对象的长度。
+<li><tt>ooffset+len</tt> 大于另一个参数的长度。
+<li><tt>ignoreCase</tt> 为 <tt>false</tt>，且存在某个小于 <tt>len</tt> 的非负整数 <i>k</i>，即：
+ <blockquote><pre>
+ this.charAt(toffset+k) != other.charAt(ooffset+k)
+ </pre></blockquote>
+<li><tt>ignoreCase</tt> 为 <tt>true</tt>，且存在某个小于 <tt>len</tt> 的非负整数 <i>k</i>，即：
+ <blockquote><pre>
+ Character.toLowerCase(this.charAt(toffset+k)) !=
+               Character.toLowerCase(other.charAt(ooffset+k))
+ </pre></blockquote>
+以及：
+ <blockquote><pre>
+ Character.toUpperCase(this.charAt(toffset+k)) !=
+         Character.toUpperCase(other.charAt(ooffset+k))
+ </pre></blockquote>
+ </ul>
+
+@param   ignoreCase   如果为 <code>true</code>，则比较字符时忽略大小写。
+@param   toffset   此字符串中子区域的起始偏移量。
+@param   other     字符串参数。
+@param   toffset   字符串参数中子区域的起始偏移量。
+@param   len       要比较的字符数。
+
+@return  如果此字符串的指定子区域匹配字符串参数的指定子区域，则返回 <code>true</code>；否则返回 <code>false</code>。是否完全匹配或考虑大小写取决于 <code>ignoreCase</code> 参数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.startsWith(String prefix, int toffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此字符串从指定索引开始的子字符串是否以指定前缀开始。
+
+@param   prefix    前缀。
+@param   toffset   在此字符串中开始查找的位置。
+@return  如果参数表示的字符序列是此对象从索引 <code>toffset</code> 处开始的子字符串前缀，则返回 <code>true</code>；否则返回 <code>false</code>。如果 <code>toffset</code> 为负或大于此 <code>String</code> 对象的长度，则结果为 <code>false</code>；否则结果与以下表达式的结果相同：
+          <pre>
+          this.substring(toffset).startsWith(prefix)
+          </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.startsWith(String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此字符串是否以指定的前缀开始。
+
+@param   prefix   前缀。
+@return  </code> 如果参数表示的字符序列是此字符串表示的字符序列的前缀，则返回 <code>true</code>；否则返回 <code>false</code>。还要注意，如果参数是空字符串，或者等于此 <code>String</code> 对象（用 {@link #equals(Object)} 方法确定），则返回 <code>true</code>。
+@since   1. 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.endsWith(String suffix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此字符串是否以指定的后缀结束。
+
+@param   suffix   后缀。
+@return </code> 如果参数表示的字符序列是此对象表示的字符序列的后缀，则返回 <code>true</code>；否则返回 <code>false</code>。注意，如果参数是空字符串，或者等于此 <code>String</code> 对象（用 {@link #equals(Object)} 方法确定），则结果为 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此字符串的哈希码。<code>String</code> 对象的哈希码根据以下公式计算：
+ <blockquote><pre>
+ s[0]*31^(n-1) + s[1]*31^(n-2) + ... + s[n-1]
+ </pre></blockquote>
+使用 <code>int</code> 算法，这里 <code>s[i]</code> 是字符串的第 <i>i</i> 个字符，<code>n</code> 是字符串的长度，<code>^</code> 表示求幂。（空字符串的哈希值为 0。）
+
+@return  此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.indexOf(int ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定字符在此字符串中第一次出现处的索引。如果在此 <code>String</code> 对象表示的字符序列中出现值为 <code>ch</code> 的字符，则返回第一次出现该字符的索引（以 Unicode 代码单元表示）。对于 0 到 0xFFFF（包括 0 和 0xFFFF）范围内的 <code>ch</code> 的值，返回值是
+ <blockquote><pre>
+ this.charAt(<i>k</i>) == ch
+ </pre></blockquote>
+为 true 的最小 <i>k</i> 值。对于其他 <code>ch</code> 值，返回值是
+ <blockquote><pre>
+ this.codePointAt(<i>k</i>) == ch
+ </pre></blockquote>
+为 true 最小 <i>k</i> 值。无论哪种情况，如果此字符串中没有这样的字符，则返回 <code>-1</code>。
+
+@param   ch   一个字符（Unicode 代码点）。
+@return  在此对象表示的字符序列中第一次出现该字符的索引；如果未出现该字符，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.indexOf(int ch, int fromIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此字符串中第一次出现指定字符处的索引，从指定的索引开始搜索。
+ <p>
+在此 <code>String</code> 对象表示的字符序列中，如果带有值 <code>ch</code> 的字符的索引不小于 <code>fromIndex</code>，则返回第一次出现该值的索引。对于 0 到 0xFFFF（包括 0 和 0xFFFF）范围内的 <code>ch</code> 值，返回值是
+ <blockquote><pre>
+ (this.charAt(<i>k</i>) == ch) && (<i>k</i> &gt;= fromIndex)
+ </pre></blockquote>
+为 true 的最小 <i>k</i> 值。对于其他 <code>ch</code> 值，返回值是
+ <blockquote><pre>
+ (this.codePointAt(<i>k</i>) == ch) && (<i>k</i> &gt;= fromIndex)
+ </pre></blockquote>
+为 true 的最小 <i>k</i> 值。无论哪种情况，如果此字符串中 <code>fromIndex</code> 或之后的位置没有这样的字符出现，则返回 <code>-1</code>。
+
+ <p>
+<code>fromIndex</code> 的值没有限制。如果它为负，则与它为 0 的效果同样：将搜索整个字符串。如果它大于此字符串的长度，则与它等于此字符串长度的效果相同：返回 <code>-1</code>。
+
+<p>所有索引都在 <code>char</code> 值中指定（Unicode 代码单元）。
+
+@param   ch          一个字符（Unicode 代码点）。
+@param   fromIndex   开始搜索的索引。
+@return  在此对象表示的字符序列中第一次出现的大于或等于 <code>fromIndex</code> 的字符的索引；如果未出现该字符，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.lastIndexOf(int ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定字符在此字符串中最后一次出现处的索引。对于 0 到 0xFFFF（包括 0 和 0xFFFF）范围内的 <code>ch</code> 的值，返回的索引（Unicode 代码单元）是
+ <blockquote><pre>
+ this.charAt(<i>k</i>) == ch
+ </pre></blockquote>
+为 true 最大 <i>k</i> 值。对于其他 <code>ch</code> 值，返回值是
+ <blockquote><pre>
+ this.codePointAt(<i>k</i>) == ch
+ </pre></blockquote>
+为 true 的最大 <i>k</i> 值。无论哪种情况，如果此字符串中没有这样的字符出现，则返回 <code>-1</code>。从最后一个字符开始反向搜索此 <code>String</code>。
+
+@param   ch          一个字符（Unicode 代码点）。
+@return  在此对象表示的字符序列中最后一次出现该字符的索引；如果未出现该字符，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.lastIndexOf(int ch, int fromIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定字符在此字符串中最后一次出现处的索引，从指定的索引处开始进行反向搜索。对于 0 到 0xFFFF（包括 0 和 0xFFFF）范围内的 <code>ch</code> 值，返回的索引是
+ <blockquote><pre>
+ (this.charAt(<i>k</i>) == ch) && (<i>k</i> &lt;= fromIndex)
+ </pre></blockquote>
+为 true 的最大 <i>k</i> 值。对于 <code>ch</code> 的其他值，返回值是
+ <blockquote><pre>
+ (this.codePointAt(<i>k</i>) == ch) && (<i>k</i> &lt;= fromIndex)
+ </pre></blockquote>
+为 true 的最大 <i>k</i> 值。无论哪种情况，如果此字符串中 <code>fromIndex</code> 或之前的位置没有这样的字符出现，则返回 <code>-1</code>。
+
+<p>所有的索引都以 <code>char</code> 值指定（Unicode 代码单元）。
+
+@param   ch          一个字符（Unicode 代码点）。
+@param   fromIndex   开始搜索的索引。<code>fromIndex</code> 的值没有限制。如果它大于等于此字符串的长度，则与它小于此字符串长度减 1 的效果相同：将搜索整个字符串。如果它为负，则与它为 -1 的效果相同：返回 -1。
+@return 在此对象表示的字符序列（小于等于 <code>fromIndex</code>）中最后一次出现该字符的索引；如果在该点之前未出现该字符，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.indexOf(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定子字符串在此字符串中第一次出现处的索引。返回的整数是
+ <blockquote><pre>
+ this.startsWith(str, <i>k</i>)
+ </pre></blockquote>
+为 <code>true</code> 的最小 <i>k</i> 值。
+
+
+@param   str   任意字符串。
+@return  如果字符串参数作为一个子字符串在此对象中出现，则返回第一个这种子字符串的第一个字符的索引；如果它不作为一个子字符串出现，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.indexOf(String str, int fromIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定子字符串在此字符串中第一次出现处的索引，从指定的索引开始。返回的整数是满足下式的最小 <tt>k</tt> 值：
+ <blockquote><pre>
+     k &gt;= Math.min(fromIndex, this.length()) && this.startsWith(str, k)
+ </pre></blockquote>
+如果不存在这样的 <i>k</i> 值，则返回 -1。
+
+@param   str         要搜索的子字符串。
+@param   fromIndex   开始搜索的索引位置。
+@return  指定子字符串在此字符串中第一次出现处的索引，从指定的索引开始。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.lastIndexOf(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定子字符串在此字符串中最右边出现处的索引。将最右边的空字符串 "" 视为出现在索引值 <code>this.length()</code> 处。返回的索引是
+ <blockquote><pre>
+ this.startsWith(str, k)
+ </pre></blockquote>
+为 true 的最大 <i>k</i> 值。
+
+
+@param   str   要搜索的子字符串。
+@return  如果字符串参数作为一个子字符串在此对象中出现一次或多次，则返回最后一个这种子字符串的第一个字符。如果它不作为一个子字符串出现，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.String.lastIndexOf(String str, int fromIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定子字符串在此字符串中最后一次出现处的索引，从指定的索引开始反向搜索。返回的整数是满足下式的最大 <i>k</i> 值：
+ <blockquote><pre>
+     k &lt;= Math.min(fromIndex,this.length()) && this.startsWith(str, k)
+ </pre></blockquote>
+如果不存在这样的 <i>k</i> 值，则返回 -1。
+ 
+@param   str         要搜索的子字符串。
+@param   fromIndex   开始搜索的索引位置。
+@return  指定子字符串在此字符串中最后一次出现处的索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.substring(int beginIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新的字符串，它是此字符串的一个子字符串。该子字符串从指定索引处的字符开始，直到此字符串末尾。<p>
+示例：
+ <blockquote><pre>
+ "unhappy".substring(2) returns "happy"
+ "Harbison".substring(3) returns "bison"
+ "emptiness".substring(9) returns "" (an empty string)
+ </pre></blockquote>
+
+@param      beginIndex   起始索引（包括）。
+@return     指定的子字符串。
+@exception  IndexOutOfBoundsException  如果 <code>beginIndex</code> 为负或大于此 <code>String</code> 对象的长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.substring(int beginIndex, int endIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新字符串，它是此字符串的一个子字符串。该子字符串从指定的 <code>beginIndex</code> 处开始，直到索引 <code>endIndex - 1</code> 处的字符。因此，该子字符串的长度为 <code>endIndex-beginIndex</code>。
+ <p>
+示例：
+ <blockquote><pre>
+ "hamburger".substring(4, 8) returns "urge"
+ "smiles".substring(1, 5) returns "mile"
+ </pre></blockquote>
+
+
+@param      beginIndex   起始索引（包括）。
+@param      endIndex     结束索引（不包括）。
+@return     指定的子字符串。
+@exception  IndexOutOfBoundsException  如果 <code>beginIndex</code> 为负，或 <code>endIndex</code> 大于此 <code>String</code> 对象的长度，或 <code>beginIndex</code> 大于 <code>endIndex</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.CharSequence java.lang.String.subSequence(int beginIndex, int endIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新的字符序列，它是此序列的一个子序列。
+
+<p> 此方法这种形式的调用：
+
+ <blockquote><pre>
+ str.subSequence(begin,&nbsp;end)</pre></blockquote>
+
+与以下调用的行为完全相同：
+
+ <blockquote><pre>
+ str.substring(begin,&nbsp;end)</pre></blockquote>
+
+定义此方法使 <tt>String</tt> 类能够实现 {@link CharSequence} 接口。 </p>
+
+
+@param      beginIndex   起始索引（包括）。
+@param      endIndex     结束索引（不包括）。
+@return     指定子序列。
+
+@throws  IndexOutOfBoundsException 如果 <tt>beginIndex</tt> 或 <tt>endIndex</tt> 为负，如果 <tt>endIndex</tt> 大于 <tt>length()</tt> 或  <tt>beginIndex</tt> 大于 <tt>startIndex</tt>
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.concat(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符串连接到此字符串的结尾。
+ <p>
+如果参数字符串的长度为 <code>0</code>，则返回此 <code>String</code> 对象。否则，创建一个新的 <code>String</code> 对象，用来表示由此 <code>String</code> 对象表示的字符序列和参数字符串表示的字符序列连接而成的字符序列。<p>
+示例：
+ <blockquote><pre>
+ "cares".concat("s") returns "caress"
+ "to".concat("get").concat("her") returns "together"
+ </pre></blockquote>
+
+
+@param   str   连接到此 <code>String</code> 结尾的 <code>String</code>。
+@return  一个字符串，它表示在此对象字符后连接字符串参数字符而成的字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.replace(char oldChar, char newChar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新的字符串，它是通过用 <code>newChar</code> 替换此字符串中出现的所有 <code>oldChar</code> 得到的。
+ <p>
+如果 <code>oldChar</code> 在此 <code>String</code> 对象表示的字符序列中没有出现，则返回对此 <code>String</code> 对象的引用。否则，创建一个新的 <code>String</code> 对象，它所表示的字符序列除了所有的 <code>oldChar</code> 都被替换为 <code>newChar</code> 之外，与此 <code>String</code> 对象表示的字符序列相同。
+ <p>
+示例：
+ <blockquote><pre>
+"mesquite in your cellar".replace('e', 'o')
+         returns "mosquito in your collar"
+ "the war of baronets".replace('r', 'y')
+         returns "the way of bayonets"
+ "sparring with a purple porpoise".replace('p', 't')
+         returns "starring with a turtle tortoise"
+ "JonL".replace('q', 'x') returns "JonL" (no change)
+ </pre></blockquote>
+
+@param   oldChar  原字符。
+@param   newChar  新字符。
+@return  一个从此字符串派生的字符串，它将此字符串中的所有 <code>oldChar</code> 替代为 <code>newChar</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.matches(String regex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知此字符串是否匹配给定的<a href="{@docRoot}/java/util/regex/Pattern.html#sum">正则表达式</a>。
+
+<p> 调用此方法的 <i>str</i><tt>.matches(</tt><i>regex</i><tt>)</tt> 形式与以下表达式产生的结果完全相同：
+
+ <blockquote><tt> {@link java.util.regex.Pattern}.{@link java.util.regex.Pattern#matches(String,CharSequence) matches}(</tt><i>regex</i><tt>,</tt> <i>str</i><tt>)</tt></blockquote>
+
+@param   regex 用来匹配此字符串的正则表达式
+
+@return  当且仅当此字符串匹配给定的正则表达式时，返回 <tt>true</tt>
+
+@throws  PatternSyntaxException 如果正则表达式的语法无效
+
+@see java.util.regex.Pattern
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.String.contains(CharSequence s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当此字符串包含指定的 char 值序列时，返回 true。
+
+@param s 要搜索的序列
+@return 如果此字符串包含 <code>s</code>，则返回 true，否则返回 false
+@throws NullPointerException 如果 <code>s</code> 为 <code>null</code>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.replaceFirst(String regex, String replacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 replacement 替换此字符串匹配给定的<a href="{@docRoot}/java/util/regex/Pattern.html#sum">正则表达式</a>的第一个子字符串。
+
+<p> 调用此方法的 <i>str</i><tt>.replaceFirst(</tt><i>regex</i><tt>,</tt> <i>repl</i><tt>)</tt> 形式与以下表达式产生的结果完全相同：
+
+<blockquote><tt>{@link java.util.regex.Pattern}.{@link java.util.regex.Pattern#compile compile}(</tt><i>regex</i><tt>).{@link java.util.regex.Pattern#matcher(java.lang.CharSequence) matcher}(</tt><i>str</i><tt>).{@link java.util.regex.Matcher#replaceFirst replaceFirst}(</tt><i>repl</i><tt>)</tt></blockquote>
+
+<p>
+注意，在替代字符串中使用反斜杠 (<tt>\</tt>) 和美元符号 (<tt>$</tt>) 与将其视为字面值替代字符串所得的结果可能不同；请参阅 {@link java.util.regex.Matcher#replaceFirst}。如有需要，可使用 {@link java.util.regex.Matcher#quoteReplacement} 取消这些字符的特殊含义。
+
+@param   regex 用来匹配此字符串的正则表达式
+@param   replacement
+          用来替换第一个匹配项的字符串
+
+@return  所得 <tt>String</tt>
+
+@throws  PatternSyntaxException 如果正则表达式的语法无效
+
+@see java.util.regex.Pattern
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.replaceAll(String regex, String replacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的 replacement 替换此字符串所有匹配给定的<a href="{@docRoot}/java/util/regex/Pattern.html#sum">正则表达式</a>的子字符串。
+
+<p> 调用此方法的 <i>str</i><tt>.replaceAll(</tt><i>regex</i><tt>,</tt> <i>repl</i><tt>)</tt> 形式与以下表达式产生的结果完全相同：
+
+<blockquote><tt>{@link java.util.regex.Pattern}.{@link java.util.regex.Pattern#compile compile}(</tt><i>regex</i><tt>).{@link java.util.regex.Pattern#matcher(java.lang.CharSequence) matcher}(</tt><i>str</i><tt>).{@link java.util.regex.Matcher#replaceAll replaceAll}(</tt><i>repl</i><tt>)</tt></blockquote>
+
+<p>
+注意，在替代字符串中使用反斜杠 (<tt>\</tt>) 和美元符号 (<tt>$</tt>) 与将其视为字面值替代字符串所得的结果可能不同；请参阅 {@link java.util.regex.Matcher#replaceAll Matcher.replaceAll}。如有需要，可使用 {@link java.util.regex.Matcher#quoteReplacement} 取消这些字符的特殊含义。
+
+@param   regex 用来匹配此字符串的正则表达式
+@param   replacement
+          用来替换每个匹配项的字符串
+
+@return  所得 <tt>String</tt>
+
+@throws  PatternSyntaxException 如果正则表达式的语法无效
+
+@see java.util.regex.Pattern
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.replace(CharSequence target, CharSequence replacement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的字面值替换序列替换此字符串所有匹配字面值目标序列的子字符串。该替换从字符串的开头朝末尾执行，例如，用 "b" 替换字符串 "aaa" 中的 "aa" 将生成 "ba" 而不是 "ab"。
+
+@param  target 要被替换的 char 值序列
+@param  replacement char 值的替换序列
+@return  所得 String
+@throws NullPointerException 如果 <code>target</code> 或 <code>replacement</code> 为 <code>null</code>。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.lang.String.split(String regex, int limit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据匹配给定的<a href="{@docRoot}/java/util/regex/Pattern.html#sum">正则表达式</a>来拆分此字符串。
+
+<p> 此方法返回的数组包含此字符串的子字符串，每个子字符串都由另一个匹配给定表达式的子字符串终止，或者由此字符串末尾终止。数组中的子字符串按它们在此字符串中出现的顺序排列。如果表达式不匹配输入的任何部分，那么所得数组只具有一个元素，即此字符串。
+
+<p> <tt>limit</tt> 参数控制模式应用的次数，因此影响所得数组的长度。如果该限制 <i>n</i> 大于 0，则模式将被最多应用 <i>n</i>&nbsp;-&nbsp;1 次，数组的长度将不会大于 <i>n</i>，而且数组的最后一项将包含所有超出最后匹配的定界符的输入。如果 <i>n</i> 为非正，那么模式将被应用尽可能多的次数，而且数组可以是任何长度。如果 <i>n</i> 为 0，那么模式将被应用尽可能多的次数，数组可以是任何长度，并且结尾空字符串将被丢弃。
+
+<p> 例如，字符串 <tt>"boo:and:foo"</tt> 使用这些参数可生成以下结果：
+
+ <blockquote><table cellpadding=1 cellspacing=0 summary="Split example showing regex, limit, and result">
+ <tr>
+     <th>Regex</th>
+     <th>Limit</th>
+     <th>结果</th>
+ <tr><td align=center>:</td>
+     <td align=center>2</td>
+     <td><tt>{ "boo", "and:foo" }</tt></td></tr>
+ <tr><td align=center>:</td>
+     <td align=center>5</td>
+     <td><tt>{ "boo", "and", "foo" }</tt></td></tr>
+ <tr><td align=center>:</td>
+     <td align=center>-2</td>
+     <td><tt>{ "boo", "and", "foo" }</tt></td></tr>
+ <tr><td align=center>o</td>
+     <td align=center>5</td>
+     <td><tt>{ "b", "", ":and:f", "", "" }</tt></td></tr>
+ <tr><td align=center>o</td>
+     <td align=center>-2</td>
+     <td><tt>{ "b", "", ":and:f", "", "" }</tt></td></tr>
+ <tr><td align=center>o</td>
+     <td align=center>0</td>
+     <td><tt>{ "b", "", ":and:f" }</tt></td></tr>
+ </table></blockquote>
+
+<p> 调用此方法的 <i>str.</i><tt>split(</tt><i>regex</i><tt>,</tt>&nbsp;<i>n</i><tt>)</tt> 形式与以下表达式产生的结果完全相同：
+
+ <blockquote>
+ {@link java.util.regex.Pattern}.{@link java.util.regex.Pattern#compile compile}<tt>(</tt><i>regex</i><tt>)</tt>.{@link java.util.regex.Pattern#split(java.lang.CharSequence,int) split}<tt>(</tt><i>str</i><tt>,</tt>&nbsp;<i>n</i><tt>)</tt>
+ </blockquote>
+
+@param  regex 定界正则表达式
+
+@param  limit 结果阈值，如上所述
+
+@return  字符串数组，它是根据给定正则表达式的匹配拆分此字符串确定的
+
+@throws  PatternSyntaxException 如果正则表达式的语法无效
+
+@see java.util.regex.Pattern
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.lang.String.split(String regex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定<a
+ href="../util/regex/Pattern.html#sum">正则表达式</a>的匹配拆分此字符串。
+
+<p> 该方法的作用就像是使用给定的表达式和限制参数 0 来调用两参数 {@link #split(String, int) split} 方法。因此，所得数组中不包括结尾空字符串。
+
+<p> 例如，字符串 <tt>"boo:and:foo"</tt> 使用这些表达式可生成以下结果：
+
+ <blockquote><table cellpadding=1 cellspacing=0 summary="Split examples showing regex and result">
+ <tr>
+  <th>Regex</th>
+  <th>结果</th>
+ </tr>
+ <tr><td align=center>:</td>
+     <td><tt>{ "boo", "and", "foo" }</tt></td></tr>
+ <tr><td align=center>o</td>
+     <td><tt>{ "b", "", ":and:f" }</tt></td></tr>
+ </table></blockquote>
+
+
+@param  regex 定界正则表达式
+
+@return  字符串数组，它是根据给定正则表达式的匹配拆分此字符串确定的
+
+@throws  PatternSyntaxException 如果正则表达式的语法无效
+
+@see java.util.regex.Pattern
+
+@since 1.4
+@spec JSR-51
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.toLowerCase(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定 <code>Locale</code> 的规则将此 <code>String</code> 中的所有字符都转换为小写。大小写映射关系基于 {@link java.lang.Character Character} 类指定的 Unicode 标准版。由于大小写映射关系并不总是 1:1 的字符映射关系，因此所得 <code>String</code> 的长度可能不同于原 <code>String</code>。
+ <p>
+下表中给出了几个小写映射关系的示例：
+ <table border="1" summary="Lowercase mapping examples showing language code of locale, upper case, lower case, and description">
+<tr>
+  <th>语言环境的代码</th>
+  <th>大写字母</th>
+  <th>小写字母</th>
+  <th>描述</th>
+ </tr>
+ <tr>
+   <td>tr (Turkish)</td>
+   <td>\u0130</td>
+   <td>\u0069</td>
+<td>大写字母 I，上面有点 -&gt; 小写字母 i</td>
+</tr>
+<tr>
+   <td>tr (Turkish)</td>
+   <td>\u0049</td>
+   <td>\u0131</td>
+<td>大写字母 I -&gt; 小写字母 i，无点 </td>
+ </tr>
+ <tr>
+   <td>(all)</td>
+   <td>French Fries</td>
+   <td>french fries</td>
+<td>将字符串中的所有字符都小写</td>
+ </tr>
+ <tr>
+   <td>(all)</td>
+   <td><img src="doc-files/capiota.gif" alt="capiota"><img src="doc-files/capchi.gif" alt="capchi">
+       <img src="doc-files/captheta.gif" alt="captheta"><img src="doc-files/capupsil.gif" alt="capupsil">
+       <img src="doc-files/capsigma.gif" alt="capsigma"></td>
+   <td><img src="doc-files/iota.gif" alt="iota"><img src="doc-files/chi.gif" alt="chi">
+       <img src="doc-files/theta.gif" alt="theta"><img src="doc-files/upsilon.gif" alt="upsilon">
+       <img src="doc-files/sigma1.gif" alt="sigma"></td>
+   <td>将字符串中的所有字符都小写</td>
+ </tr>
+ </table>
+
+@param locale 使用此语言环境的大小写转换规则
+@return 要转换为小写的 <code>String</code>。
+@see     java.lang.String#toLowerCase()
+@see     java.lang.String#toUpperCase()
+@see     java.lang.String#toUpperCase(Locale)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.toLowerCase()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认语言环境的规则将此 <code>String</code> 中的所有字符都转换为小写。这等效于调用 <code>toLowerCase(Locale.getDefault())</code>。
+ <p>
+ <b>注：</b> 此方法与语言环境有关，如果用于应独立于语言环境解释的字符串，则可能生成不可预料的结果。
+示例有编程语言标识符、协议键、HTML 标记。
+例如，<code>"TITLE".toLowerCase()</code> 在 Turkish（土耳其语）语言环境中返回 <code>"t?tle"</code>，其中“?”是 LATIN SMALL LETTER DOTLESS I 字符。
+对于与语言环境有关的字符，要获得正确的结果，请使用 <code>toLowerCase(Locale.ENGLISH)</code>。
+ <p>
+@return  要转换为小写的 <code>String</code>。
+@see     java.lang.String#toLowerCase(Locale)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.toUpperCase(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定 <code>Locale</code> 的规则将此 <code>String</code> 中的所有字符都转换为大写。大小写映射关系基于 {@link java.lang.Character Character} 类指定的 Unicode 标准版。由于大小写映射关系并不总是 1:1 的字符映射关系，因此所得 <code>String</code> 的长度可能不同于原 <code>String</code>。
+ <p>
+下表中给出了几个与语言环境有关和 1:M 大小写映射关系的一些示例。
+ <p>
+ <table border="1" summary="Examples of locale-sensitive and 1:M case mappings. Shows Language code of locale, lower case, upper case, and description.">
+<tr>
+  <th>语言环境的代码</th>
+  <th>小写</th>
+  <th>大写</th>
+  <th>描述</th>
+ </tr>
+ <tr>
+   <td>tr (Turkish)</td>
+   <td>\u0069</td>
+   <td>\u0130</td>
+<td>小写字母 i -&gt; 大写字母 I，上面有点</td>
+ </tr>
+ <tr>
+   <td>tr (Turkish)</td>
+   <td>\u0131</td>
+   <td>\u0049</td>
+<td>小写字母 i，无点 -&gt; 大写字母 I</td>
+ </tr>
+ <tr>
+   <td>(all)</td>
+   <td>\u00df</td>
+   <td>\u0053 \u0053</td>
+<td>小写字母 sharp s -&gt; 两个字母：SS</td>
+ </tr>
+ <tr>
+   <td>(all)</td>
+   <td>Fahrvergn&uuml;gen</td>
+   <td>FAHRVERGN&Uuml;N</td>
+   <td></td>
+ </tr>
+ </table>
+
+@param locale 使用此语言环境的大小写转换规则
+@return 要转换为大写的 <code>String</code>。
+@see     java.lang.String#toUpperCase()
+@see     java.lang.String#toLowerCase()
+@see     java.lang.String#toLowerCase(Locale)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.toUpperCase()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 使用默认语言环境的规则将此 <code>String</code> 中的所有字符都转换为大写。此方法等效于 <code>toUpperCase(Locale.getDefault())</code>。
+ <p>
+ <b>注：</b> 此方法与语言环境有关，如果用于应独立于语言环境解释的字符串，则可能生成不可预料的结果。
+示例有编程语言标识符、协议键、HTML 标记。
+例如，<code>"title".toUpperCase()</code> 在 Turkish（土耳其语）语言环境中返回 <code>"T?TLE"</code>，其中“?”是 LATIN CAPITAL LETTER I WITH DOT ABOVE 字符。
+对于与语言环境有关的字符，要获得正确的结果，请使用 <code>toUpperCase(Locale.ENGLISH)</code>。
+@return  要转换为大写的 <code>String</code>。
+@see     java.lang.String#toUpperCase(Locale)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.trim()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回字符串的副本，忽略前导空白和尾部空白。
+ <p>
+如果此 <code>String</code> 对象表示一个空字符序列，或者此 <code>String</code> 对象表示的字符序列的第一个和最后一个字符的代码都大于 <code>'\u0020'</code>（空格字符），则返回对此 <code>String</code> 对象的引用。
+ <p>
+否则，若字符串中没有代码大于 <code>'\u0020'</code> 的字符，则创建并返回一个表示空字符串的新 <code>String</code> 对象。
+ <p>
+否则，假定 <i>k</i> 为字符串中代码大于 <code>'\u0020'</code> 的第一个字符的索引，<i>m</i> 为字符串中代码大于 <code>'\u0020'</code> 的最后一个字符的索引。创建一个新的 <code>String</code> 对象，它表示此字符串中从索引 <i>k</i> 处的字符开始，到索引 <i>m</i> 处的字符结束的子字符串，即 <code>this.substring(<i>k</i>,&nbsp;<i>m</i>+1)</code> 的结果。
+ <p>
+此方法可用于截去字符串开头和末尾的空白（如上所述）。
+
+@return  此字符串移除了前导和尾部空白的副本；如果没有前导和尾部空白，则返回此字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.String.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象本身（它已经是一个字符串！）。
+
+@return  字符串本身。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char[] java.lang.String.toCharArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此字符串转换为一个新的字符数组。
+
+@return  一个新分配的字符数组，它的长度是此字符串的长度，它的内容被初始化为包含此字符串表示的字符序列。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.format(String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的格式字符串和参数返回一个格式化字符串。
+
+<p> 始终使用 {@link java.util.Locale#getDefault() Locale.getDefault()} 返回的语言环境。
+
+@param  format <a href="../util/Formatter.html#syntax">格式字符串</a> 
+
+@param  args 格式字符串中由格式说明符引用的参数。如果还有格式说明符以外的参数，则忽略这些额外的参数。参数的数目是可变的，可以为 0。参数的最大数目受 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 所定义的 Java 数组最大维度的限制。有关 <tt>null</tt> 参数的行为依赖于<a href="../util/Formatter.html#syntax">转换</a>。
+
+@throws  IllegalFormatException 如果格式字符串中包含非法语法、与给定的参数不兼容的格式说明符，格式字符串给定的参数不够，或者存在其他非法条件。有关所有可能的格式化错误的规范，请参阅 formatter 类规范的<a href="../util/Formatter.html#detail">详细信息</a> 一节。
+          
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return  一个格式化字符串
+
+
+@see  java.util.Formatter
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.format(Locale l, String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的语言环境、格式字符串和参数返回一个格式化字符串。
+
+@param  l 格式化过程中要应用的{@linkplain java.util.Locale 语言环境}。如果 <tt>l</tt> 为 <tt>null</tt>，则不进行本地化。
+
+@param  format <a href="../util/Formatter.html#syntax">格式字符串</a> 
+
+@param  args 格式字符串中由格式说明符引用的参数。如果还有格式说明符以外的参数，则忽略这些额外的参数。参数的数目是可变的，可以为 0。参数的最大数目受 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 所定义的 Java 数组最大维度的限制。有关 <tt>null</tt> 参数的行为依赖于<a href="../util/Formatter.html#syntax">转换</a>。
+
+@throws  IllegalFormatException 如果格式字符串中包含非法语法、与给定参数不兼容的格式说明符，格式字符串给定的参数不够，或存在其他非法条件。有关所有可能的格式化错误的规范，请参阅 formatter 类规范的<a
+          href="../util/Formatter.html#detail">详细信息</a> 一节。
+
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return  一个格式化字符串
+
+@see  java.util.Formatter
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Object</code> 参数的字符串表示形式。
+
+@param   obj   一个 <code>Object</code>。
+@return  如果参数为 <code>null</code>，则字符串等于 <code>&quot;null&quot;</code>；否则，返回 <code>obj.toString()</code> 的值。
+@see     java.lang.Object#toString()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(char[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组参数的字符串表示形式。字符数组的内容已被复制，后续修改不会影响新创建的字符串。
+
+@param   data   <code>char</code> 数组。
+@return  一个新分配的字符串，它表示包含在字符数组参数中的相同字符序列。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(char[] data, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组参数的特定子数组的字符串表示形式。
+ <p>
+<code>offset</code> 参数是子数组的第一个字符的索引。<code>count</code> 参数指定子数组的长度。字符数组的内容已被复制，后续修改不会影响新创建的字符串。
+
+@param   data     字符数组。
+@param   offset   <code>String</code> 值的初始偏移量。
+@param   count    <code>String</code> 值的长度。
+@return  一个字符串，它表示在字符数组参数的子数组中包含的字符序列。
+@exception IndexOutOfBoundsException 如果 <code>offset</code> 为负，<code>count</code> 为负，或者 <code>offset+count</code> 大于 <code>data.length</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.copyValueOf(char[] data, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定数组中表示该字符序列的 String。
+
+
+@param   data     字符数组。
+@param   offset   子数组的初始偏移量。
+@param   count    子数组的长度。
+@return  一个 <code>String</code>，它包含字符数组的指定子数组的字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.copyValueOf(char[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定数组中表示该字符序列的 String。
+
+
+@param   data   字符数组。
+@return  一个 <code>String</code>，它包含字符数组的字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>boolean</code> 参数的字符串表示形式。
+
+@param   b   一个 <code>boolean</code>。
+@return  如果参数为 <code>true</code>，则返回一个等于 <code>"true"</code> 的字符串；否则，返回一个等于 <code>"false"</code> 的字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 参数的字符串表示形式。
+
+@param   c   一个 <code>char</code>。
+@return  一个长度为 <code>1</code> 的字符串，它包含参数 <code>c</code> 的单个字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>int</code> 参数的字符串表示形式。
+ <p>
+该表示形式恰好是单参数的 <code>Integer.toString</code> 方法返回的结果。
+
+@param   i   一个 <code>int</code>。
+@return  <code>int</code> 参数的字符串表示形式。
+@see     java.lang.Integer#toString(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(long l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>long</code> 参数的字符串表示形式。
+<p>
+该表示形式恰好是单参数的 <code>Long.toString</code> 方法返回的结果。
+
+@param   l   一个 <code>long</code>。
+@return  <code>long</code> 参数的字符串表示形式。
+@see     java.lang.Long#toString(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(float f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>float</code> 参数的字符串表示形式。
+ <p>
+该表示形式恰好是单参数的 <code>Float.toString</code> 方法返回的结果。
+
+
+@param   f   一个 <code>float</code>。
+@return  <code>float</code> 参数的字符串表示形式。
+@see     java.lang.Float#toString(float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.String.valueOf(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>double</code> 参数的字符串表示形式。
+ <p>
+该表示形式恰好是单参数的 <code>Double.toString</code> 方法返回的结果。
+
+
+@param   d   一个 <code>double</code>。
+@return  <code>double</code> 参数的字符串表示形式。
+@see     java.lang.Double#toString(double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.String java.lang.String.intern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回字符串对象的规范化表示形式。
+ <p>
+一个初始为空的字符串池，它由类 <code>String</code> 私有地维护。
+ <p>
+当调用 intern 方法时，如果池已经包含一个等于此 <code>String</code> 对象的字符串（用 {@link #equals(Object)} 方法确定），则返回池中的字符串。否则，将此 <code>String</code> 对象添加到池中，并返回此 <code>String</code> 对象的引用。
+ <p>
+它遵循以下规则：对于任意两个字符串 <code>s</code> 和 <code>t</code>，当且仅当 <code>s.equals(t)</code> 为 <code>true</code> 时，<code>s.intern()&nbsp;==&nbsp;t.intern()</code> 才为 <code>true</code>。
+ <p>
+所有字面值字符串和字符串赋值常量表达式都使用 intern 方法进行操作。字符串字面值在 <a href="http://java.sun.com/docs/books/jls/html/">Java Language Specification</a> 的 &sect;3.10.5 定义。
+
+@return  一个字符串，内容与此字符串相同，但一定取自具有唯一字符串的池。
+
+<!-- END DATA -->
+
+
+
+

@@ -1,0 +1,83 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.KeyFactorySpi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类为 <code>KeyFactory</code> 类定义<i>服务提供者接口</i> (<b>SPI</b>)。希望提供特定算法的密钥工厂实现的每个加密服务提供者必须实现此类中所有的抽象方法。
+
+<P> 密钥工厂用来把 <I>keys</I>（类型 <code>Key</code> 的不透明密钥）转换成<I>密钥规范</I>（底层密钥材料的透明表示形式），反之亦然。
+
+<P> 密钥工厂是双向的。也就是说，它们允许根据一个给定的密钥规范（密钥材料）来建造一个不透明的密钥对象，或获取以合适格式表示的密钥对象的底层密钥材料。
+
+<P> 对于同一个密钥可以存在多个兼容的密钥规范。例如，一个 DSA 公钥可以使用 <code>DSAPublicKeySpec</code> 或 <code>X509EncodedKeySpec</code> 指定。密钥工厂可以用来在兼容的密钥规范之间转换。
+
+<P> provider 应该记录其密钥工厂支持的所有密钥规范。
+
+@author Jan Luehe
+
+@version 1.12, 05/05/04
+
+@see KeyFactory
+@see Key
+@see PublicKey
+@see PrivateKey
+@see java.security.spec.KeySpec
+@see java.security.spec.DSAPublicKeySpec
+@see java.security.spec.X509EncodedKeySpec
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.security.PublicKey java.security.KeyFactorySpi.engineGeneratePublic(KeySpec keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据所提供的密钥规范（密钥材料）生成公钥对象。
+
+@param keySpec 公钥的规范（密钥材料）。
+
+@return 公钥。
+
+@exception InvalidKeySpecException 如果给定的密钥规范不适合此密钥工厂来生成公钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.security.PrivateKey java.security.KeyFactorySpi.engineGeneratePrivate(KeySpec keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据所提供的密钥规范（密钥材料）生成私钥对象。
+
+@param keySpec 私钥的规范（密钥材料）。
+
+@return 私钥。
+
+@exception InvalidKeySpecException 如果给定的密钥规范不适合此密钥工厂来生成私钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract T extends java.security.spec.KeySpec java.security.KeyFactorySpi.engineGetKeySpec(Key key, java.lang.Class<T> keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定密钥对象的规范（密钥材料）。<code>keySpec</code> 标识应该将密钥材料返回到其中的规范类。例如，它可能是 <code>DSAPublicKeySpec.class</code>，指示密钥材料应该返回到 <code>DSAPublicKeySpec</code> 类的一个实例中。
+
+@param key 密钥。
+
+@param keySpec 应该将密钥材料返回到其中的规范类。
+
+@return 请求的规范类中的底层密钥规范（密钥材料）。
+
+@exception InvalidKeySpecException 如果请求的密钥规范不适合给定的密钥，或给定的密钥不能被处理（例如，给定的密钥具有不能识别的格式）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.security.Key java.security.KeyFactorySpi.engineTranslateKey(Key key) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将其 provider 可能是未知的或可能不受信任的密钥对象转换成此密钥工厂的相应密钥对象。
+
+@param key 其 provider 是未知的或不受信任的密钥对象。
+
+@return 已转换的密钥。
+
+@exception InvalidKeyException 如果给定密钥不能被此密钥工厂处理。
+
+<!-- END DATA -->

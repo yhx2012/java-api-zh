@@ -1,0 +1,123 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.bind.helpers.AbstractUnmarshallerImpl extends java.lang.Object implements javax.xml.bind.Unmarshaller
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+部分默认 <tt>Unmarshaller</tt> 实现。
+ 
+ <p>
+此类提供 {@link javax.xml.bind.Unmarshaller} 接口的部分默认实现。
+ 
+ <p>
+JAXB 提供者必须实现 5 个方法：getUnmarshallerHandler、unmarshal(Node)、unmarshal(XMLReader,InputSource)、unmarshal(XMLStreamReader) 和 unmarshal(XMLEventReader)。
+ 
+@author <ul>
+<li>Kohsuke Kawaguchi, Sun Microsystems, Inc.</li>
+         </ul>
+@version $Revision: 1.5 $ $Date: 2006-10-23 09:14:12 $
+@see javax.xml.bind.Unmarshaller
+@since JAXB1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.xml.bind.helpers.AbstractUnmarshallerImpl.validating
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 Unmarshaller 是否将执行验证。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected org.xml.sax.XMLReader javax.xml.bind.helpers.AbstractUnmarshallerImpl.getXMLReader() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取配置好的 XMLReader。
+ 
+此方法在客户端指定的 {@link SAXSource} 对象没有 XMLReader 时使用。
+ 
+{@link Unmarshaller} 不可重入，因此我们只能使用一个 XMLReader 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.Object javax.xml.bind.helpers.AbstractUnmarshallerImpl.unmarshal(XMLReader reader, InputSource source) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 XMLReader 和 InputSource 解组对象。
+ 
+被调用者应调用 XMLReader 的 setErrorHandler 方法，这样错误才能传递给客户端指定的 ValidationEventHandler。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.helpers.AbstractUnmarshallerImpl.isValidating() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 Unmarshaller 是否被配置为在执行解组操作期间进行验证。
+ <p>
+<i><b>注：</b> 为了与 JAXP 保持一致，我将该方法命名为 isValidating()，而不是 getValidating()。</i>
+
+@return 如果 Unmarshaller 被配置为在执行解组操作期间进行验证，则返回 true，否则返回 false 
+@throws JAXBException 如果检索验证标志时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.helpers.AbstractUnmarshallerImpl.setEventHandler(ValidationEventHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册一个验证事件处理程序。
+ <p>
+如果在调用任一 <tt>unmarshal</tt> 方法期间发生验证错误，则 JAXB 提供者将调用验证事件处理程序。如果在调用解组方法之前客户端应用程序没有注册验证事件处理程序，那么将忽略所有验证事件，并有可能导致不可预料的行为。
+
+@param handler 验证事件处理程序 
+@throws JAXBException 如果在设置事件处理程序时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.helpers.AbstractUnmarshallerImpl.setValidating(boolean validating) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 Unmarshaller 是否应该在执行解组操作期间进行验证。默认情况下，<tt>Unmarshaller</tt> 不进行验证。
+ <p>
+此方法仅在调用某一解组方法之前或之后调用。
+
+@param validating 如果 Unmarshaller 应该在执行解组操作期间进行验证，则该参数为 true，否则为 false 
+@throws JAXBException 如果在执行解组操作期间启用或禁用验证时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.ValidationEventHandler javax.xml.bind.helpers.AbstractUnmarshallerImpl.getEventHandler() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的事件处理程序，如果没有设置该处理程序，则返回默认的事件处理程序。
+
+@return 当前 ValidationEventHandler，如果没有设置该处理程序，则返回默认的事件处理程序 
+@throws JAXBException 如果获取当前事件处理程序时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.bind.UnmarshalException javax.xml.bind.helpers.AbstractUnmarshallerImpl.createUnmarshalException(SAXException e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 SAXException 创建 UnmarshalException。
+ 
+这是一个为派生类提供的实用方法。
+ 
+ <p>
+当提供者实现的 ContentHandler 希望抛出 JAXBException 时，它需要通过 SAXException 包装该异常。如果 unmarshaller 实现盲目地使用 JAXBException 包装 SAXException ，则异常将是用另一个 JAXBException 包装的 SAXException 包装的 JAXBException。这样做很不明智。
+ 
+ <p>
+此方法检查 SAXException 的嵌套异常并可减少过多的包装。
+ 
+@return 得到的 UnmarshalException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.bind.helpers.AbstractUnmarshallerImpl.setProperty(String name, Object value) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于没有必需的属性，setProperty 方法的默认实现总是抛出 PropertyException。如果提供商需要处理其他属性，则应该在派生类中重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.helpers.AbstractUnmarshallerImpl.getProperty(String name) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于没有必需的属性，getProperty 方法的默认实现总是抛出 PropertyException。如果提供者需要处理其他属性，则应该在派生类中重写此方法。
+
+<!-- END DATA -->

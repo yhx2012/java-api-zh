@@ -1,0 +1,1088 @@
+<!-- BEGIN KEY -->
+public final class java.lang.Class extends java.lang.Object implements java.io.Serializable, java.lang.reflect.GenericDeclaration, java.lang.reflect.Type, java.lang.reflect.AnnotatedElement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Class</code> 类的实例表示正在运行的 Java 应用程序中的类和接口。枚举是一种类，注释是一种接口。每个数组属于被映射为 Class 对象的一个类，所有具有相同元素类型和维数的数组都共享该 <code>Class</code> 对象。基本的 Java 类型（<code>boolean</code>、<code>byte</code>、<code>char</code>、<code>short</code>、<code>int</code>、<code>long</code>、<code>float</code> 和 <code>double</code>）和关键字 <code>void</code> 也表示为 <code>Class</code> 对象。
+
+<p> <code>Class</code> 没有公共构造方法。<code>Class</code> 对象是在加载类时由 Java 虚拟机以及通过调用类加载器中的 <code>defineClass</code> 方法自动构造的。
+
+<p> 以下示例使用 <code>Class</code> 对象来显示对象的类名：
+
+<p> <blockquote><pre>
+     void printClassName(Object obj) {
+         System.out.println("The class of " + obj +
+                            " is " + obj.getClass().getName());
+     }
+ </pre></blockquote>
+ 
+<p> 还可以使用一个类字面值（JLS Section <A HREF="http://java.sun.com/docs/books/jls/second_edition/html/expressions.doc.html#251530">15.8.2</A>）来获取指定类型（或 void）的 <code>Class</code> 对象。例如：
+
+ <p> <blockquote><pre>
+     System.out.println("The name of class Foo is: "+Foo.class.getName());
+ </pre></blockquote>
+
+ @param <T> 由此 {@code Class} 对象建模的类的类型。例如，{@code String.class} 的类型是 {@code
+ Class<String>}。如果将被建模的类未知，则使用 {@code Class<?>}。 
+
+ @author  unascribed
+ @version 1.201, 08/07/06
+ @see     java.lang.ClassLoader#defineClass(byte[], int, int)
+ @since   JDK1.0
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.lang.Class.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Class 类是 Serialization Stream Protocol 中的一个特例。
+
+Class 实例最初是以下列格式写入 ObjectOutputStream 的：
+ <pre>
+      <code>TC_CLASS</code> ClassDescriptor
+      ClassDescriptor 是 <code>java.io.ObjectStreamClass</code> 实例的一个特殊序列化。
+ </pre>
+ 类描述符写入该流的初始时刻会生成一个新的句柄。未来对该类描述符的引用写作对此初始类描述符实例的引用。
+
+ @see java.io.ObjectStreamClass
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Class.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将对象转换为字符串。字符串的表示形式为字符串 "class" 或 "interface" 后面紧跟一个空格，然后是该类的完全限定名，它具有 <code>getName</code> 返回的那种格式。如果此 <code>Class</code> 对象表示一个基本类型，则此方法返回该基本类型的名称。如果该 <code>Class</code> 对象表示 void，则此方法返回 "void"。
+ 
+@return 表示此 class 对象的字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Class<?> java.lang.Class.forName(String className) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与带有给定字符串名的类或接口相关联的 <code>Class</code> 对象。调用此方法等效于：
+
+ <blockquote><pre>
+  Class.forName(className, true, currentLoader)
+ </pre></blockquote>
+
+ 其中 <code>currentLoader</code> 表示当前类的定义类加载器。
+
+ <p> 例如，以下代码片段返回命名为 <code>java.lang.Thread</code> 的类的运行时 <code>Class</code> 描述符。
+
+ <blockquote><pre>
+   Class t = Class.forName("java.lang.Thread")
+ </pre></blockquote>
+ <p>
+ 调用 <tt>forName("X")</tt> 将导致命名为 <tt>X</tt> 的类被初始化。
+
+ @param      className   所需类的完全限定名。
+ @return     具有指定名的类的 <code>Class</code> 对象。
+ @exception LinkageError 如果链接失败
+ @exception ExceptionInInitializerError 如果此方法所激发的初始化失败
+ @exception ClassNotFoundException 如果无法定位该类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Class<?> java.lang.Class.forName(String name, boolean initialize, ClassLoader loader) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的类加载器，返回与带有给定字符串名的类或接口相关联的 <code>Class</code> 对象。（以 <code>getName</code> 所返回的格式）给定一个类或接口的完全限定名，此方法会试图定位、加载和链接该类或接口。指定的类加载器用于加载该类或接口。如果参数 <code>loader</code> 为 null，则该类通过引导类加载器加载。只有 <code>initialize</code> 参数为 <code>true</code> 且以前未被初始化时，才初始化该类。
+
+<p> 如果 <code>name</code> 表示一个基本类型或 void，则会尝试在未命名的包中定位用户定义的名为 <code>name</code> 的类。因此，该方法不能用于获得表示基本类型或 void 的任何 <code>Class</code> 对象。
+
+<p> 如果 <code>name</code> 表示一个数组类，则会加载但不初始化该数组类的组件类型。
+
+<p> 例如，在一个实例方法中，表达式：
+
+ <blockquote><pre>
+  Class.forName("Foo")
+ </pre></blockquote>
+
+ 等效于：
+
+ <blockquote><pre>
+  Class.forName("Foo", true, this.getClass().getClassLoader())
+ </pre></blockquote>
+
+ 注意，此方法会抛出与加载、链接或初始化相关的错误，<em>Java Language Specification</em> 的第 12.2、12.3 和 12.4 节对此进行了详细说明。
+ 注意，此方法不检查调用者是否可访问其请求的类。
+
+<p> 如果 <code>loader</code> 为 <code>null</code>，也存在安全管理器，并且调用者的类加载器不为 null，则此方法通过 <code>RuntimePermission("getClassLoader")</code> 权限调用安全管理器的 <code>checkPermission</code> 方法，以确保可以访问引导类加载器。
+
+ @param name        所需类的完全限定名
+ @param initialize  是否必须初始化类
+ @param loader      用于加载类的类加载器
+ @return           表示所需类的类对象
+  
+ @exception LinkageError 如果链接失败
+ @exception ExceptionInInitializerError 如果该方法激发的初始化失败
+ @exception ClassNotFoundException 如果指定的类加载器无法定位该类
+
+ @see 	  java.lang.Class#forName(String)
+ @see 	  java.lang.ClassLoader
+ @since 	  1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T java.lang.Class.newInstance() throws java.lang.InstantiationException, java.lang.IllegalAccessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建此 <tt>Class</tt> 对象所表示的类的一个新实例。如同用一个带有一个空参数列表的 <code>new</code> 表达式实例化该类。如果该类尚未初始化，则初始化这个类。
+
+<p>注意，此方法传播 null 构造方法所抛出的任何异常，包括已检查的异常。使用此方法可以有效地绕过编译时的异常检查，而在其他情况下编译器都会执行该检查。
+ {@link java.lang.reflect.Constructor#newInstance(java.lang.Object...) Constructor.newInstance} 方法将该构造方法所抛出的任何异常包装在一个（已检查的）{@link java.lang.reflect.InvocationTargetException} 中，从而避免了这一问题。
+
+ 
+ @return     此对象所表示的类的一个新分配的实例。
+ @exception IllegalAccessException  如果该类或其 null 构造方法是不可访问的。
+ @exception InstantiationException
+             如果此 <code>Class</code> 表示一个抽象类、接口、数组类、基本类型或 void；
+             或者该类没有 null 构造方法；
+             或者由于其他某种原因导致实例化失败。
+ @exception ExceptionInInitializerError 如果该方法引发的初始化失败。
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝创建该类的新实例
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native boolean java.lang.Class.isInstance(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判定指定的 <code>Object</code> 是否与此 <code>Class</code> 所表示的对象赋值兼容。此方法是 Java 语言 <code>instanceof</code> 运算符的动态等效方法。如果指定的 <code>Object</code> 参数非空，且能够在不引发 <code>ClassCastException</code> 的情况下被强制转换成该 <code>Class</code> 对象所表示的引用类型，则该方法返回 true；否则返回 <code>false</code>。
+
+<p> 特别地，当该 <code>Class</code> 对象表示一个已声明的类时，若指定的 <code>Object</code> 参数是所表示类（或其任一子类）的一个实例，则此方法返回 <code>true</code>；否则返回 <code>false</code>。如果此 <code>Class</code> 对象表示一个数组类，且通过身份转换或扩展引用转换，指定的 <code>Object</code> 参数能转换为一个数组类的对象，则返回 <code>true</code>；否则返回 <code>false</code>。如果此 <code>Class</code> 对象表示一个接口，且指定 <code>Object</code> 参数的类或任一超类实现了此接口，则此方法返回 <code>true</code>；否则返回 <code>false</code>。如果此 <code>Class</code> 对象表示一个基本类型，则此方法返回 <code>false</code>。
+
+ @param   obj   要检查的对象
+ @return  如果 <code>obj</code> 是此类的实例，则返回 true
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native boolean java.lang.Class.isAssignableFrom(java.lang.Class<?> cls)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判定此 <code>Class</code> 对象所表示的类或接口与指定的 <code>Class</code> 参数所表示的类或接口是否相同，或是否是其超类或超接口。如果是则返回 <code>true</code>；否则返回 <code>false</code>。如果该 <code>Class</code> 表示一个基本类型，且指定的 <code>Class</code> 参数正是该 <code>Class</code> 对象，则该方法返回 <code>true</code>；否则返回 <code>false</code>。
+
+<p> 特别地，通过身份转换或扩展引用转换，此方法能测试指定 <code>Class</code> 参数所表示的类型能否转换为此 <code>Class</code> 对象所表示的类型。有关详细信息，请参阅 <em>Java Language Specification</em> 的第 5.1.1 和 5.1.4 节。
+ 
+ @param cls 要检查的 <code>Class</code> 对象
+ @return 表明 <code>cls</code> 类型的对象能否赋予此类对象的 <code>boolean</code> 值
+ @exception NullPointerException 如果指定的 Class 参数为 null。
+ @since JDK1.1
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native boolean java.lang.Class.isInterface()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 判定指定的 <code>Class</code> 对象是否表示一个接口类型。
+
+ @return  如果此对象表示一个接口，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native boolean java.lang.Class.isArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 判定此 <code>Class</code> 对象是否表示一个数组类。
+ 
+ @return  如果此对象表示一个数组类，则返回 <code>true</code>；否则返回 <code>false</code>。
+ @since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native boolean java.lang.Class.isPrimitive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 判定指定的 <code>Class</code> 对象是否表示一个基本类型。
+
+<p> 有九种预定义的 <code>Class</code> 对象，表示八个基本类型和 void。这些类对象由 Java 虚拟机创建，与其表示的基本类型同名，即 <code>boolean</code>、<code>byte</code>、<code>char</code>、<code>short</code>、<code>int</code>、<code>long</code>、<code>float</code> 和 <code>double</code>。
+
+<p> 这些对象仅能通过下列声明为 public static final 的变量访问，也是使此方法返回 <code>true</code> 的仅有的几个 <code>Class</code> 对象。
+
+ 
+ @return 当且仅当该类表示一个基本类型时，才返回 true
+
+ @see     java.lang.Boolean#TYPE
+ @see     java.lang.Character#TYPE
+ @see     java.lang.Byte#TYPE
+ @see     java.lang.Short#TYPE
+ @see     java.lang.Integer#TYPE
+ @see     java.lang.Long#TYPE
+ @see     java.lang.Float#TYPE
+ @see     java.lang.Double#TYPE
+ @see     java.lang.Void#TYPE
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isAnnotation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <tt>Class</tt> 对象表示一个注释类型则返回 true。注意，如果此方法返回 true，则 {@link #isInterface()} 也返回 true，因为所有的注释类型同时也是接口。
+
+ 
+ @return 如果此类对象表示一个注释类型，则返回 <tt>true</tt>；否则返回 <tt>false</tt>
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isSynthetic()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果此类是复合类，则返回 <tt>true</tt>，否则 <tt>false</tt>。
+ @return 当且仅当该类为复合类时才返回 <tt>true</tt>，Java 语言规范对此作了详细说明。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Class.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 以 <tt>String</tt> 的形式返回此 <tt>Class</tt> 对象所表示的实体（类、接口、数组类、基本类型或 void）名称。
+ 
+ <p> 如果此类对象表示的是非数组类型的引用类型，则返回该类的二进制名称，Java Language Specification, Second Edition 对此作了详细说明。
+
+ <p> 如果此类对象表示一个基本类型或 void，则返回的名字是一个与该基本类型或 void 所对应的 Java 语言关键字相同的 <tt>String</tt>。
+ 
+ <p> 如果此类对象表示一个数组类，则名字的内部形式为：表示该数组嵌套深度的一个或多个 '<tt>[</tt>' 字符加元素类型名。元素类型名的编码如下：
+
+ <blockquote><table summary="Element types and encodings">
+ <tr><th> Element Type <th> &nbsp;&nbsp;&nbsp; <th> Encoding
+ <tr><td> boolean      <td> &nbsp;&nbsp;&nbsp; <td align=center> Z
+ <tr><td> byte         <td> &nbsp;&nbsp;&nbsp; <td align=center> B
+ <tr><td> char         <td> &nbsp;&nbsp;&nbsp; <td align=center> C
+ <tr><td> class or interface  
+                       <td> &nbsp;&nbsp;&nbsp; <td align=center> L<i>classname</i>;
+ <tr><td> double       <td> &nbsp;&nbsp;&nbsp; <td align=center> D
+ <tr><td> float        <td> &nbsp;&nbsp;&nbsp; <td align=center> F
+ <tr><td> int          <td> &nbsp;&nbsp;&nbsp; <td align=center> I
+ <tr><td> long         <td> &nbsp;&nbsp;&nbsp; <td align=center> J
+ <tr><td> short        <td> &nbsp;&nbsp;&nbsp; <td align=center> S
+ </table></blockquote>
+
+<p> 类或接口名 <i>classname</i> 是上面指定类的二进制名称。
+
+<p> 示例：
+ <blockquote><pre>
+ String.class.getName()
+     returns "java.lang.String"
+ byte.class.getName()
+     returns "byte"
+ (new Object[3]).getClass().getName()
+     returns "[Ljava.lang.Object;"
+ (new int[3][4][5][6][7][8][9]).getClass().getName()
+     returns "[[[[[[[I"
+ </pre></blockquote>
+
+@return  此对象所表示的类或接口名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ClassLoader java.lang.Class.getClassLoader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该类的类加载器。有些实现可能使用 null 来表示引导类加载器。如果该类由引导类加载器加载，则此方法在这类实现中将返回 null。
+
+<p> 如果存在安全管理器，并且调用者的类加载器不是 null，也不同于或是请求其类加载器的类的类加载器的祖先，则此方法通过 <code>RuntimePermission("getClassLoader")</code> 权限调用此安全管理器的 <code>checkPermission</code> 方法，以确保可以访问该类的类加载器。
+ 
+<p>如果此对象表示一个基本类型或 void，则返回 null。
+ 
+ @return  加载此对象所表示的类或接口的类加载器。
+ @throws SecurityException  如果存在安全管理器，并且 <code>checkPermission</code> 方法拒绝对该类类加载器的访问。
+ @see java.lang.ClassLoader
+ @see SecurityManager#checkPermission
+ @see java.lang.RuntimePermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.TypeVariable[] java.lang.Class.getTypeParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按声明顺序返回 <tt>TypeVariable</tt> 对象的一个数组，这些对象表示用此 <tt>GenericDeclaration</tt> 对象所表示的常规声明来声明的类型变量。如果底层常规声明不声明类型变量，则返回长度为 0 的数组。
+
+ 
+ @return 表示该常规声明所声明的类型变量的 <tt>TypeVariable</tt> 对象的一个数组
+ @throws GenericSignatureFormatError 如果常规声明的常规签名不符合 Java Virtual Machine Specification, 3rd edition 规定的格式
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.Class<? super T> java.lang.Class.getSuperclass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>Class</code> 所表示的实体（类、接口、基本类型或 void）的超类的 <code>Class</code>。如果此 <code>Class</code> 表示 <code>Object</code> 类、一个接口、一个基本类型或 void，则返回 null。如果此对象表示一个数组类，则返回表示该 <code>Object</code> 类的 <code>Class</code> 对象。
+ 
+ @return 此对象所表示的类的超类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Type java.lang.Class.getGenericSuperclass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <tt>Class</tt> 所表示的实体（类、接口、基本类型或 void）的直接超类的 <tt>Type</tt>。
+ 
+<p>如果超类是参数化类型，则返回的 <tt>Type</tt> 
+对象必须准确反映源代码中所使用的实际类型参数。如果以前未曾创建表示超类的参数化类型，则创建这个类型。有关参数化类型创建过程的语义，请参阅 {@link java.lang.reflect.ParameterizedType ParameterizedType} 声明。如果此 <tt>Class</tt> 表示 <tt>Object</tt>
+ 类、接口、基本类型或 void，则返回 null。如果此对象表示一个数组类，则返回表示 <tt>Object</tt> 类的 <tt>Class</tt> 对象。
+
+ @throws GenericSignatureFormatError 如果常规类签名不符合 Java Virtual Machine Specification, 3rd edition 规定的格式
+ @throws TypeNotPresentException 如果常规超类引用不存在的类型声明
+ @throws MalformedParameterizedTypeException 如果常规超类引用的参数化类型由于某种原因无法实例化
+ @return 此对象所表示的类的超类
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Package java.lang.Class.getPackage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此类的包。此类的类加载器用于查找该包。如果该类是通过引导类加载器加载的，则搜索从 CLASSPATH 加载的包的集合，以查找该类的包。如果所有包对象都不是用该类的类加载器加载的，则返回 null。
+
+ <p> 只有该类的附属清单中定义了信息，并且类加载器使用该清单中的属性创建了包实例时，包才具有版本和规范属性。
+
+ @return 该类的包，如果存档或基本代码中没有可用的包信息，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.Class[] java.lang.Class.getInterfaces()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 确定此对象所表示的类或接口实现的接口。
+
+<p> 如果此对象表示一个类，则返回值是一个数组，它包含了表示该类所实现的所有接口的对象。数组中接口对象顺序与此对象所表示的类的声明的 <code>implements</code> 子句中接口名顺序一致。例如，给定声明：
+ <blockquote><pre>
+ class Shimmer implements FloorWax, DessertTopping { ... }
+</pre></blockquote>
+ 设 <code>s</code> 的值为 <code>Shimmer</code> 的一个实例；表达式：
+ <blockquote><pre>
+ s.getClass().getInterfaces()[0]
+ </pre></blockquote>
+ 的值为表示 <code>FloorWax</code> 接口的 <code>Class</code> 对象；
+ <blockquote><pre>
+ s.getClass().getInterfaces()[1]
+ </pre></blockquote>
+ 的值为表示 <code>DessertTopping</code> 接口的 <code>Class</code> 对象。
+
+<p> 如果此对象表示一个接口，则该数组包含表示该接口扩展的所有接口的对象。数组中接口对象顺序与此对象所表示的接口的声明的 <code>extends</code> 子句中接口名顺序一致。
+
+<p>如果此对象表示一个不实现任何接口的类或接口，则此方法返回一个长度为 0 的数组。
+
+<p> 如果此对象表示一个基本类型或 void，则此方法返回一个长度为 0 的数组。
+
+ @return 该类所实现的接口的一个数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Type[] java.lang.Class.getGenericInterfaces()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回表示某些接口的 <tt>Type</tt>，这些接口由此对象所表示的类或接口直接实现。
+
+<p>如果超接口是参数化类型，则为它返回的 <tt>Type</tt> 对象必须准确反映源代码中所使用的实际类型参数。如果以前未曾创建表示每个超接口的参数化类型，则创建这个类型。有关参数化类型创建过程的语义，请参阅 {@link java.lang.reflect.ParameterizedType ParameterizedType} 声明。
+
+<p> 如果此对象表示一个类，则返回一个包含这样一些对象的数组，这些对象表示该类实现的所有接口。数组中接口对象顺序与此对象所表示的类的声明的 <tt>implements</tt> 子句中接口名顺序一致。对于数组类，接口 <tt>Cloneable</tt> 和 <tt>Serializable</tt> 以该顺序返回。
+
+<p>如果此对象表示一个接口，则该数组包含表示该接口直接扩展的所有接口的对象。数组中接口对象顺序与此对象所表示的接口的声明的 <code>extends</code> 子句中接口名顺序一致。
+
+<p>如果此对象表示一个不实现任何接口的类或接口，则此方法返回一个长度为 0 的数组。
+
+<p>如果此对象表示一个基本类型或 void，则此方法返回一个长度为 0 的数组。
+
+ @throws GenericSignatureFormatError
+     如果常规类签名不符合 Java Virtual Machine Specification, 3rd edition 规定的格式
+ @throws TypeNotPresentException 如果任意常规超接口引用不存在的类型声明
+ @throws MalformedParameterizedTypeException 如果任意常规超接口引用的参数化类型由于某种原因无法实例化
+ @return 此类所实现的接口的一个数组
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.Class<?> java.lang.Class.getComponentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示数组组件类型的 <code>Class</code>。如果此类不表示数组类，则此方法返回 null。
+
+ @return 如果此类是数组，则返回表示此类组件类型的 <code>Class</code>
+ @see     java.lang.reflect.Array
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native int java.lang.Class.getModifiers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此类或接口以整数编码的 Java 语言修饰符。修饰符由 Java 虚拟机的 <code>public</code>、<code>protected</code>、<code>private</code>、<code>final</code>、<code>static</code>、<code>abstract</code> 和 <code>interface</code> 对应的常量组成；它们应当使用 <code>Modifier</code> 类的方法来解码。
+
+<p> 如果底层类是数组类，则其 <code>public</code>、<code>private</code> 和 <code>protected</code> 修饰符与其组件类型的修饰符相同。如果此 <code>Class</code> 表示一个基本类型或 void，则其 <code>public</code> 修饰符始终为 <code>true</code>，<code>protected</code> 和 <code>private</code> 修饰符始终为 <code>false</code>。如果此对象表示一个数组类、一个基本类型或 void，则其 <code>final</code> 修饰符始终为 <code>true</code>，其接口修饰符始终为 <code>false</code>。该规范没有给定其他修饰符的值。
+
+ <p><em>Java Virtual Machine Specification</em> 中的表 4.1 对修饰符编码进行了详细说明。
+
+ 
+ @return 表示该类修饰符的 <code>int</code>
+ @see     java.lang.reflect.Modifier
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.Object[] java.lang.Class.getSigners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此类的标记。
+
+ @return  此类的标记，若无标记则返回 null。特别地，如果此对象表示一个基本类型或 void，则此方法返回 null。
+ @since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Method java.lang.Class.getEnclosingMethod()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <tt>Class</tt> 对象表示某一方法中的一个本地或匿名类，则返回 {@link java.lang.reflect.Method Method} 对象，它表示底层类的立即封闭方法。否则返回 <tt>null</tt>。
+
+特别地，如果底层类是由一个类型声明、实例初始值设定项或静态初始值设定项立即封闭的本地或匿名类，则此方法返回 <tt>null</tt>。
+
+ 
+ @return 如果该类是本地或匿名类，则返回底层类的立即封闭方法；否则返回 <tt>null</tt>。
+ @since 1.5
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Constructor<?> java.lang.Class.getEnclosingConstructor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该 <tt>Class</tt> 对象表示构造方法中的一个本地或匿名类，则返回 {@link java.lang.reflect.Constructor Constructor} 对象，它表示底层类的立即封闭构造方法。否则返回 <tt>null</tt>。特别地，如果底层类是由一个类型声明、实例初始值设定项或静态初始值设定项立即封闭的本地或匿名类，则此方法返回 <tt>null</tt>。
+ 
+ @return 如果该类是本地或匿名类，则返回底层类的立即封闭构造方法；否则返回 <tt>null</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public native java.lang.Class<?> java.lang.Class.getDeclaringClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>Class</code> 对象所表示的类或接口是另一个类的成员，则返回的 <code>Class</code> 对象表示该对象的声明类。如果该类或接口不是其他类的成员，则此方法返回 null。如果此 <code>Class</code> 对象表示一个数组类、基本类型或 void，则此方法返回 null。
+
+ 
+ @return 该类的声明类
+ @since JDK1.1
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> java.lang.Class.getEnclosingClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回底层类的立即封闭类。如果底层类是顶层类，则此方法返回 <tt>null</tt>。
+ 
+ @return 底层类的立即封闭类
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Class.getSimpleName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回源代码中给出的底层类的简称。如果底层类是匿名的则返回一个空字符串。
+
+<p>数组的简称即附带 "[]" 的组件类型的简称。特别地，组件类型为匿名的数组的简称是 "[]"。
+
+ 
+ @return 底层类的简称
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Class.getCanonicalName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回 Java Language Specification 中所定义的底层类的规范化名称。如果底层类没有规范化名称（即如果底层类是一个组件类型没有规范化名称的本地类、匿名类或数组），则返回 null。
+ @return 底层类的规范化名称（如果存在的话）；否则返回 <tt>null</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isAnonymousClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 当且仅当底层类是匿名类时返回 <tt>true</tt>。
+
+ @return 当且仅当此类是匿名类时，才返回 <tt>true</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isLocalClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 当且仅当底层类是本地类时返回 <tt>true</tt>。
+ 
+ @return 当且仅当该类是本地类时，才返回 <tt>true</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isMemberClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 当且仅当底层类是成员类时返回 <tt>true</tt>。
+ 
+ @return 当且仅当该类是成员类时，才返回 <tt>true</tt>。
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] java.lang.Class.getClasses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含某些 <code>Class</code> 对象的数组，这些对象表示属于此 <code>Class</code> 对象所表示的类的成员的所有公共类和接口。包括从超类继承的公共类和接口成员以及该类声明的公共类和接口成员。如果此 <code>Class</code> 对象没有公共成员类或接口，则此方法返回一个长度为 0 的数组。如果此 <code>Class</code> 对象表示一个基本类型、一个数组类或 void，则此方法也返回一个长度为 0 的数组。
+ 
+ @return 表示该类公共成员的 <code>Class</code> 对象的数组
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 方法拒绝访问该类中的类
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Field[] java.lang.Class.getFields() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含某些 <code>Field</code> 对象的数组，这些对象反映此 <code>Class</code> 对象所表示的类或接口的所有可访问公共字段。返回数组中的元素没有排序，也没有任何特定的顺序。如果类或接口没有可访问的公共字段，或者表示一个数组类、一个基本类型或 void，则此方法返回长度为 0 的数组。
+
+<p> 特别地，如果该 <code>Class</code> 对象表示一个类，则此方法返回该类及其所有超类的公共字段。如果该 <code>Class</code> 对象表示一个接口，则此方法返回该接口及其所有超接口的公共字段。
+
+<p> 该方法不反映数组类的隐式长度字段。用户代码应使用 <code>Array</code> 类的方法来操作数组。
+
+<p> 请参阅 <em>Java Language Specification</em> 的第 8.2 和 8.3 节。
+
+ 
+ @return 表示公共字段的 <code>Field</code> 对象的数组
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问该类中的字段
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Method[] java.lang.Class.getMethods() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含某些 <code>Method</code> 对象的数组，这些对象反映此 <code>Class</code> 对象所表示的类或接口（包括那些由该类或接口声明的以及从超类和超接口继承的那些的类或接口）的公共 <em>member</em> 方法。数组类返回从 <code>Object</code> 类继承的所有（公共）member 方法。返回数组中的元素没有排序，也没有任何特定的顺序。如果此 <code>Class</code> 对象表示没有公共成员方法的类或接口，或者表示一个基本类型或 void，则此方法返回长度为 0 的数组。
+
+ <p> 类初始化方法 <code>&lt;clinit&gt;</code> 不包含在返回的数组中。如果类声明了带有相同参数类型的多个公共成员方法，则它们都会包含在返回的数组中。
+
+ <p> 请参阅 <em>Java Language Specification</em> 的第 8.2 和 8.4 节。
+
+ @return 表示此类中公共方法的 <code>Method</code> 对象的数组
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问该类中的方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Constructor[] java.lang.Class.getConstructors() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含某些 <code>Constructor</code> 对象的数组，这些对象反映此 <code>Class</code> 对象所表示的类的所有公共构造方法。如果该类没有公共构造方法，或者该类是一个数组类，或者该类反映一个基本类型或 void，则返回一个长度为 0 的数组。
+
+注意，此方法返回 {@code Constructor<T>} 对象的数组（即取自此类构造方法的数组）时，此方法的返回类型是 {@code Constructor<?>[]}，<em>不是</em> 预期的 {@code Constructor<T>[]}。此少量信息的返回类型是必需的，因为从此方法返回之后，该数组可能被修改以保存不同类的 {@code Constructor} 对象，而这将违反 {@code Constructor<T>[]} 的类型保证。
+ 
+@return 表示此类公共构造方法的 <code>Constructor</code> 对象数组
+
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问该类中的构造方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess
+             s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Field java.lang.Class.getField(String name) throws java.lang.NoSuchFieldException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Field</code> 对象，它反映此 <code>Class</code> 对象所表示的类或接口的指定公共成员字段。<code>name</code> 参数是一个 <code>String</code>，用于指定所需字段的简称。
+
+ <p> 要反映的字段由下面的算法确定。设 C 为此对象所表示的类：
+ <OL>
+ <LI> 如果 C 声明一个带有指定名的公共字段，则它就是要反映的字段。</LI>
+ <LI> 如果在第 1 步中没有找到任何字段，则该算法被递归地应用于 C 的每一个直接超接口。直接超接口按其声明顺序进行搜索。</LI>
+ <LI> 如果在第 1、2 两步没有找到任何字段，且 C 有一个超类 S，则在 S 上递归调用该算法。如果 C 没有超类，则抛出 <code>NoSuchFieldException</code>。
+ </OL>
+
+ <p> 请参阅 <em>Java Language Specification</em> 的第 8.2 和 8.3 节。
+ 
+ @param name 字段名
+ @return  由 <code>name</code> 指定的该类的 <code>Field</code> 对象
+ @exception NoSuchFieldException 如果没有找到带有指定名的字段。
+ @exception NullPointerException 如果 <code>name</code> 为 <code>null</code>
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问字段
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Method java.lang.Class.getMethod(String name, java.lang.Class[] parameterTypes) throws java.lang.NoSuchMethodException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Method</code> 对象，它反映此 <code>Class</code> 对象所表示的类或接口的指定公共成员方法。<code>name</code> 参数是一个 <code>String</code>，用于指定所需方法的简称。<code>parameterTypes</code> 参数是按声明顺序标识该方法形参类型的 <code>Class</code> 对象的一个数组。如果 <code>parameterTypes</code> 为 <code>null</code>，则按空数组处理。
+
+<p> 如果 <code>name</code> 是 "{@code <init>};" 或 "{@code <clinit>}"，则将引发 <code>NoSuchMethodException</code>。否则，要反映的方法由下面的算法确定（设 C 为此对象所表示的类）：
+ <OL>
+ <LI> 在 C 中搜索任一<I>匹配的方法</I>。如果找不到匹配的方法，则将在 C 的超类上递归调用第 1 步算法。</LI>
+ <LI> 如果在第 1 步中没有找到任何方法，则在 C 的超接口中搜索匹配的方法。如果找到了这样的方法，则反映该方法。</LI>
+ </OL>
+
+在 C 类中查找匹配的方法：如果 C 正好声明了一个具有指定名称的公共方法并且恰恰有相同的形参类型，则它就是反映的方法。如果在 C 中找到了多个这样的方法，并且其中有一个方法的返回类型比其他方法的返回类型都特殊，则反映该方法；否则将从中任选一个方法。
+
+<p>注意，类中可以有多个匹配方法，因为尽管 Java 语言禁止类声明带有相同签名但不同返回类型的多个方法，但 Java 虚拟机并不禁止。这增加了虚拟机的灵活性，可以用来实现各种语言特性。例如，可以使用{@linkplain
+ java.lang.reflect.Method#isBridge 桥方法 (brige method)}实现协变返回；桥方法以及将被重写的方法将具有相同的签名，不同的返回类型。
+
+ <p> 请参阅<em>Java 语言规范</em> 第 8.2 和 8.4 节。
+
+ @param name 方法名
+ @param parameterTypes 参数列表
+ @return 与指定的 <code>name</code> 和 <code>parameterTypes</code> 匹配的 <code>Method</code> 对象
+ @exception NoSuchMethodException 如果找不到匹配的方法，或者方法名为 "&lt;init&gt;" 或 "&lt;clinit&gt;"
+ @exception NullPointerException 如果 <code>name</code> 为 <code>null</code>
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Constructor<T> java.lang.Class.getConstructor(java.lang.Class[] parameterTypes) throws java.lang.NoSuchMethodException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Constructor</code> 对象，它反映此 <code>Class</code> 对象所表示的类的指定公共构造方法。<code>parameterTypes</code> 参数是 <code>Class</code> 对象的一个数组，这些 Class 对象按声明顺序标识构造方法的形参类型。
+
+如果此 <code>Class</code> 对象表示非静态上下文中声明的内部类，则形参类型作为第一个参数包括显示封闭的实例。
+
+<p> 要反映的构造方法是此 <code>Class</code> 对象所表示的类的公共构造方法，其形参类型与 <code>parameterTypes</code> 所指定的参数类型相匹配。
+
+ @param parameterTypes 参数数组
+ @return 与指定的 <code>parameterTypes</code> 相匹配的公共构造方法的 <code>Constructor</code> 对象
+ @exception NoSuchMethodException 如果找不到匹配的方法。
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.PUBLIC)}</tt> 拒绝访问构造方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] java.lang.Class.getDeclaredClasses() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Class</code> 对象的一个数组，这些对象反映声明为此 <code>Class</code> 对象所表示的类的成员的所有类和接口。包括该类所声明的公共、保护、默认（包）访问及私有类和接口，但不包括继承的类和接口。如果该类不将任何类或接口声明为成员，或者此 <code>Class</code> 对象表示基本类型、数组类或 void，则此方法返回一个长度为 0 的数组。
+
+ @return <code>Class</code> 对象的数组，表示该类的所有 declared 成员
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess
+             s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问此类中已声明的类
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess
+             s.checkPackageAccess()}</tt> 的调用拒绝访问此类的包
+
+             </ul>
+
+ @since JDK1.1
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Field[] java.lang.Class.getDeclaredFields() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Field</code> 对象的一个数组，这些对象反映此 <code>Class</code> 对象所表示的类或接口所声明的所有字段。包括公共、保护、默认（包）访问和私有字段，但不包括继承的字段。
+返回数组中的元素没有排序，也没有任何特定的顺序。如果该类或接口不声明任何字段，或者此 <code>Class</code> 对象表示一个基本类型、一个数组类或 void，则此方法返回一个长度为 0 的数组。
+
+<p> 请参阅 <em>Java Language Specification</em> 的第 8.2 和 8.3 节。
+
+ 
+ @return    表示此类所有已声明字段的 <code>Field</code> 对象的数组
+ @exception SecurityException
+            如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问此类中已声明的字段
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+@since JDK1.1
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Method[] java.lang.Class.getDeclaredMethods() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Method</code> 对象的一个数组，这些对象反映此 <code>Class</code> 对象表示的类或接口声明的所有方法，包括公共、保护、默认（包）访问和私有方法，但不包括继承的方法。
+返回数组中的元素没有排序，也没有任何特定的顺序。如果该类或接口不声明任何方法，或者此 <code>Class</code> 对象
+表示一个基本类型、一个数组类或 void，则此方法返回一个长度为 0 的数组。类初始化方法 <code>&lt;clinit&gt;</code> 不包含在返回数组中。如果该类声明带有相同参数类型的多个公共成员方法，则它们都包含在返回的数组中。
+
+ <p> 请参阅 <em>Java Language Specification</em> 第 8.2 节。
+
+ 
+ @return    表示此类所有声明方法的 <code>Method</code> 对象的数组
+ @exception SecurityException
+            如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问该类中已声明的方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Constructor[] java.lang.Class.getDeclaredConstructors() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Constructor</code> 对象的一个数组，这些对象反映此 <code>Class</code> 对象表示的类声明的所有构造方法。它们是公共、保护、默认（包）访问和私有构造方法。返回数组中的元素没有排序，也没有任何特定的顺序。如果该类存在一个默认构造方法，则它包含在返回的数组中。
+如果此 <code>Class</code> 对象表示一个接口、一个基本类型、一个数组类或 void，则此方法返回一个长度为 0 的数组。
+
+ <p> 请参阅 <em>Java Language Specification</em> 第 8.2 节。
+
+ @return    表示此类所有已声明的构造方法的 <code>Constructor</code> 对象的数组
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问该类中已声明的构造方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问此类的包
+
+             </ul>
+
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Field java.lang.Class.getDeclaredField(String name) throws java.lang.NoSuchFieldException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Field</code> 对象，该对象反映此 <code>Class</code> 对象所表示的类或接口的指定已声明字段。<code>name</code> 参数是一个 <code>String</code>，它指定所需字段的简称。注意，此方法不反映数组类的 <code>length</code> 字段。
+
+ @param name 字段名
+ @return 此类中指定字段的 <code>Field</code> 对象
+ @exception NoSuchFieldException 如果找不到带有指定名称的字段。
+ @exception NullPointerException 如果 <code>name</code> 为 <code>null</code>
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问已声明字段
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Method java.lang.Class.getDeclaredMethod(String name, java.lang.Class[] parameterTypes) throws java.lang.NoSuchMethodException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Method</code> 对象，该对象反映此 <code>Class</code> 对象所表示的类或接口的指定已声明方法。<code>name</code> 参数是一个 <code>String</code>，它指定所需方法的简称，<code>parameterTypes</code> 参数是 <code>Class</code> 对象的一个数组，它按声明顺序标识该方法的形参类型。如果在某个类中声明了带有相同参数类型的多个方法，并且其中有一个方法的返回类型比其他方法的返回类型都特殊，则返回该方法；否则将从中任选一个方法。如果名称是 "&lt;init&gt;” 或 “&lt;clinit&gt;"，则引发一个 <code>NoSuchMethodException</code>。
+
+ @param name 方法名
+ @param parameterTypes 参数数组
+ @return    该类与指定名和参数相匹配的方法的 <code>Method</code> 对象
+ @exception NoSuchMethodException 如果找不到匹配的方法。
+ @exception NullPointerException 如果 <code>name</code> 为 <code>null</code>
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问已声明方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.reflect.Constructor<T> java.lang.Class.getDeclaredConstructor(java.lang.Class[] parameterTypes) throws java.lang.NoSuchMethodException, java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Constructor</code> 对象，该对象反映此 <code>Class</code> 对象所表示的类或接口的指定构造方法。<code>parameterTypes</code> 参数是 <code>Class</code> 对象的一个数组，它按声明顺序标识构造方法的形参类型。
+
+如果此 <code>Class</code> 对象表示非静态上下文中声明的内部类，则形参类型作为第一个参数包括显示封闭的实例。
+
+ @param parameterTypes 参数数组
+ @return    带有指定参数列表的构造方法的 <code>Constructor</code> 对象
+ @exception NoSuchMethodException 如果找不到匹配的方法。
+ @exception SecurityException
+             如果存在安全管理器 <i>s</i>，并满足下列任一条件：
+
+             <ul>
+
+             <li> 调用 <tt>{@link SecurityManager#checkMemberAccess s.checkMemberAccess(this, Member.DECLARED)}</tt> 拒绝访问已声明的构造方法
+
+             <li> 调用者的类加载器不同于也不是当前类的类加载器的一个祖先，并且对 <tt>{@link SecurityManager#checkPackageAccess s.checkPackageAccess()}</tt> 的调用拒绝访问该类的包
+
+             </ul>
+
+
+ @since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.lang.Class.getResourceAsStream(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 查找具有给定名称的资源。查找与给定类相关的资源的规则是通过定义类的 {@linkplain ClassLoader class loader} 实现的。此方法委托此对象的类加载器。如果此对象通过引导类加载器加载，则此方法将委托给 {@link ClassLoader#getSystemResourceAsStream}。
+
+ <p> 在委托前，使用下面的算法从给定的资源名构造一个绝对资源名：
+
+ <ul>
+
+ <li> 如果 <tt>name</tt> 以 <tt>'/'</tt> 开始
+ (<tt>'&#92;u002f'</tt>)，则绝对资源名是 <tt>'/'</tt> 后面的 <tt>name</tt> 的一部分。
+
+ <li> 否则，绝对名具有以下形式：
+
+ <blockquote><pre>
+   <tt>modified_package_name</tt>/<tt>name</tt>
+</pre></blockquote>
+
+ <p> 其中 <tt>modified_package_name</tt> 是此对象的包名，该名用 <tt>'/'</tt> 取代了 <tt>'.'</tt> (<tt>'&#92;u002e'</tt>)。
+
+ </ul>
+
+ @param  name 所需资源的名称
+ @return  一个 {@link java.io.InputStream} 对象；如果找不到带有该名称的资源，则返回 <tt>null</tt>
+ @throws  NullPointerException 如果 <tt>name</tt> 是 <tt>null</tt>
+ @since   JDK1.1
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.lang.Class.getResource(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 查找带有给定名称的资源。查找与给定类相关的资源的规则是通过定义类的 {@linkplain ClassLoader class loader} 实现的。此方法委托给此对象的类加载器。如果此对象通过引导类加载器加载，则此方法将委托给 {@link ClassLoader#getSystemResource}。
+
+ <p> 在委托前，使用下面的算法从给定的资源名构造一个绝对资源名：
+
+ <ul>
+
+ <li> 如果 <tt>name</tt> 以 <tt>'/'</tt>
+ (<tt>'&#92;u002f'</tt>) 开始，则绝对资源名是 <tt>'/'</tt> 后面的 <tt>name</tt> 的一部分。
+
+ <li> 否则，绝对名具有以下形式：
+
+ <blockquote><pre>
+   <tt>modified_package_name</tt>/<tt>name</tt>
+</pre></blockquote>
+
+ <p> 其中 <tt>modified_package_name</tt> 是此对象的包名，该名用 <tt>'/'</tt> 取代了 <tt>'.'</tt> (<tt>'&#92;u002e'</tt>)。
+
+ </ul>
+
+ @param  name 所需资源的名称
+ @return   一个 {@link java.net.URL} 对象；如果找不到带有该名称的资源，则返回 <tt>null</tt>
+ @since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.ProtectionDomain java.lang.Class.getProtectionDomain()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回该类的 <code>ProtectionDomain</code>。如果安装了安全管理器，则此方法首先通过 <code>RuntimePermission("getProtectionDomain")</code> 权限调用安全管理器的 <code>checkPermission</code> 方法，以确保可以获取 <code>ProtectionDomain</code>。
+
+ @return 该类的 ProtectionDomain
+ @throws SecurityException 若安全管理器存在，并且其 <code>checkPermission</code> 方法不允许获取 ProtectionDomain。
+ @see java.security.ProtectionDomain
+ @see SecurityManager#checkPermission
+ @see java.lang.RuntimePermission
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.desiredAssertionStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果要在调用此方法时将要初始化该类，则返回将分配给该类的断言状态。
+如果已经设置了该类的断言状态，则返回其最新设置；如果有包默认断言状态属于此类，则返回最特殊的相关包默认断言状态的最新设置；如果该类不是系统类（即它有类加载器），则返回其类加载器的默认断言状态；否则返回系统类默认断言状态。
+<p>
+很少有程序员需要此方法；它是为 JRE 自身提供的。（它使类能够在初始化时确定是否启用断言。）注意，不保证此方法在（或将要）初始化指定类时返回与（或将与）该指定类相关的实际断言状态。
+ 
+ @return 所需的指定类断言状态。
+ @see    java.lang.ClassLoader#setClassAssertionStatus
+ @see    java.lang.ClassLoader#setPackageAssertionStatus
+ @see    java.lang.ClassLoader#setDefaultAssertionStatus
+ @since  1.4
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isEnum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 当且仅当该类声明为源代码中的枚举时返回 true。
+ 
+ @return 当且仅当该类声明为源代码中的枚举时返回 true
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.lang.Class.getEnumConstants()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果此 Class 对象不表示枚举类型，则返回枚举类的元素或 null。
+ 
+ @return 以声明顺序返回一个数组，该数组包含构成此 Class 对象所表示的枚举类的值，或者在此 Class 对象不表示枚举类型时返回 null
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T java.lang.Class.cast(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将一个对象强制转换成此 <tt>Class</tt> 对象所表示的类或接口。
+
+ @param obj 要强制转换的对象
+ @return 强制转换返回该对象，若 obj 为 null 则返回 null 
+
+ @throws ClassCastException 如果该对象不是 null 也不能分配给类型 T。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<? extends U> java.lang.Class.asSubclass(java.lang.Class<U> clazz)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制转换该 <tt>Class</tt> 对象，以表示指定的 class 对象所表示的类的一个子类。检查强制转换的有效性，如果无效则抛出 <tt>ClassCastException</tt>。如果此方法成功了，它将始终返回对此 class 对象的一个引用。
+
+<p>此方法的使用场合为：客户端需要“收缩转换” <tt>Class</tt> 对象的类型，以便将其传递给某个 API，且该 API 对它愿意接受的 <tt>Class</tt> 对象进行限制。强制转换会产生一个编译时警告，因为强制转换的正确性无法在运行时检查（因为常规类型是通过擦除实现的）。
+
+ 
+ @return 此 <tt>Class</tt> 对象，它被强制转换以表示指定类对象的子类。
+ @throws ClassCastException 如果该 <tt>Class</tt> 对象不表示指定类的子类（这里“子类”包括该类本身）。
+ @since 1.5
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public A extends java.lang.annotation.Annotation java.lang.Class.getAnnotation(java.lang.Class<A> annotationClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NullPointerException {@inheritDoc}
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Class.isAnnotationPresent(java.lang.Class<? extends java.lang.annotation.Annotation> annotationClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NullPointerException {@inheritDoc}
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.annotation.Annotation[] java.lang.Class.getAnnotations()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.annotation.Annotation[] java.lang.Class.getDeclaredAnnotations()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.5
+
+<!-- END DATA -->
+

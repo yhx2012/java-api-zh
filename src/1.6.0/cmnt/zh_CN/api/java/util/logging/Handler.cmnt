@@ -1,0 +1,180 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.logging.Handler extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>Handler</tt> 对象从 <tt>Logger</tt> 中获取日志信息，并将这些信息导出。例如，它可将这些信息写入控制台或文件中，也可以将这些信息发送到网络日志服务中，或将其转发到操作系统日志中。
+ <p>
+可通过执行 <tt>setLevel(Level.OFF)</tt> 来禁用 <tt>Handler</tt>，并可通过执行适当级别的 <tt>setLevel</tt> 来重新启用。
+ <p>
+<tt>Handler</tt> 类通常使用 <tt>LogManager</tt> 属性来设置 <tt>Handler</tt> 的 <tt>Filter</tt>、<tt>Formatter</tt> 和 <tt>Level</tt> 的默认值。有关每个具体的 <tt>Handler</tt> 类，请参阅指定的文档。
+
+
+@version 1.17, 01/12/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.logging.Handler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认构造方法。得到的 <tt>Handler</tt> 具有 <tt>Level.ALL</tt> 的日志级别，不具有 <tt>Formatter</tt> 和 <tt>Filter</tt>。作为 <tt>ErrorManager</tt> 安装默认的 <tt>ErrorManager</tt> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.publish(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发布 <tt>LogRecord</tt>。
+ <p>
+最初向 <tt>Logger</tt> 对象发出的日志请求，此请求可初始化 <tt>LogRecord</tt> 并可在此转发这一日志记录。
+ <p>
+<tt>Handler</tt> 负责在必要时进行信息格式化。 格式化应该包括本地化。
+
+@param  record  日志事件的描述。忽略 null 记录，并且也不发布它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新所有的缓冲输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.close() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭 <tt>Handler</tt>，并释放所有相关的资源。
+ <p>
+Close 方法将执行 <tt>flush</tt>，然后关闭 <tt>Handler</tt>。调用 close 方法后，就不应再使用该 <tt>Handler</tt>。要么默认忽略方法调用，要么抛出运行时异常。
+
+@exception SecurityException 如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setFormatter(Formatter newFormatter) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <tt>Formatter</tt>。将该 <tt>Formatter</tt> 用于格式化该 <tt>Handler</tt> 的 <tt>LogRecords</tt>。
+ <p>
+某些 <tt>Handlers</tt> 不能使用 <tt>Formatters</tt>，在此情形下将记住而不是使用 <tt>Formatter</tt>。
+ <p>
+@param newFormatter <tt>Formatter</tt> 将使用（不可为空）
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.Formatter java.util.logging.Handler.getFormatter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <tt>Handler</tt> 的 <tt>Formatter</tt>。
+@return <tt>Formatter</tt>（可以为空）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setEncoding(String encoding) throws java.lang.SecurityException, java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置该 <tt>Handler</tt> 所用的字符编码。
+ <p>
+应在将任何 <tt>LogRecords</tt> 写入 <tt>Handler</tt> 之前设置编码。
+
+@param encoding  所支持字符编码的名称。可以为空，以表明应为默认平台编码。
+@exception SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+@exception UnsupportedEncodingException 如果不支持指定的编码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.Handler.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <tt>Handler</tt> 的字符编码。
+
+@return  编码名称。可以为空，以表明应使用默认编码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setFilter(Filter newFilter) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <tt>Filter</tt>，以控制该 <tt>Handler</tt> 的输出。
+ <P>
+对于 <tt>publish</tt> 的每个调用，<tt>Handler</tt> 将调用该 <tt>Filter</tt> （如果不为空），以检查是否应发布或放弃 <tt>LogRecord</tt>。
+
+@param   newFilter  <tt>Filter</tt> 对象（可以为空）
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.Filter java.util.logging.Handler.getFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 <tt>Handler</tt> 的当前 <tt>Filter</tt>。
+
+@return  <tt>Filter</tt> 对象（可以为空）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setErrorManager(ErrorManager em)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为该 Handler 定义一个 ErrorManager。
+ <p>
+如果使用该 Handler 时发生任何错误，将调用 ErrorManager 的 "error" 方法。
+
+@param em  新的 ErrorManager
+@exception SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.ErrorManager java.util.logging.Handler.getErrorManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取该 Handler 的 ErrorManager。
+
+@exception  SecurityException 如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.logging.Handler.reportError(String msg, Exception ex, int code)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于向该 Handler 的 ErrorManager 报告错误的受保护便利方法。注意，该方法无需进行安全检查即可获取和使用 ErrorManager。因此，可在调用者无特权的环境下使用该方法。
+
+@param msg    描述性字符串（可以为空）
+@param ex     异常（可以为空）
+@param code   在 ErrorManager 中定义的错误代码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.Handler.setLevel(Level newLevel) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置日志级别，指定该 <tt>Handler</tt> 所记录的信息级别。将丢弃低于该值的信息级别。 
+ <p>
+其目的在于允许开发人员打开大多数日志，但是限制将信息发送到特定 <tt>Handlers</tt>。
+ 
+@param newLevel   日志级别的新值
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.logging.Level java.util.logging.Handler.getLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得用于指定该 <tt>Handler</tt> 所记录信息的日志级别。将丢弃低于该值的信息级别。
+@return	正在记录的信息级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.logging.Handler.isLoggable(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查该 <tt>Handler</tt> 是否实际记录给定的 <tt>LogRecord</tt>。
+ <p>
+该方法检查 <tt>LogRecord</tt> 是否具有适当的 <tt>Level</tt>，以及是否满足任何 <tt>Filter</tt>。它也可进行其他 <tt>Handler</tt> 特定的检查，以防处理程序记录 <tt>LogRecord</tt>。如果 <tt>LogRecord</tt> 为 Null，将返回 False。
+ <p>
+@param record  一个 <tt>LogRecord</tt>
+@return 如果要记录 <tt>LogRecord</tt>，则返回 true。
+
+<!-- END DATA -->

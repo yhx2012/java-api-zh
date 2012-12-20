@@ -1,0 +1,135 @@
+<!-- BEGIN KEY -->
+public class java.net.CookieManager extends java.net.CookieHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ CookieManager provides a concrete implementation of {@link CookieHandler},
+ which separates the storage of cookies from the policy surrounding accepting
+ and rejecting cookies. A CookieManager is initialized with a {@link CookieStore}
+ which manages storage, and a {@link CookiePolicy} object, which makes
+ policy decisions on cookie acceptance/rejection.
+
+ <p> The HTTP cookie management in java.net package looks like:
+ <blockquote>
+ <pre>
+                  use
+ CookieHandler <------- HttpURLConnection
+       ^
+       | impl
+       |         use
+ CookieManager -------> CookiePolicy
+             |   use
+             |--------> HttpCookie
+             |              ^
+             |              | use
+             |   use        |
+             |--------> CookieStore
+                            ^
+                            | impl
+                            |
+                  Internal in-memory implementation
+ </pre>
+ <ul>
+   <li>
+     CookieHandler is at the core of cookie management. User can call
+     CookieHandler.setDefault to set a concrete CookieHanlder implementation
+     to be used.
+   </li>
+   <li>
+     CookiePolicy.shouldAccept will be called by CookieManager.put to see whether
+     or not one cookie should be accepted and put into cookie store. User can use
+     any of three pre-defined CookiePolicy, namely ACCEPT_ALL, ACCEPT_NONE and
+     ACCEPT_ORIGINAL_SERVER, or user can define his own CookiePolicy implementation
+     and tell CookieManager to use it.
+   </li>
+   <li>
+     CookieStore is the place where any accepted HTTP cookie is stored in.
+     If not specified when created, a CookieManager instance will use an internal
+     in-memory implementation. Or user can implements one and tell CookieManager
+     to use it.
+   </li>
+   <li>
+     Currently, only CookieStore.add(URI, HttpCookie) and CookieStore.get(URI)
+     are used by CookieManager. Others are for completeness and might be needed
+     by a more sophisticated CookieStore implementation, e.g. a NetscapeCookieSotre.
+   </li>
+ </ul>
+ </blockquote>
+
+ <p>There're various ways user can hook up his own HTTP cookie management behavior, e.g.
+ <blockquote>
+ <ul>
+   <li>Use CookieHandler.setDefault to set a brand new {@link CookieHandler} implementation
+   <li>Let CookieManager be the default {@link CookieHandler} implementation,
+       but implement user's own {@link CookieStore} and {@link CookiePolicy}
+       and tell default CookieManager to use them:
+     <blockquote><pre>
+       // this should be done at the beginning of an HTTP session
+       CookieHandler.setDefault(new CookieManager(new MyCookieStore(), new MyCookiePolicy()));
+     </pre></blockquote>
+   <li>Let CookieManager be the default {@link CookieHandler} implementation, but
+       use customized {@link CookiePolicy}:
+     <blockquote><pre>
+       // this should be done at the beginning of an HTTP session
+       CookieHandler.setDefault(new CookieManager());
+       // this can be done at any point of an HTTP session
+       ((CookieManager)CookieHandler.getDefault()).setCookiePolicy(new MyCookiePolicy());
+     </pre></blockquote>
+ </ul>
+ </blockquote>
+
+ <p>The implementation conforms to RFC 2965, section 3.3.
+
+ @version %I%, %E%
+ @author Edward Wang
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a new cookie manager.
+
+ <p>This constructor will create new cookie manager with default
+ cookie store and accept policy. The effect is same as
+ <tt>CookieManager(null, null)</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieManager(CookieStore store, CookiePolicy cookiePolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a new cookie manager with specified cookie store and cookie policy.
+
+ @param store     a <tt>CookieStore</tt> to be used by cookie manager.
+                  if <tt>null</tt>, cookie manager will use a default one,
+                  which is an in-memory CookieStore implmentation.
+ @param cookiePolicy      a <tt>CookiePolicy</tt> instance
+                          to be used by cookie manager as policy callback.
+                          if <tt>null</tt>, ACCEPT_ORIGINAL_SERVER will
+                          be used.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.CookieManager.setCookiePolicy(CookiePolicy cookiePolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ To set the cookie policy of this cookie manager.
+
+ <p> A instance of <tt>CookieManager</tt> will have
+ cookie policy ACCEPT_ORIGINAL_SERVER by default. Users always
+ can call this method to set another cookie policy.
+
+ @param cookiePolicy      the cookie policy. Can be <tt>null</tt>, which
+                          has no effects on current cookie policy.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.CookieStore java.net.CookieManager.getCookieStore()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ To retrieve current cookie store.
+
+ @return  the cookie store currently used by cookie manager.
+
+<!-- END DATA -->

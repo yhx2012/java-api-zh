@@ -1,0 +1,528 @@
+<!-- BEGIN KEY -->
+public class java.io.PrintStream extends java.io.FilterOutputStream implements java.lang.Appendable, java.io.Closeable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <code>PrintStream</code> 为其他输出流添加了功能，使它们能够方便地打印各种数据值表示形式。它还提供其他两项功能。与其他输出流不同，<code>PrintStream</code> 永远不会抛出 <code>IOException</code>；而是，异常情况仅设置可通过 <code>checkError</code> 方法测试的内部标志。另外，为了自动刷新，可以创建一个 <code>PrintStream</code>；这意味着可在写入 byte 数组之后自动调用 <code>flush</code> 方法，可调用其中一个 <code>println</code> 方法，或写入一个换行符或字节 (<code>'\n'</code>)。
+
+<p> <code>PrintStream</code> 打印的所有字符都使用平台的默认字符编码转换为字节。在需要写入字符而不是写入字节的情况下，应该使用 <code>{@link PrintWriter}</code> 类。
+
+@version    1.40, 06/06/28
+@author     Frank Yellin
+@author     Mark Reinhold
+@since      JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(OutputStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的打印流。此流将不会自动刷新。
+
+@param  out        将向其打印值和对象的输出流
+
+@see java.io.PrintWriter#PrintWriter(java.io.OutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(OutputStream out, boolean autoFlush)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的打印流。
+
+@param  out        将向其打印值和对象的输出流
+@param  autoFlush   boolean 变量；如果为 true，则每当写入 byte 数组、调用其中一个 <code>println</code> 方法或写入换行符或字节 (<code>'\n'</code>) 时都会刷新输出缓冲区
+
+@see java.io.PrintWriter#PrintWriter(java.io.OutputStream, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(OutputStream out, boolean autoFlush, String encoding) throws java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的打印流。
+
+@param  out        将向其打印值和对象的输出流
+@param  autoFlush   boolean 变量；如果为 true，则每当写入 byte 数组、调用其中一个 <code>println</code> 方法或写入换行符或字节 (<code>'\n'</code>) 时都会刷新缓冲区
+@param  encoding   受支持的<a href="../lang/package-summary.html#charenc">字符编码</a>的名称
+
+@throws  UnsupportedEncodingException 如果不支持指定的编码
+
+@since  1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(String fileName) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定文件名称且不带自动行刷新的新打印流。此便捷构造方法创建必要的中间 {@link java.io.OutputStreamWriter OutputStreamWriter}，后者将使用此 Java 虚拟机实例的{@linkplain java.nio.charset.Charset#defaultCharset() 默认 charset} 进行字符编码。
+
+@param  fileName 要用作此打印流目标的文件名称。如果存在该文件，则将其大小截取为零；否则，创建一个新文件。将输出写入文件中，并对其进行缓冲处理。
+
+@throws  FileNotFoundException 如果给定的文件对象不表示现有的可写常规文件，并且无法创建该名称的新常规文件，或者在打开或创建文件时发生其他一些错误
+
+@throws  SecurityException 如果存在安全管理器，并且 {@link SecurityManager#checkWrite checkWrite(fileName)} 拒绝对文件进行写入访问。
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(String fileName, String csn) throws java.io.FileNotFoundException, java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定文件名称和字符集且不带自动行刷新的新打印流。此便捷构造方法创建必要的中间 {@link java.io.OutputStreamWriter OutputStreamWriter}，后者将使用提供的字符集进行字符编码。
+
+@param  fileName 要用作此打印流目标的文件名称。如果存在该文件，则将其大小截取为零；否则，创建一个新文件。将输出写入文件中，并对其进行缓冲处理。
+
+@param  csn 受支持的{@linkplain java.nio.charset.Charset 字符集}的名称
+
+@throws  FileNotFoundException 如果给定的文件对象不表示现有的可写常规文件，并且无法创建该名称的新常规文件，或者在打开或创建文件时发生其他一些错误
+
+@throws  SecurityException 如果存在安全管理器，并且 {@link SecurityManager#checkWrite checkWrite(fileName)} 拒绝对文件进行写入访问。
+
+@throws  UnsupportedEncodingException 如果不支持指定字符集
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(File file) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定文件且不带自动行刷新的新打印流。此便捷构造方法创建必要的中间 {@link java.io.OutputStreamWriter OutputStreamWriter}，后者将使用此 Java 虚拟机实例的{@linkplain java.nio.charset.Charset#defaultCharset() 默认 charset} 进行字符编码。
+
+@param  file 要用作此打印流目标的文件。如果存在该文件，则将其大小截取为零；否则，创建一个新文件。将输出写入文件中，并对其进行缓冲处理。
+
+@throws  FileNotFoundException 如果给定的文件对象不表示现有的可写常规文件，并且无法创建该名称的新常规文件，或者在打开或创建文件时发生其他一些错误
+
+@throws  SecurityException 如果存在安全管理器，并且 {@link SecurityManager#checkWrite checkWrite(file.getPath())} 拒绝对文件进行写入访问。
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream(File file, String csn) throws java.io.FileNotFoundException, java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定文件名称和字符集且不带自动行刷新的新打印流。此便捷构造方法创建必要的中间 {@link java.io.OutputStreamWriter OutputStreamWriter}，后者将使用提供的字符集进行字符编码。
+
+@param  file 要用作此打印流目标的文件。如果存在该文件，则将其大小截取为零；否则，创建一个新文件。将输出写入文件中，并对其进行缓冲处理。
+
+@param  csn 受支持的{@linkplain java.nio.charset.Charset 字符集}的名称
+
+@throws  FileNotFoundException 如果给定的文件对象不表示现有的可写常规文件，并且无法创建该名称的新常规文件，或者在打开或创建文件时发生其他一些错误
+
+@throws  SecurityException 如果存在安全管理器，并且 {@link SecurityManager#checkWrite checkWrite(file.getPath())} 拒绝对文件进行写入访问
+
+@throws  UnsupportedEncodingException 如果不支持指定字符集
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新该流的缓冲。通过将所有缓冲的输出字节写入到底层输出流然后刷新该流的缓冲，完成此操作。
+
+@see        java.io.OutputStream#flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.close()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭流。通过刷新流然后关闭底层输出流，完成此操作。
+
+@see        java.io.OutputStream#close()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.PrintStream.checkError()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新流并检查其错误状态。当底层输出流抛出 <code>IOException</code> 而不是 <code>InterruptedIOException</code> 时，以及调用 <code>setError</code> 方法时，内部错误状态将被设置为 <code>true</code>。如果对底层输出流的操作抛出 <code>InterruptedIOException</code>，则通过调用以下方法或等效方法，<code>PrintStream</code> 将该异常转换回中断状态：
+ <pre>
+     Thread.currentThread().interrupt();
+ </pre>
+
+@return 当且仅当此流遇到 <code>IOException</code> 而不是 <code>InterruptedIOException</code> 时，或已调用 <code>setError</code> 方法时，返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.io.PrintStream.setError()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该流的错误状态设置为 <code>true</code>。
+
+<p> 在调用 {@link #clearError()} 之前，此方法将导致 {@link #checkError()} 的后续调用返回 <tt>true</tt>。
+
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.io.PrintStream.clearError()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除此流的内部错误状态。
+
+<p> 在另一个写入操作失败并调用 {@link #setError()} 之前，此方法将导致 {@link #checkError()} 的后续调用返回 <tt>false</tt>。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.write(int b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的字节写入此流。如果字节为新行且启用了自动刷新，则调用 <code>flush</code> 方法。
+
+<p> 要注意按给定写入字节；要写入将根据平台的默认字符编码转换的字符，请使用 <code>print(char)</code> 或 <code>println(char)</code> 方法。
+
+@param  b  要写入的字节
+@see #print(char)
+@see #println(char)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.write(byte[] buf, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>len</code> 字节从指定的初始偏移量为 <code>off</code> 的 byte 数组写入此流。如果启用自动刷新，则调用 <code>flush</code> 方法。
+
+<p> 注意，要按给定写入字节；要写入将根据平台的默认字符编码转换的字符，请使用 <code>print(char)</code> 或 <code>println(char)</code> 方法。
+
+@param  buf    byte 数组
+@param  off   相对于开始写入字节处的偏移量
+@param  len   要写入的字节数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 boolean 值。按照平台的默认字符编码将 <code>{@link java.lang.String#valueOf(boolean)}</code> 生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      b   要打印的 <code>boolean</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印字符。按照平台的默认字符编码将字符转换为一个或多个字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      c   要打印的 <code>char</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印整数。按照平台的默认字节编码将 <code>{@link java.lang.String#valueOf(int)}</code> 生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      i   要打印的 <code>int</code>
+@see        java.lang.Integer#toString(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(long l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 long 整数。按照平台的默认字符编码将 <code>{@link java.lang.String#valueOf(long)}</code> 生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      l   要打印的 <code>long</code>
+@see        java.lang.Long#toString(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(float f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印浮点数。按照平台的默认字符编码将 <code>{@link java.lang.String#valueOf(float)}</code> 生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      f   要打印的 <code>float</code>
+@see        java.lang.Float#toString(float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印双精度浮点数。按照平台的默认字符编码将 <code>{@link java.lang.String#valueOf(double)}</code> 生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      d   要打印的 <code>double</code>
+@see        java.lang.Double#toString(double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(char[] s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印字符数组。按照平台的默认字符编码将字符转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      s   要打印的字符数组
+
+@throws  NullPointerException 如果 <code>s</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印字符串。如果参数为 <code>null</code>，则打印字符串 <code>&quot;null&quot;</code>。否则，按照平台的默认字符编码将字符串的字符转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      s   要打印的 <code>String</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.print(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印对象。按照平台的默认字符串编码将 <code>{@link java.lang.String#valueOf(Object)}</code> 方法生成的字符串转换为字节，并完全以 <code>{@link #write(int)}</code> 方法的方式写入这些字节。
+
+@param      obj   要打印的 <code>Object</code>
+@see        java.lang.Object#toString()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过写入行分隔符字符串终止当前行。行分隔符字符串由系统属性 <code>line.separator</code> 定义，不一定是单个换行符 (<code>'\n'</code>)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(boolean x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 boolean 值，然后终止行。此方法的行为就像先调用 <code>{@link #print(boolean)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x 要打印的 <code>boolean</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(char x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印字符，然后终止该行。此方法的行为就像先调用 <code>{@link #print(char)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>char</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(int x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印整数，然后终止该行。此方法的行为就像先调用 <code>{@link #print(int)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>int</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(long x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 long，然后终止该行。此方法的行为就像先调用 <code>{@link #print(long)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>long</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(float x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 float，然后终止该行。此方法的行为就像先调用 <code>{@link #print(float)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>float</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(double x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 double，然后终止该行。此方法的行为就像先调用 <code>{@link #print(double)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>double</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(char[] x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印字符数组，然后终止该行。此方法的行为就像先调用 <code>{@link #print(char[])}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的字符数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(String x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 String，然后终止该行。此方法的行为就像先调用 <code>{@link #print(String)}</code> 然后调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>String</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PrintStream.println(Object x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印 Object，然后终止该行。此方法首先调用 String.valueOf(x) 获取打印对象的字符串值，然后的行为如同先调用 <code>{@link #print(String)}</code> 再调用 <code>{@link #println()}</code> 一样。
+
+@param x  要打印的 <code>Object</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.printf(String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化的字符串写入此输出流的便捷方法。
+
+<p> 调用此方法的 <tt>out.printf(format, args)</tt> 形式，行为与以下调用完全相同：
+
+ <pre>
+     out.format(format, args) </pre>
+
+@param  format 在<a href="../util/Formatter.html#syntax">格式字符串的语法</a>中描述的格式字符串
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的 Java 数组的最大维数的限制。针对 <tt>null</tt> 参数的行为依赖于 <a href="../util/Formatter.html#syntax">conversion</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够充足的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return 此输出流
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.printf(Locale l, String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化的字符串写入此输出流的便捷方法。
+
+<p> 调用此方法的 <tt>out.printf(l, format, args)</tt> 形式，行为与以下调用完全相同：
+
+ <pre>
+     out.format(l, format, args) </pre>
+
+@param  l 格式化过程中应用的 {@linkplain java.util.Locale locale}。如果 <tt>l</tt> 为 <tt>null</tt>，则不应用本地化。
+
+@param  format 在<a href="../util/Formatter.html#syntax">格式字符串的语法</a>中描述的格式字符串
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的 Java 数组的最大维数的限制。针对 <tt>null</tt> 参数的行为依赖于 <a href="../util/Formatter.html#syntax">conversion</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够充足的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return 此输出流
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.format(String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化字符串写入此输出流中。
+
+<p> 始终使用的语言环境是由 {@link java.util.Locale#getDefault() Locale.getDefault()} 返回的语言环境，不管以前在此对象上调用了其他什么样的格式化方法。
+
+@param  format 在<a href="../util/Formatter.html#syntax">格式字符串的语法</a>中描述的格式字符串
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的 Java 数组的最大维数的限制。针对 <tt>null</tt> 参数的行为依赖于 <a href="../util/Formatter.html#syntax">conversion</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够充足的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return  此输出流
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.format(Locale l, String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化字符串写入此输出流中。
+
+@param  l 格式化过程中应用的 {@linkplain java.util.Locale locale}。如果 <tt>l</tt> 为 <tt>null</tt>，则不应用本地化。
+
+@param  format 在<a href="../util/Formatter.html#syntax">格式字符串的语法</a>中描述的格式字符串
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java Virtual Machine Specification</a> 定义的 Java 数组的最大维数的限制。针对 <tt>null</tt> 参数的行为依赖于 <a href="../util/Formatter.html#syntax">conversion</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够充足的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws  NullPointerException 如果 <tt>format</tt> 为 <tt>null</tt>
+
+@return  此输出流
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.append(CharSequence csq)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符序列添加到此输出流。
+
+<p> 此方法调用 <tt>out.append(csq)</tt> 的行为与调用下列方法完全相同：
+
+ <pre>
+     out.print(csq.toString()) </pre>
+
+<p> 可能不添加整个序列，也可能添加，具体取决于字符序列 <tt>csq</tt> 的 <tt>toString</tt> 规范。例如，调用一个字符缓冲区的 <tt>toString</tt> 方法将返回一个子序列，其内容取决于缓冲区的位置和限制。
+
+@param  csq 要添加的字符序列。如果 <tt>csq</tt> 为 <tt>null</tt>，则向此输出流添加四个字符 <tt>&quot;null&quot;</tt>。
+
+@return  此输出流
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.append(CharSequence csq, int start, int end)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符序列的子序列添加到此输出流。 
+ 
+<p> 当 <tt>csq</tt> 不为 <tt>null</tt> 时，调用该方法的 <tt>out.append(csq、start、end)</tt> 形式，行为与以下调用完全相同：
+
+ <pre>
+     out.print(csq.subSequence(start, end).toString()) </pre>
+
+@param  csq 要添加子序列的字符序列。如果 <tt>csq</tt> 为 <tt>null</tt>，则添加这些字符，就好像 <tt>csq</tt> 包含四个字符 <tt>&quot;null&quot;</tt> 一样。
+
+@param  start 子序列中第一个字符的索引
+
+@param  end 子序列中最后一个字符后面的字符的索引
+
+@return  此输出流
+
+@throws  IndexOutOfBoundsException 如果 <tt>start</tt> 或 <tt>end</tt> 为负，而 <tt>start</tt> 大于 <tt>end</tt> 或者 <tt>end</tt> 大于 <tt>csq.length()</tt>
+
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintStream java.io.PrintStream.append(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符添加到此输出流。
+
+<p> 调用此方法的 <tt>out.append(c)</tt> 形式，行为与以下调用完全相同：
+
+ <pre>
+     out.print(c) </pre>
+
+@param  c 要添加的 16 位字符
+
+@return  此输出流
+
+@since 1.5
+
+<!-- END DATA -->

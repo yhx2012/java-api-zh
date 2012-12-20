@@ -1,0 +1,106 @@
+<!-- BEGIN KEY -->
+public class javax.management.MBeanServerInvocationHandler extends java.lang.Object implements java.lang.reflect.InvocationHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>通过 MBean 服务器将 MBean 的管理接口中的方法转发到 MBean 的 {@link InvocationHandler}。</p>
+
+<p>在给出 {@link MBeanServerConnection}、MBean 服务器中某个 MBean 的 {@link ObjectName}，以及一个 Java 接口 <code>Intf</code>（它使用用于 Standard MBean 或 MXBean 的模式描述 MBean 的管理接口）的情况下，可以使用此类构造 MBean 的代理。该代理实现了接口 <code>Intf</code>，这样就可以通过 MBean 服务器向 MBean 转发其所有方法。</p>
+
+<p>如果将 {@code InvocationHandler} 用于 MXBean，那么方法的参数会从 MXBean 接口中声明的类型转换为相应的映射类型，并将返回值从映射类型转换为声明的类型。例如，在使用了方法<br>
+
+{@code public List<String> reverse(List<String> list);}<br>
+
+并且已经知道 {@code List<String>} 的映射类型为 {@code String[]} 的情况下，调用 {@code proxy.reverse(someList)} 会将 {@code someList} 从 {@code List<String>} 转换为 {@code String[]}，调用 MBean 操作 {@code reverse}，然后将返回的 {@code String[]} 转换为 {@code List<String>}。</p>
+
+<p>当使用此调用处理程序对代理调用方法 Object.toString()、Object.hashCode() 和 Object.equals(Object) 时，仅当这些方法出现在一个代理接口中时，才将它们转发到 MBean 服务器。对于使用 {@link JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMBeanProxy} 或 {@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMXBeanProxy} 创建的代理而言，这意味着这些方法必须出现在 Standard MBean 或 MXBean 接口中。否则，这些方法具有以下行为：
+ <ul>
+<li>toString() 返回该代理的字符串表示形式
+<li>hashCode() 返回代理的哈希码，因此两个相等的代理具有相同的哈希码
+<li>当且仅当 Object 参数的代理类型与此代理相同时（带有具有相同 MBeanServerConnection 和 ObjectName 的 MBeanServerInvocationHandler），equals(Object) 才返回 true；如果其中一个 {@code MBeanServerInvocationHandler} 是使用 {@code Class} 参数构造的，则要 {@code equals} 返回 true，另一个 {@code MBeanServerInvocationHandler} 必须是使用相同的 {@code Class} 参数构造的。
+ </ul>
+
+@since 1.5 
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanServerInvocationHandler(MBeanServerConnection connection, ObjectName objectName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>通过 MBean 服务器将方法转发给 Standard MBean 的调用处理程序。此构造方法可能被调用，而不是依赖于 {@link JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMBeanProxy}，例如在需要为 {@link Proxy#newProxyInstance Proxy.newProxyInstance} 提供一个不同的 {@link ClassLoader} 的情况下。</p>
+
+<p>此构造方法不适合 MXBean。为此请使用 {@link #MBeanServerInvocationHandler(MBeanServerConnection, ObjectName, boolean)}。此构造方法等效于 {@code new MBeanServerInvocationHandler(connection, objectName, false)}。</p>
+
+@param connection MBean 服务器连接，通过此连接转发所有使用此处理程序的代理方法。
+
+@param objectName MBean 服务器中的 MBean 名称，一些方法将转发到该 MBean。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanServerInvocationHandler(MBeanServerConnection connection, ObjectName objectName, boolean isMXBean)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>可以通过 MBean 服务器将方法转发给 Standard MBean 或 MXBean 的调用处理程序。此构造方法可能被调用，而不是依赖于 {@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMXBeanProxy}，例如在需要为 {@link Proxy#newProxyInstance Proxy.newProxyInstance} 提供一个不同的 {@link ClassLoader} 的情况下。</p>
+
+@param connection MBean 服务器连接，通过此连接转发所有使用此处理程序的代理方法。
+
+@param objectName MBean 服务器中的 MBean 的名称，一些方法将转发到该 MBean。
+
+@param isMXBean  如果为 true，则代理适用于 {@link MXBean}，并且将适当映射应用于方法参数和返回值。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanServerConnection javax.management.MBeanServerInvocationHandler.getMBeanServerConnection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>MBean 服务器连接，使用此处理程序的代理的方法是通过此连接转发的。</p>
+
+@return  MBean 服务器连接。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.MBeanServerInvocationHandler.getObjectName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>MBean 服务器中 MBean 的名称，一些方法将转发到该 MBean。
+
+@return 对象名。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.MBeanServerInvocationHandler.isMXBean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>如果为 true，则该代理适用于 MXBean，并将适当映射应用于方法参数和返回值。
+
+@return  对该代理是否适用于 MXBean 的判断。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.management.MBeanServerInvocationHandler.newProxyInstance(MBeanServerConnection connection, ObjectName objectName, java.lang.Class<T> interfaceClass, boolean notificationBroadcaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个代理，该代理通过将其方法从给定 MBean 服务器转发到指定 MBean 来实现给定的接口。从 1.6 版本开始，方法 {@link JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class)} 和 {@link JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class, boolean)} 优先于此方法。</p>
+
+<p>此方法等效于 {@link Proxy#newProxyInstance Proxy.newProxyInstance}<code>(interfaceClass.getClassLoader(), interfaces, handler)</code>。其中 <code>handler</code> 是 {@link #MBeanServerInvocationHandler new MBeanServerInvocationHandler(connection, objectName)} 的结果，而 <code>interfaces</code> 是一个数组，如果 <code>notificationBroadcaster</code> 为 false，则该数组有一个元素，如果为 true，则该数组有两个元素。<code>interfaces</code> 的第一个元素是 <code>interfaceClass</code>，第二个（如果存在）是 <code>NotificationEmitter.class</code>。
+
+@param connection 要转发到的目标 MBean 服务器。
+@param  objectName <code>connection</code> 中的 MBean 的名称，各个方法将转发到该 MBean。
+@param  interfaceClass MBean 输出的管理接口，也由返回的代理来实现。
+@param  notificationBroadcaster 通过 <code>connection</code> 转发所返回代理的方法，使该代理实现 {@link NotificationEmitter}。在该代理上调用 {@link NotificationBroadcaster#addNotificationListener} 将导致对 {@link MBeanServerConnection#addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)} 的调用，对于 {@link NotificationBroadcaster} 和 {@link NotificationEmitter} 的其他方法也是如此。
+
+@param <T> 允许编译器知道如果 {@code interfaceClass} 参数为 {@code MyMBean.class} 则返回类型为 {@code MyMBean}。
+
+@return 新的代理实例。
+
+@see JMX#newMBeanProxy(MBeanServerConnection, ObjectName, Class)
+
+<!-- END DATA -->

@@ -1,0 +1,182 @@
+<!-- BEGIN KEY -->
+public class java.security.AlgorithmParameterGenerator extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>AlgorithmParameterGenerator</code> 类用于生成将在某个特定算法中使用的参数集合。参数生成器是使用 <code>getInstance</code> 工厂方法（返回给定类的实例的 static 方法）构造的。
+ 
+<P>可以使用以下两种方式初始化将生成参数的对象：与算法无关的方式或特定于算法的方式：
+
+ <ul>
+<li>使用与算法无关的方式时，所有参数生成器都共享&ldquo;大小&rdquo;概念和一个随机源。大小的测量由所有算法参数所普遍共享，尽管不同的算法对它有不同的解释。例如，在使用 <i>DSA</i> 算法的参数的情况下，&ldquo;大小&rdquo;对应于质数模数的大小（以位为单位）。使用这一方法时，特定于算法的参数生成值（如果有）默认为某些标准值，除非它们可以从指定大小派生。<P>
+
+<li>另外一种方式使用特定于算法的语义初始化参数生成器对象，这些语义由特定于算法的参数生成值集合表示。例如，倘若要生成 Diffie-Hellman 系统参数，则参数生成值通常由质数模数的大小和随机指数的大小组成，这两个大小都使用位数指定。
+ </ul>
+
+<P>为防止客户端没有显式初始化 AlgorithmParameterGenerator（通过调用 <code>init</code> 方法），每个提供商都必须提供（并记录）一种默认的初始化。例如，Sun 提供商使用 1024 位的默认模数主大小生成 DSA 参数。
+
+@author Jan Luehe
+
+@version 1.43, 04/21/06
+
+@see AlgorithmParameters
+@see java.security.spec.AlgorithmParameterSpec
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.AlgorithmParameterGenerator(AlgorithmParameterGeneratorSpi paramGenSpi, Provider provider, String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 AlgorithmParameterGenerator 对象。
+
+@param paramGenSpi 委托
+@param provider 提供者
+@param algorithm 算法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.AlgorithmParameterGenerator.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此参数生成器关联的算法的标准名称。
+ 
+@return 算法的字符串名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.AlgorithmParameterGenerator java.security.AlgorithmParameterGenerator.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回生成与指定算法一起使用的参数集的 AlgorithmParameterGenerator 对象。
+
+ <p> 此方法从首选的 Provider 开始遍历已注册安全提供者列表。返回封装新 AlgorithmParameterGeneratorSpi 实现的 AlgorithmParameterGenerator 对象，该对象取自第一个支持指定算法的 Provider。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 与此参数生成器关联的算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+ 
+ @return 新的 AlgorithmParameterGenerator 对象。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 AlgorithmParameterGeneratorSpi 实现。
+ 
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.AlgorithmParameterGenerator java.security.AlgorithmParameterGenerator.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回生成与指定算法一起使用的参数集的 AlgorithmParameterGenerator 对象。
+
+ <p> 返回封装 AlgorithmParameterGeneratorSpi 实现的新 AlgorithmParameterGenerator 对象，该实现取自指定 Provider。指定提供者必须在安全提供者列表中注册。 
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 与此参数生成器关联的算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider Provider 的字符串名称。
+
+ @return 新的 AlgorithmParameterGenerator 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 AlgorithmParameterGeneratorSpi 实现不能从指定 Provider 获得。
+
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception IllegalArgumentException 如果提供者的名称为 null 或空。
+ 
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.AlgorithmParameterGenerator java.security.AlgorithmParameterGenerator.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回生成与指定算法一起使用的参数集的 AlgorithmParameterGenerator 对象。
+
+ <p> 返回封装 AlgorithmParameterGeneratorSpi 实现的新 AlgorithmParameterGenerator 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。
+
+ @param algorithm 与此参数生成器关联的算法的字符串名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider Provider 对象。
+
+ @return 新的 AlgorithmParameterGenerator 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 AlgorithmParameterGeneratorSpi 实现不能从指定 Provider 对象获得。
+		
+ @exception IllegalArgumentException 如果指定 provider 为 null。
+
+ @see Provider
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.AlgorithmParameterGenerator.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此算法参数生成器对象的提供者。
+ 
+@return 此算法参数生成器对象的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.AlgorithmParameterGenerator.init(int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对某个特定大小初始化此参数生成器。要创建参数，则需要将最高优先级安装的提供者的 <code>SecureRandom</code> 实现用作随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+
+@param size 大小（位数）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.AlgorithmParameterGenerator.init(int size, SecureRandom random)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对某个特定大小和随机源初始化此参数生成器。
+
+@param size 大小（位数）。
+@param random 随机源。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.AlgorithmParameterGenerator.init(AlgorithmParameterSpec genParamSpec) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+利用特定于算法的参数生成值集合初始化此参数生成器。要生成参数，则需要将最高优先级安装的提供者的 <code>SecureRandom</code> 实现用作随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+
+@param genParamSpec 特定于算法的参数生成值的集合。
+
+@exception InvalidAlgorithmParameterException 如果给定的参数生成值不适合此参数生成器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.AlgorithmParameterGenerator.init(AlgorithmParameterSpec genParamSpec, SecureRandom random) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+利用特定于算法的参数生成值集合初始化此参数生成器。
+
+@param genParamSpec 特定于算法的参数生成值的集合。
+@param random 随机源。
+
+@exception InvalidAlgorithmParameterException 如果给定的参数生成值不适合此参数生成器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.AlgorithmParameters java.security.AlgorithmParameterGenerator.generateParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成参数。
+
+@return 新的 AlgorithmParameters 对象。
+
+<!-- END DATA -->

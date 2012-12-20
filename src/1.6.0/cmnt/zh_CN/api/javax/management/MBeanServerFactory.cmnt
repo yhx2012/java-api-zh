@@ -1,0 +1,138 @@
+<!-- BEGIN KEY -->
+public class javax.management.MBeanServerFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>提供 MBean 服务器引用。没有此类的实例。</p>
+
+<p>从 JMX 1.2 开始，此类使替换默认的 MBeanServer 实现成为可能。使用 {@link javax.management.MBeanServerBuilder} 类实现此替换。可通过 <b>javax.management.builder.initial</b> 系统属性指定要实例化的初始 MBeanServerBuilder 的类。指定的类必须是 {@link javax.management.MBeanServerBuilder} 的公共子类，并且必须具有公共的空构造方法。
+<p>默认情况下，如果未指定该属性的值，则创建一个 {@link javax.management.MBeanServerBuilder javax.management.MBeanServerBuilder} 的实例。否则，MBeanServerFactory 会试图使用 {@link java.lang.Thread#getContextClassLoader() Thread.currentThread().getContextClassLoader()} 加载指定的类，如果该属性值为 null，则使用 {@link java.lang.Class#forName(java.lang.String) Class.forName()} 加载指定的类。然后它使用 {@link java.lang.Class#newInstance()} 创建该 Class 的初始实例。如果在此过程中（例如 {@link java.lang.ClassNotFoundException}、{@link java.lang.InstantiationException}）引发已检查异常，则该 MBeanServerFactory 将从 RuntimeException 内传播此异常。</p>
+
+<p>每次需要创建新的 MBeanServer 时都会查询 <b>javax.management.builder.initial</b> 系统属性，并加载该属性所指向的类。如果该类与当前的 MBeanServerBuilder 的类不同，则创建一个新的 MBeanServerBuilder。否则，MBeanServerFactory 可能创建一个新的 MBeanServerBuilder 或重用当前的 MBeanServerBuilder。</p>
+
+<p>如果无法加载该属性所指向的类，或者该属性所指向的类不对应于有效的 MBeanServerBuilder 子类，则抛出一个异常，并且在将 <b>javax.management.builder.initial</b> 系统属性重置为有效值之前，不能创建任何 MBeanServer。</p>
+ 
+<p>出于某种目的，例如添加一个额外的安全层，MBeanServerBuilder 使得包装默认 MBeanServerBuilder 实现所返回的 MBeanServer 成为可能。</p>
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.management.MBeanServerFactory.releaseMBeanServer(MBeanServer mbeanServer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除对已创建 MBeanServer 的内部 MBeanServerFactory 引用。这允许垃圾回收器移除该 MBeanServer 对象。
+
+@param mbeanServer 要移除的 MBeanServer 对象。
+
+@exception java.lang.IllegalArgumentException 如果未通过某个 <code>createMBeanServer</code> 方法生成 <code>mbeanServer</code>，或者如果已在该 mbeanServer 上调用 <code>releaseMBeanServer</code>。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;releaseMBeanServer&quot;)</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.MBeanServer javax.management.MBeanServerFactory.createMBeanServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个新对象，该对象使用标准的默认域名来实现 MBeanServer 接口。如果用户指定的域为 null，则将默认域名用作 MBean 的 ObjectName 的域部分。</p>
+
+<p>标准的默认域名是 <code>DefaultDomain</code>。</p>
+
+<p>内部保存该 MBeanServer 引用。这就允许 <CODE>findMBeanServer</CODE> 返回对此 MBeanServer 对象的引用。</p>
+
+<p>此方法等效于 <code>createMBeanServer(null)</code>。
+
+@return 新创建的 MBeanServer。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;createMBeanServer&quot;)</code>。
+
+@exception JMRuntimeException 如果属性 <code>javax.management.builder.initial</code> 存在，但是无法通过公共的无参数构造方法实例化它所指定的类；如果已实例化的生成器从其 {@link MBeanServerBuilder#newMBeanServerDelegate newMBeanServerDelegate} 或 {@link MBeanServerBuilder#newMBeanServer newMBeanServer} 方法中返回 null。
+
+@exception ClassCastException 如果属性 <code>javax.management.builder.initial</code> 存在并且可以被实例化，但是它的分配与 {@link MBeanServerBuilder} 不兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.MBeanServer javax.management.MBeanServerFactory.createMBeanServer(String domain)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个新对象，该对象使用指定的默认域名来实现 {@link MBeanServer} 接口。如果用户指定的域为 null，则将给定的域名用作 MBean 的 ObjectName 的域部分。</p>
+
+<p>内部保存该 MBeanServer 引用。这就允许 <CODE>findMBeanServer</CODE> 返回对此 MBeanServer 对象的引用。</p>
+
+@param domain 所创建的 MBeanServer 的默认域名。这是 {@link MBeanServer#getDefaultDomain} 所返回的值。
+
+@return 新创建的 MBeanServer。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;createMBeanServer&quot;)</code>。
+
+@exception JMRuntimeException 如果属性 <code>javax.management.builder.initial</code> 存在，但是无法通过公共的无参数构造方法实例化它所指定的类；如果已实例化的生成器从其 {@link MBeanServerBuilder#newMBeanServerDelegate newMBeanServerDelegate} 或 {@link MBeanServerBuilder#newMBeanServer newMBeanServer} 方法中返回 null。
+
+@exception ClassCastException 如果属性 <code>javax.management.builder.initial</code> 存在并且可以被实例化，但是它的分配与 {@link MBeanServerBuilder} 不兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.MBeanServer javax.management.MBeanServerFactory.newMBeanServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个新对象，该对象使用标准的默认域名来实现 MBeanServer 接口，不保持对此新对象的内部引用。如果用户指定的域为 null，则将默认域名用作 MBean 的 ObjectName 的域部分。</p>
+
+<p>标准的默认域名是 <code>DefaultDomain</code>。</p>
+
+<p>不保存引用。<CODE>findMBeanServer</CODE> 无法返回对此 MBeanServer 对象的引用，但是没有对该 MBeanServer 的引用时，垃圾回收器能够移除该 MBeanServer 对象。</p>
+
+<p>此方法等效于 <code>newMBeanServer(null)</code>。</p>
+
+@return 新创建的 MBeanServer。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;newMBeanServer&quot;)</code>。
+
+@exception JMRuntimeException 如果属性 <code>javax.management.builder.initial</code> 存在，但是无法通过公共的无参数构造方法实例化它所指定的类；如果已实例化的生成器从其 {@link MBeanServerBuilder#newMBeanServerDelegate newMBeanServerDelegate} 或 {@link MBeanServerBuilder#newMBeanServer newMBeanServer} 方法中返回 null。
+
+@exception ClassCastException 如果属性 <code>javax.management.builder.initial</code> 存在并且可以被实例化，但是它的分配与 {@link MBeanServerBuilder} 不兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.MBeanServer javax.management.MBeanServerFactory.newMBeanServer(String domain)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个新对象，该对象使用指定的默认域名来实现 MBeanServer 接口，不保持对此新对象的内部引用。如果用户指定的域为 null，则将给定的域名用作 MBean 的 ObjectName 的域部分。</p>
+
+<p>不保存引用。<CODE>findMBeanServer</CODE> 无法返回对此 MBeanServer 对象的引用，但是没有对该 MBeanServer 的引用时，垃圾回收器能够移除该 MBeanServer 对象。</p>
+
+@param domain 所创建的 MBeanServer 的默认域名。这是 {@link MBeanServer#getDefaultDomain} 将要返回的值。
+
+@return 新创建的 MBeanServer。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;newMBeanServer&quot;)</code>。
+
+@exception JMRuntimeException 如果属性 <code>javax.management.builder.initial</code> 存在，但是无法通过公共的无参数构造方法实例化它所指定的类；如果已实例化的生成器从其 {@link MBeanServerBuilder#newMBeanServerDelegate newMBeanServerDelegate} 或 {@link MBeanServerBuilder#newMBeanServer newMBeanServer} 方法中返回 null。
+
+@exception ClassCastException 如果属性 <code>javax.management.builder.initial</code> 存在并且可以被实例化，但是它的分配与 {@link MBeanServerBuilder} 不兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.util.ArrayList<javax.management.MBeanServer> javax.management.MBeanServerFactory.findMBeanServer(String agentId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回已注册 MBeanServer 对象的列表。已注册的 MBeanServer 对象是通过某个 <code>createMBeanServer</code> 方法创建并且随后未使用 <code>releaseMBeanServer</code> 释放的 MBeanServer。</p>
+
+@param agentId 要检索的 MBeanServer 的代理标识符。如果此参数为 null，则返回此 JVM 中的所有已注册 MBeanServer。否则只返回其 id 等于 <code>agentId</code> 的 MBeanServer。MBeanServer 的 id 是其委托 MBean 的 <code>MBeanServerId</code> 属性。
+
+@return MBeanServer 对象的列表。
+
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanServerPermission}(&quot;findMBeanServer&quot;)</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.loading.ClassLoaderRepository javax.management.MBeanServerFactory.getClassLoaderRepository(MBeanServer server)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 MBeanServer 使用的 ClassLoaderRepository。此方法等效于 {@link MBeanServer#getClassLoaderRepository() server.getClassLoaderRepository()}。
+@param server 要检查的 MBeanServer。从 JMX 1.2 开始，如果 <code>server</code> 为 <code>null</code>，则结果是 {@link NullPointerException}。此行为与 JMX 1.1 中相应实现的行为不同 - 已不再使用 <code>null</code> 值。
+@return 给定 MBeanServer 使用的 ClassLoaderRepository。
+@exception SecurityException 如果有 SecurityManager 且调用者的权限不包括或隐含 <code>{@link MBeanPermission}(&quot;getClassLoaderRepository&quot;)</code>。
+
+@exception NullPointerException 如果 <code>server</code> 为 null。
+
+@since.unbundled JMX 1.1
+
+<!-- END DATA -->

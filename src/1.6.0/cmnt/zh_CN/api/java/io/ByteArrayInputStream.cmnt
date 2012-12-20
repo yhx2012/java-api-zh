@@ -1,0 +1,149 @@
+<!-- BEGIN KEY -->
+public class java.io.ByteArrayInputStream extends java.io.InputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ByteArrayInputStream</code> 包含一个内部缓冲区，该缓冲区包含从流中读取的字节。内部计数器跟踪 <code>read</code> 方法要提供的下一个字节。
+ <p>
+关闭 <tt>ByteArrayInputStream</tt> 无效。此类中的方法在关闭此流后仍可被调用，而不会产生任何 <tt>IOException</tt>。
+@author  Arthur van Hoff
+@version 1.44, 12/19/03
+@see     java.io.StringBufferInputStream
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected byte[] java.io.ByteArrayInputStream.buf
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由该流的创建者提供的 byte 数组。元素 <code>buf[0]</code> 到 <code>buf[count-1]</code> 是只能从流中读取的字节；元素 <code>buf[pos]</code> 是要读取的下一个字节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.ByteArrayInputStream.pos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要从输入流缓冲区中读取的下一个字符的索引。此值应该始终是非负数，并且不应大于 <code>count</code> 值。从输入流缓冲区中读取的下一个字节是 <code>buf[pos]</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.ByteArrayInputStream.mark
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流中当前的标记位置。构造时默认将 ByteArrayInputStream 对象标记在位置零处。通过 <code>mark()</code> 方法可将其标记在缓冲区内的另一个位置处。通过 <code>reset()</code> 方法将当前缓冲区位置设置为此点。
+ <p>
+如果尚未设置标记，则标记值是传递给构造方法的偏移量（如果未提供偏移量，则标记值为 0）。
+
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.ByteArrayInputStream.count
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比输入流缓冲区中最后一个有效字符的索引大一的索引。此值应该始终是非负数，并且不应大于 <code>buf</code> 的长度。它比 <code>buf</code> 中最后一个可从输入流缓冲区中读取的字节位置大一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ByteArrayInputStream(byte[] buf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>ByteArrayInputStream</code>，使用 <code>buf</code> 作为其缓冲区数组。该缓冲区数组不是复制得到的。<code>pos</code> 的初始值是 <code>0</code>，<code>count</code> 的初始值是 <code>buf</code> 的长度。
+
+@param   buf  输入缓冲区。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.ByteArrayInputStream(byte[] buf, int offset, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>ByteArrayInputStream</code>，使用 <code>buf</code> 作为其缓冲区数组。<code>pos</code> 的初始值是 <code>offset</code>，<code>count</code> 的初始值是 <code>offset+length</code> 和 <code>buf.length</code> 中的最小值。该缓冲区数组不是复制得到的。将该缓冲区的标记设置为指定的偏移量。
+
+@param   buf  输入缓冲区。
+@param   offset   缓冲区中要读取的第一个字节的偏移量。
+@param   length   从缓冲区中读取的最大字节数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.ByteArrayInputStream.read()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中读取下一个数据字节。返回一个 <code>0</code> 到 <code>255</code> 范围内的 <code>int</code> 字节值。如果因为到达流末尾而没有可用的字节，则返回值 <code>-1</code>。 
+ <p>
+此 <code>read</code> 方法不会阻塞。 
+
+@return     下一个数据字节，如果到达流末尾，则返回 <code>-1</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.ByteArrayInputStream.read(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将最多 <code>len</code> 个数据字节从此输入流读入 byte 数组。如果 <code>pos</code> 等于 <code>count</code>，则返回 <code>-1</code> 指示文件结束。否则，读取的字节数 <code>k</code> 等于 <code>len</code> 和 <code>count-pos</code> 中的较小者。如果 <code>k</code> 是正数，则以 <code>System.arraycopy</code> 执行的方式将 <code>buf[pos]</code> 到 <code>buf[pos+k-1]</code> 的字节复制到 <code>b[off]</code> 到 <code>b[off+k-1]</code> 中。将值 <code>k</code> 与 <code>pos</code> 相加并返回 <code>k</code>。
+ <p>
+此 <code>read</code> 方法不会阻塞。 
+
+@param      b     存储读入数据的缓冲区。
+@param      off   目标数组 <code>b</code> 的起始偏移量。
+@param      len   读取的最大字节数。
+@return     读入缓冲区的总字节数，如果由于已到达流末尾而不再有数据，则返回 <code>-1</code>。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+@exception  IndexOutOfBoundsException 如果 <code>off</code> 为负，<code>len</code> 为负，或者 <code>len</code> 大于 <code>b.length - off</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.io.ByteArrayInputStream.skip(long n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中跳过 <code>n</code> 个输入字节。如果已到达输入流末尾，则可能会跳过较少的字节。实际跳过的字节数 <code>k</code> 等于 <code>n</code> 和 <code>count-pos</code> 中的较小者。将值 <code>k</code> 与 <code>pos</code> 相加并返回 <code>k</code>。
+
+@param      n   要跳过的字节数。
+@return     跳过的实际字节数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.ByteArrayInputStream.available()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可从此输入流读取（或跳过）的剩余字节数。
+<p>返回值是 <code>count&nbsp;- pos</code>，它是要从输入缓冲区中读取的剩余字节数。
+
+@return     不受阻塞地从此输入流读取（或跳过）的剩余字节数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.ByteArrayInputStream.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>InputStream</code> 是否支持 mark/reset。<code>ByteArrayInputStream</code> 的 <code>markSupported</code> 方法始终返回 <code>true</code>。
+
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ByteArrayInputStream.mark(int readAheadLimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置流中的当前标记位置。构造时默认将 ByteArrayInputStream 对象标记在位置零处。通过此方法可将其标记在缓冲区内的另一个位置处。
+ <p>
+如果尚未设置标记，则标记值是传递给构造方法的偏移量（如果未提供偏移量，则标记值为 0）。
+
+<p> 注：<code>readAheadLimit</code> 对于此类没有意义。
+
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.ByteArrayInputStream.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将缓冲区的位置重置为标记位置。除非已标记了另一个位置，或者在构造方法中指定了一个偏移量，否则该标记位置是 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.ByteArrayInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭 <tt>ByteArrayInputStream</tt> 无效。此类中的方法在关闭此流后仍可被调用，而不会产生任何 <tt>IOException</tt>。
+ <p>
+
+<!-- END DATA -->

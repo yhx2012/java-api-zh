@@ -1,0 +1,302 @@
+<!-- BEGIN KEY -->
+public class java.net.MulticastSocket extends java.net.DatagramSocket
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+多播数据报套接字类用于发送和接收 IP 多播包。MulticastSocket 是一种 (UDP) DatagramSocket，它具有加入 Internet 上其他多播主机的&ldquo;组&rdquo;的附加功能。
+ <P>
+多播组通过 D 类 IP 地址和标准 UDP 端口号指定。D 类 IP 地址在 <CODE>224.0.0.0</CODE> 和 <CODE>239.255.255.255</CODE> 的范围内（包括两者）。地址 224.0.0.0 被保留，不应使用。
+ <P>
+可以通过首先使用所需端口创建 MulticastSocket，然后调用 <CODE>joinGroup(InetAddress groupAddr)</CODE> 方法来加入多播组：
+ <PRE>
+ // join a Multicast group and send the group salutations
+ ...
+ String msg = &quot;Hello&quot;;
+ InetAddress group = InetAddress.getByName(&quot;228.5.6.7&quot;);
+ MulticastSocket s = new MulticastSocket(6789);
+ s.joinGroup(group);
+ DatagramPacket hi = new DatagramPacket(msg.getBytes(), msg.length(),
+                             group, 6789);
+ s.send(hi);
+ // get their responses!
+byte[] buf = new byte[1000];
+ DatagramPacket recv = new DatagramPacket(buf, buf.length);
+ s.receive(recv);
+ ...
+ // OK, I'm done talking - leave the group...
+ s.leaveGroup(group);
+ </PRE>
+
+将消息发送到多播组时，该主机和端口的<B>所有</B>预定接收者都将接收到消息（在数据包的生存时间范围内，请参阅下文）。套接字不必成为多播组的成员即可向其发送消息。
+ <P>
+当套接字预定多播组/端口时，它将接收由该组/端口的其他主机发送的数据报，像该组和端口的所有其他成员一样。套接字通过 leaveGroup(InetAddress addr) 方法放弃组中的成员资格。<B>多个 MulticastSocket</B> 可以同时预定多播组和端口，并且都会接收到组数据报。
+ <P>
+同时，不允许 applet 使用多播套接字。
+
+@author Pavani Diwanji
+@since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.MulticastSocket() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建多播套接字。
+ 
+<p>如果有安全管理器，则首先使用 0 作为变量来调用其 <code>checkListen</code> 方法，以确保允许该操作。这可能会导致 SecurityException 异常。
+ <p>
+创建套接字时，将调用 {@link DatagramSocket#setReuseAddress(boolean)} 方法来启用 SO_REUSEADDR 套接字选项。 
+
+@exception IOException 如果在创建 MulticastSocket 时发生 I/O 异常
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkListen</code> 方法不允许进行该操作。
+@see SecurityManager#checkListen
+@see java.net.DatagramSocket#setReuseAddress(boolean) 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.MulticastSocket(int port) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建多播套接字并将其绑定到特定端口。
+ 
+<p>如果存在安全管理器，则首先使用 <code>port</code> 参数作为参数调用其 <code>checkListen</code> 方法，以确保允许该操作。这可能会导致 SecurityException 异常。
+ <p>
+创建套接字时，将调用 {@link DatagramSocket#setReuseAddress(boolean)} 方法来启用 SO_REUSEADDR 套接字选项。 
+ 
+@param port 要使用的端口
+@exception IOException 如果在创建 MulticastSocket 时发生 I/O 异常
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkListen</code> 方法不允许进行该操作。
+@see SecurityManager#checkListen
+@see java.net.DatagramSocket#setReuseAddress(boolean) 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.MulticastSocket(SocketAddress bindaddr) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建绑定到指定套接字地址的 MulticastSocket。
+ <p>
+或者，如果地址为 <code>null</code>，则创建未绑定套接字。
+ <p>
+<p>如果有安全管理器，则首先使用 SocketAddress 端口作为参数来调用其 <code>checkListen</code> 方法，以确保允许该操作。这可能会导致 SecurityException 异常。
+ <p>
+创建套接字时，将调用 {@link DatagramSocket#setReuseAddress(boolean)} 方法来启用 SO_REUSEADDR 套接字选项。 
+
+@param bindaddr 要绑定到的套接字地址；或者为 <code>null</code>，它表示非绑定套接字。
+@exception IOException 如果在创建 MulticastSocket 时发生 I/O 异常
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkListen</code> 方法不允许进行该操作。
+@see SecurityManager#checkListen
+@see java.net.DatagramSocket#setReuseAddress(boolean) 
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.setTTL(byte ttl) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在此 <code>MulticastSocket</code> 上发出的多播数据包的默认生存时间，以便控制多播的范围。
+
+<p>ttl 为<b>无符号</b> 8 位量，所以其<B>必须</B>在 <code>0 &lt;= ttl &lt;= 0xFF </code>范围内。
+
+@param ttl 生存时间
+@exception IOException 如果在设置默认生存时间值时发生 I/O 异常
+@deprecated 使用 setTimeToLive 方法来代替，该方法使用 <b>int</b>（而不用 <b>byte</b>）作为 ttl 的类型。
+@see #getTTL()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.setTimeToLive(int ttl) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在此 <code>MulticastSocket</code> 上发出的多播数据包的默认生存时间，以便控制多播的范围。
+
+<P> ttl <B>必须</B>在 <code>0 &lt;= ttl &lt;= 255</code> 范围内，否则将抛出 IllegalArgumentException。
+@exception IOException 如果在设置默认生存时间值时发生 I/O 异常
+@param ttl 生存时间
+@see #getTimeToLive()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.net.MulticastSocket.getTTL() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在套接字上发出的多播数据包的默认生存时间。
+
+@exception IOException 如果在获取默认生存时间值时发生 I/O 异常
+@return 默认生存时间值
+@deprecated 使用 getTimeToLive 方法来代替，该方法返回 <b>int</b>（而不是 <b>byte</b>）。
+@see #setTTL(byte)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.MulticastSocket.getTimeToLive() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取在套接字上发出的多播数据包的默认生存时间。
+@exception IOException 如果在获取默认生存时间值时发生 I/O 异常
+@return 默认生存时间值
+@see #setTimeToLive(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.joinGroup(InetAddress mcastaddr) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加入多播组。其行为可能受到 <code>setInterface</code> 或 <code>setNetworkInterface</code> 的影响。
+ 
+<p>如果有安全管理器，则此方法首先使用 <code>mcastaddr</code> 作为参数来调用其 <code>checkMulticast</code> 方法。
+ 
+@param mcastaddr 要加入的多播地址
+ 
+@exception IOException 如果存在错误加入或者当地址不是多播地址时。
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkMulticast</code> 方法不允许加入。
+ 
+@see SecurityManager#checkMulticast(InetAddress)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.leaveGroup(InetAddress mcastaddr) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+离开多播组。其行为可能受到 <code>setInterface</code> 或 <code>setNetworkInterface</code> 的影响。
+ 
+<p>如果有安全管理器，则此方法首先使用 <code>mcastaddr</code> 作为参数来调用其 <code>checkMulticast</code> 方法。
+ 
+@param mcastaddr 要离开的多播地址
+@exception IOException 如果存在错误离开或者当地址不是多播地址时。
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkMulticast</code> 方法不允许进行该操作。
+ 
+@see SecurityManager#checkMulticast(InetAddress)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.joinGroup(SocketAddress mcastaddr, NetworkInterface netIf) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加入指定接口上的指定多播组。
+
+<p>如果有安全管理器，则此方法首先使用 <code>mcastaddr</code> 作为参数来调用其 <code>checkMulticast</code> 方法。
+ 
+@param mcastaddr 要加入的多播地址
+@param netIf 指定要接收多播数据报包的本地接口；或者为 <i>null</i>，表示由 {@link MulticastSocket#setInterface(InetAddress)} 或 {@link MulticastSocket#setNetworkInterface(NetworkInterface)} 设置的接口
+
+@exception IOException 如果存在错误加入或者当地址不是多播地址时。
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkMulticast</code> 方法不允许加入。
+@throws  IllegalArgumentException 如果 mcastaddr 为 null 或者为此套接字不支持的 SocketAddress 子类。
+ 
+@see SecurityManager#checkMulticast(InetAddress)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.leaveGroup(SocketAddress mcastaddr, NetworkInterface netIf) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+离开指定本地接口上的多播组。
+ 
+<p>如果有安全管理器，则此方法首先使用 <code>mcastaddr</code> 作为参数来调用其 <code>checkMulticast</code> 方法。
+ 
+@param mcastaddr 要离开的多播地址
+@param netIf 指定本地接口；或者为 <i>null</i>，表示由 {@link MulticastSocket#setInterface(InetAddress)} 或 {@link MulticastSocket#setNetworkInterface(NetworkInterface)} 设置的接口
+@exception IOException 如果存在错误离开或者当地址不是多播地址时。
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkMulticast</code> 方法不允许进行该操作。
+@throws  IllegalArgumentException 如果 mcastaddr 为 null 或者为此套接字不支持的 SocketAddress 子类。
+ 
+@see SecurityManager#checkMulticast(InetAddress)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.setInterface(InetAddress inf) throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置多播网络接口，供其行为将受网络接口值影响的方法使用。对多宿主机 (multihomed host) 很有用。
+@param inf InetAddress
+@exception SocketException 如果在底层协议中存在错误，如 TCP 错误。
+@see #getInterface()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetAddress java.net.MulticastSocket.getInterface() throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于多播数据包的网络接口的地址。
+ 
+@return 表示用于多播数据包的网络接口地址的 <code>InetAddress</code>。
+
+@exception SocketException 如果底层协议出现错误，例如 TCP 错误。
+ 
+@see #setInterface(java.net.InetAddress)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.setNetworkInterface(NetworkInterface netIf) throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定在此套接字上发送的输出多播数据报的网络接口。
+
+@param netIf 接口
+@exception SocketException 如果在底层协议中存在错误，如 TCP 错误。
+@see #getNetworkInterface()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.NetworkInterface java.net.MulticastSocket.getNetworkInterface() throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取多播网络接口集合。
+
+@exception SocketException 如果底层协议出现错误，例如 TCP 错误。
+@return 当前设置的多播 <code>NetworkInterface</code>
+@see #setNetworkInterface(NetworkInterface)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.setLoopbackMode(boolean disable) throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用/禁用多播数据报的本地回送。平台的网络代码将该选项用作设置是否将多播数据回送到本地套接字的提示。
+
+<p>因为此选项是一个提示，所以要验证回送的设置模式的应用程序应该调用 {@link #getLoopbackMode()}
+@param disable 为 <code>true</code> 表示禁用 LoopbackMode
+@throws SocketException 如果在设置值时发生错误
+@since 1.4
+@see #getLoopbackMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.MulticastSocket.getLoopbackMode() throws java.net.SocketException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取多播数据报的本地回送的设置。
+
+@throws SocketException  如果在获取值时发生错误
+@return 如果已禁用 LoopbackMode，则返回 true
+@since 1.4
+@see #setLoopbackMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.MulticastSocket.send(DatagramPacket p, byte ttl) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+利用套接字的默认值之外的 TTL（生存时间）将数据报包发送到目的地。只有在需要特定 TTL 的实例中才需要使用此方法；否则，优先考虑在套接字上设置一次 TTL 并将该默认 TTL 用于所有数据包。此方法<B>不</B>改变套接字的默认 TTL。其行为可能受到 <code>setInterface</code> 的影响。
+
+<p>如果存在安全管理器，则此方法首先执行某些安全检查。首先，如果 <code>p.getAddress().isMulticastAddress()</code> 为 true，则此方法将使用 <code>p.getAddress()</code> 和 <code>ttl</code> 作为参数调用安全管理器的 <code>checkMulticast</code> 方法。如果该表达式的计算为 false，则此方法改为调用安全管理器的以 <code>p.getAddress().getHostAddress()</code> 和 <code>p.getPort()</code> 为参数的 <code>checkConnect</code> 方法。如果不允许该操作，则每次调用安全管理器方法都会导致 SecurityException。
+ 
+@param p	要发送的数据包。数据包应该包含目标多播 ip 地址和要发送的数据。不必成为组成员即可将数据包发送到目标多播地址。
+@param ttl 多播数据包的可选生存时间。默认的 ttl 为 1。
+ 
+@exception IOException 如果发生错误（即设置 ttl 时出错）则引发该异常。
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkMulticast</code> 或 <code>checkConnect</code> 方法不允许发送。
+ 
+@deprecated 使用以下代码或其等效代码：...... int ttl = mcastSocket.getTimeToLive(); mcastSocket.setTimeToLive(newttl); mcastSocket.send(p); mcastSocket.setTimeToLive(ttl); ......
+
+@see DatagramSocket#send
+@see DatagramSocket#receive
+@see SecurityManager#checkMulticast(java.net.InetAddress, byte)
+@see SecurityManager#checkConnect
+
+<!-- END DATA -->

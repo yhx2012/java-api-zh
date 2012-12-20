@@ -1,0 +1,647 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.text.AbstractDocument extends java.lang.Object implements javax.swing.text.Document, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+文档接口的实现，可作为实现各种文档的基础。在此级别上几乎没有策略，所以相应地增加了使用难度。
+ <p>
+此类实现了文档的锁定机制。它允许多个 reader 或一个 writer，并且在 writer 开始对文档的另一次改变前，必须等到将以前的更改已通知该文档的所有观察者。使用 <code>render</code> 方法获取和释放读取锁定。通过改变文档的那些方法来获取写入锁定，并且在该方法调用期间保持锁定。在生成改变的线程上完成通知，并且在通知期间该线程对文件具有完全的读取访问权限，不过在通知结束前其他 reader 无法读取。该通知是一个 bean 事件通知，只有通知所有侦听器之后才允许进一步的改变。
+ <p>
+所有根据此类创建子类且与文本组件（该组件具有派生自 BasicTextUI 的外观实现）一起使用的模型都可安全地进行异步更新，因为如果该文档的类型是 <code>AbstractDocument</code>，则对 View 层次结构的所有访问都是由 BasicTextUI 序列化的。锁定机制假定独立的线程仅从 DocumentListener 方法访问 View 层次结构，并且同一时间只有一个事件线程处于活动状态。
+ <p>
+如果需要并发支持，则有下列额外的含义。所有 DocumentListener 实现和所有 UndoListener 实现的代码路径必须是线程安全的，并且如果要避免死锁，则不能访问组件锁定。在 JComponent 上执行 <code>repaint</code> 和 <code>revalidate</code> 方法是安全的。
+ <p>
+AbstractDocument 在文档的结尾模拟了一个隐含的分隔。除了其他作用，这一功能允许您在最后一个字符的后面定位插入符。因此，<code>getLength</code> 返回一个比 Content 的长度小的值。如果创建自己的 Content，一定要有一个额外的字符并且初始化它。有关此内容的示例，请参见 StringContent 和 GapContent。另一个含义是模拟该隐含结束字符的 Element 具有 endOffset == (getLength() + 1)。例如，在 DefaultStyledDocument 中，<code>getParagraphElement(getLength()).getEndOffset() == getLength() + 1</code>。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@version 1.151 07/13/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.EventListenerList javax.swing.text.AbstractDocument.listenerList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+文档的事件侦听器列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.String javax.swing.text.AbstractDocument.BAD_LOCATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示位置错误的错误消息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.AbstractDocument.ParagraphElementName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于表示段落的元素名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.AbstractDocument.ContentElementName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于表示内容的元素名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.AbstractDocument.SectionElementName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于保存各节（行/段落）的元素名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.AbstractDocument.BidiElementName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于保存单向操作的元素名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.AbstractDocument.ElementNameAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指定元素名的属性名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Dictionary<java.lang.Object, java.lang.Object> javax.swing.text.AbstractDocument.documentProperties
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存储文档级的属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.AbstractDocument.Content javax.swing.text.AbstractDocument.data
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实际存储文本的地方，并且是管理标记集的地方，编辑文档时这些标记集负责跟踪文档的更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.AbstractDocument.AttributeContext javax.swing.text.AbstractDocument.context
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+属性的工厂方法。这是属性压缩策略，并且它以 collection 形式控制属性集的生命周期。此方法可能与其他文档共享。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.DocumentFilter javax.swing.text.AbstractDocument.documentFilter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于文本插入/移除的过滤器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AbstractDocument(AbstractDocument.Content data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有某种指定内容存储机制的新 <code>AbstractDocument</code>。
+
+@param data 内容
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AbstractDocument(AbstractDocument.Content data, AbstractDocument.AttributeContext context)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有某种指定内容存储机制的新 <code>AbstractDocument</code>。
+
+@param data 内容
+@param context 属性上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Dictionary<java.lang.Object, java.lang.Object> javax.swing.text.AbstractDocument.getDocumentProperties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持管理属性集。调用者可以使用 <code>documentProperties</code> 字典通过文档范围内起作用的属性注释文档。
+ 
+@return 非 <code>null</code> 的 <code>Dictionary</code>
+@see #setDocumentProperties
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.setDocumentProperties(java.util.Dictionary<java.lang.Object, java.lang.Object> x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替换此文档的文档属性字典。
+ 
+@param x 新字典
+@see #getDocumentProperties
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.fireInsertUpdate(DocumentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册对获得此事件类型通知感兴趣的所有侦听器。使用传入此触发方法的参数延后 (lazily) 创建事件实例。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.fireChangedUpdate(DocumentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册对获得此事件类型通知感兴趣的所有侦听器。使用传入此触发方法的参数延后创建事件实例。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.fireRemoveUpdate(DocumentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册对获得此事件类型通知感兴趣的所有侦听器。使用传入此触发方法的参数延后创建事件实例。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.fireUndoableEditUpdate(UndoableEditEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册对获得此事件类型通知感兴趣的所有侦听器。使用传入此触发方法的参数延后创建事件实例。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] javax.swing.text.AbstractDocument.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目前已在此文档上注册为 <code><em>Foo</em>Listener</code> 的所有对象组成的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以使用以下代码查询文档 <code>d</code>，以获得该文档的侦听器：
+
+ <pre>DocumentListener[] mls = (DocumentListener[])(d.getListeners(DocumentListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 所请求的侦听器类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 返回一个在此组件上作为 <code><em>Foo</em>Listener</code> 注册的所有对象的数组，如果尚未添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@see #getDocumentListeners
+@see #getUndoableEditListeners
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AbstractDocument.getAsynchronousLoadPriority()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得异步加载优先级。如果小于零，则不应异步加载该文档。
+
+@return 异步加载优先级，如果不应异步加载该文档，则返回 <code>-1</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.setAsynchronousLoadPriority(int p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置异步加载优先级。
+@param p 新异步加载优先级；小于零的值指示不应异步加载该文档
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.setDocumentFilter(DocumentFilter filter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>DocumentFilter</code>。<code>DocumentFilter</code> 被传递到 <code>insert</code> 和 <code>remove</code>，以便有条件地允许文本的插入/删除。<code>null</code> 值指示不进行过滤。
+
+@param filter 用于限制文本的 <code>DocumentFilter</code>
+@see #getDocumentFilter
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DocumentFilter javax.swing.text.AbstractDocument.getDocumentFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回负责进行插入/移除过滤的 <code>DocumentFilter</code>。<code>null</code> 返回值意味着不进行过滤。
+
+@since 1.4
+@see #setDocumentFilter
+@return the DocumentFilter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.render(Runnable r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果模型支持被异步更新，则此方法允许在并发情况下安全地呈现该模型。给定的 runnable 的执行方式是，在 runnable 执行时安全读取模型且不作任何更改。该 runnable 本身可能<em>不</em> 进行任何改变。 
+ <p>
+实现此方法以便为 runnable 执行期间获取一个读取锁定。在同一时间，可能有多个 runnable 在执行，并且当存在活动呈现的 runnable 时将会阻塞所有 writer。如果该 runnable 抛出异常，则将安全地释放其锁定。对于从不退出的 runnable 没有保护，在其生命周期中会有效地保持文档的锁定。
+ <p>
+如果给定的 runnable 试图在此实现中对文档进行任何改变，则会发生死锁。没有为每个呈现线程进行跟踪以便允许检测此种情况的机制，但是子类可以通过额外的开销对呈现线程进行跟踪，并在死锁时抛出错误。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param r 要执行的渲染器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AbstractDocument.getLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数据的长度。这是表示用户数据的内容字符数。
+
+@return 长度，该值 &gt;= 0
+@see Document#getLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.addDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加负责通知任何更改的文档侦听器。
+
+@param listener 要添加的 <code>DocumentListener</code> 
+@see Document#addDocumentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.removeDocumentListener(DocumentListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除文档侦听器。
+
+@param listener 要移除的 <code>DocumentListener</code>
+@see Document#removeDocumentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.DocumentListener[] javax.swing.text.AbstractDocument.getDocumentListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此文档上注册的所有文档侦听器的数组。
+
+@return 此文档的所有 <code>DocumentListener</code>，如果当前没有注册的文档侦听器，则返回一个空数组
+
+@see #addDocumentListener
+@see #removeDocumentListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.addUndoableEditListener(UndoableEditListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加负责通知任何更改的撤消侦听器。在 <code>UndoableEdit</code> 上执行撤消/重复操作将激发适当的 DocumentEvent，以让视图与模型保持同步。
+
+@param listener 要添加的 <code>UndoableEditListener</code>
+@see Document#addUndoableEditListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.removeUndoableEditListener(UndoableEditListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除撤消侦听器。
+
+@param listener 要移除的 <code>UndoableEditListener</code>
+@see Document#removeDocumentListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.UndoableEditListener[] javax.swing.text.AbstractDocument.getUndoableEditListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此文档上注册的所有可撤消编辑侦听器的数组。
+
+@return 此文档的所有 <code>UndoableEditListener</code>，如果当前没有注册的可撤消编辑侦听器，则返回一个空数组。
+
+@see #addUndoableEditListener
+@see #removeUndoableEditListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object javax.swing.text.AbstractDocument.getProperty(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找属性值的便捷方法。它等效于：
+ <pre>
+ getDocumentProperties().get(key);
+ </pre>
+ 
+@param key 非 <code>null</code> 的属性键
+@return 此属性的值，或者为 <code>null</code>
+@see #getDocumentProperties
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.text.AbstractDocument.putProperty(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存储属性值的便捷方法。它等效于：
+ <pre>
+ getDocumentProperties().put(key, value);
+ </pre>
+如果 <code>value</code> 为 <code>null</code>，则此方法将移除该属性。
+ 
+@param key 非 <code>null</code> 的键
+@param value 属性值
+@see #getDocumentProperties
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.remove(int offs, int len) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从文档中移除某些内容。移除内容会导致在进行实际更改时保持写入锁定。将会把更改通知调用此方法的线程上的观察者。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+ 
+@param offs 起始偏移量，该值 &gt;= 0
+@param len 要移除的字符数，该值 &gt;= 0
+@exception BadLocationException  给定的移除位置不是文档内的有效位置
+@see Document#remove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.replace(int offset, int length, String text, AttributeSet attrs) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+删除从 <code>offset</code> 到 <code>offset + length</code> 的文本区域，并用 <code>text</code> 替换它。由实现决定如何实现该替换，某些实现可能将该替换当作两个不同的操作：一次移除，后跟一次插入，其他实现可能将该替换当作一个原子操作。
+ 
+@param offset 子元素的索引
+@param length 要删除的文本长度，可能为 0，指示不删除任何内容
+@param text 要插入的文本，<code>null</code> 指示不插入文本
+@param attrs AttributeSet 指示所插入文本的属性，<code>null</code> 是合法值，通常作为空 attributeset 对待，但是具体的解释由子类负责
+@exception BadLocationException 给定的位置不是文档内的有效位置
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.insertString(int offs, String str, AttributeSet a) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将某些内容插入文档。插入内容会导致在实际发生改变时存储写锁定，接着会向线程上抓取该写入锁定的观察者发出通知。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param offs  起始偏移量，该值 &gt;= 0
+@param str  要插入的字符串；null/空字符串不执行任何操作
+@param a  插入内容的属性
+@exception BadLocationException 如果给定的插入位置不是文档中的有效位置
+@see Document#insertString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.AbstractDocument.getText(int offset, int length) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从文档中获得文本序列。  
+
+@param offset 起始偏移量，该值 &gt;= 0
+@param length 要检索的字符数，该值 &gt;= 0
+@return 文本
+@exception BadLocationException  给定范围内包括的位置不是文档内的有效位置
+@see Document#getText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.getText(int offset, int length, Segment txt) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文档给定部分内包含的文本。
+ <p>
+如果 txt 参数的 partialReturn 属性为 false，Segment 中返回的数据将是请求的整个长度，根据数据存储的方式可能是副本，也可能不是。如果 partialReturn 属性为 true，则只能返回不需要创建副本即能返回的文本量。使用部分返回在需要扫描大部分文档的情况下具有更好的效果。下面是使用部分返回访问整个文档的示例：
+ <p>
+ <pre>
+ &nbsp; int nleft = doc.getDocumentLength();
+ &nbsp; Segment text = new Segment();
+ &nbsp; int offs = 0;
+ &nbsp; text.setPartialReturn(true);   
+ &nbsp; while (nleft &gt; 0) {
+ &nbsp;     doc.getText(offs, nleft, text);
+ &nbsp;     // do something with text
+ &nbsp;     nleft -= text.count;
+ &nbsp;     offs += text.count;
+ &nbsp; }
+ </pre>
+
+@param offset 起始偏移量，该值 &gt;= 0
+@param length 要检索的字符数，该值 &gt;= 0
+@param txt 所检索到的文本被放入的 Segment 对象
+@exception BadLocationException  给定范围内包括的位置不是文档内的有效位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.Position javax.swing.text.AbstractDocument.createPosition(int offs) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回更改文档时，将跟踪更改的位置。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param offs 模型中的位置，该值 &gt;= 0
+@return 位置
+@exception BadLocationException  如果给定的位置不表示关联文档内的有效位置
+@see Document#createPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.text.Position javax.swing.text.AbstractDocument.getStartPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示文档开始的位置。可对返回的位置进行计数以便跟踪更改，也可以让其保留在文档起始位置。
+
+@return 位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.text.Position javax.swing.text.AbstractDocument.getEndPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示文档结尾的位置。可对返回的位置进行计数以便跟踪更改，也可以让其保留在文档结束位置。
+
+@return 位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element[] javax.swing.text.AbstractDocument.getRootElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得已定义的所有根元素。通常只有一个根元素，所以默认实现将返回默认的根元素。
+
+@return 根元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.swing.text.Element javax.swing.text.AbstractDocument.getDefaultRootElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视图赖依存在的根元素，除非提供了向元素结构指派视图的其他机制。
+
+@return 根元素
+@see Document#getDefaultRootElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.AbstractDocument.getBidiRootElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此文档双向结构的根元素。其子级表示以给定的 Unicode 双向层次进行字符操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.swing.text.Element javax.swing.text.AbstractDocument.getParagraphElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得包含给定位置的段落元素。子类必须为其自身定义准确的段落组成。但是应该要记住，一个段落至少应该是在其上可运行 Unicode 双向算法的文本单元。
+
+@param pos 起始偏移量，该值 &gt;= 0
+@return 元素
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.AbstractDocument.AttributeContext javax.swing.text.AbstractDocument.getAttributeContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取管理属性的上下文。此方法高效地建立了用于压缩 AttributeSet 信息的策略。
+
+@return 上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.insertUpdate(AbstractDocument.DefaultDocumentEvent chng, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在文本插入后更新文档结构。这将在写锁定内发生。如果此类的子类重新实现此方法，则还应该委托给超类。
+
+@param chng 更改的描述
+@param attr 更改的属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.removeUpdate(AbstractDocument.DefaultDocumentEvent chng)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+随文本的移除更新任何文档结构。从 Content 中实际移除文本前调用此方法。这将在写锁定内发生。如果此类的子类重新实现此方法，则还应该委托给超类。
+
+@param chng 更改的描述
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AbstractDocument.postRemoveUpdate(AbstractDocument.DefaultDocumentEvent chng)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+随文本的移除更新任何文档结构。从 Content 中移除文本后调用此方法。这将在写锁定内发生。如果此类的子类重新实现此方法，则还应该委托给超类。
+
+@param chng 更改的描述
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AbstractDocument.dump(PrintStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供诊断转储 (dump)。
+
+@param out 输出流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.AbstractDocument.Content javax.swing.text.AbstractDocument.getContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得文档的内容。
+
+@return 内容
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Element javax.swing.text.AbstractDocument.createLeafElement(Element parent, AttributeSet a, int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建文档叶元素。使用此操作来创建那些表示文档结构的元素。因为此实现分别保存结构和内容，所以扩展内容时元素会自动增加，然后会拆分现有的元素。文档本身决定如何生成元素，从而在使用的元素类型上提供了灵活性。
+
+@param parent 父元素
+@param a 元素的属性
+@param p0 范围的开始，该值 &gt;= 0
+@param p1 范围的结尾，该值 &gt;= p0
+@return 新元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Element javax.swing.text.AbstractDocument.createBranchElement(Element parent, AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建文档分支元素，它可包含其他元素。
+
+@param parent 父元素
+@param a 属性
+@return 元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final synchronized java.lang.Thread javax.swing.text.AbstractDocument.getCurrentWriter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前的写入线程（如果有的话）。这可用于区分被调用的方法是否为现有修改的一部分，或者是否需要获得锁定并开始新事务。  
+
+@return 正在修改文档的线程，如果没有正在进行修改，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final synchronized void javax.swing.text.AbstractDocument.writeLock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个锁定，以开始改变此锁定保护的文档。为了获得锁定，不能有正在进行的写入、更改通知或读取。另外，只要某个线程不尝试从文档通知内获得其他 <code>writeLock</code>，就允许它获得多个 <code>writeLock</code>。尝试从 DocumentListener 通知内获得 <code>writeLock</code> 将导致 <code>IllegalStateException</code>。每个线程可获得多个 <code>writeLock</code> 的功能允许子类获得一个 writeLock、执行多个操作，然后释放该锁定。
+ <p>
+对 <code>writeLock</code> 的调用必须与对 <code>writeUnlock</code> 的调用对称，否则 <code>Document</code> 将被保持在锁定状态，从而无法进行读取或写入。
+
+@exception IllegalStateException 如果尝试非法锁定。如果正确实现了文档，则仅在文档侦听器尝试改变该文档时才出现此异常。此情况违反了 bean 事件模型，此模型中不保证传递顺序，在允许进一步改变前应通知所有侦听器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final synchronized void javax.swing.text.AbstractDocument.writeUnlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放以前通过 <code>writeLock</code> 所获得的写入锁定。将锁定计数减一后，如果没有其他未解锁的锁定，则允许新的 writer 或多个 reader 执行操作。
+
+@see #writeLock
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void javax.swing.text.AbstractDocument.readLock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个锁定，以开始读取文档的某个状态。同时可以有多个 reader。完成对侦听器的更改通知前，写入锁定会阻塞各个 reader。使用此方法应该非常小心，以避免对文档的无意破坏。此方法应该始终与 <code>readUnlock</code> 保持对称。
+
+@see #readUnlock
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final synchronized void javax.swing.text.AbstractDocument.readUnlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行读取解除锁定。该操作通知某个 reader 已完成操作。如果没有其他 reader，则又可以开始写入。此方法应该与 readLock 保持对称，并且应该在最后的语句中出现，这样才能保证对称性。下面是一个示例：
+ <pre><code>
+ &nbsp;   readLock();
+ &nbsp;   try {
+&nbsp;       // do something
+ &nbsp;   } finally {
+ &nbsp;       readUnlock();
+ &nbsp;   }
+ </code></pre>
+
+@see #readLock
+
+<!-- END DATA -->

@@ -1,0 +1,155 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.sampled.DataLine extends javax.sound.sampled.Line
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataLine</code> 将与介质相关的功能添加到其超接口 <code>{@link Line}</code>。此功能包括一些传输控制方法，这些方法可以启动、停止、消耗和刷新通过数据行传入的音频数据。数据行还可以报告介质的当前位置、音量和音频格式。数据行通过使用子接口 <code>{@link SourceDataLine}</code> 或 <code>{@link Clip}</code> 用于音频输出，这些子接口允许应用程序写入数据。类似地，音频输入由子接口 <code>{@link TargetDataLine}</code> 处理，该接口允许读取数据。
+ <p>
+数据行有一个内部缓冲区，传入或传出数据在该缓冲区被加入队列。此内部缓冲区变空之前（通常因为已处理所有列队的数据），<code>{@link #drain()}</code> 方法发生阻塞。<code>{@link #flush()}</code> 方法将放弃内部缓冲区中的所有可用的已列队数据。
+ <p>
+只要数据行开始还是停止数据的活动现象或数据的捕获，就会产生 <code>{@link LineEvent.Type#START START}</code> 和 <code>{@link LineEvent.Type#STOP STOP}</code> 事件。这些事件可能在响应特定请求时生成，也可能是不太直接的状态更改的结果。例如，如果对非活动数据行调用 <code>{@link #start()}</code>，且数据可用于捕获或回放，则将在实际开始数据回放或捕获时生成 <code>START</code> 事件。或者，如果因为活动数据行的数据流受到限制而在数据呈现中发生间隙，则生成 <code>STOP</code> 事件。
+ <p>
+混频器常常支持多条数据行的同步控制。可以通过混频器接口的 <code>{@link Mixer#synchronize synchronize}</code> 方法来建立同步。关于更完整的描述，请参见 <code>{@link Mixer Mixer}</code> 接口的描述。
+
+@author Kara Kytle
+@version 1.34, 05/11/17
+@see LineEvent
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.DataLine.drain()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过在清空数据行的内部缓冲区之前继续数据 I/O，排空数据行中的列队数据。在完成排空操作之前，此方法发生阻塞。因为这是一个阻塞方法，所以应小心使用它。如果在队列中有数据的终止行上调用 <code>drain()</code>，则在该行正在运行和数据队列变空之前，此方法将发生阻塞。如果通过一个线程调用 <code>drain()</code>，另一个线程继续填充数据队列，则该操作没有完成。此方法总是在关闭数据行时返回。
+
+@see #flush()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.DataLine.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新数据行中已列队的数据。已刷新的数据将被丢弃。在某些情况下，不是所有已列队的数据都被丢弃。例如，混频器可以刷新特定输入行的缓冲区中的数据，但是输出缓冲区中尚未播放的数据（混合的结果）仍将被播放。如果想要在重新启动回放或捕获时跳过&ldquo;陈旧的&rdquo;数据，则可以在暂停某一数据行（正常情况）之后调用此方法。（刷新尚未停止的数据行是合法的，但在活动行上这样做很可能导致数据的间断，导致一个显而易见的单击。）
+
+@see #stop()
+@see #drain()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.DataLine.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许某一数据行执行数据 I/O。如果在已经运行的数据行上调用此方法，则此方法不执行任何操作。除非已刷新缓冲区中的数据，否则该行将从停止该数据行时未经处理的第一帧开始恢复 I/O。当开始音频捕获或回放时，生成 <code>{@link LineEvent.Type#START START}</code> 事件。
+
+@see #stop()
+@see #isRunning()
+@see LineEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.DataLine.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止行。停止的行应该停止 I/O 活动。但是，如果行已被打开并且正在运行，它应该保留恢复活动所需的资源。停止的行应该保留其缓冲区中的任何音频数据而不是丢弃它，以便在恢复时，I/O 可以从原来停止的位置继续（如有可能）。（当然，此操作不保证在当前缓冲区之外永远不会有间断；如果停止的情况持续时间太长，则可能删除输入或输出示例。）如果需要，可以通过调用 <code>flush</code> 方法丢弃保留的数据。当音频捕获或回放停止时，生成 <code>{@link LineEvent.Type#STOP STOP}</code> 事件。
+
+@see #start()
+@see #isRunning()
+@see #flush()
+@see LineEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.DataLine.isRunning()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示该行是否正在运行。默认值为 <code>false</code>。打开的行将在响应调用 <code>start</code> 方法而呈现第一个数据时开始运行，并可持续到响应调用 <code>stop</code> 或因为回放结束而表现为停止状态时为止。
+@return  如果该行正在运行，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #start() 
+@see #stop()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.DataLine.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示该行是否正在进行活动 I/O（如回放或捕获）。当非活动行变得活动时，它会向其侦听器发送一个 <code>{@link LineEvent.Type#START START}</code> 事件。类似地，当活动行变得不活动时，它将发送 <code>{@link LineEvent.Type#STOP STOP}</code> 事件。
+@return  如果行将在活动情况下捕获或呈现声音，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #isOpen
+@see #addLineListener
+@see #removeLineListener
+@see LineEvent
+@see LineListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat javax.sound.sampled.DataLine.getFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得数据行的音频数据的当前格式（编码、样本频率、信道数，等等）。
+
+<p>如果行未打开且从来没有打开过，则返回默认格式。默认格式是一个特定音频格式实现，如果 <code>DataLine.Info</code> 对象（用于检索此 <code>DataLine</code>）至少指定一个完全限定的音频格式，则将最后一个格式用作默认格式。打开具有特定音频格式（如 {@link SourceDataLine#open(AudioFormat)}）的行将重写默认格式。
+
+@return  当前的音频数据格式 
+@see AudioFormat
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.DataLine.getBufferSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得将适合数据行的内部缓冲区的最大数据字节数。对于源数据行，这是将写入数据的缓冲区的大小。对于目标数据行，它是可以读取数据的缓冲区的大小。注意，这里使用的单位是字节，但它将始终对应于音频数据的样本帧数（整数）。
+
+@return  缓冲区的大小（以字节为单位）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.DataLine.available()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前可用于数据行内部缓冲区中处理的应用程序的数据字节数。对于源数据行，该数据字节数是可以不受阻塞地写入缓冲区的数据量。对于目标数据行，该数据字节数是可用于由应用程序读取的数据量。对于剪贴区，因为在打开剪贴区时将音频数据加载到缓冲区，并保留到关闭剪贴区时才收到通知，所以此值始终为 0。
+ <p>
+注意，这里使用的单位是字节，但将始终对应于音频数据的样本帧数（整数）。
+ <p>
+保证应用程序对从 <code>available()</code> 返回的字节数进行的读取或写入操作不受阻塞；不过，不保证试图读取或写入更多数据将发生阻塞。
+
+@return  可用的数据量（以字节为单位）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.DataLine.getFramePosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得音频数据中的当前位置（以样本帧为单位）。帧位置测量从打开行以来由行捕获的样本帧数或在行中呈现的样本帧数。此返回值将包装大约 2^31 以后的帧。建议改用 <code>getLongFramePosition</code>。
+
+@return  打开行以来已经处理的帧数 
+@see #getLongFramePosition()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.sampled.DataLine.getLongFramePosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得音频数据中的当前位置（以样本帧为单位）。帧位置测量从打开行以来由行捕获的样本帧数或在行中呈现的样本帧数。
+
+@return  打开行以来已经处理的帧数 
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.sampled.DataLine.getMicrosecondPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得音频数据中的当前位置（以微秒为单位）。微秒位置测量对应于从打开行以来由行捕获的样本帧数或在行中呈现的样本帧数的时间。不保证精度的级别。例如，某一实现可能根据当前帧的位置和音频样本帧比率来计算微秒位置 (microsecond position)。以微秒为单位的精度应限制为每样本帧的微秒数。
+
+@return  打开行以来所处理数据的微秒数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.sampled.DataLine.getLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得行的当前音量级别。此级别是对信号的当前振幅的测量，且不应该与音量控制的当前设置混淆。范围从 0.0（静）到 1.0（声音波形的最大可能振幅）。该单位测量线性振幅，不测量分贝数。
+
+@return  此行中信号的当前振幅，或 <code>{@link AudioSystem#NOT_SPECIFIED}</code>
+
+<!-- END DATA -->

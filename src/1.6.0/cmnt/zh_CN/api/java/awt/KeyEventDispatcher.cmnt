@@ -1,0 +1,29 @@
+<!-- BEGIN KEY -->
+public interface java.awt.KeyEventDispatcher
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指派所有 KeyEvent 和为其确定目标时，KeyEventDispatcher 和当前 KeyboardFocusManager 一起使用。在当前 KeyboardFocusManager 中注册的 KeyEventDispatcher 在 KeyEvent 被指派到目标前接收它们，允许每个 KeyEventDispatcher 重定向事件，使用它，指派事件本身，或者进行其他更改。
+ <p>
+注意，KeyboardFocusManager 本身即可实现 KeyEventDispatcher。默认情况下，当前 KeyboardFocusManager 是已注册 KeyEventDispatcher 未指派的所有 KeyEvent 的接受器。无法将当前 KeyboardFocusManager 作为 KeyEventDispatcher 完全注销。但是，如果 KeyEventDispatcher 报告指派了 KeyEvent，则不管是否实际指派了，KeyboardFocusManager 都将不对 KeyEvent 进行进一步的操作。（尽管客户端代码将当前的 KeyboardFocusManager 一次或多次注册为 KeyEventDispatcher 是可能的，但通常不必要也不建议这样做。）
+
+@author David Mendenhall
+@version 1.5, 12/19/03
+
+@see KeyboardFocusManager#addKeyEventDispatcher
+@see KeyboardFocusManager#removeKeyEventDispatcher
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.KeyEventDispatcher.dispatchKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前 KeyboardFocusManager 调用此方法，请求此 KeyEventDispatcher 为其指派指定的事件。此 KeyEventDispatcher 可以随意重定向事件，使用它，指派它本身，或者进行其他更改。通常使用此功能将 KeyEvent 传递给 Component 而不是焦点所有者。例如，可以使用此功能在可访问环境中导航不可聚焦 Window 的子级。注意，如果 KeyEventDispatcher 指派 KeyEvent 本身，则其必须使用 <code>redispatchEvent</code> 来防止当前 KeyboardFocusManager 递归式请求此 KeyEventDispatcher 再次指派事件。
+ <p>
+如果此方法的实现返回 <code>false</code>，则将 KeyEvent 传入链中的下一个 KeyEventDispatcher，以当前的 KeyboardFocusManager 结尾。如果实现返回 <code>true</code>，则假定已经指派了该 KeyEvent（尽管事实不一定如此），当前 KeyboardFocusManager 将不对该 KeyEvent 进行任何进一步的操作。在此情况下，<code>KeyboardFocusManager.dispatchEvent</code> 也应该返回 <code>true</code>。如果实现使用 KeyEvent，但是返回 <code>false</code>，则仍将所使用的事件传入链中的下一个 KeyEventDispatcher。开发人员在将 KeyEvent 指派到目标前首先检查它是否已使用至关重要。默认情况下，当前 KeyboardFocusManager 不指派使用的 KeyEvent。
+
+@param e 要指派的 KeyEvent
+@return 如果 KeyboardFocusManager 不应对该 KeyEvent 进行进一步操作，则返回 <code>true</code>；否则，返回 <code>false</code>
+@see KeyboardFocusManager#redispatchEvent
+
+<!-- END DATA -->

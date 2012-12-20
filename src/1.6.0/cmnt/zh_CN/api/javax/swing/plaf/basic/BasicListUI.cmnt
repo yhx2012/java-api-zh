@@ -1,0 +1,358 @@
+<!-- BEGIN KEY -->
+public class javax.swing.plaf.basic.BasicListUI extends javax.swing.plaf.ListUI
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@code ListUI} 的可扩展实现。
+ <p>
+ 多个列表之间不能共享 {@code BasicListUI} 实例。
+
+ @version 1.121 07/11/06
+ @author Hans Muller
+ @author Philip Milne
+ @author Shannon Hickey (drag and drop)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.paintCell(Graphics g, int row, Rectangle rowBounds, ListCellRenderer cellRenderer, ListModel dataModel, ListSelectionModel selModel, int leadIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制一个 List 单元格：计算相关状态，获取&ldquo;橡皮图章&rdquo;单元格渲染器组件，然后使用 CellRendererPane 来绘制它。子类可能要重写此方法（而非 paint() 方法）。
+
+@see #paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicListUI.paint(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制与 Graphics 对象 clipRect 相交的行。此方法在必要时调用 paintCell。子类可能要重写这些方法。
+
+@see #paintCell
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicListUI.getBaseline(JComponent c, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回基线。
+
+ @throws NullPointerException {@inheritDoc}
+ @throws IllegalArgumentException {@inheritDoc}
+ @see javax.swing.JComponent#getBaseline(int, int)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component.BaselineResizeBehavior javax.swing.plaf.basic.BasicListUI.getBaselineResizeBehavior(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个枚举，它指示该组件的基线如何随大小的改变而发生更改。 
+
+ @throws NullPointerException {@inheritDoc}
+ @see javax.swing.JComponent#getBaseline(int, int)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicListUI.getPreferredSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+列表的 preferredSize 依赖于布局方向。
+ <table summary="Describes the preferred size for each layout orientation">
+<tr><th>布局方向</th><th>首选大小</th></tr>
+ <tr>
+   <td>JList.VERTICAL
+<td>列表的 preferredSize 是行的总高度和单元格的最大宽度。如果指定了 JList.fixedCellHeight，则行的总高度为 (cellVerticalMargins + fixedCellHeight) * model.getSize()，其中，rowVerticalMargins 是为绘制黄色焦点轮廓所分配的空间。同样，如果指定了 fixedCellWidth，则使用它即可。
+   </td>
+ <tr>
+   <td>JList.VERTICAL_WRAP
+<td>如果可见行计数大于 0，则 preferredHeight 为最大单元格高度 * visibleRowCount。如果可见行计数 &lt;= 0，则首选高度为列表的当前高度或最大单元格调试，取其中的较大者。首选宽度则为最大单元格宽度 * 所需的列数。其中所需的列数为 list.height / 最大单元格高度。最大单元格高度或者是固定单元高度，或者通过对所有单元格进行迭代以从 ListCellRenderer 中查找最大高度来确定。
+ <tr>
+   <td>JList.HORIZONTAL_WRAP
+<td>如果可见行计数大于 0，则 preferredHeight 即为最大单元格高度 * adjustedRowCount。其中 visibleRowCount 用于确定列数。因为此操作进行水平布置，所以行数将根据列数来确定。例如，假设一个模型有 10 个项和 8 个可见行计数。显示此模型所需的列数是 2，但是不再需要 8 行来显示，只需 5 行，因此 adjustedRowCount 为 5。
+<p>如果可见行计数 &lt;= 0，则首选高度由列数规定，列数的多少以适合 <code>JList</code> 的宽度为准（宽度 / 最大单元格宽度），但至少为一列。首选高度则为模型大小 / 列数 * 最大单元格高度。最大单元格高度或者是固定单元高度，或者通过对所有单元格进行迭代以从 ListCellRenderer 中查找最大高度来确定。
+ </table>
+上述内容指定原始首选宽度和高度。所产生的首选宽度为上述宽度 + insets.left + insets.right，所产生的首选高度为上述高度 + insets.top + insets.bottom。其中 <code>Insets</code> 根据 <code>list.getInsets()</code> 确定。
+
+@param c JList 组件。
+@return 列表的总大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.selectPreviousIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择前一行并强行使其可见。
+
+@see JList#ensureIndexIsVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.selectNextIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择下一行并强行使其可见。
+
+@see JList#ensureIndexIsVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.installKeyboardActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在与 <code>BasicListUI</code> 关联的 <code>JList</code> 上注册键盘绑定。此方法在 installUI() 时调用。
+
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.uninstallKeyboardActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注销根据 <code>installKeyboardActions</code> 安装的键盘动作。此方法在 uninstallUI() 时调用，该时刻子类应该确保已从此处移除在 installUI 时注册的所有键盘动作。
+
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.installListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 JList、其模型及其 selectionModel 创建并安装侦听器。此方法在 installUI() 时调用。
+
+@see #installUI
+@see #uninstallListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.uninstallListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除 JList、其模型及其 selectionModel 的侦听器。所有侦听器字段都将在此被重置为 null。在 uninstallUI() 时调用此方法，它应该与 installListeners 保持同步。
+
+@see #uninstallUI
+@see #installListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.installDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化 JList 属性（如字体、前景和背景）并添加 CellRendererPane。仅当字体、前景和背景属性的当前值为 null 或 UIResource 时才设置这些属性，其他属性在当前值为 null 时设置。
+
+@see #uninstallDefaults
+@see #installUI
+@see CellRendererPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.uninstallDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将尚未显式重写的 JList 属性设置为 null。如果某个属性的当前值不是 UIResource，则视为被重写。
+
+@see #installDefaults
+@see #uninstallUI
+@see CellRendererPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicListUI.installUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序调用 <code>installDefaults()</code>、<code>installListeners()</code> 和 <code>installKeyboardActions()</code> 来初始化 <code>this.list</code>。
+
+@see #installDefaults
+@see #installListeners
+@see #installKeyboardActions
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicListUI.uninstallUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按顺序调用 <code>uninstallListeners()</code>、<code>uninstallKeyboardActions()</code> 和 <code>uninstallDefaults()</code> 来取消初始化 <code>this.list</code>。将 this.list 设置为 null。
+
+@see #uninstallListeners
+@see #uninstallKeyboardActions
+@see #uninstallDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.plaf.ComponentUI javax.swing.plaf.basic.BasicListUI.createUI(JComponent list)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 BasicListUI 的新实例。为每个 JList 分配一个 BasicListUI 委托。
+
+@return Windows 外观的新的 ListUI 实现。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicListUI.locationToIndex(JList list, Point location)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ @throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.plaf.basic.BasicListUI.indexToLocation(JList list, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.plaf.basic.BasicListUI.getCellBounds(JList list, int index1, int index2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.plaf.basic.BasicListUI.getRowHeight(int row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回基于当前布局的指定行的高度。
+
+@return 指定行高度，如果 row 无效，则返回 -1。
+@see #convertYToRow
+@see #convertRowToY
+@see #updateLayoutState
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.plaf.basic.BasicListUI.convertYToRow(int y0)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于当前布局，将 JList 相对坐标转换为包含它的行。如果 y0 没有落在任何行中，则返回 -1。
+
+@return 包含 y0 的行，或者返回 -1。
+@see #getRowHeight
+@see #updateLayoutState
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.plaf.basic.BasicListUI.convertRowToY(int row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定行的原点的 JList 相对 Y 坐标，如果 row 无效，则返回 -1。
+
+@return 包含行原点的 Y 坐标，或者返回 -1。
+@see #getRowHeight
+@see #updateLayoutState
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.maybeUpdateLayoutState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 updateLayoutStateNeeded 为非 0，则调用 updateLayoutState() 并重置 updateLayoutStateNeeded。各种方法在进行任何基于列表几何形状的计算之前应该调用此方法。例如，在 paint() 和 getPreferredSize() 中首先调用此方法。
+
+@see #updateLayoutState
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicListUI.updateLayoutState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于当前字体和 fixedCellWidth、fixedCellHeight 和 prototypeCellValue 的当前值重新计算 cellHeight（一个或多个）和 cellWidth 的值。
+
+@see #maybeUpdateLayoutState
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.MouseInputListener javax.swing.plaf.basic.BasicListUI.createMouseInputListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建实现 MouseInputListener 的委托。委托在 installUI() 时被添加到相应的 java.awt.Component 侦听器列表中。子类可以重写此方法以返回自定义 MouseInputListener，例如
+ <pre>
+ class MyListUI extends BasicListUI {
+    protected MouseInputListener <b>createMouseInputListener</b>() {
+        return new MyMouseInputHandler();
+    }
+    public class MyMouseInputHandler extends MouseInputHandler {
+        public void mouseMoved(MouseEvent e) {
+            // do some extra work when the mouse moves
+            super.mouseMoved(e);
+        }
+    }
+ }
+ </pre>
+
+@see MouseInputHandler
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ListSelectionListener javax.swing.plaf.basic.BasicListUI.createListSelectionListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建在需要时由 selectionModel 添加到 JList 的 ListSelectionHandler 的实例。子类可以重写此方法以返回自定义 ListSelectionListener，例如
+ <pre>
+ class MyListUI extends BasicListUI {
+    protected ListSelectionListener <b>createListSelectionListener</b>() {
+        return new MySelectionListener();
+    }
+    public class MySelectionListener extends ListSelectionHandler {
+        public void valueChanged(ListSelectionEvent e) {
+            // do some extra work when the selection changes
+            super.valueChange(e);
+        }
+    }
+ }
+ </pre>
+
+@see ListSelectionHandler
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ListDataListener javax.swing.plaf.basic.BasicListUI.createListDataListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建在需要时由模型添加到 JList 的 ListDataListener 的实例。子类可以重写此方法以返回自定义 ListDataListener，例如
+ <pre>
+ class MyListUI extends BasicListUI {
+    protected ListDataListener <b>createListDataListener</b>() {
+        return new MyListDataListener();
+    }
+    public class MyListDataListener extends ListDataHandler {
+        public void contentsChanged(ListDataEvent e) {
+            // do some extra work when the models contents change
+            super.contentsChange(e);
+        }
+    }
+ }
+ </pre>
+
+@see ListDataListener
+@see JList#getModel
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.beans.PropertyChangeListener javax.swing.plaf.basic.BasicListUI.createPropertyChangeListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建由 installUI() 添加到 JList 的 PropertyChangeHandler 的实例。子类可以重写此方法以返回自定义 PropertyChangeListener，例如
+ <pre>
+ class MyListUI extends BasicListUI {
+    protected PropertyChangeListener <b>createPropertyChangeListener</b>() {
+        return new MyPropertyChangeListener();
+    }
+    public class MyPropertyChangeListener extends PropertyChangeHandler {
+        public void propertyChange(PropertyChangeEvent e) {
+            if (e.getPropertyName().equals(&quot;model&quot;)) {
+                // do some extra work when the model changes
+            }
+            super.propertyChange(e);
+        }
+    }
+ }
+ </pre>
+
+@see PropertyChangeListener
+@see #installUI
+
+<!-- END DATA -->

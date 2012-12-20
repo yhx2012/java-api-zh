@@ -1,0 +1,241 @@
+<!-- BEGIN KEY -->
+public class javax.swing.TransferHandler extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于处理往返于 Swing 组件的 <code>Transferable</code> 的传输。该 <code>Transferable</code> 用于表示通过往/返于剪贴板的剪切、复制或粘贴操作进行交换的数据。它还在拖放操作中使用，以表示对组件进行拖动和放置组件。Swing 提供自动支持剪切、复制和粘贴的键盘绑定的功能，该键盘绑定使用由此类的实现提供的功能。Swing 还提供自动支持拖放操作的功能，该拖放操作使用由此类的实现提供的功能。Swing 开发人员可以主要通过在 Swing 组件上设置 <code>transferHandler</code> 属性专门指定传输语义。
+ <p>
+只通过指定构造方法中的属性名称即可实现此类，以提供传输某个组件属性的默认行为。例如，要通过剪贴板或拖放操作将前景色从一个组件传输到另一个组件，可以使用字符串 &quot;foreground&quot; 构造一个 <code>TransferHandler</code>。内置支持将把由 <code>getForeground</code> 返回的颜色用作该传输的源，把由 <code>setForeground</code> 返回的颜色用作传输的目标。  
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">How to Use Drag and Drop and Data Transfer</a> 一节。
+ 
+@author Timothy Prinzing
+@author Shannon Hickey
+@version 1.47 06/06/06
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.NONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示无传输动作的 <code>int</code> 值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.COPY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示&ldquo;复制&rdquo;传输动作的 <code>int</code> 值。将数据复制到剪贴板或复制到拖放操作中其他位置时使用此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.MOVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示&ldquo;移动&rdquo;传输动作的 <code>int</code> 值。将数据移动到剪贴板（即剪切）或移动到拖放操作中的其他位置时使用此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.COPY_OR_MOVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示&ldquo;复制&rdquo;或&ldquo;移动&rdquo;的源操作功能的 <code>int</code> 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.LINK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 表示“链接”传输动作的 <code>int</code> 值。此值用于指定应该以拖放操作链接数据。 
+
+ @see java.awt.dnd.DnDConstants#ACTION_LINK
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler(String property)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个通过剪贴板或拖放操作可以将 Java Bean 属性从一个组件传输到另一个组件的传输处理程序。
+
+@param property  要传输的属性的名称；如果没有与该传输处理程序相关的属性（例如，执行其他某种传输的子类），则可以为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.TransferHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类的便捷构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getCutAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个执行剪切到剪贴板操作的 {@code Action}。在执行时，此动作通过对组件的 {@code TransferHandler} 调用带 {@code MOVE} 动作的 {@code exportToClipboard}，在 {@code ActionEvent} 的 {@code JComponent} 源上进行操作。
+
+ @return 一个执行剪切到剪贴板的 {@code Action} 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getCopyAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个执行复制到剪贴板操作的 {@code Action}。在执行时，此动作通过对组件的 {@code TransferHandler} 调用带 {@code COPY} 动作的 {@code exportToClipboard}，在 {@code ActionEvent} 的 {@code JComponent} 源上进行操作。
+
+ @return 一个执行复制到剪贴板的 {@code Action}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getPasteAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个从剪贴板执行粘贴操作的 {@code Action}。在执行时，此动作通过对组件的 {@code TransferHandler} 调用带有剪贴板内容的 {@code importData}，在 {@code ActionEvent} 的 {@code JComponent} 源上进行操作。
+
+ @return 一个从剪贴板执行粘贴的 {@code Action}  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.exportAsDrag(JComponent comp, InputEvent e, int action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致 Swing 拖动支持的启用。如果在组件上设置 dragEnabled 属性，则由 <code>javax.swing.plaf.basic</code> 包中的各种 UI 实现调用此方法。可由使用 Swing 拖动支持的自定义 UI 实现调用此方法。也可由作为 <code>JComponent</code> 的子类写入的 Swing 扩展调用此方法，以利用 Swing 拖动支持。
+ <p>
+传输<em>不必</em> 在返回此调用时完成（即该调用不会在等待放置时阻塞）。该传输将通过 <code>java.awt.dnd</code> 机制的 Swing 实现进行，无需开发人员投入更大精力。完成该传输时将调用 <code>exportDone</code> 方法。
+
+ @param comp  存储要传输的数据的组件；提供此参数以启用 <code>TransferHandler</code> 的共享
+ @param e     触发该传输的事件
+ @param action 最初请求的传输动作；为 {@code COPY}、{@code MOVE} 或 {@code LINK}；DnD 系统可以在执行拖动操作的过程中更改所使用的动作
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.exportToClipboard(JComponent comp, Clipboard clip, int action) throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致从给定组件到给定剪贴板的传输。可以由在组件的操作映射中注册的默认剪切和复制操作调用该方法。  
+ <p>
+该传输将使用 <code>java.awt.datatransfer</code> 机制进行，无需开发人员投入更大精力。任何数据传输都<em>将</em> 在此 <code>exportDone</code> 方法返回之前完成，并使用发生的操作调用该方法。如果尝试在其上放置数据时剪贴板不可用，则由 {@link Clipboard#setContents(Transferable, ClipboardOwner)} 抛出的 <code>IllegalStateException</code> 将通过此方法传播。但是，出于一致性考虑，首先要使用 <code>NONE</code> 操作调用 <code>exportDone</code>。
+
+@param comp  存储要传输的数据的组件；提供此参数以启用 <code>TransferHandler</code> 的共享
+@param clip  要向其传输数据的剪贴板
+@param action 请求的传输动作；这应该是 <code>COPY</code> 或 <code>MOVE</code> 二者的其中一个值；执行的操作是由 getSourceActions 和请求的操作给定的传输功能的交集；如果不支持请求的操作，则该交集可能会导致 <code>NONE</code> 操作
+@throws IllegalStateException 如果该剪贴板当前不可用
+@see Clipboard#setContents(Transferable, ClipboardOwner)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.importData(TransferHandler.TransferSupport support)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致从剪贴板或拖放操作的传输。要导入的 <code>Transferable</code> 和要传输到的组件包含在 <code>TransferSupport</code> 中。
+ <p>
+拖放实现在调用此方法前调用 {@code canImport} 确定是否适合传输，但粘贴的实现不会这样做。因此，调用此方法进行粘贴时不能假定传输一定是可接受的。这种情况下，建议显式调用 {@code canImport}。
+ <p>
+注：传递给此方法的 <code>TransferSupport</code> 对象只在该方法的调用期间才有效。此方法返回后它可以包含的值是不确定的。
+
+ @param support 包含该传输细节的对象，不为 <code>null</code>。
+ @return 如果数据被插入该组件，则返回 true；否则返回 false 
+ @throws NullPointerException 如果 <code>support</code> 为 {@code null}
+ @see #canImport(TransferHandler.TransferSupport)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.importData(JComponent comp, Transferable t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致从剪贴板或 DND 放置操作向组件的传输。<code>Transferable</code> 表示要导入组件的数据。  
+ <p>
+注：Swing 现在调用新的 <code>importData</code>，它带有 <code>TransferSupport</code>，而 <code>TransferSupport</code> 调用此方法（如果 {@code TransferSupport} 中的组件是 {@code JComponent}）。鼓励开发人员调用并重写新的版本，因为它提供了更多信息（它也是唯一支持与直接在 {@code JFrame} 或其他非 {@code JComponent} 上设置的 {@code TransferHandler} 一起使用的版本）。
+
+@param comp  要接收传输的组件；提供此参数以启用 <code>TransferHandler</code> 的共享
+@param t     要导入的数据
+@return  如果该数据已插入到组件，则返回 true，否则返回 false
+ @see #importData(TransferHandler.TransferSupport)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.canImport(TransferHandler.TransferSupport support)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在拖放操作期间重复调用此方法，以允许开发人员配置传输的可接受性属性，并返回传输的可接受性；返回 {@code true} 值指示给定 {@code TransferSupport}（它包含该传输的所有细节）所表示的传输在当前是可以接受的，{@code false} 值指示拒绝该传输。
+ <p>
+对于在拖放期间自动显示放置位置的那些组件（接受传输），默认情况下，告知它们显示放置位置。这可通过在 {@code TransferSupport} 上调用 {@code setShowDropLocation} 更改。 
+ <p>
+默认情况下，当接受传输时，选择的放置动作是用户通过其拖动动作挑出的动作。通过在 {@code TransferSupport} 上调用 {@code setDropAction}，开发人员可以重写此方法并从受支持的源动作中选择一个不同的动作。 
+ <p>
+每次调用 {@code canImport} 时，{@code TransferSupport} 都包含新状态。因此，每次调用时都必须设置在其上设置的所有属性。对于放置操作，调用 {@code importData} 之前最后再调用一次 {@code canImport}。最后一次调用期间在 {@code TransferSupport} 上设置的任何状态在 {@code importData} 中都是可用的。
+ <p>
+不会内部调用此方法来响应粘贴操作。因此，对于这种情况，建议 {@code importData} 的实现显式调用此方法，并建议此方法还要准备好返回是否适合粘贴操作。
+ <p>
+注：传递给此方法的 <code>TransferSupport</code> 对象只在该方法的调用期间才有效。此方法返回后可以包含的值是不确定的。
+ @param support 包含该传输的细节的对象，不为 <code>null</code>。
+ @return 如果导入可能发生，则返回 <code>true</code>；否则返回 <code>false</code> 
+ @throws NullPointerException 如果 <code>support</code> 为 {@code null}
+ @see #importData(TransferHandler.TransferSupport)
+ @see javax.swing.TransferHandler.TransferSupport#setShowDropLocation
+ @see javax.swing.TransferHandler.TransferSupport#setDropAction
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.canImport(JComponent comp, java.awt.datatransfer.DataFlavor[] transferFlavors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示一个组件在实际尝试导入给定数据 flavor 的集合之前是否接受其导入。 
+ <p>
+注：Swing 现在调用新的 <code>importData</code>，它带有 <code>TransferSupport</code>，而 <code>TransferSupport</code> 调用此方法（当且仅当 {@code TransferSupport} 中的组件是 {@code JComponent} 时）。鼓励开发人员调用并重写新的版本，因为它提供了更多信息（它也是唯一支持与直接在 {@code JFrame} 或其他非 {@code JComponent} 上设置的 {@code TransferHandler} 一起使用的版本）。
+
+@param comp  要接收传输的组件；提供此参数以启用 <code>TransferHandlers</code> 的共享
+@param transferFlavors  可用的数据格式
+@return  如果可以将该数据插入到组件，则返回 true，否则返回 false
+@see #canImport(TransferHandler.TransferSupport)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.TransferHandler.getSourceActions(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回源支持的传输动作的类型；{@code COPY}、{@code MOVE} 和 {@code LINK} 的任意按位或组合。
+ <p>
+有些模型是不可变的，因此 {@code MOVE} 的传输动作不应该在这种情况下公开。返回 {@code NONE} 禁用该组件的传输。
+ 
+@param c  存储要传输的数据的组件；提供此参数以启用 <code>TransferHandler</code> 的共享
+@return  如果可以找到该传输属性，则返回 {@code COPY}；否则返回 <code>NONE</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.TransferHandler.getVisualRepresentation(Transferable t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个建立传输外观的对象。此方法适用于在执行拖动操作时提供反馈和在具有可视化外观的剪贴板实现中表示传输。该 <code>Icon</code> 接口的实现不应更改图形剪贴或 alpha 级别。该图标实现不必是矩形，也不必绘制所有边界矩形，并且调用该图标绘制方法的逻辑不应假定绘制了所有位。<code>null</code> 是此方法的一个有效返回值，指示没有提供任何可视化表示形式。在这种情况下，该调用逻辑完全可以随意表示该 transferable。  
+ <p>
+如果返回值为 <code>null</code>，则该默认 Swing 逻辑将不执行 alpha 混合拖动动画。
+
+@param t  要传输的数据；此值希望已由 <code>createTransferable</code> 方法创建
+@return  <code>null</code>，指示没有任何默认可视化表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.datatransfer.Transferable javax.swing.TransferHandler.createTransferable(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个要用作数据传输源的 <code>Transferable</code>。返回要传输的数据表示形式，或者返回 <code>null</code> 如果组件的属性为 <code>null</code>
+
+@param c  存储要传输的数据的组件；提供此参数以启用 <code>TransferHandler</code> 的共享
+@return  要传输的数据表示形式，或返回 <code>null</code> 如果与 <code>c</code> 相关的属性为 <code>null</code> 
+  
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.TransferHandler.exportDone(JComponent source, Transferable data, int action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在导出数据之后调用。如果该操作为 <code>MOVE</code>，则此方法应该移除已传输的数据。
+ <p>
+因为 <code>MOVE</code> 不是此实现支持的操作，所以实现此方法不执行任何操作（<code>getSourceActions</code> 不包括 <code>MOVE</code>）。
+
+@param source 以前作为数据源的组件
+@param data   已传输的数据，如果该操作为 <code>NONE</code>，则可能为 null。
+@param action 已执行的实际操作
+
+<!-- END DATA -->

@@ -1,0 +1,29 @@
+<!-- BEGIN KEY -->
+public interface java.awt.KeyEventPostProcessor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在最终解析所有未使用的 KeyEvent 时，需要将 KeyEventPostProcessor 和当前的 KeyboardFocusManager 一起使用。在当前 KeyboardFocusManager 中注册的 KeyEventPostProcessor 在 KeyEvent 被指派到目标并由目标处理后接收它们。因为目前应用程序中不存在拥有该焦点的 Component，所以也可以将这些 KeyEvent 转发到已注册的 KeyEventPostProcessor 中，否则它们将被丢弃。这允许应用程序实现需要全局 KeyEvent 后处理的功能，如菜单快捷键。
+ <p>
+注意，KeyboardFocusManager 本身实现了 KeyEventPostProcessor。默认情况下，当前的 KeyboardFocusManager 将是链中的最终 KeyEventPostProcessor。无法将当前 KeyboardFocusManager 作为 KeyEventPostProcessor 完全注销。但是，如果 KeyEventPostProcessor 报告不应进一步后处理 KeyEvent，则 AWT 将认为已完全处理了该事件，不再对它执行任何其他操作。（尽管客户端代码将当前的 KeyboardFocusManager 一次或多次注册为 KeyEventPostProcessor 是可能的，但通常不必要也不建议这样做。）
+
+@author David Mendenhall
+@version 1.5, 12/19/03
+
+@see KeyboardFocusManager#addKeyEventPostProcessor
+@see KeyboardFocusManager#removeKeyEventPostProcessor
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.KeyEventPostProcessor.postProcessKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前 KeyboardFocusManager 调用此方法，请求此 KeyEventPostProcessor 执行应该作为 KeyEvent 最终解析的一部分的所需后处理。在调用此方法时，通常已经将该 KeyEvent 指派到其目标并由其目标进行了处理。但是，如果目前应用程序中任何 Component 均不拥有该焦点，则表示尚未将该 KeyEvent 指派给任何 Component。通常情况下，KeyEvent 后处理用于实现需要全局 KeyEvent 后处理的功能，如菜单快捷键。注意，如果 KeyEventPostProcessor 希望指派 KeyEvent，则其必须使用 <code>redispatchEvent</code> 来防止 AWT 递归式请求此 KeyEventPostProcessor 再次后处理该事件。
+ <p>
+如果此方法的实现返回 <code>false</code>，则将 KeyEvent 传入链中的下一个 KeyEventPostProcessor，以当前的 KeyboardFocusManager 结尾。如果实现返回 <code>true</code>，则假定已经完全处理了该 KeyEvent（尽管事实不一定如此），AWT 将不对该 KeyEvent 进行任何进一步的操作。如果实现使用了 KeyEvent，但是返回 <code>false</code>，则仍将所使用的事件传入链中的下一个 KeyEventPostProcessor。开发人员在后处理 KeyEvent 之前检查是否已经使用了该 KeyEvent 至关重要。默认情况下，当前 KeyboardFocusManager 不执行任何响应已使用 KeyEvent 的后处理操作。
+
+@param e 要后处理的 KeyEvent
+@return 如果 AWT 不应该对该 KeyEvent 执行进一步操作，则返回 <code>true</code>；否则返回 <code>false</code>
+@see KeyboardFocusManager#redispatchEvent
+
+<!-- END DATA -->

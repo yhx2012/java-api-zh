@@ -1,0 +1,173 @@
+<!-- BEGIN KEY -->
+public interface javax.script.ScriptEngineFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ScriptEngineFactory</code> 用来描述和实例化 <code>ScriptEngine</code>。<br><br> 实现 <code>ScriptEngine</code> 的每个类都有一个相应的工厂，该工厂公开描述引擎类的元数据。<br><br> <code>ScriptEngineManager</code> 使用 <i>Jar 文件规范</i> 中描述的服务提供者机制来获取所有当前 ClassLoader 中可用的 <code>ScriptEngineFactory</code> 实例。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getEngineName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ScriptEngine</code> 的完全名称。例如，基于 Mozilla Rhino Javascript 引擎的实现可以返回 <i>Rhino Mozilla Javascript Engine</i>。
+@return 引擎实现的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getEngineVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ScriptEngine</code> 的版本。
+@return <code>ScriptEngine</code> 实现版本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> javax.script.ScriptEngineFactory.getExtensions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回文件扩展名的不可变列表，这些扩展名通常标识使用此 <code>ScriptEngine</code> 支持的语言所编写的脚本。该数组由 <code>ScriptEngineManager</code> 使用，用于实现其 <code>getEngineByExtension</code> 方法。
+@return 扩展名列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> javax.script.ScriptEngineFactory.getMimeTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 mimetypes 的不可变列表，这些 mimetypes 与可由引擎执行的脚本关联。该列表由 <code>ScriptEngineManager</code> 类使用，用于实现其 <code>getEngineByMimetype</code> 方法。
+@return  mime 类型的列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> javax.script.ScriptEngineFactory.getNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>ScriptEngine</code> 短名称的不可变列表，这些名称由 <code>ScriptEngineManager</code> 用来标识 <code>ScriptEngine</code>。例如，基于 Mozilla Rhino Javascript 引擎的实现可以返回包含 {&quot;javascript&quot;, &quot;rhino&quot;} 的列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getLanguageName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ScriptEngine</code> 支持的脚本语言的名称。
+@return 受支持语言的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getLanguageVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>ScriptEngine</code> 支持的脚本语言的版本。
+@return 受支持语言的版本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.script.ScriptEngineFactory.getParameter(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回属性值，该属性的含义可能是特定于实现的。其值在所有实现中定义的键有：
+ <ul>
+<li>ScriptEngine.ENGINE</li>
+<li>ScriptEngine.ENGINE_VERSION</li>
+<li>ScriptEngine.NAME</li>
+<li>ScriptEngine.LANGUAGE</li>
+<li>ScriptEngine.LANGUAGE_VERSION</li>
+ </ul>
+ <p>
+用于这些键的值分别是 <code>getEngineName</code>、<code>getEngineVersion</code>、<code>getName</code>、<code>getLanguageName</code> 和 <code>getLanguageVersion</code> 返回的 String。<br><br>还定义了保留键 <code><b>THREADING</b></code>，它的值描述了与脚本并发执行和状态维护有关的引擎行为。用于 <code><b>THREADING</b></code> 键的值有：<br><br>
+ <ul>
+<p><code>null</code> - 引擎实现不是线程安全的，并且无法用来在多个线程上并发执行脚本。
+<p><code>&quot;MULTITHREADED&quot;</code> - 引擎实现是内部线程安全的，并且脚本可以并发执行，尽管在某个线程上执行脚本的效果对于另一个线程上的脚本是可见的。
+<p><code>&quot;THREAD-ISOLATED&quot;</code> - 该实现满足 &quot;MULTITHREADED&quot; 的要求，并且引擎为不同线程上执行的脚本中的符号维护独立的值。
+<p><code>&quot;STATELESS&quot;</code> - 该实现满足 <code>&quot;THREAD-ISOLATED&quot;</code> 的要求。此外，脚本执行不改变 <code>Bindings</code> 中的映射关系，该 Bindings 是 <code>ScriptEngine</code> 的引擎范围。具体来说，<code>Bindings</code> 及其关联值中的键在执行脚本之前和之后是相同的。
+ </li>
+ </ul>
+<br><br> 实现可以定义特定于实现的键。
+
+@param key 参数名
+@return 给定参数的值。如果没有为键分配值，则返回 <code>null</code>。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getMethodCallSyntax(String obj, String m, java.lang.String[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 String，该 String 可用来调用使用受支持脚本语言语法的 Java 对象的方法。例如，Javascript 引擎的实现可能是：
+ <p>
+ <code><pre>
+public String getMethodCallSyntax(String obj,
+String m, String... args) {
+String ret = obj;
+ret += &quot;.&quot;+ m + &quot;(&quot;;
+for (int i = 0; i &lt; args.length; i++) {
+ret += args[i];
+if (i == args.length - 1) {
+ret += &quot;)&quot;;
+} else {
+ret += &quot;,&quot;;
+          }
+      }
+return ret;
+ }
+</pre></code>
+ <p>
+
+@param obj 表示其方法将被调用的对象的名称。该名称是用来使用 <code>ScriptEngine</code> 的 <code>put</code> 方法、<code>ENGINE_SCOPE</code> <code>Bindings</code> 的 <code>put</code> 方法或者 <code>ScriptContext</code> 的 <code>setAttribute</code> 方法创建 bindings 的名称。脚本中使用的标识符可以是指定标识符的装饰形式。
+
+@param m 要调用的方法的名称。
+@param args 方法调用中的参数名称。
+
+@return 用来调用使用脚本语言语法的方法的 String。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getOutputStatement(String toDisplay)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 String，该 String 可用作一个语句来显示使用受支持脚本语言语法的指定 String。例如，Perl 引擎的实现可能是：
+ <p>
+ <pre><code>
+public String getOutputStatement(String toDisplay) {
+return &quot;print(&quot; + toDisplay + &quot;)&quot;;
+ }
+ </code></pre>
+
+@param toDisplay 将由返回的语句显示的 String。
+@return 用来显示使用脚本语言语法的 String 的字符串。
+
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.script.ScriptEngineFactory.getProgram(java.lang.String[] statements)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含给定语句的有效脚本语言的可执行程序。例如，PHP 引擎的实现可能是：
+ <p>
+ <pre><code>
+public String getProgram(String... statements) {
+$retval = &quot;&lt;?\n&quot;;
+int len = statements.length;
+for (int i = 0; i &lt; len; i++) {
+$retval += statements[i] + &quot;;\n&quot;;
+      }
+$retval += &quot;?&gt;&quot;;
+
+ }
+ </code></pre>
+
+@param statements 要执行的语句。可能是调用 <code>getMethodCallSyntax</code> 和 <code>getOutputStatement</code> 方法的返回值。
+@return 程序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.script.ScriptEngine javax.script.ScriptEngineFactory.getScriptEngine()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>ScriptEngineFactory</code> 关联的 <code>ScriptEngine</code> 的实例。通常返回一个新的 ScriptEngine，但这些实现可以池化、共享或重用引擎。
+
+@return 新的 <code>ScriptEngine</code> 实例。
+
+<!-- END DATA -->

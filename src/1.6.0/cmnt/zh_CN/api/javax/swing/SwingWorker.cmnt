@@ -1,0 +1,435 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.SwingWorker extends java.lang.Object implements java.util.concurrent.RunnableFuture
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在专用线程中执行长时间 GUI 交互任务的抽象类。
+ 
+ <p>
+使用 Swing 编写多线程应用程序时，要记住两个约束条件：（有关详细信息，请参阅 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</a>）：
+ <ul>
+<li> 不应该在<i>事件指派线程</i> 上运行耗时任务。否则应用程序将无响应。
+   </li>
+<li> 只能在<i>事件指派线程</i> 上访问 Swing 组件。
+   </li>
+ </ul>
+
+ <p>
+
+ <p>
+这些约束意味着需要时间密集计算操作的 GUI 应用程序至少需要以下两个线程：1) 执行长时间任务的线程； 2) 所有 GUI 相关活动的<i>事件指派线程</i> （EDT）这涉及到难以实现的线程间通信。
+
+ <p>
+{@code SwingWorker} 设计用于需要在后台线程中运行长时间运行任务的情况，并可在完成后或者在处理过程中向 UI 提供更新。{@code SwingWorker} 的子类必须实现 {@link #doInBackground} 方法，以执行后台计算。
+
+
+ <p>
+<b>工作流</b>
+ <p>
+{@code SwingWorker} 的生命周期中包含三个线程：
+ <ul>
+ <li>
+ <p>
+<i>当前</i> 线程：在此线程上调用 {@link #execute} 方法。它调度 {@code SwingWorker} 以在 <i>worker</i> 线程上执行并立即返回。可以使用 {@link #get get} 方法等待 {@code SwingWorker} 完成。
+ <li>
+ <p>
+<i>Worker</i> 线程：在此线程上调用 {@link #doInBackground} 方法。所有后台活动都应该在此线程上发生。要通知 {@code PropertyChangeListeners} 有关绑定 (bound) 属性的更改，请使用 {@link #firePropertyChange firePropertyChange} 和 {@link #getPropertyChangeSupport} 方法。默认情况下，有两个可用的绑定属性：{@code state} 和 {@code progress}。
+ <li>
+ <p>
+<i>事件指派线程</i>：所有与 Swing 有关的活动都在此线程上发生。{@code SwingWorker} 调用 {@link #process process} 和 {@link #done} 方法，并通知此线程的所有 {@code PropertyChangeListener}。
+ </ul>
+ 
+ <p>
+通常，<i>当前</i> 线程就是<i>事件指派线程</i>。 
+
+
+ <p>
+在 <i>worker</i> 线程上调用 {@code doInBackground} 方法之前，{@code SwingWorker} 通知所有 {@code PropertyChangeListener} 有关对 {@code StateValue.STARTED} 的 {@code state} 属性更改。{@code doInBackground} 方法完成后，执行 {@code done} 方法。然后 {@code SwingWorker} 通知所有 {@code PropertyChangeListener} 有关对 {@code StateValue.DONE} 的 {@code state} 属性更改。
+
+ <p>
+{@code SwingWorker} 被设计为只执行一次。多次执行 {@code SwingWorker} 将不会调用两次 {@code doInBackground} 方法。
+
+ <p>
+<b>示例用法</b>
+ <p>
+下例说明了最简单的使用范例：在后台完成某些处理，并在处理完成后更新 Swing 组件。
+
+ <p>
+假定想找到&ldquo;Meaning of Life&rdquo;并在 {@code JLabel} 中显示结果。
+ 
+ <pre>
+final JLabel label;
+class MeaningOfLifeFinder extends SwingWorker&lt;String, Object&gt; {
+{@code @Override}
+public String doInBackground() {
+return findTheMeaningOfLife();
+       }
+
+{@code @Override}
+protected void done() {
+try { 
+label.setText(get());
+} catch (Exception ignore) {
+           }
+       }
+   }
+ 
+(new MeaningOfLifeFinder()).execute();
+ </pre>
+ 
+ <p>
+在希望处理已经在<i>事件指派线程</i> 上准备好的数据时，下一个例子很有用。
+
+ <p>
+现在想要查找第一个 N 素数值并在 {@code JTextArea} 中显示结果。在计算过程中，想在 {@code JProgressBar} 中更新进度。最后，还要将该素数值打印到 {@code System.out}。
+ <pre>
+class PrimeNumbersTask extends 
+SwingWorker&lt;List&lt;Integer&gt;, Integer&gt; {
+PrimeNumbersTask(JTextArea textArea, int numbersToFind) { 
+//initialize 
+     }
+
+{@code @Override}
+public List&lt;Integer&gt; doInBackground() {
+while (! enough &amp;&amp; ! isCancelled()) {
+number = nextPrimeNumber();
+publish(number);
+setProgress(100 * numbers.size() / numbersToFind);
+             }
+         }
+return numbers;
+     }
+
+{@code @Override}
+protected void process(List&lt;Integer&gt; chunks) {
+for (int number :chunks) {
+textArea.append(number + &quot;\n&quot;);
+         }
+     }
+ }
+
+JTextArea textArea = new JTextArea();
+final JProgressBar progressBar = new JProgressBar(0, 100);
+PrimeNumbersTask task = new PrimeNumbersTask(textArea, N);
+task.addPropertyChangeListener(
+new PropertyChangeListener() {
+public  void propertyChange(PropertyChangeEvent evt) {
+if (&quot;progress&quot;.equals(evt.getPropertyName())) {
+progressBar.setValue((Integer)evt.getNewValue());
+             }
+         }
+     });
+
+task.execute();
+System.out.println(task.get()); //prints all prime numbers we have got
+ </pre>
+ 
+ <p>
+因为 {@code SwingWorker} 实现了 {@code Runnable}，所以可以将 {@code SwingWorker} 提交给 {@link java.util.concurrent.Executor} 执行。
+  
+@author Igor Kushnirskiy
+@version 1.7 08/10/06
+ 
+@param <T> 此 {@code SwingWorker} 的 {@code doInBackground} 和 {@code get} 方法返回的结果类型
+@param <V> 用于保存此 {@code SwingWorker} 的 {@code publish} 和 {@code process} 方法的中间结果的类型
+ 
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SwingWorker()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造此 {@code SwingWorker}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract T javax.swing.SwingWorker.doInBackground() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算结果；如果无法计算结果，则抛出异常。
+
+ <p>
+注意，此方法只执行一次。
+ 
+ <p>
+注：此方法在后台线程中执行。
+  
+
+@return 计算的结果
+@throws Exception 如果无法计算结果
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.SwingWorker.run()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 {@code Future} 设置为计算的结果，除非它已经被取消。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.swing.SwingWorker.publish(V[] chunks)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将数据块发送给 {@link #process} 方法。将从 {@code doInBackground} 方法内部使用此方法传送中间结果，以便在 {@code process} 方法内部对<i>事件指派线程</i> 进行处理。
+ 
+ <p>
+由于在<i>事件指派进程</i> 上异步地调用 {@code process} 方法，所以在执行 {@code process} 方法之前可以对 {@code publish} 方法进行多次调用。为了改进性能，所有这些调用都合并为一个带连接参数的调用。
+ 
+ <p>
+例如：
+ 
+ <pre>
+publish(&quot;1&quot;);
+publish(&quot;2&quot;, &quot;3&quot;);
+publish(&quot;4&quot;, &quot;5&quot;, &quot;6&quot;);
+ </pre>
+ 
+结果可能为：
+ 
+ <pre>
+process(&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;)
+ </pre>
+
+ <p>
+<b>示例用法</b>。以下代码片断加载某一表格数据，并用它来更新 {@code DefaultTableModel}。注意，从 {@code process} 方法内部更换 tableModel 是安全的，因为该方法是在<i>事件指派线程</i> 上调用的。
+ 
+ <pre>
+class TableSwingWorker extends 
+SwingWorker&lt;DefaultTableModel, Object[]&gt; {
+private final DefaultTableModel tableModel;
+ 
+public TableSwingWorker(DefaultTableModel tableModel) {
+this.tableModel = tableModel;
+     }
+ 
+{@code @Override}
+protected DefaultTableModel doInBackground() throws Exception {
+for (Object[] row = loadData(); 
+! isCancelled() &amp;&amp; row != null; 
+row = loadData()) {
+publish((Object[]) row);
+         }
+return tableModel;
+     }
+ 
+{@code @Override}
+protected void process(List&lt;Object[]&gt; chunks) {
+for (Object[] row :chunks) {
+tableModel.addRow(row);
+         }
+     }
+ }
+ </pre>
+ 
+@param chunks 要处理的中间结果
+ 
+@see #process
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.SwingWorker.process(java.util.List<V> chunks)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在<i>事件指派线程</i> 上异步地从 {@code publish} 方法接收数据块。
+ 
+ <p>
+有关详细信息，请参阅 {@link #publish} 方法。
+ 
+@param chunks 要处理的中间结果
+ 
+@see #publish
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.SwingWorker.done()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code doInBackground} 方法完成后，在<i>事件指派线程</i> 上执行此方法。默认实现不执行任何操作。子类可以重写此方法，以在<i>事件指派线程</i> 上执行完成操作。注意，可以查询此方法实现内部的状态，以确定此任务的结果或者是否已经取消了此任务。
+ 
+@see #doInBackground
+@see #isCancelled()
+@see #get
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.swing.SwingWorker.setProgress(int progress)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@code progress} 绑定属性。该值应该在 0 到 100 之间。
+
+ <p>
+由于在<i>事件指派线程</i> 上异步地通知 {@code PropertyChangeListener}，所以可以在调用任意 {@code PropertyChangeListener} 之前对 {@code setProgress} 方法进行多次调用。为了改进性能，所有这些调用都合并为一个只带最后一个调用参数的调用。
+ 
+ <p>
+例如，以下调用：
+ 
+ <pre>
+setProgress(1);
+setProgress(2);
+setProgress(3);
+ </pre>
+ 
+结果可能为带有值 {@code 3} 的单个 {@code PropertyChangeListener} 通知。
+ 
+@param progress 要设置的进度值
+@throws IllegalArgumentException 如果值不是从 0 到 100
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int javax.swing.SwingWorker.getProgress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code progress} 绑定属性。
+ 
+@return progress 绑定属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.SwingWorker.execute()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调度此 {@code SwingWorker} 以便在 <i>worker</i> 线程上执行。存在许多可用的 <i>worker</i> 线程。如果所有 <i>worker</i> 线程都忙于处理其他 {@code SwingWorker}，则此 {@code SwingWorker} 将被放入等待队列。
+
+ <p>
+注：{@code SwingWorker} 被设计为只执行一次。多次执行 {@code SwingWorker} 将不会调用两次 {@code doInBackground} 方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.swing.SwingWorker.cancel(boolean mayInterruptIfRunning)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.swing.SwingWorker.isCancelled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean javax.swing.SwingWorker.isDone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final T javax.swing.SwingWorker.get() throws java.lang.InterruptedException, java.util.concurrent.ExecutionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+注：在此 {@code SwingWorker} 完成之前，在<i>事件指派线程</i> 上调用 {@code get} 将阻塞<i>所有</i> 事件（包括 repaint）的处理。
+ 
+ <p>
+想在<i>事件指派线程</i> 上阻塞 {@code SwingWorker} 时，建议使用 <i>模式对话框（modal dialog）</i>。
+
+ <p>
+例如：
+ 
+ <pre>
+class SwingWorkerCompletionWaiter extends PropertyChangeListener {
+private JDialog dialog;
+ 
+public SwingWorkerCompletionWaiter(JDialog dialog) {
+this.dialog = dialog;
+     }
+ 
+public void propertyChange(PropertyChangeEvent event) {
+if (&quot;state&quot;.equals(event.getPropertyName())
+&amp;&amp; SwingWorker.StateValue.DONE == event.getNewValue()) {
+dialog.setVisible(false);
+dialog.dispose();
+         }
+     }
+ }
+JDialog dialog = new JDialog(owner, true);
+swingWorker.addPropertyChangeListener(
+new SwingWorkerCompletionWaiter(dialog));
+swingWorker.execute();
+//the dialog will be visible until the SwingWorker is done
+dialog.setVisible(true); 
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final T javax.swing.SwingWorker.get(long timeout, TimeUnit unit) throws java.lang.InterruptedException, java.util.concurrent.ExecutionException, java.util.concurrent.TimeoutException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+ <p>
+有关更多信息，请参阅 {@link #get}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.SwingWorker.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 {@code PropertyChangeListener} 添加到侦听器列表。该侦听器是为所有属性注册的。同一侦听器对象可以被添加多次，并且它们被调用的次数将与添加它们的次数相同。如果 {@code listener} 为 {@code null}，则不抛出任何异常并且不执行任何操作。
+ 
+ <p>
+注：此方法只是一个便捷包装器。所有工作都委托给 {@link #getPropertyChangeSupport} 返回的 {@code PropertyChangeSupport}。
+ 
+@param listener 要添加的 {@code PropertyChangeListener}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.SwingWorker.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表中移除一个 {@code PropertyChangeListener}。此方法移除一个为所有属性注册的 {@code PropertyChangeListener}。如果将 {@code listener} 多次添加到同一事件源，则在被移除之后，它获得的通知将减少一次。如果 {@code listener} 为 {@code null}，或者没有添加过，则不抛出任何异常并且不执行任何操作。
+ 
+ <p>
+注：此方法只是一个便捷包装器。所有工作都委托给 {@link #getPropertyChangeSupport} 返回的 {@code PropertyChangeSupport}。
+ 
+@param listener 要移除的 {@code PropertyChangeListener}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.SwingWorker.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向所有已注册的侦听器报告绑定属性更新。如果 {@code old} 和 {@code new} 相等并且为非 null，则不触发任何事件。
+ 
+ <p>
+此 {@code SwingWorker} 将成为所有已生成事件的源。
+
+ <p>
+在<i>事件指派线程</i> 之外调用此方法时，则在<i>事件指派线程</i> 上异步地通知 {@code PropertyChangeListener}。
+ <p>
+注：此方法只是一个便捷包装器。所有工作都委托给 {@link #getPropertyChangeSupport} 返回的 {@code PropertyChangeSupport}。
+ 
+ 
+@param propertyName 已更改属性的编程名称
+@param oldValue 属性的旧值
+@param newValue 属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.beans.PropertyChangeSupport javax.swing.SwingWorker.getPropertyChangeSupport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 {@code SwingWorker} 的 {@code PropertyChangeSupport}。当需要灵活地访问绑定属性支持时，使用此方法。
+ <p>
+此 {@code SwingWorker} 将成为所有已生成事件的源。
+ 
+ <p>
+注：如果在<i>事件指派线程</i> 之外调用 {@code firePropertyChange} 或 {@code fireIndexedPropertyChange}，则返回的 {@code PropertyChangeSupport} 在<i>事件指派线程</i> 上异步地通知所有 {@code PropertyChangeListener}。
+ 
+@return 此 {@code SwingWorker} 的 {@code PropertyChangeSupport}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.swing.SwingWorker.StateValue javax.swing.SwingWorker.getState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@code SwingWorker} 状态绑定属性。
+ 
+@return 当前状态
+
+<!-- END DATA -->

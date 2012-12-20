@@ -1,0 +1,87 @@
+<!-- BEGIN KEY -->
+public interface org.omg.DynamicAny.DynUnionOperations extends org.omg.DynamicAny.DynAnyOperations
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+DynUnion 对象支持对 IDL 联合数据 (union) 的操作。联合数据只能有两个有效的当前位置：
+ <UL>
+<LI>0，表示鉴别符 (discriminator)
+<LI>1，表示活动成员
+ </UL>
+联合数据的 component_count 值依赖于当前鉴别符：其鉴别符指示一个指定成员的联合数据的 component_count 值为 2，其他情况为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny.DynUnionOperations.get_discriminator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前鉴别符值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny.DynUnionOperations.set_discriminator(DynAny d) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 DynUnion 的鉴别符值设置为指定值。将鉴别符设置为与当前活动联合数据成员一致的值对当前活动成员没有影响。将鉴别符设置为与当前活动成员不一致的值将停用该成员，并将与新鉴别符值一致的成员（如果存在与该值对应的成员）初始化为其默认值，从而激活该成员。如果鉴别符值指示一个不存在的联合数据成员，则设置联合数据鉴别符会将当前位置设置为 0（在此情况下，has_no_active_member 返回 true）。否则，如果鉴别符值指示指定的联合数据成员，则将当前位置设置为 1（在此情况下，has_no_active_member 返回 false，component_count 返回 2）。
+
+@exception TypeMismatch 如果参数的 TypeCode 不等于联合数据鉴别符的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny.DynUnionOperations.set_to_default_member() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将鉴别符设置为联合数据的默认 case 的值。它将当前位置设置为 0，并导致 component_count 返回 2。
+
+@exception TypeMismatch 如果联合数据没有显式的默认 case
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny.DynUnionOperations.set_to_no_active_member() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将鉴别符设置为与任何联合数据 case 标签都不相应的值。它将当前位置设置为 0，并导致 component_count 返回 1。
+
+@exception TypeMismatch 如果联合数据具有显式的默认 case，或者其显式 case 标签使用了整个鉴别符值范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny.DynUnionOperations.has_no_active_member()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果联合数据没有活动成员，即这些联合数据值仅由其鉴别符组成（因为鉴别符的值不作为显式 case 标签列出），则返回 true。对具有默认 case 的联合数据调用此操作将返回 false。对显式 case 标签使用了整个鉴别符值范围的联合数据调用此操作将返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TCKind org.omg.DynamicAny.DynUnionOperations.discriminator_kind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回鉴别符 TypeCode 的 TCKind 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TCKind org.omg.DynamicAny.DynUnionOperations.member_kind() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员 TypeCode 的 TCKind 值。 
+
+@exception InvalidValue 如果联合数据不具有当前活动成员
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny.DynUnionOperations.member() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员。注意，当且仅当当前活动成员没有更改时返回的引用才仍然有效。使用超出当前活动成员生存时间的返回引用将引发 OBJECT_NOT_EXIST。 
+
+@exception InvalidValue 如果联合数据没有活动成员
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.DynamicAny.DynUnionOperations.member_name() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员的名称。如果联合数据 TypeCode 不包含当前活动成员的成员名称，则操作将返回空字符串。
+
+@exception InvalidValue 如果联合数据没有活动成员
+
+<!-- END DATA -->

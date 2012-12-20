@@ -1,0 +1,98 @@
+<!-- BEGIN KEY -->
+public abstract class javax.sound.midi.MidiMessage extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MidiMessage</code> 是 MIDI 消息的基类。这些基类中不仅包含了合成器可响应的标准 MIDI 消息，还包含可供 sequencer 程序使用的&ldquo;元事件&rdquo;。还有针对类似歌词、版权、速度指示、时间和主要签名、制造者等信息的元事件。有关更多的信息，请参见 Standard MIDI Files 1.0 规范，它是由 MIDI 制造商协会 (<a href = http://www.midi.org>http://www.midi.org</a>) 发布的 Complete MIDI 1.0 Detailed Specification 的一部分。
+ <p>
+<code>MidiMessage</code> 基类提供了对有关 MIDI 消息的三类信息的访问：
+ <ul>
+<li>消息的状态字节</li>
+<li>消息的总长度，以字节为单位（状态字节加数据字节）</li>
+<li>包含完整消息的 byte 数组</li>
+ </ul>
+
+<code>MidiMessage</code> 包含了用于获取这些值的方法，但不包括用于设置这些值的方法。设置这些值是子类的任务。
+ <p>
+<a name="integersVsBytes"></a> MIDI 标准用字节表示 MIDI 数据。但是，由于 Java<sup>TM</sup> 使用带符号字节，所以 Java Sound API 表示 MIDI 数据时使用整数而不是字节。例如，<code>MidiMessage</code> 的 {@link #getStatus()} 方法返回用整数表示的 MIDI 状态字节。如果处理来源于 Java Sound 之外的 MIDI 数据，而现在又编码为带符号字节，可使用以下转换将字节转换为整数：
+ <center><code>int i = (int)(byte &amp; 0xFF)</code></center>
+ <p>
+如果只需要将一个已知 MIDI 字节值作为方法参数传递，则可使用（例如）十进制或十六进制符号直接将其表示为整数。例如，要传递&ldquo;实际有意义的&rdquo;状态字节作为 ShortMessage 的 {@link ShortMessage#setMessage(int) setMessage(int)} 方法的第一个参数，您可以将其表示为 254 或 0xFE。
+
+@see Track
+@see Sequence
+@see Receiver
+
+@version 1.30, 05/11/17
+@author David Rivas
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected byte[] javax.sound.midi.MidiMessage.data
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+MIDI 消息数据。第一个字节是消息的状态字节；后面一直到消息长度字节为止的是此消息的数据字节。
+@see #getLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.midi.MidiMessage.length
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+MIDI 消息中的字节数，包括状态字节和数据字节。
+@see #getLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.midi.MidiMessage(byte[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>MidiMessage</code>。此受保护的构造方法由具体子类调用，具体子类应确保数据数组指定一个完整有效的 MIDI 消息。
+
+@param data 包含完整消息的 byte 数组。使用 <code>setMessage</code> 方法可更改消息数据。
+
+@see #setMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.sound.midi.MidiMessage.setMessage(byte[] data, int length) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 MIDI 消息设置数据。此受保护的方法由具体子类调用，具体子类应确保数据数组指定一个完整有效的 MIDI 消息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.sound.midi.MidiMessage.getMessage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 MIDI 消息数据。返回的 byte 数组中的第一个字节是消息的状态字节。后面一直到消息长度字节为止的是数据字节。byte 数组的长度可能会大于实际消息的长度；消息总长度（以字节为单位）由 <code>{@link #getLength}</code> 方法报告。
+
+@return 包含完整的 <code>MidiMessage</code> 数据的 byte 数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiMessage.getStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 MIDI 消息的状态字节。以整数方式表示状态&ldquo;字节&rdquo;；请参见 <code>MidiMessage</code> 类描述中的<a href="#integersVsBytes">讨论</a>。
+
+@return 此事件的状态字节的整数表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiMessage.getLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 MIDI 消息的总长度，以字节为单位。一个 MIDI 消息包含一个状态字节和零个或多个数据字节。返回值的范围：系统实时消息为 1，通道消息为 2 或 3，元和系统独占消息为任意值。
+
+@return 消息的长度，以字节为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.sound.midi.MidiMessage.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个与此对象具有相同类和相同内容的新对象。
+@return 此实例的一个副本。
+
+<!-- END DATA -->

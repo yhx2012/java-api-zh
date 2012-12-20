@@ -1,0 +1,185 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.image.VolatileImage extends java.awt.Image implements java.awt.Transparency
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+VolatileImage 是一种图像，它可以在不受应用程序控制的情形下（例如，由操作系统或其他应用程序引起的情况）随时丢失其内容。由于存在硬件加速的潜力，VolatileImage 对象在某些平台上能够获得显著的性能受益。
+ <p>
+图像的绘制表面（图像内容实际驻留的内存）可以丢失或失效，从而引起该内存的内容丢失。因此，绘制表面需要恢复或重新创建，表面的内容需要重新呈现。VolatileImage 提供了一个接口，此接口允许用户检测这些问题，并在出现这些问题时修复它们。
+<p>
+ 当创建 VolatileImage 对象时，可能为支持图像而分配了显存 (VRAM) 之类的有限系统资源。当不再使用 VolatileImage 对象时，可以将它作为垃圾回收，并返还其占用的系统资源，但此过程无法在保证的时间内发生。创建许多 VolatileImage 对象的应用程序（例如，在窗口大小改变时可以强行重建其后台缓冲区的可调整大小窗口）可能会为新的 VolatileImage 对象用光最优系统资源，因为原有对象还没有从系统中移除。（仍然可以创建新的 VolatileImage 对象，但它们执行起来可能不如那些在加速内存中创建的对象）。
+可以调用 flush 方法在任何时间主动释放由 VolatileImage 使用的资源，这样就不会妨碍后续 VolatileImage 对象的加速操作。按照这种方式，应用程序可以对过时的 VolatileImage 对象所占用的资源状态拥有更多的控制权。
+ <p>
+不能直接为此图像创建子类，而应该使用 {@link java.awt.Component#createVolatileImage(int, int) Component.createVolatileImage} 或 {@link java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int) GraphicsConfiguration.createCompatibleVolatileImage(int, int)} 方法来创建。
+ <P>
+以下是一个使用 VolatileImage 对象的示例：
+ <pre>
+ // image creation
+ VolatileImage vImg = createVolatileImage(w, h);
+
+
+ // rendering to the image
+ void renderOffscreen() {
+	do {
+	    if (vImg.validate(getGraphicsConfiguration()) ==
+		VolatileImage.IMAGE_INCOMPATIBLE)
+	    {
+		// old vImg doesn't work with new GraphicsConfig; re-create it
+		vImg = createVolatileImage(w, h);
+	    }
+	    Graphics2D g = vImg.createGraphics();
+	    //
+	    // miscellaneous rendering commands...
+	    //
+	    g.dispose();
+	} while (vImg.contentsLost());
+ }
+
+
+ // copying from the image (here, gScreen is the Graphics
+ // object for the onscreen window)
+ do {
+	int returnCode = vImg.validate(getGraphicsConfiguration());
+	if (returnCode == VolatileImage.IMAGE_RESTORED) {
+	    // Contents need to be restored
+	    renderOffscreen();	    // restore contents
+	} else if (returnCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+	    // old vImg doesn't work with new GraphicsConfig; re-create it
+	    vImg = createVolatileImage(w, h);
+	    renderOffscreen();
+	}
+	gScreen.drawImage(vImg, 0, 0, this);
+ } while (vImg.contentsLost());
+ </pre>
+ <P>
+注意，此类是从 {@link Image} 类创建的子类，{@link Image} 类包含带有 {@link ImageObserver} 参数的方法，用于从潜在 {@link ImageProducer} 收到信息时的异步通知。由于此 <code>VolatileImage</code> 不是从异步源加载的，因此带有 <code>ImageObserver</code> 参数的不同方法的行为就好像已经从 <code>ImageProducer</code> 中获得了数据。明确地说，这意味着这些方法的返回值永远不会指示信息尚不可用，并且永远不需要为了异步回调通知而记录这些方法中使用的 <code>ImageObserver</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.VolatileImage.IMAGE_OK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+经验证的图像准备按原样使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.VolatileImage.IMAGE_RESTORED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+经验证的图像已经被恢复并准备使用。注意，恢复引起图像内容的丢失。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.VolatileImage.IMAGE_INCOMPATIBLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+经验证的图像与提供的 <code>GraphicsConfiguration</code> 对象不兼容，应该重新创建适当的图像。从 <code>validate</code> 收到此返回代码后按原样使用图像的行为是不明确的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.VolatileImage.transparency
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此图像所使用的透明度值。
+@see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int,int)
+@see java.awt.GraphicsConfiguration#createCompatibleVolatileImage(int, int,ImageCapabilities,int)
+@see Transparency
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.image.BufferedImage java.awt.image.VolatileImage.getSnapshot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的静态快照图像。返回的 <code>BufferedImage</code> 仅与请求时刻的 <code>VolatileImage</code> 保持一致，不随 <code>VolatileImage</code> 未来的更改而更新。
+@return 此 <code>VolatileImage</code> 的 {@link BufferedImage} 表示形式
+@see BufferedImage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.VolatileImage.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>VolatileImage</code> 的宽度。
+@return 此 <code>VolatileImage</code> 的宽度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.VolatileImage.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>VolatileImage</code> 的高度。
+@return 此 <code>VolatileImage</code> 的高度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ImageProducer java.awt.image.VolatileImage.getSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此方法返回此 VolatileImage 的 ImageProducer。注意，用于呈现操作和位图传输到屏幕或其他 VolatileImage 对象时，VolatileImage 对象很理想，但用于读回图像的像素时则相反。因此，<code>getSource</code> 这类操作的执行速度可能不如不依赖读取像素的那些操作。同样要注意，从图像读取的像素值只与获取时图像的像素值保持一致。此方法在作出请求时拍下图像的快照，返回的 ImageProducer 对象使用该静态快照，而不是原始的 VolatileImage 进行工作。调用 getSource() 等效于调用 getSnapshot().getSource()。
+@return {@link ImageProducer}，它可以为此 Image 的 <code>BufferedImage</code> 表示形式生成像素。
+@see ImageProducer
+@see #getSnapshot()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics java.awt.image.VolatileImage.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回 {@link Graphics2D}，但它存在于此处是出于向后兼容性的考虑。{@link #createGraphics() createGraphics} 更为方便，因为它被声明为返回 <code>Graphics2D</code>。
+@return <code>Graphics2D</code>，可以将它绘制到此图像中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Graphics2D java.awt.image.VolatileImage.createGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Graphics2D</code>，可以将它绘制到此 <code>VolatileImage</code> 中。
+@return <code>Graphics2D</code>，用于绘制到此图像中。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.VolatileImage.validate(GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果上次调用 <code>validate</code> 后绘制表面丢失，则试图恢复图像的绘制表面。还要依靠给定的 GraphicsConfiguration 参数验证此图像，即查看从此图像到 GraphicsConfiguration 的操作是否兼容。以下情形就是一个不兼容组合的例子：VolatileImage 对象在一个图形设备上创建，然后在另一个不同的图形设备上呈现。由于 VolatileImage 对象与设备特别相关，此操作可能不会按预期进行，因此调用此 validate 返回的代码将记录这种不兼容性。null 或不正确的 gc 值可能引起 <code>validate</code> 返回不正确的值，随后可能引起呈现问题。
+
+@param   gc   一个 <code>GraphicsConfiguration</code> 对象，图像依靠此对象进行验证。gc 为 null 意味着 validate 方法应该跳过兼容性测试。
+@return  如果图像不需要验证，则返回 <code>IMAGE_OK</code>。<BR>如果图像需要恢复，则返回 <code>IMAGE_RESTORED</code>。恢复意味着图像内容可能已受到影响，并且图像可能需要重新呈现。<BR>如果图像与传入 <code>validate</code> 方法的 <code>GraphicsConfiguration</code> 对象不兼容，则返回 <code>IMAGE_INCOMPATIBLE</code>。不兼容意味着图像可能需要用新的 <code>Component</code> 或 <code>GraphicsConfiguration</code> 重新创建，以获得一个能够用此 <code>GraphicsConfiguration</code> 成功使用的图像。不兼容的图像不会检查是否需要恢复，因此在 <code>IMAGE_INCOMPATIBLE</code> 值返回后图像的状态不变，这个返回值与图像是否需要恢复无关。
+@see java.awt.GraphicsConfiguration
+@see java.awt.Component
+@see #IMAGE_OK
+@see #IMAGE_RESTORED
+@see #IMAGE_INCOMPATIBLE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.image.VolatileImage.contentsLost()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果上次调用 <code>validate</code> 后呈现数据丢失，则返回 <code>true</code>。在对图像进行的任何系列呈现操作的结尾，应用程序应该调用此方法，以查看图像是否需要验证和重新呈现。
+@return 如果绘制表面需要恢复，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.ImageCapabilities java.awt.image.VolatileImage.getCapabilities()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ImageCapabilities 对象，查询此对象即可了解此 VolatileImage 的特定功能。这允许程序员查找关于他们已经创建的特定 VolatileImage 对象的更多运行时信息。例如，用户可能要创建一个 VolatileImage，但系统剩余的显存可能不足以创建该尺寸的图像，因此尽管该对象是 VolatileImage，但它可能不会像此平台上其他 VolatileImage 对象一样被加速。用户可能需要该信息来寻找解决问题的其他方案。
+@return 包含此 <code>VolatileImage</code> 的功能的 <code>ImageCapabilities</code> 对象。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.VolatileImage.getTransparency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回透明度。返回 OPAQUE、BITMASK 或 TRANSLUCENT 中的一个。
+@return 此 <code>VolatileImage</code> 的透明度。
+@see Transparency#OPAQUE
+@see Transparency#BITMASK
+@see Transparency#TRANSLUCENT
+@since 1.5
+
+<!-- END DATA -->

@@ -1,0 +1,118 @@
+<!-- BEGIN KEY -->
+public abstract class javax.crypto.KeyAgreementSpi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类为 <code>KeyAgreement</code> 类定义了<i>服务提供者接口</i> (<b>SPI</b>)。此类中的所有抽象方法必须由希望提供特定密钥一致算法实现的每个加密服务提供者来实现。
+
+<p> 建立共享秘密所涉及的密钥由某个密钥生成器（<code>KeyPairGenerator</code> 或 <code>KeyGenerator</code>，一个 <code>KeyFactory</code>）来创建，或从密钥协定协议的中间阶段来创建 ({@link #engineDoPhase(java.security.Key, boolean) engineDoPhase})。
+
+<p> 对于密钥交换中的每个对应物，需要调用 <code>engineDoPhase</code>。例如，如果密钥交换是与其他一个参与者进行的，则需要调用一次 <code>engineDoPhase</code>，将 <code>lastPhase</code> 标志设置为 <code>true</code>。如果密钥交换是与其他两个参与者进行的，则需要调用两次 <code>engineDoPhase</code>，第一次将 <code>lastPhase</code> 标志设置为 <code>false</code>，第二次将它设置为 <code>true</code>。密钥交换可能涉及任意数量的参与者。
+
+@author Jan Luehe
+
+@version 1.4, 12/19/03
+
+@see KeyGenerator
+@see SecretKey
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.KeyAgreementSpi.engineInit(Key key, SecureRandom random) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用给定密钥和随机源初始化此密钥协定。给定密钥需要包含此密钥协定所需的所有算法参数。
+
+<p> 如果该密钥一致算法需要随机字节，则从给定的随机源 <code>random</code> 中获取它们。不过，如果底层算法实现不需要任何随机字节，则忽略 <code>random</code>。
+
+@param  key  参与者的私有信息。例如，对于 Diffie-Hellman 密钥协定，这应是参与者自己的 Diffie-Hellman 私钥。
+@param  random  随机源
+
+@exception InvalidKeyException  如果给定的密钥不适合此密钥协定，即属于错误类型或有一个不一致的算法类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.KeyAgreementSpi.engineInit(Key key, AlgorithmParameterSpec params, SecureRandom random) throws java.security.InvalidKeyException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用给定密钥、算法参数集和随机源初始化此密钥协定。
+
+@param  key  参与者的私有信息。例如，对于 Diffie-Hellman 密钥协定，这应是参与者自己的 Diffie-Hellman 私钥。
+@param  params  密钥协定参数
+@param  random  随机源
+
+@exception InvalidKeyException  如果给定的密钥不适合此密钥协定，即属于错误类型或有一个不一致的算法类型。
+@exception InvalidAlgorithmParameterException  如果给定算法不适合此密钥协定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.security.Key javax.crypto.KeyAgreementSpi.engineDoPhase(Key key, boolean lastPhase) throws java.security.InvalidKeyException, java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用给定密钥执行此密钥协定的下一个阶段，该给定密钥是从此密钥协定中涉及的其他某个参与者那里接收的。
+
+@param  key  此阶段的密钥。例如，对于两个参与者之间的 Diffie-Hellman，此密钥应是其他参与者的 Diffie-Hellman 公钥。
+@param  lastPhase  指示这是否是此密钥协定的最后阶段的标志。
+
+@return  从此阶段得到的（中间）密钥；如果此阶段不产生密钥，则返回 null
+
+@exception InvalidKeyException  如果给定密钥不适合此阶段。
+@exception IllegalStateException  如果尚未初始化此密钥协定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract byte[] javax.crypto.KeyAgreementSpi.engineGenerateSecret() throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+生成共享秘密密钥并在新的缓冲区中返回它。
+
+<p>此方法重新设置此 <code>KeyAgreementSpi</code> 对象，以便能够将它重新用于进一步的密钥协定。如果没有使用某个 <code>engineInit</code> 方法重新初始化此密钥协定，则将相同的私有信息和算法参数用于后续密钥协定。
+
+@return  带有共享秘密密钥的新缓冲区
+
+@exception IllegalStateException  如果尚未实现此密钥协定
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract int javax.crypto.KeyAgreementSpi.engineGenerateSecret(byte[] sharedSecret, int offset) throws java.lang.IllegalStateException, javax.crypto.ShortBufferException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+生成共享秘密密钥，并将从 <code>offset</code> 开始（包括）的部分放入缓冲区 <code>sharedSecret</code>。
+
+<p>如果 <code>sharedSecret</code> 缓冲区太小而无法保存该结果，则抛出 <code>ShortBufferException</code>。在此情况下，应该用更大的输出缓冲区重复进行此调用。 
+
+<p>此方法重新设置此 <code>KeyAgreementSpi</code> 对象，以便能够将它重新用于进一步的密钥协定。如果没有使用某个 <code>engineInit</code> 方法重新初始化此密钥协定，则将相同的私有信息和算法参数用于后续密钥协定。
+
+@param  sharedSecret  共享秘密密钥的缓冲区
+@param  offset  将存储共享秘密密钥的 <code>sharedSecret</code> 中的偏移量
+
+@return  放入 <code>sharedSecret</code> 中的字节数
+
+@exception IllegalStateException  如果尚未实现此密钥协定
+@exception ShortBufferException  如果给定输出缓冲区太小而无法保存该秘密密钥
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract javax.crypto.SecretKey javax.crypto.KeyAgreementSpi.engineGenerateSecret(String algorithm) throws java.lang.IllegalStateException, java.security.NoSuchAlgorithmException, java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建共享秘密密钥，并将它作为所请求算法类型的秘密密钥对象返回。
+
+<p>此方法重新设置此 <code>KeyAgreementSpi</code> 对象，以便能够将它重新用于进一步的密钥协定。如果没有使用某个 <code>engineInit</code> 方法重新初始化此密钥协定，则将相同的私有信息和算法参数用于后续密钥协定。
+
+@param  algorithm  所请求秘密密钥的算法
+
+@return  共享的秘密密钥
+
+@exception IllegalStateException  如果此密钥协定尚未实现
+@exception NoSuchAlgorithmException  如果所请求的秘密密钥算法不可用
+@exception InvalidKeyException  如果无法使用共享秘密密钥材料生成所请求算法类型的秘密密钥（例如，密钥材料太短缺）
+
+<!-- END DATA -->

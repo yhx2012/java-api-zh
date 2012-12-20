@@ -1,0 +1,3273 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.Component extends java.lang.Object implements java.awt.image.ImageObserver, java.awt.MenuContainer, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<em>component</em> 是一个具有图形表示能力的对象，可在屏幕上显示，并可与用户进行交互。典型图形用户界面中的按钮、复选框和滚动条都是组件示例。 <p>
+<code>Component</code> 类是与菜单不相关的 Abstract Window Toolkit 组件的抽象超类。还可以直接扩展类 <code>Component</code> 来创建一个轻量级组件。轻量级组件是与本机不透明窗口不相关的组件。
+ <p>
+<h3>序列化</h3>
+存储对象时，仅保存那些符合 <code>Serializable</code> 协议的 AWT 侦听器，注意这一点很重要。如果具有侦听器的 AWT 对象未标记为可序列化，则在 <code>writeObject</code> 时将会被丢弃。开发人员始终需要考虑序列化对象的意义。需要注意的一种情形是：
+ <pre>
+    import java.awt.*;
+    import java.awt.event.*;
+    import java.io.Serializable;
+    
+    class MyApp implements ActionListener, Serializable
+    {
+        BigObjectThatShouldNotBeSerializedWithAButton bigOne;
+        Button aButton = new Button();
+      
+        MyApp()
+        {
+            // Oops, now aButton has a listener with a reference
+            // to bigOne!
+            aButton.addActionListener(this);
+        }
+    
+        public void actionPerformed(ActionEvent e)
+        {
+            System.out.println(&quot;Hello There&quot;);
+        }
+    }
+ </pre>
+在此示例中，通过 <code>aButton</code> 自身进行序列化会使得 <code>MyApp</code> 及其引用的所有内容也都被序列化。问题是，原本没打算序列化的侦听器也被同时序列化了。为分别判断 <code>MyApp</code> 和 <code>ActionListener</code> 是否可序列化，可使用一个嵌套类，如下面示例所示：
+ <pre>
+    import java.awt.*;
+    import java.awt.event.*;
+    import java.io.Serializable;
+
+    class MyApp java.io.Serializable
+    {
+         BigObjectThatShouldNotBeSerializedWithAButton bigOne;
+         Button aButton = new Button();
+
+         static class MyActionListener implements ActionListener
+         {
+             public void actionPerformed(ActionEvent e)
+             {
+                 System.out.println(&quot;Hello There&quot;);
+             }
+         }
+ 
+         MyApp()
+         {
+             aButton.addActionListener(new MyActionListener());
+         }
+    }
+ </pre>
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+ <p>
+有关焦点子系统的详情，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a> 部分，以及 <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a> 了解更多信息。
+
+
+@version     1.426, 07/27/06
+@author      Arthur van Hoff
+@author      Sami Shaio
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float java.awt.Component.TOP_ALIGNMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAlignmentY()</code> 的易于使用的常量。指定组件顶部对齐方式。
+@see     #getAlignmentY
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float java.awt.Component.CENTER_ALIGNMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAlignmentY</code> 和 <code>getAlignmentX</code> 的易于使用的常量。指定组件居中对齐方式。
+@see     #getAlignmentX
+@see     #getAlignmentY
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float java.awt.Component.BOTTOM_ALIGNMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAlignmentY</code> 的易于使用的常量。指定组件底部对齐方式。
+@see     #getAlignmentY
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float java.awt.Component.LEFT_ALIGNMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAlignmentX</code> 的易于使用的常量。指定组件左对齐方式。
+@see     #getAlignmentX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float java.awt.Component.RIGHT_ALIGNMENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAlignmentX</code> 的易于使用的常量。指定组件右对齐方式。
+@see     #getAlignmentX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Component.x
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在父级坐标系中组件的 x 坐标。
+
+@serial
+@see #getLocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Component.y
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在父级坐标系中组件的 y 坐标。
+
+@serial
+@see #getLocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Component.width
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件的宽度。
+
+@serial
+@see #getSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Component.height
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件的高度。
+
+@serial
+@see #getSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Color java.awt.Component.foreground
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件的前景色。<code>foreground</code> 可以为 <code>null</code>。
+
+@serial
+@see #getForeground
+@see #setForeground
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Color java.awt.Component.background
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件的背景色。<code>background</code> 可以为 <code>null</code>。
+
+@serial
+@see #getBackground
+@see #setBackground
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Font java.awt.Component.font
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件使用的字体。<code>font</code> 可以为 <code>null</code>。
+
+@serial
+@see #getFont
+@see #setFont
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Font java.awt.Component.peerFont
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+同位体当前使用的字体。(如果不存在同位体，则为 <code>null</code>）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Cursor java.awt.Component.cursor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指针位于组件上时显示的光标。此值可以为 <code>null</code>。
+
+@serial
+@see #getCursor
+@see #setCursor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Locale java.awt.Component.locale
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件的语言环境。
+
+@serial
+@see #getLocale
+@see #setLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.ignoreRepaint
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象应该忽略所有重绘事件时为 True。
+
+@since 1.4
+@serial
+@see #setIgnoreRepaint
+@see #getIgnoreRepaint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.visible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象是可见时为 True。在屏幕上不绘制不可见的对象。
+
+@serial
+@see #isVisible
+@see #setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.enabled
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象已启用时为 True。用户无法与未启用的对象进行交互。
+
+@serial
+@see #isEnabled
+@see #setEnabled
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.valid
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象有效时为 True。需要布局无效对象。对象大小改变时将此标志设置为 false。
+
+@serial
+@see #isValid
+@see #validate
+@see #invalidate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.dnd.DropTarget java.awt.Component.dropTarget
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与对象相关的 <code>DropTarget</code>。
+
+@since 1.2
+@serial
+@see #setDropTarget
+@see #getDropTarget
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Vector java.awt.Component.popups
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial
+@see #add
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.awt.Component.name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+组件名称。该字段可以为 <code>null</code>。
+
+@serial
+@see #getName
+@see #setName(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.Component.nameExplicitlySet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否已显示地设置了名称的布尔值。如果尚未设置名称，则 <code>nameExplicitlySet</code> 为 false；否则为 true。
+
+@serial
+@see #getName
+@see #setName(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.Component.focusable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示此 Component 是否可以获得焦点。
+
+@serial
+@see #setFocusable
+@see #isFocusable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.Component.isFocusTraversableOverridden
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+跟踪此 Component 是否依赖于默认的焦点可遍历性。
+
+@serial
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Set[] java.awt.Component.focusTraversalKeys
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+焦点遍历键。对于已启用焦点遍历键的 Component 而言，这些键将生成 Component 的焦点遍历行为。如果为遍历键指定的了 null 值，则此 Component 继承其父级的遍历键。如果此 Component 的所有祖先都被指定了 null 遍历键值，则使用当前 KeyboardFocusManager 的默认遍历键。
+
+@serial
+@see #setFocusTraversalKeys
+@see #getFocusTraversalKeys
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.Component.focusTraversalKeysEnabled
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示是否为此 Component 启用了焦点遍历键。其焦点遍历键已禁用的 Component 接收这些焦点遍历键的按键事件。其焦点遍历键已启用的 Component 不会看到这些事件；相反，会将该事件自动转换为遍历操作。
+
+@serial
+@see #setFocusTraversalKeysEnabled
+@see #getFocusTraversalKeysEnabled
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Dimension java.awt.Component.minSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最小大小。（此字段可能是瞬态的）。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.minSizeSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否已用非 null 值调用了 setMinimumSize。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Dimension java.awt.Component.prefSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+首选的大小。（此字段可能是瞬态的）。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.prefSizeSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否已用非 null 值调用了 setPreferredSize。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Dimension java.awt.Component.maxSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最大大小。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.maxSizeSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否已用非 null 值调用了 setMaximumSize。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.Component.newEventsOnly
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果事件属于已为该组件所启用的事件类型之一，则 <code>newEventsOnly</code> 为 true。然后将允许继续进行正常的处理。如果为 false，则将该事件传递到该组件的父级并一直在祖先树中向上传递，直到有使用该事件的组件为止。
+
+@serial
+@see #dispatchEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ long java.awt.Component.eventMask
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅能由子类通过 <code>enableEvents</code> 来设置 <code>eventMask</code>。已注册侦听器时不应设置该屏蔽，这样我们才能区分侦听器请求事件和子类请求事件之间的差别。表示是否已启用输入方法时只使用 1 位；此位由 <code>enableInputMethods</code> 设置并且默认为 on。
+
+@serial
+@see #enableInputMethods
+@see AWTEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.beans.PropertyChangeSupport java.awt.Component.changeSupport
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已注册了任意 <code>PropertyChangeListener</code>，则 <code>changeSupport</code> 字段负责描述它们。
+
+@serial
+@since 1.2
+@see #addPropertyChangeListener
+@see #removePropertyChangeListener
+@see #firePropertyChange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.Component.boundsOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+直接用于几何学 API（setLocation、setBounds、setSize）的伪参数，通知 setBounds 发生了什么改变。应该在 TreeLock 下使用。需要它的唯一原因是无法改变公共和否决方法的交叉调用顺序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.Component.componentSerializedDataVersion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+序列化的 Component 数据版本。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新组件。可以直接扩展 <code>Component</code> 类，以便创建不利用本机不透明窗口的轻量级组件。轻量级组件必须由组件树中较高处的本机容器所承载（例如由 <code>Frame</code> 对象承载）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.Component.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的名称。
+@return 组件的名称
+@see    #setName
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setName(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的名称设置为指定的字符串。
+@param name  要成为组件名称的字符串。
+@see #getName
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container java.awt.Component.getParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此组件的父级。
+@return 此组件的父级容器
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.peer.ComponentPeer java.awt.Component.getPeer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，程序不应直接操作同位体；由 <code>boolean isDisplayable()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.setDropTarget(DropTarget dt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件与 <code>DropTarget</code> 相关联。仅在已启用 <code>Component</code> 时才接收放置。
+
+@see #isEnabled
+@param dt  DropTarget
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.dnd.DropTarget java.awt.Component.getDropTarget()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>Component</code> 相关的 <code>DropTarget</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.GraphicsConfiguration java.awt.Component.getGraphicsConfiguration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>Component</code> 相关的 <code>GraphicsConfiguration</code>。如果尚未给 <code>Component</code> 分配指定的 <code>GraphicsConfiguration</code>，则返回该 <code>Component</code> 对象顶层容器的 <code>GraphicsConfiguration</code>。如果已经创建了 <code>Component</code> 但尚未添加到 <code>Container</code> 中，则此方法返回 <code>null</code>。
+
+@return 此 <code>Component</code> 使用的 <code>GraphicsConfiguration</code>，或者返回 <code>null</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.awt.Component.getTreeLock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此组件用于 AWT 组件树和布局操作的锁定对象（拥有线程同步监视器的对象）。
+@return 此组件的锁定对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Toolkit java.awt.Component.getToolkit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此组件的工具包。注意，包含组件的框架控制该组件使用哪个工具包。因此，如果组件从一个框架移到另一个框架中，那么它所使用的工具包可能改变。
+@return  此组件的工具包
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定组件是否有效。当组件在其父级容器内正确确定了大小和位置，并且其所有子组件也是有效的，则该组件是有效的。为了确定同位体的大小要求，组件首次显示在屏幕上时是无效的。 完全实现父级容器时，其所有组件将是有效的。
+@return 如果组件有效，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #validate
+@see #invalidate
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isDisplayable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此组件是否可以显示。当组件连接到一个本机屏幕资源时是可以显示的。
+ <p>
+将组件添加到一个可显示的包含层次结构时，或者其包含层次结构变成可显示时，该组件才成为可显示的组件。当包含层次结构的祖先窗口被打包或变为可见时，它才成为可显示的。
+ <p>
+从可显示的包含层次结构中移除某个组件，或者该组件的包含层次结构变成不可显示时，该组件就成为不可显示的组件。当包含层次结构的祖先窗口被移除时，它才变成不可显示的。
+
+@return 如果组件是可显示的，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see Container#add(Component)
+@see Window#pack
+@see Window#show
+@see Container#remove(Component)
+@see Window#dispose
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此组件在其父容器可见时是否应该可见。组件初始是可见的，诸如 <code>Frame</code> 对象等顶层组件除外。
+@return 如果组件是可见的，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #setVisible
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Component.getMousePosition() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>Component</code> 正好位于鼠标指针下，则返回鼠标指针在该 <code>Component</code> 的坐标空间中的位置；否则返回 <code>null</code>。如果屏幕上未显示 <code>Component</code>，那么即使鼠标指针位于将显示 <code>Component</code> 的区域之上，此方法也只是返回 <code>null</code>。如果 <code>Component</code> 被其他 <code>Component</code> 或本机窗口所部分或完全遮掩，则仅在鼠标指针位于 <code>Component</code> 未被遮掩的部分之上时，此方法才返回非 null 值。
+ <p>
+对于 <code>Container</code>，如果鼠标位于 <code>Container</code> 本身之上或位于其后代之上时，则此方法返回非 null 值。如果需要将子容器排除在外，请使用 {@link Container#getMousePosition(boolean)}。
+ <p>
+有时鼠标的准确坐标并不重要，唯一重要的是指定的 <code>Component</code> 是否位于鼠标指针下。如果此方法的返回值为 <code>null</code>，则鼠标指针不位于 <code>Component</code> 的上边。
+
+@exception HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true
+@see       #isShowing
+@see       Container#getMousePosition
+@return    鼠标相对与此 <code>Component</code> 的坐标，或者返回 null。
+@since     1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isShowing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此组件是否在屏幕上显示。这意味着组件必须是可见的，并且必须位于一个可见并且正在显示的容器中。
+<p>
+ <strong>注：</strong>有时无法检测用户是否可以实际看见 {@code Component}。这可能发生在以下情况时：
+ <ul>
+ <li>该组件已被添加到一个可见的 {@code ScrollPane} 中，但 {@code Component} 目前不在滚动窗格的视区中。
+ <li>该 {@code Component} 被另一个 {@code Component} 或 {@code Container} 遮掩。
+ </ul>
+@return 如果正在显示组件，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #setVisible
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此组件是否已启用。已启用的组件可以响应用户输入并生成事件。默认情况下，组件最初是启用的。调用组件的 <code>setEnabled</code> 方法可以启用或禁用组件。
+@return 如果组件已启用，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #setEnabled
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setEnabled(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据参数 <code>b</code> 的值启用或禁用此组件。已启用的组件可以响应用户输入并生成事件。默认情况下，组件最初是启用的。
+
+<p>注：禁用轻量级组件不会阻止其接收 MouseEvents。
+<p>注：禁用重量级容器可以阻止此容器中的所有组件接收任何输入事件。但是禁用重量级容器只影响此容器。
+
+@param  b 如果为 <code>true</code>，则启用此组件；否则禁用此组件 
+@see #isEnabled
+@see #isLightweight
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.enable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setEnabled(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.enable(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setEnabled(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.disable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setEnabled(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isDoubleBuffered()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将此组件绘制到一个随后复制到屏幕上的屏幕外图像（&ldquo;缓冲区&rdquo;），则返回 true。支持双缓冲的组件子类应该重写此方法，以便在启用双缓冲时返回 true。
+ 
+@return 默认返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.enableInputMethods(boolean enable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用或禁用此组件的输入方法支持。如果启用输入方法支持并且组件也处理按键事件，则将传入的事件提供给当前的输入方法，并且如果输入方法没有使用它们，则仅由组件处理或指派给其侦听器。默认情况下启用输入方法支持。
+
+@param enable true 表示启用，false 表示禁用
+@see #processKeyEvent
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setVisible(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据参数 <code>b</code> 的值显示或隐藏此组件。
+@param b  如果为 <code>true</code>，则显示此组件；否则隐藏此组件
+@see #isVisible
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.show()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setVisible(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.show(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setVisible(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.hide()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setVisible(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color java.awt.Component.getForeground()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的前景色。
+@return 组件的前景色；如果此组件没有前景色，则返回其父级的前景色
+@see #setForeground
+@since JDK1.0
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setForeground(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置组件的前景色。
+@param c 要成为此组件前景色的颜色；如果此参数为 <code>null</code>，则此组件继承其父级的前景色
+@see #getForeground
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isForegroundSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已为此组件显式地设置了前景色。如果此方法返回 <code>false</code>，则此组件继承了其祖先的前景色。
+
+@return 如果已为此组件显示地设置了前景色，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color java.awt.Component.getBackground()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的背景色。
+@return 组件的背景色；如果此组件没有背景色，则返回其父级的背景色
+@see #setBackground
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setBackground(Color c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置组件的背景色。
+ <p>
+背景色对每个组件的影响各不相同，并且部分受背景色影响的组件在不同的操作系统之间可能有所不同。
+
+@param c 要成为此组件背景色的颜色；如果此参数为 <code>null</code>，则此组件继承其父级的背景色
+@see #getBackground
+@since JDK1.0
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isBackgroundSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已为此组件显示地设置了背景色。如果此方法返回 <code>false</code>，则此组件继承了其祖先的背景色。
+
+@return 如果已为此组件显示地设置了背景色，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font java.awt.Component.getFont()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的字体。
+@return 组件的字体；如果此组件未设置字体，则返回其父级的字体
+@see #setFont
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setFont(Font f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置组件的字体。
+@param f 要成为此组件字体的字体；如果此参数为 <code>null</code>，则此组件继承其父级的字体
+@see #getFont
+@since JDK1.0
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isFontSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已为此组件显示地设置了字体。如果此方法返回 <code>false</code>，则此组件继承了其祖先的字体。
+
+@return 如果已为此组件显示地设置了字体，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale java.awt.Component.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的语言环境。
+@return 组件的语言环境；如果此组件没有语言环境，则返回其父级的语言环境
+@see #setLocale
+@exception IllegalComponentStateException 如果 <code>Component</code> 没有其自己的语言环境，并且尚未添加到包含层次结构中（如果添加到包含层次结构中就可以从其包含父级确定语言环境）
+@since  JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setLocale(Locale l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置组件的语言环境。这是一个绑定 (bound) 属性。
+@param l 要成为此组件语言环境的语言环境
+@see #getLocale
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ColorModel java.awt.Component.getColorModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于在输出设备上显示组件的 <code>ColorModel</code> 实例。
+@return 组件使用的颜色模型
+@see java.awt.image.ColorModel
+@see java.awt.peer.ComponentPeer#getColorModel()
+@see Toolkit#getColorModel()
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Component.getLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的位置，形式是指定组件左上角的一个点。该位置是相对于父级坐标空间的。
+ <p>
+由于本机事件处理的异步特性，所以此方法可能返回过时的值（例如，在快速连续调用 <code>setLocation()</code> 后）。为此，推荐获得组件位置的方法是在 <code>java.awt.event.ComponentListener.componentMoved()</code> 内，在操作系统结束组件移动后调用它。
+ </p>
+@return 一个 <code>Point</code> 实例，表示在组件父级坐标空间中组件边界的左上角
+@see #setLocation
+@see #getLocationOnScreen
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Component.getLocationOnScreen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的位置，形式是一个指定屏幕坐标空间中组件左上角的一个点。
+@return 一个 <code>Point</code> 实例，表示在屏幕坐标空间中组件边界的左上角
+@throws <code>IllegalComponentStateException</code> 如果屏幕上未显示该组件
+@see #setLocation
+@see #getLocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Component.location()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getLocation()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setLocation(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件移到新位置。通过此组件父级坐标空间中的 <code>x</code> 和 <code>y</code> 参数来指定新位置的左上角。
+@param x  父级坐标空间中新位置左上角的 <i>x</i> 坐标
+@param y  父级坐标空间中新位置左上角的 <i>y</i> 坐标
+@see #getLocation
+@see #setBounds
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.move(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setLocation(int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setLocation(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件移到新位置。通过点 <code>p</code> 来指定新位置的左上角。在父级坐标空间中给出点 <code>p</code>。
+@param p 定义新位置左上角的点，在此组件的父级坐标空间中给出
+@see #getLocation
+@see #setBounds
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.getSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>Dimension</code> 对象的形式返回组件的大小。<code>Dimension</code> 对象的 <code>height</code> 字段包含此组件的高度，而 <code>Dimension</code> 对象的 <code>width</code> 字段则包含此组件的宽度。
+@return 表示组件大小的 <code>Dimension</code> 对象
+@see #setSize
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getSize()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setSize(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整组件的大小，使其宽度为 <code>width</code>，高度为 <code>height</code>。
+@param width 组件的新宽度，单位是像素
+@param height 组件的新高度，单位是像素
+@see #getSize
+@see #setBounds
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.resize(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setSize(int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setSize(Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整组件的大小，使其宽度为 <code>d.width</code>，高度为 <code>d.height</code>。
+@param d 指定组件新大小的尺寸
+@see #setSize
+@see #setBounds
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.resize(Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由  <code>setSize(Dimension)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Component.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>Rectangle</code> 对象的形式获取组件的边界。边界指定此组件的宽度、高度和相对于其父级的位置。
+@return 表示组件边界的矩形
+@see #setBounds
+@see #getLocation
+@see #getSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Component.bounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getBounds()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setBounds(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移动组件并调整其大小。由 <code>x</code> 和 <code>y</code> 指定左上角的新位置，由 <code>width</code> 和 <code>height</code> 指定新的大小。
+@param x 组件的新 <i>x</i> 坐标
+@param y 组件的新 <i>y</i> 坐标
+@param width 组件的新 <code>width</code>
+@param height 组件的新 <code>height</code> 
+@see #getBounds
+@see #setLocation(int, int)
+@see #setLocation(Point)
+@see #setSize(int, int)
+@see #setSize(Dimension)
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.reshape(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setBounds(int, int, int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setBounds(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移动组件并调整其大小，使其符合新的有界矩形 <code>r</code>。由 <code>r.x</code> 和 <code>r.y</code> 指定组件的新位置，由 <code>r.width</code> 和 <code>r.height</code> 指定组件的新大小
+@param r 此组件的新的有界矩形
+@see       #getBounds
+@see       #setLocation(int, int)
+@see       #setLocation(Point)
+@see       #setSize(int, int)
+@see       #setSize(Dimension)
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.getX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件原点的当前 x 坐标。此方法优于 <code>component.getBounds().x</code> 或 <code>component.getLocation().x</code> 方法，因为它不会导致任何的堆分配。
+
+@return 组件原点的当前 x 坐标
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.getY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回组件原点的当前 y 坐标。此方法优于 <code>component.getBounds().y</code> 或 <code>component.getLocation().y</code> 方法，因为它不会导致任何的堆分配。
+
+@return 组件原点的当前 y 坐标
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件的当前宽度。此方法优于 <code>component.getBounds().width</code> 或 <code>component.getLocation().width</code> 方法，因为它不会导致任何的堆分配。
+
+@return 组件的当前宽度
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回组件的当前高度。此方法优于 <code>component.getBounds().height</code> 或 <code>component.getSize().height</code> 方法，因为它不会导致任何的堆分配。
+
+@return 组件的当前高度
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Component.getBounds(Rectangle rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将组件的边界存储到&ldquo;返回值&rdquo;<b>rv</b> 中并返回 <b>rv</b>。如果 rv 为 <code>null</code>，则分配一个新的 <code>Rectangle</code>。如果调用者想要避免在堆上分配一个新的 <code>Rectangle</code> 对象，则此版本的 <code>getBounds</code> 是很有用的。
+ 
+@param rv 返回值，被修改为组件的边界
+@return rv
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.getSize(Dimension rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的宽度/高度存储到&ldquo;返回值&rdquo;<b>rv</b> 中并返回 <b>rv</b>。如果 rv 为 <code>null</code>，则分配一个新的 <code>Dimension</code> 对象。如果调用者想要避免在堆上分配一个新的 <code>Dimension</code> 对象，则此版本的 <code>getSize</code> 是很有用的。
+ 
+@param rv 返回值，被修改为组件的大小
+@return rv
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.Component.getLocation(Point rv)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的 x，y 原点存储到&ldquo;返回值&rdquo; <b>rv</b> 中并返回 <b>rv</b>。如果 rv 为 <code>null</code>，则分配一个新的 <code>Point</code>。如果调用者想要避免在堆上分配一个新的 <code>Point</code> 对象，则此版本的 <code>getLocation</code> 是很有用的。
+ 
+@param rv 返回值，被修改为组件的位置
+@return rv
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isOpaque()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果组件是完全不透明的，则返回 true，默认返回 false。
+ <p>
+不透明组件将每个像素绘制在其矩形区域内。透明的组件则仅绘制其某些像素，允许其下面的像素&ldquo;透视出来&rdquo;。因此，没有完全绘制其像素的组件则提供了一定程度的透明度。只有轻量级组件可以是透明的。
+ <p>
+保证总是完全绘制其内容的子类应该重写此方法并返回 true。所有&ldquo;重量级&rdquo;AWT 组件都是不透明的。
+
+@return 如果组件是完全不透明的，则返回 true
+@see #isLightweight
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isLightweight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+轻量级组件没有本机工具包同位体。除了在此包中定义的、像 <code>Button</code> 或 <code>Scrollbar</code> 那些组件以外，<code>Component</code> 和 <code>Container</code> 的子类都是轻量级组件。所有 Swing 组件是轻量级组件。
+ <p>
+如果组件是不可显示的，那么由于无法确定不可显示的组件是轻量级还是重量级的，所以此方法总是返回 <code>false</code>。
+
+@return 如果组件有一个轻量级同位体，则返回 true；如果有一个本机同位体或没有同位体，则返回 false
+@see #isDisplayable
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setPreferredSize(Dimension preferredSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的首选大小设置为常量值。对 <code>getPreferredSize</code> 的后续调用总是返回此值。将首选大小设置为 <code>null</code> 可还原默认的行为。
+
+@param preferredSize 新的首选大小，或者为 null
+@see #getPreferredSize
+@see #isPreferredSizeSet
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isPreferredSizeSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已将首选大小设置为非 <code>null</code> 值，则返回 true，否则返回 false。
+
+@return 如果已经用非 null 值调用了 <code>setPreferredSize</code>，则返回 true。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的首选大小。
+@return 一个表示组件首选大小的 dimension 对象
+@see #getMinimumSize
+@see LayoutManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.preferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getPreferredSize()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setMinimumSize(Dimension minimumSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的最小大小设置为常量值。对 <code>getMinimumSize</code> 的后续调用总是返回此值。将最小大小设置为 <code>null</code> 可还原默认的行为。
+
+@param minimumSize 组件新的最小大小
+@see #getMinimumSize
+@see #isMinimumSizeSet
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isMinimumSizeSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已用非 null 值调用了 <code>setMinimumSize</code>。
+
+@return 如果已经用非 null 值调用了 <code>setMinimumSize</code>，则返回 true。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.getMinimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的最小大小。
+@return 一个表示组件最小大小的 dimension 对象
+@see #getPreferredSize
+@see LayoutManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.minimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getMinimumSize()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setMaximumSize(Dimension maximumSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件的最大大小设置为常量值。对 <code>getMaximumSize</code> 的后续调用总是返回此值。将最大大小设置为 <code>null</code> 可还原默认的行为。
+
+@param maximumSize 一个包含所需最大允许大小的 <code>Dimension</code> 
+@see #getMaximumSize
+@see #isMaximumSizeSet
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isMaximumSizeSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已将最大大小设置为非 <code>null</code> 值，则返回 true，否则返回 false。
+
+@return 如果 <code>maximumSize</code> 是非 <code>null</code> 值，则返回 true，否则返回 false
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.Component.getMaximumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件的最大大小。
+@return 一个表示组件最大大小的 dimension 对象
+@see #getMinimumSize
+@see #getPreferredSize
+@see LayoutManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.Component.getAlignmentX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 x 轴的对齐方式。指定组件相对于其他组件的对齐方式。值应该是 0 到 1 之间的数，其中 0 代表与原点对齐，1 代表距离原点最远处对齐，0.5 代表居中等。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.Component.getAlignmentY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 y 轴的对齐方式。指定组件相对于其他组件的对齐方式。值应该是 0 到 1 之间的数，其中 0 代表与原点对齐，1 代表距离原点最远处对齐，0.5 代表居中等。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.getBaseline(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回基线。基线是从组件的顶部测量的。此方法主要用于 <code>LayoutManager</code>，以便沿组件的基线对齐组件。返回值小于 0 表示此组件没有合理的基线，<code>LayoutManager</code> 不应该根据该组件的基线来对齐此组件。
+ <p>
+默认实现返回 -1。支持基线的子类应该适当重写。如果返回值 >= 0，则该组件有一个对于 >= 最小大小的任何大小有效的基线，并且可以使用 <code>getBaselineResizeBehavior</code> 确定基线如何随大小发生更改。
+
+ @param width 适合基线的宽度
+ @param height 适合基线的高度
+ @return 基线，如果基线 < 0，则表示没有合理的基线
+ @throws IllegalArgumentException 如果 width 或 height < 0
+ @see #getBaselineResizeBehavior
+ @see java.awt.FontMetrics
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component.BaselineResizeBehavior java.awt.Component.getBaselineResizeBehavior()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个指示组件的基线如何随大小发生更改的枚举。此方法主要适用于布局管理器和 GUI 生成器。
+ <p>
+ 默认实现返回 <code>BaselineResizeBehavior.OTHER</code>。拥有基线的子类应该适当重写。子类永远不应该返回 <code>null</code>；如果无法计算基线，则返回 <code>BaselineResizeBehavior.OTHER</code>。调用者应该首先查询使用 <code>getBaseline</code> 的基线，如果返回值 >= 0，则使用此方法。如果此方法返回一个不同于 <code>BaselineResizeBehavior.OTHER</code> 的值，即使 <code>getBaseline</code> 返回一个小于 0 的值，也是可接受的。
+
+ @return 一个指示基线如何随组件大小的更改发生变化的枚举
+ @see #getBaseline(int, int)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.doLayout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提示布局管理器布局此组件。通常在验证组件（更明确地说是容器）时调用。
+@see #validate
+@see LayoutManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.layout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>doLayout()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.validate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确保组件具有有效的布局。此类主要适用于在 <code>Container</code> 实例上进行操作。
+@see       #invalidate
+@see       #doLayout()
+@see       LayoutManager
+@see       Container#validate
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.invalidate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使此组件无效。此组件及其上所有父组件都标记为需要进行布局。此方法经常被调用，所以需要其快速执行。
+@see       #validate
+@see       #doLayout
+@see       LayoutManager
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics java.awt.Component.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为组件创建一个图形上下文。如果组件当前是不可显示的，则此方法返回 <code>null</code>。
+@return 组件的图形上下文，如果其没有，则返回 <code>null</code>
+@see       #paint
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.FontMetrics java.awt.Component.getFontMetrics(Font font)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取指定字体的字体规格。警告：因为 Font 规格受 {@link java.awt.font.FontRenderContext FontRenderContext} 影响，并且此方法不返回任何字体规格，所以可以只返回适用于默认呈现上下文的规格，该规格可能与呈现在 Component 上时使用的规格不匹配（如果使用 {@link Graphics2D} 功能）。相反，可以在呈现时通过调用 {@link Graphics#getFontMetrics()} 或 {@link Font Font} 类上的文本测量 API 获得规格。
+
+@param font 要获得其字体规格的字体
+@return <code>font</code> 的字体规格
+@see       #getFont
+@see       #getPeer
+@see       java.awt.peer.ComponentPeer#getFontMetrics(Font)
+@see       Toolkit#getFontMetrics(Font)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setCursor(Cursor cursor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定的光标设置光标图像。当此组件的 <code>contains</code> 方法为当前的光标位置返回 ture，并且此组件是可见的、可显示的并且已启用的，则显示此光标图像。设置 <code>Container</code> 的光标会导致在该容器的所有子组件内显示该光标，那些具有非 <code>null</code> 的光标除外。 
+ <p>
+如果 Java 平台实现和/或本机系统不支持更改鼠标光标形状，则该方法可能不会产生任何视觉效果。
+@param cursor  <code>Cursor</code> 类定义的常量之一；如果此参数为 <code>null</code>，则此组件继承其父级的光标 
+@see       #isEnabled
+@see       #isShowing
+@see       #getCursor
+@see       #contains
+@see       Toolkit#createCustomCursor
+@see       Cursor
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Cursor java.awt.Component.getCursor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取组件中的光标集合。如果组件没有光标集合，则返回其父级的光标。如果整个层次结构中都没有设置光标，则返回 <code>Cursor.DEFAULT_CURSOR</code>。
+@see #setCursor
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isCursorSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已为此组件显示地设置了光标。如果此方法返回 <code>false</code>，则此组件继承了其祖先的光标。
+
+@return 如果已为此组件显示地设置了光标，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制此组件。  
+ <p>
+应该绘制组件的内容时调用此方法；例如首次显示组件或者组件已损坏并需要修复时。<code>Graphics</code> 参数中的剪贴区矩形设置为需要绘制的区域。重写此方法的 <code>Component</code> 子类不需要调用 <code>super.paint(g)</code>。 
+ <p>
+出于性能的考虑，首次显示宽度或高度为 0 的 <code>Component</code> 时认为它不需要进行绘制，并且也不需要修复。 
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+ 
+@param g 用于绘制的图像上下文
+@see       #update
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.update(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新组件。
+ <p>
+如果此组件不是轻量级组件，则为了响应对 <code>repaint</code> 的调用，AWT 调用 <code>update</code> 方法。可以假定未清除背景。
+ <p>
+<code>Component</code> 的 <code>update</code> 方法调用此组件的 <code>paint</code> 方法来重绘此组件。为响应对 <code>repaint</code> 的调用而需要其他工作的子类通常重写此方法。重写此方法的 Component 子类应该调用 <code>super.update(g)</code>，或者直接从其 <code>update</code> 方法中调用 <code>paint(g)</code>。  
+ <p>
+图形上下文的原点，即它的（<code>0</code>，<code>0</code>）坐标点是此组件的左上角。图形上下文的剪贴区域是此组件的边界矩形。
+
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+ 
+@param g 用于更新的指定上下文
+@see       #paint
+@see       #repaint()
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.paintAll(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制此组件及其所有子组件。
+ <p>
+图形上下文的原点，即它的（<code>0</code>，<code>0</code>）坐标点是此组件的左上角。图形上下文的剪贴区域是此组件的边界矩形。
+ 
+@param     g   用于绘制的图形上下文
+@see       #paint
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.repaint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重绘此组件。
+ <p>
+如果此组件是轻量级组件，则此方法会尽快调用此组件的 <code>paint</code> 方法。否则此方法会尽快调用此组件的 <code>update</code> 方法。
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+
+@see       #update(Graphics)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.repaint(long tm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重绘组件。如果此组件是轻量级组件，则会导致在 <code>tm</code> 毫秒内调用 <code>paint</code>。
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+
+@param tm 更新前等待的最长时间（以毫秒为单位）
+@see #paint
+@see #update(Graphics)
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.repaint(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重绘组件的指定矩形区域。
+ <p>
+如果此组件是轻量级组件，则此方法会尽快调用此组件的 <code>paint</code> 方法。否则此方法会尽快调用此组件的 <code>update</code> 方法。
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+
+@param     x   <i>x</i> 坐标
+@param     y   <i>y</i> 坐标
+@param     width   宽度
+@param     height  高度
+@see       #update(Graphics)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.repaint(long tm, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 <code>tm</code> 毫秒内重绘组件的指定矩形区域。
+ <p>
+如果此组件是轻量级组件，则此方法调用此组件的 <code>paint</code> 方法。否则此方法调用此组件的 <code>update</code> 方法。
+ <p>
+<b>注</b>：有关 AWT 和 Swing 所用绘制机制的更多信息，包括如何编写最高效的绘制代码的信息，请参阅 <a href="http://java.sun.com/products/jfc/tsc/articles/painting/index.html">Painting in AWT and Swing</a>。
+
+@param     tm   更新前等待的最长时间（以毫秒为单位）
+@param     x    <i>x</i> 坐标 
+@param     y    <i>y</i> 坐标
+@param     width    宽度
+@param     height   高度
+@see       #update(Graphics)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.print(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印此组件。对于打印前必须进行特殊处理或打印内容不同于绘制内容的组件，应用程序应该重写此方法。
+ <p>
+此方法的默认实现调用 <code>paint</code> 方法。
+ <p>
+图形上下文的原点，即它的（<code>0</code>，<code>0</code>）坐标点是此组件的左上角。图形上下文的剪贴区域是此组件的边界矩形。
+@param     g   用于绘制的图形上下文
+@see       #paint(Graphics)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.printAll(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印此组件及其所有子组件。
+ <p>
+图形上下文的原点，即它的（<code>0</code>，<code>0</code>）坐标点是此组件的左上角。图形上下文的剪贴区域是此组件的边界矩形。
+@param     g   用于打印的图形上下文
+@see       #print(Graphics)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.imageUpdate(Image img, int infoflags, int x, int y, int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+图像已改变时重绘组件。当有关图像的更多信息可用时调用 <code>ImageObserver</code> 的 <code>imageUpdate</code> 方法，该图像是以前使用诸如 <code>Graphics</code> 的 <code>drawImage</code> 方法等此类异步例程请求的。有关此方法及其参数的更多信息，请参阅 <code>imageUpdate</code> 的定义。
+ <p>
+随着有更多的可用图像位，<code>Component</code> 的 <code>imageUpdate</code> 方法在组件上逐渐绘制图像。
+ <p>
+如果系统属性 <code>awt.image.incrementaldraw</code> 丢失或其值为 <code>true</code>，则逐渐绘制图像。如果该系统属性为其他值，则在完全加载图像后才绘制它。
+ <p>
+另外，如果是逐渐绘制图像，则将系统属性 <code>awt.image.redrawrate</code> 的值解释为一个整数，得到一个最快的重绘速率，单位是毫秒。如果该系统属性丢失或无法解释为一个整数，则重绘速率是每 100ms 一次。
+ <p>
+<code>x</code>、<code>y</code>、<code>width</code> 和 <code>height</code> 参数的解释取决于 <code>infoflags</code> 参数值。
+
+@param     img   正观察的图像
+@param     infoflags   有关更多信息，请参阅 <code>imageUpdate</code> 
+@param     x   <i>x</i> 坐标
+@param     y    <i>y</i> 坐标
+@param     w   宽度
+@param     h   高度
+@return    如果 infoflags 表明已完全加载了图像，则返回 <code>false</code>；否则返回 <code>true</code>。
+ 
+
+@see     java.awt.image.ImageObserver
+@see     Graphics#drawImage(Image, int, int, Color, java.awt.image.ImageObserver)
+@see     Graphics#drawImage(Image, int, int, java.awt.image.ImageObserver)
+@see     Graphics#drawImage(Image, int, int, int, int, Color, java.awt.image.ImageObserver)
+@see     Graphics#drawImage(Image, int, int, int, int, java.awt.image.ImageObserver)
+@see     java.awt.image.ImageObserver#imageUpdate(java.awt.Image, int, int, int, int, int)
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Image java.awt.Component.createImage(ImageProducer producer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的图像生成器创建一幅图像。
+@param     producer  图像生成器
+@return    生成的图像
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Image java.awt.Component.createImage(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一幅用于双缓冲的、可在屏幕外绘制的图像。
+@param     width 指定的宽度
+@param     height 指定的高度
+@return    一幅屏幕外可绘制的图像，可用于双缓冲。如果组件是不可显示的，则返回值可能为 <code>null</code>。如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>，则始终发生这种情况。
+@see #isDisplayable
+@see GraphicsEnvironment#isHeadless
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.VolatileImage java.awt.Component.createVolatileImage(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一幅用于双缓冲的、可变的、可在屏幕外绘制的图像。
+@param     width 指定的宽度。
+@param     height 指定的高度。
+@return    一幅屏幕外可绘制的图像，可用于双缓冲。如果组件是不可显示的，则返回值可能为 <code>null</code>。如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>，则始终发生这种情况。
+@see java.awt.image.VolatileImage
+@see #isDisplayable
+@see GraphicsEnvironment#isHeadless
+@since     1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.VolatileImage java.awt.Component.createVolatileImage(int width, int height, ImageCapabilities caps) throws java.awt.AWTException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一幅具有给定能力的、可变的、可在屏幕外绘制的图像。由于操作系统的问题，此图像的内容可在任意时间丢失，所以必须通过 <code>VolatileImage</code> 接口管理该图像。
+@param     width 指定的宽度。
+@param     height 指定的高度。
+@param caps 图像的能力
+@exception AWTException 如果无法创建具有指定能力的图像
+@return 一个 VolatileImage 对象，可用于管理图面内容丢失和能力。
+@see java.awt.image.VolatileImage
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.prepareImage(Image image, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+准备一幅在此组件上呈现的图像。图像数据由另一个线程异步下载并生成适当的图像屏幕表示。
+@param     image   准备进行屏幕表示的 <code>Image</code>
+@param     observer   图像准备就绪时所要通知的 <code>ImageObserver</code> 对象
+@return    如果图像已经完全准备好，则返回 <code>true</code>；否则返回 <code>false</code>
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.prepareImage(Image image, int width, int height, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以指定的宽度和高度准备一幅在此组件上呈现的图像。
+ <p>
+图像数据由另一个线程异步下载并生成适当缩放的图像屏幕表示。
+@param     image    准备进行屏幕表示的 <code>Image</code> 实例
+@param     width    所需屏幕表示的宽度
+@param     height   所需屏幕表示的高度
+@param     observer   图像准备就绪时所要通知的 <code>ImageObserver</code> 对象
+@return    如果图像已经完全准备好，则返回 <code>true</code>；否则返回 <code>false</code>
+@see       java.awt.image.ImageObserver
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.checkImage(Image image, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定图像屏幕表示的构造状态。
+ <p>
+此方法不会使图像开始加载。应用程序必须使用 <code>prepareImage</code> 方法强制加载图像。
+ <p>
+可在 <code>ImageObserver</code> 接口的讨论中找到有关此方法返回的标志的信息。
+@param     image   正检查其状态的 <code>Image</code> 对象
+@param     observer   图像准备就绪时所要通知的 <code>ImageObserver</code> 对象
+@return   对 <code>ImageObserver</code> 的标志按位进行 <b>OR</b> 运算后的结果，指示图像的哪些信息是当前可用的
+@see      #prepareImage(Image, int, int, java.awt.image.ImageObserver)
+@see      Toolkit#checkImage(Image, int, int, java.awt.image.ImageObserver)
+@see      java.awt.image.ImageObserver
+@since    JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Component.checkImage(Image image, int width, int height, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定图像屏幕表示的构造状态。
+ <p>
+此方法不会使图像开始加载。应用程序必须使用 <code>prepareImage</code> 方法强制加载图像。
+ <p>
+<code>Component</code> 的 <code>checkImage</code> 方法调用其同位体的 <code>checkImage</code> 方法来计算标志。如果此组件还没有同位体，则调用组件工具包的 <code>checkImage</code> 方法。
+ <p>
+可在 <code>ImageObserver</code> 接口的讨论中找到有关此方法返回的标志的信息。
+@param     image   正检查其状态的 <code>Image</code> 
+@param     width   要检查其状态的缩放图像的宽度
+@param     height  要检查其状态的缩放图像的高度
+@param     observer   图像准备就绪时所要通知的 <code>ImageObserver</code> 对象
+@return    对 <code>ImageObserver</code> 的标志按位进行 <b>OR</b> 运算后的结果，指示图像的哪些信息是当前可用的
+@see      #prepareImage(Image, int, int, java.awt.image.ImageObserver)
+@see      Toolkit#checkImage(Image, int, int, java.awt.image.ImageObserver)
+@see      java.awt.image.ImageObserver
+@since    JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setIgnoreRepaint(boolean ignoreRepaint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否应该忽略从操作系统接受的绘制消息。这不会影响 AWT 在软件中生成的绘制事件，除非它们是对操作系统级别绘制消息的直接响应。
+ <p>
+这是很有用的，例如正在全屏模式中运行并且需要更佳的性能，或者使用页面翻转作为缓冲策略时。
+
+@since 1.4
+@see #getIgnoreRepaint
+@see Canvas#createBufferStrategy
+@see Window#createBufferStrategy
+@see java.awt.image.BufferStrategy
+@see GraphicsDevice#setFullScreenWindow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.getIgnoreRepaint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@return 是否应该忽略接收操作系统发出的绘制消息。
+
+@since 1.4
+@see #setIgnoreRepaint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.contains(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查组件是否&ldquo;包含&rdquo;指定的点，其中 <code>x</code> 和 <code>y</code> 是相对于此组件的坐标系定义的。
+@param     x   该点的 <i>x</i> 坐标
+@param     y   该点的 <i>y</i> 坐标
+@see       #getComponentAt(int, int)
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.inside(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 contains(int, int) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.contains(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查组件是否&ldquo;包含&rdquo;指定的点，其中该点的 <i>x</i> 和 <i>y</i> 坐标是相对于此组件的坐标系定义的。
+@param     p     点
+@see       #getComponentAt(Point)
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.Component.getComponentAt(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此组件或其直接子组件之一是否包含（<i>x</i>，<i>y</i>）位置，并且如果是，则返回包含该位置的组件。此方法仅查找一层子组件。如果点（<i>x</i>，<i>y</i>）处于某个子组件内部，而该子组件本身也有子组件，则此方法不向下查找子组件树。
+ <p>
+如果（<i>x</i>，<i>y</i>）坐标位置处于组件边界框的内部，则 <code>Component</code> 的 <code>locate</code> 方法只是简单地返回组件本身；否则返回 <code>null</code>。
+@param     x   <i>x</i> 坐标
+@param     y   <i>y</i> 坐标
+@return   包含（<i>x</i>，<i>y</i>）位置的组件或子组件；如果该位置位于此组件外部，则返回 <code>null</code> 
+@see       #contains(int, int)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.Component.locate(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 getComponentAt(int, int) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.Component.getComponentAt(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含指定点的组件或子组件。
+@param     p   点
+@see       java.awt.Component#contains
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.deliverEvent(Event e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>dispatchEvent(AWTEvent e)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.Component.dispatchEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为组件或其子组件之一指派事件。对于已为 <code>Component</code> 启用的 1.1 类型的事件，在返回前要调用 <code>processEvent</code>。
+@param e 事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.postEvent(Event e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 dispatchEvent(AWTEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addComponentListener(ComponentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的组件侦听器，以接收发自此组件的组件事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   组件侦听器
+@see      java.awt.event.ComponentEvent
+@see      java.awt.event.ComponentListener
+@see      #removeComponentListener
+@see      #getComponentListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeComponentListener(ComponentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的组件侦听器，以便它不再接收发自此组件的组件事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   组件侦听器
+@see      java.awt.event.ComponentEvent
+@see      java.awt.event.ComponentListener
+@see      #addComponentListener
+@see      #getComponentListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.ComponentListener[] java.awt.Component.getComponentListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的组件侦听器的数组。
+
+@return 组件的所有 <code>ComponentListener</code>，如果当前没有注册的组件侦听器，则返回一个空数组
+
+@see #addComponentListener
+@see #removeComponentListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addFocusListener(FocusListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的焦点侦听器，以便当此组件获得输入焦点时能够接收发自此组件的焦点事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   焦点侦听器
+@see      java.awt.event.FocusEvent
+@see      java.awt.event.FocusListener
+@see      #removeFocusListener
+@see      #getFocusListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeFocusListener(FocusListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的焦点侦听器，以便它不再接收发自此组件的焦点事件。如果参数所指定的侦听器尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   焦点侦听器
+@see      java.awt.event.FocusEvent
+@see      java.awt.event.FocusListener
+@see      #addFocusListener
+@see      #getFocusListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.FocusListener[] java.awt.Component.getFocusListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的焦点侦听器的数组。
+
+@return 组件的所有 <code>FocusListener</code>，如果当前没有注册的焦点侦听器，则返回一个空数组
+
+@see #addFocusListener
+@see #removeFocusListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.addHierarchyListener(HierarchyListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的层次结构侦听器，以便当此容器所属的层次结构发生变化时接收发自此组件的层次结构变化事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   层次结构侦听器
+@see      java.awt.event.HierarchyEvent
+@see      java.awt.event.HierarchyListener
+@see      #removeHierarchyListener
+@see      #getHierarchyListeners
+@since    1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.removeHierarchyListener(HierarchyListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的层次结构侦听器，以便它不再接收发自此组件的层次结构变化事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   层次结构侦听器
+@see      java.awt.event.HierarchyEvent
+@see      java.awt.event.HierarchyListener
+@see      #addHierarchyListener
+@see      #getHierarchyListeners
+@since    1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.HierarchyListener[] java.awt.Component.getHierarchyListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的层次结构侦听器的数组。
+
+@return 组件的所有 <code>HierarchyListener</code>，如果当前没有注册的层次结构侦听器，则返回一个空数组
+
+@see      #addHierarchyListener
+@see      #removeHierarchyListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.addHierarchyBoundsListener(HierarchyBoundsListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的层次结构边界侦听器，以便当此容器所属的层次结构发生变化时接收发自此组件的层次结构边界事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   层次结构边界侦听器
+@see      java.awt.event.HierarchyEvent
+@see      java.awt.event.HierarchyBoundsListener
+@see      #removeHierarchyBoundsListener
+@see      #getHierarchyBoundsListeners
+@since    1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.removeHierarchyBoundsListener(HierarchyBoundsListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的层次结构边界侦听器，以便它不再接收发自此组件的层次结构边界事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   层次结构边界侦听器
+@see      java.awt.event.HierarchyEvent
+@see      java.awt.event.HierarchyBoundsListener
+@see      #addHierarchyBoundsListener
+@see      #getHierarchyBoundsListeners
+@since    1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.HierarchyBoundsListener[] java.awt.Component.getHierarchyBoundsListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的层次结构边界侦听器的数组。
+
+@return 组件的所有 <code>HierarchyBoundsListener</code>，如果当前没有注册的层次结构边界侦听器，则返回一个空数组
+
+@see      #addHierarchyBoundsListener
+@see      #removeHierarchyBoundsListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addKeyListener(KeyListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的按键侦听器，以接收发自此组件的按键事件。如果 l 为 null，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   按键侦听器。
+@see      java.awt.event.KeyEvent
+@see      java.awt.event.KeyListener
+@see      #removeKeyListener
+@see      #getKeyListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeKeyListener(KeyListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的按键侦听器，以便它不再接收发自此组件的按键事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   按键侦听器
+@see      java.awt.event.KeyEvent
+@see      java.awt.event.KeyListener
+@see      #addKeyListener
+@see      #getKeyListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.KeyListener[] java.awt.Component.getKeyListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的按键侦听器的数组。
+
+@return 组件的所有 <code>KeyListener</code>，如果当前没有注册的按键侦听器，则返回一个空数组
+
+@see      #addKeyListener
+@see      #removeKeyListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addMouseListener(MouseListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的鼠标侦听器，以接收发自此组件的鼠标事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标侦听器
+@see      java.awt.event.MouseEvent
+@see      java.awt.event.MouseListener
+@see      #removeMouseListener
+@see      #getMouseListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeMouseListener(MouseListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的鼠标侦听器，以便它不再接收发自此组件的鼠标事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标侦听器
+@see      java.awt.event.MouseEvent
+@see      java.awt.event.MouseListener
+@see      #addMouseListener
+@see      #getMouseListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.MouseListener[] java.awt.Component.getMouseListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的鼠标侦听器的数组。
+
+@return 组件的所有 <code>MouseListener</code>，如果当前没有注册的鼠标侦听器，则返回一个空数组
+
+@see      #addMouseListener
+@see      #removeMouseListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addMouseMotionListener(MouseMotionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的鼠标移动侦听器，以接收发自此组件的鼠标移动事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标移动侦听器
+@see      java.awt.event.MouseEvent
+@see      java.awt.event.MouseMotionListener
+@see      #removeMouseMotionListener
+@see      #getMouseMotionListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeMouseMotionListener(MouseMotionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的鼠标移动侦听器，以便它不再接收发自此组件的鼠标移动事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标移动侦听器
+@see      java.awt.event.MouseEvent
+@see      java.awt.event.MouseMotionListener
+@see      #addMouseMotionListener
+@see      #getMouseMotionListeners
+@since    JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.MouseMotionListener[] java.awt.Component.getMouseMotionListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的鼠标移动侦听器的数组。
+
+@return 组件的所有 <code>MouseMotionListener</code>，如果当前没有注册的鼠标移动侦听器，则返回一个空数组
+
+@see      #addMouseMotionListener
+@see      #removeMouseMotionListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addMouseWheelListener(MouseWheelListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的鼠标滚轮侦听器，以接收发自此组件的鼠标滚轮事件。容器还接收发自子组件的鼠标滚轮事件。
+ <p>
+有关如何指派鼠标滚轮事件的信息，请参阅 {@link MouseWheelEvent} 的类描述。
+ <p>
+如果 l 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标滚轮侦听器
+@see      java.awt.event.MouseWheelEvent
+@see      java.awt.event.MouseWheelListener
+@see      #removeMouseWheelListener
+@see      #getMouseWheelListeners
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeMouseWheelListener(MouseWheelListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的鼠标滚轮侦听器，以便它不再接收发自此组件的鼠标滚轮事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果 l 为 null，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   鼠标滚轮侦听器。
+@see      java.awt.event.MouseWheelEvent
+@see      java.awt.event.MouseWheelListener
+@see      #addMouseWheelListener
+@see      #getMouseWheelListeners
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.MouseWheelListener[] java.awt.Component.getMouseWheelListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的鼠标滚轮侦听器的数组。
+
+@return 组件的所有 <code>MouseWheelListener</code>，如果当前没有注册的鼠标滚轮侦听器，则返回一个空数组
+
+@see      #addMouseWheelListener
+@see      #removeMouseWheelListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addInputMethodListener(InputMethodListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的输入方法侦听器，以接收发自此组件的输入方法事件。如果组件还重写了 <code>getInputMethodRequests</code> 并返回一个 <code>InputMethodRequests</code> 实例，则该组件只接收发自输入方法的输入方法事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   输入方法侦听器
+@see      java.awt.event.InputMethodEvent
+@see      java.awt.event.InputMethodListener
+@see      #removeInputMethodListener
+@see      #getInputMethodListeners
+@see      #getInputMethodRequests
+@since    1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removeInputMethodListener(InputMethodListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的输入方法侦听器，以便它不再接收发自此组件的输入方法事件。如果参数所指定的侦听器先前尚未添加到此组件，则此方法不起作用，也不抛出异常。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+<p>有关 AWT 的线程模型的细节信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+@param    l   输入方法侦听器
+@see      java.awt.event.InputMethodEvent
+@see      java.awt.event.InputMethodListener
+@see      #addInputMethodListener
+@see      #getInputMethodListeners
+@since    1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.InputMethodListener[] java.awt.Component.getInputMethodListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的输入方法侦听器的数组。
+
+@return 组件的所有 <code>InputMethodListener</code>，如果当前没有注册的输入方法侦听器，则返回一个空数组
+
+@see      #addInputMethodListener
+@see      #removeInputMethodListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.awt.Component.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个当前在此 <code>Component</code> 上作为 <code><em>Foo</em>Listener</code> 注册的所有对象的数组。<code><em>Foo</em>Listener</code> 是使用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+可以使用 class 字面值（如 <code><em>Foo</em>Listener.class</code>）来指定 <code>listenerType</code> 参数。例如，可以使用以下代码来查询 <code>Component</code> <code>c</code> 的鼠标侦听器：
+
+<pre>MouseListener[] mls = (MouseListener[])(c.getListeners(MouseListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法返回一个空数组。
+
+@param listenerType 所请求的侦听器类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 返回一个在此组件上作为 <code><em>Foo</em>Listener</code> 注册的所有对象的数组，如果尚未添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@see #getComponentListeners
+@see #getFocusListeners
+@see #getHierarchyListeners
+@see #getHierarchyBoundsListeners
+@see #getKeyListeners
+@see #getMouseListeners
+@see #getMouseMotionListeners
+@see #getMouseWheelListeners
+@see #getInputMethodListeners
+@see #getPropertyChangeListener
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.im.InputMethodRequests java.awt.Component.getInputMethodRequests()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取输入方法请求处理程序，该处理程序支持此组件输入方法发出的请求。支持当场文本输入的组件必须重写此方法，以便返回一个 <code>InputMethodRequests</code> 实例。同时，还必须处理输入方法事件。
+
+@return 组件的输入方法请求处理程序，默认为 <code>null</code> 
+@see #addInputMethodListener
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.im.InputContext java.awt.Component.getInputContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此组件使用的输入上下文，用于处理在此组件中输入文本时与输入方法的通信。默认情况下，返回父组件使用的输入上下文。组件可能重写此方法，以便返回一个私有的输入上下文。
+
+@return 组件使用的输入上下文，如果可以确定没有上下文，则返回 <code>null</code> 
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.awt.Component.enableEvents(long eventsToEnable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用由传递给此组件的指定事件掩码参数所定义的事件。
+ <p>
+将某个事件类型的侦听器添加到该组件时，自动启用该事件类型。
+ <p>
+此方法只能由 <code>Component</code> 的子类调用，该子类需要将指定的事件类型传递给 <code>processEvent</code>，而不管是否已注册了侦听器。
+@param      eventsToEnable   定义事件类型的事件掩码
+@see        #processEvent
+@see        #disableEvents
+@see        AWTEvent
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.awt.Component.disableEvents(long eventsToDisable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+禁用由传递给此组件的指定事件掩码参数所定义的事件。
+@param      eventsToDisable   定义事件类型的事件掩码
+@see        #enableEvents
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.AWTEvent java.awt.Component.coalesceEvents(AWTEvent existingEvent, AWTEvent newEvent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将正发送的事件与现有事件组合在一起。如果队列中的事件与要发送的事件有相同的 ID（两个事件都将此组件作为其源组件）时，则由 <code>EventQueue.postEvent</code> 调用此方法。此方法返回一个已组合的事件并用该事件取代现有事件（然后丢弃新事件），或者返回 <code>null</code>，表示没有进行组合（将第二个事件添加到队列的末尾）。如果未返回 <code>null</code>，则可以修改并返回任一事件参数，同时丢弃另一个参数。
+ <p>
+此 <code>coalesceEvents</code> 实现可组合两种事件类型：鼠标移动（和拖动）事件，以及绘制（和更新）事件。对于鼠标移动事件，总是返回最后一个事件，导致丢弃中间的移动。对于绘制事件，将新事件组合到同位体中的复杂 <code>RepaintArea</code>。总是返回新的 <code>AWTEvent</code>。  
+
+@param  existingEvent  已在 <code>EventQueue</code> 中的事件
+@param  newEvent       正发送到 <code>EventQueue</code> 中的事件
+@return 一个已组合的事件，或者返回 <code>null</code> 表明没有进行组合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的事件。默认情况下，此方法调用给定事件类的适当 <code>process&lt;event type&gt;Event</code> 方法。
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param     e 事件
+@see       #processComponentEvent
+@see       #processFocusEvent
+@see       #processKeyEvent
+@see       #processMouseEvent
+@see       #processMouseMotionEvent
+@see       #processInputMethodEvent
+@see       #processHierarchyEvent
+@see       #processMouseWheelEvent
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processComponentEvent(ComponentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的组件事件，方法是将其指派到任意已注册的 <code>ComponentListener</code> 对象。
+ <p>
+如果组件上没有启用组件事件，则不调用此方法。发生下列之一时启用组件事件：
+ <p><ul>
+<li>通过 <code>addComponentListener</code> 注册了一个 <code>ComponentListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了组件事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 组件事件
+@see         java.awt.event.ComponentEvent
+@see         java.awt.event.ComponentListener
+@see         #addComponentListener
+@see         #enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processFocusEvent(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的焦点事件，方法是将其指派到任意已注册的 <code>FocusListener</code> 对象。
+ <p>
+如果组件上没有启用焦点事件，则不调用此方法。发生下列之一时启用焦点事件：
+ <p><ul>
+<li>通过 <code>addFocusListener</code> 注册了一个 <code>FocusListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了焦点事件。
+ </ul>
+ <p>
+如果为某个 <code>Component</code> 启用了焦点事件，则当前的 <code>KeyboardFocusManager</code> 确定是否应该将焦点事件指派到已注册的 <code>FocusListener</code> 对象。如果未指派事件，则 <code>KeyboardFocusManager</code> 调用 <code>Component</code> 的 <code>dispatchEvent</code> 方法，此方法又调用 <code>Component</code> 的 <code>processFocusEvent</code> 方法。
+ <p>
+如果为 <code>Component</code> 启用了焦点事件，则用 <code>FocusEvent</code> 作为参数来调用 <code>Component</code> 的 <code>dispatchEvent</code> 方法将导致调用 <code>Component</code> 的 <code>processFocusEvent</code> 方法，而不管当前的 <code>KeyboardFocusManager</code> 如何。
+ <p>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 焦点事件
+@see         java.awt.event.FocusEvent
+@see         java.awt.event.FocusListener
+@see         java.awt.KeyboardFocusManager
+@see         #addFocusListener
+@see         #enableEvents
+@see         #dispatchEvent
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的按键事件，方法是将其指派到任意已注册的 <code>KeyListener</code> 对象。
+ <p>
+如果组件上没有启用按键事件，则不调用此方法。发生下列之一时启用按键事件：
+ <p><ul>
+<li>通过 <code>addKeyListener</code> 注册了一个 <code>KeyListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了按键事件。
+ </ul>
+
+ <p>
+如果为某个 <code>Component</code> 启用了按键事件，则当前的 <code>KeyboardFocusManager</code> 确定是否应该将按键事件指派到已注册的 <code>KeyListener</code> 对象。<code>DefaultKeyboardFocusManager</code> 不会为非焦点所有者或未显示的 <code>Component</code> 指派按键事件。
+ <p>
+从 J2SE 1.4 开始，已将 <code>KeyEvent</code> 重定向到焦点所有者。有关更多信息，请参阅 <a href="doc-files/FocusSpec.html">Focus Specification</a>。
+ <p>
+只要组件正在显示、已定焦、已启用并且其上的按键事件已启用，那么使用 <code>KeyEvent</code> 作为参数来调用  <code>Component</code> 的 <code>dispatchEvent</code> 方法将导致调用 <code>Component</code> 的 <code>processKeyEvent</code> 方法，而不管当前的 <code>KeyboardFocusManager</code> 如何。
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 按键事件
+@see         java.awt.event.KeyEvent
+@see         java.awt.event.KeyListener
+@see         java.awt.KeyboardFocusManager
+@see         java.awt.DefaultKeyboardFocusManager
+@see         #processEvent
+@see         #dispatchEvent
+@see         #addKeyListener
+@see         #enableEvents
+@see         #isShowing
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processMouseEvent(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的鼠标事件，方法是将其指派到任意已注册的 <code>MouseListener</code> 对象。
+ <p>
+如果组件上没有启用鼠标事件，则不调用此方法。发生下列之一时启用鼠标事件：
+ <p><ul>
+<li>通过 <code>addMouseListener</code> 注册了一个 <code>MouseListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了鼠标事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 鼠标事件
+@see         java.awt.event.MouseEvent
+@see         java.awt.event.MouseListener
+@see         #addMouseListener
+@see         #enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processMouseMotionEvent(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的鼠标移动事件，方法是将其指派到任意已注册的 <code>MouseMotionListener</code> 事件。
+ <p>
+如果组件上没有启用鼠标移动事件，则不调用此方法。发生下列之一时启用鼠标移动事件：
+ <p><ul>
+<li>通过 <code>addMouseMotionListener</code> 注册了一个 <code>MouseMotionListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了鼠标移动事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 鼠标移动事件
+@see         java.awt.event.MouseEvent
+@see         java.awt.event.MouseMotionListener
+@see         #addMouseMotionListener
+@see         #enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processMouseWheelEvent(MouseWheelEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的鼠标滚轮事件，方法是将其指派到任意已注册的 <code>MouseWheelListener</code> 对象。
+ <p>
+如果组件上没有启用鼠标滚轮事件，则不调用此方法。发生下列之一时启用鼠标滚轮事件：
+ <p><ul>
+<li>通过 <code>addMouseWheelListener</code> 注册了一个 <code>MouseWheelListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了鼠标滚轮事件。
+ </ul>
+ <p>
+有关如何指派鼠标滚轮事件的信息，请参阅 {@link MouseWheelEvent} 的类描述。
+ <p>
+注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 鼠标滚轮事件
+@see         java.awt.event.MouseWheelEvent
+@see         java.awt.event.MouseWheelListener
+@see         #addMouseWheelListener
+@see         #enableEvents
+@since       1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processInputMethodEvent(InputMethodEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的输入方法事件，方法是将其指派到任意已注册的 <code>InputMethodListener</code> 对象。
+ <p>
+如果组件上没有启用输入方法事件，则不调用此方法。发生下列之一时启用输入方法事件：
+ <p><ul>
+<li>通过 <code>addInputMethodListener</code> 注册了一个 <code>InputMethodListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了输入方法事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 输入方法事件
+@see         java.awt.event.InputMethodEvent
+@see         java.awt.event.InputMethodListener
+@see         #addInputMethodListener
+@see         #enableEvents
+@since       1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processHierarchyEvent(HierarchyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的层次结构事件，方法是将其指派到任意已注册的 <code>HierarchyListener</code> 对象。
+ <p>
+如果组件上没有启用层次结构事件，则不调用此方法。发生下列之一时启用层次结构事件：
+ <p><ul>
+<li>通过 <code>addHierarchyListener</code> 注册了一个 <code>HierarchyListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了层次结构事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 层次结构事件
+@see         java.awt.event.HierarchyEvent
+@see         java.awt.event.HierarchyListener
+@see         #addHierarchyListener
+@see         #enableEvents
+@since       1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.processHierarchyBoundsEvent(HierarchyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理组件上发生的层次结构边界事件，方法是将其指派到任意已注册的 <code>HierarchyBoundsListener</code> 对象。
+ <p>
+如果组件上没有启用层次结构边界事件，则不调用此方法。发生下列之一时启用层次结构边界事件：
+ <p><ul>
+<li>通过 <code>addHierarchyBoundsListener</code> 注册了一个 <code>HierarchyBoundsListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用了层次结构边界事件。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param       e 层次结构事件
+@see         java.awt.event.HierarchyEvent
+@see         java.awt.event.HierarchyBoundsListener
+@see         #addHierarchyBoundsListener
+@see         #enableEvents
+@since       1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.handleEvent(Event evt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processEvent(AWTEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseDown(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseDrag(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseMotionEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseUp(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseMove(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseMotionEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseEnter(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.mouseExit(Event evt, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processMouseEvent(MouseEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.keyDown(Event evt, int key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processKeyEvent(KeyEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.keyUp(Event evt, int key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processKeyEvent(KeyEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.action(Event evt, Object what)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，应该将此组件作为组件（激发动作事件）上的 ActionListener 来注册。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将此 <code>Component</code> 连接到一个本机屏幕资源使其成为可显示的。此方法由工具包内部调用，不应直接由程序调用。
+@see       #isDisplayable
+@see       #removeNotify
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.removeNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+通过销毁此 <code>Component</code> 的本机屏幕资源使其成为不可显示的。 
+ <p>
+此方法由工具包内部调用，不应直接由程序调用。重写此方法的代码应该在重写方法的首行调用 <code>super.removeNotify</code>。
+
+@see       #isDisplayable
+@see       #addNotify
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.gotFocus(Event evt, Object what)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processFocusEvent(FocusEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.lostFocus(Event evt, Object what)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 processFocusEvent(FocusEvent) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isFocusTraversable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Component</code> 是否可以成为焦点所有者。
+
+@return 如果此 <code>Component</code> 是可以获得焦点的，则返回 <code>true</code>；否则返回 <code>false</code> 
+@see #setFocusable
+@since JDK1.1
+@deprecated 从 1.4 开始，由 <code>isFocusable()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isFocusable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Component 是否可以获得焦点。
+
+@return 如果此 Component 可以获得焦点，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see #setFocusable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setFocusable(boolean focusable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 Component 的焦点状态设置为指定值。此值覆盖 Component 的默认焦点状态。
+
+@param focusable 表明此 Component 是否可以获得焦点
+@see #isFocusable
+@since 1.4
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setFocusTraversalKeys(int id, java.util.Set<? extends java.awt.AWTKeyStroke> keystrokes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 Component 的给定遍历操作设置焦点遍历键。
+ <p>
+Component 的焦点遍历键的默认值与实现有关。Sun 建议为特定本机平台的所有实现使用相同的默认值。下面列出了 Windows 和 Unix 的建议值。在 Sun AWT 实现中使用了这些建议值。
+
+ <table border=1 summary="Recommended default values for a Component's focus traversal keys">
+ <tr>
+<th>标识符</th>
+<th>含义</th>
+<th>默认值</th>
+ </tr>
+ <tr>
+    <td>KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS</td>
+<td>正常的前向键盘遍历</td>
+<td>KEY_PRESSED 上的 TAB，KEY_PRESSED 上的 CTRL-TAB</td>
+ </tr>
+ <tr>
+    <td>KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS</td>
+<td>正常的反向键盘遍历</td>
+<td>KEY_PRESSED 上的 SHIFT-TAB，KEY_PRESSED 上的 CTRL-SHIFT-TAB</td>
+ </tr>
+ <tr>
+    <td>KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS</td>
+<td>到上一个焦点遍历循环</td>
+<td>无</td>
+ </tr>
+ </table>
+
+使用空的 Set 来禁用遍历键；建议使用 Collections.EMPTY_SET。
+ <p>
+客户机代码使用 AWTKeyStroke API 可以指定根据哪种特定的 KeyEvents（KEY_PRESSED 或 KEY_RELEASED）将会发生焦点遍历操作。然而，无论指定了哪种 KeyEvent，都将使用与焦点遍历键相关的所有 KeyEvents（包括相关联的 KEY_TYPED 事件），并且不会指派到任意 Component。将 KEY_TYPED 事件指定为焦点遍历操作的映射，或者将相同的事件映射到多个默认焦点遍历操作会生成运行时错误。
+ <p>
+如果为 Set 指定了 null 值，则此 Component 会继承其父级的 Set。如果此 Component 的所有祖先都为 Set 指定了 null，则使用当前 KeyboardFocusManager 的默认 Set。
+
+@param id  KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一。
+@param keystrokes 指定操作的 AWTKeyStroke 的 Set。
+@see #getFocusTraversalKeys
+@see KeyboardFocusManager#FORWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#BACKWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#UP_CYCLE_TRAVERSAL_KEYS
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一、或者 keystroke 包含 null、或者 keystroke 中的 Object 不是 AWTKeyStroke、或者任意 keystroke 表示一个 KEY_TYPED 事件，或者任意 keystroke 已经映射到此 Component 的另一个焦点遍历操作
+@since 1.4
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.awt.AWTKeyStroke> java.awt.Component.getFocusTraversalKeys(int id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Component 的给定遍历操作的焦点遍历键 Set。（有关每个键的完整描述，请参阅 <code>setFocusTraversalKeys</code>）。
+ <p>
+如果没有为此 Component 显式定义遍历键 Set，则返回此 Component 的父级 Set。如果没有为此 Component 的所有父级显式定义 Set，则返回当前 KeyboardFocusManager 的默认 Set。
+
+@param id  KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一。
+@return 指定操作的 AWTKeyStrokes 的 Set。Set 是不可修改的，但可为空。此方法永远不会返回 null。
+@see #setFocusTraversalKeys
+@see KeyboardFocusManager#FORWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#BACKWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#UP_CYCLE_TRAVERSAL_KEYS
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.areFocusTraversalKeysSet(int id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否为此 Component 显式定义了给定焦点遍历操作的焦点遍历键 Set。如果此方法返回 <code>false</code>，则此 Component 继承了其祖先或当前 KeyboardFocusManager 的 Set。
+
+@param id  KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一
+@return 如果已为此 Component 显式定义了给定焦点遍历操作的焦点遍历键 Set，则返回 <code>true</code>；否则返回 <code>false</code>。
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS 或 KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 之一
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setFocusTraversalKeysEnabled(boolean focusTraversalKeysEnabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否为此 Component 启用焦点遍历键。其焦点遍历键已禁用的 Component 接收焦点遍历键的按键事件。其焦点遍历键已启用的 Component 不会看到这些事件；相反，会自动将这些事件转换为遍历操作。
+
+@param focusTraversalKeysEnabled 是否为此 Component 启用焦点遍历键
+@see #getFocusTraversalKeysEnabled
+@see #setFocusTraversalKeys
+@see #getFocusTraversalKeys
+@since 1.4
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.getFocusTraversalKeysEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否已为此 Component 启用了焦点遍历键。其焦点遍历键已禁用的 Component 接收焦点遍历键的按键事件。其焦点遍历键已启用的 Component 不会看到这些事件；相反，会自动将这些事件转换为遍历操作。
+
+@return 是否已为此 Component 启用焦点遍历键
+@see #setFocusTraversalKeysEnabled
+@see #setFocusTraversalKeys
+@see #getFocusTraversalKeys
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.requestFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 Component 获取输入焦点，并且此 Component 的顶层祖先成为获得焦点的 Window。此 Component 对于所要许可的请求而言必须是不可显示的、可聚焦的和可见的并且其所有祖先（除了顶层 Window 以外）必须是可见的。此方法会尽力完成该请求；但是在某些情况下可能无法完成。在此 Component 接收 FOCUS_GAINED 事件前，开发人员永远不能假定此 Component 是焦点所有者。如果由于此 Component 的顶层 Window 没有成为获得焦点的窗口而拒绝了此请求，则记住此请求，并在后来用户使窗口成为获得焦点的窗口时许可此请求。
+ <p>
+此方法不能用于为根本不是 Component 的内容设置焦点所有者，应该使用 <code>KeyboardFocusManager.clearGlobalFocusOwner()</code>。
+ <p>
+因为此方法的焦点行为与平台有关，所以强烈建议开发人员在可能时使用 <code>requestFocusInWindow</code>。
+<p>注：并不是所有的焦点传输都将导致防止调用此方法。同样地，组件可以在没有调用此方法或 {@code Component} 的其他任何方法的情况下接收焦点。
+
+@see #requestFocusInWindow
+@see java.awt.event.FocusEvent
+@see #addFocusListener
+@see #isFocusable
+@see #isDisplayable
+@see KeyboardFocusManager#clearGlobalFocusOwner
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.Component.requestFocus(boolean temporary)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求此 <code>Component</code> 获取输入焦点，并且此 <code>Component</code> 的顶层祖先成为获得焦点的 <code>Window</code>。此 Component 对于所要许可的请求而言必须是不可显示的、可聚焦的和可见的并且其所有祖先（除了顶层 Window 以外）必须是可见的。此方法会尽力完成该请求；但是在某些情况下可能无法完成。在此 Component 接收 FOCUS_GAINED 事件前，开发人员必须永远不能假定此 Component 是焦点所有者。如果由于此 Component 的顶层窗口没有成为获得焦点的窗口而拒绝了此请求，则记住此请求，并在后来用户使窗口成为获得焦点的窗口时许可此请求。
+ <p>
+此方法返回布尔值。如果返回 <code>false</code>，则请求<b>注定要失败</b>。如果返回 <code>true</code>，并且在本机窗口系统允许请求前不禁止该请求或不发生特别的事件（如处理该组件的同位体），则请求成功。此外，虽然返回 <code>true</code> 表示请求可能成功了，但是在此组件接收 FOCUS_GAINED 事件前，开发人员必须永远不能假定此 Component 是焦点所有者。
+ <p>
+此方法不能用于为根本不是 component 的内容设置焦点所有者，应该使用 <code>KeyboardFocusManager.clearGlobalFocusOwner</code>。
+ <p>
+因为此方法的焦点行为与平台有关，所以强烈建议开发人员在可能时使用 <code>requestFocusInWindow</code>。
+ <p>
+此方法会尽力完成该请求，确保作为此请求结果所产生的 <code>FocusEvent</code> 具有指定的临时值。但是，因为在所有本机窗口系统上指定一个任意的临时状态是不可能实现的，所以只有轻量级 <code>Component</code> 可以保证此方法的行为正确。此方法并非用于一般用途，而是作为轻量级组件库（如 Swing）的钩子 (hook) 而存在的。
+<p>注：并不是所有的焦点传输都将导致防止调用此方法。同样地，组件可以在没有调用此方法或 {@code Component} 的其他任何方法的情况下接收焦点。
+
+@param temporary 如果焦点改变是临时的（如在窗口丢失焦点时），则为 true；有关临时焦点改变的更多信息，请参阅 <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a>
+@return 如果焦点改变请求注定要失败，则返回 <code>false</code>；如果可能成功，则返回 <code>true</code> 
+@see java.awt.event.FocusEvent
+@see #addFocusListener
+@see #isFocusable
+@see #isDisplayable
+@see KeyboardFocusManager#clearGlobalFocusOwner
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.requestFocusInWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 Component 的顶层祖先已经是获得焦点的 Window，则请求此 Component 获取输入焦点。此 Component 对于所要许可的请求而言必须是不可显示的、可聚焦的和可见的并且其所有祖先（除了顶层 Window 以外）必须是可见的。此方法会尽力完成该请求；但是在某些情况下可能无法完成。在此 Component 接收 FOCUS_GAINED 事件前，开发人员永远不能假定此 Component 是焦点所有者。
+ <p>
+此方法返回布尔值。如果返回 <code>false</code>，则请求<b>注定要失败</b>。如果返回 <code>true</code>，并且在本机窗口系统允许请求前不禁止该请求或不发生特别的事件（如处理该组件的同位体），则请求成功。此外，虽然返回 <code>true</code> 表示请求可能成功了，但是在此组件接收 FOCUS_GAINED 事件前，开发人员必须永远不能假定此 Component 是焦点所有者。
+ <p>
+此方法不能用于为根本不是 Component 的内容设置焦点所有者，应该使用 <code>KeyboardFocusManager.clearGlobalFocusOwner()</code>。
+ <p>
+可在各种平台之间一致地实现此方法的焦点行为，所以强烈建议开发人员在可能时使用此方法，而不是 <code>requestFocus</code>。依赖 <code>requestFocus</code> 的代码可能在不同平台上表现出不同的焦点行为。
+<p>注：并不是所有的焦点传输都将导致防止调用此方法。同样地，组件可以在没有调用此方法或 {@code Component} 的其他任何方法的情况下接收焦点。
+ 
+@return 如果焦点改变请求注定要失败，则返回 <code>false</code>；如果可能成功，则返回 <code>true</code>
+@see #requestFocus
+@see java.awt.event.FocusEvent
+@see #addFocusListener
+@see #isFocusable
+@see #isDisplayable
+@see KeyboardFocusManager#clearGlobalFocusOwner
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.Component.requestFocusInWindow(boolean temporary)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>Component</code> 的顶层祖先已经是获得焦点的 <code>Window</code>，则请求此 <code>Component</code> 获取输入焦点。此 Component 对于所要许可的请求而言必须是不可显示的、可聚焦的和可见的并且其所有祖先（除了顶层 Window 以外）必须是可见的。此方法会尽力完成该请求；但是在某些情况下可能无法完成。在此 Component 接收 FOCUS_GAINED 事件前，开发人员必须永远不能假定此 Component 是焦点所有者。
+ <p>
+此方法返回布尔值。如果返回 <code>false</code>，则请求<b>注定要失败</b>。如果返回 <code>true</code>，并且在本机窗口系统允许请求前不禁止该请求或不发生特别的事件（如处理该组件的同位体），则请求成功。此外，虽然返回 <code>true</code> 表示请求可能成功了，但是在此组件接收 FOCUS_GAINED 事件前，开发人员必须永远不能假定此 Component 是焦点所有者。
+ <p>
+此方法不能用于为根本不是 Component 的内容设置焦点所有者。应该使用 <code>KeyboardFocusManager.clearGlobalFocusOwner</code>。
+ <p>
+可在各种平台之间一致地实现此方法的焦点行为，所以强烈建议开发人员在可能时使用此方法，而不是 <code>requestFocus</code>。依赖 <code>requestFocus</code> 的代码可能在不同平台上表现出不同的焦点行为。
+ <p>
+此方法会尽力完成该请求，确保作为此请求结果所产生的 <code>FocusEvent</code> 具有指定的临时值。但是，因为在所有本机窗口系统上指定一个任意的临时状态是不可能实现的，所以只有轻量级组件可以保证此方法的行为正确。此方法并非用于一般用途，而是作为轻量级组件库（如 Swing）的钩子 (hook) 而存在的。
+<p>注：并不是所有的焦点传输都将导致防止调用此方法。同样地，组件可以在没有调用此方法或 {@code Component} 的其他任何方法的情况下接收焦点。
+ 
+@param temporary 如果焦点改变是临时的（如在窗口丢失焦点时），则为 true；有关临时焦点改变的更多信息，请参阅 <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a>
+@return 如果焦点改变请求注定要失败，则返回 <code>false</code>；如果可能成功，则返回 <code>true</code>
+@see #requestFocus
+@see java.awt.event.FocusEvent
+@see #addFocusListener
+@see #isFocusable
+@see #isDisplayable
+@see KeyboardFocusManager#clearGlobalFocusOwner
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.transferFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将焦点转移到下一个组件，就好像此 Component 曾是焦点所有者。
+@see       #requestFocus()
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container java.awt.Component.getFocusCycleRootAncestor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为此 Component 焦点遍历循环的焦点循环根的 Container。每个焦点遍历循环只有一个焦点遍历循环根，每个不是 Container 的 Component 只属于一个焦点遍历循环。是焦点循环根的 Container 属于两个循环：一个起始于 Container 本身的循环，以及一个起始于 Container 的最近焦点循环根祖先的循环。对于这些 Container，此方法返回 Container 的最近焦点循环根祖先。
+
+@return 此 Component 的最近焦点循环根祖先
+@see Container#isFocusCycleRoot()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isFocusCycleRoot(Container container)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定的 Container 是否为此 Component 焦点遍历循环的焦点循环根。每个焦点遍历循环只有一个焦点遍历循环根，每个不是 Container 的 Component 只属于一个焦点遍历循环。
+
+@param container 要测试的 Container
+@return 如果指定的 Container 是此 Component 的焦点循环根，则返回 <code>true</code>；否则返回 <code>false</code>
+@see Container#isFocusCycleRoot()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.nextFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 transferFocus() 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.transferFocusBackward()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将焦点转移到前一个组件，就好像此 Component 曾是焦点所有者。
+@see       #requestFocus()
+@since     1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.transferFocusUpCycle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将焦点向上转移一个焦点遍历循环。通常将焦点所有者设置为此 Component 的焦点循环根，将当前的焦点循环根设置为新焦点所有者的焦点循环根。但是如果此 Component 的焦点循环根是一个 Window，则将焦点所有者设置为焦点循环根的默认 Component，以便获得焦点，并且不改变当前的焦点循环根。
+
+@see       #requestFocus()
+@see       Container#isFocusCycleRoot()
+@see       Container#setFocusCycleRoot(boolean)
+@since     1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.hasFocus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>Component</code> 是焦点所有者，则返回 <code>true</code>。此方法已过时，并且已经由 <code>isFocusOwner()</code> 取代。
+
+@return 如果此 <code>Component</code> 是焦点所有者，则返回 <code>true</code>；否则返回 <code>false</code>
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Component.isFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>Component</code> 是焦点所有者，则返回 <code>true</code>。
+
+@return 如果此 <code>Component</code> 是焦点所有者，则返回 <code>true</code>；否则返回 <code>false</code>
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.add(PopupMenu popup)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向组件添加指定的弹出菜单。
+@param     popup 要添加给组件的弹出菜单。
+@see       #remove(MenuComponent)
+@exception NullPointerException 如果 {@code popup} 为 {@code null}
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.remove(MenuComponent popup)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从组件移除指定的弹出菜单。
+@param     popup 要移除的弹出菜单
+@see       #add(PopupMenu)
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.Component.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件状态的字符串表示形式。此方法仅在进行调试的时候使用，对于这两个实现，返回的字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  组件状态的字符串表示形式
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.Component.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件及其值的字符串表示形式。
+@return  组件的字符串表示形式。
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.list()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件列表打印到标准系统输出流 <code>System.out</code>。
+@see       java.lang.System#out
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.list(PrintStream out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件列表打印到指定的输出流。
+@param    out   打印流
+@since    JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.list(PrintStream out, int indent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将列表从指定的缩排开始打印到指定的打印流。
+@param     out      打印流
+@param     indent   缩排的空格数
+@see       java.io.PrintStream#println(java.lang.Object)
+@since     JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.list(PrintWriter out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将列表打印到指定的打印编写器。
+@param  out  打印到的打印编写器
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.list(PrintWriter out, int indent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将列表从指定的缩排开始打印到指定的打印编写器。
+@param out 打印到的打印编写器
+@param indent 缩排的空格数
+@see       java.io.PrintStream#println(java.lang.Object)
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向侦听器列表添加一个 PropertyChangeListener。侦听器是为此类的所有绑定属性注册的，这些属性包括：
+ <ul>
+<li>此 Component 的字体 (&quot;font&quot;)</li>
+<li>此 Component 的背景色 (&quot;background&quot;)</li>
+<li>此 Component 的前景色 (&quot;foreground&quot;)</li>
+<li>此 Component 的可拥有焦点性 (&quot;focusable&quot;)</li>
+<li>此 Component 的焦点遍历键启用状态 (&quot;focusTraversalKeysEnabled&quot;)</li>
+<li>此 Component 的 FORWARD_TRAVERSAL_KEYS 的 Set (&quot;forwardFocusTraversalKeys&quot;)</li>
+<li>此 Component 的 BACKWARD_TRAVERSAL_KEYS 的 Set (&quot;backwardFocusTraversalKeys&quot;)</li>
+<li>此 Component 的 UP_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;upCycleFocusTraversalKeys&quot;)</li>
+<li>此 Component 的首选大小 (&quot;preferredSize&quot;)</li>
+<li>此 Component 的最小大小 (&quot;minimumSize&quot;)</li>
+<li>此 Component 的最大大小 (&quot;maximumSize&quot;)</li>
+<li>此 Component 的名称 (&quot;name&quot;)</li>
+ </ul>
+注意，如果此 <code>Component</code> 继承了一个绑定属性，则不会激发事件来响应继承属性的改变。
+ <p>
+如果 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+
+@param    listener  要添加的属性更改侦听器
+
+@see #removePropertyChangeListener
+@see #getPropertyChangeListener
+@see #addPropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除一个 PropertyChangeListener。应该使用此方法移除为此类的所有绑定属性所注册的 PropertyChangeListener。
+ <p>
+如果 listener 为 null，则不会抛出异常并且不执行动作。
+
+@param   listener  要移除的 PropertyChangeListener
+
+@see #addPropertyChangeListener
+@see #getPropertyChangeListener
+@see #removePropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] java.awt.Component.getPropertyChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此组件上所有已注册的属性更改侦听器的数组。
+
+@return 组件的所有 <code>PropertyChangeListener</code>，如果当前没有注册的属性更改侦听器，则返回一个空数组
+
+@see      #addPropertyChangeListener
+@see      #removePropertyChangeListener
+@see      #getPropertyChangeListener(java.lang.String)
+@see      java.beans.PropertyChangeSupport#getPropertyChangeListener
+@since    1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向指定属性的侦听器列表添加一个 PropertyChangeListener。指定的属性可能是用户定义的，或者是下列之一：
+ <ul>
+<li>此 Component 的字体 (&quot;font&quot;)</li>
+<li>此 Component 的背景色 (&quot;background&quot;)</li>
+<li>此 Component 的前景色 (&quot;foreground&quot;)</li>
+<li>此 Component 的可拥有焦点性 (&quot;focusable&quot;)</li>
+<li>此 Component 的焦点遍历键启用状态 (&quot;focusTraversalKeysEnabled&quot;)</li>
+<li>此 Component 的 FORWARD_TRAVERSAL_KEYS 的 Set (&quot;forwardFocusTraversalKeys&quot;)</li>
+<li>此 Component 的 BACKWARD_TRAVERSAL_KEYS 的 Set (&quot;backwardFocusTraversalKeys&quot;)</li>
+<li>此 Component 的 UP_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;upCycleFocusTraversalKeys&quot;)</li>
+ </ul>
+注意，如果此 <code>Component</code> 继承了一个绑定属性，则不会激发事件来响应继承属性的改变。
+ <p>
+如果 <code>propertyName</code> 或 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+
+@param propertyName 上面所列的属性名之一
+@param listener 要添加的 PropertyChangeListener
+
+@see #removePropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+@see #getPropertyChangeListener(java.lang.String)
+@see #addPropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Component.removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定属性的侦听器列表中移除一个 <code>PropertyChangeListener</code>。应该使用此方法移除为指定绑定属性所注册的 <code>PropertyChangeListener</code>。
+ <p>
+如果 <code>propertyName</code> 或 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行动作。
+
+@param propertyName 有效的属性名
+@param listener 要移除的 PropertyChangeListener
+
+@see #addPropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+@see #getPropertyChangeListener(java.lang.String)
+@see #removePropertyChangeListener(java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] java.awt.Component.getPropertyChangeListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定属性相关联的所有侦听器的数组。
+
+@return 与指定属性相关联的所有 <code>PropertyChangeListener</code>；如果尚未添加这样的侦听器，或者 <code>propertyName</code> 为 <code>null</code>，则返回空数组
+
+@see #addPropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+@see #removePropertyChangeListener(java.lang.String, java.beans.PropertyChangeListener)
+@see #getPropertyChangeListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告 Object 属性的绑定属性改变。当改变了绑定属性并且向所有已注册的 PropertyChangeListener 发送相应的 PropertyChangeEvent 时可以调用此方法。
+
+@param propertyName 其值已改变的属性
+@param oldValue 该属性以前的值
+@param newValue 该属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.firePropertyChange(String propertyName, boolean oldValue, boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告布尔属性的绑定属性改变。当改变了绑定属性并且向所有已注册的 PropertyChangeListener 发送相应的 PropertyChangeEvent 时可以调用此方法。
+
+@param propertyName 其值已改变的属性
+@param oldValue 该属性以前的值
+@param newValue 该属性的新值
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Component.firePropertyChange(String propertyName, int oldValue, int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持报告整数属性的绑定属性改变。当改变了绑定属性并且向所有已注册的 PropertyChangeListener 发送相应的 PropertyChangeEvent 时可以调用此方法。
+
+@param propertyName 其值已改变的属性
+@param oldValue 该属性以前的值
+@param newValue 该属性的新值
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, byte oldValue, byte newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称 
+@param oldValue 该属性的旧值（byte 类型） 
+@param newValue 该属性的新值（byte 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, char oldValue, char newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称 
+@param oldValue 该属性的旧值（char 类型） 
+@param newValue 该属性的新值（char 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, short oldValue, short newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称 
+@param oldValue 该属性的旧值（short 类型） 
+@param newValue 该属性的新值（short 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, long oldValue, long newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称 
+@param oldValue 该属性的旧值（long 类型） 
+@param newValue 该属性的新值（long 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, float oldValue, float newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称 
+@param oldValue 该属性的旧值（float 类型） 
+@param newValue 该属性的新值（float 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.firePropertyChange(String propertyName, double oldValue, double newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告绑定属性的改变。
+
+@param propertyName 已改变的属性的编程名称
+@param oldValue 该属性的旧值（double 类型） 
+@param newValue 该属性的新值（double 类型）
+@see #firePropertyChange(java.lang.String, java.lang.Object, java.lang.Object)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.setComponentOrientation(ComponentOrientation o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置语言敏感的方向，用于排序此组件内的元素或文本。语言敏感的 <code>LayoutManager</code> 和 <code>Component</code> 子类使用此属性来确定如何布局并绘制组件。
+ <p>
+在构造时，组件的方向设置为 <code>ComponentOrientation.UNKNOWN</code>，表示尚未显式地指定它。UNKNOWN 方向的行为与 <code>ComponentOrientation.LEFT_TO_RIGHT</code> 相同。
+ <p>
+要设置单个组件的方向，请使用此方法。要设置整个组件层次结构的方向，请使用 {@link #applyComponentOrientation applyComponentOrientation}。
+
+@see ComponentOrientation
+
+@author Laura Werner, IBM
+@beaninfo bound:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.ComponentOrientation java.awt.Component.getComponentOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索将用于排序此组件内的元素或文本的语言敏感的方向。需要考虑方向的 <code>LayoutManager</code> 和 <code>Component</code> 子类在执行布局或绘制前应该调用此方法来获取组件的方向。
+
+@see ComponentOrientation
+
+@author Laura Werner, IBM
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Component.applyComponentOrientation(ComponentOrientation orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此组件及其包含的所有组件的 <code>ComponentOrientation</code> 属性。
+
+@param orientation 此组件及其包含的所有组件的新组件方向。
+@exception NullPointerException 如果 <code>orientation</code> 为 null。
+@see #setComponentOrientation
+@see #getComponentOrientation
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.Component.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>Component</code> 相关的 <code>AccessibleContext</code>。此基类所实现的方法返回 null。扩展 <code>Component</code> 的类应该实现此方法，以便返回与该子类相关的 <code>AccessibleContext</code>。
+
+@return 此 <code>Component</code> 的 <code>AccessibleContext</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Component.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 <code>ObjectInputStream</code> 并且如果它不为 <code>null</code>，则添加一个侦听器，以便接收由组件所激发的各种事件。忽略未识别的键或值。
+
+@param s 要读取的 <code>ObjectInputStream</code> 
+@see #writeObject(ObjectOutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Component.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认的可序列化字段写入流中。将各种可序列化侦听器作为可选数据写入。检测不可序列化的侦听器并且不尝试对其进行序列化。
+
+@param s 要写入的 <code>ObjectOutputStream</code>
+@serialData 以 <code>null</code> 终止的 0 或多对序列；该对由一个 <code>String</code> 和一个 <code>Object</code> 组成；<code>String</code> 表示对象的类型并为下列类型之一（1.4 中）：<code>componentListenerK</code> 表示 <code>ComponentListener</code> 对象；<code>focusListenerK</code> 表示 <code>FocusListener</code> 对象；<code>keyListenerK</code> 表示 <code>KeyListener</code> 对象；<code>mouseListenerK</code> 表示 <code>MouseListener</code> 对象；<code>mouseMotionListenerK</code> 表示 <code>MouseMotionListener</code> 对象；<code>InputMethodListener</code> 表示 <code>InputMethodListener</code> 对象；<code>hierarchyListenerK</code> 表示 <code>HierarchyListener</code> 对象；<code>hierarchyBoundsListenerK</code> 表示 <code>HierarchyBoundsListener</code> 对象；<code>mouseWheelListenerK</code> 表示 <code>MouseWheelListener</code> 对象
+@serialData 一个可选的 <code>ComponentOrientation</code>（在 1.2 中位于 <code>inputMethodListener</code> 之后）
+
+@see AWTEventMulticaster#save(java.io.ObjectOutputStream, java.lang.String, java.util.EventListener)
+@see #componentListenerK
+@see #focusListenerK
+@see #keyListenerK
+@see #mouseListenerK
+@see #mouseMotionListenerK
+@see #inputMethodListenerK
+@see #hierarchyListenerK
+@see #hierarchyBoundsListenerK
+@see #mouseWheelListenerK
+@see #readObject(ObjectInputStream)
+
+<!-- END DATA -->

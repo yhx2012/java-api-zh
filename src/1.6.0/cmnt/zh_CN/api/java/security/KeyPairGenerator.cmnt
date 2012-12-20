@@ -1,0 +1,225 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.KeyPairGenerator extends java.security.KeyPairGeneratorSpi
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+KeyPairGenerator 类用于生成公钥和私钥对。密钥对生成器是使用 <code>getInstance</code> 工厂方法（返回一个给定类的实例的静态方法）构造的。
+
+<p>特定算法的密钥对生成器可以创建能够与此算法一起使用的公钥/私钥对。它还可以将特定于算法的参数与每个生成的密钥关联。
+ 
+<p>有两种生成密钥对的方式：与算法无关的方式和特定于算法的方式。两种方式的唯一区别在于对象的初始化：
+ 
+ <ul>
+<li><b>与算法无关的初始化</b>
+<p>所有的密钥对生成器遵循密钥大小和随机源的概念。对于不同的算法，密钥大小的解释也不相同（例如，对于 <i>DSA</i> 算法，密钥大小对应于模的长度）。此 KeyPairGenerator 类有一个 {@link #initialize(int, java.security.SecureRandom) initialize} 方法，该方法带有两个通用的共享类型的参数。还有一个只带有 <code>keysize</code> 参数的方法，它使用以最高优先级安装的提供者的 <code>SecureRandom</code> 实现作为随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+ 
+<p>因为调用上述与算法无关的 <code>initialize</code> 方法时没有指定其他参数，所以由提供者决定如何处理与每个密钥关联的特定于算法的参数（如果有）。
+ 
+<p>如果算法为 <i>DSA</i> 算法，密钥大小（模大小）为 512、768 或 1024，那么 <i>Sun</i> 提供者对 <code>p</code>、<code>q</code> 和 <code>g</code> 参数使用一组预计算值。如果模大小不是上述值之一，则 <i>Sun</i> 提供者创建一个新的参数集合。其他提供者可能具有供更多模大小（不仅仅是上文提及的那三个）使用的预计算参数集合。其他提供者也可能没有任何预计算参数列表，而总是创建新的参数集合。
+ <p>
+
+<li><b>特定于算法的初始化</b>
+<p>对于特定于算法的参数集合已存在的情况（例如，DSA 中所谓的<i>公用参数</i>），有两个 {@link #initialize(java.security.spec.AlgorithmParameterSpec) initialize} 方法具有 <code>AlgorithmParameterSpec</code> 参数。其中一个方法还有一个 <code>SecureRandom</code> 参数，而另一个方法使用以最高优先级安装的提供者的 <code>SecureRandom</code> 实现作为随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+ </ul>
+
+<p>每个提供者都必须提供（并记录）默认的初始化，以防客户端没有显式初始化 KeyPairGenerator（通过调用 <code>initialize</code> 方法）。例如，<i>Sun</i> 提供者使用 1024 位的默认模大小（密钥大小）。
+
+<p>注意，由于历史原因，此类是抽象类，是从 <code>KeyPairGeneratorSpi</code> 扩展的。应用程序开发人员只需注意在此 <code>KeyPairGenerator</code> 类中定义的方法；超类中的所有方法是供加密服务提供者使用的，这些加密服务提供者希望提供自己的密钥对生成器实现。
+
+@author Benjamin Renaud
+
+@version 1.59, 04/21/06
+
+@see java.security.spec.AlgorithmParameterSpec
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.KeyPairGenerator(String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定的算法创建 KeyPairGenerator 对象。
+
+@param algorithm 算法的标准字符串名称。有关标准算法名称的信息，请参阅 <a href=  "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.KeyPairGenerator.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此密钥对生成器算法的标准名称。有关标准算法名称的信息，请参阅 <a href=  "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+ 
+@return 算法的标准字符串名称。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyPairGenerator java.security.KeyPairGenerator.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回生成指定算法的 public/private 密钥对的 KeyPairGenerator 对象。
+
+ <p> 此方法从首选 Provider 开始遍历已注册安全提供者列表。返回封装 KeyPairGeneratorSpi 实现的新 KeyPairGenerator 对象，该实现取自第一个支持指定算法的 Provider。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 算法的标准字符串名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @return 新的 KeyPairGenerator 对象。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 KeyPairGeneratorSpi 实现。
+
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyPairGenerator java.security.KeyPairGenerator.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回生成指定算法的 public/private 密钥对的 KeyPairGenerator 对象。
+
+ <p> 返回一个封装 KeyPairGeneratorSpi 实现的新 KeyPairGenerator 对象，该实现取自指定提供者。指定提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 算法的标准字符串名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+@param provider 提供者的字符串名称。
+
+@return 新的 KeyPairGenerator 对象。
+
+@exception NoSuchAlgorithmException 如果指定算法的 KeyPairGeneratorSpi 实现不能从指定提供者获得。
+
+@exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+@exception IllegalArgumentException 如果提供者的名称为 null 或空。
+ 
+@see Provider 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyPairGenerator java.security.KeyPairGenerator.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回生成指定算法的 public/private 密钥对的 KeyPairGenerator 对象。
+
+ <p> 返回一个封装 KeyPairGeneratorSpi 实现的新 KeyPairGenerator 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。 
+
+ @param algorithm 算法的标准字符串名称。有关标准算法名称的信息，请参阅  <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+@param provider 提供者。
+
+@return 新的 KeyPairGenerator 对象。
+
+@exception NoSuchAlgorithmException 如果指定算法的 KeyPairGeneratorSpi 实现不能从指定提供者对象获得。
+        
+@exception IllegalArgumentException 如果指定提供者为 null。
+
+@see Provider
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.KeyPairGenerator.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此密钥对生成器对象的提供者。
+ 
+@return 返回此密钥对生成器对象的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.KeyPairGenerator.initialize(int keysize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化确定密钥大小的密钥对生成器，使用默认的参数集合，并使用以最高优先级安装的提供者的 <code>SecureRandom</code> 实现作为随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+
+@param keysize 密钥大小。它是特定于算法的度量（如模长度），以位数为单位指定。
+
+@exception InvalidParameterException 如果 <code>keysize</code> 不受此 KeyPairGenerator 对象支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.KeyPairGenerator.initialize(int keysize, SecureRandom random)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的随机源（和默认的参数集合）初始化确定密钥大小的密钥对生成器。
+
+@param keysize 密钥大小。它是特定于算法的度量（如模长度），以位数为单位指定。
+@param random 随机源。
+
+@exception InvalidParameterException 如果 <code>keysize</code> 不受此 KeyPairGenerator 对象支持。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.KeyPairGenerator.initialize(AlgorithmParameterSpec params) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化密钥对生成器，使用指定参数集合，并使用以最高优先级安装的提供者的 <code>SecureRandom</code> 的实现作为随机源。（如果任何安装的提供者都不提供 <code>SecureRandom</code> 的实现，则使用系统提供的随机源。）
+
+<p>已将此具体方法添加到以前定义的这个抽象类中。此方法调用 KeyPairGeneratorSpi 的 {@link KeyPairGeneratorSpi#initialize( java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) initialize} 方法，为它传递 <code>params</code> 和随机源（从以最高优先级安装的提供者获得；如果任何已安装的提供者都不能提供，则由系统提供）。如果没有被提供者重写，则该 <code>initialize</code> 方法总是抛出 UnsupportedOperationException。
+
+@param params 用于生成密钥的参数集合。
+
+@exception InvalidAlgorithmParameterException 如果给定的参数不适合此密钥对生成器。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.KeyPairGenerator.initialize(AlgorithmParameterSpec params, SecureRandom random) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定参数集合和随机源初始化密钥对生成器。
+
+<p>已将此具体方法添加到以前定义的这个抽象类中。此方法调用 KeyPairGeneratorSpi 的 {@link KeyPairGeneratorSpi#initialize( java.security.spec.AlgorithmParameterSpec, java.security.SecureRandom) initialize} 方法，为它传递 <code>params</code> 和 <code>random</code>。如果没有被提供者重写，则该 <code>initialize</code> 方法总是抛出 UnsupportedOperationException。
+
+@param params 用于生成密钥的参数集合。
+@param random 随机源。
+
+@exception InvalidAlgorithmParameterException 如果给定的参数不适合此密钥对生成器。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.KeyPair java.security.KeyPairGenerator.genKeyPair()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成密钥对。
+
+<p>如果此 KeyPairGenerator 没有被显式初始化，特定于提供者的默认值将用于所生成密钥的大小和其他（特定于算法的）值。
+
+<p>每次调用此方法都将生成新的密钥对。
+
+<p>此方法在功能上等同于 {@link #generateKeyPair() generateKeyPair}。
+
+@return 生成的密钥对
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.KeyPair java.security.KeyPairGenerator.generateKeyPair()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个密钥对。
+
+<p>如果此 KeyPairGenerator 没有被显式初始化，特定于提供者的默认值将用于所生成密钥的大小和其他（特定于算法的）值。
+
+<p>每次调用此方法都将生成新的密钥对。
+ 
+<p>此方法在功能上等同于 {@link #generateKeyPair() generateKeyPair}。
+
+@return 生成的密钥对
+
+<!-- END DATA -->

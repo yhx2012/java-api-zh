@@ -1,0 +1,226 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.Executors extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此包中所定义的 {@link Executor}、{@link ExecutorService}、{@link ScheduledExecutorService}、{@link ThreadFactory} 和 {@link Callable} 类的工厂和实用方法。此类支持以下各种方法：
+ 
+ <ul>
+<li> 创建并返回设置有常用配置字符串的 {@link ExecutorService} 的方法。 
+<li> 创建并返回设置有常用配置字符串的 {@link ScheduledExecutorService} 的方法。 
+<li> 创建并返回&ldquo;包装的&rdquo;ExecutorService 方法，它通过使特定于实现的方法不可访问来禁用重新配置。
+<li> 创建并返回 {@link ThreadFactory} 的方法，它可将新创建的线程设置为已知的状态。
+<li> 创建并返回非闭包形式的 {@link Callable} 的方法，这样可将其用于需要 <tt>Callable</tt> 的执行方法中。
+ </ul>
+
+@since 1.5
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newFixedThreadPool(int nThreads)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程。在任意点，在大多数 <tt>nThreads</tt> 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地{@link ExecutorService#shutdown 关闭}之前，池中的线程将一直存在。
+
+@param nThreads 池中的线程数
+@return 新创建的线程池
+@throws IllegalArgumentException 如果 <tt>nThreads &lt;= 0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newFixedThreadPool(int nThreads, ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个可重用固定线程数的线程池，以共享的无界队列方式来运行这些线程，在需要时使用提供的 ThreadFactory 创建新线程。在任意点，在大多数 <tt>nThreads</tt> 线程会处于处理任务的活动状态。如果在所有线程处于活动状态时提交附加任务，则在有可用线程之前，附加任务将在队列中等待。如果在关闭前的执行期间由于失败而导致任何线程终止，那么一个新线程将代替它执行后续的任务（如果需要）。在某个线程被显式地{@link ExecutorService#shutdown 关闭}之前，池中的线程将一直存在。
+
+@param nThreads 池中的线程数
+@param threadFactory 创建新线程时使用的工厂
+@return 新创建的线程池
+@throws NullPointerException 如果 threadFactory 为 null
+@throws IllegalArgumentException 如果 <tt>nThreads &lt;= 0</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newSingleThreadExecutor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程。（注意，如果因为在关闭前的执行期间出现失败而终止了此单个线程，那么如果需要，一个新线程将代替它执行后续的任务）。可保证顺序地执行各个任务，并且在任意给定的时间不会有多个线程是活动的。与其他等效的 <tt>newFixedThreadPool(1)</tt> 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。
+
+@return 新创建的单线程 Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newSingleThreadExecutor(ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个使用单个 worker 线程的 Executor，以无界队列方式来运行该线程，并在需要时使用提供的 ThreadFactory 创建新线程。与其他等效的 <tt>newFixedThreadPool(1, threadFactory)</tt> 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。
+ 
+@param threadFactory 创建新线程时使用的工厂
+
+@return 新创建的单线程 Executor
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newCachedThreadPool()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们。对于执行很多短期异步任务的程序而言，这些线程池通常可提高程序性能。调用 <tt>execute</tt> 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。因此，长时间保持空闲的线程池不会使用任何资源。注意，可以使用 {@link ThreadPoolExecutor} 构造方法创建具有类似属性但细节不同（例如超时参数）的线程池。
+
+@return 新创建的线程池
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.newCachedThreadPool(ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个可根据需要创建新线程的线程池，但是在以前构造的线程可用时将重用它们，并在需要时使用提供的 ThreadFactory 创建新线程。
+@param threadFactory 创建新线程时使用的工厂
+@return 新创建的线程池
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ScheduledExecutorService java.util.concurrent.Executors.newSingleThreadScheduledExecutor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个单线程执行程序，它可安排在给定延迟后运行命令或者定期地执行。（注意，如果因为在关闭前的执行期间出现失败而终止了此单个线程，那么如果需要，一个新线程会代替它执行后续的任务）。可保证顺序地执行各个任务，并且在任意给定的时间不会有多个线程是活动的。与其他等效的 <tt>newScheduledThreadPool(1)</tt> 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。
+@return 新创建的安排执行程序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ScheduledExecutorService java.util.concurrent.Executors.newSingleThreadScheduledExecutor(ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个单线程执行程序，它可安排在给定延迟后运行命令或者定期地执行。（注意，如果因为在关闭前的执行期间出现失败而终止了此单个线程，那么如果需要，一个新线程会代替它执行后续的任务）。可保证顺序地执行各个任务，并且在任意给定的时间不会有多个线程是活动的。与其他等效的 <tt>newScheduledThreadPool(1, threadFactory)</tt> 不同，可保证无需重新配置此方法所返回的执行程序即可使用其他的线程。
+@param threadFactory 创建新线程时使用的工厂
+@return 新创建的安排执行程序
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ScheduledExecutorService java.util.concurrent.Executors.newScheduledThreadPool(int corePoolSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。
+@param corePoolSize 池中所保存的线程数，即使线程是空闲的也包括在内。
+@return 新创建的安排线程池
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ScheduledExecutorService java.util.concurrent.Executors.newScheduledThreadPool(int corePoolSize, ThreadFactory threadFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个线程池，它可安排在给定延迟后运行命令或者定期地执行。
+@param corePoolSize 池中所保存的线程数，即使线程是空闲的也包括在内
+@param threadFactory 执行程序创建新线程时使用的工厂
+@return 新创建的安排线程池
+@throws IllegalArgumentException 如果 <tt>corePoolSize &lt; 0</tt>
+@throws NullPointerException 如果 threadFactory 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ExecutorService java.util.concurrent.Executors.unconfigurableExecutorService(ExecutorService executor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个将所有已定义的 {@link ExecutorService} 方法委托给指定执行程序的对象，但是使用强制转换可能无法访问其他方法。这提供了一种可安全地&ldquo;冻结&rdquo;配置并且不允许调整给定具体实现的方法。
+@param executor 底层实现
+@return 一个 <tt>ExecutorService</tt> 实例
+@throws NullPointerException 如果 executor 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ScheduledExecutorService java.util.concurrent.Executors.unconfigurableScheduledExecutorService(ScheduledExecutorService executor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个将所有已定义的 {@link ExecutorService} 方法委托给指定执行程序的对象，但是使用强制转换可能无法访问其他方法。这提供了一种可安全地&ldquo;冻结&rdquo;配置并且不允许调整给定具体实现的方法。
+@param executor 底层实现
+@return 一个 <tt>ScheduledExecutorService</tt> 实例
+@throws NullPointerException 如果 executor 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ThreadFactory java.util.concurrent.Executors.defaultThreadFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于创建新线程的默认线程工厂。此工厂创建同一 {@link ThreadGroup} 中 Executor 使用的所有新线程。如果有 {@link java.lang.SecurityManager}，则它使用 {@link System#getSecurityManager} 组来调用此 <tt>defaultThreadFactory</tt> 方法，其他情况则使用线程组。每个新线程都作为非守护程序而创建，并且具有设置为 <tt>Thread.NORM_PRIORITY</tt> 中较小者的优先级以及线程组中允许的最大优先级。新线程具有可通过 <em>pool-N-thread-M</em> 的 {@link Thread#getName} 来访问的名称，其中 <em>N</em> 是此工厂的序列号，<em>M</em> 是此工厂所创建线程的序列号。
+@return 线程工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.ThreadFactory java.util.concurrent.Executors.privilegedThreadFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于创建新线程的线程工厂，这些新线程与当前线程具有相同的权限。此工厂创建具有与 {@link Executors#defaultThreadFactory} 相同设置的线程，新线程的 AccessControlContext 和 contextClassLoader 的其他设置与调用此 <tt>privilegedThreadFactory</tt> 方法的线程相同。可以在 {@link AccessController#doPrivileged} 操作中创建一个新 <tt>privilegedThreadFactory</tt>，设置当前线程的访问控制上下文，以便创建具有该操作中保持的所选权限的线程。
+
+<p> 注意，虽然运行在此类线程中的任务具有与当前线程相同的访问控制和类加载器，但是它们无需具有相同的 {@link java.lang.ThreadLocal} 或 {@link java.lang.InheritableThreadLocal} 值。如有必要，使用 {@link ThreadPoolExecutor#beforeExecute} 在 {@link ThreadPoolExecutor} 子类中运行任何任务前，可以设置或重置线程局部变量的特定值。另外，如果必须初始化 worker 线程，以具有与某些其他指定线程相同的 InheritableThreadLocal 设置，则可以在线程等待和服务创建请求的环境中创建自定义的 ThreadFactory，而不是继承其值。
+
+@return 线程工厂
+@throws AccessControlException 如果当前访问控制上下文没有获取和设置上下文类加载器的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<T> java.util.concurrent.Executors.callable(Runnable task, T result)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可运行给定的任务并返回给定的结果。这在把需要 <tt>Callable</tt> 的方法应用到其他无结果的操作时很有用。
+@param task 要运行的任务
+@param result 返回的结果
+@return 一个 callable 对象
+@throws NullPointerException 如果 task 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<java.lang.Object> java.util.concurrent.Executors.callable(Runnable task)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可运行给定的任务并返回 <tt>null</tt>。
+@param task 要运行的任务
+@return 一个 callable 对象
+@throws NullPointerException 如果 task 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<java.lang.Object> java.util.concurrent.Executors.callable(java.security.PrivilegedAction<?> action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可运行给定特权的操作并返回其结果。
+@param action 要运行的特权操作
+@return 一个 callable 对象
+@throws NullPointerException 如果 action 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<java.lang.Object> java.util.concurrent.Executors.callable(java.security.PrivilegedExceptionAction<?> action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可运行给定特权的异常操作并返回其结果。
+@param action 要运行的特权异常操作
+@return 一个 callable 对象
+@throws NullPointerException 如果 action 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<T> java.util.concurrent.Executors.privilegedCallable(java.util.concurrent.Callable<T> callable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可在当前的访问控制上下文中执行给定的 <tt>callable</tt> 对象。通常应该在 {@link AccessController#doPrivileged} 操作中调用此方法，以便创建 callable 对象，并且如有可能，则在该操作中保持的所选权限设置下执行此对象；如果无法调用，则抛出相关的 {@link AccessControlException}。
+@param callable 底层任务
+@return 一个 callable 对象
+@throws NullPointerException 如果 callable 为 null
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.concurrent.Callable<T> java.util.concurrent.Executors.privilegedCallableUsingCurrentClassLoader(java.util.concurrent.Callable<T> callable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 {@link Callable} 对象，调用它时可在当前的访问控制上下文中，使用当前上下文类加载器作为上下文类加载器来执行给定的 <tt>callable</tt> 对象。通常应该在 {@link AccessController#doPrivileged} 操作中调用此方法，以创建 callable 对象，并且如有可能，则在该操作中保持的所选权限设置下执行此对象；如果无法调用，则抛出相关的 {@link AccessControlException}。
+@param callable 底层任务
+
+@return 一个 callable 对象
+@throws NullPointerException 如果 callable 为 null
+@throws AccessControlException 如果当前的访问控制上下文没有设置和获得上下文类加载器的权限。
+
+<!-- END DATA -->

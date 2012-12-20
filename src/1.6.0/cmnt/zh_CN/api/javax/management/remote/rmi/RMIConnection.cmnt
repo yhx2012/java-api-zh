@@ -1,0 +1,536 @@
+<!-- BEGIN KEY -->
+public interface javax.management.remote.rmi.RMIConnection extends java.io.Closeable, java.rmi.Remote
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>RMI 对象，用于将 MBeanServer 请求从客户端转发到其位于服务器端的 MBeanServer 实现。连接到 RMI 连接器的每个远程客户端都有一个实现此接口的 Remote 对象。</p>
+
+<p>用户代码不经常引用此接口。它作为公用 API 的一部分指定，便于该 API 的不同实现之间实现互操作。</p>
+
+<p>为确保用正确的类加载器将客户端参数在服务器端反序列化，客户端参数（例如，用于调用方法的参数）包装在 {@link MarshalledObject} 方法中。此接口的实现必须首先获得适用于操作及其目标的适当的类加载器，然后用该类加载器反序列化编组的参数。除非另外说明，<code>MarshalledObject</code> 或 <code>MarshalledObject[]</code> 类型的参数必定不为 null；如果参数为 null，则行为不明确。</p>
+
+<p>有关类加载的内容在 <a href="{@docRoot}/../technotes/guides/jmx/JMX_1_4_specification.pdf">
+ JMX Specification, version 1.4</a> PDF 文档中进行了详细的描述。</p>
+
+
+<p>此接口中的多数方法与 {@link MBeanServerConnection} 接口中的方法相似。这里未指定方法的行为方面，它与相应的 <code>MBeanServerConnection</code> 方法相同。
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.rmi.RMIConnection.getConnectionId() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回连接 ID。对于每个到给定的 RMI 连接器服务器的开放连接，此字符串都不相同。</p>
+
+@return 连接 ID
+
+@see RMIConnector#connect RMIConnector.connect
+
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>关闭此连接。从此方法返回时，不导出实现此接口的 RMI 对象，因此对它的进一步远程调用将失败。</p>
+
+@throws IOException 如果无法关闭连接，或 Remote 对象无法被导出，或者在传输远程关闭请求时出现通信故障。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.remote.rmi.RMIConnection.createMBean(String className, ObjectName name, Subject delegationSubject) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#createMBean(String, ObjectName)} 方法。
+
+@param className 要实例化的 MBean 的类名称。
+@param name MBean 的对象名。可以为 null。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return <code>ObjectInstance</code>，它包含新实例化的 MBean 的 <code>ObjectName</code> 和 Java 类名。如果所包含的 <code>ObjectName</code> 为 <code>n</code>，则所包含的 Java 类名为 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@throws ReflectionException 在尝试调用 MBean 的构造方法的过程中出现的、包装了 <code>java.lang.ClassNotFoundException</code> 或 <code>java.lang.Exception</code> 的异常。
+@throws InstanceAlreadyExistsException MBean 已处于 MBean 服务器的控制之下。
+@throws MBeanRegistrationException MBean 的 <code>preRegister</code> （<code>MBeanRegistration</code> 接口）方法已抛出异常。不对 MBean 进行注册。
+@throws MBeanException MBean 的构造方法已抛出异常。
+@throws NotCompliantMBeanException 该类不是一个遵守 JMX 的 MBean。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：className 传入的参数为 null，<code>ObjectName</code> 传入的参数包含模式或未为 MBean 指定任何 <code>ObjectName</code>。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.remote.rmi.RMIConnection.createMBean(String className, ObjectName name, ObjectName loaderName, Subject delegationSubject) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#createMBean(String, ObjectName, ObjectName)} 方法。
+
+@param className 要实例化的 MBean 的类名称。
+@param name MBean 的对象名。可以为 null。
+@param loaderName 要使用的类加载器的对象名。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return <code>ObjectInstance</code>，它包含新实例化的 MBean 的 <code>ObjectName</code> 和 Java 类名。如果所包含的 <code>ObjectName</code> 为 <code>n</code>，则所包含的 Java 类名为 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@throws ReflectionException 在尝试调用 MBean 的构造方法的过程中出现的、包装了 <code>java.lang.ClassNotFoundException</code> 或 <code>java.lang.Exception</code> 的异常。
+@throws InstanceAlreadyExistsException MBean 已处于 MBean 服务器的控制之下。
+@throws MBeanRegistrationException MBean 的 <code>preRegister</code> （<code>MBeanRegistration</code> 接口）方法已抛出异常。不对 MBean 进行注册。
+@throws MBeanException MBean 的构造方法已抛出异常。
+@throws NotCompliantMBeanException 该类不是一个遵守 JMX 的 MBean。
+@throws InstanceNotFoundException 指定的类加载器未在 MBean 服务器中注册。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：className 传入的参数为 null，<code>ObjectName</code> 传入的参数包含模式或未为 MBean 指定任何 <code>ObjectName</code>。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.remote.rmi.RMIConnection.createMBean(String className, ObjectName name, java.rmi.MarshalledObject params, java.lang.String[] signature, Subject delegationSubject) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#createMBean(String, ObjectName, Object[], String[])} 方法。<code>Object[]</code> 参数包装在 <code>MarshalledObject</code> 中。
+
+@param className 要实例化的 MBean 的类名称。
+@param name MBean 的对象名。可以为 null。
+@param params 包含要调用的构造方法的参数的数组，数组封装在 <code>MarshalledObject</code> 中。封装的数组可以为 null，其等效于一个空数组。
+@param signature 包含要调用的构造方法的签名的数组。可以为 null，等效于一个空数组。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return <code>ObjectInstance</code>，它包含新实例化的 MBean 的 <code>ObjectName</code> 和 Java 类名。如果所包含的 <code>ObjectName</code> 为 <code>n</code>，则所包含的 Java 类名为 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@throws ReflectionException 在尝试调用 MBean 的构造方法的过程中出现的、包装了 <code>java.lang.ClassNotFoundException</code> 或 <code>java.lang.Exception</code> 的异常。
+@throws InstanceAlreadyExistsException MBean 已处于 MBean 服务器的控制之下。
+@throws MBeanRegistrationException MBean 的 <code>preRegister</code> （<code>MBeanRegistration</code> 接口）方法已抛出异常。不对 MBean 进行注册。
+@throws MBeanException MBean 的构造方法已抛出异常。
+@throws NotCompliantMBeanException 该类不是一个遵守 JMX 的 MBean。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：className 传入的参数为 null，<code>ObjectName</code> 传入的参数包含一个模式，或未为 MBean 指定任何 <code>ObjectName</code>。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.remote.rmi.RMIConnection.createMBean(String className, ObjectName name, ObjectName loaderName, java.rmi.MarshalledObject params, java.lang.String[] signature, Subject delegationSubject) throws javax.management.ReflectionException, javax.management.InstanceAlreadyExistsException, javax.management.MBeanRegistrationException, javax.management.MBeanException, javax.management.NotCompliantMBeanException, javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#createMBean(String, ObjectName, ObjectName, Object[], String[])} 方法。<code>Object[]</code> 参数包装在 <code>MarshalledObject</code> 中。
+
+@param className 要实例化的 MBean 的类名称。
+@param name MBean 的对象名。可以为 null。
+@param loaderName 要使用的类加载器的对象名。
+@param params 包含要调用的构造方法的参数的数组，数组封装在 <code>MarshalledObject</code> 中。封装的数组可以为 null，其等效于一个空数组。
+@param signature 包含要调用的构造方法的签名的数组。可以为 null，等效于一个空数组。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return <code>ObjectInstance</code>，它包含新实例化的 MBean 的 <code>ObjectName</code> 和 Java 类名。如果所包含的 <code>ObjectName</code> 为 <code>n</code>，则所包含的 Java 类名为 <code>{@link #getMBeanInfo getMBeanInfo(n)}.getClassName()</code>。
+
+@throws ReflectionException 在尝试调用 MBean 的构造方法的过程中出现的、包装了 <code>java.lang.ClassNotFoundException</code> 或 <code>java.lang.Exception</code> 的异常。
+@throws InstanceAlreadyExistsException MBean 已处于 MBean 服务器的控制之下。
+@throws MBeanRegistrationException MBean 的 <code>preRegister</code> （<code>MBeanRegistration</code> 接口）方法已抛出异常。不对 MBean 进行注册。
+@throws MBeanException MBean 的构造方法已抛出异常。
+@throws NotCompliantMBeanException 该类不是一个遵守 JMX 的 MBean。
+@throws InstanceNotFoundException 指定的类加载器未在 MBean 服务器中注册。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：className 传入的参数为 null，<code>ObjectName</code> 传入的参数包含一个模式，或未为 MBean 指定任何 <code>ObjectName</code>。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.unregisterMBean(ObjectName name, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.MBeanRegistrationException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#unregisterMBean(ObjectName)} 方法。
+
+@param name 要注册的 MBean 的对象名。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws MBeanRegistrationException MBean 的 preDeregister （<code>MBeanRegistration</code> 接口）方法已抛出异常。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null 或您尝试注销的 MBean 为 {@link javax.management.MBeanServerDelegate MBeanServerDelegate} MBean。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectInstance javax.management.remote.rmi.RMIConnection.getObjectInstance(ObjectName name, Subject delegationSubject) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getObjectInstance(ObjectName)} 方法。
+
+@param name MBean 的对象名。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 由 <var>name</var> 指定的与 MBean 关联的 <code>ObjectInstance</code>。所包含的 <code>ObjectName</code> 为 <code>name</code>，所包含的类名称为 <code>{@link #getMBeanInfo getMBeanInfo(name)}.getClassName()</code>。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<javax.management.ObjectInstance> javax.management.remote.rmi.RMIConnection.queryMBeans(ObjectName name, java.rmi.MarshalledObject query, Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#queryMBeans(ObjectName, QueryExp)} 方法。<code>QueryExp</code> 包装在 <code>MarshalledObject</code> 中。
+
+@param name 标识要检索的 MBean 的对象名模式。如果指定了 null 或未指定任何域或关键字属性，则将检索所有已注册的 MBean。
+@param query 用于选择 MBean 的查询表达式，它封装在 <code>MarshalledObject</code> 中。如果 <code>MarshalledObject</code> 封装了一个 null 值，则选择 MBean 时不使用任何查询表达式。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 包含选定 MBean 的 <code>ObjectInstance</code> 对象集。如果没有任何 MBean 满足此查询，则返回一个空列表。
+
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<javax.management.ObjectName> javax.management.remote.rmi.RMIConnection.queryNames(ObjectName name, java.rmi.MarshalledObject query, Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#queryNames(ObjectName, QueryExp)} 方法。<code>QueryExp</code> 包装在 <code>MarshalledObject</code> 中。
+
+@param name 标识要检索的 MBean 名称的对象名模式。如果指定了 null 或未指定任何域或关键字属性，则将检索所有已注册的 MBean 的名称。
+@param query 用于选择 MBean 的查询表达式，它封装在 <code>MarshalledObject</code> 中。如果 <code>MarshalledObject</code> 封装了一个 null 值，则选择 MBean 时不使用任何查询表达式。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 包含选定的 MBean 的 ObjectName 集。如果没有任何 MBean 满足此查询，则返回一个空列表。
+
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.remote.rmi.RMIConnection.isRegistered(ObjectName name, Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#isRegistered(ObjectName)} 方法。
+
+@param name 要检查的 MBean 的对象名。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return True 如果 MBean 已在 MBean 服务器上注册，否则返回 false。
+
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Integer javax.management.remote.rmi.RMIConnection.getMBeanCount(Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getMBeanCount()} 方法。
+
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 已注册的 MBean 数。
+
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.remote.rmi.RMIConnection.getAttribute(ObjectName name, String attribute, Subject delegationSubject) throws javax.management.MBeanException, javax.management.AttributeNotFoundException, javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getAttribute(ObjectName, String)} 方法。
+
+@param name 将要从其检索属性的 MBean 的对象名。
+@param attribute 指定要检索的属性名称的字符串。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return	检索到的属性的值。
+
+@throws AttributeNotFoundException 指定的属性在 MBean 中无法访问。
+@throws MBeanException 包装了由 MBean 的获取方法抛出的异常。
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws ReflectionException 包装了尝试调用获取方法时抛出的 <code>java.lang.Exception</code>。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null，或参数中的属性为 null。
+@throws RuntimeMBeanException 包装了由 MBean 的获取方法抛出的运行时异常。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+@see #setAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.remote.rmi.RMIConnection.getAttributes(ObjectName name, java.lang.String[] attributes, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getAttributes(ObjectName, String[])} 方法。
+
+@param name 从其检索属性的 MBean 的对象名。
+@param attributes 要检索的属性的列表。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 所检索的属性的列表。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws ReflectionException 尝试调用 Dynamic MBean 的 getAttributes 方法时出现的异常。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null，或参数中的属性为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+
+@see #setAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.setAttribute(ObjectName name, java.rmi.MarshalledObject attribute, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.AttributeNotFoundException, javax.management.InvalidAttributeValueException, javax.management.MBeanException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#setAttribute(ObjectName, Attribute)} 方法。<code>Attribute</code> 参数包装在 <code>MarshalledObject</code> 中。
+
+@param name 在其中设置属性的 MBean 的名称。
+@param attribute 要设置的属性的标识及要设置的值，封装在 <code>MarshalledObject</code> 中。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws AttributeNotFoundException 指定的属性在 MBean 中无法访问。
+@throws InvalidAttributeValueException 为属性指定的值无效。
+@throws MBeanException 包装了由 MBean 的设置方法抛出的异常。
+@throws ReflectionException 包装了尝试调用设置方法时抛出的 <code>java.lang.Exception</code>。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null，或参数中的属性为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+@see #getAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.AttributeList javax.management.remote.rmi.RMIConnection.setAttributes(ObjectName name, java.rmi.MarshalledObject attributes, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#setAttributes(ObjectName, AttributeList)} 方法。<code>AttributeList</code> 参数包装在 <code>MarshalledObject</code> 中。
+
+@param name 要在其中设置属性的 MBean 的对象名。
+@param attributes 属性列表：要设置的属性的标识及要设置的值，封装在 <code>MarshalledObject</code> 中。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 原先设置过的带有新值的属性列表。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws ReflectionException 尝试调用 Dynamic MBean 的 getAttributes 方法时出现的异常。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null，或参数中的属性为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+@see #getAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.management.remote.rmi.RMIConnection.invoke(ObjectName name, String operationName, java.rmi.MarshalledObject params, java.lang.String[] signature, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.MBeanException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#invoke(ObjectName, String, Object[], String[])} 方法。<code>Object[]</code> 参数包装在 <code>MarshalledObject</code> 中。
+
+@param name 将在其上调用此方法的 MBean 的对象名。
+@param operationName 要调用的操作的名称。
+@param params 包含调用操作时将设置的参数的数组，它封装在 <code>MarshalledObject</code> 中。封装的数组可以为 null，其等效于一个空数组。
+@param signature 包含操作的签名的数组。该类对象将使用与加载在其上调用了操作的 MBean 过程中所用的相同的类加载器加载。可以为 null，等效于一个空数组。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 操作返回的对象，它代表在指定的 MBean 上调用操作的结果。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws MBeanException 包装了由 MBean 的调用的方法抛出的异常。
+@throws ReflectionException 包装了尝试调用此方法时抛出的 <code>java.lang.Exception</code>。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+@throws RuntimeOperationsException 包装了 <code>name</code> 或 <code>operationName</code> 为 null 时抛出的 {@link IllegalArgumentException}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.rmi.RMIConnection.getDefaultDomain(Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getDefaultDomain()} 方法。
+
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 默认的域。
+
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.management.remote.rmi.RMIConnection.getDomains(Subject delegationSubject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getDomains()} 方法。
+
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 域列表。
+
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanInfo javax.management.remote.rmi.RMIConnection.getMBeanInfo(ObjectName name, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.IntrospectionException, javax.management.ReflectionException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#getMBeanInfo(ObjectName)} 方法。
+
+@param name 要分析的 MBean 的名称
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证委托 principal，则为 <code>null</code>。
+
+@return 允许检索该 MBean 的所有属性和操作的 <code>MBeanInfo</code> 的实例。
+
+@throws IntrospectionException 自行推算过程中出现的异常。
+@throws InstanceNotFoundException 未找到指定的 MBean。
+@throws ReflectionException 尝试调用 Dynamic MBean 的 getMBeanInfo 方法时出现的异常。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.remote.rmi.RMIConnection.isInstanceOf(ObjectName name, String className, Subject delegationSubject) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#isInstanceOf(ObjectName, String)} 方法。
+
+@param name MBean 的 <code>ObjectName</code>。
+@param className 类的名称。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@return 按照上面的规则，如果指定的 MBean 为指定类的实例，则返回 true，否则返回 false。
+
+@throws InstanceNotFoundException 指定的 MBean 未在 MBean 服务器中注册。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+@throws RuntimeOperationsException 包装了 <code>java.lang.IllegalArgumentException</code>：参数中的对象名为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.addNotificationListener(ObjectName name, ObjectName listener, java.rmi.MarshalledObject filter, java.rmi.MarshalledObject handback, Subject delegationSubject) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#addNotificationListener(ObjectName, ObjectName, NotificationFilter, Object)} 方法。<code>NotificationFilter</code> 参数包装在 <code>MarshalledObject</code> 中。<code>Object</code> (handback) 参数也包装在 <code>MarshalledObject</code> 中。
+
+@param name 应在其上添加侦听器的 MBean 的名称。
+@param listener 将处理由已注册的 MBean 发出通知的侦听器的对象名。
+@param filter 过滤器对象，封装在 <code>MarshalledObject</code> 中。如果封装在 <code>MarshalledObject</code> 中的过滤器的值为 null，则在对通知处理之前不执行任何过滤。
+@param handback 通知发出时发送到侦听器的上下文，封装在 <code>MarshalledObject</code> 中。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 通知侦听器或通知广播器的 MBean 名称不与注册的任何 MBean 匹配。
+@throws RuntimeOperationsException 包装了 {@link IllegalArgumentException}。存在由 <code>listener</code> 命名的 MBean，但它并不实现 {@link javax.management.NotificationListener} 接口，或者 <code>name</code> 或 <code>listener</code> 为 null。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+
+@see #removeNotificationListener(ObjectName, ObjectName, Subject)
+@see #removeNotificationListener(ObjectName, ObjectName, MarshalledObject, MarshalledObject, Subject)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.removeNotificationListener(ObjectName name, ObjectName listener, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#removeNotificationListener(ObjectName, ObjectName)} 方法。
+
+@param name 应在其上移除侦听器的 MBean 的名称。
+@param listener 要移除的侦听器的对象名。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 所提供的 MBean 名称不与任何已注册 MBean 匹配。
+@throws ListenerNotFoundException 侦听器未在 MBean 中注册。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+@throws RuntimeOperationsException 当 <code>name</code> 或 <code>listener</code> 为 null 时包装了 {@link IllegalArgumentException}。
+
+@see #addNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.removeNotificationListener(ObjectName name, ObjectName listener, java.rmi.MarshalledObject filter, java.rmi.MarshalledObject handback, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 {@link javax.management.MBeanServerConnection#removeNotificationListener(ObjectName, ObjectName, NotificationFilter, Object)} 方法。<code>NotificationFilter</code> 参数包装在 <code>MarshalledObject</code> 中。<code>Object</code> 参数也包装在 <code>MarshalledObject</code> 中。
+
+@param name 应在其上移除侦听器的 MBean 的名称。
+@param listener 原先添加到此 MBean 的侦听器。
+@param filter 添加侦听器时指定的过滤器，它封装在 <code>MarshalledObject</code> 中。
+@param handback 添加侦听器时指定的 handback，它封装在 <code>MarshalledObject</code> 中。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 所提供的 MBean 名称不与任何已注册 MBean 匹配。
+@throws ListenerNotFoundException 侦听器未在 MBean 中注册，或者未用给定的过滤器和 handback 注册。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有执行此操作的权限。
+@throws IOException 如果出现通用通信异常。
+@throws RuntimeOperationsException 当 <code>name</code> 或 <code>listener</code> 为 null 时包装了 {@link IllegalArgumentException}。
+
+@see #addNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Integer[] javax.management.remote.rmi.RMIConnection.addNotificationListeners(javax.management.ObjectName[] names, java.rmi.MarshalledObject[] filters, javax.security.auth.Subject[] delegationSubjects) throws javax.management.InstanceNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>处理 {@link javax.management.MBeanServerConnection#addNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)} 方法。</p>
+
+<p>供来自给定 MBean 的与给定的过滤器匹配的通知使用的记录。远程客户端以后可使用 {@link #fetchNotifications fetchNotifications} 方法检索该通知。</p>
+
+<p>对于每个侦听器，原始的 <code>NotificationListener</code> 和 <code>handback</code> 保留在客户端；为帮助客户端识别它们，服务器生成并返回一个唯一的 <code>listenerID</code>。该 <code>listenerID</code> 与 <code>Notifications</code> 一起转发到远程客户端。</p>
+
+<p>如果给定 (name, filter) 对中有任何一对无法注册，则操作失败并抛出异常，不注册任何名称或过滤器。</p>
+
+@param names 标识发出 Notification 的 MBean 的 <code>ObjectNames</code>。
+@param filters <code>NotificationFilters</code> 的编组表示形式的数组。此数组的元素可以为 null。
+@param delegationSubjects 侦听器代表其添加的 <code>Subjects</code>。此数组的元素可以为 null。同样，<code>delegationSubjects</code> 参数本身可以为 null，它表示具有 null 值的数组，数组大小与 <code>names</code> 和 <code>filters</code> 数组大小相同。
+
+@return 标识本地侦听器的 <code>listenerIDs</code> 数组。此数组具有与参数个数相同的元素数。
+
+@throws IllegalArgumentException 如果 <code>names</code> 或 <code>filters</code> 为 null，或者 <code>names</code> 包含 null 元素，或者三个数组的大小不相同。
+@throws ClassCastException 如果 <code>filters</code> 中有一个元素解组为不是 <code>NotificationFilter</code> 的非 null 对象。
+@throws InstanceNotFoundException 如果 <code>names</code> 中有一个不与任何已注册的 MBean 对应。
+@throws SecurityException 如果 MBean 之一、客户端或委托的 Subject（如果有）无权添加侦听器。
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.remote.rmi.RMIConnection.removeNotificationListeners(ObjectName name, java.lang.Integer[] listenerIDs, Subject delegationSubject) throws javax.management.InstanceNotFoundException, javax.management.ListenerNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>处理 {@link javax.management.MBeanServerConnection#removeNotificationListener(ObjectName,NotificationListener) removeNotificationListener(ObjectName, NotificationListener)} 和 {@link javax.management.MBeanServerConnection#removeNotificationListener(ObjectName,NotificationListener,NotificationFilter,Object) removeNotificationListener(ObjectName, NotificationListener, NotificationFilter, Object)} 方法。</p>
+
+<p>此方法从 MBean 服务器中的给定 MBean 中移除一个或多个 <code>NotificationListener</code>。</p>
+
+<p><code>NotificationListeners</code> 通过从 {@link #addNotificationListeners(ObjectName[], MarshalledObject[], Subject[])} 方法返回的 ID 标识。</p>
+
+@param name 标识发出 Notification 的 MBean 的 <code>ObjectName</code>。
+@param listenerIDs 与要移除的侦听器对应的 ID。
+@param delegationSubject 包含委托 principal 的 <code>Subject</code>，如果使用了验证 principal，则为 <code>null</code>。
+
+@throws InstanceNotFoundException 如果给定的 <code>name</code> 不对应任何已注册的 MBean。
+@throws ListenerNotFoundException 如果有一个侦听器在服务器端无法找到。当 MBean 出于某种原因丢弃了一个侦听器，而未通过调用 <code>MBeanServer.removeNotificationListener</code> 丢弃时，出现该异常。
+@throws SecurityException 如果客户端或委托的 Subject（如果有）没有移除侦听器的权限。
+@throws IOException 如果出现通用通信异常。
+@throws IllegalArgumentException 如果 <code>ObjectName</code> 或 <code>listenerIds</code> 为 null，或者 <code>listenerIds</code> 包含一个 null 元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.NotificationResult javax.management.remote.rmi.RMIConnection.fetchNotifications(long clientSequenceNumber, int maxNotifications, long timeout) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>检索来自连接器服务器的通知。该方法可能阻塞，直到至少有一个通知，或者直到达到指定的超时时间。该方法还可在任何时间返回零通知。</p>
+
+<p>如果通知的序列号不小于 <code>clientSequenceNumber</code>，并且此客户端已为 MBean 生成通知至少注册了一个侦听器（带一个接收通知的过滤器），则通知可包含在该结果中。对通知感兴趣的各侦听器由从 {@link #addNotificationListeners(ObjectName[], MarshalledObject[], Subject[])} 返回的整数型 ID 标识。</p>
+
+@param clientSequenceNumber 客户端感兴趣的第一个序列号。如果为负，它表示下一个通知将具有的序列号。
+
+@param maxNotifications 返回的不同通知的最大数。如果同一个通知出现了多次，则返回的 <code>NotificationResult</code> 中的 <code>TargetedNotification</code> 数组可能包含比此数更多的元素。如果该参数为负，则行为不明确。
+
+@param timeout 等待通知到达的最长时间，以毫秒为单位。它可以是 0，指示在无通知时该方法不应等待，而应立即返回。它可以为 <code>Long.MAX_VALUE</code>，指示无超时。如果该参数为负，则行为不明确。
+
+@return 一个 <code>NotificationResult</code>。
+
+@throws IOException 如果出现通用通信异常。
+
+<!-- END DATA -->

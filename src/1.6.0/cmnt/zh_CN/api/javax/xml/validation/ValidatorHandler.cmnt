@@ -1,0 +1,292 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.validation.ValidatorHandler extends java.lang.Object implements org.xml.sax.ContentHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理 SAX 流的流验证器。
+ 
+ <p>
+{@link ValidatorHandler} 对象不是线程安全的，也不能重入。换句话说，应用程序负责确保在任何给定时刻使用 {@link ValidatorHandler} 对象的线程不多于一个。
+ 
+ <p>
+{@link ValidatorHandler} 检查 SAX 事件是否遵守关联的 {@link Schema} 中所描述的约束集，此外它可以修改 SAX 事件（例如添加默认值等）。
+ 
+ <p>
+{@link ValidatorHandler} 扩展自 {@link ContentHandler}，但它按以下方式修改了底层 {@link ContentHandler}：
+ <ol>
+<li>对于 <code>uri</code>、<code>localName</code> 和 <code>qname</code>，即使 SAX 允许当中一些值为 null，startElement/endElement 事件也必须接收非 null String。类似地，对于这 3 个参数，用户指定的 {@link ContentHandler} 也将接收非 null String。
+ 
+<li>应用程序必须确保正确调用 {@link ValidatorHandler} 的 {@link ContentHandler#startPrefixMapping(String,String)} 和 {@link ContentHandler#endPrefixMapping(String)}。类似地，用户指定的 {@link ContentHandler} 将接收 startPrefixMapping/endPrefixMapping 事件。如果 {@link ValidatorHandler} 引入了额外的名称空间绑定，则用户指定的 {@link ContentHandler} 将接收额外的 startPrefixMapping/endPrefixMapping 事件。
+ 
+<li> {@link ContentHandler#startElement(String,String,String,Attributes)} 的 {@link org.xml.sax.Attributes} 可以包括也可以不包括 xmlns* 属性。
+ </ol>
+ 
+ <p>
+每次调用 startDocument 方法时将自动重置 {@link ValidatorHandler}。
+ 
+<h2>识别的属性和特性</h2>
+ <p>
+此规范定义了以下特性，所有 {@link ValidatorHandler} 实现必须识别这些特性。
+ 
+ <h3><code>http://xml.org/sax/features/namespace-prefixes</code></h3>
+ <p>
+此特性控制 {@link ValidatorHandler} 如何引入原始 SAX 事件流中不存在的名称空间绑定。当此特性设置为 true 时，它必须确保用户的 {@link ContentHandler} 将看到 {@link ContentHandler#startElement(String,String,String,Attributes)} 回调的 {@link org.xml.sax.Attributes} 对象中相应的 <code>xmlns*</code> 属性。否则，不得将 <code>xmlns*</code> 属性添加到传递给用户指定的 {@link ContentHandler} 的 {@link org.xml.sax.Attributes}。
+ <p> 
+（注意，无论特性如何切换，名称空间绑定总是通过用户所指定的 {@link ContentHandler} 的 {@link ContentHandler#startPrefixMapping(String,String)} 和 {@link ContentHandler#endPrefixMapping(String)} 方法通知应用程序。）
+ 
+ <p>
+注意，此特性<em>不</em> 影响 {@link ValidatorHandler} 接收 SAX 事件的方式。它仅更改其扩充 SAX 事件的方式。
+ 
+<p>此特性默认设置为 <code>false</code>。</p>
+ 
+@author  <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
+@version $Revision: 1.5 $, $Date: 2006-10-23 09:14:17 $
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.validation.ValidatorHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>派生类的构造方法。</p>
+ 
+ <p>
+该构造方法不执行任何操作。</p>
+ 
+ <p>
+派生类必须创建具有 <code>null</code> {@link ErrorHandler} 和 <code>null</code> {@link LSResourceResolver} 的 {@link ValidatorHandler} 对象。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.ValidatorHandler.setContentHandler(ContentHandler receiver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link ContentHandler}，它接收扩充的验证结果。
+
+ <p>
+当指定了 {@link ContentHandler} 时，{@link ValidatorHandler} 将充当过滤器，实际上是将输入事件复制到指定的 {@link ContentHandler}。
+ 
+ <p>
+在复制过程中，{@link ValidatorHandler} 可以修改事件，例如添加默认属性。
+ 
+ <p>
+{@link ValidatorHandler} 可以对事件进行一定程度的缓冲，但要使解析器使用 {@link ValidatorHandler}，必须满足以下要求。
+ 
+ <ol>
+<li>当对 {@link ValidatorHandler} 调用 {@link ContentHandler#startElement(String, String, String, Attributes)}、{@link ContentHandler#endElement(String, String, String)}、{@link ContentHandler#startDocument()} 或 {@link ContentHandler#endDocument()} 时，在回调返回之前，必须针对相同事件对用户指定的 {@link ContentHandler} 调用相同的方法。
+<li>{@link ValidatorHandler} 不能引入输入中不存在的新元素。
+ 
+<li>{@link ValidatorHandler} 不能移除输入中存在的属性。
+ </ol> 
+ 
+ <p>
+当对指定的 {@link ContentHandler} 调用回调方法抛出异常时，必须从 {@link ValidatorHandler} 抛出相同的异常对象。{@link ErrorHandler} 不应该获得此类异常的通知。
+ 
+ <p>
+甚至在验证期间也可以调用此方法。
+
+@param receiver {@link ContentHandler} 或 null 值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.xml.sax.ContentHandler javax.xml.validation.ValidatorHandler.getContentHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取接收扩充的验证结果的 {@link ContentHandler}。
+ 
+@return 此方法返回通过 {@link #getContentHandler()} 方法设置的最后一个对象；如果自从创建此 {@link ValidatorHandler} 以来一直未调用该方法，则返回 null。
+ 
+@see #setContentHandler(ContentHandler)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.ValidatorHandler.setErrorHandler(ErrorHandler errorHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link ErrorHandler} 以接收验证期间遇到的错误。
+ 
+ <p>
+错误处理程序可用于自定义验证期间的错误处理过程。设置了 {@link ErrorHandler} 时，验证期间发现的错误将首先被发送到 {@link ErrorHandler}。
+ 
+ <p>
+错误处理程序通过抛出来自处理程序的 {@link org.xml.sax.SAXException} 可以立即中止进一步验证。或者，它可以将错误打印到屏幕上，并尝试通过从 {@link ErrorHandler} 正常返回来继续该验证。
+ 
+ <p>
+如果从 {@link ErrorHandler} 抛出任何 {@link Throwable}，则将向调用堆栈的根抛出相同的 {@link Throwable} 对象。
+ 
+ <p>
+在 {@link ValidatorHandler} 首先向 {@link ErrorHandler} 报告之前，不允许抛出 {@link org.xml.sax.SAXException}。
+ 
+ <p>
+当 {@link ErrorHandler} 为 null 时，实现的行为就好像设置了以下 {@link ErrorHandler} 一样：
+ <pre>
+ class DraconianErrorHandler implements {@link ErrorHandler} {
+     public void fatalError( {@link org.xml.sax.SAXParseException} e ) throws {@link org.xml.sax.SAXException} {
+         throw e;
+     }
+     public void error( {@link org.xml.sax.SAXParseException} e ) throws {@link org.xml.sax.SAXException} {
+         throw e;
+     }
+     public void warning( {@link org.xml.sax.SAXParseException} e ) throws {@link org.xml.sax.SAXException} {
+         // noop
+     }
+ }
+ </pre>
+ 
+ <p>
+当创建新 {@link ValidatorHandler} 对象时，此字段最初被设置为 null。
+ 
+@param   errorHandler 要设置的新错误处理程序。此参数可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.xml.sax.ErrorHandler javax.xml.validation.ValidatorHandler.getErrorHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取设置为此 {@link ValidatorHandler} 的当前 {@link ErrorHandler}。
+ 
+@return 此方法返回通过 {@link #setErrorHandler(ErrorHandler)} 方法设置的最后一个对象；如果自从创建此 {@link ValidatorHandler} 以来一直未调用该方法，则返回 null。
+ 
+@see #setErrorHandler(ErrorHandler)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.validation.ValidatorHandler.setResourceResolver(LSResourceResolver resourceResolver)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@link LSResourceResolver} 以自定义验证期间的资源解析。
+ 
+ <p>
+验证期间，{@link ValidatorHandler} 在需要查找外部资源时使用 {@link LSResourceResolver}，虽然组成&ldquo;查找外部资源&rdquo;的准确语句取决于每个模式语言。
+ 
+ <p>
+当 {@link LSResourceResolver} 为 null 时，实现的行为就好像设置了以下 {@link LSResourceResolver} 一样：
+ <pre>
+ class DumbLSResourceResolver implements {@link LSResourceResolver} {
+     public {@link org.w3c.dom.ls.LSInput} resolveResource(
+         String publicId, String systemId, String baseURI) {
+         
+         return null; // always return null
+     }
+ }
+ </pre>
+ 
+ <p>
+如果 {@link LSResourceResolver} 抛出 {@link RuntimeException}（或其派生类的实例），则 {@link ValidatorHandler} 将中止解析，且 <code>validate</code> 方法的调用者将接收相同的 {@link RuntimeException}。 
+ 
+ <p>
+当创建新 {@link ValidatorHandler} 对象时，此字段最初被设置为 null。
+ 
+@param   resourceResolver 要设置的新资源解析器。此参数可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.w3c.dom.ls.LSResourceResolver javax.xml.validation.ValidatorHandler.getResourceResolver()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取设置到此 {@link ValidatorHandler} 的当前 {@link LSResourceResolver}。
+ 
+@return 此方法返回通过 {@link #setResourceResolver(LSResourceResolver)} 方法设置的最后一个对象；如果自从创建此 {@link ValidatorHandler} 以来一直未调用该方法，则返回 null。
+ 
+@see #setErrorHandler(ErrorHandler)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.validation.TypeInfoProvider javax.xml.validation.ValidatorHandler.getTypeInfoProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 {@link ValidatorHandler} 的 {@link TypeInfoProvider} 实现。
+ 
+ <p>
+在解析期间可以查询所获取的 {@link TypeInfoProvider}，以访问验证器确定的类型信息。
+ 
+ <p>
+某些模式语言未定义类型概念，对于这些语言，此方法可能不受支持。但是，为了遵守此规范，W3C XML 模式 1.0 实现必须支持此操作。 
+ 
+@return 如果验证器/模式语言不支持 {@link org.w3c.dom.TypeInfo} 概念，则返回 null。否则返回非 null 的有效 {@link TypeInfoProvider}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.validation.ValidatorHandler.getFeature(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找特性标志的值。
+
+<p>特性名称是任何完全限定的 URI。{@link ValidatorHandler} 可以识别特性名称，但暂时不能返回其值。某些特性值只有在特定上下文中才能使用，例如在验证前、验证中或验证之后。
+
+<p>使用在自己的 URI 上构建的名称，实现者可随意选择（鼓励）创建自己的特性。</p>
+
+@param name 特性名称，它是非 null 的完全限定 URI。
+@return 特性的当前值（true 或 false）。
+@throws SAXNotRecognizedException 如果不能分配或检索特性值。
+@throws SAXNotSupportedException 当 {@link ValidatorHandler} 可以识别特性名称但不能确定其此时的值时。
+@throws NullPointerException 当 <code>name</code> 为 <code>null</code> 时。
+@see #setFeature(String, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.validation.ValidatorHandler.setFeature(String name, boolean value) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>设置此 <code>ValidatorHandler</code> 的特性。</p>
+
+ <p>
+特性可用于控制 {@link ValidatorHandler} 解析模式的方式。特性名称是任何完全限定的 URI。{@link ValidatorHandler} 可以公开特性值，但不能更改当前值。某些特性值只有在特定上下文中才是不可变的或可变的，例如在验证前、验证中或验证之后。</p>
+
+ <p>所有实现必须支持 {@link javax.xml.XMLConstants#FEATURE_SECURE_PROCESSING} 特性。当特性为以下情况时：</p>
+ <ul>
+   <li>
+     <code>true</code>：该实现将限制 XML 处理遵守实现限制。示例包括实体扩展限制和将使用大量资源的 XML 模式构造。如果由于安全原因 XML 处理受到限制，则将通过调用注册的 {@link ErrorHandler#fatalError(SAXParseException exception)} 来报告此情况。参见 {@link #setErrorHandler(ErrorHandler errorHandler)}。
+   </li>
+   <li>
+     <code>false</code>：实现将根据 XML 规范来处理 XML，而不管可能的实现限制。
+   </li>
+ </ul>
+
+@param name 特性名称，它是非 null 的完全限定 URI。
+@param value 所请求的特性值（true 或 false）。
+ 
+@throws SAXNotRecognizedException 如果不能分配或检索特性值。
+@throws SAXNotSupportedException 当 {@link ValidatorHandler} 可以识别特性名称，但不能设置请求的值时。
+@throws NullPointerException 当 <code>name</code> 为 <code>null</code>时。
+ 
+@see #getFeature(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.validation.ValidatorHandler.setProperty(String name, Object object) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置属性值。
+
+<p>属性名称是任何完全限定的 URI。{@link ValidatorHandler} 可以识别属性名称，但不能更改当前值。某些属性值只有在特定上下文中才是不可变的或可变的，例如在验证前、验证中或验证之后。</p>
+
+<p>{@link ValidatorHandler} 无需识别设置任何特定的属性名称。</p>
+
+@param name 属性名称，它是非 null 的完全限定 URI。
+@param object 所请求的属性值。
+ 
+@throws SAXNotRecognizedException 如果不能分配或检索属性值。
+@throws SAXNotSupportedException 当 {@link ValidatorHandler} 可以识别属性名称，但不能设置请求的值时。
+@throws NullPointerException 当 <code>name</code> 为 <code>null</code> 时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.validation.ValidatorHandler.getProperty(String name) throws org.xml.sax.SAXNotRecognizedException, org.xml.sax.SAXNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找属性值。
+
+<p>属性名称是任何完全限定的 URI。{@link ValidatorHandler} 可以识别属性名称，但暂时不能返回其值。某些属性值只有在特定上下文中才能使用，例如在验证前、验证中或验证之后。</p>
+
+<p>{@link ValidatorHandler} 无需识别任何指定的属性名称。</p>
+
+<p>使用在自己 URI 上构建的名称，实现者可随意选择（鼓励）创建自己的属性。</p>
+
+@param name 属性名称，它是非 null 的完全限定 URI。
+@return 属性的当前值。
+@throws SAXNotRecognizedException 如果不能分配或检索属性值。
+@throws SAXNotSupportedException 当 XMLReader 可以识别属性名称，但不能确定其此时的值时。
+@throws NullPointerException 当 <code>name</code> 为 <code>null</code> 时。
+@see #setProperty(String, Object)
+
+<!-- END DATA -->

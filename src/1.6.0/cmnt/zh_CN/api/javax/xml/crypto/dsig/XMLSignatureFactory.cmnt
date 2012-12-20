@@ -1,0 +1,494 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.crypto.dsig.XMLSignatureFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于从头创建 {@link XMLSignature} 对象或从相应的 XML 表示形式解组 <code>XMLSignature</code> 对象的工厂。
+
+<h2>XMLSignatureFactory 类型</h2>
+
+<p>每个 <code>XMLSignatureFactory</code> 实例都支持一个特定的 XML 机制类型。要创建 <code>XMLSignatureFactory</code>，则需要调用一个静态 {@link #getInstance getInstance} 方法，以传入所需的 XML 机制类型，例如：
+
+<blockquote><code>XMLSignatureFactory factory = XMLSignatureFactory.getInstance(&quot;DOM&quot;);</code></blockquote>
+
+<p>此工厂生成的对象将基于 DOM 并遵守 DOM 互操作性要求，正如 API 概述的 <a href="../../../../../technotes/guides/security/xmldsig/overview.html#DOM Mechanism Requirements">DOM Mechanism Requirements</a> 部分中所定义的。标准机制类型列表，请参阅 API 概述的 <a href="../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+
+<p>使用 {@link java.security.Provider} 机制来注册和加载 <code>XMLSignatureFactory</code> 实现。例如，支持 DOM 机制的服务提供者将在 <code>Provider</code> 子类中指定，如下所示：
+ <pre>
+put(&quot;XMLSignatureFactory.DOM&quot;, &quot;org.example.DOMXMLSignatureFactory&quot;);
+ </pre>
+
+<p>实现至少必须支持默认的机制类型：DOM。 
+
+<p>注意，调用者必须使用相同的 <code>XMLSignatureFactory</code> 实例来创建要生成的特定 <code>XMLStructure</code> 的 <code>XMLSignature</code>。如果同时使用取自不同提供者或不同机制类型的 <code>XMLStructure</code>，则行为是不明确的。
+
+<p>同时，由此工厂创建的 <code>XMLStructure</code> 可能包含特定于 <code>XMLSignature</code> 的状态，并且该状态是不可重用的。
+
+<h2>从头创建 XMLSignature</h2>
+
+<p>创建了 <code>XMLSignatureFactory</code> 后，就可以通过调用适当的方法来实例化这些对象。例如，可以通过调用一个 {@link #newReference newReference} 方法来创建 {@link Reference} 实例。
+
+<h2>从 XML 解组 XMLSignature</h2>
+
+<p>此外，通过调用 {@link #unmarshalXMLSignature unmarshalXMLSignature} 方法，并向其传递包含 XML 内容的特定于机制的 {@link XMLValidateContext} 实例，可以从现有 XML 表示形式创建 <code>XMLSignature</code>：
+
+ <pre>
+DOMValidateContext context = new DOMValidateContext(key, signatureElement);
+XMLSignature signature = factory.unmarshalXMLSignature(context);
+ </pre>
+
+每个 <code>XMLSignatureFactory</code> 都必须支持该工厂类型所需的 <code>XMLValidateContext</code> 类型，但也可以支持其他类型。DOM <code>XMLSignatureFactory</code> 必须支持 {@link DOMValidateContext} 对象。
+ 
+<h2>将 XMLSignatures 签名并编组到 XML</h2>
+
+通过调用 {@link XMLSignature} 对象的 {@link XMLSignature#sign sign} 方法，并向其传递包含签名密钥和编组参数（参见 {@link DOMSignContext}）的特定于机制的 {@link XMLSignContext} 对象，可以将工厂创建的每个 <code>XMLSignature</code> 编组为 XML 表示形式并对其进行签名。例如： 
+
+ <pre>
+DOMSignContext context = new DOMSignContext(privateKey, document);
+signature.sign(context);
+ </pre>
+
+<b>并发访问</b>
+<p>可保证此类的静态方法是线程安全的。多个线程可以并发调用此类中所定义的静态方法，而不会产生不良效果。 
+
+<p>但是，对于此类所定义的非静态方法并非如此。除非具体的提供者另行指定，否则需要并发访问单个 <code>XMLSignatureFactory</code> 实例的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同 <code>XMLSignatureFactory</code> 实例的多个线程而言，无需实现同步。 
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.crypto.dsig.XMLSignatureFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认的构造方法，由子类调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.XMLSignatureFactory javax.xml.crypto.dsig.XMLSignatureFactory.getInstance(String mechanismType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>XMLSignatureFactory</code>，它支持指定的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）。
+
+<p>此方法使用标准的 JCA 提供者查找机制来查找并实例化所需机制类型的 <code>XMLSignatureFactory</code> 实现。它将从首选的 <code>Provider</code> 开始，遍历已注册的安全 <code>Provider</code> 的列表。返回取自第一个支持指定机制的 <code>Provider</code> 中的新 <code>XMLSignatureFactory</code> 对象。 
+
+<p>注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。 
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@return 新的 <code>XMLSignatureFactory</code>
+@throws NullPointerException 如果 <code>mechanismType</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果没有任何 <code>Provider</code> 支持指定机制的 <code>XMLSignatureFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.XMLSignatureFactory javax.xml.crypto.dsig.XMLSignatureFactory.getInstance(String mechanismType, Provider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持请求的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）的 <code>XMLSignatureFactory</code>，由指定提供者提供。注意，指定的 <code>Provider</code> 对象不必已经在提供者列表中注册。 
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@param provider <code>Provider</code> 对象
+@return 新的 <code>XMLSignatureFactory</code>
+@throws NullPointerException 如果 <code>provider</code> 或 <code>mechanismType</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果不能从指定的 <code>Provider</code> 对象得到指定机制的 <code>XMLSignatureFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.XMLSignatureFactory javax.xml.crypto.dsig.XMLSignatureFactory.getInstance(String mechanismType, String provider) throws java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持所需的 XML 处理机制和表示形式类型（比如：&ldquo;DOM&rdquo;）的 <code>XMLSignatureFactory</code>，由指定提供者提供。指定的提供者必须已在安全提供者列表中注册。 
+
+<p>注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。
+
+@param mechanismType XML 处理机制和表示形式的类型。有关标准机制类型列表，请参阅 API 概述的 <a 
+    href="../../../../../technotes/guides/security/xmldsig/overview.html#Service Provider">Service Providers</a> 部分。
+@param provider 提供者的字符串名称
+@return 新的 <code>XMLSignatureFactory</code>
+@throws NoSuchProviderException 如果指定的提供者没有在安全提供者列表中进行注册
+@throws NullPointerException 如果 <code>provider</code> 或 <code>mechanismType</code> 为 <code>null</code>
+@throws NoSuchMechanismException 如果从指定的提供者不能得到指定机制的 <code>XMLSignatureFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.crypto.dsig.XMLSignatureFactory javax.xml.crypto.dsig.XMLSignatureFactory.getInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回支持默认的 XML 处理机制和表示形式类型（&ldquo;DOM&rdquo;） 的 <code>XMLSignatureFactory</code>。
+
+<p>此方法使用标准的 JCA 提供者查找机制来查找并实例化默认机制类型的 <code>XMLSignatureFactory</code> 实现。它将从首选的 <code>Provider</code> 开始，遍历已注册的安全 <code>Provider</code> 的列表。返回取自第一个支持 DOM 机制的<code>Provider</code> 中的新 <code>XMLSignatureFactory</code> 对象。 
+
+<p>注意，已注册提供者的列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。 
+
+@return 新的 <code>XMLSignatureFactory</code>
+@throws NoSuchMechanismException 如果没有任何 <code>Provider</code> 支持 DOM 机制的 <code>XMLSignatureFactory</code> 实现
+@see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.xml.crypto.dsig.XMLSignatureFactory.getMechanismType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignatureFactory</code> 支持的 XML 处理机制类型和表示形式类型（比如：&ldquo;DOM&rdquo;）。
+
+@return 此 <code>XMLSignatureFactory</code> 支持的 XML 处理机制类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider javax.xml.crypto.dsig.XMLSignatureFactory.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>XMLSignatureFactory</code> 的提供者。
+
+@return 此 <code>XMLSignatureFactory</code> 的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.XMLSignature javax.xml.crypto.dsig.XMLSignatureFactory.newXMLSignature(SignedInfo si, KeyInfo ki)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>XMLSignature</code>，并使用指定的 <code>SignedInfo</code> 和 <code>KeyInfo</code> 对象的内容对其进行初始化。
+
+@param si 签名信息
+@param ki 密钥信息（可能为 <code>null</code>）
+@return <code>XMLSignature</code>
+@throws NullPointerException 如果 <code>si</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.XMLSignature javax.xml.crypto.dsig.XMLSignatureFactory.newXMLSignature(SignedInfo si, KeyInfo ki, java.util.List objects, String id, String signatureValueId)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>XMLSignature</code>，并使用指定的参数对其进行初始化。
+
+@param si 签名信息
+@param ki 密钥信息（可以为 <code>null</code>）
+@param objects {@link XMLObject} 列表（可以为空或 <code>null</code>）
+@param id Id（可以为 <code>null</code>）
+@param signatureValueId SignatureValue Id（可以为 <code>null</code>）
+@return <code>XMLSignature</code>
+@throws NullPointerException 如果 <code>si</code> 为 <code>null</code>
+@throws ClassCastException 如果有些 <code>objects</code> 的类型不是 <code>XMLObject</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Reference javax.xml.crypto.dsig.XMLSignatureFactory.newReference(String uri, DigestMethod dm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定 URI 和摘要方法的 <code>Reference</code>。
+
+@param uri 引用 URI（可以为 <code>null</code>）
+@param dm 摘要方法
+@return <code>Reference</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容
+@throws NullPointerException 如果 <code>dm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Reference javax.xml.crypto.dsig.XMLSignatureFactory.newReference(String uri, DigestMethod dm, java.util.List transforms, String type, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定参数的 <code>Reference</code>。
+
+@param uri 引用 URI（可以为 <code>null</code>）
+@param dm 摘要方法
+@param transforms {@link Transform} 列表。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@param type URI 形式的引用类型（可以为 <code>null</code>）
+@param id 引用 ID（可以为 <code>null</code>）
+@return <code>Reference</code>
+@throws ClassCastException 如果有些 <code>transforms</code> 的类型不是 <code>Transform</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容
+@throws NullPointerException 如果 <code>dm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Reference javax.xml.crypto.dsig.XMLSignatureFactory.newReference(String uri, DigestMethod dm, java.util.List transforms, String type, String id, byte[] digestValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定参数和预计算的摘要值的 <code>Reference</code>。 
+
+<p>如果先前已经计算了 <code>Reference</code> 的摘要值，则此方法很有用。有关示例，请参阅 <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=dss">OASIS-DSS（数字签名服务）</a>规范。
+ 
+@param uri 引用 URI（可以为 <code>null</code>）
+@param dm 摘要方法
+@param transforms {@link Transform} 列表。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@param type URI 形式的引用类型（可以为 <code>null</code>）
+@param id 引用 ID（可以为 <code>null</code>）
+@param digestValue 摘要值。复制该数组，以防止随后被修改。
+@return <code>Reference</code>
+@throws ClassCastException 如果任何 <code>transforms</code> 的类型不是 <code>Transform</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容
+@throws NullPointerException 如果 <code>dm</code> 或 <code>digestValue</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Reference javax.xml.crypto.dsig.XMLSignatureFactory.newReference(String uri, DigestMethod dm, java.util.List appliedTransforms, Data result, java.util.List transforms, String type, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定参数的 <code>Reference</code>。
+
+<p>在已将转换列表应用于 <code>Reference</code> 时，此方法很有用。例如，请参阅 <a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=dss">OASIS-DSS（数字签名服务）</a>规范。
+
+<p>生成了包含此引用的 <code>XMLSignature</code> 之后，将指定的 <code>transforms</code>（如果为非空）应用于指定的 <code>result</code>。所得 <code>Reference</code> 元素的 <code>Transforms</code> 元素被设置为 <code>appliedTransforms</code> 和 <code>transforms</code> 的串联。
+ 
+@param uri 引用 URI（可以为 <code>null</code>）
+@param dm 摘要方法
+@param appliedTransforms 已应用的 {@link Transform} 的列表。需要复制该列表，以防止随后被修改。列表至少必须包含一个条目。
+@param result 处理 <code>appliedTransforms</code> 的序列的结果
+@param transforms 生成签名时将应用的 {@link Transform} 的列表。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@param type URI 形式的引用类型（可以为 <code>null</code>）
+@param id 引用 ID（可以为 <code>null</code>）
+@return <code>Reference</code>
+@throws ClassCastException 如果任何转换（任一列表中）的类型不是 <code>Transform</code>
+@throws IllegalArgumentException 如果 <code>uri</code> 与 RFC 2396 不兼容或 <code>appliedTransforms</code> 为空
+@throws NullPointerException 如果 <code>dm</code>、<code>appliedTransforms</code> 或 <code>result</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.SignedInfo javax.xml.crypto.dsig.XMLSignatureFactory.newSignedInfo(CanonicalizationMethod cm, SignatureMethod sm, java.util.List references)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定的规范化方法和签名方法、以及一个或多个引用的列表的 <code>SignedInfo</code>。 
+
+@param cm 规范化方法
+@param sm 签名方法
+@param references 一个列表，由一个或多个 {@link Reference} 组成。需要复制该列表，以防止随后被修改。
+@return <code>SignedInfo</code>
+@throws ClassCastException 如果任何引用的类型不是 <code>Reference</code>
+@throws IllegalArgumentException 如果 <code>references</code> 为空
+@throws NullPointerException 如果任何参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.SignedInfo javax.xml.crypto.dsig.XMLSignatureFactory.newSignedInfo(CanonicalizationMethod cm, SignatureMethod sm, java.util.List references, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定参数的 <code>SignedInfo</code>。
+
+@param cm 规范化方法
+@param sm 签名方法
+@param references 一个列表，由一个或多个 {@link Reference} 组成。需要复制该列表，以防止随后被修改。
+@param id id（可以为 <code>null</code>）
+@return <code>SignedInfo</code>
+@throws ClassCastException 如果任何引用的类型不是 <code>Reference</code>
+@throws IllegalArgumentException 如果 <code>references</code> 为空
+@throws NullPointerException 如果 <code>cm</code>、<code>sm</code> 或 <code>references</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.XMLObject javax.xml.crypto.dsig.XMLSignatureFactory.newXMLObject(java.util.List content, String id, String mimeType, String encoding)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定参数创建 <code>XMLObject</code>。
+
+@param content {@link XMLStructure} 的列表。需要复制该列表，以防止随后被修改。可以为 <code>null</code> 或空。
+@param id Id（可以为 <code>null</code>）
+@param mimeType MIME 类型（可以为 <code>null</code>）
+@param encoding 编码（可以为 <code>null</code>）
+@return <code>XMLObject</code>
+@throws ClassCastException 如果 <code>content</code> 包含任何类型不是 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Manifest javax.xml.crypto.dsig.XMLSignatureFactory.newManifest(java.util.List references)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的 {@link Reference} 列表的 <code>Manifest</code>。
+
+@param references 一个列表，由一个或多个 <code>Reference</code> 组成。需要复制该列表，以防止随后被修改。
+@return <code>Manifest</code>
+@throws NullPointerException 如果 <code>references</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>references</code> 为空
+@throws ClassCastException 如果 <code>references</code> 包含任何类型不是 {@link Reference} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Manifest javax.xml.crypto.dsig.XMLSignatureFactory.newManifest(java.util.List references, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的 {@link Reference} 列表和可选 id 的 <code>Manifest</code>。
+
+@param references 一个列表，由一个或多个 <code>Reference</code> 组成。需要复制该列表，以防止随后被修改。
+@param id id（可以为 <code>null</code>）
+@return <code>Manifest</code>
+@throws NullPointerException 如果 <code>references</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>references</code> 为空
+@throws ClassCastException 如果 <code>references</code> 包含任何类型不是 {@link Reference} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.SignatureProperty javax.xml.crypto.dsig.XMLSignatureFactory.newSignatureProperty(java.util.List content, String target, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的 {@link XMLStructure} 列表、目标 URI 和可选 id 的<code>SignatureProperty</code>。
+
+@param content 一个列表，由一个或多个 <code>XMLStructure</code> 组成。需要复制该列表，以防止随后被修改。
+@param target 使用此属性的 Signature 的目标 URI
+@param id id（可以为 <code>null</code>）
+@return <code>SignatureProperty</code>
+@throws NullPointerException 如果 <code>content</code> 或 <code>target</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>content</code> 为空
+@throws ClassCastException 如果 <code>content</code> 包含任何类型不是 {@link XMLStructure} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.SignatureProperties javax.xml.crypto.dsig.XMLSignatureFactory.newSignatureProperties(java.util.List properties, String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定的 {@link SignatureProperty} 列表和可选 id 的 <code>SignatureProperties</code>。
+
+@param properties 一个列表，由一个或多个 <code>SignatureProperty</code> 组成。需要复制该列表，以防止随后被修改。
+@param id id（可以为 <code>null</code>）
+@return <code>SignatureProperties</code>
+@throws NullPointerException 如果 <code>properties</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>properties</code> 为空
+@throws ClassCastException 如果 <code>properties</code> 包含任何类型不是 {@link SignatureProperty} 的条目
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.DigestMethod javax.xml.crypto.dsig.XMLSignatureFactory.newDigestMethod(String algorithm, DigestMethodParameterSpec params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>DigestMethod</code>。
+
+@param algorithm 标识摘要算法的 URI
+@param params 特定于算法的摘要参数（可以为 <code>null</code>）
+@return <code>DigestMethod</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.SignatureMethod javax.xml.crypto.dsig.XMLSignatureFactory.newSignatureMethod(String algorithm, SignatureMethodParameterSpec params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>SignatureMethod</code>。
+
+@param algorithm 标识签名算法的 URI
+@param params 特定于算法的签名参数（可以为 <code>null</code>）
+@return <code>SignatureMethod</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Transform javax.xml.crypto.dsig.XMLSignatureFactory.newTransform(String algorithm, TransformParameterSpec params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>Transform</code>。
+
+@param algorithm 标识转换算法的 URI
+@param params 特定于算法的转换参数（可以为 <code>null</code>）
+@return <code>Transform</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.Transform javax.xml.crypto.dsig.XMLSignatureFactory.newTransform(String algorithm, XMLStructure params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>Transform</code>。该参数被指定为特定于机制的 <code>XMLStructure</code>（比如：{@link DOMStructure}）。当参数是 XML 形式或没有任何用于指定参数的标准类时，此方法很有用。
+
+@param algorithm 标识转换算法的 URI
+@param params 从中解组参数的特定于机制的 XML 结构（如果该结构不是必需的或是可选的，则此参数为 <code>null</code>）
+@return <code>Transform</code>
+@throws ClassCastException 如果 <code>params</code> 类型不适合此 <code>XMLSignatureFactory</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.CanonicalizationMethod javax.xml.crypto.dsig.XMLSignatureFactory.newCanonicalizationMethod(String algorithm, C14NMethodParameterSpec params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>CanonicalizationMethod</code>。
+
+@param algorithm 标识规范化算法的 URI
+@param params 特定于算法的规范化参数（可以为 <code>null</code>）
+@return <code>CanonicalizationMethod</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.CanonicalizationMethod javax.xml.crypto.dsig.XMLSignatureFactory.newCanonicalizationMethod(String algorithm, XMLStructure params) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对指定的算法 URI 和参数创建 <code>CanonicalizationMethod</code>。该参数被指定为特定于机制的 <code>XMLStructure</code>（比如：{@link DOMStructure}）。当参数是 XML 形式或没有任何用于指定参数的标准类时，此方法很有用。
+
+@param algorithm 标识规范化算法的 URI
+@param params 从中解组参数的特定于机制的 XML 结构（如果该结构不是必需的或是可选的，则此参数为 <code>null</code>）
+@return <code>CanonicalizationMethod</code>
+@throws ClassCastException 如果 <code>params</code> 类型不适合此 <code>XMLSignatureFactory</code>
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合请求的算法
+@throws NoSuchAlgorithmException 如果无法找到指定算法的实现
+@throws NullPointerException 如果 <code>algorithm</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final javax.xml.crypto.dsig.keyinfo.KeyInfoFactory javax.xml.crypto.dsig.XMLSignatureFactory.getKeyInfoFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建 <code>KeyInfo</code> 对象的 <code>KeyInfoFactory</code>。返回的 <code>KeyInfoFactory</code> 具有与此 <code>XMLSignatureFactory</code> 相同的机制类型和提供者。
+
+@return <code>KeyInfoFactory</code>
+@throws NoSuchMechanismException 如果具有相同机制类型和提供者的 <code>KeyFactory</code> 实现不可用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.XMLSignature javax.xml.crypto.dsig.XMLSignatureFactory.unmarshalXMLSignature(XMLValidateContext context) throws javax.xml.crypto.MarshalException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从特定于机制的 <code>XMLValidateContext</code> 实例解组新的 <code>XMLSignature</code> 实例。
+
+@param context 从中解组签名的特定于机制的上下文
+@return <code>XMLSignature</code>
+@throws NullPointerException 如果 <code>context</code> 为 <code>null</code>
+@throws ClassCastException 如果 <code>context</code> 类型不适合此工厂
+@throws MarshalException 如果解组过程中发生不可恢复的异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.dsig.XMLSignature javax.xml.crypto.dsig.XMLSignatureFactory.unmarshalXMLSignature(XMLStructure xmlStructure) throws javax.xml.crypto.MarshalException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从特定于机制的 <code>XMLStructure</code> 实例解组新的 <code>XMLSignature</code> 实例。如果只想解组（且不验证） <code>XMLSignature</code> 时，此方法很有用。
+
+@param xmlStructure 从中解组签名的特定于机制的 XML 结构
+@return <code>XMLSignature</code>
+@throws NullPointerException 如果 <code>xmlStructure</code> 为 <code>null</code>
+@throws ClassCastException 如果 <code>xmlStructure</code> 类型不适合此工厂
+@throws MarshalException 如果解组过程中发生不可恢复的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.crypto.dsig.XMLSignatureFactory.isFeatureSupported(String feature)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否支持指定的功能。
+
+@param feature 功能名称（作为抽象 URI）
+@return 如果支持指定功能，则返回 <code>true</code>，否则返回 <code>false</code>
+@throws NullPointerException 如果 <code>feature</code> 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.crypto.URIDereferencer javax.xml.crypto.dsig.XMLSignatureFactory.getURIDereferencer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对 <code>URIDereferencer</code> 的引用，默认情况下该引用用于取消 {@link Reference} 对象中对 URI 的引用。
+
+@return 对默认 <code>URIDereferencer</code> 的引用（不能为 <code>null</code>）
+
+<!-- END DATA -->

@@ -1,0 +1,157 @@
+<!-- BEGIN KEY -->
+public class java.awt.Desktop extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code Desktop} 类允许 Java 应用程序启动已在本机桌面上注册的关联应用程序，以处理 {@link java.net.URI} 或文件。
+
+<p> 支持的操作包括：
+ <ul>
+<li>启动用户默认浏览器来显示指定的 URI；</li>
+<li>启动带有可选 {@code mailto} URI 的用户默认邮件客户端；</li>
+<li>启动已注册的应用程序，以打开、编辑或打印指定的文件。</li>
+ </ul>
+
+<p> 此类提供与这些操作对应的方法。这些方法查找在当前平台上注册的关联应用程序，并启动该应用程序来处理 URI 或文件。如果没有关联应用程序或关联应用程序无法启动，则抛出异常。
+
+<p> 应用程序被注册为 URI 或文件类型；例如，{@code &quot;sxi&quot;} 文件扩展名通常注册为 StarOffice。注册、访问和启动关联应用程序的机制与平台有关。
+
+<p> 每个操作都是由 {@link Desktop.Action} 类表示的一种动作类型。
+
+<p> 注：当调用一些动作和执行关联应用程序时，将在与启动 Java 应用程序相同的系统上执行它们。
+
+@since 1.6
+@author Armin Chen
+@author George Zhang
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.awt.Desktop java.awt.Desktop.getDesktop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前浏览器上下文的 <code>Desktop</code> 实例。一些平台不支持 Desktop API；可以使用 {@link #isDesktopSupported} 方法来确定是否支持当前桌面。
+@return 当前浏览器上下文的 Desktop 实例
+@throws HeadlessException 如果 {@link GraphicsEnvironment#isHeadless()} 返回 {@code true}
+@throws UnsupportedOperationException 如果当前平台不支持此类
+@see #isDesktopSupported()
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.awt.Desktop.isDesktopSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试当前平台是否支持此类。如果不受支持，则使用 {@link #getDesktop()} 获得实例。
+
+@return 如果当前平台支持此类，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #getDesktop()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Desktop.isSupported(Desktop.Action action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试当前平台是否支持某一动作。
+
+<p>即使平台支持某一动作、文件或 URI，也可能没有针对该动作的注册应用程序。例如，大多数平台支持 {@link Desktop.Action#OPEN} 动作。但对于特定文件，可能没有用来打开它的注册应用程序。在这种情况下，{@link #isSupported} 可能返回 {@code true}，但相应的动作方法将抛出 {@link IOException}。
+
+@param action 指定的 {@link Action}
+@return 如果当前平台支持指定的动作，则返回 <code>true</code>；否则返回 <code>false</code>
+@see Desktop.Action
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.open(File file) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动关联应用程序来打开文件。
+
+<p> 如果指定的文件是一个目录，则启动当前平台的文件管理器打开它。
+
+@param file 要用关联应用程序打开的文件
+@throws NullPointerException 如果 {@code file} 为 {@code null}
+@throws IllegalArgumentException 如果指定文件不存在
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#OPEN} 动作
+@throws IOException 如果指定文件没有关联应用程序，或者关联应用程序无法启动
+@throws SecurityException 如果安全管理器存在且其 {@link java.lang.SecurityManager#checkRead(java.lang.String)} 方法拒绝对文件进行读取访问；或者它拒绝 <code>AWTPermission(&quot;showWindowWithoutWarningBanner&quot;)</code> 权限；或者不允许调用线程创建子进程
+@see java.awt.AWTPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.edit(File file) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动关联编辑器应用程序并打开用于编辑的文件。
+
+@param file 要打开用于编辑的文件
+@throws NullPointerException 如果指定文件为 {@code null}
+@throws IllegalArgumentException 如果指定文件不存在
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#EDIT} 动作
+@throws IOException 如果指定文件没有关联编辑器，或者关联应用程序无法启动
+@throws SecurityException 如果安全管理器存在且其 {@link java.lang.SecurityManager#checkRead(java.lang.String)} 方法拒绝对文件进行读取访问；或者 {@link java.lang.SecurityManager#checkWrite(java.lang.String)} 方法拒绝对文件进行写入访问；或者它拒绝 <code>AWTPermission(&quot;showWindowWithoutWarningBanner&quot;)</code> 权限；或者不允许调用线程创建子进程
+@see java.awt.AWTPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.print(File file) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用关联应用程序的打印命令，用本机桌面打印设施来打印文件。
+
+@param file 要打印的文件
+@throws NullPointerException 如果指定文件为 {@code null}
+@throws IllegalArgumentException 如果指定文件不存在
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#PRINT} 动作
+@throws IOException 如果指定文件没有可用于打印它的关联应用程序
+@throws SecurityException 如果安全管理器存在且其 {@link java.lang.SecurityManager#checkRead(java.lang.String)} 方法拒绝对文件进行读取访问；或者其 {@link java.lang.SecurityManager#checkPrintJobAccess()} 方法拒绝打印文件的权限；或者不允许调用线程创建子进程
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.browse(URI uri) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动默认浏览器来显示 {@code URI}。如果默认浏览器无法处理指定的 {@code URI}，则调用用于处理指定类型的 {@code URI} 的注册应用程序。正如 {@code URI} 类定义的一样，根据协议和 {@code URI} 的路径确定应用程序。
+ <p>
+如果调用线程没有必需的权限，且它是从 applet 中调用的，则使用 {@code AppletContext.showDocument()}。类似地，如果调用线程没有必需的权限，且它是从 Java Web Started 应用程序中调用的，则使用 {@code BasicService.showDocument()}。
+
+@param uri 将显示在用户默认浏览器中的 URI
+@throws NullPointerException 如果 {@code uri} 为 {@code null}
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#BROWSE} 动作
+@throws IOException 如果未找到用户默认浏览器或无法启动它，或者默认处理器应用程序无法启动
+@throws SecurityException 如果安全管理器存在且它拒绝 <code>AWTPermission(&quot;showWindowWithoutWarningBanner&quot;)</code> 权限；或者它不允许调用线程创建子进程，且不是从 applet 或 Java Web Started 应用程序中调用的
+@throws IllegalArgumentException 如果必需权限不可用且 URI 无法转换为 {@code URL}
+@see java.net.URI
+@see java.awt.AWTPermission
+@see java.applet.AppletContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.mail() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动用户默认邮件客户端的邮件组合窗口。
+
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#MAIL} 动作
+@throws IOException 如果未找到默认邮件客户端，或者无法启动它
+@throws SecurityException 如果安全管理器存在且它拒绝 <code>AWTPermission(&quot;showWindowWithoutWarningBanner&quot;)</code> 权限，或者它不允许调用线程创建子进程
+@see java.awt.AWTPermission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Desktop.mail(URI mailtoURI) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动用户默认邮件客户端的邮件组合窗口，填充由 {@code mailto:} URI 指定的消息字段。
+
+<p> <code>mailto:</code>URI 可以指定包含 <i>&quot;to&quot;</i>、<i>&quot;cc&quot;</i>、<i>&quot;subject&quot;</i>、<i>&quot;body&quot;</i> 等内容的消息字段。有关 {@code mailto:} URI 规范的详细信息，请参阅 <a
+ href="http://www.ietf.org/rfc/rfc2368.txt">mailto URL scheme (RFC 2368)</a>。
+
+@param mailtoURI 指定的 {@code mailto:}URI
+@throws NullPointerException 如果指定的 URI 为 {@code null}
+@throws IllegalArgumentException 如果 URI 方案不是 <code>&quot;mailto&quot;</code>
+@throws UnsupportedOperationException 如果当前平台不支持 {@link Desktop.Action#MAIL} 动作
+@throws IOException 如果未找到用户默认邮件客户端或无法启动它
+@throws SecurityException 如果安全管理器存在且它拒绝 <code>AWTPermission(&quot;showWindowWithoutWarningBanner&quot;)</code> 权限，或者它不允许调用线程创建子进程
+@see java.net.URI
+@see java.awt.AWTPermission
+
+<!-- END DATA -->

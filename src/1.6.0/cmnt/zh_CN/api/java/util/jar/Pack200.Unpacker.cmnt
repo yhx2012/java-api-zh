@@ -1,0 +1,113 @@
+<!-- BEGIN KEY -->
+public static interface java.util.jar.Pack200.Unpacker
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解包器引擎将打包的流转换为 JAR 文件。可使用 {@link #newUnpacker} 获得该引擎的实例。
+ <p>
+此引擎所生成的每个 JAR 文件将包括字符串 &quot;<tt>PACK200</tt>&quot; 作为 zip 文件注释。这允许部署者检测 JAR 存档是否被打包或解包。
+ <p>
+解包器的此版本与以前所有版本兼容。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Unpacker.KEEP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 &quot;keep&quot;，某些属性的可能值。
+@see #DEFLATE_HINT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Unpacker.TRUE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 &quot;true&quot;，某些属性的可能值。
+@see #DEFLATE_HINT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Unpacker.FALSE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 &quot;false&quot;，某些属性的可能值。
+@see #DEFLATE_HINT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Unpacker.DEFLATE_HINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此属性指示解包器应该忽略 DEFLATE_HINT 的所有已传输的值，并用给定值 {@link #TRUE} 或 {@link #FALSE} 替换它们。默认值为特殊字符串 {@link #KEEP}，要求解包器保留所有已传输的压缩提示。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Unpacker.PROGRESS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解包器的百分比进度，由解包器定期更新。值 0 - 100 是正常的，-1 指示停止。用 {@link PropertyChangeListener} 观察此属性。
+ <p>
+至少，解包器必须在打包操作开始时把进度设置为 0，在结束时把进度设置为 100。
+@see #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<java.lang.String, java.lang.String> java.util.jar.Pack200.Unpacker.properties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此引擎属性集。此集合是&ldquo;实时视图&rdquo;，所以更改其内容可立即影响 Packer 引擎，并且在映射中可立即见到引擎中的变化（如进度指示）。
+
+<p>属性映射可能包含指定和默认属性的预定义实现。鼓励用户在修改已存在的属性前阅读该信息，并完全理解其含意。
+ <p>
+特定实现的属性是用与实现者相关的包名称作前缀的，以 <tt>com.</tt> 或类似前缀开头。以 <tt>pack.</tt> 和 <tt>unpack.</tt> 开头的所有属性名称保留给此 API 使用。
+ <p>
+未知的属性可以用未指定的错误忽略或拒绝，并且无效的条目可能导致抛出未指定的错误。
+
+@return 选项键字符串到选项值的有序关联。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Unpacker.unpack(InputStream in, JarOutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 Pack200 存档，并将已编码的 JAR 写入 JarOutputStream。将读取输入流的全部内容。使用下面描述的替代方法将 Pack200 存档读取到文件中并传递 File 对象可能更加高效。
+ <p>
+关闭其输入，但并不关闭其输出。（输出可以累积更多元素。）
+@param in 一个 InputStream。
+@param out 一个 JarOutputStream。
+@exception IOException 如果遇到错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Unpacker.unpack(File in, JarOutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 Pack200 存档，并将已编码的 JAR 写入 JarOutputStream。
+ <p>
+不关闭其输出。（输出可以累积更多元素。）
+@param in 一个 File。
+@param out 一个 JarOutputStream。
+@exception IOException 如果遇到错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Unpacker.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为属性映射上的 PropertyChange 事件注册一个侦听器。通常应用程序使用它来更新进度条。
+
+@see #properties
+@see #PROGRESS
+@param listener 更改属性时要调用的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Unpacker.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除由 {@link #addPropertyChangeListener} 所添加的 PropertyChange 事件侦听器。
+
+@see #addPropertyChangeListener
+@param listener  要移除的 PropertyChange 侦听器。
+
+<!-- END DATA -->

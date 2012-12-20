@@ -1,0 +1,213 @@
+<!-- BEGIN KEY -->
+public interface javax.tools.JavaFileManager extends java.io.Closeable, java.io.Flushable, javax.tools.OptionChecker
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Java&trade; 编程语言源和类文件之上进行操作的工具的文件管理器。在这里，<em>文件</em> 是指常规文件和其他数据源的抽象。
+
+<p>构建新的 JavaFileObject 时，文件管理器必须确定创建它们的位置。例如，如果文件管理器在文件系统上管理常规文件，那么在创建或查找文件时，此文件管理器很可能将当前/工作目录作为默认位置使用。可以向文件管理器提供许多关于在何处创建文件的提示。文件管理器可以选择忽略这些提示。
+
+<p>此接口中的某些方法使用类名称。这种类名称必须以完全限定类和接口名称的 Java Virtual Machine 内部形式给定。为了方便起见，'.' 和 '/' 可以互换使用。在 <a href="http://java.sun.com/docs/books/vmspec/2nd-edition/jvms-maintenance.html">Java Virtual Machine Specification</a> 第四章中定义了内部形式。
+
+ <blockquote><p>
+<i>讨论：</i>这意味着名称 "java/lang.package-info"、"java/lang/package-info"、"java.lang.package-info" 有效并且相等。比较 <a href="http://java.sun.com/docs/books/jls/">Java Language Specification (JLS)</a> 第 13.1 节 "The Form of a Binary" 中定义的二进制名称。
+ </p></blockquote>
+
+<p>名称的大小写很重要。所有名称都应该区分大小写。例如，某些文件系统的文件名称大小写不敏感 (case-insensitive)、但可区分大小写 (case-aware)。表示此类文件的文件对象应该通过使用 {@link java.io.File#getCanonicalFile} 或类似方法来保存大小写形式。如果系统不可区分大小写，那么文件对象必须使用其他方法来保存大小写。
+
+<p><em><a name="relative_name">相对名称</a>：</em>此接口中的某些方法使用相对名称。相对名称是指用 '/' 分隔的路径段的非 null、非空序列。'.' 或 '..' 为无效路径段。有效的相对名称必须符合 <a  href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a> 的第 3.3 节的&ldquo;无根路径&rdquo;规则。非正式情况下，下式应该为 true：
+
+
+<!-- URI.create(relativeName).normalize().getPath().equals(relativeName) -->
+<pre>  URI.{@linkplain java.net.URI#create create}(relativeName).{@linkplain java.net.URI#normalize normalize}().{@linkplain java.net.URI#getPath getPath}().equals(relativeName)</pre>
+
+<p>此接口中的所有方法都可能抛出 SecurityException。
+
+<p>不要求此接口的对象支持多线程访问，也就是说，此接口中的对象是同步的。但是，它必须支持对此对象创建的不同文件对象的并发访问。
+
+<p><em>实现注意事项：</em> 此要求使得对 {@linkplain java.util.jar.JarOutputStream} 的输出的普通实现将不够充分。也就是说，不是创建直接返回 JarOutputStream 的 JavaFileObject，而是在关闭前必须缓存内容，然后将内容写入 JarOutputStream。
+
+<p>除非明确允许，否则只要给定 {@code null} 参数，此接口中的所有方法都将抛出 NullPointerException。
+
+@author Peter von der Ah&eacute;
+@author Jonathan Gibbons
+@see JavaFileObject
+@see FileObject
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ClassLoader javax.tools.JavaFileManager.getClassLoader(JavaFileManager.Location location)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取可从给定位置加载插件的类加载器。例如，要加载注释处理器，编译器将请求 {@link StandardLocation#ANNOTATION_PROCESSOR_PATH ANNOTATION_PROCESSOR_PATH} 位置的类加载器。
+
+@param location 位置
+@return 给定位置的类加载器；如果不能从给定位置加载插件或位置未知，则返回 {@code null}
+@throws SecurityException 如果在当前安全上下文中不能创建类加载器
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且不能重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<javax.tools.JavaFileObject> javax.tools.JavaFileManager.list(JavaFileManager.Location location, String packageName, java.util.Set<javax.tools.JavaFileObject.Kind> kinds, boolean recurse) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+列出给定位置处符合给定标准的所有文件对象。如果 recurse 为 true，则列出&ldquo;子包&rdquo;中的文件对象。
+
+<p>注：即使给定位置对于此文件管理器是未知的，此方法也不会返回 {@code null}。未知位置也不会导致异常。
+
+@param location 位置
+@param packageName 包名称
+@param kinds 只返回这些类型的对象
+@param recurse 如果为 true，则包含&ldquo;子包&rdquo;
+@return 符合给定标准的文件对象的 Iterable
+@throws IOException 如果发生 I/O 错误，或者已经调用了 {@link #close} 并且无法重新打开此文件管理器
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.tools.JavaFileManager.inferBinaryName(JavaFileManager.Location location, JavaFileObject file)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据位置推断文件对象的二进制名称。返回的二进制名称可能不是有效的 JLS 二进制名称。
+
+@param location 位置
+@param file 文件对象
+@return 二进制名称；如果在给定位置没有找到文件对象，则返回 {@code null}
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.tools.JavaFileManager.isSameFile(FileObject a, FileObject b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个文件对象，如果它们表示相同的底层对象，则返回 true。
+
+@param a 文件对象
+@param b 文件对象
+@return 如果给定的文件对象表示相同的底层对象，则返回 true
+
+@throws IllegalArgumentException 如果其中一个参数是用另一个文件管理器创建的，并且此文件管理器不支持外部文件对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.tools.JavaFileManager.handleOption(String current, java.util.Iterator<java.lang.String> remaining)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理一个选项。如果 {@code current} 是此文件管理器的一个选项，则它将通过 {@code remaining} 获得该选项的所有参数并返回 true，否则返回 false。
+
+@param current 当前选项
+@param remaining 剩余选项
+@return 如果由此文件管理器处理此选项，则返回 true，否则返回 false
+@throws IllegalArgumentException 如果错误地使用了此文件管理器的选项
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.tools.JavaFileManager.hasLocation(JavaFileManager.Location location)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此文件管理器是否已知某位置。
+
+@param location 位置
+@return 如果已知该位置，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.JavaFileObject javax.tools.JavaFileManager.getJavaFileForInput(JavaFileManager.Location location, String className, JavaFileObject.Kind kind) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取输入的{@linkplain JavaFileObject 文件对象}，它表示给定位置处指定类型的指定类。
+
+@param location 位置
+@param className 类的名称
+@param kind 文件的类型，必须是 {@link JavaFileObject.Kind#SOURCE SOURCE} 或 {@link JavaFileObject.Kind#CLASS CLASS}
+@return 一个文件对象；如果文件不存在，则可能返回 {@code null}
+@throws IllegalArgumentException 如果位置对于此文件管理器未知并且该文件管理器不支持未知位置，或者类型无效
+@throws IOException 如果发生 I/O 错误，或者已经调用了 {@link #close} 并且无法重新打开此文件管理器
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.JavaFileObject javax.tools.JavaFileManager.getJavaFileForOutput(JavaFileManager.Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取输出的{@linkplain JavaFileObject 文件对象}，它表示给定位置处指定类型的指定类。
+
+<p>此文件管理器可以将 sibling 视为对放置输出位置的提示（可选）。没有指定此提示的确切语义。除非提供了类文件输出目录，否则 Sun 的编译器（例如 javac）将把类文件放到与原始源文件相同的目录下。要实现此行为，调用此方法时 javac 可以提供原始源文件作为 sibling。
+
+@param location 位置
+@param className 类的名称
+@param kind 文件的类型，必须是 {@link JavaFileObject.Kind#SOURCE SOURCE} 或 {@link JavaFileObject.Kind#CLASS CLASS}
+@param sibling 用作位置提示的文件对象，可以为 {@code null}
+@return 输出的文件对象
+@throws IllegalArgumentException 如果 sibling 对于此文件管理器是未知的，或者位置对于此文件管理器是未知的并且该文件管理器不支持未知位置，或者类型无效
+@throws IOException 如果发生 I/O 错误，或者已经调用了 {@link #close} 并且无法重新打开此文件管理器
+@throws IllegalStateException 已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.FileObject javax.tools.JavaFileManager.getFileForInput(JavaFileManager.Location location, String packageName, String relativeName) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取输入的{@linkplain FileObject 文件对象}，它表示给定位置处指定包中的指定<a href="JavaFileManager.html#relative_name">相对名称</a>。
+
+<p>如果返回的对象表示{@linkplain JavaFileObject.Kind#SOURCE 源}或{@linkplain JavaFileObject.Kind#CLASS 类}文件，则它必须是 {@link JavaFileObject} 的一个实例。
+
+<p>非严格意义上来讲，在位置、包名称和相对名称的串联中查找此方法返回的文件对象。例如，要在 {@linkplain StandardLocation#SOURCE_PATH SOURCE_PATH} 位置处的 "com.sun.tools.javac" 包中查找属性文件 "resources/compiler.properties"，将调用此方法，如下：
+
+<pre>getFileForInput(SOURCE_PATH, &quot;com.sun.tools.javac&quot;, &quot;resources/compiler.properties&quot;);</pre>
+
+<p>如果在 Windows 上执行该调用，其中 SOURCE_PATH 设置为 <code>"C:\Documents&nbsp;and&nbsp;Settings\UncleBob\src\share\classes"</code>，那么有效的结果将是表示文件 <code>&quot;C:\Documents&nbsp;and&nbsp;Settings\UncleBob\src\share\classes\com\sun\tools\javac\resources\compiler.properties&quot;</code> 的文件对象。
+
+@param location 位置
+@param packageName 包名称
+@param relativeName 相对名称
+@return 文件对象；如果文件不存在，则可能返回 {@code null}
+@throws IllegalArgumentException 如果位置对于此文件管理器是未知的并且该文件管理器不支持未知位置，或者 {@code relativeName} 无效
+@throws IOException 如果发生 I/O 错误，或者已经调用了 {@link #close} 并且无法重新打开此文件管理器
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.FileObject javax.tools.JavaFileManager.getFileForOutput(JavaFileManager.Location location, String packageName, String relativeName, FileObject sibling) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取输出的{@linkplain FileObject 文件对象}，它表示给定位置处指定包中的指定<a href="JavaFileManager.html#relative_name">相对名称</a>。
+
+<p>此文件管理器可能将 sibling 视为对放置输出位置的提示（可选）。没有指定此提示的确切语义。除非提供了类文件输出目录，否则 Sun 的编译器（例如 javac）将把类文件放到与原始源文件相同的目录下。要实现此行为，调用此方法时 javac 可以提供原始源文件作为 sibling。
+
+<p>如果返回的对象表示{@linkplain JavaFileObject.Kind#SOURCE 源}或{@linkplain JavaFileObject.Kind#CLASS 类}文件，则它必须是 {@link JavaFileObject} 的一个实例。
+
+<p>非正式情况下，在位置、包名称和相对名称的串联或 sibling 参数的同级元素中查找此方法返回的文件对象。有关示例，请参阅 {@link #getFileForInput getFileForInput}。
+
+@param location 位置
+@param packageName 包名称
+@param relativeName 相对名称
+@param sibling 用作位置提示的文件对象；可以为 {@code null}
+@return 文件对象
+@throws IllegalArgumentException 如果 sibling 对于此文件管理器是未知的，或者位置对于此文件管理器是未知的并且该文件管理器不支持未知位置，或者 {@code relativeName} 无效
+@throws IOException 如果发生 I/O 错误，或者已经调用了 {@link #close} 并且无法重新打开此文件管理器
+@throws IllegalStateException 如果已经调用了 {@link #close} 并且无法重新打开此文件管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.tools.JavaFileManager.flush() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新此文件管理器直接或间接为输出打开的所有资源。刷新已关闭的文件管理器没有任何效果。
+
+@throws IOException 如果发生 I/O 错误
+@see #close
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.tools.JavaFileManager.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放此文件管理器直接或间接打开的所有资源。这会使得此文件管理器无效，除非明确允许，否则对此对象上的方法或通过此对象获取的所有对象进行后续调用都将导致不确定的结果。但是，关闭已经关闭的文件管理器没有任何效果。
+
+@throws IOException 如果发生 I/O 错误
+@see #flush
+
+<!-- END DATA -->

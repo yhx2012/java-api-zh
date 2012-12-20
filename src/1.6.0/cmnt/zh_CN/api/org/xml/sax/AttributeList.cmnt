@@ -1,0 +1,137 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.AttributeList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于元素的属性规范的接口。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>这是用于报告元素的属性的原始 SAX1 接口。与新的 {@link org.xml.sax.Attributes Attributes} 接口不同，它不支持与名称空间相关的信息。</p>
+
+<p>当把属性列表作为 {@link org.xml.sax.DocumentHandler#startElement startElement} 事件的一部分提供时，该列表将返回仅在该事件范围内的有效结果；一旦事件处理程序将控制返回给解析器，则该属性列表无效。若要保存属性列表的永久性副本，请使用 SAX1 {@link org.xml.sax.helpers.AttributeListImpl AttributeListImpl} helper 类。</p>
+
+<p>属性列表只包括已经指定的或默认的属性：#IMPLIED 属性将不包括在内。</p>
+
+<p>对于 SAX 应用程序，有两种方法来获取来自 AttributeList 的信息。第一，它可以迭代整个列表：</p>
+
+ <pre>
+ public void startElement (String name, AttributeList atts) {
+   for (int i = 0; i &lt; atts.getLength(); i++) {
+     String name = atts.getName(i);
+     String type = atts.getType(i);
+     String value = atts.getValue(i);
+     [...]
+   }
+ }
+ </pre>
+
+<p>（注意，如果没有属性，则 getLength() 的结果将是零。）
+
+<p>作为选择，该应用程序可以请求特定属性的值或类型：</p>
+
+ <pre>
+ public void startElement (String name, AttributeList atts) {
+   String identifier = atts.getValue(&quot;id&quot;);
+   String label = atts.getValue(&quot;label&quot;);
+   [...]
+ }
+ </pre>
+
+@deprecated 此接口已经被 SAX2 {@link org.xml.sax.Attributes Attributes} 接口取代，后者包括名称空间支持。
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.DocumentHandler#startElement startElement
+@see org.xml.sax.helpers.AttributeListImpl AttributeListImpl
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.xml.sax.AttributeList.getLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中属性的个数。
+
+<p>SAX 解析器能够以任意顺序提供属性，而与其声明或指定的顺序无关。属性的个数可以为零。</p>
+
+@return 此列表中属性的个数。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.AttributeList.getName(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此列表中属性的名称（根据位置）。
+
+<p>名称必须是唯一的：SAX 解析器不能两次包括同一属性。将从列表中忽略不带有值的属性（那些在启动标记中不带指定值的声明的 #IMPLIED）。</p>
+
+<p>如果属性名称具有名称空间前缀，则仍将带上该前缀。</p>
+
+@param i 列表中属性的索引（从 0 开始）。
+@return 被索引的属性的名称，如果索引超出范围，则返回 null。
+@see #getLength 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.AttributeList.getType(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中属性的类型（根据位置）。
+
+<p>属性类型是下列字符串之一：&quot;CDATA&quot;、&quot;ID&quot;、&quot;IDREF&quot;、&quot;IDREFS&quot;、&quot;NMTOKEN&quot;、&quot;NMTOKENS&quot;、&quot;ENTITY&quot;、&quot;ENTITIES&quot; 或 &quot;NOTATION&quot;（始终用大写字母）。</p>
+
+<p>如果解析器尚未读取属性的声明，或者解析器没有报告属性类型，则必须返回值 &quot;CDATA&quot;，这一点在&ldquo;XML 1.0 建议书&rdquo;（第 3.3.3 条款，&ldquo;属性值标准化&rdquo;）中规定。</p>
+
+<p>对于不是注释的可枚举的属性，解析器将把类型报告为 &quot;NMTOKEN&quot;。</p>
+
+@param i 列表中属性的索引（从 0 开始）。
+@return 字符串形式的属性类型，如果索引超出范围，则返回 null。
+@see #getLength
+@see #getType(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.AttributeList.getValue(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中属性的值（根据位置）。
+
+<p>如果属性值是标记（IDREFS、ENTITIES 或 NMTOKENS）列表，则将把这些标记串接成用空白分开的单个字符串。</p>
+
+@param i 列表中属性的索引（从 0 开始）。
+@return 字符串形式的属性值，如果索引超出范围，则返回 null。
+@see #getLength
+@see #getValue(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.AttributeList.getType(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中属性的类型（根据名称）。
+
+<p>返回值与 getType(int) 的返回值相同。</p>
+
+<p>如果属性名称在文档中具有名称空间前缀，则应用程序必须在此处包括前缀。</p>
+
+@param name 属性的名称。
+@return 字符串形式的属性类型，如果不存在此类属性，则返回 null。
+@see #getType(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.AttributeList.getValue(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中属性的值（根据名称）。
+
+<p>返回值与 getValue(int) 的返回值相同。</p>
+
+<p>如果属性名称在文档中具有名称空间前缀，则应用程序必须在此处包括前缀。</p>
+
+@param name 要返回的属性的名称
+@return 字符串形式的属性值，如果不存在此类属性，则返回 null。
+@see #getValue(int)
+
+<!-- END DATA -->

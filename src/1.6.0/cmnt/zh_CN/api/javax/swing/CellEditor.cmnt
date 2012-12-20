@@ -1,0 +1,80 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.CellEditor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口定义任何通用编辑器应该能够实现的方法。 <p>
+
+让此接口启用复杂组件（编辑器的客户端），比如 <code>JTree</code> 和 <code>JTable</code>，从而允许任何一般编辑器编辑表单元格值、树单元格值等等。如果没有此一般编辑器接口，则 <code>JTable</code> 不得不了解特定编辑器，比如 <code>JTextField</code>、<code>JCheckBox</code>、<code>JComboBox</code> 等等。此外，如果没有此接口，则编辑器（如 <code>JTable</code>）的客户端无法使用用户或第三方 ISV 将来开发的其他任何编辑器。 <p>
+
+要使用此接口，创建新编辑器的开发人员可以用新的组件实现该接口。或者开发人员可以选择一个基于包装器的方法，提供一个实现 <code>CellEditor</code> 接口的辅助对象（请参见 <code>JCellEditor</code> 获取示例）。如果用户想将第三方 ISV 编辑器用于 <code>JTable</code>，但该 ISV 没有实现 <code>CellEditor</code> 接口，则包装器方法特别有用。用户可以只创建一个包含第三方编辑器对象实例的对象，并将 <code>CellEditor</code> API&ldquo;转换&rdquo;成第三方编辑器的 API。
+
+@see javax.swing.event.CellEditorListener
+
+@version 1.24 12/19/03
+@author Alan Chung
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.CellEditor.getCellEditorValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回编辑器中包含的值。
+@return 编辑器中包含的值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.CellEditor.isCellEditable(EventObject anEvent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+询问编辑器它是否可以使用 <code>anEvent</code> 开始进行编辑。<code>anEvent</code> 在将要调用的组件的坐标系统中。编辑器不能假定由 <code>getCellEditorComponent</code> 返回的 Component 已被安装。此方法供客户端使用，以避免不可能进行编辑时设置和安装编辑器组件所带来的花费。如果可以开始进行编辑，则此方法返回 true。
+ 
+@param	anEvent 编辑器考虑是否开始进行编辑时应该使用的事件
+@return 如果可开始进行编辑，则返回 true
+@see #shouldSelectCell
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.CellEditor.shouldSelectCell(EventObject anEvent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果应该选择正编辑的单元格，则返回 true，否则返回 false。通常，返回的值为 true，因为大多数情况下都应该选择正编辑的单元格。不过，通过返回 false 可以使选择不受某些类型的编辑更改的影响。例如，对于包含一列复选框的表，用户也许想在不改变选择的情况下能够更改这些复选框。（请参见 Netscape Communicator 来获得这样的示例）当然，这取决于编辑器的客户端是否使用返回的值，但是，如果它不想使用返回值的话，则不必使用。
+
+@param	anEvent  编辑器开始进行编辑时应该使用的事件
+@return  如果编辑器愿意选择正编辑的单元格，则返回 true；否则返回 false
+@see #isCellEditable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.CellEditor.stopCellEditing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知编辑器停止编辑并接受任何已部分编辑的值作为编辑器的值。如果编辑没有停止，则编辑器返回 false；这对已生效并且无法接受无效条目的编辑器很有用。
+
+@return 如果编辑已停止，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellEditor.cancelCellEditing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知编辑器取消编辑并且不接受任何已部分编辑的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellEditor.addCellEditorListener(CellEditorListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当编辑器停止运作或取消编辑时，向被通知的列表添加一个侦听器。
+
+@param	l  CellEditorListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.CellEditor.removeCellEditorListener(CellEditorListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从被通知的列表中移除一个侦听器
+
+@param	l  CellEditorListener
+
+<!-- END DATA -->

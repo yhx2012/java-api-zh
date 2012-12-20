@@ -1,0 +1,30 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.plaf.UIResource
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此接口用于标记由 ComponentUI 委托创建的对象。<code>ComponentUI.installUI()</code> 和 <code>ComponentUI.uninstallUI()</code> 方法可以使用此接口确定属性值是否已经被重写。例如，JList cellRenderer 属性只在其初始值为 null 时由 BasicListUI.installUI() 初始化：
+ <pre>
+ if (list.getCellRenderer() == null) {
+     list.setCellRenderer((ListCellRenderer)(UIManager.get(&quot;List.cellRenderer&quot;)));
+ }
+ </pre>
+在执行 uninstallUI() 时，如果该属性的值是 UIResource 的一个实例，则将该属性重置为 null：
+ <pre>
+ if (list.getCellRenderer() instanceof UIResource) {
+     list.setCellRenderer(null);
+ }
+</pre>
+此模式应用于除 java.awt.Component 属性 font、foreground 和 background 之外的所有属性。如果这些属性中有一个未被初始化，或者被显式设置为 null，则其容器将提供该值。因此，在调用 installUI() 来动态更新组件外观时，<code>&quot;== null&quot;</code> 是不可靠的。因此，在执行 installUI() 时，要检查当前值是否是一个 UIResource：
+<pre>
+ if (!(list.getFont() instanceof UIResource)) {
+     list.setFont(UIManager.getFont(&quot;List.font&quot;));
+ }
+ </pre>
+
+@see ComponentUI
+@version 1.10 12/19/03
+@author Hans Muller
+ 
+
+<!-- END DATA -->

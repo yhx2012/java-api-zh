@@ -1,0 +1,159 @@
+<!-- BEGIN KEY -->
+public abstract class javax.management.remote.JMXConnectorServer extends javax.management.NotificationBroadcasterSupport implements javax.management.remote.JMXConnectorServerMBean, javax.management.MBeanRegistration, javax.management.remote.JMXAddressable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>每个连接器服务器的超类。连接器服务器连接到 MBean 服务器。它侦听客户端连接请求并为每个请求创建连接。</p>
+
+<p>连接器服务器或者通过在该 MBean 服务器上注册该连接器服务器，或者通过将 MBean 服务器传给其构造方法来与 MBean 服务器关联。</p>
+
+<p>连接器服务器在创建时为非活动的。只有在调用了 {@link #start() start} 方法后，它才开始侦听客户端连接。当调用了 {@link #stop() stop} 方法，或者将连接器服务器从其 MBean 服务器注销后，连接器服务器停止侦听客户端连接。</p>
+
+<p>停止连接器服务器并不会将它从其 MBean 服务器注销。连接器服务器一旦停止就无法重新启动。</p>
+
+<p>客户端连接每次建立或断开都将发出一个类 {@link JMXConnectionNotification} 的通知。</p>
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.remote.JMXConnectorServer.AUTHENTICATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>为连接器服务器指定经验证的属性名称。此属性关联的值（如果有）必须是一个实现 {@link JMXAuthenticator} 接口的对象。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXConnectorServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个将注册为连接到 MBean 服务器的 MBean 的连接器服务器。此构造方法通常由 <code>createMBean</code> 方法之一在创建（在 MBean 服务器内）实现远程可用的连接器服务器时调用。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXConnectorServer(MBeanServer mbeanServer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个连接到给定 MBean 服务器的连接器服务器。使用这样的方法创建的连接器服务器可注册到一个不同的 MBean 服务器上。</p>
+
+@param mbeanServer 该连接器服务器连接到的 MBean 服务器。如果该连接器服务器将通过注册的方式连接到 MBean 服务器，则为 Null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.MBeanServer javax.management.remote.JMXConnectorServer.getMBeanServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回该连接器服务器连接到的 MBean 服务器。</p>
+
+@return 该连接器服务器连接到的 MBean 服务器，或者如果尚未连接到 MBean 服务器，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXConnector javax.management.remote.JMXConnectorServer.toJMXConnector(java.util.Map<java.lang.String, ?> env) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此连接器服务器的客户端 stub。客户端 stub 为一个可序列化的对象，其 {@link JMXConnector#connect(Map) connect} 方法可用于建立一个到此连接器服务器的新连接。</p>
+
+<p>给定的连接器不必支持生成客户端 stub。但是，由 JMX Remote API 指定的连接器必须支持生成客户端 stub（JMXMP Connector 和 RMI Connector）。</p>
+
+<p>此方法的默认实现使用 {@link #getAddress} 和 {@link JMXConnectorFactory} 生成 stub，其代码等效于：</p>
+
+ <pre>
+ JMXServiceURL addr = {@link #getAddress() getAddress()};
+ return {@link JMXConnectorFactory#newJMXConnector(JMXServiceURL, Map) 
+          JMXConnectorFactory.newJMXConnector(addr, env)};
+ </pre>
+
+<p>此代码不适用的连接器服务器必须重写此方法，这样或者实现适当的逻辑，或者抛出 {@link UnsupportedOperationException}。</p>
+
+@param env 客户端连接参数，与提供给 {@link JMXConnector#connect(Map) JMXConnector.connect(Map)} 的参数具有相同的类型。可以为 null，它等效于一个空映射。
+
+@return 可用于建立到此连接器服务器的新连接的客户端 stub。
+
+@exception UnsupportedOperationException 如果此连接器服务器不支持生成客户端 stub。
+
+@exception IllegalStateException 如果 JMXConnectorServer 未启动（请参阅 {@link JMXConnectorServerMBean#isActive()}）。
+
+@exception IOException 如果存在通信问题而导致无法创建 stub。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.MBeanNotificationInfo[] javax.management.remote.JMXConnectorServer.getNotificationInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回一个指示由该 MBean 发送的通知的数组。<code>JMXConnectorServer</code> 中的实现返回带一个元素的数组，这指示它可以发出在此类中定义的类型的类 {@link JMXConnectionNotification} 的通知。能够发出其他通知的子类应返回一个包含该元素和对其他通知的描述的数组。</p>
+
+@return 可能的通知的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.management.remote.JMXConnectorServer.connectionOpened(String connectionId, String message, Object userData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>打开新的客户端连接时由子类调用。将由 {@link #getConnectionIds()} 返回的 <code>connectionId</code> 添加到列表中，然后发出一个类型为 {@link JMXConnectionNotification#OPENED} 的 {@link JMXConnectionNotification}。</p>
+
+@param connectionId 新连接的 ID。它必须与任何由此连接器服务器先前打开的连接的 ID 不一样。
+
+@param message 发出的 {@link JMXConnectionNotification} 的消息。可以为 null。请参阅 {@link Notification#getMessage()}。
+
+@param userData 发出的 {@link JMXConnectionNotification} 的 <code>userData</code>。可以为 null。请参阅 {@link Notification#getUserData()}。
+
+@exception NullPointerException 如果 <code>connectionId</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.management.remote.JMXConnectorServer.connectionClosed(String connectionId, String message, Object userData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>正常关闭客户端连接时由子类调用。从列表中移除由 {@link #getConnectionIds()} 返回的 <code>connectionId</code>，然后发出一个类型为 {@link JMXConnectionNotification#CLOSED} 的 {@link JMXConnectionNotification}。</p>
+
+@param connectionId 已关闭连接的 ID。
+
+@param message 发出的 {@link JMXConnectionNotification} 的消息。可以为 null。请参阅 {@link Notification#getMessage()}。
+
+@param userData 发出的 {@link JMXConnectionNotification} 的 <code>userData</code>。可以为 null。请参阅 {@link Notification#getUserData()}。
+
+@exception NullPointerException 如果 <code>connectionId</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.management.remote.JMXConnectorServer.connectionFailed(String connectionId, String message, Object userData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>客户端连接失败时由子类调用。从列表中移除由 {@link #getConnectionIds()} 返回的 <code>connectionId</code>，然后发出一个类型为 {@link JMXConnectionNotification#FAILED} 的 {@link JMXConnectionNotification}。</p>
+
+@param connectionId 失败连接的 ID。
+
+@param message 发出的 {@link JMXConnectionNotification} 的消息。可以为 null。请参阅 {@link Notification#getMessage()}。
+
+@param userData 发出的 {@link JMXConnectionNotification} 的 <code>userData</code>。可以为 null。请参阅 {@link Notification#getUserData()}。
+
+@exception NullPointerException 如果 <code>connectionId</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.ObjectName javax.management.remote.JMXConnectorServer.preRegister(MBeanServer mbs, ObjectName name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>当此连接器服务器在 MBean 服务器上注册时，由该 MBean 服务器调用此方法。此连接器服务器连接到此 MBean 服务器上且其 {@link #getMBeanServer()} 方法将返回 <code>mbs</code>。</p>
+
+<p>如果该连接器服务器已连接到 MBean 服务器，则该方法没有任何作用。它所连接到的 MBean 服务器不一定就是所注册的 MBean 服务器。</p>
+
+@param mbs 该连接器服务器注册所在的 MBean 服务器。
+
+@param name MBean 的对象名。
+
+@return MBean 将注册的名称。
+
+@exception NullPointerException 如果 <code>mbs</code> 或 <code>name</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.remote.JMXConnectorServer.preDeregister() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>当此连接器服务器从 MBean 服务器上注销时，由该 MBean 服务器调用此方法。如果该连接器服务器以注册的方式连接到该 MBean 服务器，并且如果该连接器服务器仍为活动状态，则注销它将调用 {@link #stop stop} 方法。如果 <code>stop</code> 方法抛出一个异常，则注销尝试将失败。建议在注销 MBean 之前显式调用 <code>stop</code> 方法。</p>
+
+@exception IOException 如果异常由 {@link #stop stop} 方法抛出。
+
+<!-- END DATA -->

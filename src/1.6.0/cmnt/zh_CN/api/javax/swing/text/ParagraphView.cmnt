@@ -1,0 +1,289 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.ParagraphView extends javax.swing.text.FlowView implements javax.swing.text.TabExpander
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存在简单换行的段落的视图，其支持多种字体、颜色、组件、图标等。它基本上是周围有空白的纵向框。该框的内容是一组行，这些行是特殊的横向框。此视图创建表示段落元素的子元素的视图集合。如果这些视图合适，则可将其中的每个视图直接放到行中；否则，将调用 <code>breakView</code> 方法尝试将视图切割成合适的片段。
+
+@author  Timothy Prinzing
+@author  Scott Violet
+@author  Igor Kushnirskiy
+@version 1.90 04/16/03
+@see     View
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ParagraphView.firstLineIndent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+相对于左边的 inset 进行的第一行的缩进。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.ParagraphView(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建给定元素的 <code>ParagraphView</code>。
+
+@param elem  此视图负责的元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ParagraphView.setJustification(int j)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置对齐方式的类型。
+
+@param j  为下列值之一：
+ <ul>
+ <li><code>StyleConstants.ALIGN_LEFT</code>
+ <li><code>StyleConstants.ALIGN_CENTER</code>
+ <li><code>StyleConstants.ALIGN_RIGHT</code>
+ </ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ParagraphView.setLineSpacing(float ls)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置行间距。
+
+@param ls  该值为行高的因子
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ParagraphView.setFirstLineIndent(float fi)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置第一行的行缩进量。
+
+@param fi  以磅 (point) 为单位的值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ParagraphView.setPropertiesFromAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性集设置缓存的属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ParagraphView.getLayoutViewCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此视图负责的视图数。段落的子视图是已用于安排表示子元素的 <code>View</code> 片段的行。这是平铺在两个维数之间的视图数，此数应等于此视图负责的元素的子元素数。
+
+@return  此 <code>ParagraphView</code> 负责的视图数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.ParagraphView.getLayoutView(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 <code>index</code> 处的视图。段落的子视图是已用于安排表示子元素的 <code>View</code> 片段的行。此方法返回负责子元素索引的视图（拆分前）。这些是从工厂生成（以表示子元素）且用于布局的 View。
+
+@param index  所需视图的 <code>index</code>
+@return  <code>index</code> 处的视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ParagraphView.adjustRow(ParagraphView.Row r, int desiredSpan, int x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如有可能，调整给定行以使其处于布局区域内。默认情况下，此操作将试图能在最接近行结尾的位置找到最高拆分权重。如果遇到强制拆分，则该拆分将定位于强制拆分的位置。
+ <p>
+这是内部用法，不应直接使用。
+ 
+@param r  要调整到当前布局区域内的行
+@param desiredSpan  当前布局区域，该值 &gt;= 0
+@param x  r 开始处的位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ParagraphView.getNextNorthSouthVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在东或西方向返回光标的下一个可视位置。通过 <code>CompositeView</code> 重写。
+@param pos  模型中的位置
+@param b  <code>Position.Bias.Forward</code> 或 <code>Position.Bias.Backward</code>
+@param a  要呈现的分配区域
+@param direction  <code>SwingConstants.NORTH</code> 或 <code>SwingConstants.SOUTH</code>
+@param biasRet  包含以此方法查到的偏差的数组
+@return  模型中表示下一个位置可视处的位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ParagraphView.getClosestPositionTo(int pos, Position.Bias b, Shape a, int direction, javax.swing.text.Position.Bias[] biasRet, int rowIndex, int x) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最接近 <code>x</code> 处的模型位置。<code>rowIndex</code> 是要在其中查找的视图对应的索引。
+@param pos  模型中的位置
+@param a  要呈现的分配区域
+@param direction  它是以下值之一：
+ <ul>
+ <li><code>SwingConstants.NORTH</code>
+ <li><code>SwingConstants.SOUTH</code>
+ </ul>
+@param biasRet  包含在此方法中查到的偏差的数组
+@param rowIndex  视图的索引
+@param x  需要的 x 坐标
+@return  最接近 <code>x</code> 的模型位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.ParagraphView.flipEastAndWestAtEnds(int position, Position.Bias bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定下一个视图要布置的方向。假定 <code>View</code> 位于索引 n 处，通常 <code>View</code> 是从左向右放置的，所以在东面的 <code>View</code> 将位于索引 n + 1 处，在西面的 <code>View</code> 将位于索引 n - 1 处。在某些情况下（例如双向文本中）有可能东面的 <code>View</code> 不是位于 n + 1 处，而是位于 n - 1 处，或者西面的 <code>View</code> 不是位于 n - 1 处，而是位于索引 n + 1 处。这种情况下，该方法将返回 true，指示 <code>View</code> 按降序放置。
+ <p>
+如果文本在某个位置从右向左布置，则返回 true；否则返回 false。
+
+@param position  模型中的位置
+@param bias  <code>Position.Bias.Forward</code> 或 <code>Position.Bias.Backward</code>
+@return  如果文本在某个位置从右向左布置，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.ParagraphView.getFlowSpan(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定子索引流入的约束区域。
+@param index  查询视图的索引
+@return  在 <code>index</code> 处给定视图的约束区域
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.ParagraphView.getFlowStart(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取沿流轴的流区域开始位置。
+@param index  查询视图的索引
+@return  在 <code>index</code> 处给定视图的位置
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.ParagraphView.createRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于在流中存储子级行值的 <code>View</code>。
+@return 新的 <code>View</code>
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.ParagraphView.nextTabStop(float x, int tabOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定了参照位置的下一个制表符位位置。此视图实现制表符坐标系，并在布局进程中在逻辑子级上调用 <code>getTabbedSpan</code>，以确定该子级所需的区域。逻辑子级可以将其制表符扩展委托给知道如何扩展制表符的段落。<code>LabelView</code> 是将其制表符扩展需要委托给段落的视图的示例。
+ <p>
+实现此方法以尝试在段落元素的属性集合中查找 <code>TabSet</code>。如果能找到一个制表符集，将使用其设置；否则将提供默认扩展。制表符扩展的基本位置是段落左部最近分配的位置（即子级布局的依据）。
+
+@param x  X 引用位置
+@param tabOffset  在文本流内放置制表符的位置，该值 &gt;= 0
+@return  制表符扩展的尾端，该值 &gt;= 0
+@see TabSet
+@see TabStop
+@see LabelView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.TabSet javax.swing.text.ParagraphView.getTabSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取计算制表符时使用的 <code>Tabset</code>。
+
+@return  <code>TabSet</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.swing.text.ParagraphView.getPartialSize(int startOffset, int endOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>startOffset</code> 和 <code>endOffset</code> 之间的视图使用的大小。如果子视图实现 <code>TabableView</code> 接口，则此方法将使用 <code>getPartialView</code> 计算该大小。如果需要某个大小，并且 <code>View</code> 未实现 <code>TabableView</code> 接口，则使用 <code>preferredSpan</code>。
+
+@param startOffset 起始文档偏移量，该值 &gt;= 0
+@param endOffset 结束文档偏移量，该值 &gt;= startOffset
+@return  大小，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ParagraphView.findOffsetToCharactersInString(char[] string, int start)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>string</code> 中字符查找文档中的下一个字符，起点是偏移量 <code>start</code>。如果找不到字符，则返回 -1。
+
+@param string  由字符组成的字符串
+@param  start 模型中的起始位置，该值 &gt;= 0
+@return  文档偏移量；如果找不到字符，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.swing.text.ParagraphView.getTabBase()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从中计算制表符的位置。
+@return  从中计算制表符的位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ParagraphView.paint(Graphics g, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的呈现面和该面上的区域进行呈现。实现此方法以便在拆分用作制表符计算的基坐标之后委托给超类。
+
+@param g 要使用的呈现表面
+@param a 分配的要在其中呈现的区域
+@see View#paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.ParagraphView.getAlignment(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某轴所需的对齐方式。实现此方法以使第一行中心沿 y 轴对齐，而默认是沿 x 轴对齐。
+
+@param axis 可以是 <code>View.X_AXIS</code>，也可以是 <code>View.Y_AXIS</code>
+@return  所需的对齐方式。这应是 0.0 和 1.0 之间的值，其中 0.0 指示原点对齐，1.0 指示原点以外的整个区域对齐。0.5 对齐方式指视图中心对齐。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.ParagraphView.breakView(int axis, float len, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以给定的长度在给定的轴上拆分此视图。
+ <p>
+<code>ParagraphView</code> 实例只可沿 <code>Y_AXIS</code> 且只在 <code>len</code> 位于第一行之后时拆分。
+
+@param axis 可以是 <code>View.X_AXIS</code>，也可以是 <code>View.Y_AXIS</code>
+@param len 指定沿给定轴可能需要拆分的位置，该值 &gt;= 0
+@param a 视图的当前分配区域
+@return 如果视图可以拆分，则返回表示给定区域的视图片段；如果视图不支持拆分行为，则返回视图本身
+@see View#breakView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.ParagraphView.getBreakWeight(int axis, float len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定位置的拆分权重。
+ <p>
+<code>ParagraphView</code> 实例只沿 <code>Y_AXIS</code> 且只在 <code>len</code> 位于第一行之后拆分。如果长度小于一行，则返回 <code>BadBreakWeight</code> 的值。
+
+@param axis 可以是 <code>View.X_AXIS</code>，也可以是 <code>View.Y_AXIS</code>
+@param len 指定可能需要拆分的位置，该值 &gt;= 0
+@return 指示在此处拆分的可能性；<code>GoodBreakWeight</code> 或 <code>BadBreakWeight</code>
+@see View#getBreakWeight
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ParagraphView.changedUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知文档中此视图负责的某个位置的属性已更改。
+
+@param changes 来自相关文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#changedUpdate
+
+<!-- END DATA -->

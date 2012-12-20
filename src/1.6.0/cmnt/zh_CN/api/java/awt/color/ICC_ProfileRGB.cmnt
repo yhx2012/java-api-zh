@@ -1,0 +1,108 @@
+<!-- BEGIN KEY -->
+public class java.awt.color.ICC_ProfileRGB extends java.awt.color.ICC_Profile
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ICC_ProfileRGB 类是 ICC_Profile 类的子类，它表示满足以下标准的配置文件： 
+ <ul>
+<li>配置文件的颜色空间类型是 RGB。</li>
+<li>配置文件包括 <code>redColorantTag</code>、<code>greenColorantTag</code>、<code>blueColorantTag</code>、<code>redTRCTag</code>、<code>greenTRCTag</code>、<code>blueTRCTag</code> 和 <code>mediaWhitePointTag</code> 标记。</li>
+ </ul>  
+当满足这些条件时，<code>ICC_Profile</code> 的 <code>getInstance</code> 方法将返回一个 <code>ICC_ProfileRGB</code> 对象。三个分量、基于矩阵输入的配置文件和 RGB 显示配置文件是这种类型的配置文件示例。
+ <p>
+此配置文件类提供了颜色变换矩阵和查找表，Java 或本机方法在某些情况下可直接使用它们来优化颜色转换。
+ <p>
+要从设备配置文件颜色空间转换到 CIEXYZ 配置文件连接空间，首先应该由查找表通过色调再现曲线 (TRC) 来线性化每种设备颜色分量。线性化之后的 RGB 分量通过一个由 RGB 颜料所构造的 3x3 矩阵转换为 CIEXYZ PCS。
+ <pre>
+
+ &nbsp;               linearR = redTRC[deviceR]
+
+ &nbsp;               linearG = greenTRC[deviceG]
+ 
+ &nbsp;               linearB = blueTRC[deviceB]
+ 
+ &nbsp; _      _       _                                             _   _         _
+ &nbsp;[  PCSX  ]     [  redColorantX  greenColorantX  blueColorantX  ] [  linearR  ]
+ &nbsp;[        ]     [                                               ] [           ]
+ &nbsp;[  PCSY  ]  =  [  redColorantY  greenColorantY  blueColorantY  ] [  linearG  ]
+ &nbsp;[        ]     [                                               ] [           ]
+ &nbsp;[_ PCSZ _]     [_ redColorantZ  greenColorantZ  blueColorantZ _] [_ linearB _]
+ 
+ </pre>
+可用以下方式执行逆向转换：通过上面 3x3 矩阵的逆矩阵可将 PCS XYZ 分量转换为线性 RGB 分量，然后通过逆 TRC 将线性 RGB 转换为设备 RGB。
+ <p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.color.ICC_ProfileRGB.REDCOMPONENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于获取红色分量的 gamma 值或 TRC。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.color.ICC_ProfileRGB.GREENCOMPONENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于获取绿色分量的 gamma 值或 TRC。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.color.ICC_ProfileRGB.BLUECOMPONENT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于获取蓝色分量的 gamma 值或 TRC。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.color.ICC_ProfileRGB.getMediaWhitePoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含配置文件的 <CODE>mediaWhitePointTag</CODE> 分量的数组。
+
+@return 一个 3 元素的 <CODE>float</CODE> 数组，它包含配置文件的 <CODE>mediaWhitePointTag</CODE> 的 x、y 和 z 分量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[][] java.awt.color.ICC_ProfileRGB.getMatrix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个由配置文件的 <CODE>redColorantTag</CODE>、<CODE>greenColorantTag</CODE> 和 <CODE>blueColorantTag</CODE> 的 X、Y 和 Z 分量构造的 3x3 <CODE>float</CODE> 矩阵。
+ <p>
+此矩阵可用于配置文件的正向颜色转换，即从配置文件颜色空间到 CIEXYZ PCS 的转变。
+
+@return 一个包含配置文件的 <CODE>redColorantTag</CODE>、<CODE>greenColorantTag</CODE> 和 <CODE>blueColorantTag</CODE> 的 X、Y 和 Z 分量的 3x3 <CODE>float</CODE> 数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.color.ICC_ProfileRGB.getGamma(int component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示特定分量色调再现曲线 (TRC) 的 gamma 值。component 参数必须是 REDCOMPONENT、GREENCOMPONENT 或 BLUECOMPONENT 三者之一。  
+ <p>
+如果配置文件将相应分量的 TRC 表示为表，而不是单个 gamma 值，则抛出异常。在这种情况下，可通过 {@link #getTRC(int)} 方法获得实际的表。使用 gamma 值时，按如下方式计算线性分量（R、G 或 B）：
+ <pre>
+ 
+ &nbsp;                                         gamma
+ &nbsp;        linearComponent = deviceComponent
+
+</pre>
+@param component <CODE>ICC_ProfileRGB</CODE> 常量，表示要检索其 TRC 的分量
+@return float 类型的 gamma 值。
+@exception ProfileDataException 如果配置文件没有将相应的 TRC 指定为单个 gamma 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short[] java.awt.color.ICC_ProfileRGB.getTRC(int component)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以数组形式返回特定分量的 TRC。Component 必须是 <code>REDCOMPONENT</code>、<code>GREENCOMPONENT</code> 或 <code>BLUECOMPONENT</code> 三者之一。否则该返回数组表示一个查找表，在理论上，其输入分量值范围是 [0.0, 1.0]。值 0.0 对应数组索引 0，值 1.0 则对应数组索引 length-1。对于数组中无确切对应某个索引的输入值，可以使用插值法为其生成输出值。输出值也与范围 [0.0, 1.0] 呈线性对应。数组值 0x0000 表示值 0.0，0xFFFF 则表示值 1.0。换句话说，尽管这些值是以 <code>short</code> 数组的形式返回的，但它们实际上是无符号的 <code>short</code> 值。
+
+如果配置文件已经将相应的 TRC 指定为线性（gamma＝1.0）或一个简单的 gamma 值，则此方法抛出异常。在这种情况下，应该使用 {@link #getGamma(int)} 方法获取 gamma 值。      
+
+@param component <CODE>ICC_ProfileRGB</CODE> 常量，表示要检索其 TRC 的分量：<CODE>REDCOMPONENT</CODE>、<CODE>GREENCOMPONENT</CODE> 或 <CODE>BLUECOMPONENT</CODE>。
+
+@return 表示 TRC 的 short 数组。
+@exception ProfileDataException 如果配置文件没有将相应的 TRC 指定为一个表。
+
+<!-- END DATA -->

@@ -1,0 +1,605 @@
+<!-- BEGIN KEY -->
+public class java.awt.datatransfer.DataFlavor extends java.lang.Object implements java.io.Externalizable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code DataFlavor} 提供有关数据的元信息。{@code DataFlavor} 通常用于访问剪切板上的数据，或者在执行拖放操作时使用。
+ <p>
+ {@code DataFlavor} 实例封装 <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>
+ 和 <a href="http://www.ietf.org/rfc/rfc2046.txt">RFC 2046</a> 中定义的内容类型。内容类型通常被称为 MIME 类型。
+ <p>
+ 内容类型由媒体类型（被称为基本类型）、子类型和可选参数组成。关于 MIME 类型的语法的详细信息，请参阅 <a href="http://www.ietf.org/rfc/rfc2045.txt">RFC 2045</a>。
+ <p>
+ JRE 数据传输实现将 MIME 类型的参数 &quot;class&quot; 解释为<B>一个表示形式类</b>。表示形式类反映将被传输的对象的类。换句话说，表示形式类是由 {@link Transferable#getTransferData} 返回的对象的类型。例如，{@link #imageFlavor} 的 MIME 类型是 {@code "image/x-java-image;class=java.awt.Image"}，基本类型是 {@code image}，子类型是 {@code x-java-image}，表示形式类是 {@code java.awt.Image}。当调用 {@code getTransferData}，且 {@code DataFlavor} 为 {@code imageFlavor} 时，返回 {@code java.awt.Image} 的实例。要重点注意的是，{@code DataFlavor} 不会依据表示形式类进行任何错误检查。由 {@code DataFlavor} 的使用者（如 {@code Transferable}）决定是否遵守表示形式类。
+ <br>
+ 注意，如果在创建 {@code DataFlavor} 时没有指定表示形式类，则使用默认表示形式类。有关 {@code DataFlavor} 的构造方法，请参阅适当的文档。
+ <p>
+ 此外，具有 &quot;text&quot; 基本 MIME 类型的 {@code DataFlavor} 实例可能有一个 &quot;charset&quot; 参数。有关 &quot;text&quot; MIME 类型和 &quot;charset&quot; 参数的详细信息，请参阅 <a href="http://www.ietf.org/rfc/rfc2046.txt">RFC 2046</a> 和
+ {@link #selectBestTextFlavor} 。
+ <p>
+ {@code DataFlavors} 的相等性由基本类型、子类型和表示形式类决定。有关详细信息，请参阅 {@link #equals(DataFlavor)}。在确定相等性时，所有可选参数都被忽略。例如，以下代码产生的两个 {@code DataFlavors} 被认为是相等的：
+ <pre>
+   DataFlavor flavor1 = new DataFlavor(Object.class, &quot;X-test/test; class=&lt;java.lang.Object&gt;; foo=bar&quot;);
+   DataFlavor flavor2 = new DataFlavor(Object.class, &quot;X-test/test; class=&lt;java.lang.Object&gt;; x=y&quot;);
+   // The following returns true.
+   flavor1.equals(flavor2);
+ </pre>
+ 正如上面提到的那样，{@code flavor1} 和 {@code flavor2} 被认为是相等的。同样地，请求 {@code Transferable} 或 {@code DataFlavor} 将返回相同的结果。
+ <p>
+ 有关在 Swing 中使用数据传输的更多信息，请参阅 <em>Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">How to Use Drag and Drop and Data Transfer</a> 一节。
+
+ @version     1.83, 07/28/06
+ @author      Blake Sullivan
+ @author      Laurence P. G. Cable
+ @author      Jeff Dunn
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.stringFlavor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataFlavor</code> 表示 Java Unicode String 类，其中：
+ <pre>
+     representationClass = java.lang.String
+     mimeType           = &quot;application/x-java-serialized-object&quot;        
+ </pre> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.imageFlavor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataFlavor</code> 表示 Java Image 类，其中：
+ <pre>
+     representationClass = java.awt.Image
+     mimeType            = &quot;image/x-java-image&quot;
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.plainTextFlavor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataFlavor</code> 表示使用 Unicode 编码的纯文本，其中：
+ <pre>
+     representationClass = InputStream
+     mimeType            = &quot;text/plain; charset=unicode&quot;
+ </pre>
+此 <code>DataFlavor</code> 已<b>过时</b>，因为 (1) 其表示形式为 InputStream，一个基于 8 位的表示形式，而 Unicode 是一个 16 位的字符集；(2) charset &quot;unicode&quot; 意义不明确。&quot;unicode&quot; 意味着特定平台的 Unicode 实现，而不是跨平台的实现。
+
+@deprecated 从 1.3 开始。使用 <code>DataFlavor.getReaderForText(Transferable)</code> 代替 <code>Transferable.getTransferData(DataFlavor.plainTextFlavor)</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.awt.datatransfer.DataFlavor.javaSerializedObjectMimeType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+MIME Content 类型的 application/x-java-serialized-object 表示已变得持久的 Java 对象的图形。与此 <code>DataFlavor</code> 关联的表示形式类可以标识对象的 Java 类型，这里的对象指调用 <code>java.awt.datatransfer.getTransferData</code> 时作为引用返回的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.javaFileListFlavor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要将文件列表传入 Java（及底层平台）或从中传出，需要使用此类型/子类型的 <code>DataFlavor</code> 和 <code>java.util.List</code> 的表示形式类。要求/保证列表的每个元素都是 <code>java.io.File</code> 类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.awt.datatransfer.DataFlavor.javaJVMLocalObjectMimeType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要将一个引用传输到不具有关联 MIME Content 类型的任意 Java 对象引用（跨越同一 JVM 中的 <code>Transferable</code> 接口），需要使用具有此类型/子类型的 <code>DataFlavor</code>，其中 <code>representationClass</code> 等于跨越 <code>Transferable</code> 传递的类/接口的类型。
+ <p>
+对于具有此 MIME Content 类型的 <code>DataFlavor</code>，从 <code>Transferable.getTransferData</code> 返回的对象引用必须是 <code>DataFlavor</code> 的表示形式类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.awt.datatransfer.DataFlavor.javaRemoteObjectMimeType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了通过拖放 <code>ACTION_LINK</code> 操作将活动链接传递到 Remote 对象，应该使用 Mime Content 类型的 application/x-java-remote-object，其中 <code>DataFlavor</code> 的表示形式类表示要传输的 <code>Remote</code> 接口的类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>DataFlavor</code>。提供此构造方法的目的只是为了支持 <code>Externalizable</code> 接口。它不用于公共（客户端）用途。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor(java.lang.Class<?> representationClass, String humanPresentableName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个表示 Java 类的 <code>DataFlavor</code>。
+ <p>
+返回的 <code>DataFlavor</code> 将具有以下特征：
+ <pre>
+    representationClass = representationClass
+    mimeType            = application/x-java-serialized-object        
+ </pre>
+@param representationClass 用于在此 flavor 中传输数据的类
+@param humanPresentableName 用于标识此 flavor 的可读字符串；如果此参数为 <code>null</code>，则使用 MIME Content 类型的值
+@exception NullPointerException 如果 <code>representationClass</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor(String mimeType, String humanPresentableName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个表示 <code>MimeType</code> 的 <code>DataFlavor</code>。
+ <p>
+返回的 <code>DataFlavor</code> 将具有以下特征：
+ <p>
+如果 <code>mimeType</code> 为 &quot;application/x-java-serialized-object; class=&lt;representation class&gt;&quot;，则结果与调用 <code>new DataFlavor(Class:forName(&lt;representation class&gt;)</code> 相同。
+ <p>
+否则：
+ <pre>
+     representationClass = InputStream
+     mimeType            = mimeType         
+ </pre>
+@param mimeType 用于标识此 flavor 的 MIME 类型的字符串；如果 <code>mimeType</code> 没有指定 &quot;class=&quot; 参数，或者没有成功地加载类，则抛出 <code>IllegalArgumentException</code>
+@param humanPresentableName 用于标识此 flavor 的可读字符串；如果此参数为 <code>null</code>，则使用 MIME Content 类型的值
+@exception IllegalArgumentException 如果 <code>mimeType</code> 无效或者没有成功加载类
+@exception NullPointerException 如果 <code>mimeType</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor(String mimeType, String humanPresentableName, ClassLoader classLoader) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个表示 <code>MimeType</code> 的 <code>DataFlavor</code>。
+ <p>
+返回的 <code>DataFlavor</code> 将具有以下特征：
+ <p>
+如果 mimeType 为 &quot;application/x-java-serialized-object; class=&lt;representation class&gt;&quot;，则结果与调用 <code>new DataFlavor(Class:forName(&lt;representation class&gt;)</code> 相同。
+ <p>
+否则：
+ <pre>
+     representationClass = InputStream
+     mimeType            = mimeType         
+ </pre>
+@param mimeType 用于标识此 flavor 的 MIME 类型的字符串
+@param humanPresentableName 用于标识此 flavor 的可读字符串
+@param classLoader 要使用的类加载器
+@exception ClassNotFoundException 如果没有加载类
+@exception IllegalArgumentException 如果 <code>mimeType</code> 无效
+@exception NullPointerException 如果 <code>mimeType</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor(String mimeType) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>mimeType</code> 字符串构造 <code>DataFlavor</code>。该字符串可以指定 &quot;class=<fully specified Java class name>&quot; 参数，以创建具有所需表示形式类的 <code>DataFlavor</code>。如果字符串不包含 &quot;class=&quot; 参数，则使用 <code>java.io.InputStream</code> 作为默认值。
+ 
+@param mimeType 用于标识此 flavor 的 MIME 类型的字符串；如果没有成功加载 &quot;class=&quot; 参数指定的类，则抛出 <code>ClassNotFoundException</code>
+@exception ClassNotFoundException 如果没有加载类
+@exception IllegalArgumentException 如果 <code>mimeType</code> 无效
+@exception NullPointerException 如果 <code>mimeType</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.Class<?> java.awt.datatransfer.DataFlavor.tryToLoadClass(String className, ClassLoader fallback) throws java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图从以下位置加载类：引导加载器、系统加载器、上下文加载器（如果存在）和指定的最终加载器。
+
+@param className 要加载的类的名称
+@param fallback 回退加载器
+@return 加载的类
+@exception ClassNotFoundException 如果未找到类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 <code>DataFlavor</code> 及其参数的字符串表示形式。得到的 <code>String</code> 包含 <code>DataFlavor</code> 类的名称、此 flavor 的 MIME 类型及其表示形式类。如果此 flavor 具有 &quot;text&quot; 的基本 MIME 类型、支持 charset 参数并且具有编码的表示形式，则还包括 flavor 的 charset。有关支持 charset 参数的文本 flavor 列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@return  此 <code>DataFlavor</code> 的字符串表示形式
+@see #selectBestTextFlavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.getTextPlainUnicodeFlavor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示具有 Unicode 编码的纯文本的 <code>DataFlavor</code>，其中：
+ <pre>
+     representationClass = java.io.InputStream
+     mimeType            = &quot;text/plain;
+                            charset=&lt;platform default Unicode encoding&gt;&quot;
+ </pre>
+Sun 的 Microsoft Windows 实现使用编码 <code>utf-16le</code>。Sun 的 Solaris 和 Linux 实现使用编码 <code>iso-10646-ucs-2</code>。
+
+@return 表示具有 Unicode 编码的纯文本的 <code>DataFlavor</code>
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.datatransfer.DataFlavor java.awt.datatransfer.DataFlavor.selectBestTextFlavor(java.awt.datatransfer.DataFlavor[] availableFlavors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>DataFlavor</code> 数组中选择最佳文本 <code>DataFlavor</code>。只能选择 <code>DataFlavor.stringFlavor</code>、等效 flavor 和具有基本 MIME &quot;text&quot; 类型的 flavor。
+ <p>
+首先 Flavor 按照其 MIME 类型排序，顺序如下所示：
+ <ul>
+ <li>&quot;text/sgml&quot;
+ <li>&quot;text/xml&quot;
+ <li>&quot;text/html&quot;
+ <li>&quot;text/rtf&quot;
+ <li>&quot;text/enriched&quot;
+ <li>&quot;text/richtext&quot;
+ <li>&quot;text/uri-list&quot;
+ <li>&quot;text/tab-separated-values&quot;
+ <li>&quot;text/t140&quot;
+ <li>&quot;text/rfc822-headers&quot;
+ <li>&quot;text/parityfec&quot;
+ <li>&quot;text/directory&quot;
+ <li>&quot;text/css&quot;
+ <li>&quot;text/calendar&quot;
+ <li>&quot;application/x-java-serialized-object&quot;
+ <li>&quot;text/plain&quot;
+ <li>&quot;text/&lt;other&gt;&quot;
+ </ul>
+<p>例如，在 &quot;text/html&quot; 上选择 &quot;text/sgml&quot;，在 <code>DataFlavor.plainTextFlavor</code> 上选择 <code>DataFlavor.stringFlavor</code>。
+ <p>
+如果两个或更多 flavor 共享数组中的最佳 MIME 类型，则需要检查 MIME 类型以查看它是否支持 charset 参数。
+ <p>
+以下 MIME 类型支持（或被视为支持）charset 参数：
+ <ul>
+ <li>&quot;text/sgml&quot;
+ <li>&quot;text/xml&quot;
+ <li>&quot;text/html&quot;
+ <li>&quot;text/enriched&quot;
+ <li>&quot;text/richtext&quot;
+ <li>&quot;text/uri-list&quot;
+ <li>&quot;text/directory&quot;
+ <li>&quot;text/css&quot;
+ <li>&quot;text/calendar&quot;
+ <li>&quot;application/x-java-serialized-object&quot;
+ <li>&quot;text/plain&quot;
+ </ul>
+以下 MIME 类型不支持（或被视为不支持）charset 参数：
+ <ul>
+ <li>&quot;text/rtf&quot;
+ <li>&quot;text/tab-separated-values&quot;
+ <li>&quot;text/t140&quot;
+ <li>&quot;text/rfc822-headers&quot;
+ <li>&quot;text/parityfec&quot;
+ </ul>
+对于 &quot;text/&lt;other&gt;&quot; MIME 类型，首先 JRE 需要确定 MIME 类型是否支持 charset 参数，它将检查该参数是否显式列入任意选择的使用该 MIME 类型的 <code>DataFlavor</code> 中。如果是这样，则 JRE 将假定从该点开始，MIME 类型支持 charset 参数，并且不再进行检查。如果没有显式列入该参数，则 JRE 将假定从该点开始，MIME 类型不支持 charset 参数，并且不再进行检查。因为此检查是在任意选择的 <code>DataFlavor</code> 上执行的，所以如果 MIME 类型支持 charset 参数，开发人员就必须确保所有具有该 &quot;text/&lt;other&gt;&quot; MIME 类型的 <code>DataFlavor</code> 指定了该参数。开发人员不应该依赖 JRE 用平台的默认 charset 来替代 &quot;text/&lt;other&gt;&quot; DataFlavor。不遵守此限制将导致不确定的行为。
+ <p>
+如果数组中的最佳 MIME 类型不支持 charset 参数，则共享 MIME 类型的 flavor 按照其表示形式类排序，顺序如下所示：<code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code>、<code>[B</code>、&lt;其他&gt;。
+ <p>
+如果两个或多个 flavor 共享最佳表示形式类，或者任何 flavor 都不具有三个指定的表示形式中的一个，则随意地选择这些 flavor 中的一个。
+ <p>
+如果数组中的最佳 MIME 类型支持 charset 参数，则共享 MIME 类型的 flavor 按照其表示形式类排序，顺序如下所示：<code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code>、<code>[C</code>、&lt;其他&gt;。
+ <p>
+如果两个或多个 flavor 共享最佳表示形式类，并且该表示形式是明确列出的四个表示形式中的一个，则非随意地选择这些 flavor 中的一个。但是，如果任何 flavor 都不是四个指定的表示形式中的一个，则通过其 charset 对 flavor 排序。Unicode charset，如 &quot;UTF-16&quot;、&quot;UTF-8&quot;、&quot;UTF-16BE&quot;、&quot;UTF-16LE&quot; 及其别名被认为是最佳的。其次选择平台默认的 charset 及其别名。&quot;US-ASCII&quot; 及其别名最差。所有其他 charset 都是按字母顺序选择的，但是只考虑 Java 平台的此实现所支持的 charset。
+ <p>
+如果两个或更多 flavor 共享最佳 charset，则 flavor 再次按照其表示形式类排序，顺序如下所示：<code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code>、<code>[B</code>、&lt;其他&gt;。
+ <p>
+如果两个或多个 flavor 共享最佳表示形式类，或者任何 flavor 都不具有三个指定的表示形式中的一个，则非随意地选择这些 flavor 中的一个。
+
+@param availableFlavors 可用 <code>DataFlavor</code> 的数组
+@return 按照以上指定规则的最佳（最高保真度）flavor；如果 <code>availableFlavors</code> 为 <code>null</code>、长度为零或包含非文本 flavor，则返回 <code>null</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.awt.datatransfer.DataFlavor.getReaderForText(Transferable transferable) throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本 flavor 的 Reader，如果需要，则为期望的 charset（编码的）解码。受支持的表示形式类有：<code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code>、<code>[C</code>、<code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code> 和 <code>[B</code>。
+ <p>
+因为不支持 charset 参数的文本 flavor 是以非标准格式编码的，所以应为这种 flavor 调用此方法。但是，为了维护向后兼容性，如果为这样的 flavor 调用了此方法，那么此方法会将该 flavor 视为支持 charset 参数，并相应地尝试为其解码。有关不支持 charset 参数的文本 flavor 列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@param transferable 将在此 flavor 中请求其数据的 <code>Transferable</code>
+
+@return 要读取 <code>Transferable</code> 数据的 <code>Reader</code>
+
+@exception IllegalArgumentException 如果表示形式类不是上文列出的七种之一
+@exception IllegalArgumentException 如果 <code>Transferable</code> 包含 <code>null</code> 数据
+@exception NullPointerException 如果 <code>Transferable</code> 为 <code>null</code>
+@exception UnsupportedEncodingException 如果此 flavor 的表示形式为 <code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code> 或 <code>[B</code>，但 Java 平台的此实现不支持此 flavor 的编码
+@exception UnsupportedFlavorException 如果 <code>Transferable</code> 不支持此 flavor
+@exception IOException 如果因 I/O 错误而无法读取数据
+@see #selectBestTextFlavor
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.getMimeType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的 MIME 类型字符串。
+@return 此 flavor 的 MIME 类型字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> java.awt.datatransfer.DataFlavor.getRepresentationClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回请求此 <code>DataFlavor</code> 时，支持此 <code>DataFlavor</code> 的对象将返回的 <code>Class</code>。
+@return 请求此 <code>DataFlavor</code> 时，支持此 <code>DataFlavor</code> 的对象将返回的 <code>Class</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.getHumanPresentableName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 表示的数据格式的得体的名称。此名称将由各个国家/地区来本地化。
+@return 此 <code>DataFlavor</code> 表示的数据格式的得体的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.getPrimaryType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的基本 MIME 类型。
+@return 此 <code>DataFlavor</code> 的基本 MIME 类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.getSubType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的子 MIME 类型。
+@return 此 <code>DataFlavor</code> 的子 MIME 类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.DataFlavor.getParameter(String paramName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>paramName</code> 等于 &quot;humanPresentableName&quot;，则返回此 <code>DataFlavor</code> 的得体的名称。否则返回与 <code>paramName</code> 关联的 MIME 类型值。
+
+@param paramName 请求的参数名
+@return name 参数的值；如果不存在关联值，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.datatransfer.DataFlavor.setHumanPresentableName(String humanPresentableName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>DataFlavor</code> 表示的数据格式的得体的名称。此名称将由各个国家/地区来本地化。
+@param humanPresentableName 新的得体的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试任意 <code>Object</code> 与此 <code>DataFlavor</code> 的相等性。当且仅当两个 <code>DataFlavor</code> 的 MIME 基本类型、子类型和表示形式类都相等时，才认为它们是相等的。此外，如果基本类型为 &quot;text&quot;，子类型表示支持 charset 参数的文本 flavor，而表示形式类不是 <code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code> 或 <code>[C</code>，则 <code>charset</code> 参数也一定要相等。如果没有为一个或两个 <code>DataFlavor</code> 显式指定 charset，则假定使用平台默认的编码。有关支持 charset 参数的文本 flavor 列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@param o 要与 <code>this</code> 相比较的 <code>Object</code>
+@return 如果 <code>that</code> 等于此 <code>DataFlavor</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #selectBestTextFlavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.equals(DataFlavor that)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>DataFlavor</code> 与此 <code>DataFlavor</code> 的相等性。当且仅当两个 <code>DataFlavor</code> 的 MIME 基本类型、子类型和表示形式类都相等时，才认为它们是相等的。此外，如果基本类型为 &quot;text&quot;，子类型表示支持 charset 参数的文本 flavor，而表示形式类不是 <code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code> 或 <code>[C</code>，则 <code>charset</code> 参数也一定要相等。如果没有为一个或两个 <code>DataFlavor</code> 显式指定 charset，则假定使用平台默认的编码。有关支持 charset 参数的文本 flavor 的列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@param that 要与 <code>this</code> 相比较的 <code>DataFlavor</code>
+@return 如果 <code>that</code> 等于此 <code>DataFlavor</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #selectBestTextFlavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.equals(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只比较 <code>mimeType</code> 与传入的 <code>String</code>，在比较中不考虑 <code>representationClass</code>。如果需要比较 <code>representationClass</code>，则可以使用 <code>equals(new DataFlavor(s))</code>。
+
+@deprecated 与 <code>hashCode()</code> 协定不一致，使用 <code>isMimeTypeEqual(String)</code> 代替。
+@return 如果 String (MimeType) 相等，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.datatransfer.DataFlavor.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的哈希码。对于两个相等的 <code>DataFlavor</code>，其哈希码也相等。对于与 <code>DataFlavor.equals(String)</code> 匹配的 <code>String</code>，不保证 <code>DataFlavor</code> 的哈希码等于 <code>String</code> 的哈希码。
+
+@return 此 <code>DataFlavor</code> 的哈希码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.match(DataFlavor that)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>DataFlavor</code> 与此 <code>DataFlavor</code> 的相等性。当且仅当两个 <code>DataFlavor</code> 的 MIME 基本类型、子类型和表示形式类都相等时，才认为它们是相等的。此外，如果基本类型为 &quot;text&quot;，子类型表示支持 charset 参数的文本 flavor，而表示形式类不是 <code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code> 或 <code>[C</code>，则 <code>charset</code> 参数也一定要相等。如果没有为一个或两个 <code>DataFlavor</code> 显式指定 charset，则假定使用平台默认的编码。有关支持 charset 参数的文本 flavor 的列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@param that 要与 <code>this</code> 相比较的 <code>DataFlavor</code>
+@return 如果 <code>that</code> 等于此 <code>DataFlavor</code>，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #selectBestTextFlavor
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isMimeTypeEqual(String mimeType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回传入的 MIME 类型的字符串表示形式是否等于此 <code>DataFlavor</code> 的 MIME 类型。比较中不包括参数。
+
+@param mimeType MIME 类型的字符串表示形式
+@return 如果传入的 MIME 类型的字符串表示形式等于此 <code>DataFlavor</code> 的 MIME 类型，则返回 true；否则返回 false
+@throws NullPointerException 如果 mimeType 为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.datatransfer.DataFlavor.isMimeTypeEqual(DataFlavor dataFlavor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个 <code>DataFlavor</code> 对象的 <code>mimeType</code>。不考虑任何参数。
+
+@param dataFlavor 要比较的 <code>DataFlavor</code>
+@return 如果 <code>MimeType</code> 相等，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isMimeTypeSerializedObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataFlavor</code> 是否表示序列化对象？
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassInputStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DataFlavor</code> 是否表示 <code>java.io.InputStream</code>？
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassReader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的表示形式类是 <code>java.io.Reader</code> 还是其子类。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassCharBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的表示形式类是 <code>java.nio.CharBuffer</code> 还是其子类。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassByteBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的表示形式类是 <code>java.nio.ByteBuffer</code> 还是其子类。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassSerializable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果表示形式类可序列化，则返回 true。
+@return 如果表示形式类可序列化，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isRepresentationClassRemote()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果表示形式类为 <code>Remote</code>，则返回 true。
+@return 如果表示形式类为 <code>Remote</code>，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isFlavorSerializedObjectType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 <code>DataFlavor</code> 表示序列化对象，则返回 true。
+@return 如果指定的 <code>DataFlavor</code> 表示序列化对象，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isFlavorRemoteObjectType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 <code>DataFlavor</code> 表示远程对象，则返回 true。
+@return 如果指定的 <code>DataFlavor</code> 表示远程对象，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isFlavorJavaFileListType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定的 <code>DataFlavor</code> 表示 File 对象列表，则返回 true。
+@return 如果指定的 <code>DataFlavor</code> 表示 File 对象列表，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.DataFlavor.isFlavorTextType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 是否是 Java 平台此实现的有效文本 flavor。只有等于 <code>DataFlavor.stringFlavor</code> 和 <code>DataFlavor</code>，并且其基本 MIME 类型为 &quot;text&quot; 的 flavor 才是有效的文本 flavor。
+ <p>
+如果此 flavor 支持 charset 参数，则它必须等于 <code>DataFlavor.stringFlavor</code>，或者其表示形式必须为 <code>java.io.Reader</code>、<code>java.lang.String</code>、<code>java.nio.CharBuffer</code>、<code>[C</code>、<code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code> 或 <code>[B</code>。如果表示形式为 <code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code> 或 <code>[B</code>，则此 flavor 的 <code>charset</code> 参数必须受 Java 平台此实现的支持。如果未指定 charset，则假定使用始终受支持的平台默认 charset。
+ <p>
+如果此 flavor 不支持 charset 参数，则其表示形式必须为 <code>java.io.InputStream</code>、<code>java.nio.ByteBuffer</code> 或 <code>[B</code>。
+ <p>
+有关支持 charset 参数的文本 flavor 的列表，请参阅 <code>selectBestTextFlavor</code>。
+
+@return 如果此 <code>DataFlavor</code> 为上述有效文本 flavor，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #selectBestTextFlavor
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.DataFlavor.writeExternal(ObjectOutput os) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+序列化此 <code>DataFlavor</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.DataFlavor.readExternal(ObjectInput is) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Serialized 状态还原此 <code>DataFlavor</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.datatransfer.DataFlavor.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DataFlavor</code> 的副本。
+@return 此 <code>DataFlavor</code> 的副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.datatransfer.DataFlavor.normalizeMimeTypeParameter(String parameterName, String parameterValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为每个 MIME 类型参数对 <code>DataFlavor</code> 调用此方法可以使 <code>DataFlavor</code> 的子类处理特定参数，如文本/纯文本 <code>charset</code> 参数，其值是区分大小写的。（假定 MIME 类型参数值区分大小写。）
+ <p>
+为每个参数名/值对调用此方法，应该返回 <code>parameterValue</code> 的标准化表示形式。
+
+从 1.1 版本开始，此实现不再调用此方法。
+
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.datatransfer.DataFlavor.normalizeMimeType(String mimeType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为每个 MIME 类型字符串调用此方法可以使 <code>DataFlavor</code> 子类型有机会更改实现 MIME 类型标准化的方式。一种可能的使用情况是添加默认的参数/值对，以防传入的 MIME 类型字符串中参数/值对不存在的情况。
+
+从 1.1 版本开始，此实现不再调用此方法。
+
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.DataFlavor.readExternal(ObjectInput is) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Serialized 状态还原此 <code>DataFlavor</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.DataFlavor.writeExternal(ObjectOutput os) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+序列化此 <code>DataFlavor</code>。
+
+<!-- END DATA -->

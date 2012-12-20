@@ -1,0 +1,153 @@
+<!-- BEGIN KEY -->
+public class java.awt.dnd.DragSourceDragEvent extends java.awt.dnd.DragSourceEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过 <code>DragSourceContext</code>，将 <code>DragSourceDragEvent</code> 从 <code>DragSourceContextPeer</code> 传递给向 <code>DragSourceContext</code> 及其关联 <code>DragSource</code> 注册的 <code>DragSourceListener</code>。
+<p>
+<code>DragSourceDragEvent</code> 报告可反映当前拖动操作状态的<i>目标放置动作</i> 和<i>用户放置动作</i>。
+<p>
+<i>目标放置动作</i> 是 <code>DnDConstants</code> 之一：如果拖动源支持此放置动作，则为当前放置目标所选择的放置动作；如果拖动源不支持此放置动作，则为 <code>DnDConstants.ACTION_NONE</code>。
+<p>
+<i>用户放置动作</i> 则取决于拖动源所支持的放置动作和用户所选择的放置动作。用户可在拖动操作期间按下修改键来选择放置动作：
+ <pre> 
+   Ctrl + Shift -&gt; ACTION_LINK
+   Ctrl         -&gt; ACTION_COPY
+   Shift        -&gt; ACTION_MOVE
+ </pre> 
+如果用户选择了某个放置动作，则<i>用户放置动作</i> 是 <code>DnDConstants</code> 之一：如果拖动源支持此放置动作，则为所选择的放置动作；如果拖动源不支持此放置动作，则为 <code>DnDConstants.ACTION_NONE</code>。
+<p>
+如果用户未选择某个放置动作，则在 <code>DnDConstants</code> 集合（表示拖动源支持的放置动作集合）中搜索 <code>DnDConstants.ACTION_MOVE</code>，然后是 <code>DnDConstants.ACTION_COPY</code>，最后是 <code>DnDConstants.ACTION_LINK</code>，找到的第一个常量就是<i>用户放置动作</i>。
+如果未找到常量，则<i>用户放置动作</i> 为 <code>DnDConstants.ACTION_NONE</code>。
+ 
+@version 	1.31, 04/04/06 
+@since 1.2
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.dnd.DragSourceDragEvent.targetActions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标放置动作。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.dnd.DragSourceDragEvent.dropAction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户放置动作。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.dnd.DragSourceDragEvent.gestureModifiers
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与用户动作关联的输入设备修饰符状态。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.dnd.DragSourceDragEvent.invalidModifiers
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 <code>gestureModifiers</code> 是否无效。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSourceDragEvent(DragSourceContext dsc, int dropAction, int action, int modifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>DragSourceDragEvent</code>。
+此类通常由 <code>DragSourceContextPeer</code> 实例化，而不是直接由客户机代码实例化。未指定此 <code>DragSourceDragEvent</code> 的坐标，所以 <code>getLocation</code> 将对此事件返回 <code>null</code>。
+<p>
+参数 <code>dropAction</code> 和 <code>action</code> 应该是表示单个动作的 <code>DnDConstants</code> 之一。参数 <code>modifiers</code> 应该是旧 <code>java.awt.event.InputEvent.*_MASK</code> 常量的位掩码，或者是扩展 <code>java.awt.event.InputEvent.*_DOWN_MASK</code> 常量的位掩码。此构造方法对无效的 <code>dropAction</code>、<code>action</code> 和 <code>modifiers</code> 不抛出任何异常。
+ 
+@param dsc 用来管理此事件通知的 <code>DragSourceContext</code>。
+@param dropAction 用户放置动作。
+@param action 目标放置动作。
+@param modifiers 事件期间按下的修改键（shift、ctrl、alt、meta）。应该使用扩展的 _DOWN_MASK 修饰符或旧的 _MASK 修饰符，但是在一个事件中不应混用两种模型。首选扩展的修饰符。
+
+@throws <code>IllegalArgumentException</code> 如果 <code>dsc</code> 为 <code>null</code>。
+
+@see java.awt.event.InputEvent
+@see DragSourceEvent#getLocation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSourceDragEvent(DragSourceContext dsc, int dropAction, int action, int modifiers, int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定 <code>DragSourceContext</code>、用户放置动作、目标放置动作、修改键和坐标的 <code>DragSourceDragEvent</code>。
+<p>
+参数 <code>dropAction</code> 和 <code>action</code> 应该是表示单个动作的 <code>DnDConstants</code> 之一。参数 <code>modifiers</code> 应该是旧 <code>java.awt.event.InputEvent.*_MASK</code> 常量的位掩码，或者是扩展 <code>java.awt.event.InputEvent.*_DOWN_MASK</code> 常量的位掩码。此构造方法对无效的 <code>dropAction</code>、<code>action</code> 和 <code>modifiers</code> 不抛出任何异常。
+ 
+@param dsc 与此事件关联的 <code>DragSourceContext</code>
+@param dropAction 用户放置动作。
+@param action 目标放置动作。
+@param modifiers 事件期间按下的修改键（shift、ctrl、alt、meta）。应该使用扩展的 _DOWN_MASK 修饰符或旧的 _MASK 修饰符，但是在一个事件中不应混用两种模型。首选扩展的修饰符。
+@param x  光标位置的水平坐标
+@param y  光标位置的垂直坐标
+
+@throws <code>IllegalArgumentException</code> 如果 <code>dsc</code> 为 <code>null</code>。
+
+@see java.awt.event.InputEvent
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceDragEvent.getTargetActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回目标放置动作。
+
+@return 目标放置动作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceDragEvent.getGestureModifiers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回一个 <code>int</code> 值，表示与用户动作关联的输入设备修饰符的当前状态。通常是鼠标按键或键盘修饰符。
+<p>
+如果传递给构造方法的 <code>modifiers</code> 无效，则此方法按原样返回它们。
+ 
+@return 输入设备修饰符的当前状态
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceDragEvent.getGestureModifiersEx()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回一个 <code>int</code> 值，表示与用户动作关联的输入设备扩展修饰符的当前状态。请参阅 {@link InputEvent#getModifiersEx}
+<p>
+如果传递给构造方法的 <code>modifiers</code> 无效，则此方法按原样返回它们。
+
+@return 输入设备扩展修饰符的当前状态 
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceDragEvent.getUserAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回用户放置动作。
+ 
+@return 用户放置动作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceDragEvent.getDropAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回目标放置动作与拖动源支持的放置动作集合的逻辑交集。
+
+@return 目标放置动作与拖动源支持的放置动作集合的逻辑交集。
+
+<!-- END DATA -->

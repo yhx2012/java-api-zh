@@ -1,0 +1,270 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.Policy extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Policy 对象负责确定在 Java 运行时环境中执行的代码是否有权执行安全敏感的操作。
+
+ <p> 任意给定时刻只有一个 Policy 对象安装在运行时中。可以通过调用 <code>setPolicy</code> 方法安装 Policy 对象。安装的 Policy 对象可以通过调用 <code>getPolicy</code> 方法获得。
+
+ <p> 如果尚未在运行时中安装任何 Policy 对象，那么将调用 <code>getPolicy</code> 安装默认 Policy 实现的实例（此抽象类的默认子类实现）。
+通过将 "policy.provider" 安全属性（在 Java 安全属性文件中）的值设置为所需 Policy 子类实现的完全限定名，可以更改默认 Policy 实现。Java 安全属性文件位于名为 &lt;JAVA_HOME&gt;/lib/security/java.security 的文件中。
+&lt;JAVA_HOME&gt; 引用 java.home 系统属性的值，并指定 JRE 的安装目录。
+
+ <p> 应用程序代码可以直接子类化 Policy，提供定制的实现。此外，通过调用某一个 <code>getInstance</code> 工厂方法并使用标准类型作为参数，可以构建一个 Policy 对象的实现。默认策略类型是 "JavaPolicy"。有关标准 Policy 类型列表，请参阅 <a href="../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ <p> 安装了 Policy 实例后（通过默认安装或调用 <code>setPolicy</code>），在需要确定执行代码（封装在 ProtectionDomain 中）是否可以执行受保护 SecurityManager 操作时，Java 运行时将调用其 <code>implies</code>。Policy 对象如何获取其策略数据由 Policy 实现本身决定。策略数据可以存储在纯 ASCII 文件中、Policy 类的序列化二进制文件中、数据库中等等。
+
+ <p> <code>refresh</code> 方法使 Policy 对象刷新/重载其数据。 此操作与实现有关。例如，如果 Policy 对象将其数据存储在配制文件中，那么调用 <code>refresh</code> 将导致重读配制策略文件。如果不支持刷新操作，那么此方法不执行任何操作。注意，刷新策略对特定 ProtectionDomain 中的类可能无效。这取决于 Policy 提供者的 <code>implies</code> 方法实现及其 PermissionCollection 缓存策略。
+
+@author Roland Schemers
+@author Gary Ellison
+ @version 1.102, 04/21/06
+ @see java.security.Provider
+ @see java.security.ProtectionDomain
+ @see java.security.Permission
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.security.PermissionCollection java.security.Policy.UNSUPPORTED_EMPTY_COLLECTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 一个空的只读 PermissionCollection 实例。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Policy java.security.Policy.getPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回安装的 Policy 对象。此值不应该被缓存，因为它可能通过调用 <code>setPolicy</code> 更改。此方法首先使用 <code>SecurityPermission(&quot;getPolicy&quot;)</code> 权限调用 <code>SecurityManager.checkPermission</code> 来保证可以获取 Policy 对象。
+
+@return 安装的 Policy。
+
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许获取 Policy 对象。
+
+@see SecurityManager#checkPermission(Permission)
+@see #setPolicy(java.security.Policy)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.security.Policy.setPolicy(Policy p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置系统范围的 Policy 对象。此方法首先使用 <code>SecurityPermission(&quot;setPolicy&quot;)</code> 权限调用 <code>SecurityManager.checkPermission</code> 来保证可以设置 Policy。
+
+@param p 新的系统 Policy 对象。
+
+@throws SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许设置 Policy。
+
+@see SecurityManager#checkPermission(Permission)
+@see #getPolicy()
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Policy java.security.Policy.getInstance(String type, Policy.Parameters params) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Policy 对象。
+
+ <p> 此方法从首选 Provider 开始，遍历已注册安全提供者列表。返回一个封装 PolicySpi 实现的新 Policy 对象，该实现取自第一个支持指定类型的 Provider。
+
+ 
+ <p> 注意，已注册提供者列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。
+
+ 
+ @param type 指定的 Policy 类型。有关标准 Policy 类型列表，请参阅 <a href="../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+
+ @param params Policy 的参数，可以为 null。
+
+ @return 新的 Policy 对象。
+
+ @exception SecurityException 如果调用者无权获取指定类型的 Policy 实例。
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果选定 Provider 的 PolicySpi 实现不理解指定的参数。
+
+ @exception NoSuchAlgorithmException 如果没有任何 Provider 支持指定类型的 PolicySpi 实现。
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Policy java.security.Policy.getInstance(String type, Policy.Parameters params, String provider) throws java.security.NoSuchProviderException, java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Policy 对象。
+
+ <p> 返回一个封装 PolicySpi 实现的新 Policy 对象，该实现取自指定提供者。注意，指定的提供者必须已在安全提供者列表中注册。
+
+ <p> 注意，已注册提供者列表可以使用 {@link Security#getProviders() Security.getProviders()} 方法获得。
+
+ @param type 指定的 Policy 类型。有关标准 Policy 类型列表，请参阅 <a href="../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ @param params Policy 的参数，可以为 null。
+
+ @param provider 提供者。
+
+ @return 新的 Policy 对象。
+
+ @exception SecurityException 如果调用者无权获取指定类型的 Policy 实例。
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果指定提供者为 null 或空，或者指定提供者的 PolicySpi 实现不理解指定的参数。
+		
+
+ @exception NoSuchProviderException 如果指定提供者没有在安全提供者列表中注册。
+		
+ @exception NoSuchAlgorithmException 如果指定提供者不支持指定类型的 PolicySpi 实现。
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Policy java.security.Policy.getInstance(String type, Policy.Parameters params, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Policy 对象。
+
+ <p>返回一个封装 PolicySpi 实现的新 Policy 对象，该实现取自指定 Provider 对象。注意，指定的 Provider 对象无需在提供者列表中注册。
+
+
+ @param type 指定的 Policy 类型。有关标准 Policy 类型列表，请参阅 <a href="../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+
+ @param params Policy 的参数，可以为 null。
+
+ @param provider Provider。
+
+ @return 新的 Policy 对象。
+
+ @exception SecurityException 如果调用者无权获取指定类型的 Policy 实例。
+
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果指定的 Provider 为 null，或者指定 Provider 的 PolicySpi 实现不理解指定的参数。
+
+
+ @exception NoSuchAlgorithmException 如果指定的 Provider 不支持指定类型的 PolicySpi 实现。
+
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Provider java.security.Policy.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 Policy 的 Provider。
+
+ <p> 只有通过调用 <code>Policy.getInstance</code> 获取的 Policy 实例才有 Provider。否则此方法返回 null。
+
+ @return 此 Policy 的 Provider，或者 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Policy.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 Policy 的类型。
+
+ <p> 只有通过调用 <code>Policy.getInstance</code> 获取的 Policy 实例才有类型。否则此方法返回 null。
+
+ @return 此 Policy 的类型，或者 null。
+
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Policy.Parameters java.security.Policy.getParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回 Policy 参数。
+
+ <p> 只有通过调用 <code>Policy.getInstance</code> 获取的 Policy 实例才有参数。否则此方法返回 null。
+
+ @return Policy 参数，或者 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.security.Policy.getPermissions(CodeSource codesource)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 PermissionCollection 对象，它包含授予指定 CodeSource 的权限集。
+
+ <p>建议应用程序不要调用此方法，因此并非所有策略实现都支持此操作。
+ 应用程序只能依赖 <code>implies</code> 方法执行策略检查。如果应用程序不得不调用 getPermissions 方法，那么它应该调用 <code>getPermissions(ProtectionDomain)</code>。
+
+ <p> 此方法的默认实现返回 Policy.UNSUPPORTED_EMPTY_COLLECTION。如果策略实现可以返回授予 CodeSource 的权限组，则可以重写此方法。
+
+ @param codesource 已授予返回 PermissionCollection 的 CodeSource。
+
+ @return 授予指定 CodeSource 的权限集。如果支持此操作，那么返回的权限集必须是新的可变实例，并且它必须支持多种 Permission 类型。如果不支持此操作，则返回 Policy.UNSUPPORTED_EMPTY_COLLECTION。
+
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.security.Policy.getPermissions(ProtectionDomain domain)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 PermissionCollection 对象，它包含授予指定 ProtectionDomain 的权限集。
+
+ <p> 建议应用程序不要调用此方法，因此并非所有策略实现都支持此操作。
+ 应用程序应依赖 <code>implies</code> 方法执行策略检查。
+
+ <p> 此方法的默认实现首先获取 <code>getPermissions(CodeSource)</code>（CodeSource 取自指定的 ProtectionDomain）返回的权限，以及位于指定 ProtectionDomain 中的权限。
+
+ 然后组合所有这些权限，并在一个新的 PermissionCollection 对象中返回。如果 <code>getPermissions(CodeSource)</code> 返回 Policy.UNSUPPORTED_EMPTY_COLLECTION，那么此方法在一个新的 PermissionCollection 对象中返回包含在指定 ProtectionDomain 中的权限。
+
+ <p>如果策略实现支持返回授予 ProtectionDomain 的权限组，则可以重写此方法。
+
+
+ @param domain 已授予返回 PermissionCollection 的 ProtectionDomain。
+
+ @return 授予指定 ProtectionDomain 的权限集。如果支持此操作，那么返回的权限集必须是新的可变实例，并且它必须支持多种 Permission 类型。如果不支持此操作，则返回 Policy.UNSUPPORTED_EMPTY_COLLECTION。
+@see java.security.ProtectionDomain
+@see java.security.SecureClassLoader
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.Policy.implies(ProtectionDomain domain, Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算授予 ProtectionDomain 的权限的全局策略，并测试是否授予了该权限。
+
+@param domain 要测试的 ProtectionDomain
+@param permission 要测试其暗含权限的 Permission 对象。
+
+@return 如果 &quot;permission&quot; 是授予此 ProtectionDomain 的真子集，则返回 true。
+
+@see java.security.ProtectionDomain
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Policy.refresh()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新/重新加载策略配置。此方法的行为取决于实现。例如，对基于文件的策略调用 <code>refresh</code> 将导致重新读取该文件。
+ 
+<p>此方法的默认实现不执行任何操作。如果策略实现支持刷新操作，则可以重写此方法。
+
+<!-- END DATA -->

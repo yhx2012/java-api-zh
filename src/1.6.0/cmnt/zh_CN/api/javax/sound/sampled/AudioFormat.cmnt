@@ -1,0 +1,266 @@
+<!-- BEGIN KEY -->
+public class javax.sound.sampled.AudioFormat extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>AudioFormat</code> 是在声音流中指定特定数据安排的类。通过检查以音频格式存储的信息，可以发现在二进制声音数据中解释位的方式。
+ <p>
+每个数据行都有与其数据流相关的音频格式。源（回放）数据行的音频格式指示数据行期望接收输出的数据类型。对于目标（捕获）数据行，音频格式指定可以从该行读取的数据种类。当然，声音文件也有音频格式。<code>{@link AudioFileFormat}</code> 类封装 <code>AudioFormat</code> 以及其他特定于文件的信息。类似地，<code>{@link AudioInputStream}</code> 具有 <code>AudioFormat</code>。
+ <p>
+<code>AudioFormat</code> 类适应多种常见声音文件编码技术，包括脉冲编码调制 (PCM)、mu-law 编码和 a-law 编码。这些编码技术是预先定义的，但服务提供者可以创建新的编码类型。特定格式使用的编码通过其 <code>encoding</code> 字段命名。
+<p>
+除编码外，音频格式还包括进一步指定具体数据安排的其他属性。这些属性包括信道数、采样速率、样本大小、字节顺序、帧速率和帧大小。声音可以有不同数量的音频信道：单声道有一个信道，立体声有两个信道。样本速率测量每信道、每秒钟采用的声压&ldquo;快照&rdquo;（样本）数。（如果声音是立体声，而不是单声道，则在每个瞬间实际测量两个样本：一个是左声道，另一个是右声道；不过，样本速率仍测量每个声道的数量，所以不管声道数是多少，速率都一样。这是该术语的标准用途。）样本大小指示用于存储每个快照的位数；典型值是 8 和 16。对于 16 位样本（或大于一个字节大小的任何其他样本），字节顺序很重要；每个样本中的字节要么以 &quot;little-endian&quot; 样式排列，要么以 &quot;big-endian&quot; 样式排列。对于类似 PCM 的编码，帧由在给定时间点上所有声道的样本集合组成，因此帧的大小（以字节为单位）总是等于样本大小（以字节为单位）乘以声道数。不过，使用其他种类的编码，帧可以包含整个系列样本的压缩数据包，以及其他非样本数据。对于这些编码，样本速率和样本大小在将数据解码到 PCM 之后引用该数据，所以它们与帧速率和帧大小完全不同。
+
+<p><code>AudioFormat</code> 对象可以包括属性的集合。属性是一个键值对：键属于 <code>String</code> 类型，相关属性值可为任意对象。属性指定其他格式规范，如压缩格式的比特率。属性主要用作传送往返于服务提供者的其他音频格式信息的方法。因此，属性在 {@link #matches(AudioFormat)} 方法中被忽略。不过，依靠已安装的服务提供者的方法（如 {@link AudioSystem#isConversionSupported (AudioFormat, AudioFormat) isConversionSupported}）可以考虑使用属性，具体取决于各自的服务提供者实现。
+
+<p>下表列出了服务提供者应该使用的一些常见属性（如果适用）：
+
+ <table border=0>
+  <tr>
+<th>属性键</th>
+<th>值类型</th>
+<th>描述</th>
+  </tr>
+  <tr>
+<td>&ldquo;比特率&rdquo;</td>
+   <td>{@link java.lang.Integer Integer}</td>
+<td>以位每秒为单位的平均比特率</td>
+  </tr>
+  <tr>
+<td>&ldquo;可变比特率&rdquo;</td>
+   <td>{@link java.lang.Boolean Boolean}</td>
+<td>如果文件采用可变比特率 (VBR) 进行编码，则为 <code>true</code></td>
+  </tr>
+  <tr>
+<td>&ldquo;音质&rdquo;</td>
+   <td>{@link java.lang.Integer Integer}</td>
+<td>编码/转换质量，1 到 100</td>
+  </tr>
+ </table>
+
+<p>鼓励服务提供者（插件）的供应商寻找关于其他已经在第三方插件中建立的属性的信息，并遵循相同的约定。
+
+@author Kara Kytle
+@author Florian Bomers
+@version 1.36 05/11/17
+@see DataLine#getFormat
+@see AudioInputStream#getFormat
+@see AudioFileFormat
+@see javax.sound.sampled.spi.FormatConversionProvider
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.sampled.AudioFormat.Encoding javax.sound.sampled.AudioFormat.encoding
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此格式使用的音频编码技术。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.sound.sampled.AudioFormat.sampleRate
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+具有此格式的声音每秒播放或录制的样本数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.sampled.AudioFormat.sampleSizeInBits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个具有此格式的声音样本中的位数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.sampled.AudioFormat.channels
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此格式的音频信道数（单声道为 1，立体声为 2）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.sampled.AudioFormat.frameSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个具有此格式的声音帧包含的字节数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.sound.sampled.AudioFormat.frameRate
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+具有此格式的声音每秒播放和录制的帧数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.sound.sampled.AudioFormat.bigEndian
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是以 big-endian 顺序还是 little-endian 顺序存储音频数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat(AudioFormat.Encoding encoding, float sampleRate, int sampleSizeInBits, int channels, int frameSize, float frameRate, boolean bigEndian)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定参数的 <code>AudioFormat</code>。该编码指定用于表示数据的约定。其他参数在{@link AudioFormat 类描述}中进一步解释。
+@param encoding	音频编码技术 
+@param  sampleRate  	每秒的样本数 
+@param  sampleSizeInBits 每个样本中的位数
+@param  channels  		声道数（单声道 1 个，立体声 2 个，等等）
+@param  frameSize  		每帧中的字节数
+@param  frameRate  		每秒的帧数
+@param  bigEndian  		指示是否以 big-endian 字节顺序存储单个样本中的数据（<code>false</code> 意味着 little-endian）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat(AudioFormat.Encoding encoding, float sampleRate, int sampleSizeInBits, int channels, int frameSize, float frameRate, boolean bigEndian, java.util.Map<java.lang.String, java.lang.Object> properties)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定参数的 <code>AudioFormat</code>。该编码指定用于表示数据的约定。其他参数在{@link AudioFormat 类描述}中进一步解释。
+@param   encoding   音频编码技术
+@param   sampleRate   每秒样本数
+@param  sampleSizeInBits   每个样本中的位数
+@param   channels   声道数（单声道为 1，立体声为 2，等等）
+@param   frameSize   每帧包含的字节数
+@param   frameRate   每秒帧数
+@param   bigEndian   指示是否以 big-endian 字节顺序存储数据（<code>false</code> 意味着 little-endian）
+@param   properties   包含格式属性的 <code>Map&lt;String,Object&gt;</code> 对象
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat(float sampleRate, int sampleSizeInBits, int channels, boolean signed, boolean bigEndian)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有线性 PCM 编码和给定参数的 <code>AudioFormat</code>。将帧大小设置为包含每个声道一个样本所需的字节数，将帧速率设置为样本速率。
+
+
+@param sampleRate		每秒的样本数
+@param  sampleSizeInBits  	每个样本中的位数
+@param  channels  		声道数（单声道 1 个，立体声 2 个）
+@param  signed  		指示数据是有符号的，还是无符号的
+@param  bigEndian  		指示是否以 big-endian 字节顺序存储单个样本中的数据（<code>false</code> 意味着 little-endian）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat.Encoding javax.sound.sampled.AudioFormat.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此格式声音的编码类型。
+
+@return 编码类型
+@see Encoding#PCM_SIGNED
+@see Encoding#PCM_UNSIGNED
+@see Encoding#ULAW
+@see Encoding#ALAW
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.sampled.AudioFormat.getSampleRate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取样本速率。对于压缩格式，返回值是未压缩音频数据的样本速率。当此 AudioFormat 用于查询（如 {@link AudioSystem#isConversionSupported(AudioFormat, AudioFormat) AudioSystem.isConversionSupported}）或功能（如 {@link DataLine.Info#getFormats() DataLine.Info.getFormats}）时，<code>AudioSystem.NOT_SPECIFIED</code> 的样本速率意味着可以接受任何样本速率。当没有为此音频格式定义样本速率时，还会返回 <code>AudioSystem.NOT_SPECIFIED</code>。
+@return  每秒样本数，或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+@see #getFrameRate()
+@see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioFormat.getSampleSizeInBits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取样本的大小。对于压缩格式，返回值是未压缩音频数据的样本大小。当此 AudioFormat 用于查询（如 {@link AudioSystem#isConversionSupported(AudioFormat, AudioFormat) AudioSystem.isConversionSupported}）或功能（如 {@link DataLine.Info#getFormats() DataLine.Info.getFormats}）时，<code>AudioSystem.NOT_SPECIFIED</code> 的样本大小意味着可以接受任何样本大小。当没有为此音频格式定义样本大小时，还会返回 <code>AudioSystem.NOT_SPECIFIED</code>。
+@return  每个样本中的位数，或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+@see #getFrameSize()
+@see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioFormat.getChannels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取信道数。当此 AudioFormat 用于查询（如 {@link AudioSystem#isConversionSupported(AudioFormat, AudioFormat) AudioSystem.isConversionSupported}）或功能（如 {@link DataLine.Info#getFormats() DataLine.Info.getFormats}）时，<code>AudioSystem.NOT_SPECIFIED</code> 的返回值意味着可以接受任何（正）数量的信道。
+@return  信道数（单声道为 1，立体声为 2，等等），或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+@see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioFormat.getFrameSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取以字节为单位的帧大小。当此 AudioFormat 用于查询（如 {@link AudioSystem#isConversionSupported(AudioFormat, AudioFormat) AudioSystem.isConversionSupported}）或功能（如 {@link DataLine.Info#getFormats() DataLine.Info.getFormats}）时，<code>AudioSystem.NOT_SPECIFIED</code> 的帧大小意味着可以接受任何帧大小。当没有为此音频格式定义帧大小时，还会返回 <code>AudioSystem.NOT_SPECIFIED</code>。
+@return  每帧字节数，或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+@see #getSampleSizeInBits()
+@see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.sampled.AudioFormat.getFrameRate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取以帧每秒为单位的帧速率。当此 AudioFormat 用于查询（如 {@link AudioSystem#isConversionSupported(AudioFormat, AudioFormat) AudioSystem.isConversionSupported}）或功能（如 {@link DataLine.Info#getFormats() DataLine.Info.getFormats}）时，<code>AudioSystem.NOT_SPECIFIED</code> 的帧速率意味着可以接受任何帧速率。当没有为此音频格式定义帧速率时，还会返回 <code>AudioSystem.NOT_SPECIFIED</code>。
+@return  每秒帧数，或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+@see #getSampleRate()
+@see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.AudioFormat.isBigEndian()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是以 big-endian 顺序还是以 little-endian 顺序存储音频数据。如果样本大小不超过一个字节，则返回值没有实际意义。
+@return  如果按 big-endian 字节顺序存储数据，则返回 <code>true</code>；如果按 little-endian 顺序，则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.lang.Object> javax.sound.sampled.AudioFormat.properties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取不可修改的属性映射。属性的概念在{@link AudioFileFormat 类描述}进一步解释。
+
+@return  包含所有属性的 <code>Map&lt;String,Object&gt;</code> 对象。如果无法识别任何属性，则返回空映射。
+
+@see #getProperty(String)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.sound.sampled.AudioFormat.getProperty(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取键指定的属性值。属性的概念在{@link AudioFileFormat 类描述}进一步解释。
+
+<p>如果指定属性不是为特定文件格式定义的，则此方法返回 <code>null</code>。
+
+@param  key  所需属性的键
+@return  具有指定键的属性值；如果属性不存在，则返回 <code>null</code>。
+
+@see #properties
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.AudioFormat.matches(AudioFormat format)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此格式是否与指定格式匹配。所谓匹配是指两种格式的编码、信道数、每个样本的位数以及每帧包含的字节数均必须相同。如果指定格式的采样速率值不为 <code>AudioSystem.NOT_SPECIFIED</code>（表示任何采样速率均匹配），则这两种格式还必须具有相同的采样速率。如果指定格式的帧速率不为 <code>AudioSystem.NOT_SPECIFIED</code>，则二者的帧速率必须大致相等。如果样本大小大于一个字节，则字节存储顺序（big-endian 或 little-endian）必须匹配。
+
+@param  format  要测试是否匹配的格式
+@return  如果此格式与指定格式匹配，则返回 <code>true</code>；否则，返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.sound.sampled.AudioFormat.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述格式的字符串，如：&quot;PCM SIGNED 22050 Hz 16 bit mono big-endian&quot;。字符串的内容可能会因 Java Sound 实现的不同而不同。
+
+@return  描述格式参数的字符串
+
+<!-- END DATA -->

@@ -1,0 +1,479 @@
+<!-- BEGIN KEY -->
+public abstract class javax.crypto.CipherSpi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类为 <code>Cipher</code> 类定义了<i>服务提供者接口</i> (<b>SPI</b>)。此类中的所有抽象方法都必须由每个想要提供实现特定 cipher 算法的加密服务提供者实现。
+
+<p>为创建封装了此 <code>CipherSpi</code> 类实例的 <code>Cipher</code> 实例，应用程序调用 {@link Cipher Cipher} 引擎类的 {@link Cipher#getInstance(java.lang.String) getInstance} 工厂方法之一并指定请求的<i>转换</i>。作为可选项，应用程序还可以指定提供者的名称。
+
+<p><i>转换</i> 是描述为产生某种输出而在给定的输入上执行的操作（或一组操作）的字符串。转换始终包括加密算法的名称（例如，<i>DES</i>），后面可能跟有一个反馈模式和填充方案。
+
+<p> 转换具有下面的形式：<p>
+
+ <ul>
+<li>&quot;<i>算法/模式/填充</i>&rdquo;或
+ <p>
+<li>&quot;<i>算法</i>&rdquo;
+ </ul>
+
+<P> （后一种情况下，使用此模式和填充方案的特定于提供者的默认值）。例如，以下是有效的转换：<p>
+
+ <pre>
+     Cipher c = Cipher.getInstance(&quot;<i>DES/CBC/PKCS5Padding</i>&quot;);
+ </pre>
+
+<p>一个提供者可能为每个<i>算法/模式/填充</i> 组合提供一个单独的类，也有可能决定提供多个表示与<i>算法</i> 或<i>算法/模式</i> 或<i>算法//填充</i> （注意，是双斜线）对应的子转换的一般类，在这种情况下，请求的模式和/或填充由 <code>Cipher</code> 的 <code>getInstance</code> 方法自动设置，它调用的是提供者的 <code>CipherSpi</code> 子类的 {@link #engineSetMode(java.lang.String) engineSetMode} 和 {@link #engineSetPadding(java.lang.String) engineSetPadding} 方法。
+ 
+<p>提供者主类中的 <code>Cipher</code> 属性可能具有以下格式之一：
+ 
+ <ul>
+ 
+ <li>
+ <pre>
+     // provider's subclass of &quot;CipherSpi&quot; implements &quot;algName&quot; with
+     // pluggable mode and padding
+     <code>Cipher.</code><i>algName</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     // provider's subclass of &quot;CipherSpi&quot; implements &quot;algName&quot; in the
+     // specified &quot;mode&quot;, with pluggable padding
+     <code>Cipher.</code><i>algName/mode</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     // provider's subclass of &quot;CipherSpi&quot; implements &quot;algName&quot; with the
+     // specified &quot;padding&quot;, with pluggable mode
+     <code>Cipher.</code><i>algName//padding</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     // provider's subclass of &quot;CipherSpi&quot; implements &quot;algName&quot; with the
+     // specified &quot;mode&quot; and &quot;padding&quot;
+     <code>Cipher.</code><i>algName/mode/padding</i>
+ </pre>
+ 
+ </ul>
+ 
+<p>例如，某提供者可能提供实现 <i>DES/ECB/PKCS5Padding</i> 的 <code>CipherSpi</code> 子类，以及实现 <i>DES/CBC/PKCS5Padding</i>、<i>DES/CFB/PKCS5Padding</i> 和 <i>DES/OFB/PKCS5Padding</i> 的 <code>CipherSpi</code> 子类。该提供者在其主类中将有以下 <code>Cipher</code> 属性：<p>
+ 
+ <ul>
+ 
+ <li>
+ <pre>
+     <code>Cipher.</code><i>DES/ECB/PKCS5Padding</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     <code>Cipher.</code><i>DES/CBC/PKCS5Padding</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     <code>Cipher.</code><i>DES/CFB/PKCS5Padding</i>
+ </pre>
+ 
+ <li>
+ <pre>
+     <code>Cipher.</code><i>DES/OFB/PKCS5Padding</i>
+ </pre>
+ 
+ </ul>
+ 
+<p>另一个提供者可能实现一个用于以上每个模式的类（即一个用于 <i>ECB</i> 的类、一个用于 <i>CBC</i> 的类、一个用于 <i>CFB</i> 的类及一个用于 <i>OFB</i> 的类），一个用于 <i>PKCS5Padding</i> 的类，以及一个通过子类化 <code>CipherSpi</code> 所得到的通用 <i>DES</i> 类。该提供者在其主类中将有以下 <code>Cipher</code> 属性：<p>
+ 
+ <ul>
+ 
+ <li>
+ <pre>
+     <code>Cipher.</code><i>DES</i>
+ </pre>
+ 
+ </ul>
+ 
+<p><code>Cipher</code> 引擎类的 <code>getInstance</code> 工厂方法遵守这些规则，以便为&ldquo;<i>算法</i>&rdquo;形式的转换实例化提供者的 <code>CipherSpi</code> 实现：
+ 
+ <ol>
+ <li>
+检查提供者是否已为指定的&ldquo;<i>算法</i>&rdquo;注册了一个 <code>CipherSpi</code> 子类。
+<p>如果已经注册，则实例化此类，使用其模式和填充方案的默认值（由提供者给出）。
+<p>如果未注册，则抛出 <code>NoSuchAlgorithmException</code>。
+ </ol>
+ 
+<p><code>Cipher</code> 引擎类的 <code>getInstance</code> 工厂方法遵守这些规则，以便为&ldquo;<i>算法/模式/填充</i>&rdquo;形式的转换实例化提供者的 <code>CipherSpi</code> 实现：
+ 
+ <ol>
+ <li>
+检查提供者是否已为指定的&ldquo;<i>算法/模式/填充</i>&rdquo;转换注册了一个 <code>CipherSpi</code> 子类。
+<p>如果已注册，则将其实例化。
+<p>如果未注册，则转到下一步。<p>
+ <li>
+检查提供者是否已为&ldquo;<i>算法/模式</i>&rdquo;子转换注册了一个 <code>CipherSpi</code> 子类。
+<p>如果已注册，则将其实例化，并在新实例上调用 <code>engineSetPadding(<i>padding</i>)</code>。
+<p>如果未注册，则转到下一步。<p>
+ <li>
+检查提供者是否已为&ldquo;<i>算法//填充</i>&rdquo;子转换注册了一个 <code>CipherSpi</code> 子类(注意，是双斜线的)。
+<p>如果已注册，则将其实例化，并在新实例上调用 <code>engineSetMode(<i>mode</i>)</code>。
+<p>如果未注册，则转到下一步。<p>
+ <li>
+检查提供者是否已为&ldquo;<i>算法</i>&rdquo;子转换注册了一个 <code>CipherSpi</code> 子类。
+<p>如果已注册，则将其实例化，并在新实例上调用 <code>engineSetMode(<i>mode</i>)</code> 和 <code>engineSetPadding(<i>padding</i>)</code>。
+<p>如果未注册，则抛出 <code>NoSuchAlgorithmException</code>。
+ </ol>
+ 
+@author Jan Luehe
+
+@version 1.25, 12/10/03
+
+@see KeyGenerator
+@see SecretKey
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.CipherSpi.engineSetMode(String mode) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此 cipher 的模式。
+
+@param mode cipher 模式
+
+@exception NoSuchAlgorithmException 如果请求的 cipher 模式不存在
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.CipherSpi.engineSetPadding(String padding) throws javax.crypto.NoSuchPaddingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此 cipher 的填充机制。
+
+@param padding 填充机制
+
+@exception NoSuchPaddingException 如果请求的填充机制不存在
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract int javax.crypto.CipherSpi.engineGetBlockSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回块的大小（以字节为单位）。
+
+@return 块的大小（以字节为单位），如果底层算法不是块 cipher，则返回 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract int javax.crypto.CipherSpi.engineGetOutputSize(int inputLen)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在给定了输入长度 <code>inputLen</code>（以字节为单位）的情况下，返回用于保存下一个 <code>update</code> 或 <code>doFinal</code> 操作结果所需的输出缓冲区长度的字节数。
+ 
+<p>此调用还考虑到来自上一个 <code>update</code> 调用的任何未处理（已缓存）的数据和填充。
+
+<p>下一个 <code>update</code> 或 <code>doFinal</code> 调用的实际输出长度可能小于此方法返回的长度。
+
+@param inputLen 输入长度（以字节为单位）
+
+@return 所需的输出缓冲区大小（以字节为单位）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract byte[] javax.crypto.CipherSpi.engineGetIV()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回新缓冲区中的初始化向量 (IV)。 
+
+<p> 此方法在基于密码的加密或解密上下文中很有用，此时 IV 派生自用户提供的 passphrase。 
+
+@return 新缓冲区中的初始化向量，如果底层算法不使用 IV，或 IV 尚未设置，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.security.AlgorithmParameters javax.crypto.CipherSpi.engineGetParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此 cipher 使用的参数。
+
+<p>返回的参数可能与初始化此 cipher 所使用的参数相同；如果此 cipher 要求使用算法参数但却未使用任何参数进行初始化，则返回的参数可能会包含由默认值和底层 cipher 实现所使用的随机参数值的组合。
+
+@return 此 cipher 使用的参数，如果此 cipher 不使用任何参数，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.CipherSpi.engineInit(int opmode, Key key, SecureRandom random) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用密钥和随机源初始化此 cipher。
+
+<p>为以下 4 种操作之一初始化该 cipher：加密、解密、密钥包装或密钥打开，这取决于 <code>opmode</code> 的值。
+
+<p>如果此 cipher 要求使用任何算法参数，而此参数又无法从给定的 <code>key</code> 派生，则在被初始化为加密或密钥包装时，底层 cipher 实现将会自己生成所需的参数（使用特定于提供者的默认或随机值）；在初始化为解密或密钥打开时，将引发 <code>InvalidKeyException</code>。可以用 {@link #engineGetParameters() engineGetParameters} 或 {@link #engineGetIV() engineGetIV} 获取生成的参数（如果该参数为 IV）。
+
+<p>如果此 cipher（包括其底层反馈或填充方案）要求使用任何随机字节（例如，用于参数生成），那么它将从 <code>random</code> 获取这些随机字节。
+
+<p>注意，当初始化 Cipher 对象时，它将失去所有以前获得的状态。换句话说，初始化 Cipher 相当于创建该 Cipher 的一个新实例并将其初始化。
+
+@param opmode 此 cipher 的操作模式（其为如下之一：<code>ENCRYPT_MODE</code>、<code>DECRYPT_MODE</code>、<code>WRAP_MODE</code> 或 <code>UNWRAP_MODE</code>）
+@param key 加密密钥
+@param random 随机源
+
+@exception InvalidKeyException 如果给定的 key 不适合初始化此 cipher，如果要将此 cipher 初始化为解密，并且它所要求的算法参数无法从给定的 key 确定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.CipherSpi.engineInit(int opmode, Key key, AlgorithmParameterSpec params, SecureRandom random) throws java.security.InvalidKeyException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用一个密钥、一组算法参数和一个随机源初始化此 cipher。
+
+<p>为以下 4 种操作之一初始化该 cipher：加密、解密、密钥包装或密钥打开，这取决于 <code>opmode</code> 的值。
+
+<p>如果此 cipher 要求使用任何算法参数，而 <code>params</code> 为 null，则在被初始化为加密或密钥包装时，底层 cipher 实现将会自己生成所需的参数（使用特定于提供者的默认或随机值）；在初始化为解密或密钥打开时，将引发 <code>InvalidAlgorithmParameterException</code>。可以用 {@link #engineGetParameters() engineGetParameters} 或 {@link #engineGetIV() engineGetIV} 获取生成的参数（如果该参数为 IV）。
+
+<p>如果此 cipher（包括其底层反馈或填充方案）要求使用任何随机字节（例如，用于参数生成），那么它将从 <code>random</code> 获取这些随机字节。
+
+<p>注意，当初始化 Cipher 对象时，它将失去所有以前获得的状态。换句话说，初始化 Cipher 相当于创建该 Cipher 的一个新实例并将其初始化。
+
+@param opmode 此 cipher 的操作模式（其为如下之一：<code>ENCRYPT_MODE</code>、<code>DECRYPT_MODE</code>、<code>WRAP_MODE</code> 或 <code>UNWRAP_MODE</code>）
+@param key 加密密钥
+@param params 算法参数
+@param random 随机源
+
+@exception InvalidKeyException 如果给定的 key 不适合初始化此 cipher
+@exception InvalidAlgorithmParameterException 如果给定的算法参数不适合此 cipher，如果要将此 cipher 初始化为解密，并且要求使用算法参数，而 <code>params</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.crypto.CipherSpi.engineInit(int opmode, Key key, AlgorithmParameters params, SecureRandom random) throws java.security.InvalidKeyException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用一个密钥、一组算法参数和一个随机源初始化此 cipher。
+
+<p>为以下 4 种操作之一初始化该 cipher：加密、解密、密钥包装或密钥打开，这取决于 <code>opmode</code> 的值。
+
+<p>如果此 cipher 要求使用任何算法参数，而 <code>params</code> 为 null，则在被初始化为加密或密钥包装时，底层 cipher 实现将会自己生成所需的参数（使用特定于提供者的默认或随机值）；在初始化为解密或密钥打开时，将引发 <code>InvalidAlgorithmParameterException</code>。可以用 {@link #engineGetParameters() engineGetParameters} 或 {@link #engineGetIV() engineGetIV} 获取生成的参数（如果该参数为 IV）。
+
+<p>如果此 cipher（包括其底层反馈或填充方案）要求使用任何随机字节（例如，用于参数生成），那么它将从 <code>random</code> 获取这些随机字节。
+
+<p>注意，当初始化 Cipher 对象时，它将失去所有以前获得的状态。换句话说，初始化 Cipher 相当于创建该 Cipher 的一个新实例并将其初始化。
+
+@param opmode 此 cipher 的操作模式（其为如下之一：<code>ENCRYPT_MODE</code>、<code>DECRYPT_MODE</code>、<code>WRAP_MODE</code> 或 <code>UNWRAP_MODE</code>）
+@param key 加密密钥
+@param params 算法参数
+@param random 随机源
+
+@exception InvalidKeyException 如果给定的 key 不适合初始化此 cipher
+@exception InvalidAlgorithmParameterException 如果给定的算法参数不适合此 cipher，如果要将此 cipher 初始化为解密，并且要求使用算法参数，而 <code>params</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract byte[] javax.crypto.CipherSpi.engineUpdate(byte[] input, int inputOffset, int inputLen)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+继续多部分加密或解密操作（取决于此 cipher 的初始化方式），以处理其他数据部分。
+
+<p>处理 <code>input</code> 缓冲区中从 <code>inputOffset</code> 开始（包含）的前 <code>inputLen</code> 个字节，并将结果存储在新的缓冲区中。
+
+@param input 输入缓冲区
+@param inputOffset <code>input</code> 中输入开始位置的偏移量
+@param inputLen 输入长度
+
+@return 包含结果的新缓冲区，如果底层 cipher 为块 cipher 并且输入数据太短而无法形成新的块时，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract int javax.crypto.CipherSpi.engineUpdate(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset) throws javax.crypto.ShortBufferException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+继续多部分加密或解密操作（取决于此 cipher 的初始化方式），以处理其他数据部分。
+
+<p>处理 <code>input</code> 缓冲区中从 <code>inputOffset</code> 开始（包含）的前 <code>inputLen</code> 个字节，并将结果存储在 <code>output</code> 缓冲区中从 <code>outputOffset</code> 开始（包含）的位置。
+
+<p>如果 <code>output</code> 缓冲区太小无法保存该结果，则抛出 <code>ShortBufferException</code>。
+
+@param input 输入缓冲区
+@param inputOffset <code>input</code> 中输入开始位置的偏移量
+@param inputLen 输入长度
+@param output 保存结果的缓冲区
+@param outputOffset <code>output</code> 中存储结果的位置的偏移量
+
+@return <code>output</code> 中存储的字节数
+
+@exception ShortBufferException 如果给定的输出缓冲区太小无法保存该结果
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.crypto.CipherSpi.engineUpdate(ByteBuffer input, ByteBuffer output) throws javax.crypto.ShortBufferException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+继续多部分加密或解密操作（取决于此 cipher 的初始化方式），以处理其他数据部分。
+
+<p>处理从 <code>input.position()</code> 开始的所有 <code>input.remaining()</code> 字节。结果存储在输出缓冲区中。返回时，输入缓冲区的位置将等于其限制；其限制并未改变。输出缓冲区的位置将前移 n，其中 n 为此方法返回的值；输出缓冲区的限制并未改变。
+
+<p>如果 <code>output.remaining()</code> 个字节还不够保存该结果，则抛出 <code>ShortBufferException</code>。
+
+<p>如果能够比 byte 数组更有效地处理 ByteBuffer，子类应考虑重写此方法。
+
+@param input 输入 ByteBuffer
+@param output 输出 ByteBuffer
+
+@return <code>output</code> 中存储的字节数
+
+@exception ShortBufferException 如果输出缓冲区中没有足够的空间
+
+@throws NullPointerException 如果任一参数为 <CODE>null</CODE>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract byte[] javax.crypto.CipherSpi.engineDoFinal(byte[] input, int inputOffset, int inputLen) throws javax.crypto.IllegalBlockSizeException, javax.crypto.BadPaddingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+按单部分操作加密或解密数据，或者结束一个多部分操作。数据被加密还是解密取决于此 cipher 的初始化方式。
+
+<p>处理 <code>input</code> 缓冲区中从 <code>inputOffset</code> 开始（包含）的前 <code>inputLen</code> 个字节以及可能在上一次 <code>update</code> 操作过程中已缓存的任何输入字节，其中应用了填充（如果需要）。结果存储在新缓冲区中。
+
+<p>结束时，此方法将把此 cipher 对象重置为上一次调用 <code>engineInit</code> 初始化得到的状态。即重置该对象，可供加密或解密（取决于调用 <code>engineInit</code> 时指定的操作模式）更多的数据。 
+
+<p>注：如果抛出了任何异常，则再次使用此 cipher 对象前，可能需要将其重置。
+
+@param input 输入缓冲区
+@param inputOffset <code>input</code> 中输入开始位置的偏移量
+@param inputLen 输入长度
+
+@return 存储结果的新缓冲区
+
+@exception IllegalBlockSizeException 如果此 cipher 为块 cipher，未请求任何填充（只针对加密模式），并且由此 cipher 处理的数据总输入长度不是块大小的倍数，如果此加密算法无法处理所提供的输入数据。
+@exception BadPaddingException 如果此 cipher 为解密模式，并且未请求填充或不填充，但解密的数据没有用适当的填充字节所限制
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract int javax.crypto.CipherSpi.engineDoFinal(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset) throws javax.crypto.ShortBufferException, javax.crypto.IllegalBlockSizeException, javax.crypto.BadPaddingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+按单部分操作加密或解密数据，或者结束一个多部分操作。数据被加密还是解密取决于此 cipher 的初始化方式。
+
+<p>处理 <code>input</code> 缓冲区中从 <code>inputOffset</code> 开始（包含）的前 <code>inputLen</code> 个字节以及可能在上一次 <code>update</code> 操作过程中已缓存的任何输入字节，其中应用了填充（如果需要）。结果存储在 <code>output</code> 缓冲区中从 <code>outputOffset</code>（包含）开始的位置。
+
+<p>如果 <code>output</code> 缓冲区太小无法保存该结果，则抛出 <code>ShortBufferException</code>。
+
+<p>结束时，此方法将把此 cipher 对象重置为上一次调用 <code>engineInit</code> 初始化得到的状态。即重置该对象，可供加密或解密（取决于调用 <code>engineInit</code> 时指定的操作模式）更多的数据。 
+
+<p>注：如果抛出了任何异常，则再次使用此 cipher 对象前，可能需要将其重置。
+
+@param input 输入缓冲区
+@param inputOffset <code>input</code> 中输入开始位置的偏移量
+@param inputLen 输入长度
+@param output 保存结果的缓冲区
+@param outputOffset <code>output</code> 中存储结果的位置的偏移量
+
+@return <code>output</code> 中存储的字节数
+
+@exception IllegalBlockSizeException 如果此 cipher 为块 cipher，未请求任何填充（只针对加密模式），并且由此 cipher 处理的数据总输入长度不是块大小的倍数，如果此加密算法无法处理所提供的输入数据。
+@exception ShortBufferException 如果给定的输出缓冲区太小无法保存结果
+@exception BadPaddingException 如果 cipher 为解密模式，并且未请求填充或不填充，但解密的数据没有用适当的填充字节所限制
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.crypto.CipherSpi.engineDoFinal(ByteBuffer input, ByteBuffer output) throws javax.crypto.ShortBufferException, javax.crypto.IllegalBlockSizeException, javax.crypto.BadPaddingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+按单部分操作加密或解密数据，或者结束一个多部分操作。数据被加密还是解密取决于此 cipher 的初始化方式。
+
+<p>处理从 <code>input.position()</code> 开始的所有 <code>input.remaining()</code> 字节。结果存储在输出缓冲区中。返回时，输入缓冲区的位置将等于其限制；其限制并未改变。输出缓冲区的位置将前移 n，其中 n 为此方法返回的值；输出缓冲区的限制并未改变。
+
+<p>如果 <code>output.remaining()</code> 个字节还不够保存该结果，则抛出 <code>ShortBufferException</code>。
+
+<p>结束时，此方法将把此 cipher 对象重置为上一次调用 <code>engineInit</code> 初始化得到的状态。即重置该对象，可供加密或解密（取决于调用 <code>engineInit</code> 时指定的操作模式）更多的数据。
+
+<p>注：如果抛出了任何异常，则再次使用此 cipher 对象前，可能需要将其重置。
+
+<p>如果能够比 byte 数组更有效地处理 ByteBuffer，子类应考虑重写此方法。
+
+@param input 输入 ByteBuffer
+@param output 输出 ByteBuffer
+
+@return <code>output</code> 中存储的字节数
+
+@exception IllegalBlockSizeException 如果此 cipher 为块 cipher，未请求任何填充（只针对加密模式），并且由此 cipher 处理的数据总输入长度不是块大小的倍数，如果此加密算法无法处理所提供的输入数据。
+@exception ShortBufferException 如果输出缓冲区没有足够的空间
+@exception BadPaddingException 如果 cipher 为解密模式，并且未请求填充或不填充，但解密的数据没有用适当的填充字节所限制
+ 
+@throws NullPointerException 如果任一参数为 <CODE>null</CODE>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected byte[] javax.crypto.CipherSpi.engineWrap(Key key) throws javax.crypto.IllegalBlockSizeException, java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将密钥包装。
+
+<p>已将此具体方法添加到了先前定义过的抽象类中。（为向后兼容，它不能为抽象方法）。可以由提供者重写以包装该密钥。如果给定的密钥无法被包装，则这样的重写可能会抛出 IllegalBlockSizeException 或 InvalidKeyException （在指定情况下）。如果不重写此方法，则它总是抛出 UnsupportedOperationException。
+
+@param key 要包装的密钥。
+
+@return 已包装的密钥。
+ 
+@exception IllegalBlockSizeException 如果此 cipher 为块 cipher，未请求填充，并且要包装的密钥的编码长度不是块大小的倍数。
+
+@exception InvalidKeyException 如果不可能用此 cipher 包装该密钥，或这样做不安全（例如，将一个硬件保护的密钥传给只要求软件保护的 cipher）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.Key javax.crypto.CipherSpi.engineUnwrap(byte[] wrappedKey, String wrappedKeyAlgorithm, int wrappedKeyType) throws java.security.InvalidKeyException, java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+打开一个以前包装的密钥。
+
+<p>已将此具体方法添加到了先前定义过的抽象类中。（为向后兼容，它不能为抽象方法）。可以由提供者重写以打开以前包装的密钥。如果无法打开给定的包装密钥，则这样的重写可能会抛出 InvalidKeyException。如果不重写此方法，则它总是抛出 UnsupportedOperationException。
+
+@param wrappedKey 要打开的密钥。
+
+@param wrappedKeyAlgorithm 与此包装密钥关联的算法。
+
+@param wrappedKeyType 已包装密钥的类型。此类型为 <code>SECRET_KEY</code>、<code>PRIVATE_KEY</code> 或 <code>PUBLIC_KEY</code> 之一。
+
+@return 打开的密钥。
+
+@exception NoSuchAlgorithmException 如果没有一个已安装的提供者能够为 <code>wrappedKeyAlgorithm</code> 创建类型为 <code>wrappedKeyType</code> 的密钥。
+
+@exception InvalidKeyException 如果 <code>wrappedKey</code> 并不为 <code>wrappedKeyAlgorithm</code> 表示类型为 <code>wrappedKeyType</code> 的已包装密钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.crypto.CipherSpi.engineGetKeySize(Key key) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回给定密钥对象的密钥大小，以位为单位。
+<p>已将此具体方法添加到了先前定义过的抽象类中。如果提供者未重写此方法，则将抛出 <code>UnsupportedOperationException</code>。
+
+@param key 密钥对象
+ 
+@return 给定密钥对象的密钥大小。
+
+@exception InvalidKeyException 如果 <code>key</code> 无效。
+
+<!-- END DATA -->

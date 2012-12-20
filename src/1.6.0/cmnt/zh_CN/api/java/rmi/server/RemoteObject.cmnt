@@ -1,0 +1,199 @@
+<!-- BEGIN KEY -->
+public abstract class java.rmi.server.RemoteObject extends java.lang.Object implements java.rmi.Remote, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该 <code>RemoteObject</code> 类实现远程对象的 <code>java.lang.Object</code> 行为。<code>RemoteObject</code> 通过实现 hashCode、equals 和 toString 方法提供 Object 的远程语义。
+
+@author	Ann Wollrath
+@author	Laird Dornin
+@author	Peter Jones
+@version	1.33, 03/12/19
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.rmi.server.RemoteRef java.rmi.server.RemoteObject.ref
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象的远程引用。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.server.RemoteObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建远程对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.server.RemoteObject(RemoteRef newref)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个用指定远程引用初始化的远程对象。
+@param newref 远程引用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.RemoteRef java.rmi.server.RemoteObject.getRef()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回远程对象的远程引用。
+
+<p>注：从此方法返回的对象可以是特定于实现的类的实例。该 <code>RemoteObject</code> 通过其自定义 <code>writeObject</code> 和 <code>readObject</code> 方法的行为确保其实例远程引用的序列化可移植性。不应在 <code>RemoteObject</code> 包装器实例之外序列化 <code>RemoteRef</code> 的实例，否则其结果可能无法移植。
+
+@return 对远程对象的远程引用
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.server.RemoteObject.toStub(Remote obj) throws java.rmi.NoSuchObjectException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回作为参数传递的远程对象 <code>obj</code> 的 stub。此操作仅在导出对象<i>之后</i> 有效。
+@param obj 需要其 stub 的远程对象
+@return 远程对象 <code>obj</code> 的 stub。
+@exception NoSuchObjectException 如果无法找到远程对象的 stub。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.server.RemoteObject.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回远程对象的哈希码。引用同一远程对象的两个远程对象 stub 将有相同的哈希码（以便作为哈希表中的键支持远程对象）。
+
+@see  java.util.Hashtable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.server.RemoteObject.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个远程对象是否相等。返回指示此远程对象是否与指定对象等效的 boolean。在哈希表中存储远程对象时将使用此方法。如果指定对象本身不是 RemoteObject 的实例，则此方法通过返回调用其参数的 <code>equals</code> 方法的结果将此远程对象委托为参数。
+@param	obj	要与之比较的对象
+@return	如果这些对象相等，则返回 true；否则，返回 false。
+@see		java.util.Hashtable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.server.RemoteObject.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此远程对象的值的 String。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.rmi.server.RemoteObject.readObject(ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于自定义序列化的 <code>readObject</code>。
+
+<p>此方法按以下方式读取该类的此对象的序列化形式：
+
+<p>在 <code>in</code> 上调用 <code>readUTF</code> 方法来读取 <code>RemoteRef</code> 实例的外部 ref 类型名称，以将其填充到此对象的 <code>ref</code> 字段。如果 <code>readUTF</code> 返回的字符串长度为 0，则在 <code>in</code> 上调用 <code>readObject</code> 方法，然后将 <code>readObject</code> 返回的值转换为 <code>RemoteRef</code>，并将此对象的 <code>ref</code> 字段设置为该值。否则，此对象的 <code>ref</code> 字段将设置为从与 <code>readUTF</code> 返回的外部 ref 类型名称相对应的特定于实现的类创建的 <code>RemoteRef</code> 实例，然后在此对象的 <code>ref</code> 字段上调用 <code>readExternal</code> 方法。
+
+<p>如果外部 ref 类型名称为 <code>&quot;UnicastRef&quot;</code>、<code>&quot;UnicastServerRef&quot;</code>、<code>&quot;UnicastRef2&quot;</code>、<code>&quot;UnicastServerRef2&quot;</code> 或 <code>&quot;ActivatableRef&quot;</code>，则必须找到一个相应的特定于实现的类，并且其 <code>readExternal</code> 方法在指定要写入此类的 <b>serialData</b> 文档时必须读取外部 ref 类型名称的序列数据。如果外部 ref 类型名称是任何其他字符串（长度不是 0），则将抛出 <code>ClassNotFoundException</code>，除非该实现提供相对于该外部 ref 类型名称的特定于实现的类，在这种情况下，将把此对象的 <code>ref</code> 字段设置为一个该特定于实现的类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.rmi.server.RemoteObject.writeObject(ObjectOutputStream out) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于自定义序列化的 <code>writeObject</code>。
+
+<p>此方法按以下方式写入该类的此对象的序列化形式：
+
+<p>在此对象的 <code>ref</code> 字段上调用 {@link RemoteRef#getRefClass(java.io.ObjectOutput) getRefClass} 方法，以获得其外部 ref 类型名称。如果 <code>getRefClass</code> 返回的值是长度大于 0 的非 <code>null</code> 字符串，则在具有 <code>getRefClass</code> 返回的值的 <code>out</code> 上调用 <code>writeUTF</code> 方法，然后在作为参数传递 <code>out</code> 的此对象的 <code>ref</code> 字段上调用 <code>writeExternal</code> 方法；否则，在具有 0 长度字符串 (<code>&quot;&quot;</code>) 的 <code>out</code> 上调用 <code>writeUTF</code> 方法，然后在作为参数传递此对象的 <code>ref</code> 字段的 <code>out</code> 上调用 <code>writeObject</code> 方法。
+ 
+@serialData
+
+此类的序列化数据包含一个字符串（用 <code>ObjectOutput.writeUTF</code> 写入），该字符串可以是包含的 <code>RemoteRef</code> 实例（<code>ref</code> 字段）的外部 ref 类型名称，也可以是一个 0 长度字符串，如果该字符串的长度不是 0，则后跟 <code>writeExternal</code> 方法写入的 <code>ref</code> 字段的外部形式；如果该字符串的长度为 0，则后跟将其传递到序列化流的 <code>writeObject</code> 时写入的 <code>ref</code> 字段的序列化形式。
+
+<p>如果此对象是一个从任何 <code>UnicastRemoteObject.exportObject</code> 方法返回的 {@link RemoteStub} 或 {@link RemoteObjectInvocationHandler} 的实例，且未使用自定义套接字工厂，则外部 ref 类型名称为 <code>&quot;UnicastRef&quot;</code>。
+
+如果此对象是一个从任何 <code>UnicastRemoteObject.exportObject</code> 方法返回的 <code>RemoteStub</code> 或 <code>RemoteObjectInvocationHandler</code> 的实例，且使用自定义套接字工厂，则外部 ref 类型名称为 <code>&quot;UnicastRef2&quot;</code>。
+
+如果此对象是一个从任何 <code>java.rmi.activation.Activatable.exportObject</code> 方法返回的 <code>RemoteStub</code> 或 <code>RemoteObjectInvocationHandler</code> 的实例，则外部 ref 类型名称为 <code>&quot;ActivatableRef&quot;</code>。
+
+如果此对象是一个从 <code>RemoteObject.toStub</code> 方法返回的 <code>RemoteStub</code> 或 <code>RemoteObjectInvocationHandler</code> 的实例（并且传入 <code>toStub</code> 的参数本身不是 <code>RemoteStub</code>），则外部 ref 类型名称是一个传入 <code>toStub</code> 的远程对象的导出方式的函数，如上所述。
+
+如果此对象是一个最初通过反序列化创建的 <code>RemoteStub</code> 或 <code>RemoteObjectInvocationHandler</code> 的实例，则外部 ref 类型名称与此对象进行反序列化时读取的类型名称相同。
+
+<p>如果此对象是一个未使用自定义套接字工厂的 <code>java.rmi.server.UnicastRemoteObject</code> 的实例，则外部 ref 类型名称为 <code>&quot;UnicastServerRef&quot;</code>。
+
+如果此对象是一个使用自定义套接字工厂的 <code>UnicastRemoteObject</code> 实例，则外部 ref 类型名称为 <code>&quot;UnicastServerRef2&quot;</code>。
+
+<p>下面是必须由 <code>writeExternal</code> 方法写入且由 <code>RemoteRef</code> 实现类的 <code>readExternal</code> 方法读取的数据，该实现类对应于每个定义的外部 ref 类型名称：
+
+<p>对于 <code>&quot;UnicastRef&quot;</code>：
+
+ <ul>
+
+<li>引用的远程对象的主机名，由 {@link java.io.ObjectOutput#writeUTF(String)} 写入
+
+<li>引用的远程对象的端口，由 {@link java.io.ObjectOutput#writeInt(int)} 写入
+
+<li>作为引用中包含的 <code>ObjID</code> 实例上调用 {link java.rmi.server.ObjID#write(java.io.ObjectOutput)} 的结果写入的数据
+
+<li>boolean 值 <code>false</code>，由 {@link java.io.ObjectOutput#writeBoolean(boolean)} 写入
+
+ </ul>
+
+<p>对于具有 <code>null</code> 客户机套接字工厂的 <code>&quot;UnicastRef2&quot;</code>：
+
+ <ul>
+
+<li>字节值 <code>0x00</code>（指示 <code>null</code> 客户机套接字工厂），由 {@link java.io.ObjectOutput#writeByte(int)} 写入
+
+<li>引用的远程对象的主机名，由 {@link java.io.ObjectOutput#writeUTF(String)} 写入
+
+<li>引用的远程对象的端口，由 {@link java.io.ObjectOutput#writeInt(int)} 写入
+
+<li>作为引用中包含的 <code>ObjID</code> 实例上调用 {link java.rmi.server.ObjID#write(java.io.ObjectOutput)} 的结果写入的数据
+
+<li>boolean 值 <code>false</code>，由 {@link java.io.ObjectOutput#writeBoolean(boolean)} 写入
+
+ </ul>
+ 
+<p>对于具有非 <code>null</code> 客户机套接字工厂的 <code>&quot;UnicastRef2&quot;</code>：
+
+ <ul>
+
+<li>字节值 <code>0x01</code>（指示非 <code>null</code> 客户机套接字工厂），由 {@link java.io.ObjectOutput#writeByte(int)} 写入
+
+<li>引用的远程对象的主机名，由 {@link java.io.ObjectOutput#writeUTF(String)} 写入
+
+<li>引用的远程对象的端口，由 {@link java.io.ObjectOutput#writeInt(int)} 写入
+
+<li>客户机套接字工厂（类型 <code>java.rmi.server.RMIClientSocketFactory</code> 的对象），通过将其传递到流实例上的 <code>writeObject</code> 的调用写入
+
+<li>作为引用中包含的 <code>ObjID</code> 实例上调用 {link java.rmi.server.ObjID#write(java.io.ObjectOutput)} 的结果写入的数据
+
+<li>boolean 值 <code>false</code>，由 {@link java.io.ObjectOutput#writeBoolean(boolean)} 写入
+
+ </ul>
+
+<p>对于具有 <code>null</code> 嵌入远程引用的 <code>&quot;ActivatableRef&quot;</code>：
+
+ <ul>
+
+<li><code>java.rmi.activation.ActivationID</code> 的实例，通过将其传递到流实例上的 <code>writeObject</code> 的调用写入
+
+<li>0 长度字符串 (<code>&quot;&quot;</code>)，由 {@link java.io.ObjectOutput#writeUTF(String)} 写入
+
+ </ul>
+
+<p>对于具有非 <code>null</code> 嵌入远程引用的 <code>&quot;ActivatableRef&quot;</code>：
+
+ <ul>
+
+<li><code>java.rmi.activation.ActivationID</code> 的实例，通过将其传递到流实例上的 <code>writeObject</code> 的调用写入
+
+<li>嵌入的远程引用的外部 ref 类型名称（必须是 <code>&quot;UnicastRef2&quot;</code>），由 {@link java.io.ObjectOutput#writeUTF(String)} 写入
+
+<li>嵌入的远程引用的外部形式，通过调用其具有流实例的 <code>writeExternal</code> 方法写入（请参阅上述 <code>&quot;UnicastRef2&quot;</code> 的外部形式的描述）
+
+ </ul>
+
+<p>对于 <code>&quot;UnicastServerRef&quot;</code> 和 <code>&quot;UnicastServerRef2&quot;</code>，不能通过 <code>writeExternal</code> 方法写入数据，也不能通过 <code>readExternal</code> 方法读取数据。
+
+<!-- END DATA -->

@@ -1,0 +1,68 @@
+<!-- BEGIN KEY -->
+public interface java.util.concurrent.CompletionService
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将生产新的异步任务与使用已完成任务的结果分离开来的服务。生产者 <tt>submit</tt> 执行的任务。使用者 <tt>take</tt> 已完成的任务，并按照完成这些任务的顺序处理它们的结果。例如，<tt>CompletionService</tt> 可以用来管理异步 IO ，执行读操作的任务作为程序或系统的一部分提交，然后，当完成读操作时，会在程序的不同部分执行其他操作，执行操作的顺序可能与所请求的顺序不同。
+
+<p>通常，<tt>CompletionService</tt> 依赖于一个单独的 {@link Executor} 来实际执行任务，在这种情况下，<tt>CompletionService</tt> 只管理一个内部完成队列。{@link ExecutorCompletionService} 类提供了此方法的一个实现。
+
+<p>内存一致性效果：线程中向 {@code CompletionService} 提交任务之前的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 该任务执行的操作，后者依次 <i>happen-before</i> 紧跟在从对应 {@code take()} 成功返回的操作。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Future<V> java.util.concurrent.CompletionService.submit(java.util.concurrent.Callable<V> task)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提交要执行的值返回任务，并返回表示挂起的任务结果的 Future。在完成时，可能会提取或轮询此任务。
+
+@param task 要提交的任务
+@return 一个表示挂起的任务完成的 Future
+@throws RejectedExecutionException 如果不能安排要执行的任务
+@throws NullPointerException 如果该任务为 null     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Future<V> java.util.concurrent.CompletionService.submit(Runnable task, V result)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提交要执行的 Runnable 任务，并返回一个表示任务完成的 Future，可以提取或轮询此任务。
+
+@param task 要提交的任务
+@param result 要返回的已成功完成任务的结果
+@return 一个表示挂起的任务完成的 Future，其 <tt>get()</tt> 方法将返回完成时给出的结果值
+@throws RejectedExecutionException 如果不能安排要执行的任务
+@throws NullPointerException 如果该任务为 null  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Future<V> java.util.concurrent.CompletionService.take() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除表示下一个已完成任务的 Future，如果目前不存在这样的任务，则等待。
+
+@return 表示下一个已完成任务的 Future
+@throws InterruptedException 如果在等待时被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Future<V> java.util.concurrent.CompletionService.poll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除表示下一个已完成任务的 Future，如果不存在这样的任务，则返回 <tt>null</tt>。
+
+@return 表示下一个已完成任务的 Future；如果不存在这样的任务，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.Future<V> java.util.concurrent.CompletionService.poll(long timeout, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除表示下一个已完成任务的 Future，如果目前不存在这样的任务，则将等待指定的时间（如果有必要）。
+
+@param timeout 放弃之前需要等待的时间长度，以 <tt>unit</tt> 为时间单位
+@param unit 确定如何解释 <tt>timeout</tt> 参数的 <tt>TimeUnit</tt>
+@return 表示下一个已完成任务的 Future；如果等待了指定时间仍然不存在这样的任务，则返回 <tt>null</tt>
+@throws InterruptedException 如果在等待时被中断
+
+<!-- END DATA -->

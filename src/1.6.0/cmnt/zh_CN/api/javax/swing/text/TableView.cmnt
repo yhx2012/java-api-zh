@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.text.TableView extends javax.swing.text.BoxView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+为某个表实现 View 接口，这由一个元素结构组成，其中此视图负责的元素的子元素表示行，而行元素的子元素为单元格。在单元格元素下可以有任意的元素结构，这将由通过 getViewFactory 方法返回的 ViewFactory 来构建。
+ <pre>
+
+    表
+      行
+        单元格
+        单元格
+      行
+        单元格
+        单元格
+
+ </pre>
+ <p>
+此类实现为一个框的层次，表本身是垂直框，行是水平框，单元格是垂直框。单元格允许跨越多个列和行。在默认情况下，表可认为是在网格之上形成的（即可以在网格包布局中找到类似物），其中表单元格能请求跨越多个网格单元格。默认情况下，表单元格的水平跨距以此网格为基础，但是可以通过重新实现所请求的单元格跨距来更改（即需要时表单元格可以具有独立的跨距）。
+ 
+@author  Timothy Prinzing
+@version 1.33 05/18/04
+@see     View
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.TableView(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对给定的元素构造一个 TableView。
+
+@param elem 此视图所负责的元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.TableView.TableRow javax.swing.text.TableView.createTableRow(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的表格行。
+
+@param elem 元素
+@return 行
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.TableView.TableCell javax.swing.text.TableView.createTableCell(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 现在表单元格可以是任意视图实现并且应该由 ViewFactory 而不是表来产生。
+
+@param elem 元素
+@return 单元格
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.TableView.replace(int offset, int length, javax.swing.text.View[] views)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改子视图。实现此方法来提供超类的行为并且使网格无效，以便对行和列进行重新计算。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.TableView.layoutColumns(int targetSpan, int[] offsets, int[] spans, javax.swing.SizeRequirements[] reqs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+布局列，使其符合给定的目标跨距。通过 {@code offsets} 和 {@code spans} 返回结果。
+
+@param targetSpan 所有表格列总的给定跨距
+@param reqs 每一列的所需大小。此参数是请求最小、首选、最大跨距的单元的列最大值
+@param spans 分配给每一列的量的返回值
+@param offsets 距每一列起始点的偏移量的返回值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.TableView.layoutMinorAxis(int targetSpan, int axis, int[] offsets, int[] spans)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对框的辅轴（即垂直于其所表示的轴的轴）执行布局操作。布局的结果应当置于给定数组中，该数组对子级沿辅轴的位置分配。只要布局需要沿辅轴进行更新，超类便调用此方法。
+ <p>
+实现此方法来调用 <a href="#layoutColumns">layoutColumns</a> 方法，然后转发给超类来实际执行表格行的布局。
+
+@param targetSpan 给视图的总跨距，将用于对子级的布局。
+@param axis 要布局的轴。
+@param offsets 距每个子视图的视图起始处的偏移量。这是一个返回值，由此方法的实现填写。
+@param spans 每个子视图的跨距。这是一个返回值，由此方法的实现填写。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SizeRequirements javax.swing.text.TableView.calculateMinorAxisRequirements(int axis, SizeRequirements r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算辅轴的所需大小。只要所需大小需要更新（即一个 preferenceChanged 传给了此视图），超类便调用此方法。  
+ <p>
+实现此方法来计算作为列的所需大小之和的所需大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.TableView.getViewAtPosition(int pos, Rectangle a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示模型中给定位置的子视图。实现此方法以通过遍历子级来查找包含给定位置的范围。在此视图中，子级与子元素无须具有一一对应的映射。
+
+@param pos 查找位置，该值 &gt;= 0
+@param a 入口处表的分配和出口处包含该位置的视图的分配
+@return 表示给定位置的视图，如果不存在则返回 <code>null</code>
+
+<!-- END DATA -->

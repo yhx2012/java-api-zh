@@ -1,0 +1,143 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.plugins.jpeg.JPEGImageWriteParam extends javax.imageio.ImageWriteParam
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类添加了使用内置 JPEG writer 插件时设置 JPEG 量化表和 Huffman 表以及请求为图像计算最佳 Huffman 表的能力。此类的实例将从内置 <code>ImageWriter</code> 的 <code>getDefaultImageWriteParam</code> 方法返回。
+
+<p> 这些新增功能的主要目的是允许在编码简写流中使用表的规范。内置 JPEG writer 还将接受普通 <code>ImageWriteParam</code>，在这种情况下，writer 将在内部构造所需的表。
+
+<p> 无论是哪种情况，在 <code>ImageWriteParam</code> 中设置的质量对于底层库而言意义都是相同的：1.00 表示全部为 1 的量化表，0.75 表示&ldquo;标准&rdquo;量化表（即视觉上无损失量化表），而 0.00 则表示全部为 255 的量化表。
+
+<p> 简写流的表常常通过首先写入仅包含表的简写流来指定，在有些应用程序中，这些表是提前准备好的。此类允许直接从客户端代码指定表。
+
+<p> 通常，表是在传入 writer 的 <code>IIOMetadata</code> 对象中指定的，这些对象中包括的所有表都会写入流中。如果没有在元数据中指定表，则写入简写流。如果元数据中不包括任何表并且也没有在 <code>JPEGImageWriteParam</code> 中指定任何表，则使用&ldquo;标准&rdquo;视觉上无损失表编码简写流。当某个简写流必须在没有首先向流中写入任何表的情况下进行写入时，需要使用此类来指定表。要使用此类，传入 writer 的元数据对象不能包含任何表，并且不能提供任何流元数据。有关默认表的更多信息，请参见 {@link JPEGQTable <code>JPEGQTable</code>} 和 {@link JPEGHuffmanTable <code>JPEGHuffmanTable</code>}。
+
+<p> writer 的 <code>getDefaultWriteParam</code> 方法返回的默认 <code>JPEGImageWriteParam</code> 不包含任何表。默认表包括在 writer 返回的默认 <code>IIOMetadata</code> 对象中。
+
+<p> 如果元数据包含表，则忽略 <code>JPEGImageWriteParam</code> 中给定的表。此外，写入一组表后，只有元数据中的表可以重写它们来进行后续写入，不管写入相同的流还是不同的流。为了使用此类指定新表，必须调用 writer 的 {@link javax.imageio.ImageWriter#reset <code>reset</code>} 方法。
+
+ <p>
+有关内置 JPEG 插件的操作的更新信息，请参见 <A HREF="../../metadata/doc-files/jpeg_metadata.html">JPEG metadata format specification and usage notes</A>。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGImageWriteParam(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>JPEGImageWriteParam</code>。不支持平铺。支持逐步编码。默认的逐步模式为 MODE_DISABLED。支持名为 &quot;JPEG&quot; 的单个压缩形式。默认的压缩质量为 0.75。
+
+@param locale 要由超类用于本地化压缩类型名称和质量描述的 <code>Locale</code>，或者为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageWriteParam.unsetCompression()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有以前的压缩质量设置值。
+
+<p> 默认实现将压缩质量重置为 <code>0.75F</code>。
+
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.plugins.jpeg.JPEGImageWriteParam.isCompressionLossless()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>false</code>，因为 JPEG 插件仅支持有损失的压缩。
+
+@return <code>false</code>。
+
+@exception IllegalStateException 如果压缩模式不是 <code>MODE_EXPLICIT</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.plugins.jpeg.JPEGImageWriteParam.areTablesSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果表是当前设置的，则返回 <code>true</code>。
+
+@return 如果表存在，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageWriteParam.setEncodeTables(javax.imageio.plugins.jpeg.JPEGQTable[] qTables, javax.imageio.plugins.jpeg.JPEGHuffmanTable[] DCHuffmanTables, javax.imageio.plugins.jpeg.JPEGHuffmanTable[] ACHuffmanTables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置量化表和 Huffman 表以在编码简写流中使用。每个类型可能至多有 4 个表。如果在元数据中指定了表，则忽略这些表。所有参数都必须为非 <code>null</code>。两个 Huffman 表的数组必须具有相同的元素数。假定元数据中的帧和扫描标题的表说明符等效于这些数组中的索引。使用此方法复制参数数组。
+
+@param qTables 量化表对象所组成的数组。
+@param DCHuffmanTables Huffman 表对象所组成的数组。
+@param ACHuffmanTables Huffman 表对象所组成的数组。
+
+@exception IllegalArgumentException 如果这些参数中的任何一个为 <code>null</code> 或者具有 4 个以上的元素，或者 DC 和 AC 的表数不同。
+
+@see #unsetEncodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageWriteParam.unsetEncodeTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除当前设置的所有量化表和 Huffman 表。
+
+@see #setEncodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGQTable[] javax.imageio.plugins.jpeg.JPEGImageWriteParam.getQTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setEncodeTables</code> 设置的量化表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGQTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setEncodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGHuffmanTable[] javax.imageio.plugins.jpeg.JPEGImageWriteParam.getDCHuffmanTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setEncodeTables</code> 设置的 DC Huffman 表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGHuffmanTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setEncodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGHuffmanTable[] javax.imageio.plugins.jpeg.JPEGImageWriteParam.getACHuffmanTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setEncodeTables</code> 设置的 AC Huffman 表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGHuffmanTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setEncodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageWriteParam.setOptimizeHuffmanTables(boolean optimize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知 writer 是否作为写入过程的一部分为图像生成最佳 Huffman 表。默认值为 <code>false</code>。如果将此标志设置为 <code>true</code>，则其重写在元数据中指定的所有表。注意，这意味着通过将此标志设置为 <code>true</code> 而写入的任何图像总是包含 Huffman 表。
+
+@param optimize 一个 boolean 值，指示是否在写入时生成最佳 Huffman 表。
+
+@see #getOptimizeHuffmanTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.plugins.jpeg.JPEGImageWriteParam.getOptimizeHuffmanTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回传入对 <code>setOptimizeHuffmanTables</code> 的最近一次调用中的值；如果从未调用 <code>setOptimizeHuffmanTables</code>，则返回 <code>false</code>。
+
+@return 如果 writer 将生成最佳 Huffman 表，则返回 <code>true</code>。
+
+@see #setOptimizeHuffmanTables
+
+<!-- END DATA -->

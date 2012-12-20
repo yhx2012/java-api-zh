@@ -1,0 +1,111 @@
+<!-- BEGIN KEY -->
+public interface java.awt.image.ImageObserver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于在构造 Image 时，接收有关 Image 信息通知的异步更新接口。
+
+@version 	1.27 12/19/03
+@author 	Jim Graham
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.WIDTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示基本图像的宽度现在可用，并且可从 width 参数中获取此宽度到 imageUpdate 回调方法。
+@see Image#getWidth
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.HEIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示基本图像的高度现在可用，并且可从 height 参数中获取此高度到 imageUpdate 回调方法。
+@see Image#getHeight
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.PROPERTIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示该图像的属性现在可用。
+@see Image#getProperty
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.SOMEBITS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示已提供了绘制图像缩放变体所需的更多像素。可从 x、y、width 和 height 参数中获取新像素的边界框到 imageUpdate 回调方法。
+@see java.awt.Graphics#drawImage
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.FRAMEBITS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示多帧图像（以前绘制的）的另一个完整帧现在可以再次绘制。应该忽略 imageUpdate 回调方法的 x、y、width 和 height 参数。
+@see java.awt.Graphics#drawImage
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.ALLBITS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示现在已完成了一幅以前绘制的静态图像，并且可以其最终形式再次绘制它。应该忽略 imageUpdate 回调方法的 x、y、width 和 height 参数。
+@see java.awt.Graphics#drawImage
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.ERROR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示被异步跟踪的图像遇到了错误。没有更多信息可用，并且图像绘制将失败。出于方便的考虑，同时还将指定 ABORT 标志，以指示图像生成已中止。
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ImageObserver.ABORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+imageUpdate 的 infoflags 参数中的此标志指示被异步跟踪的图像在生成完成前即已中止。在没有进一步的动作以触发另一个图像生成序列的情况下，没有更多可用信息。如果在此图像更新中没有设置 ERROR 标志，则访问图像中的任何数据都会再次重新开始图像的生成（可能是从头开始）。
+@see #imageUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.ImageObserver.imageUpdate(Image img, int infoflags, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当以前使用异步接口所请求的图像的信息变得可用时就调用此方法。异步接口是将 ImageObserver 对象作为参数的方法调用，如 getWidth(ImageObserver) 和 drawImage(img, x, y, ImageObserver)。这些方法要么将调用者注册为对有关总体图像本身的信息感兴趣（对于 getWidth(ImageObserver)），要么注册为对有关图像输出版本的信息感兴趣（对于调用 drawImage(img, x, y, [w, h,] ImageObserver)）。  
+
+<p>如果需要进一步的更新，则此方法应该返回 true，如果已获得所需的信息，则应返回 false。使用 img 参数传入所跟踪的图像。组合各种常量即可形成 infoflags 参数，指示哪种图像信息现在可用。对 x、y、width 和 height 参数的解释取决于 infoflags 参数的内容。
+ <p>
+<code>infoflags</code> 参数应该是对下列标志按位进行 <b>OR</b> 运算后的结果：<code>WIDTH</code>、<code>HEIGHT</code>、<code>PROPERTIES</code>、<code>SOMEBITS</code>、<code>FRAMEBITS</code>、<code>ALLBITS</code>、<code>ERROR</code>、<code>ABORT</code>。
+
+@param     img   正在观察的图像。
+@param     infoflags   下列标志按位 OR 运算后的结果：<code>WIDTH</code>、<code>HEIGHT</code>、<code>PROPERTIES</code>、<code>SOMEBITS</code>、<code>FRAMEBITS</code>、<code>ALLBITS</code>、<code>ERROR</code>、<code>ABORT</code>。
+@param     x   <i>x</i> 坐标。
+@param     y  <i>y</i> 坐标。
+@param     width  宽度。
+@param     height  高度。
+@return    如果 infoflags 指示已完全加载了图像，则返回 <code>false</code>；否则返回 <code>true</code>。
+ 
+@see #WIDTH
+@see #HEIGHT
+@see #PROPERTIES
+@see #SOMEBITS
+@see #FRAMEBITS
+@see #ALLBITS
+@see #ERROR
+@see #ABORT
+@see Image#getWidth
+@see Image#getHeight
+@see java.awt.Graphics#drawImage
+
+<!-- END DATA -->

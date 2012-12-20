@@ -1,0 +1,158 @@
+<!-- BEGIN KEY -->
+public final class java.awt.LinearGradientPaint extends java.awt.MultipleGradientPaint
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code LinearGradientPaint} 类提供利用线性颜色渐变模式填充 {@link java.awt.Shape} 的方式。用户可以指定两种或多种渐变颜色，并且此绘制将在颜色与颜色之间提供一个插值。用户还可以指定起始点和结束点，它们定义了颜色渐变在用户空间中的开始和结束位置。
+ <p>
+用户必须提供一个 float 数组，指定如何沿渐变分布颜色。这些值的范围从 0.0 到 1.0，其作用与沿着渐变的关键帧类似（它们标记了渐变应完全变为某种特定颜色的位置）。
+ <p>
+在用户没有将第一个关键帧值设置为等于 0 和/或将最后一个关键帧值设置为等于 1 的情况下，将在这些位置创建关键帧，并且第一种颜色和最后一种颜色将在这些位置处复制。因此，如果用户指定以下数组来构造渐变：<br>
+ <pre>
+{Color.BLUE, Color.RED}, {.3f, .7f}
+ </pre>
+那么此渐变将转换为一个带有以下关键帧的渐变：<br>
+ <pre>
+{Color.BLUE, Color.BLUE, Color.RED, Color.RED}, {0f, .3f, .7f, 1f}
+ </pre>
+
+ <p>
+在填充起始点和结束点以外的颜色时，用户也可以选择 {@code LinearGradientPaint} 应执行的动作。如果没有指定循环方法，则将默认选择 {@code NO_CYCLE}，这意味着将使用端点颜色填充剩余的区域。
+ <p>
+colorSpace 参数允许用户指定应在哪一种颜色空间（默认 sRGB 或线性 RGB）中执行插值操作。
+
+ <p>
+以下代码演示了 {@code LinearGradientPaint} 的典型用法：
+ <p>
+ <pre>
+Point2D start = new Point2D.Float(0, 0);
+Point2D end = new Point2D.Float(50, 50);
+float[] dist = {0.0f, 0.2f, 1.0f};
+Color[] colors = {Color.RED, Color.WHITE, Color.BLUE};
+LinearGradientPaint p =
+new LinearGradientPaint(start, end, dist, colors);
+ </pre>
+ <p>
+此代码将创建一个 {@code LinearGradientPaint}，它插入到渐变前 20% 的红色和白色之间，以及渐变剩余 80% 的白色和蓝色之间。
+
+ <p>
+此图像演示了对以上示例代码使用三种循环方法时的情形：
+ <p>
+ <center>
+ <img src = "doc-files/LinearGradientPaint.png">
+ </center>
+  
+@see java.awt.Paint
+@see java.awt.Graphics2D#setPaint
+@author Nicholas Talian, Vincent Hardy, Jim Graham, Jerry Evans
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.LinearGradientPaint(float startX, float startY, float endX, float endY, float[] fractions, java.awt.Color[] colors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code NO_CYCLE} 重复方法和 {@code SRGB} 颜色空间的 {@code LinearGradientPaint}。
+
+@param startX 用户空间中渐变轴起始点的 X 坐标
+@param startY 用户空间中渐变轴起始点的 Y 坐标
+@param endX 用户空间中渐变轴结束点的 X 坐标
+@param endY 用户空间中渐变轴结束点的 Y 坐标
+@param fractions 范围从 0.0 到 1.0 之间的数字，用于指定沿渐变的颜色分布
+@param colors 与每个小数值相对应的颜色数组
+     
+@throws NullPointerException 如果 {@code fractions} 数组为 null，或 {@code colors} 数组为 null
+@throws IllegalArgumentException 如果起始点和结束点是同一个点；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.LinearGradientPaint(float startX, float startY, float endX, float endY, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code SRGB} 颜色空间的 {@code LinearGradientPaint}。
+
+@param startX 用户空间中渐变轴起始点的 X 坐标
+@param startY 用户空间中渐变轴起始点的 Y 坐标
+@param endX   用户空间中渐变轴结束点的 X 坐标
+@param endY   用户空间中渐变轴结束点的 Y 坐标
+@param fractions 范围从 0.0 到 1.0 之间的数字，用于指定沿渐变的颜色分布
+@param colors 与每个小数值相对应的颜色数组
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+
+@throws NullPointerException 如果 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果起始点和结束点是同一个点；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按照升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.LinearGradientPaint(Point2D start, Point2D end, float[] fractions, java.awt.Color[] colors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code NO_CYCLE} 重复方法和 {@code SRGB} 颜色空间的 {@code LinearGradientPaint}。
+
+@param start 用户空间中渐变轴的起始 {@code Point2D}
+@param end 用户空间中渐变轴的结束 {@code Point2D}
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 与每个小数值相对应的颜色数组
+
+@throws NullPointerException 如果有一个点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null
+@throws IllegalArgumentException 如果起始点和结束点是同一个点；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.LinearGradientPaint(Point2D start, Point2D end, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code SRGB} 颜色空间的 {@code LinearGradientPaint}。
+
+@param start 用户空间中渐变轴的起始 {@code Point2D}
+@param end 用户空间中渐变轴的结束 {@code Point2D}
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 与每个小数值相对应的颜色数组
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+   
+@throws NullPointerException 如果有一个点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果起始点和结束点为同一个点；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.LinearGradientPaint(Point2D start, Point2D end, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod, MultipleGradientPaint.ColorSpaceType colorSpace, AffineTransform gradientTransform)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 {@code LinearGradientPaint}。
+
+@param start 用户空间中渐变轴的起始 {@code Point2D}
+@param end 用户空间中渐变轴的结束 {@code Point2D}
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 与每个小数值相对应的颜色数组
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+@param colorSpace 用于插值操作的颜色空间，该参数为 {@code SRGB} 或 {@code LINEAR_RGB}
+@param gradientTransform 将应用到渐变的转换
+     
+@throws NullPointerException 如果有一个点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null；或者 {@code colorSpace} 为 null；或者 {@code gradientTransform} 为 null
+@throws IllegalArgumentException 如果起始点和结束点为同一个点；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.PaintContext java.awt.LinearGradientPaint.createContext(ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds, AffineTransform transform, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Point2D java.awt.LinearGradientPaint.getStartPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回渐变轴起始点的副本。
+
+@return {@code Point2D} 对象，它是此 {@code LinearGradientPaint} 第一种颜色着色点的副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Point2D java.awt.LinearGradientPaint.getEndPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回渐变轴结束点的副本。
+
+@return  {@code Point2D} 对象，它是此 {@code LinearGradientPaint} 最后一种颜色着色点的副本
+
+<!-- END DATA -->

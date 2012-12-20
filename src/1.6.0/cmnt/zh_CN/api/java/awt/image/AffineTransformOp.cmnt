@@ -1,0 +1,194 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.AffineTransformOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类使用仿射转换来执行从源图像或 <CODE>Raster</CODE> 中 2D 坐标到目标图像或 <CODE>Raster</CODE> 中 2D 坐标的线性映射。所使用的插值类型由构造方法通过一个 <CODE>RenderingHints</CODE> 对象或通过此类中定义的整数插值类型之一来指定。
+ <p>
+如果在构造方法中指定了 <CODE>RenderingHints</CODE> 对象，则使用插值提示和呈现的质量提示为此操作设置插值类型。要求进行颜色转换时，可以使用颜色呈现提示和抖动提示。
+ <p>
+注意，务必要满足以下约束：
+ <ul>
+<li>源图像与目标图像必须不同。
+<li>对于 <CODE>Raster</CODE> 对象，源图像中的 band 数必须等于目标图像中的 band 数。
+ </ul>
+
+@see AffineTransform
+@see BufferedImageFilter
+@see java.awt.RenderingHints#KEY_INTERPOLATION
+@see java.awt.RenderingHints#KEY_RENDERING
+@see java.awt.RenderingHints#KEY_COLOR_RENDERING
+@see java.awt.RenderingHints#KEY_DITHERING
+@version 16 Apr 1998
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.AffineTransformOp.TYPE_NEAREST_NEIGHBOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最接近的邻插值类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.AffineTransformOp.TYPE_BILINEAR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+双线性的插值类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.AffineTransformOp.TYPE_BICUBIC
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+双三次插值类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.AffineTransformOp(AffineTransform xform, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据仿射转换构造 <CODE>AffineTransformOp</CODE>。根据 <CODE>RenderingHints</CODE> 对象确定插值类型。如果定义了插值提示，则要使用该提示。否则，如果定义了呈现的质量提示，则根据其值确定插值类型。如果没有指定提示（<CODE>hints</CODE> 为 null），则插值类型为 {@link #TYPE_NEAREST_NEIGHBOR TYPE_NEAREST_NEIGHBOR}。
+
+@param xform 该操作要使用的 <CODE>AffineTransform</CODE>。
+
+@param hints 用于指定该操作插值类型的 <CODE>RenderingHints</CODE> 对象。 
+
+@throws ImagingOpException 如果转换是不可逆的。
+@see java.awt.RenderingHints#KEY_INTERPOLATION
+@see java.awt.RenderingHints#KEY_RENDERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.AffineTransformOp(AffineTransform xform, int interpolationType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据仿射转换和插值类型构造一个 <CODE>AffineTransformOp</CODE>。
+ 
+@param xform 该操作要使用的 <CODE>AffineTransform</CODE>。
+@param interpolationType 由此类定义的整数插值类型常量之一：{@link #TYPE_NEAREST_NEIGHBOR TYPE_NEAREST_NEIGHBOR}、{@link #TYPE_BILINEAR TYPE_BILINEAR}、{@link #TYPE_BICUBIC TYPE_BICUBIC}。
+@throws ImagingOpException 如果转换是不可逆的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.AffineTransformOp.getInterpolationType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由此 op 使用的插值类型。
+@return 插值类型。
+@see #TYPE_NEAREST_NEIGHBOR
+@see #TYPE_BILINEAR
+@see #TYPE_BICUBIC
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.AffineTransformOp.filter(BufferedImage src, BufferedImage dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+转换源 <CODE>BufferedImage</CODE> 并将结果存储在目标 <CODE>BufferedImage</CODE> 中。如果两个图像的颜色模型不匹配，则将颜色模型转换成目标颜色模型。如果目标图像为 null，则使用源 <CODE>ColorModel</CODE> 创建 <CODE>BufferedImage</CODE>。
+ <p>
+由 <code>getBounds2D(BufferedImage)</code> 返回的矩形坐标不一定与由此方法返回的 <code>BufferedImage</code> 的坐标相同。如果矩形的左上角坐标为负，则不用绘制矩形的这一部分。如果矩形的左上角坐标为正，则在目标 <code>BufferedImage</code> 中的该位置绘制过滤后的图像。
+ <p> 
+如果源图像与目标图像相同，则抛出 <CODE>IllegalArgumentException</CODE>。
+
+@param src 要转换的 <CODE>BufferedImage</CODE>。
+@param dst 要在其中存储转换结果的 <CODE>BufferedImage</CODE>。
+
+@return 过滤后的 <CODE>BufferedImage</CODE>。
+@throws IllegalArgumentException 如果 <code>src</code> 和 <code>dst</code> 相同
+@throws ImagingOpException 如果由于无效的图像格式、tile 格式、图像处理操作或任何其他不受支持的操作引起的数据处理错误，导致该图像无法转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.AffineTransformOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+转换源 <CODE>Raster</CODE> 并将结果存储在目标 <CODE>Raster</CODE> 中。此操作逐个 band 执行转换。
+ <p>
+如果目标 <CODE>Raster</CODE> 为 null，则创建一个新的 <CODE>Raster</CODE>。如果源 <CODE>Raster</CODE> 与目标 <CODE>Raster</CODE> 相同，或者源 <CODE>Raster</CODE> 中的 band 数不等于目标 <CODE>Raster</CODE> 中的 band 数，则可能抛出 <CODE>IllegalArgumentException</CODE>。
+ <p>
+由 <code>getBounds2D(Raster)</code> 返回的矩形坐标不一定与由此方法返回的 <code>WritableRaster</code> 的坐标相同。如果矩形的左上角坐标为负，则不用绘制矩形的这一部分。如果矩形的左上角坐标为正数，则在目标 <code>Raster</code> 中的该位置绘制过滤后的图像。
+ <p>
+@param src 要转换的 <CODE>Raster</CODE>。
+@param dst 要在其中存储转换结果的 <CODE>Raster</CODE>。
+
+@return 转换后的 <CODE>Raster</CODE>。
+
+@throws ImagingOpException 如果由于无效的图像格式、tile 格式、图像处理操作或任何其他不受支持的操作引起的数据处理错误，导致该 raster 无法转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.AffineTransformOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回转换后的目标图像的边界框。返回的矩形是转换后的点的实际边界框。返回矩形的左上角坐标不一定是 (0,&nbsp;0)。
+
+@param src 要转换的 <CODE>BufferedImage</CODE>。
+
+@return 表示目标图像边界框的 <CODE>Rectangle2D</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.AffineTransformOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回转换后的目标图像的边界框。返回的矩形将是转换后的点的实际边界框。返回矩形的左上角坐标不一定是 (0,&#xA0;0)。
+
+@param src 要转换的 <CODE>Raster</CODE>。
+
+@return 表示目标图像边界框的 <CODE>Rectangle2D</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.AffineTransformOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有正确大小和 band 数的经过检查的目标图像。如果转换后的宽度和高度等于 0，则可能抛出 <CODE>RasterFormatException</CODE>。  
+ <p>
+如果 <CODE>destCM</CODE> 为 null，则使用合适的 <CODE>ColorModel</CODE>；即使源 <CODE>ColorModel</CODE> 是不透明的，此 <CODE>ColorModel</CODE> 也可能具有一个 alpha 通道。
+
+@param src 要转换的 <CODE>BufferedImage</CODE>。
+@param destCM  目标 <CODE>ColorModel</CODE>。如果它为 null，则使用一个合适的 <CODE>ColorModel</CODE>。  
+
+@return 经过检查的目标图像。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.AffineTransformOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有正确大小和 band 数的经过检查的目标 <CODE>Raster</CODE>。如果转换后的宽度和高度等于 0，则可能抛出 <CODE>RasterFormatException</CODE>。
+
+@param src 要转换的 <CODE>Raster</CODE>。
+
+@return 经过检查的目标 <CODE>Raster</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.AffineTransformOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与源图像中给定点对应的目标点的位置。如果指定了 <CODE>dstPt</CODE>，则使用它来保存返回值。
+
+@param srcPt 表示源点 <code>Point2D</code>。
+@param dstPt 用于存储结果 <CODE>Point2D</CODE>。
+
+@return 与源图像中指定点对应的目标图像中的 <CODE>Point2D</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.AffineTransform java.awt.image.AffineTransformOp.getTransform()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此转换操作使用的仿射转换。
+
+@return 与此操作关联的 <CODE>AffineTransform</CODE>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.AffineTransformOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此转换操作使用的呈现提示。
+
+@return 与此操作关联的 <CODE>RenderingHints</CODE> 对象。 
+
+<!-- END DATA -->

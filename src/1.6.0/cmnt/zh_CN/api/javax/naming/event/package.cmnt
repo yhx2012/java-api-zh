@@ -1,0 +1,61 @@
+<!-- BEGIN KEY -->
+javax.naming.event
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在访问命名和目录服务时提供对事件通知的支持。
+
+<p>
+此包定义 Java Naming and Directory Interface<font size=-2><sup>TM</sup></font> (JNDI) 的事件通知操作。&#xA0; JNDI 向使用 Java 编程语言编写的应用程序提供命名和目录功能。它被设计成与任何特定的命名或目录服务实现无关。因此可以使用共同的方式对多种服务（新的、新出现的及已经部署的服务）进行访问。
+
+<h4>命名事件</h4>
+<p>
+此包定义 <tt>NamingEvent</tt> 类以表示由命名/目录服务生成的事件。它还定义 <tt>Context</tt> 和 <tt>DirContext</tt> 的子接口（分别称为 <tt>EventContext</tt> 和 <tt>EventDirContext</tt>），应用程序可以通过这些子接口注册它们感兴趣的、由上下文触发的事件。
+<p>
+<tt>NamingEvent</tt> 表示在命名或目录服务中发生的事件。有两种命名事件：
+<ul>
+<li>影响名称空间的事件（添加/移除/重命名对象）
+<li>影响对象内容的事件。
+</ul>
+这两种事件分别由对应的侦听器处理：<tt>NamespaceChangeListener</tt> 或 <tt>ObjectChangeListener</tt>。
+<p>
+例如，应用程序可以按以下方式注册对上下文中的对象进行的其感兴趣的更改：
+<blockquote>
+<pre>
+EventContext src = 
+    (EventContext)(new InitialContext()).lookup(&quot;o=wiz,c=us&quot;);
+src.addNamingListener(&quot;ou=users&quot;, EventContext.ONELEVEL_SCOPE,
+    new ChangeHandler());
+...
+class ChangeHandler implements ObjectChangeListener {
+    public void objectChanged(NamingEvent evt) {
+        System.out.println(evt.getNewBinding());
+    }
+    public void namingExceptionThrown(NamingExceptionEvent evt) {
+        System.out.println(evt.getException());
+    }
+}
+</pre>
+</blockquote>
+
+<a name=THREADING></a>
+<h4>线程问题</h4>
+
+将事件指派给侦听器时，侦听器方法（如 <tt>objectChanged()</tt>）可以在没有执行调用 <tt>addNamingListener()</tt> 的某个线程中执行。由服务提供者选择要使用的线程。将一个事件指派给多个侦听器时，服务提供者可以选择（通常建议这样做）在各个线程中并发执行侦听器方法。
+<p>
+当侦听器实例调用 <tt>NamingEvent.getEventContext()</tt> 时，它必须考虑到其他线程可能将并发使用该上下文。同样，在通过 <tt>addNamingListener()</tt> 注册侦听器时，注册线程也必须考虑到类似的可能性，即服务提供者稍后可能在新创建的线程中调用这些侦听器。因为一般不保证 <tt>Context</tt> 实例是线程安全的，所以必须根据需要同步所有上下文操作。
+
+<h4>异常处理</h4>
+
+当侦听器在上下文中注册事件时，上下文可能需要进行一些内部处理以便收集生成事件所需的信息。例如，上下文可能需要向服务器请求注册在服务器上进行的感兴趣更改，这些更改最终将被转换为事件。如果发生了阻止收集关于事件的信息的异常，则侦听器将永远无法获得这些事件的通知。发生此类异常时，将触发 <tt>NamingExceptionEvent</tt> 来通知侦听器。侦听器的 <tt>namingExceptionThrown()</tt> 方法被调用（如上文示例代码所示），侦听器被自动注销。
+<p>
+
+<h2>包规范</h2>
+
+JNDI API 规范及相关文档可在
+<a href="../../../../technotes/guides/jndi/index.html">JNDI documentation</a> 中找到。
+
+@since 1.3
+
+
+<!-- END DATA -->

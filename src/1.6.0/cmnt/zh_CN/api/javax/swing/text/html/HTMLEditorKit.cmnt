@@ -1,0 +1,363 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.html.HTMLEditorKit extends javax.swing.text.StyledEditorKit implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Swing JEditorPane 文本组件通过称为 EditorKit 的插件机制来支持不同种类的内容。因为 HTML 是很流行的内容格式，因此默认提供了某种支持。此类提供了 HTML version 3.2（带有某些扩展）的默认支持，并正在向 version 4.0 迁移。不支持 &lt;applet&gt; 标记，但为 &lt;object&gt; 标记提供了某种支持。
+ <p>
+提供 HTML EditorKit 有几个目的，这些目的影响了 HTML 的建模方式。并从基本方法上影响了其设计。  
+ <dl>
+ <p>
+ <dt>
+支持编辑
+ <dd>
+有一点看起来相当明显，即 JEditorPane 的插件应该提供编辑支持，但实际上需要考虑几点设计因素。有相当数量的 HTML 文档没有正确遵守 HTML 规范。如果要编辑这些文档，则必须在某种程度上进行标准化，使其具有正确的形式。此外，用户不希望面对过多的结构编辑，因此使用传统的文本编辑动作优先于使用 HTML 文档中精确定义的 HTML 结构。
+ <p>
+<code>HTMLDocument</code> 类提供了 HTML 的建模。其文档描述了建模 HTML 的细节。编辑支持主要不利用 text 包。
+ <p>
+ <dt>
+可扩展的/可伸缩的
+ <dd>
+为了最大化此工具包的使用，我们付诸了大量努力使其具有可扩展性。这里是一些特性。
+ <ol>
+   <li>
+解析器是可替换的。默认解析器是基于 DTD 的 Hot Java 解析器。可以使用不同的 DTD，或者可以使用一个完全不同的解析器。要更改解析器，请重新实现 getParser 方法。首次请求默认解析器时动态加载它，因此如果使用了另一个解析器，则永远不会加载类文件。默认解析器在此包下面一个单独的包中，这个包称为 parser。
+   <li>
+解析器驱动由 HTMLDocument 所提供的 ParserCallback。要更改回调，请创建 HTMLDocument 子类，并重新实现 createDefaultDocument 方法以返回生成不同 reader 的文档。reader 控制文档的结构。虽然在默认情况下 Document 提供了 HTML 支持，但并不妨碍它支持替代元素结构所产生的非 HTML 标记。
+   <li>
+默认的模型视图是作为 View 实现的层次结构提供的，所以我们可以轻松地自定义如何显示某个特定元素，或者通过提供新的 View 实现来添加新元素类型的功能。默认的视图集合由 <code>HTMLFactory</code> 类提供。可以轻松地更改此方法，方法是创建 HTMLFactory 的子类或替换 HTMLFactory 类，并重新实现 getViewFactory 方法以返回替代的工厂。
+   <li>
+View 实现主要是清除保持在视图中的 CSS 属性。这就能够在看似极不相同的相同模型上映射多个视图。这对于打印是非常有用的。出于显示目的，对于大多数的 HTML 属性，要将 HTML 属性转换为 CSS 属性。这有助于使 View 实现更为通用。
+ </ol>
+ <p>
+ <dt>
+异步加载
+ <dd>
+较大的文档涉及大量的解析工作，并需要一定时间来加载。默认情况下，此工具包生成异步加载的文档（如果使用 <code>JEditorPane.setPage</code> 来加载）。这由文档的一个属性来控制。这可以通过重写 <a href="#createDefaultDocument">createDefaultDocument</a> 方法来更改。批处理工作由 <code>HTMLDocument.HTMLReader</code> 类完成。实际的工作由 text 包中的 <code>DefaultStyledDocument</code> 和 <code>AbstractDocument</code> 类完成。
+ <p>
+ <dt>
+根据当前 LAF 进行自定义
+ <dd>
+HTML 提供了已知的特性集，但没有准确指定显示特征。Swing 具有其外观实现的 theme 机制。外观应该在 HTML 视图中提供显示特征。例如，视力较差的用户需要高对比度和比典型字体更大的字体。
+ <p>
+<code>StyleSheet</code> 类提供了这种支持。通过设置 EditorKit 上的 StyleSheet 属性，可以对 HTML 的表示产生很大影响。
+ <p>
+ <dt>
+无丢失
+ <dd>
+EditorKit 能够读取和保存文档。通常用户最希望的是在两个操作之间没有数据丢失。HTMLEditorKit 的策略是保存未识别或不必要可见的内容，以便随后可以写出它们。因此，HTML 文档的模型应该包含读取文档时所发现的所有信息。由于需要支持编辑，因此这在某些方面受到限制（例如有时必须将不正确的文档标准化）。指导原则是不应该丢失信息，但可以合成某些信息来生成更正确的模型，或者重新安排信息。
+ </dl>
+
+@author  Timothy Prinzing
+@version 1.131 05/18/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.DEFAULT_CSS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于设置标记视图的默认级联样式表 (Cascading Style Sheet) 文件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.BOLD_ACTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+粗体动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.ITALIC_ACTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+斜体动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.PARA_INDENT_LEFT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+段落左缩进动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.PARA_INDENT_RIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+段落右缩进动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.FONT_CHANGE_BIGGER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字体大小增大到下一个值的动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.FONT_CHANGE_SMALLER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字体大小减小到下一个值的动作标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.COLOR_ACTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Color 选择动作标识符（颜色作为参数传递）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.LOGICAL_STYLE_ACTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+逻辑样式选择动作标识符（逻辑样式作为参数传递）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.IMG_ALIGN_TOP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将图像顶部对齐。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.IMG_ALIGN_MIDDLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将图像居中对齐。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.IMG_ALIGN_BOTTOM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将图像底部对齐。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.html.HTMLEditorKit.IMG_BORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将图像对齐到边框。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.HTMLEditorKit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造 HTMLEditorKit，创建 StyleContext，并加载样式表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.html.HTMLEditorKit.getContentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此工具包支持的 MIME 类型的数据。此工具包支持 <code>text/html</code> 类型。
+
+@return 类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.ViewFactory javax.swing.text.html.HTMLEditorKit.getViewFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个适合供由此包所产生的任何模型来产生视图的工厂。  
+
+@return 工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Document javax.swing.text.html.HTMLEditorKit.createDefaultDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个适合此编辑器类型的未初始化文本存储模型。
+
+@return 模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.read(Reader in, Document doc, int pos) throws java.io.IOException, javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+插入来自给定流的内容。如果 <code>doc</code> 是 HTMLDocument 的一个实例，则这将读取 HTML 3.2 文本。将 HTML 插入非空文档时必须插入到正文 Element 的内部，如果未插入正文中，则抛出一个异常。当插入非空文档时，正文外部的所有标记（头、标题）将被删除。
+ 
+@param in 要从其读取的流
+@param doc 插入的目标
+@param pos 在文档中放置内容的位置
+@exception IOException 如果发生任何 I/O 错误
+@exception BadLocationException 如果 pos 代表文档中的无效位置
+@exception RuntimeException （最终将为 BadLocationException）如果 pos 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.insertHTML(HTMLDocument doc, int offset, String html, int popDepth, int pushDepth, HTML.Tag insertTag) throws javax.swing.text.BadLocationException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 HTML 插入现有文档。
+
+@param doc 内容将要插入的文档
+@param offset HTML 插入位置的偏移量
+@param popDepth  插入前要生成的 ElementSpec.EndTagTypes 的数量
+@param pushDepth 插入前但生成结束标记之后，应该生成的 ElementSpec.StartTagTypes 的数量（它具有 ElementSpec.JoinNextDirection 方向）
+@param insertTag 开始插入文档的首个标记
+@exception RuntimeException  （最终将为 BadLocationException）如果 pos 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.write(Writer out, Document doc, int pos, int len) throws java.io.IOException, javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以适合此类内容处理程序的格式，将文档中的内容写入给定流。
+ 
+@param out  要写入的流
+@param doc  写入的源
+@param pos  在文档中获取内容的位置
+@param len  写出量
+@exception IOException 如果发生任何 I/O 错误
+@exception BadLocationException 如果 pos 代表文档中的无效位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.install(JEditorPane c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将工具包安装到 JEditorPane 中时调用。
+
+@param c JEditorPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.deinstall(JEditorPane c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+工具包从 JEditorPane 移除时调用。这可用于取消对任何所关联侦听器的注册。
+
+@param c JEditorPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.setStyleSheet(StyleSheet s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要用于呈现各种 HTML 元素的样式集。这些样式是根据 CSS 规范指定的。工具包所生成的每个文档将拥有表的一个副本，它可以向此副本添加特定的文档样式。默认情况下，所有 HTMLEditorKit 实例共享所指定的 StyleSheet。如果需要，应该重新实现它以便提供更细的粒度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.StyleSheet javax.swing.text.html.HTMLEditorKit.getStyleSheet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前正用于呈现 HTML 元素的样式集。默认情况下加载 DEFAULT_CSS 所指定的资源，所有 HTMLEditorKit 实例均共享此资源。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Action[] javax.swing.text.html.HTMLEditorKit.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器的命令列表。此命令列表受超类支持，该超类是通过样式操作的本地定义的命令集合扩展的。
+
+@return 命令列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLEditorKit.createInputAttributes(Element element, MutableAttributeSet set)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>element</code> 的 AttributeSet 键/值复制到 <code>set</code> 中。此操作不复制组件、图标或者元素名称属性。子类可能希望修改此处要复制什么，不复制什么。确保首先移除 <code>set</code> 中的所有属性。<p>
+这在插入符移到一个不同位置时调用。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.MutableAttributeSet javax.swing.text.html.HTMLEditorKit.getInputAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取该样式编辑动作的输入属性。
+
+@return 属性集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.setDefaultCursor(Cursor cursor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置默认光标。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Cursor javax.swing.text.html.HTMLEditorKit.getDefaultCursor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认光标。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.setLinkCursor(Cursor cursor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要在链接上使用的光标。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Cursor javax.swing.text.html.HTMLEditorKit.getLinkCursor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要在超链接上使用的光标。
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.html.HTMLEditorKit.isAutoFormSubmission()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否自动处理 html 表单提交，或只是激发 <code>FormSubmitEvent</code>。
+
+@return 如果自动处理 html 表单提交，则返回 true；否则返回 false。
+
+@see #setAutoFormSubmission
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLEditorKit.setAutoFormSubmission(boolean isAuto)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定是否自动处理 html 表单提交，或只是激发 <code>FormSubmitEvent</code>。默认情况下设置为 true。
+
+@see #isAutoFormSubmission
+@see FormSubmitEvent
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.text.html.HTMLEditorKit.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建编辑器工具包的一个副本。
+
+@return 副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.html.HTMLEditorKit.Parser javax.swing.text.html.HTMLEditorKit.getParser()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取要用于读取 HTML 流的解析器。可以重新实现此方法以提供不同的解析器。默认情况下此实现是动态加载的，以避免加载默认解析器（如果没有使用它）的开销。默认解析器是使用 HTML 3.2 DTD 的 HotJava 解析器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.text.html.HTMLEditorKit.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此编辑器工具包关联的 AccessibleContext。
+
+@return 与此编辑器工具包关联的 AccessibleContext
+@since 1.4
+
+<!-- END DATA -->

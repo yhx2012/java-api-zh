@@ -1,0 +1,161 @@
+<!-- BEGIN KEY -->
+public class java.util.LinkedHashMap extends java.util.HashMap implements java.util.Map
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p><tt>Map</tt> 接口的哈希表和链接列表实现，具有可预知的迭代顺序。此实现与 <tt>HashMap</tt> 的不同之处在于，后者维护着一个运行于所有条目的双重链接列表。此链接列表定义了迭代顺序，该迭代顺序通常就是将键插入到映射中的顺序（<i>插入顺序</i>）。注意，如果在映射中<i>重新插入</i> 键，则插入顺序不受影响。（如果在调用 <tt>m.put(k, v)</tt> 前 <tt>m.containsKey(k)</tt> 返回了 <tt>true</tt>，则调用时会将键 <tt>k</tt> 重新插入到映射 <tt>m</tt> 中。）
+
+<p>此实现可以让客户避免未指定的、由 {@link HashMap}（及 {@link Hashtable}）所提供的通常为杂乱无章的排序工作，同时无需增加与 {@link TreeMap} 相关的成本。使用它可以生成一个与原来顺序相同的映射副本，而与原映射的实现无关：
+ <pre>
+     void foo(Map m) {
+         Map copy = new LinkedHashMap(m);
+         ...
+     }
+ </pre>
+如果模块通过输入得到一个映射，复制这个映射，然后返回由此副本确定其顺序的结果，这种情况下这项技术特别有用。（客户通常期望返回的内容与其出现的顺序相同。）
+
+<p>提供特殊的{@link #LinkedHashMap(int,float,boolean) 构造方法}来创建链接哈希映射，该哈希映射的迭代顺序就是最后访问其条目的顺序，从近期访问最少到近期访问最多的顺序（<i>访问顺序</i>）。这种映射很适合构建 LRU 缓存。调用 <tt>put</tt> 或 <tt>get</tt> 方法将会访问相应的条目（假定调用完成后它还存在）。<tt>putAll</tt> 方法以指定映射的条目集迭代器提供的键-值映射关系的顺序，为指定映射的每个映射关系生成一个条目访问。<i>任何其他方法均不生成条目访问。</i>特别是，collection 视图上的操作<i>不</i> 影响底层映射的迭代顺序。
+
+<p>可以重写 {@link #removeEldestEntry(Map.Entry)} 方法来实施策略，以便在将新映射关系添加到映射时自动移除旧的映射关系。
+
+<p>此类提供所有可选的 <tt>Map</tt> 操作，并且允许 null 元素。与 <tt>HashMap</tt> 一样，它可以为基本操作（<tt>add</tt>、<tt>contains</tt> 和 <tt>remove</tt>）提供稳定的性能，假定哈希函数将元素正确分布到桶中。由于增加了维护链接列表的开支，其性能很可能比 <tt>HashMap</tt> 稍逊一筹，不过这一点例外：<tt>LinkedHashMap</tt> 的 collection 视图迭代所需时间与映射的<i>大小</i> 成比例。<tt>HashMap</tt> 迭代时间很可能开支较大，因为它所需要的时间与其<i>容量</i> 成比例。
+
+<p>链接的哈希映射具有两个影响其性能的参数：<i>初始容量</i>和<i>加载因子</i>。它们的定义与 <tt>HashMap</tt> 极其相似。要注意，为初始容量选择非常高的值对此类的影响比对 <tt>HashMap</tt> 要小，因为此类的迭代时间不受容量的影响。
+ 
+<p><strong>注意，此实现不是同步的。</strong>如果多个线程同时访问链接的哈希映射，而其中至少一个线程从结构上修改了该映射，则它<em>必须</em> 保持外部同步。这一般通过对自然封装该映射的对象进行同步操作来完成。如果不存在这样的对象，则应该使用 {@link Collections#synchronizedMap Collections.synchronizedMap} 方法来&ldquo;包装&rdquo;该映射。最好在创建时完成这一操作，以防止对映射的意外的非同步访问：
+ <pre>
+    Map m = Collections.synchronizedMap(new LinkedHashMap(...));</pre>
+
+结构修改是指添加或删除一个或多个映射关系，或者在按访问顺序链接的哈希映射中影响迭代顺序的任何操作。在按插入顺序链接的哈希映射中，仅更改与映射中已包含键关联的值不是结构修改。<strong>在按访问顺序链接的哈希映射中，仅利用 <tt>get</tt> 查询映射不是结构修改。</strong>）
+
+<p>Collection（由此类的所有 collection 视图方法所返回）的 <tt>iterator</tt> 方法返回的迭代器都是<em>快速失败</em> 的：在迭代器创建之后，如果从结构上对映射进行修改，除非通过迭代器自身的 <tt>remove</tt> 方法，其他任何时间任何方式的修改，迭代器都将抛出 {@link
+ ConcurrentModificationException}。因此，面对并发的修改，迭代器很快就会完全失败，而不冒将来不确定的时间任意发生不确定行为的风险。
+
+<p>注意，迭代器的快速失败行为无法得到保证，因为一般来说，不可能对是否出现不同步并发修改做出任何硬性保证。快速失败迭代器会尽最大努力抛出 <tt>ConcurrentModificationException</tt>。因此，编写依赖于此异常的程序的方式是错误的，正确做法是：<i>迭代器的快速失败行为应该仅用于检测程序错误。</i>
+
+<p>此类是  <a href="{@docRoot}/../technotes/guides/collections/index.html"> Java Collections Framework</a> 的成员。
+
+@param <K> 由此映射维护的键的类型
+@param <V> 映射值的类型
+
+@author  Josh Bloch
+@version 1.18, 02/19/04
+@see     Object#hashCode()
+@see     Collection
+@see     Map
+@see     HashMap
+@see     TreeMap
+@see     Hashtable
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final boolean java.util.LinkedHashMap.accessOrder
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此链接哈希映射的迭代排序方法：访问顺序为 <tt>true</tt>；插入顺序为 <tt>false</tt>。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashMap(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带指定初始容量和加载因子的空插入顺序 <tt>LinkedHashMap</tt> 实例。
+
+@param  initialCapacity 初始容量
+@param  loadFactor 加载因子
+@throws IllegalArgumentException 如果初始容量为负或者加载因子为非正
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashMap(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带指定初始容量和默认加载因子 (0.75) 的空插入顺序 <tt>LinkedHashMap</tt> 实例。 
+
+@param  initialCapacity 初始容量
+@throws IllegalArgumentException 如果初始容量为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带默认初始容量 (16) 和加载因子 (0.75) 的空插入顺序 <tt>LinkedHashMap</tt> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashMap(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个映射关系与指定映射相同的插入顺序 <tt>LinkedHashMap</tt> 实例。所创建的 <tt>LinkedHashMap</tt> 实例具有默认的加载因子 (0.75) 和足以容纳指定映射中映射关系的初始容量。
+
+@param  m 要将其映射关系存放在此映射中的映射
+@throws  NullPointerException 如果指定的映射为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.LinkedHashMap(int initialCapacity, float loadFactor, boolean accessOrder)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带指定初始容量、加载因子和排序模式的空 <tt>LinkedHashMap</tt> 实例。
+
+@param  initialCapacity 初始容量
+@param  loadFactor      加载因子
+@param  accessOrder     排序模式 - 对于访问顺序，为 <tt>true</tt>；对于插入顺序，则为 <tt>false</tt>
+@throws IllegalArgumentException 如果初始容量为负或者加载因子为非正
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.LinkedHashMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>。
+
+@param value 其在此映射中的存在已经测试的值
+@return 如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.LinkedHashMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射到指定键的值。如果此映射中没有该键的映射关系，则返回 {@code null} 。 
+<p>更确切地讲，如果此映射包含满足 {@code (key==null ? k==null :
+ key.equals(k))} 的从键 {@code k} 到值 {@code v} 的映射关系，则此方法返回 {@code v}；否则，返回 {@code null}。（最多只能有一个这样的映射关系。） 
+
+<p>返回 {@code null} 值并不 <i>一定</i> 表明此映射不包含该键的映射关系；也可能此映射将该键显式地映射为 {@code null}。可使用 {@link #containsKey containsKey} 操作来区分这两种情况。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.LinkedHashMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从该映射中移除所有映射关系。
+此调用返回后映射将为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.LinkedHashMap.removeEldestEntry(java.util.Map.Entry<K, V> eldest)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射移除其最旧的条目，则返回 <tt>true</tt>。在将新条目插入到映射后，<tt>put</tt> 和 <tt>putAll</tt> 将调用此方法。此方法可以提供在每次添加新条目时移除最旧条目的实现程序。如果映射表示缓存，则此方法非常有用：它允许映射通过删除旧条目来减少内存损耗。
+
+<p>示例用法：此重写允许映射增加到 100 个条目，然后每次添加新条目时删除最旧的条目，始终维持 100 个条目的稳定状态。
+ <pre>
+     private static final int MAX_ENTRIES = 100;
+
+     protected boolean removeEldestEntry(Map.Entry eldest) {
+        return size() > MAX_ENTRIES;
+     }
+ </pre>
+
+<p>此方法通常不以任何方式修改映射，相反允许映射在其返回值的指引下进行自我修改。使用此方法直接修改映射<i>是</i> 允许的，但是如果它执行了此操作，则<i>一定</i> 返回 <tt>false</tt>（表示该映射不应进行任何进一步的修改）。在此方法中修改映射后是否返回 <tt>true</tt> 是不确定的。
+
+<p>此实现仅返回 <tt>false</tt>（这样，此映射的行为将类似于正常映射，即永远不能移除最旧的元素）。
+
+@param eldest 在映射中最早插入的条目；如果是访问顺序映射，则为最早访问的条目。如果此方法返回 <tt>true</tt>，则此为将移除的条目。如果导致此调用的 <tt>put</tt> 或 <tt>putAll</tt> 调用之前映射为空，则该条目就是刚刚插入的条目；换句话说，如果映射只包含单个条目，则最旧的条目也是最新的条目。
+@return  如果应该从映射移除最旧的条目，则返回 <tt>true</tt>；如果应该保留，则返回 <tt>false</tt>。
+
+<!-- END DATA -->

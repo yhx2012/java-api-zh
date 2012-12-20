@@ -1,0 +1,618 @@
+<!-- BEGIN KEY -->
+public class javax.swing.tree.DefaultMutableTreeNode extends java.lang.Object implements java.lang.Cloneable, javax.swing.tree.MutableTreeNode, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DefaultMutableTreeNode</code> 是树数据结构中的通用节点。有关使用默认可变树节点的示例，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/components/tree.html">How to Use Trees</a> 一节。
+
+ <p>
+
+一个树节点最多可以有一个父节点、0 或多个子节点。<code>DefaultMutableTreeNode</code> 为检查和修改节点的父节点和子节点提供操作，也为检查节点所属的树提供操作。节点的树是所有节点的集合，通过从某一节点开始并沿着父节点和子节点的所有可能的链接，可以访问这些节点。不带父节点的节点是树的根；不带子节点的节点是叶节点。树可以由许多子树组成，每个节点充当自已的子树的根。
+ <p>
+此类提供按各种顺序有效地遍历树或子树，或者沿着两节点间的路径进行遍历的枚举。<code>DefaultMutableTreeNode</code> 还可以保存对用户对象的引用，用户对象由用户使用。通过 <code>toString()</code> 请求 <code>DefaultMutableTreeNode</code> 的字符串表示形式将返回其用户对象的字符串表示形式。
+ <p>
+<b>这不是一个线程安全的类。</b>如果打算在多个线程中使用 DefaultMutableTreeNode（或 TreeNodes 的树），则需要执行自己的同步。要采用的较好惯例是在树的根节点上进行同步。
+ <p>
+尽管 DefaultMutableTreeNode 实现 MutableTreeNode 接口，并允许您将其添加到 MutableTreeNode 的任何实现中，但是并不是 DefaultMutableTreeNode 中的所有方法都将适用于所有的 MutableTreeNodes 实现。特别是通过提供的一些枚举，使用其中一些方法，我们假定 DefaultMutableTreeNode 只包含 DefaultMutableNode 实例。无论添加什么实现，所有的 TreeNode/MutableTreeNode 方法都将表现出定义的行为。
+
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see MutableTreeNode
+
+@version 1.23 07/13/04
+@author Rob Davis
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.util.Enumeration<javax.swing.tree.TreeNode> javax.swing.tree.DefaultMutableTreeNode.EMPTY_ENUMERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终为空的枚举。当请求叶节点的子节点的枚举时使用它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.MutableTreeNode javax.swing.tree.DefaultMutableTreeNode.parent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此节点的父节点，如果此节点没有父节点，则为 null
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector javax.swing.tree.DefaultMutableTreeNode.children
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子节点的数组，如果此节点没有子节点，则可以为 null
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.tree.DefaultMutableTreeNode.userObject
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可选用户对象
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.tree.DefaultMutableTreeNode.allowsChildren
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该节点可以有子节点，则为 true
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建没有父节点和子节点的树节点，该树节点允许有子节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode(Object userObject)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建没有父节点和子节点、但允许有子节点的树节点，并使用指定的用户对象对它进行初始化。
+ 
+@param userObject 用户提供的 Object，它构成节点的数据
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode(Object userObject, boolean allowsChildren)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建没有父节点和子节点的树节点，使用指定的用户对象对它进行初始化，仅在指定时才允许有子节点。
+ 
+@param userObject 用户提供的 Object，它构成该节点的数据
+@param allowsChildren 如果为 true，则允许该节点有子节点，否则它始终为一个叶节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.insert(MutableTreeNode newChild, int childIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从其现有父节点移除 <code>newChild</code>（如果它有父节点），将子节点的父节点设置为此节点，然后，将该子节点添加到此节点位于索引 <code>childIndex</code> 处的子节点数组。<code>newChild</code> 不能为 null，也不能为此节点的祖先。
+
+@param	newChild	在此节点下插入的 MutableTreeNode
+@param	childIndex	此节点的子节点数组中的索引，它是此节点插入的位置
+@exception	ArrayIndexOutOfBoundsException	如果 <code>childIndex</code> 超出边界
+@exception	IllegalArgumentException	如果 <code>newChild</code> 为 null，或者是此节点的祖先
+@exception	IllegalStateException	如果此节点不允许有子节点
+@see	#isNodeDescendant
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.remove(int childIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此节点的子节点中移除指定索引处的子节点，并将该节点的父节点设置为 null。要移除的子节点必须是 <code>MutableTreeNode</code>。
+
+@param	childIndex	要移除的此节点的子节点数组中子节点的索引
+@exception	ArrayIndexOutOfBoundsException	如果 <code>childIndex</code> 超出边界
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.setParent(MutableTreeNode newParent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此节点的父节点设置为 <code>newParent</code>，但不更改父节点的子节点数组。从 <code>insert()</code> 和 <code>remove()</code> 调用此方法，以重新分配子节点的父节点，而不应从其他任何地方向它传递消息。
+
+@param	newParent	此节点的新父节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的父节点，如果此节点没有父节点，则返回 null。
+
+@return	此节点的父 TreeNode，如果此节点没有父节点，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getChildAt(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的子节点数组中指定索引处的子节点。
+
+@param	index	此节点的子节点数组中的一个索引
+@exception	ArrayIndexOutOfBoundsException	如果 <code>index</code> 超出边界
+@return	此节点的子节点数组中指定索引处的 TreeNode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getChildCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的子节点数。
+
+@return	提供此节点的子节点数的 int
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getIndex(TreeNode aChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的子节点数组中指定子节点的索引。如果指定节点不是此节点的子节点，则返回 <code>-1</code>。此方法执行线性搜索，该方法花费时间为 O(n)，其中 n 表示子节点数。
+
+@param	aChild	要在此节点的子节点中搜索的 TreeNode
+@exception	IllegalArgumentException	如果 <code>aChild</code> 为 null
+@return	提供此节点的子节点数组中节点索引的 int，如果指定的节点不是此节点的子节点，则返回 <code>-1</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.children()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回此节点的子节点的正向枚举。修改此节点的子节点数组会使修改前创建的任何子节点枚举无效。
+
+@return	此节点的子节点 Enumeration
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.setAllowsChildren(boolean allows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许此节点拥有子节点。如果 <code>allows</code> 为 false，则移除此节点的所有子节点。
+ <p>
+注：默认情况下，节点允许有子节点。
+
+@param	allows	如果允许此节点拥有子节点，则为 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.getAllowsChildren()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果允许此节点拥有子节点，则返回 true。
+
+@return	如果此节点允许拥有子节点，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.setUserObject(Object userObject)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此节点的用户对象设置为 <code>userObject</code>。
+
+@param	userObject	构成此节点的用户指定数据的 Object
+@see	#getUserObject
+@see	#toString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.tree.DefaultMutableTreeNode.getUserObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的用户对象。
+
+@return	用户存储在此节点的 Object
+@see	#setUserObject
+@see	#toString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.removeFromParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过向此节点提供一个 null 父节点，从树中移除以此节点为根的子树。如果此节点是其树的根，则不执行任何操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.remove(MutableTreeNode aChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过向其提供一个 null 父节点，从此节点的子节点数组移除 <code>aChild</code>。
+
+@param	aChild	要移除的此节点的子节点
+@exception	IllegalArgumentException	如果 <code>aChild</code> 为 null，或者不是此节点的子节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.removeAllChildren()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将其父节点设置为 null，移除此节点的所有子节点。如果此节点没有子节点，则此方法不执行任何操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultMutableTreeNode.add(MutableTreeNode newChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从其父节点移除 <code>newChild</code>，并通过将其添加到此节点的子数组的结尾，使其成为此节点的子节点。
+
+@see		#insert
+@param	newChild	作为此节点的子节点添加的节点
+@exception	IllegalArgumentException    如果 <code>newChild</code> 为 null
+@exception	IllegalStateException	如果此节点不允许拥有子节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isNodeAncestor(TreeNode anotherNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>anotherNode</code> 是此节点的祖先 -- 如果它是此节点、此节点的父节点或此节点的父节点的祖先，则返回 true。（注意，节点被认为是它本身的祖先。）如果 <code>anotherNode</code> 为 null，则此方法返回 false。此操作至少花费时间 O(h)，其中 h 表示根到此节点的距离。
+
+@see		#isNodeDescendant
+@see		#getSharedAncestor
+@param	anotherNode	测试是否为此节点的祖先的节点
+@return	如果此节点是 <code>anotherNode</code> 的后代，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isNodeDescendant(DefaultMutableTreeNode anotherNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>anotherNode</code> 是此节点的后代 -- 如果它是此节点、此节点的一个子节点或此节点的一个子节点的后代，则返回 true。注意，节点被认为是它本身的后代。如果 <code>anotherNode</code> 为 null，则返回 false。此操作至少花费时间 O(h)，其中 h 表示根到 <code>anotherNode</code> 的距离。
+
+@see	#isNodeAncestor
+@see	#getSharedAncestor
+@param	anotherNode	测试是否为此节点的后代的节点
+@return	如果此节点是 <code>anotherNode</code> 的祖先，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getSharedAncestor(DefaultMutableTreeNode aNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点和 <code>aNode</code> 最近的共同祖先。如果不存在这样的祖先 -- 如果此节点和 <code>aNode</code> 位于不同的树中，或者 <code>aNode</code> 为 null，则返回 null。节点被认为是它本身的祖先。
+
+@see	#isNodeAncestor
+@see	#isNodeDescendant
+@param	aNode	查找其共同祖先的节点
+@return	此节点和 <code>aNode</code> 最近的共同祖先，如果没有，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isNodeRelated(DefaultMutableTreeNode aNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当 <code>aNode</code> 位于与此节点相同的树中时，返回 true。如果 <code>aNode</code> 为 null，则返回 false。
+
+@see	#getSharedAncestor
+@see	#getRoot
+@return	如果 <code>aNode</code> 位于与此节点相同的树中，则返回 true；如果 <code>aNode</code> 为 null，则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getDepth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以此节点为根的树的深度 -- 从此节点到叶节点的最长距离。如果此节点没有子节点，则返回 0。此操作的开销远大于 <code>getLevel()</code>，因为它必须有效地遍历以此节点为根的整棵树。
+
+@see	#getLevel
+@return	以此节点为根的树的深度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点上的级数 -- 从根到此节点的距离。如果此节点为根，则返回 0。
+
+@see	#getDepth
+@return	此节点上的级数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode[] javax.swing.tree.DefaultMutableTreeNode.getPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从根到达此节点的路径。该路径中最后一个元素是此节点。
+
+@return 提供了路径的 TreeNode 对象组成的数组，其中此路径中的第一个元素是根，最后一个元素是此节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreeNode[] javax.swing.tree.DefaultMutableTreeNode.getPathToRoot(TreeNode aNode, int depth)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构建节点的父节点一直到根节点（包括根节点），其中源节点是返回数组中的最后一个元素。返回的数组长度给出了树中节点的深度。
+ 
+@param aNode  获取其路径的 TreeNode 
+@param depth  提供朝根的方向（通过递归调用）执行的步骤数的 int，用于衡量返回的数组的大小
+@return 提供从根到指定节点的路径的 TreeNodes 组成的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.swing.tree.DefaultMutableTreeNode.getUserObjectPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从根到达此节点的路径。如果路径中某些 TreeNodes 的用户对象为 null ，则返回的路径将包含 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此节点的树的根。根是所有节点的祖先，其父节点为 null。
+
+@see	#isNodeAncestor
+@return	包含此节点的树的根
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此节点是树的根，则返回 true。根是树中父节点为 null 的惟一节点；每棵树只有一个根。
+
+@return	如果此节点是树的根，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getNextNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此节点的树的前序遍历中此节点之后的节点。如果此节点是该遍历中的最后一个节点，则返回 null。这是遍历整棵树的一种低效方式；请改用枚举。
+
+@see	#preorderEnumeration
+@return	前序遍历中此节点之后的节点，如果此节点是最后一个节点，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getPreviousNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此节点树的前序遍历中此节点之前的节点。如果此节点是遍历的第一个节点 -- 树的根，则返回 <code>null</code>。这是遍历整棵树的一种低效方式；请改用枚举。
+
+@see	#preorderEnumeration
+@return	前序遍历中此节点之前的节点，如果此节点是第一个节点，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.preorderEnumeration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回按前序遍历以此节点为根的子树的一个枚举。由枚举的 <code>nextElement()</code> 方法返回的第一个节点是此节点。<P>
+
+通过插入、移除或移动节点修改树可以使修改前创建的任何枚举无效。
+
+@see	#postorderEnumeration
+@return	按前序遍历遍历树的一个枚举
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.postorderEnumeration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回按后序遍历以此节点为根的树的一个枚举。由枚举的 <code>nextElement()</code> 方法返回的第一个节点是最左边的叶节点。这与深度优先遍历相同。<P>
+
+通过插入、移除或移动节点修改树可以使修改前创建的任何枚举无效。
+
+@see	#depthFirstEnumeration
+@see	#preorderEnumeration
+@return	按后序遍历遍历树的一个枚举
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.breadthFirstEnumeration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个枚举，该枚举按广度优先的顺序遍历以此节点为根的子树。由枚举的 <code>nextElement()</code> 方法返回的第一个节点是此节点。<P>
+
+通过插入、移除或移动节点修改树可以使修改前创建的任何枚举无效。
+
+@see	#depthFirstEnumeration
+@return	按广度优先的顺序遍历树的一个枚举
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.depthFirstEnumeration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个枚举，该枚举按深度优先的顺序遍历以此节点为根的子树。由枚举的 <code>nextElement()</code> 方法返回的第一个节点是最左边的叶节点。这与后序遍历相同。<P>
+
+通过插入、移除或移动节点修改树可以使修改前创建的任何枚举无效。
+
+@see	#breadthFirstEnumeration
+@see	#postorderEnumeration
+@return	按深度优先的顺序遍历树的一个枚举
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration javax.swing.tree.DefaultMutableTreeNode.pathFromAncestorEnumeration(TreeNode ancestor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回沿着从 <code>ancestor</code> 到此节点的路径的一个枚举。枚举的 <code>nextElement()</code> 方法首先返回 <code>ancestor</code>，然后返回作为此节点祖先的 <code>ancestor</code> 的子节点，依此类推，最后返回此节点。创建枚举所花费的时间是 O(m)，其中 m 是此节点和 <code>ancestor</code>（包含）之间的节点数。每个 <code>nextElement()</code> 消息的花费都是 O(1)。<P>
+
+通过插入、移除或移动节点修改树可以使修改前创建的任何枚举无效。
+
+@see		#isNodeAncestor
+@see		#isNodeDescendant
+@exception	IllegalArgumentException 如果 <code>ancestor</code> 不是此节点的祖先
+@return	一个枚举，它在从此节点的祖先到此节点的路径上
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isNodeChild(TreeNode aNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>aNode</code> 是此节点的子节点，则返回 true。如果 <code>aNode</code> 为 null，则此方法返回 false。
+
+@return	如果 <code>aNode</code> 为此节点的子节点，则返回 true；如果 <code>aNode</code> 为 null，则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getFirstChild()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的第一个子节点。如果此节点没有子节点，则抛出 NoSuchElementException。
+
+@return	此节点的第一个子节点
+@exception	NoSuchElementException	如果此节点没有子节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getLastChild()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的最后一个子节点。如果此节点没有子节点，则抛出 NoSuchElementException。
+
+@return	此节点的最后一个子节点
+@exception	NoSuchElementException	如果此节点没有子节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getChildAfter(TreeNode aChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的子节点数组中刚好跟在 <code>aChild</code> 之后的子节点，它必须是此节点的子节点。如果 <code>aChild</code> 是最后一个子节点，则返回 null。此方法对此节点的子节点执行线性搜索，以查找 <code>aChild</code> ，并且花费时间为 O(n)，其中 n 表示子节点数；要遍历整个子节点数组，请改用枚举。
+
+@see		#children
+@exception	IllegalArgumentException 如果 <code>aChild</code> 为 null，或者不是此节点的子节点
+@return	此节点的子节点，它刚好跟在 <code>aChild</code> 之后
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreeNode javax.swing.tree.DefaultMutableTreeNode.getChildBefore(TreeNode aChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的子节点数组中刚好在 <code>aChild</code> 之前的子节点，它必须是此节点的子节点。如果 <code>aChild</code> 是第一个子节点，则返回 null。此方法对此节点的子节点执行线性搜索，以查找 <code>aChild</code> ，并且花费时间为 O(n) ，其中 n 表示子节点数。
+
+@exception	IllegalArgumentException 如果 <code>aChild</code> 为 null，或者不是此节点的子节点
+@return	此节点的子节点，它刚好在 <code>aChild</code> 之前
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isNodeSibling(TreeNode anotherNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>anotherNode</code> 是此节点的兄弟节点（与此节点共享同一父节点），则返回 true。节点是其本身的兄弟节点。如果 <code>anotherNode</code> 为 null，则返回 false。
+
+@param	anotherNode	测试其是否为此节点的兄弟节点
+@return	如果 <code>anotherNode</code> 是此节点的兄弟节点，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getSiblingCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点的兄弟节点数。节点是其本身的兄弟节点（如果它没有父节点，或者没有兄弟节点，则此方法返回 <code>1</code>）。
+
+@return	此节点的兄弟节点数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getNextSibling()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回父节点的子节点数组中此节点的下一个兄弟节点。如果此节点没有父节点，或者是父节点的最后一个子节点，则返回 null。此方法执行线性搜索，花费时间为 O(n)，其中 n 表示子节点数；要遍历整个数组，请改用父节点的子节点枚举。
+
+@see	#children
+@return	此节点的兄弟节点，它刚好跟在此节点之后
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getPreviousSibling()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回父节点的子节点数组中此节点的前一个兄弟节点。如果此节点没有父节点，或者是父节点的第一个子节点，则返回 null。此方法执行线性搜索，花费时间为 O(n)，其中 n 表示子节点数。
+
+@return	此节点的兄弟节点，它刚好在此节点之前
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultMutableTreeNode.isLeaf()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此节点没有子节点，则返回 true。要区分没有子节点的节点和<i>不能</i> 拥有子节点的节点（例如，区分空目录中的文件），请将此方法与 <code>getAllowsChildren</code> 联合使用
+
+@see	#getAllowsChildren
+@return	如果此节点没有子节点，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getFirstLeaf()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找并返回为此节点后代的第一个叶节点，即此节点或其第一个子节点的第一个叶节点。如果它是叶节点，则返回此节点。
+
+@see	#isLeaf
+@see	#isNodeDescendant
+@return	以此节点为根的子树中的第一个叶节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getLastLeaf()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找并返回为此节点后代的最后一个叶节点，即此节点或其最后一个子节点的最后一个叶节点。如果它是叶节点，则返回此节点。
+
+@see	#isLeaf
+@see	#isNodeDescendant
+@return	以此节点为根的子树中的最后一个叶节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getNextLeaf()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点后面的叶节点，如果此节点是树中的最后一个叶节点，则返回 null。
+ <p>
+在 <code>MutableNode</code> 接口的此实现中，此操作效率非常低。为了确定下一个节点，此方法首先在父节点的子节点列表中执行线性搜索，以便找到当前节点。 
+ <p>
+该实现使该操作适合于从已知位置开始的简短遍历。但是，要遍历树中的所有叶节点，您应使用 <code>depthFirstEnumeration</code> 来枚举树中的节点，并对每个节点执行 <code>isLeaf</code> 确定哪些是叶节点。
+
+@see	#depthFirstEnumeration
+@see	#isLeaf
+@return	返回此节点之后的下一个叶节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultMutableTreeNode javax.swing.tree.DefaultMutableTreeNode.getPreviousLeaf()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此节点之前的叶节点，如果此节点是树中的第一个叶节点，则返回 null。
+ <p>
+在 <code>MutableNode</code> 接口的此实现中，此操作效率非常低。为了确定前一个节点，此方法首先在父节点的子节点列表中执行线性搜索，以便找到当前节点。 
+ <p>
+该实现使得操作适合于从已知位置开始的简短遍历。但是，要遍历树中的所有叶节点，您应使用 <code>depthFirstEnumeration</code> 来枚举树中的节点，并对每个节点执行 <code>isLeaf</code> 确定哪些是叶节点。
+
+@see		#depthFirstEnumeration
+@see		#isLeaf
+@return	返回此节点之前的叶节点
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultMutableTreeNode.getLeafCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为此节点后代的叶节点总数。如果此节点是叶节点，则返回 <code>1</code>。此方法花费时间为 O(n)，其中 n 表示此节点的后代数。
+
+@see	#isNodeAncestor
+@return	此节点下面的叶节点数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.tree.DefaultMutableTreeNode.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将 <code>toString()</code> 发送到此节点的用户对象的结果，如果此节点没有用户对象，则返回 null。
+
+@see	#getUserObject
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.tree.DefaultMutableTreeNode.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写以复制 public。返回对此节点的浅表复制；新的节点没有父节点或子节点，但具有对同一用户对象（如果有）的引用。
+
+@return	此节点的副本
+
+<!-- END DATA -->

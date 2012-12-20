@@ -1,0 +1,695 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.image.SampleModel extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此抽象类定义一个提取图像像素样本的接口。所有图像数据都被表示成一个像素集合。每个像素由多个样本组成。样本是一个图像 band 的基本数据，band 由图像中某一特定类型的所有样本组成。例如，一个像素可能包含三个样本，分别表示红、绿、蓝的分量。在包含此相素的图像中有三个 band。其中一个 band 由图像中所有像素的红色样本组成。第二个 band 由所有绿色样本组成，第三个 band 由所有蓝色样本组成。像素可以以各种格式存储。例如，特定 band 中的所有样本可以连续存储，单个像素的所有样本也可以连续存储。
+  <p>
+SampleModel 的子类指定它们能够表示的样本类型（例如，无符号 8 位 byte、有符号 16 位 short 等），并且可以指定如何在内存中组织样本。在 Java 2D(tm) API 中，内置的图像处理运算符可能无法处理所有可能的样本类型，但通常可以处理 16 位或 16 位以下的无符号整数样本。某些运算符支持更大范围的样本类型。
+  <p>
+像素的集合被表示为一个 Raster，它由 DataBuffer 和 SampleModel 组成。SampleModel 允许访问 DataBuffer 中的样本，并提供程序员可以用来直接操作 DataBuffer 中样本和像素的低级别信息。
+  <p>
+此类通常是处理图像的一个回调方法。更为有效的代码将 SampleModel 强行转换为适当的子类，并提取直接操作 DataBuffer 中的像素所需的信息。
+
+@see java.awt.image.DataBuffer
+@see java.awt.image.Raster
+@see java.awt.image.ComponentSampleModel
+@see java.awt.image.PixelInterleavedSampleModel
+@see java.awt.image.BandedSampleModel
+@see java.awt.image.MultiPixelPackedSampleModel
+@see java.awt.image.SinglePixelPackedSampleModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.SampleModel.width
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 SampleModel 描述的图像数据区域的宽度（以像素位单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.SampleModel.height
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 SampleModel 描述的图像数据区域的高度（以像素位单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.SampleModel.numBands
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 SampleModel 描述的图像数据的 band 数。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.awt.image.SampleModel.dataType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存储像素数据的 DataBuffer 的数据类型。
+@see java.awt.image.DataBuffer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel(int dataType, int w, int h, int numBands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定参数的 SampleModel。
+@param dataType  存储像素数据的 DataBuffer 的数据类型。
+@param w	图像数据区域的宽度（以像素为单位）。
+@param h  图像数据区域的高度（以像素为单位）。
+@param numBands  图像数据的 band 数。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 不大于 0
+@throws IllegalArgumentException 如果 <code>w</code> 和 <code>h</code> 的乘积大于 <code>Integer.MAX_VALUE</code>
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的数据类型之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.SampleModel.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素宽度。
+@return 此 <code>SampleModel</code> 描述的图像数据区域的宽度（以像素为单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.SampleModel.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回像素高度。
+@return 此 <code>SampleModel</code> 描述的图像数据区域的高度（以像素为单位）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.SampleModel.getNumBands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回图像数据的总 band 数。
+@return 此 <code>SampleModel</code> 描述的图像数据的 band 数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.SampleModel.getNumDataElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 getDataElements 和 setDataElements 方法传输一个像素所需的数据元素数。当通过这些方法传输像素时，可以使用压缩或非压缩格式，具体取决于 SampleModel 的实现。使用这些方法，像素就可以作为基本类型的 getNumDataElements() 元素数组传输，基本类型由 getTransferType() 给定。TransferType 可以与 DataType 的存储数据类型相同，也可以不同。
+@return 数据元素的数量。
+@see #getDataElements(int, int, Object, DataBuffer)
+@see #getDataElements(int, int, int, int, Object, DataBuffer)
+@see #setDataElements(int, int, Object, DataBuffer)
+@see #setDataElements(int, int, int, int, Object, DataBuffer)
+@see #getTransferType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.awt.image.SampleModel.getDataType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回存储像素数据的 DataBuffer 的数据类型。
+@return 数据类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.SampleModel.getTransferType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 getDataElements 和 setDataElements 方法传输像素所使用的 TransferType。当通过这些方法传输像素时，可以使用压缩或非压缩格式，具体取决于 SampleModel 的实现。使用这些方法，像素就可以作为基本类型的 getNumDataElements() 元素数组传输，基本类型由 getTransferType() 给定。TransferType 可以与 DataType 的存储数据类型相同，也可以不同。TransferType 将是 DataBuffer 中定义的类型之一。
+@return 传输类型。
+@see #getDataElements(int, int, Object, DataBuffer)
+@see #getDataElements(int, int, int, int, Object, DataBuffer)
+@see #setDataElements(int, int, Object, DataBuffer)
+@see #setDataElements(int, int, int, int, Object, DataBuffer)
+@see #getNumDataElements
+@see java.awt.image.DataBuffer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SampleModel.getPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在一个 int 数组中返回指定像素的样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param iArray    如果不为 null，则在此数组中返回样本
+@param data      包含图像数据的 DataBuffer
+@return 指定像素的样本。
+@see #setPixel(int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 iArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.awt.image.SampleModel.getDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在 TransferType 类型的基本数组中返回单个像素的数据。对于 Java 2D API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。可以使用压缩格式返回数据，从而提高数据传输的效率。通常，obj 应作为 null 传入，从而 Object 将被自动创建，并具有正确的基本数据类型。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SampleModel <code>sm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SampleModel <code>sm2</code> 描述）。该传输通常比使用 getPixel/setPixel 更有效。
+ <pre>
+ 	     SampleModel sm1, sm2;
+	     DataBuffer db1, db2;
+ 	     sm2.setDataElements(x, y, sm1.getDataElements(x, y, null, db1), db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+如果 obj 不为 null，则它应是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在边界内，或者 obj 不为 null 且大小不足以保存像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param obj       如果不为 null，则 obj 是接收返回像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@return 指定像素的数据元素。
+@see #getNumDataElements
+@see #getTransferType
+@see java.awt.image.DataBuffer
+@see #setDataElements(int, int, Object, DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 obj 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.SampleModel.getDataElements(int x, int y, int w, int h, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在 TransferType 类型基本数组中返回指定像素矩形的像素数据。对于 Java 2D API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。可以使用压缩格式返回数据，从而提高数据传输的效率。通常，obj 作为 null 传入，从而 Object 将被自动创建，并具有正确的基本数据类型。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SampleModel <code>sm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SampleModel <code>sm2</code> 描述）。该传输通常比使用 getPixels/setPixels 更有效。
+ <pre>
+ 	     SampleModel sm1, sm2;
+	     DataBuffer db1, db2;
+ 	     sm2.setDataElements(x, y, w, h, sm1.getDataElements(x, y, w,
+                           h, null, db1), db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+如果 obj 不为 null，则它应是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在边界内，或者 obj 不为 null 且大小不足以保存像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素矩形的最小 X 坐标。
+@param y	像素矩形的最小 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param obj       如果不为 null，则 obj 是接收返回像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@return 指定像素区域的数据元素。
+@see #getNumDataElements
+@see #getTransferType
+@see #setDataElements(int, int, int, int, Object, DataBuffer)
+@see java.awt.image.DataBuffer
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 obj 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.image.SampleModel.setDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 TransferType 类型基本数组设置指定 DataBuffer 中单个像素的数据。对于 Java 2D API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。数组中的数据可以是压缩格式，从而提高数据传输的效率。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SampleModel <code>sm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SampleModel <code>sm2</code> 描述）。该传输通常比使用 getPixel/setPixel 更有效。
+ <pre>
+ 	     SampleModel sm1, sm2;
+	     DataBuffer db1, db2;
+ 	     sm2.setDataElements(x, y, sm1.getDataElements(x, y, null, db1),
+                           db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+obj 必须是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在边界内，或者 obj 的大小不足以容纳像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param obj       包含像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@see #getNumDataElements
+@see #getTransferType
+@see #getDataElements(int, int, Object, DataBuffer)
+@see java.awt.image.DataBuffer
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 obj 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setDataElements(int x, int y, int w, int h, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 TransferType 类型的基本数组设置指定 DataBuffer 中像素矩形的数据。对于 Java 2D API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。数组中的数据可以是压缩格式，从而提高数据传输的效率。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 SampleModel <code>sm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 SampleModel <code>sm2</code> 描述）。该传输通常比使用 getPixels/setPixels 更有效。
+ <pre>
+ 	     SampleModel sm1, sm2;
+	     DataBuffer db1, db2;
+ 	     sm2.setDataElements(x, y, w, h, sm1.getDataElements(x, y, w, h,
+                           null, db1), db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数量，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在两个 DataBuffer/SampleModel 对之间进行传输是合法的。
+ <p>
+obj 必须是 TransferType 类型的基本数组。否则抛出 ClassCastException。如果坐标不在边界内，或者 obj 的大小不足以容纳像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素矩形的最小 X 坐标。
+@param y	像素矩形的最小 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param obj       包含像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@see #getNumDataElements
+@see #getTransferType
+@see #getDataElements(int, int, int, int, Object, DataBuffer)
+@see java.awt.image.DataBuffer
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 obj 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.image.SampleModel.getPixel(int x, int y, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 float 数组中返回指定像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param fArray    如果不为 null，则在此数组中返回样本。
+@param data      包含图像数据的 DataBuffer。
+@return 指定像素的样本。
+@see #setPixel(int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 fArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double[] java.awt.image.SampleModel.getPixel(int x, int y, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 double 数组中返回指定像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param dArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定像素的样本。
+@see #setPixel(int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 dArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SampleModel.getPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 int 数组中返回像素矩形的所有样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param iArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定像素区域的样本。
+@see #setPixels(int, int, int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 iArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.image.SampleModel.getPixels(int x, int y, int w, int h, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 float 数组中返回像素矩形的所有样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param fArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定像素区域的样本。
+@see #setPixels(int, int, int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 fArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double[] java.awt.image.SampleModel.getPixels(int x, int y, int w, int h, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 double 数组中返回像素矩形的所有样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param dArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定像素区域的样本。
+@see #setPixels(int, int, int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 dArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.SampleModel.getSample(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 int 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要返回的 band。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素的样本。
+@see #setSample(int, int, int, int, DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.SampleModel.getSampleFloat(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 float 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要返回的 band。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素的样本。
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.image.SampleModel.getSampleDouble(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 double 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要返回的 band。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素的样本。
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.SampleModel.getSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 int 数组中返回指定 band 中对应于指定像素矩形的样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要返回的 band。
+@param iArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素区域的样本。
+@see #setSamples(int, int, int, int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 iArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.image.SampleModel.getSamples(int x, int y, int w, int h, int b, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 float 数组中返回指定 band 中对应于指定像素矩形的样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要返回的 band。
+@param fArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素区域的样本。
+@see #setSamples(int, int, int, int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 fArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double[] java.awt.image.SampleModel.getSamples(int x, int y, int w, int h, int b, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在一个 double 数组中返回指定 band 中对应于指定像素矩形的样本，每个数组元素对应一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要返回的 band。
+@param dArray	如果不为 null，则在此数组中返回样本。
+@param data	包含图像数据的 DataBuffer。
+@return 指定 band 中对应于指定像素区域的样本。
+@see #setSamples(int, int, int, int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 dArray 太小而不能容纳输出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 int 样本数组设置 DataBuffer 中的像素。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param iArray	int 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixel(int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 iArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 iArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixel(int x, int y, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 float 样本数组设置 DataBuffer 中的像素。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param fArray	float 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixel(int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 fArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 fArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixel(int x, int y, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 double 样本数组设置 DataBuffer 中的像素。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param dArray	double 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixel(int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 dArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 fArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置像素矩形的所有样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param iArray	int 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixels(int, int, int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 iArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 iArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixels(int x, int y, int w, int h, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 float 数组设置像素矩形的所有样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param fArray	float 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixels(int, int, int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 fArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 fArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setPixels(int x, int y, int w, int h, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 double 数组设置像素矩形的所有样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param dArray	double 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getPixels(int, int, int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 dArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内，或者 dArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.image.SampleModel.setSample(int x, int y, int b, int s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 int 设置指定 band 中对应于 DataBuffer (x,y) 处像素的样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要设置的 band。
+@param s	int 形式的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSample(int, int, int,  DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setSample(int x, int y, int b, float s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 float 设置指定 band 中对应于 DataBuffer (x,y) 处像素的样本。此方法的默认实现将输入 float 样本强制转换为 int 值，然后使用该 int 值调用 <code>setSample(int, int, int, DataBuffer)</code> 方法。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要设置的 band。
+@param s	float 形式的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSample(int, int, int, DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setSample(int x, int y, int b, double s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 double 设置指定 band 中对应于 DataBuffer (x,y) 处像素的样本。此方法的默认实现将输入 double 样本强制转换为 int 值，然后使用该 int 值调用 <code>setSample(int, int, int, DataBuffer)</code> 方法。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	像素位置的 X 坐标。
+@param y	像素位置的 Y 坐标。
+@param b	要设置的 band。
+@param s	double 形式的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSample(int, int, int, DataBuffer)
+
+@throws NullPointerException 如果 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置指定 band 中对应于指定像素矩形的样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要设置的 band。
+@param iArray	int 数组中的输入样本。
+@param data      包含图像数据的 DataBuffer。
+@see #getSamples(int, int, int, int, int, int[], DataBuffer)
+
+@throws NullPointerException 如果 iArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 iArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setSamples(int x, int y, int w, int h, int b, float[] fArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 float 数组设置指定 band 中对应于指定像素矩形的样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要设置的 band。
+@param fArray	float 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSamples(int, int, int, int, int, float[], DataBuffer)
+
+@throws NullPointerException 如果 fArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 fArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.SampleModel.setSamples(int x, int y, int w, int h, int b, double[] dArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 double 数组设置指定 band 中对应于指定像素矩形的样本，该数组为每个数组元素包含一个样本。如果坐标不在边界内，则抛出 ArrayIndexOutOfBoundsException。
+@param x	左上角像素位置的 X 坐标。
+@param y	左上角像素位置的 Y 坐标。
+@param w	像素矩形的宽度。
+@param h	像素矩形的高度。
+@param b	要设置的 band。
+@param dArray	double 数组中的输入样本。
+@param data	包含图像数据的 DataBuffer。
+@see #getSamples(int, int, int, int, int, double[], DataBuffer)
+
+@throws NullPointerException 如果 dArray 或 data 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 dArray 太小而不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.image.SampleModel java.awt.image.SampleModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个用此 SampleModel 的格式描述数据，但宽度和高度不同的 SampleModel。
+@param w 图像数据的宽度
+@param h 图像数据的高度
+@return 描绘的数据与此 <code>SampleModel</code> 相同，但大小不同的 <code>SampleModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.image.SampleModel java.awt.image.SampleModel.createSubsetSampleModel(int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新 SampleModel，它具有此 SampleModel 的 band 子集。
+@param bands 此 <code>SampleModel</code> 的 band 子集
+@return 具有此 <code>SampleModel</code> band 子集的 <code>SampleModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.image.DataBuffer java.awt.image.SampleModel.createDataBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个对应于此 SampleModel 的 DataBuffer。DataBuffer 的宽度和高度将与此 SampleModel 匹配。
+@return 对应于此 <code>SampleModel</code> 的 <code>DataBuffer</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int[] java.awt.image.SampleModel.getSampleSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有 band 样本的大小（以位为单位）。
+@return 所有 band 样本的大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.SampleModel.getSampleSize(int band)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 band 样本的大小（以位为单位）。
+@param band 指定的 band
+@return 指定 band 样本的大小。    
+
+<!-- END DATA -->

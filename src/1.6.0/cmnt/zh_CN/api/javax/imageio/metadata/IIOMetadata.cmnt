@@ -1,0 +1,493 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.metadata.IIOMetadata extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将由表示与图像和流关联的元数据（非图像数据）的对象扩展的抽象类。插件表示使用不透明、特定于插件的对象的元数据。但是这些对象提供以 <code>IIOMetadataNode</code> 对象的树的形式访问其内部信息的能力，<code>IIOMetadataNode</code> 对象支持 XML DOM 接口以及用于存储非文本数据和获取关于合法数据值的信息的其他接口。这种树的格式是依赖于插件的，但插件可以选择支持下述插件无关的格式。单个插件可能支持多个元数据格式，这些格式的名称可以通过调用 <code>getMetadataFormatNames</code> 确定。插件还可支持单个特殊格式（叫做&ldquo;本机&rdquo;格式），设计用于无损耗地编码其元数据。通常，此格式专门设计用于与特定文件格式一起使用，以便以同一种格式加载和保存图像而不丢失元数据，但是对于在不同图像格式的 <code>ImageReader</code> 和 <code>ImageWriter</code> 之间传输元数据没有多大用途。要像图像文件格式所允许的那样无损耗地在两个本机格式之间转换元数据，必须使用 <code>ImageTranscoder</code> 对象。
+
+@see javax.imageio.ImageReader#getImageMetadata
+@see javax.imageio.ImageReader#getStreamMetadata
+@see javax.imageio.ImageReader#readAll
+@see javax.imageio.ImageWriter#getDefaultStreamMetadata
+@see javax.imageio.ImageWriter#getDefaultImageMetadata
+@see javax.imageio.ImageWriter#write
+@see javax.imageio.ImageWriter#convertImageMetadata
+@see javax.imageio.ImageWriter#convertStreamMetadata
+@see javax.imageio.IIOImage
+@see javax.imageio.ImageTranscoder
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.metadata.IIOMetadata.standardFormatSupported
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示具体子类是否支持标准元数据格式的 boolean 值，通过构造方法设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.imageio.metadata.IIOMetadata.nativeMetadataFormatName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此对象本机元数据格式的名称，初始化为 <code>null</code>，通过构造方法设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.imageio.metadata.IIOMetadata.nativeMetadataFormatClassName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现 <code>IIOMetadataFormat</code> 和表示本机元数据格式的类的名称，初始化为 <code>null</code>，通过构造方法设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.imageio.metadata.IIOMetadata.extraMetadataFormatNames
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此插件支持的格式（标准格式和本机格式除外）的名称所组成的数组，初始化为 <code>null</code>，通过构造方法设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.imageio.metadata.IIOMetadata.extraMetadataFormatClassNames
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现 <code>IIOMetadataFormat</code> 和表示此插件支持的元数据格式（标准格式和本机格式除外）的类的名称所组成的数组，初始化为 <code>null</code>，通过构造方法设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataController javax.imageio.metadata.IIOMetadata.defaultController
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+建议用作此 <code>IIOMetadata</code> 对象的控制器的 <code>IIOMetadataController</code>。它可以通过 <code>getDefaultController</code> 获取。要安装默认控制器，请调用 <code>setController(getDefaultController())</code>。此实例变量应该由子类设置，这些子类可以选择提供自己的默认控制器（通常是一个 GUI）来设置参数。
+
+@see IIOMetadataController
+@see #getDefaultController
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataController javax.imageio.metadata.IIOMetadata.controller
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>activateController</code> 方法时，将用来为此 <code>IIOMetadataController</code> 对象提供设置值的 <code>IIOParamController</code>。此值重写任何默认控制器，即使为 <code>null</code> 时也是如此。
+
+@see IIOMetadataController
+@see #setController(IIOMetadataController)
+@see #hasController()
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadata()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个空的 <code>IIOMetadata</code> 对象。子类负责为所有受保护的实例变量提供值，这将使方法的未重写默认实现符合其协定。例如，<code>extraMetadataFormatNames</code> 的长度不应为 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadata(boolean standardMetadataFormatSupported, String nativeMetadataFormatName, String nativeMetadataFormatClassName, java.lang.String[] extraMetadataFormatNames, java.lang.String[] extraMetadataFormatClassNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>IIOMetadata</code> 对象，使其带有给定格式名称和格式类名称，以及指示是否支持标准格式的 boolean 值。
+
+<p> 此构造方法不会试图检查类名称的有效性。无效的类名称在后续调用 <code>getMetadataFormat</code> 时可能导致异常。
+
+@param standardMetadataFormatSupported 如果此对象可返回或接受使用标准元数据格式的 DOM 树，则该参数为 <code>true</code>。
+@param nativeMetadataFormatName <code>String</code> 形式的本机元数据格式的名称；如果不存在本机格式，则为 <code>null</code>。
+@param nativeMetadataFormatClassName 本机元数据格式的类名称；如果不存在本机格式，则为 <code>null</code>。
+@param extraMetadataFormatNames 指示此对象所支持的其他格式的 <code>String</code> 数组；如果不支持任何其他格式，则为 <code>null</code>。
+@param extraMetadataFormatClassNames 指示此对象所支持的所有其他格式的类名称的 <code>String</code> 数组；如果不支持任何其他格式，则为 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>extraMetadataFormatNames</code> 的长度为 0。
+@exception IllegalArgumentException 如果 <code>extraMetadataFormatNames</code> 和 <code>extraMetadataFormatClassNames</code> 既不同时为 <code>null</code> 也不具有相同长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.metadata.IIOMetadata.isStandardMetadataFormatSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>getMetadataFormat</code>、<code>getAsTree</code>、<code>setFromTree</code> 和 <code>mergeTree</code> 支持标准元数据格式，则返回 <code>true</code>。
+
+<p> 默认实现返回 <code>standardFormatSupported</code> 实例变量的值。
+
+@return 如果支持标准元数据格式，则返回 <code>true</code>。
+
+@see #getAsTree
+@see #setFromTree
+@see #mergeTree
+@see #getMetadataFormat
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.imageio.metadata.IIOMetadata.isReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此对象不支持 <code>mergeTree</code>、<code>setFromTree</code> 和 <code>reset</code> 方法，则返回 <code>true</code>。  
+
+@return 如果无法修改此 <code>IIOMetadata</code> 对象，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadata.getNativeMetadataFormatName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此插件的&ldquo;本机&rdquo;元数据格式的名称，该格式通常允许无损失地编码和传输以此插件处理的格式存储的元数据。如果不支持这种格式，则将返回 <code>null</code>。
+
+<p> 创建此 <code>IIOMetadata</code> 对象的插件定义&ldquo;本机&rdquo;元数据格式的结构和内容。用于简单格式的插件通常先为根创建一个虚拟节点，然后再创建一系列表示个别标记、存储块和关键字/值对的子节点。插件可以选择是否记录其本机格式。
+
+<p> 默认实现返回 <code>nativeMetadataFormatName</code> 实例变量的值。
+
+@return 本机格式的名称；或 <code>null</code>。
+
+@see #getExtraMetadataFormatNames
+@see #getMetadataFormatNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.metadata.IIOMetadata.getExtraMetadataFormatNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，包含此插件的 <code>getAsTree</code>、<code>setFromTree</code> 和 <code>mergeTree</code> 方法可识别的其他元数据格式（本机格式和标准格式除外）的名称。如果不存在这样的其他格式，则返回 <code>null</code>。
+
+<p> 默认实现返回 <code>extraMetadataFormatNames</code> 实例变量的副本。
+
+@return 长度至少为 1 的 <code>String</code> 数组；或 <code>null</code>。
+
+@see #getAsTree
+@see #setFromTree
+@see #mergeTree
+@see #getNativeMetadataFormatName
+@see #getMetadataFormatNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.metadata.IIOMetadata.getMetadataFormatNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，包含包括此插件的 <code>getAsTree</code>、<code>setFromTree</code> 和 <code>mergeTree</code> 方法可识别的所有元数据格式（包括本机格式和标准格式）的名称。如果不存在这样的格式，则返回 <code>null</code>。
+
+<p> 默认实现调用 <code>getNativeMetadataFormatName</code>、<code>isStandardMetadataFormatSupported</code> 和 <code>getExtraMetadataFormatNames</code> 并返回组合结果。
+
+@return <code>String</code> 数组。
+
+@see #getNativeMetadataFormatName
+@see #isStandardMetadataFormatSupported
+@see #getExtraMetadataFormatNames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.metadata.IIOMetadataFormat javax.imageio.metadata.IIOMetadata.getMetadataFormat(String formatName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述给定元数据格式的 <code>IIOMetadataFormat</code> 对象，如果没有可用的描述，则返回 <code>null</code>。提供的名称必须为 <code>getMetadataFormatNames</code> 返回的名称之一（<i>即</i>，本机格式名称、标准格式名称或 <code>getExtraMetadataFormatNames</code> 返回的名称之一）。
+
+<p> 默认实现凭借全局标准元数据格式名称进行名称检查，如果支持则返回该格式。否则，它将凭借本机格式名称然后是任何其他格式名称进行检查。如果发现匹配项，则其从 <code>nativeMetadataFormatClassName</code> 或 <code>extraMetadataFormatClassNames</code> 获取相应的 <code>IIOMetadataFormat</code> 类的名称，并使用其 <code>getInstance</code> 方法构造该类的实例。
+
+@param formatName 所需的元数据格式。
+
+@return <code>IIOMetadataFormat</code> 对象。
+
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>，或者不是插件可识别的名称之一。
+@exception IllegalStateException 如果无法加载与格式名称对应的类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.w3c.dom.Node javax.imageio.metadata.IIOMetadata.getAsTree(String formatName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 XML DOM <code>Node</code> 对象，该对象表示此对象所包含的元数据树的根（根据给定元数据格式定义的约定）。
+
+<p> 使用 <code>getMetadataFormatNames</code> 方法可以查询可用元数据格式的名称。
+
+@param formatName 所需的元数据格式。
+
+@return 形成树的根的 XML DOM <code>Node</code> 对象。
+
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>，或者不是 <code>getMetadataFormatNames</code> 返回的名称之一。
+ 
+@see #getMetadataFormatNames
+@see #setFromTree
+@see #mergeTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.imageio.metadata.IIOMetadata.mergeTree(String formatName, Node root) throws javax.imageio.metadata.IIOInvalidTreeException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 XML DOM <code>Node</code> 树（其语法由给定元数据格式定义）改变此 <code>IIOMetadata</code> 对象的内部状态。只在存在于给定树中的节点需要时才改变以前的状态。如果树结构或内容无效，则抛出 <code>IIOInvalidTreeException</code>。
+
+<p> 由于如何将一个树或子树与另一个树合并的语义完全特定于格式，因此插件设计者可以使用最适合格式的方式实现此方法，包括使用给定树的内容取代所有的现有状态。
+
+@param formatName 所需的元数据格式。
+@param root 形成树的根的 XML DOM <code>Node</code> 对象。
+
+@exception IllegalStateException 如果此对象是只读的。
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>，或者不是 <code>getMetadataFormatNames</code> 返回的名称之一。
+@exception IllegalArgumentException 如果 <code>root</code> 为 <code>null</code>。
+@exception IIOInvalidTreeException 如果使用给定格式的规则无法成功地解析树。
+
+@see #getMetadataFormatNames
+@see #getAsTree
+@see #setFromTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardChromaNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的色度信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardCompressionNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的压缩信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardDataNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的数据格式信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardDimensionNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的维度信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardDocumentNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的文档信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardTextNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的文本信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardTileNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的平铺信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+@see #getStandardTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardTransparencyNode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示标准 <code>javax_imageio_1.0</code> 元数据格式的透明度信息的 <code>IIOMetadataNode</code>；如果没有可用的此类信息，则返回 <code>null</code>。此方法将由实用例行程序 <code>getStandardTree</code> 调用。
+
+<p> 默认实现返回 <code>null</code>。
+
+<p> 如果子类希望支持标准元数据格式，则其应该重写此方法以生成适当的子树。
+
+@return <code>IIOMetadataNode</code>，或者 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.imageio.metadata.IIOMetadataNode javax.imageio.metadata.IIOMetadata.getStandardTree()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此对象中所包含元数据的 <code>IIOMetadataNode</code> 的树（根据标准 <code>javax_imageio_1.0</code> 元数据格式的约定）的实用方法。
+
+<p> 此方法调用各种 <code>getStandard*Node</code> 方法提供每个以根节点的子节点为根的子树。如果这些方法中任意一个返回 <code>null</code>，则省略相应的子树。如果它们都返回 <code>null</code>，则返回由单个根节点组成的树。
+
+@return 表示 <code>javax_imageio_1.0</code> 格式的元数据树的根的 <code>IIOMetadataNode</code>。
+
+@see #getStandardChromaNode
+@see #getStandardCompressionNode
+@see #getStandardDataNode
+@see #getStandardDimensionNode
+@see #getStandardDocumentNode
+@see #getStandardTextNode
+@see #getStandardTileNode
+@see #getStandardTransparencyNode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.metadata.IIOMetadata.setFromTree(String formatName, Node root) throws javax.imageio.metadata.IIOInvalidTreeException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 XML DOM <code>Node</code> 的树（其语法由给定元数据格式定义）设置此 <code>IIOMetadata</code> 对象的内部状态。丢弃以前的状态。如果树结构或内容无效，则抛出 <code>IIOInvalidTreeException</code>。
+
+<p> 默认实现先调用 <code>reset</code>，然后调用 <code>mergeTree(formatName, root)</code>。
+
+@param formatName 所需的元数据格式。
+@param root 形成树的根的 XML DOM <code>Node</code> 对象。
+
+@exception IllegalStateException 如果此对象是只读的。
+@exception IllegalArgumentException 如果 <code>formatName</code> 为 <code>null</code>，或者不是 <code>getMetadataFormatNames</code> 返回的名称之一。
+@exception IllegalArgumentException 如果 <code>root</code> 为 <code>null</code>。
+@exception IIOInvalidTreeException 如果使用给定格式的规则无法成功地解析树。
+
+@see #getMetadataFormatNames
+@see #getAsTree
+@see #mergeTree
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.imageio.metadata.IIOMetadata.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象中存储的所有数据重置为默认值，通常为此对象构造后立即处于的状态，尽管精确的语义是特定于插件的。注意，因创建对象的方式不同而存在多种可能的默认值。
+
+@exception IllegalStateException 如果此对象是只读的。
+
+@see javax.imageio.ImageReader#getStreamMetadata
+@see javax.imageio.ImageReader#getImageMetadata
+@see javax.imageio.ImageWriter#getDefaultStreamMetadata
+@see javax.imageio.ImageWriter#getDefaultImageMetadata
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.metadata.IIOMetadata.setController(IIOMetadataController controller)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在调用 <code>activateController</code> 方法时用来为此 <code>IIOParam</code> 对象提供设置值的 <code>IIOMetadataController</code>，重写任何默认控制器。如果该参数为 <code>null</code>，则不使用任何控制器，包括所有默认控制器。要恢复默认值，请使用 <code>setController(getDefaultController())</code>。
+
+<p> 默认实现将 <code>controller</code> 实例变量设置为提供的值。
+
+@param controller 一个适当的 <code>IIOMetadataController</code>，或者为 <code>null</code>。
+
+@see IIOMetadataController
+@see #getController
+@see #getDefaultController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.metadata.IIOMetadataController javax.imageio.metadata.IIOMetadata.getController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前已安装的所有 <code>IIOMetadataController</code>。返回值可以是默认控制器（如果有）、<code>null</code> 或最近一次调用 <code>setController</code> 时使用的参数。
+
+<p> 默认实现返回 <code>controller</code> 实例变量的值。
+
+@return 当前安装的 <code>IIOMetadataController</code>；或者 <code>null</code>。
+
+@see IIOMetadataController
+@see #setController
+@see #getDefaultController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.metadata.IIOMetadataController javax.imageio.metadata.IIOMetadata.getDefaultController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认 <code>IIOMetadataController</code>（如果有），不考虑当前安装的控制器。如果没有默认安装器，则返回 <code>null</code>。
+
+<p> 默认实现返回 <code>defaultController</code> 实例变量的值。
+
+@return 默认 <code>IIOMetadataController</code> 或 <code>null</code>。
+
+@see IIOMetadataController
+@see #setController(IIOMetadataController)
+@see #getController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.metadata.IIOMetadata.hasController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果存在为此 <code>IIOMetadata</code> 对象安装的控制器，则返回 <code>true</code>。
+
+<p> 如果 <code>getController</code> 方法返回非 <code>null</code> 值，则默认实现返回 <code>true</code>。
+
+@return 如果安装了一个控制器，则返回 <code>true</code>。
+
+@see IIOMetadataController
+@see #setController(IIOMetadataController)
+@see #getController
+@see #getDefaultController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.metadata.IIOMetadata.activateController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活为此 <code>IIOMetadata</code> 对象安装的 <code>IIOMetadataController</code>，并返回所得到的值。当此方法返回 <code>true</code> 时，此 <code>IIOMetadata</code> 对象的所有值都已准备好进行下一次写入操作。如果返回 <code>false</code>，则此对象中没有任何设置会被干扰（<i>也就是说</i>，用户取消了该操作）。
+
+<p> 通常，控制器将是一个 GUI，为特定插件的 <code>IIOMetadata</code> 的子类提供用户界面。不过，控制器不必一定是 GUI。
+
+<p> 默认实现调用 <code>getController</code>，如果 <code>hasController</code> 返回 <code>true</code>，则对返回对象调用 <code>activate</code>。
+
+@return 如果控制器完全正常，则返回 <code>true</code>。
+
+@exception IllegalStateException 如果当前没有安装控制器。
+
+@see IIOMetadataController
+@see #setController(IIOMetadataController)
+@see #getController
+@see #getDefaultController
+@see #hasController
+
+<!-- END DATA -->

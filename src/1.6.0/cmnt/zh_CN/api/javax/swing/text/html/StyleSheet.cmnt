@@ -1,0 +1,376 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.html.StyleSheet extends javax.swing.text.StyleContext
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+支持定义要呈现的 HTML 视图的可视化特征。该 StyleSheet 用于将 HTML 模型转换为具有可视化特征的视图。此类可自定义视图的外观、通过一个模型分别呈现多个视图等等。该类可以看作 CSS 规则的存储库。CSS 属性的键是类型 CSS.Attribute 的对象。值类型由 StyleSheet 实现决定，但需要 <code>toString</code> 方法返回 CSS 值的字符串表示形式。
+ <p>
+获取其属性的 HTML View 实现的主要入口点是 <a href="#getViewAttributes">getViewAttributes</a> 方法。通过创建所需的用来将属性与视图关联的策略来实现这一方法。每个 HTMLEditorKit（也即每个关联的 JEditorPane）都可以有其自己的 StyleSheet，但默认情况下，所有 HTMLEditorKit 实例都将共享一个表。HTMLDocument 实例还可以有一个 StyleSheet，它用来存储特定于文档的 CSS 规范。
+ <p>
+为使 View 存储较少的状态并因此变得更轻量级，StyleSheet 可充当处理某些呈现任务的 painter 的工厂。此方法允许实现来确定要缓存的内容，以及在选择器通常为多视图的级别上可能共享的内容。由于 StyleSheet 可以由面向多个文档的视图使用，并且通常 HTML 属性不影响使用的选择器，所以共享选择器的可能性非常大。
+ <p>
+这些规则是按指定样式存储的，并且还存储了其他信息以便将元素的上下文快速转换为一个规则。以下代码片段将显示指定的样式，以及由此所包含的 CSS 规则。 <code><pre>
+ &nbsp; 
+ &nbsp; import java.util.*;
+ &nbsp; import javax.swing.text.*;
+ &nbsp; import javax.swing.text.html.*;
+ &nbsp; 
+ &nbsp; public class ShowStyles {
+ &nbsp; 
+ &nbsp;     public static void main(String[] args) {
+ &nbsp; 	HTMLEditorKit kit = new HTMLEditorKit();
+ &nbsp; 	HTMLDocument doc = (HTMLDocument) kit.createDefaultDocument();
+ &nbsp; 	StyleSheet styles = doc.getStyleSheet();
+ &nbsp; 	
+ &nbsp; 	Enumeration rules = styles.getStyleNames();
+ &nbsp; 	while (rules.hasMoreElements()) {
+ &nbsp; 	    String name = (String) rules.nextElement();
+ &nbsp; 	    Style rule = styles.getStyle(name);
+ &nbsp; 	    System.out.println(rule.toString());
+ &nbsp; 	}
+ &nbsp; 	System.exit(0);
+ &nbsp;     }
+ &nbsp; }
+ &nbsp; 
+ </pre></code>
+ <p>
+此语义用于 CSS 样式未良好定义的情况，在这种情况下，CSS 样式应根据元素的定义重写可视属性。例如，html <code>&lt;body bgcolor=red&gt;</code> 将使主体呈现为红色背景。但如果该 html 文件还包含 CSS 规则 <code>body { background:blue }</code>，则该主体的背景就没有它该呈现的颜色清晰了。当前的实现为在元素中定义的可视属性提供了最高优先权，也就是说在应用任何样式之前都要先检查它们。因此，在前面的示例中，当主体元素将背景颜色定义为红色时，其背景也将成为红色。
+ <p>
+正如前面提到的那样，此方法支持 CSS。我们不提供对所有 CSS 规范的支持。请参考 CSS 类的 javadoc 以查看我们支持的属性。我们当前不支持的两种主要的 CSS 解析相关的概念是伪选择器，如 <code>A:link { color:red }</code> 和 <code>important</code> 修饰符。
+ <p>
+<font color="red">注：此实现目前尚不完整。可以使用完整的替代实现来取代它。此类的未来版本将提供更好的 CSS 支持。</font>
+
+@author  Timothy Prinzing
+@author  Sunita Mani
+@author  Sara Swanson
+@author  Jill Nakata
+@version 1.84 07/23/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.html.StyleSheet.SelectorMapping javax.swing.text.html.StyleSheet.selectorMapping
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择器的倒置图形。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Hashtable javax.swing.text.html.StyleSheet.resolvedStyles
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从选择器（字符串形式）映射到包括所有相关样式的 Style。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Vector javax.swing.text.html.StyleSheet.linkedStyleSheets
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+规则要引用的 StyleSheet 向量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.net.URL javax.swing.text.html.StyleSheet.base
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可以找到样式表的位置。用于相关的导入。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.StyleSheet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造 StyleSheet
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.html.StyleSheet.getRule(HTML.Tag t, Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用来呈现给定类型的 HTML 标记的样式。给定的元素代表标记，可用来确定是什么样的嵌套情形：是嵌套在元素的内部还是外部，这两种情况的属性是不一样的。
+
+@param t  将转换为可视属性的类型
+@param e  表示标记的元素；该元素可用于确定嵌套的情况，如果嵌套在其他元素的内部，则属性将不同
+@return 用来呈现标记的 CSS 属性集合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.html.StyleSheet.getRule(String selector)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取最能匹配以字符串形式表示的选择器的规则。其中 <code>selector</code> 是由空格隔开的元素名称 String。例如，<code>selector</code> 可以是 'html body tr td'<p>
+返回的 Style 属性将随着添加和移除规则进行更改。也就是说，如果要请求一个具有选择器 &quot;table p&quot; 的规则，并添加了具有选择器 &quot;p&quot; 的新规则，则返回的 Style 将包括来自规则 &quot;p&quot; 的新属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.addRule(String rule)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向 sheet 添加规则集合。该规则应是有效的 CSS 格式。通常情况下将根据对 &lt;style&gt; 标记的解析结果调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.getDeclaration(String decl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 CSS 声明转换为表示 CSS 声明的 AttributeSet。通常在遇到 HTML 样式属性时将调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.loadRules(Reader in, URL ref) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载 CSS1 语法中指定的规则集合。如果与现有的规则发生了冲突，则保留新指定的规则。
+
+@param in 要从其读取 CSS 语法的流
+@param ref  引用 URL。此值表示流的位置，可以为 null。所有在流中指定的相关 URL 都将以此参数为依据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.getViewAttributes(View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用来显示视图的属性集。这基本上是一个可用于 View.getAttributes 的属性集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.removeStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前添加到该文档中的指定样式。
+
+@param nm  要移除的样式的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.addStyleSheet(StyleSheet ss)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 StyleSheet <code>ss</code> 中的规则添加到接收者的规则中。<code>ss's</code> 规则将重写以前添加的所有样式表的规则。添加的 StyleSheet 永远不会重写接收样式表的规则。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.removeStyleSheet(StyleSheet ss)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从接收者的规则中移除 StyleSheet <code>ss</code>。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.StyleSheet[] javax.swing.text.html.StyleSheet.getStyleSheets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个链接 StyleSheet 的数组。如果不存在链接 StyleSheet，则返回 null。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.importStyleSheet(URL url)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>url</code> 导入样式表。得到的规则将直接添加到接收者中。如果不想让这些规则成为接收者的一部分，则要创建一个新的 StyleSheet，并使用 addStyleSheet 与其链接。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.setBase(URL base)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 base。所有相关的导入语句都将与 <code>base</code> 相关。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL javax.swing.text.html.StyleSheet.getBase()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 base。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.addCSSAttribute(MutableAttributeSet attr, CSS.Attribute key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 CSS 属性添加到给定的集合。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.html.StyleSheet.addCSSAttributeFromHTML(MutableAttributeSet attr, CSS.Attribute key, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 CSS 属性添加到给定的集合。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.translateHTMLToCSS(AttributeSet htmlAttrSet)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 HTML 属性集合转换为对等的 CSS 属性集合。
+
+@param htmlAttrSet  包含 HTML 属性的 AttributeSet。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.addAttribute(AttributeSet old, Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向给定集合添加属性，并返回新的表示方式的集合。实现此方法以将 StyleConstant 属性转换为 CSS，然后转发给超类行为。StyleConstants 属性没有相应的 CSS 项，将会存储 StyleConstants 属性（但不一定有用）。
+
+@param old  原有属性集
+@param key  非 null 属性键
+@param value  属性值
+@return  更新的属性集
+@see MutableAttributeSet#addAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.addAttributes(AttributeSet old, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向元素添加属性集。如果这些属性都是 StyleConstants 属性，则会将它们转换为 CSS，然后再转发给超类行为。
+
+@param old 原有属性集
+@param attr 要添加的属性
+@return 更新后的属性集
+@see MutableAttributeSet#addAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.removeAttribute(AttributeSet old, Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从集合中移除属性。如果该属性是 StyleConstants 属性，则会将请求转换为 CSS 属性，然后再转发给超类行为。
+
+@param old  原有的属性集
+@param key  非 null 属性名称
+@return  更新的属性集
+@see MutableAttributeSet#removeAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.removeAttributes(AttributeSet old, java.util.Enumeration<?> names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除元素的属性集。如果所有属性都是 StyleConstants 属性，则该请求将会转换为 CSS 属性，然后再转发给超类行为。
+
+@param old 原有属性集
+@param names 属性名
+@return 更新后的属性集
+@see MutableAttributeSet#removeAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.html.StyleSheet.removeAttributes(AttributeSet old, AttributeSet attrs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除属性集。如果所有属性都是 StyleConstants 属性，则该请求将会转换为 CSS 属性，然后再转发给超类行为。
+
+@param old 原有属性集
+@param attrs 属性
+@return 更新后的属性集
+@see MutableAttributeSet#removeAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.StyleContext.SmallAttributeSet javax.swing.text.html.StyleSheet.createSmallAttributeSet(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建可以共享的属性压缩集。这是想要改变 SmallAttributeSet 行为的子类的一个钩子。重新实现此方法以返回提供某种属性转换的 AttributeSet。
+
+@param a 以压缩形式表示的属性集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.MutableAttributeSet javax.swing.text.html.StyleSheet.createLargeAttributeSet(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个以空间来换取时间的大属性集合。此集合将不可共享。这是想要改变更大属性存储样式（默认情况下是 SimpleAttributeSet）的子类的一个钩子。重新实现此方法以返回提供某种属性转换的 MutableAttributeSet。
+
+@param a 以更大形式表示的属性集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.text.html.StyleSheet.getFont(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定属性集使用的字体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.html.StyleSheet.getForeground(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个属性集并将其转换为前景色规范。此方法可以用于指定诸如更亮、更鲜艳等之类的内容。
+
+@param a  属性集
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.html.StyleSheet.getBackground(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取一个属性集并将其转换为背景色规范。此方法可以用于指定诸如更亮、更鲜艳等之类的内容。
+
+@param a  属性集
+@return  颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.StyleSheet.BoxPainter javax.swing.text.html.StyleSheet.getBoxPainter(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定 CSS 属性集合使用的框 formatter。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.html.StyleSheet.ListPainter javax.swing.text.html.StyleSheet.getListPainter(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定 CSS 属性集合使用的列表 formatter。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.setBaseFontSize(int sz)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置基本字体大小，其有效值范围为 1 到 7。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.StyleSheet.setBaseFontSize(String size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据传入的 String 设置基本字体大小。字符串可以标识特定字体大小（有效值在 1 和 7 之间），也可以标识相对字体大小（如 +1 或 -2）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.html.StyleSheet.getPointSize(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定大小索引的情况下返回点大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.html.StyleSheet.getPointSize(String size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定字符串（如 &quot;+2&quot;、&quot;-2&quot; 或 &quot;2&quot;），则返回点大小值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.html.StyleSheet.stringToColor(String string)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将颜色字符串（如 &quot;RED&quot; 或 &quot;#NNNNNN&quot;）转换为 Color。注：此方法仅转换 HTML3.2 颜色字符串或长度为 7 的字符串；否则，将返回 null。
+
+<!-- END DATA -->

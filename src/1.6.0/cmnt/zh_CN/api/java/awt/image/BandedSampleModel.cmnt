@@ -1,0 +1,273 @@
+<!-- BEGIN KEY -->
+public final class java.awt.image.BandedSampleModel extends java.awt.image.ComponentSampleModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类表示以 band 交错方式存储的图像数据，像素的每个样本都占用 DataBuffer 的一个数据元素。此类是 ComponentSampleModel 的子类，但是对于访问 band 交错图像数据来说，它提供的实现比 ComponentSampleModel 提供的实现更有效。当处理存储在不同 DataBuffer 存储单元中每个 band 样本数据的图像时，通常应该使用此类。由于提供了存取方法，因此可以直接对图像数据进行操作。像素间距是同一 扫描行上同一 band 的两个样本之间的数据数组元素数。BandedSampleModel 的像素间距为 1。扫描行间距是给定样本与下一扫描行的同一列中对应样本之间的数据数组元素数。band 偏移量表示从保存每个 band 的 DataBuffer 存储单元第一个数据数组元素到 band 第一个样本之间的数据数组元素数。这些 band 从 0 到 N-1 进行编号。存储单元索引表示数据缓冲区存储单元与图像数据 band 之间的对应关系。此类支持 {@link DataBuffer#TYPE_BYTE TYPE_BYTE}、{@link DataBuffer#TYPE_USHORT TYPE_USHORT}、{@link DataBuffer#TYPE_SHORT TYPE_SHORT}、{@link DataBuffer#TYPE_INT TYPE_INT}、{@link DataBuffer#TYPE_FLOAT TYPE_FLOAT} 和 {@link DataBuffer#TYPE_DOUBLE TYPE_DOUBLE} 数据类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BandedSampleModel(int dataType, int w, int h, int numBands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定参数的 BandedSampleModel。像素间距将为一个数据元素。扫描行间距与宽度相同。每个 band 都存储在一个单独的存储单元中，所有 band 偏移量都为零。
+@param dataType  存储样本的数据类型。
+@param w	所描述的图像数据区域的宽度（以像素为单位）。
+@param h	所描述的图像数据区域的高度（以像素为单位）。
+@param numBands  图像数据的 band 数。
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的数据类型之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BandedSampleModel(int dataType, int w, int h, int scanlineStride, int[] bankIndices, int[] bandOffsets)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定参数的 BandedSampleModel。可以从 bandOffsets bankIndices 数组的长度推断 band 数，它们必须相等。像素间距将为一个数据元素。
+@param dataType  存储样本的数据类型。
+@param w	所描述的图像数据区域的宽度（以像素为单位）。
+@param h	所描述的图像数据区域的高度（以像素为单位）。
+@param scanlineStride 图像数据的行间距。
+@param bankIndices 每个 band 的存储单元索引。
+@param bandOffsets 每个 band 的 band 偏移量。
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的数据类型之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.BandedSampleModel.createCompatibleSampleModel(int w, int h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定宽度和高度的新的 BandedSampleModel。新 BandedSampleModel 将具有与此 BandedSampleModel 相同的 band 数、存储数据类型和存储单元索引。band 偏移量将被压缩，使得 band 之间的偏移量为 w*pixelStride，并且所有 band 偏移量的最小值为零。
+@param w 得到的 <code>BandedSampleModel</code> 的宽度
+@param h 得到的 <code>BandedSampleModel</code> 的高度
+@return 具有指定宽度和高度的新 <code>BandedSampleModel</code>。
+@throws IllegalArgumentException 如果 <code>w</code> 或 <code>h</code> 等于 <code>Integer.MAX_VALUE</code> 或 <code>Integer.MIN_VALUE</code>
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的数据类型之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.SampleModel java.awt.image.BandedSampleModel.createSubsetSampleModel(int[] bands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有此 BandedSampleModel 的 band 子集的新 BandedSampleModel。新的 BandedSampleModel 可以与任何使用现有 BandedSampleModel 的 DataBuffer 一起使用。新的 BandedSampleModel/DataBuffer 组合将表示一个具有原 BandedSampleModel/DataBuffer 组合 band 子集的图像。
+@throws RasterFormatException 如果 band 数大于此样本模型中的存储单元数。
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的数据类型之一 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.DataBuffer java.awt.image.BandedSampleModel.createDataBuffer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个与此 BandedSampleModel 对应的 DataBuffer，该 DataBuffer 的数据类型、存储单元数和大小都将与此 BandedSampleModel 一致。
+@throws IllegalArgumentException 如果 <code>dataType</code> 不是受支持的类型之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.BandedSampleModel.getDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在 TransferType 类型基本数组中返回单个像素的数据。对于 BandedSampleModel，返回的数据与 data 类型相同，并将对每个数组元素返回一个样本。通常，obj 作为 null 传入，从而 Object 将被自动创建，并具有正确的基本数据类型。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 BandedSampleModel <code>bsm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 BandedSampleModel <code>bsm2</code> 描述）。通常，该传输比使用 getPixel/setPixel 方法更高效。
+ <pre>
+ 	     BandedSampleModel bsm1, bsm2;
+	     DataBufferInt db1, db2;
+ 	     bsm2.setDataElements(x, y, bsm1.getDataElements(x, y, null, db1),
+                            db2);
+ </pre>
+如果两个 SampleModel 具有相同的 band 数，相应 band 的每个样本具有相同的位数，且 TransferType 相同，则使用 getDataElements/setDataElements 在这两个 DataBuffer/SampleModel 对之间传输数据是合法的。
+ <p>
+如果 obj 不为 null，则它应该是一个 TransferType 类型基本数组。否则抛出 ClassCastException。如果坐标不在边界内部，或者 obj 不为 null 且大小不足以容纳像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x         像素位置的 X 坐标
+@param y         像素位置的 Y 坐标
+@param obj       如果不为 null，则为一个接收返回像素数据的基本数组。
+@param data      包含图像数据的 DataBuffer。
+@return 指定像素的数据。
+@see #setDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.BandedSampleModel.getPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 int 数组中返回指定像素的所有样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x         像素位置的 X 坐标
+@param y         像素位置的 Y 坐标
+@param iArray    如果不为 null，则在此数组中返回样本
+@param data      包含图像数据的 DataBuffer
+@return 指定像素的样本。
+@see #setPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.BandedSampleModel.getPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 int 数组中返回指定像素矩形的所有样本，每个数据数组元素对应一个样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 左上角像素位置的 X 坐标
+@param y 左上角像素位置的 Y 坐标
+@param w         像素矩形的宽度
+@param h         像素矩形的高度
+@param iArray    如果不为 null，则在此数组中返回样本
+@param data      包含图像数据的 DataBuffer
+@return 指定区域中像素的样本。
+@see #setPixels(int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.BandedSampleModel.getSample(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 int 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要返回的 band
+@param data      包含图像数据的 DataBuffer 
+@return 指定 band 中对应于指定像素的样本。
+@see #setSample(int, int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.BandedSampleModel.getSampleFloat(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 float 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要返回的 band
+@param data      包含图像数据的 DataBuffer
+@return 一个 float 值，表示指定 band 中对应于指定像素的样本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.awt.image.BandedSampleModel.getSampleDouble(int x, int y, int b, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 double 形式返回指定 band 中对应于 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要返回的 band
+@param data      包含图像数据的 DataBuffer
+@return 一个 double 值，表示指定 band 中对应于指定像素的样本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.image.BandedSampleModel.getSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 int 数组中返回指定 band 中对应于指定像素矩形的样本，每个数据数组元素对应一个样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 左上角像素位置的 X 坐标
+@param y 左上角像素位置的 Y 坐标
+@param w         像素矩形的宽度
+@param h         像素矩形的高度
+@param b         要返回的 band
+@param iArray    如果不为 null，则返回此数组中的样本
+@param data      包含图像数据的 DataBuffer
+@return 指定 band 中对应于指定区域内像素的样本。
+@see #setSamples(int, int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setDataElements(int x, int y, Object obj, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 TransferType 类型基本数组设置指定 DataBuffer 中单个像素的数据。对于 BandedSampleModel，设置的数据与 data 类型相同，且每个数组元素传输一个样本。
+ <p>
+以下代码说明了如何将一个像素的数据从 DataBuffer <code>db1</code>（其存储布局由 BandedSampleModel <code>bsm1</code> 描述）传输到 DataBuffer <code>db2</code>（其存储布局由 BandedSampleModel <code>bsm2</code> 描述）。通常，该传输比使用 getPixel/setPixel 更高效。
+ <pre>
+ 	     BandedSampleModel bsm1, bsm2;
+	     DataBufferInt db1, db2;
+ 	     bsm2.setDataElements(x, y, bsm1.getDataElements(x, y, null, db1),
+                            db2);
+ </pre>
+如果两个 SampleModels 具有相同的 band 数，相应 band 的每个样本具有相同的位数，且 TransferTypes 相同，则使用 getDataElements/setDataElements 在这两个 DataBuffer/SampleModel 对之间传输数据是合法的。
+ <p>
+obj 必须是一个 TransferType 类型基本数组。否则抛出 ClassCastException。如果坐标不在边界内部，或者 obj 的大小不足以容纳像素数据，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param obj       如果不为 null，则返回此对象中的基本数组
+@param data      包含图像数据的 DataBuffer
+@see #getDataElements(int, int, Object, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setPixel(int x, int y, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入样本的 int 数组设置 DataBuffer 中的像素。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param iArray    int 数组中的输入样本
+@param data      包含图像数据的 DataBuffer
+@see #getPixel(int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setPixels(int x, int y, int w, int h, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置对应于像素矩形的所有样本，int 数组中每个数组元素包含一个样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置左上角的 X 坐标
+@param y 像素位置左上角的 Y 坐标
+@param w         像素矩形的宽度
+@param h         像素矩形的高度
+@param iArray    int 数组中的输入样本
+@param data      包含图像数据的 DataBuffer
+@see #getPixels(int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setSample(int x, int y, int b, int s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 int 值设置指定 band 中对应于 DataBuffer 中 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要设置的 band
+@param s         输入的样本（int 形式）
+@param data      包含图像数据的 DataBuffer
+@see #getSample(int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setSample(int x, int y, int b, float s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 float 值设置指定 band 中对应于 DataBuffer 中 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要设置的 band
+@param s         输入的样本（float 形式）
+@param data      包含图像数据的 DataBuffer
+@see #getSample(int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setSample(int x, int y, int b, double s, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入的 double 值设置指定 band 中对应于 DataBuffer 中 (x,y) 处像素的样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置的 X 坐标
+@param y 像素位置的 Y 坐标
+@param b         要设置的 band 
+@param s         输入的样本（为一个 double 值）
+@param data      包含图像数据的 DataBuffer
+@see #getSample(int, int, int, DataBuffer)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.BandedSampleModel.setSamples(int x, int y, int w, int h, int b, int[] iArray, DataBuffer data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 int 数组设置指定 band 中对应于指定像素矩形的样本，int 数组中每个数据数组元素包含一个样本。如果坐标不在边界内部，则抛出 ArrayIndexOutOfBoundsException。
+@param x 像素位置左上角的 X 坐标
+@param y 像素位置左上角的 Y 坐标
+@param w         像素矩形的宽度
+@param h         像素矩形的高度
+@param b         要设置的 band
+@param iArray    输入的样本数组
+@param data      包含图像数据的 DataBuffer
+@see #getSamples(int, int, int, int, int, int[], DataBuffer)
+
+<!-- END DATA -->

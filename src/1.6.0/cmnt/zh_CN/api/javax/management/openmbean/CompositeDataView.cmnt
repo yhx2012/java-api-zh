@@ -1,0 +1,85 @@
+<!-- BEGIN KEY -->
+public interface javax.management.openmbean.CompositeDataView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>Java 类可以实现此接口，以指示如何通过 MXBean 框架将其转换为 {@code CompositeData}。</p>
+
+<p>使用此类的典型方式是，除了已经在 MXBean 框架提供的 {@code CompositeType} 中声明的项外，还要向 {@code CompositeData} 添加额外的项。要做到这一点，必须创建另一个 {@code CompositeType}，其中包含所有相同的项以及额外的项。</p>
+
+<p>例如，假定您有一个由名为 {@code units} 的 String 和一个 {@code value}（可以是 {@code long} 或 {@code double}）组成的 {@code Measure} 类。其形式可能如下所示：</p>
+
+ <pre>
+public class Measure implements CompositeDataView {
+private String units;
+private Number value; // a Long or a Double
+
+public Measure(String units, Number value) {
+this.units = units;
+this.value = value;
+     }
+
+public static Measure from(CompositeData cd) {
+return new Measure((String) cd.get(&quot;units&quot;),
+(Number) cd.get(&quot;value&quot;));
+     }
+
+public String getUnits() {
+return units;
+     }
+
+// Can't be called getValue(), because Number is not a valid type
+// in an MXBean, so the implied &quot;value&quot; property would be rejected.
+public Number _getValue() {
+return value;
+     }
+
+public CompositeData toCompositeData(CompositeType ct) {
+try {
+{@code List<String> itemNames = new ArrayList<String>(ct.keySet());}
+{@code List<String> itemDescriptions = new ArrayList<String>();}
+{@code List<OpenType&lt;?&gt;&gt; itemTypes = new ArrayList<OpenType&lt;?&gt;&gt;();}
+for (String item :itemNames) {
+itemDescriptions.add(ct.getDescription(item));
+itemTypes.add(ct.getType(item));
+             }
+itemNames.add(&quot;value&quot;);
+itemDescriptions.add(&quot;long or double value of the measure&quot;);
+itemTypes.add((value instanceof Long) ?SimpleType.LONG :
+SimpleType.DOUBLE);
+CompositeType xct =
+new CompositeType(ct.getTypeName(),
+ct.getDescription(),
+itemNames.toArray(new String[0]),
+itemDescriptions.toArray(new String[0]),
+itemTypes.toArray(new OpenType&lt;?&gt;[0]));
+CompositeData cd =
+new CompositeDataSupport(xct,
+new String[] {&quot;units&quot;, &quot;value&quot;},
+new Object[] {units, value});
+assert ct.isValue(cd);  // check we've done it right
+return cd;
+} catch (Exception e) {
+throw new RuntimeException(e);
+         }
+     }
+ }
+ </pre>
+
+<p>将出现在用于此类型的属性或操作的 {@link javax.management.Descriptor Descriptor} 的 {@code openType} 字段中的 {@code CompositeType} 将只显示 {@code units} 项，但生成的实际 {@code CompositeData} 将既包含 {@code units} 又包含 {@code value}。</p>
+
+@see javax.management.MXBean
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.CompositeData javax.management.openmbean.CompositeDataView.toCompositeData(CompositeType ct)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回对应于此对象中的值的 {@code CompositeData}。返回的值通常应该是一个 {@link CompositeDataSupport} 实例，或通过 {@code writeReplace} 方法序列化为一个 {@code CompositeDataSupport} 的类。否则，接收对象的远程客户端可能无法重新构造它。
+
+@param ct  返回值的期望 {@code CompositeType}。如果返回值是 {@code cd}，则 {@code cd.getCompositeType().equals(ct)} 应该为 true。通常这是因为 {@code cd} 是一个通过将 {@code ct} 作为其 {@code CompositeType} 构造而成的 {@link CompositeDataSupport}。
+
+@return  {@code CompositeData}。
+
+<!-- END DATA -->

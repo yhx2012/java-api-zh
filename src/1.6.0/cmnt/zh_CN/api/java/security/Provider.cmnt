@@ -1,0 +1,271 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.Provider extends java.util.Properties
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示 Java 安全 API &quot;provider&quot;，这里 provider 实现了 Java 安全性的一部分或者全部。provider 可能实现的服务包括：
+
+ <ul>
+
+<li>算法（如 DSA、RSA、MD5 或 SHA-1）。
+
+<li>密钥的生成、转换和管理设施（如用于特定于算法的密钥）。
+
+</ul>
+
+<p>每个 provider 有一个名称和一个版本号，并且在每个它装入运行时中进行配置。
+
+<p>有关特定类型的 provider、加密服务 provider 如何工作和安装的信息，请参阅 &quot;Java Cryptography Architecture API Specification &amp; Reference&quot; 中的 <a href =
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#Provider">Provider 类</a>。但是，请注意 provider 能够被用来实现 Java 中的任何安全服务,这些安全服务使用带有适合下层的实现选择的可插入架构。
+
+<p>某些 provider 的实现在操作时可能遇到不可恢复的内部错误，例如与安全性令牌通信的错误。应该使用 {@link ProviderException} 指示此类错误。
+
+<p>服务类型 <code>Provider</code> 留给安全框架使用。此类型的服务不能被应用程序添加、移除或修改。以下属性自动放置在每个 Provider 对象中：
+ <table cellspacing=4>
+<tr><th>名称</th><th>值</th>
+ <tr><td><code>Provider.id name</code></td>
+    <td><code>String.valueOf(provider.getName())</code></td>
+ <tr><td><code>Provider.id version</code></td>
+     <td><code>String.valueOf(provider.getVersion())</code></td>
+ <tr><td><code>Provider.id info</code></td>
+       <td><code>String.valueOf(provider.getInfo())</code></td>
+ <tr><td><code>Provider.id className</code></td>
+     <td><code>provider.getClass().getName()</code></td>
+ </table>
+
+@version 1.61, 05/05/04
+@author Benjamin Renaud
+@author Andreas Sterbenz
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.Provider.name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+provider 名称
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.Provider.info
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+provider 及其服务的描述。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private double java.security.Provider.version
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+provider 版本号。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.Provider(String name, double version, String info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定的名称、版本号和信息构造一个 provider。
+
+@param name provider 的名称。
+
+@param version provider 的版本号。
+
+@param info provider 及其服务的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Provider.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 provider 的名称。
+
+@return  此 provider 的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.security.Provider.getVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 provider 的版本号。
+
+@return  此 provider 的版本号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Provider.getInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 provider 及其服务的人可读 (human-readable) 的描述。此方法可能返回带有相关链接的 HTML 页面。
+
+@return provider 及其服务的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Provider.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有此 provider 名称和版本号的字符串。
+
+@return 具有此 provider 名称和版本号的字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.security.Provider.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除此 provider，使其不再包含用来查找由该 provider 实现的设施的属性。
+ 
+<p>首先，如果存在安全管理器，则用字符串 <code>&quot;clearProviderProperties.&quot;+name</code>（其中 <code>name</code> 是 provider 的名称）作为参数值调用其 <code>checkSecurityAccess</code> 方法，以查看是否能够清除此 provider。如果使用 <code>checkSecurityAccess</code> 的默认实现（即未重写此方法），则会导致使用 <code>SecurityPermission(&quot;clearProviderProperties.&quot;+name)</code> 权限来调用安全管理器的 <code>checkPermission</code> 方法。
+
+@throws  SecurityException 如果存在安全管理器，且其 <code>{{@link java.lang.SecurityManager#checkSecurityAccess}</code> 方法拒绝清除此 provider
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.security.Provider.load(InputStream inStream) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从输入流中读取属性列表（键和元素对）。
+
+@param inStream   输入流。
+@exception  IOException  如果读取输入流时发生错误。
+@see java.util.Properties#load
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.security.Provider.putAll(java.util.Map<?, ?> t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 Map 中所有映射关系复制到此 provider 中。针对指定 Map 中的当前所有键，这些映射关系将替换此 provider 中具有的所有属性。 
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Set<java.util.Map.Entry<java.lang.Object, java.lang.Object>> java.security.Provider.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Provider 中所包含的属性项的一个不可修改的 Set 视图。
+
+@see   java.util.Map.Entry
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.Object> java.security.Provider.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 provider 中所包含的属性键的一个不可修改的 Set 视图。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<java.lang.Object> java.security.Provider.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 provider 中所包含的属性值的一个不可修改的 Collection 视图。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.security.Provider.put(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>key</code> 属性，使其具有指定的 <code>value</code>。
+ 
+<p>首先，如果存在安全管理器，则用字符串 <code>&quot;clearProviderProperties.&quot;+name</code>（其中 <code>name</code> 是 provider 的名称）作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看是否能设置此 provider 的属性值。如果使用 <code>checkSecurityAccess</code> 的默认实现（即未重写此方法），则会导致使用 <code>SecurityPermission(&quot;putProviderProperty.&quot;+name)</code> 权限来调用安全管理器的 <code>checkPermission</code> 方法。
+
+@param   key   属性键。
+
+@param value 属性值。
+
+@return 指定属性 (<code>key</code>) 以前的值；如果不存在该值，则返回 null。
+
+@throws  SecurityException 如果存在安全管理器，且其 <code>{@link java.lang.SecurityManager#checkSecurityAccess}</code> 方法拒绝设置属性值。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.security.Provider.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除 <code>key</code> 属性（及其相应的 <code>value</code>）。
+ 
+<p>首先，如果存在安全管理器，则用字符串 <code>&quot;removeProviderProperty.&quot;+name</code>（其中 <code>name</code> 是 provider 的名称）作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看是否能移除此 provider 的属性。如果使用 <code>checkSecurityAccess</code> 的默认实现（即未重写此方法），则会导致使用 <code>SecurityPermission(&quot;removeProviderProperty.&quot;+name)</code> 权限来调用安全管理器的 <code>checkPermission</code> 方法。
+
+@param key 要移除的属性的键。
+
+@return  与该键存在映射关系的值；如果该键没有映射关系，则返回 null。
+
+@throws  SecurityException 如果存在安全管理器，且其 <code>{@link java.lang.SecurityManager#checkDelete}</code> 方法拒绝移除此 provider 的属性。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.security.Provider.Service java.security.Provider.getService(String type, String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取描述此算法或别名的指定类型的此 Provider 实现的服务。如果不存在此类实现，则此方法返回 null。如果存在两个匹配的服务，分别使用 {@link #putService putService()} 和 {@link #put put()} 添加到此 provider，那么返回通过 {@link #putService putService()} 添加的服务。
+
+@param type 请求的 {@link Service service} 类型（例如 <code>MessageDigest</code>）
+@param algorithm 所请求服务不区分大小写的算法名称（或备用的别名）（例如 <code>SHA-1</code>）
+
+@return 描述此 Provider 的匹配服务的服务，如果不存在此类服务，则返回 null
+
+@throws NullPointerException 如果类型或算法为 null
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Set<java.security.Provider.Service> java.security.Provider.getServices()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 Provider 支持的所有服务的一个不可修改的 Set。
+
+@return 此 Provider 支持的所有服务的一个不可修改的 Set。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.security.Provider.putService(Provider.Service s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加服务。如果存在一个具有相同算法名称的相同类型服务，并且它是使用 {@link #putService putService()} 添加的，则其将被新的服务替换。此方法还将关于此服务的信息放在 provider 的 Hashtable 值中，以 <a href="../../../technotes/guides/security/crypto/CryptoSpec.html">Java Cryptography Architecture API Specification &amp; Reference</a> 中描述的格式存放。
+
+<p>同样，如果存在安全管理器，则用字符串 <code>&quot;clearProviderProperties.&quot;+name</code>（其中 <code>name</code> 是 provider 的名称）作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看是否能设置此 provider 的属性值。如果使用 <code>checkSecurityAccess</code> 的默认实现（即未重写此方法），则会导致使用 <code>SecurityPermission(&quot;putProviderProperty.&quot;+name)</code> 权限来调用安全管理器的 <code>checkPermission</code> 方法。
+
+@param s 要添加的服务
+
+@throws  SecurityException 如果存在安全管理器，且其 <code>{@link java.lang.SecurityManager#checkSecurityAccess}</code> 方法拒绝设置属性值。
+@throws NullPointerException 如果 s 为 null
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.security.Provider.removeService(Provider.Service s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前用 {@link #putService putService()} 添加的服务。从此 provider 中移除指定的服务。它将不再会被 {@link #getService getService()} 返回，并且将从此 provider 的 Hashtable 中移除其信息。
+
+<p>同样，如果存在安全管理器，则用字符串 <code>&quot;removeProviderProperty.&quot;+name</code>（其中 <code>name</code> 是 provider 的名称）作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看是否能移除此 provider 的属性。如果使用 <code>checkSecurityAccess</code> 的默认实现（即未重写此方法），则会导致使用 <code>SecurityPermission(&quot;removeProviderProperty.&quot;+name)</code> 权限来调用安全管理器的 <code>checkPermission</code> 方法。
+
+@param s 要移除的服务
+
+@throws  SecurityException 如果存在安全管理器，且其 <code>{@link java.lang.SecurityManager# checkDelete}</code> 方法拒绝移除此 provider 的属性。
+@throws NullPointerException 如果 s 为 null
+
+@since 1.5
+
+<!-- END DATA -->

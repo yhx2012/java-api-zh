@@ -1,0 +1,222 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.AbstractCollection extends java.lang.Object implements java.util.Collection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 <tt>Collection</tt> 接口的骨干实现，以最大限度地减少了实现此接口所需的工作。 <p>
+
+要实现一个不可修改的 collection，编程人员只需扩展此类，并提供 <tt>iterator</tt> 和 <tt>size</tt> 方法的实现。（<tt>iterator</tt> 方法返回的迭代器必须实现 <tt>hasNext</tt> 和 <tt>next</tt>。）<p>
+
+要实现可修改的 collection，编程人员必须另外重写此类的 <tt>add</tt> 方法（否则，会抛出 <tt>UnsupportedOperationException</tt>），<tt>iterator</tt> 方法返回的迭代器还必须另外实现其 <tt>remove</tt> 方法。<p>
+
+按照 <tt>Collection</tt> 接口规范中的建议，编程人员通常应提供一个 void （无参数）和 <tt>Collection</tt> 构造方法。<p>
+
+此类中每个非抽象方法的文档详细描述了其实现。如果要实现的 collection 允许更有效的实现，则可以重写这些方法中的每个方法。<p>
+
+此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.38, 06/16/06
+@see Collection
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.AbstractCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。（由子类构造方法调用，通常是隐式的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Iterator<E> java.util.AbstractCollection.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此 collection 中的元素上进行迭代的迭代器。
+
+@return 在此 collection 中的元素上进行迭代的迭代器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>
+此实现返回 <tt>size() == 0</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在 collection 中的元素上进行迭代，并依次检查每个元素以确定其是否与指定的元素相等。
+
+@throws ClassCastException   {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.AbstractCollection.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回一个数组，它包含此 collection 的迭代器返回的所有元素，这些元素的排列顺序与数组的连续元素存储顺序相同，都是从索引 {@code 0} 开始。返回数组的长度等于迭代器返回的元素数，即使此 collection 的大小发生更改也是如此，这种情况可能发生在 collection 允许在迭代期间进行并发修改时。{@code size} 方法只是作为一个优化提示被调用；即使迭代器返回不同的元素数，也会返回正确的结果。
+
+ <p>此方法等效于：
+
+  <pre> {@code
+ List<E> list = new ArrayList<E>(size());
+ for (E e : this)
+     list.add(e);
+ return list.toArray();
+ }</pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.util.AbstractCollection.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现返回一个数组，它包含此 collection 的迭代器返回的所有元素，这些元素的排列顺序与数组的连续元素存储顺序相同，都是从索引 {@code 0} 开始。如果迭代器返回的元素数太大，不适合指定数组，则在新分配的数组中返回这些元素，该数组的长度等于迭代器返回的元素数，即使此 collection 的大小在进行迭代期间发生更改也是如此，这种情况可能发生在 collection 允许在迭代期间进行并发修改时。{@code size} 方法只是作为一个优化提示被调用；即使迭代器返回不同的元素数，也会返回正确的结果。
+
+ <p>此方法等效于：
+
+  <pre> {@code
+ List<E> list = new ArrayList<E>(size());
+ for (E e : this)
+     list.add(e);
+ return list.toArray(a);
+ }</pre>
+
+@throws ArrayStoreException  {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现总是抛出一个
+ <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+@throws IllegalStateException         {@inheritDoc}
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+<p>此实现在该 collection 上进行迭代，查找指定的元素。如果找到该元素，那么它会使用迭代器的 remove 方法从该 collection 中移除该元素。
+
+<p>注意，如果此 collection 的 iterator 方法所返回的迭代器无法实现 <tt>remove</tt> 方法，并且此 collection 包含指定的对象，那么此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.containsAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在指定的 collection 上进行迭代，依次检查该迭代器返回的每个元素，查看其是否包含在此 collection 中。如果是，则返回 <tt>true</tt>；否则返回 <tt>false</tt>。
+
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+ 
+@see #contains(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.addAll(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在指定的 collection 上进行迭代，并依次将迭代器返回的每个对象添加到此 collection 中。
+
+<p>注意，除非重写 <tt>add</tt>，否则此实现将抛出 <tt>UnsupportedOperationException</tt>（假定指定的 collection 非空）。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+@throws IllegalArgumentException      {@inheritDoc}
+@throws IllegalStateException         {@inheritDoc}
+ 
+@see #add(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在此 collection 上进行迭代，依次检查该迭代器返回的每个元素，以查看其是否包含在指定的 collection 中。如果是，则使用迭代器的 <tt>remove</tt> 方法将其从此 collection 中移除。
+
+<p>注意，如果 <tt>iterator</tt> 方法返回的迭代器无法实现 <tt>remove</tt> 方法，并且此 collection 包含一个或多个与指定 collection 共有的元素，那么此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+
+@see #remove(Object)
+@see #contains(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractCollection.retainAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在此 collection 上进行迭代，依次检查该迭代器返回的每个元素，以查看其是否包含在指定的 collection 中。如果不是，则使用迭代器的 <tt>remove</tt> 方法将其从此 collection 中移除。
+
+<p>注意，如果 <tt>iterator</tt> 方法返回的迭代器无法实现 <tt>remove</tt> 方法，并且此 collection 包含一个或多个在指定 collection 中不存在的元素，那么此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+@throws ClassCastException            {@inheritDoc}
+@throws NullPointerException          {@inheritDoc}
+
+@see #remove(Object)
+@see #contains(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.AbstractCollection.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<p>此实现在此 collection 上进行迭代，并使用 <tt>Iterator.remove</tt> 操作移除每个元素。为了提高效率，多数实现可能会选择重写此方法。
+
+<p>注意，如果此 collection 的 <tt>iterator</tt> 方法所返回的迭代器无法实现 <tt>remove</tt> 方法，并且此 collection 非空，那么此实现将抛出 <tt>UnsupportedOperationException</tt>。
+
+@throws UnsupportedOperationException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.AbstractCollection.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 collection 的字符串表示形式。该字符串表示形式由 collection 元素的列表组成，这些元素按其迭代器返回的顺序排列，并用方括号 (<tt>&quot;[]&quot;</tt>) 括起来。相邻元素由字符 <tt>&quot;, &quot;</tt>（逗号加空格）分隔。通过 {@link String#valueOf(Object)} 可以将元素转换成字符串。
+ 
+@return 此 collection 的字符串表示形式
+
+<!-- END DATA -->

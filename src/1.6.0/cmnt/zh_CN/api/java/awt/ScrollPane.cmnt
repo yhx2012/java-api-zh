@@ -1,0 +1,316 @@
+<!-- BEGIN KEY -->
+public class java.awt.ScrollPane extends java.awt.Container implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现用于单个子组件的自动水平和/或垂直滚动的容器类。滚动条的显示策略可以设置如下：
+ <OL>
+ <LI>as needed: 创建滚动条，且只在滚动窗格需要时显示
+ <LI>always: 创建滚动条，且滚动窗格总是显示滚动条
+ <LI>never: 滚动窗格永远不创建或显示滚动条
+ </OL>
+ <P>
+水平和垂直滚动条的状态由两个实现 <code>Adjustable</code> 接口的 <code>ScrollPaneAdjustable</code> 对象描述（每个对象对应各自的尺寸）。API 提供了访问这些对象的方法，以便能够对 Adjustable 对象的属性（如 unitIncrement 和 value 等）进行操作。
+ <P>
+某些可调整属性（minimum、maximum、blockIncrement 和 visibleAmount）是由滚动窗格根据自身的几何形状及其子组件在内部进行设置的，不应由使用滚动窗格的程序设置。
+ <P>
+如果滚动条显示策略被定义为 &quot;never&quot;，那么滚动窗格可以使用 setScrollPosition() 方法按程序滚动，并且滚动窗格将适当移动和裁剪子组件的内容。如果程序需要创建和管理自己的可调整控件，那么这个策略很有用。
+ <P>
+滚动条的放置由程序之外的用户通过特定于平台的属性集控制。
+ <P>
+此容器的初始大小被设置为 100x100，可以使用 setSize() 重新设置它。
+ <P>
+默认情况下，使用配有滚轮的鼠标上的滚轮进行滚动。可以使用 <code>setWheelScrollingEnabled</code> 禁用此功能。通过设置水平和垂直 Adjustable 的块增量和单位增量，可以自定义滚轮滚动。有关如何指派鼠标滚轮事件的信息，请参阅 {@link MouseWheelEvent} 的类描述。
+ <P>
+Insets 用于定义滚动条使用的所有空间和滚动窗格创建的所有边框，可以使用 getInsets() 获取当前 insets 的值。如果 scrollbarsAlwaysVisible 值为 false，则 insets 的值将根据滚动条当前是否可见而发生更改。
+
+@version     1.95 05/18/04
+@author      Tom Ball
+@author      Amy Fowler
+@author      Tim Prinzing
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.ScrollPane.SCROLLBARS_AS_NEEDED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定只在子组件的大小超过了滚动窗格水平/垂直尺寸时显示水平/垂直滚动条。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.ScrollPane.SCROLLBARS_ALWAYS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定无论滚动窗格和子组件各自大小如何，总是显示水平/垂直滚动条。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.ScrollPane.SCROLLBARS_NEVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定无论滚动窗格和子组件各自大小如何，永不显示水平/垂直滚动条。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.ScrollPane.scrollbarDisplayPolicy
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+有三种显示滚动条的方法。此整数将显示三种显示方法之一&mdash;&mdash;（SCROLLBARS_ALWAYS、SCROLLBARS_AS_NEEDED 和 SCROLLBARS_NEVER）
+
+@serial
+@see #getScrollbarDisplayPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.ScrollPaneAdjustable java.awt.ScrollPane.vAdjustable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个可调整的垂直滚动条。注意到<em>不必</em> 调用三种 <code>Adjustable</code> 方法非常重要，这三种方法是：<code>setMinimum()</code>、<code>setMaximum()</code> 和 <code>setVisibleAmount()</code>。
+
+@serial
+@see #getVAdjustable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.ScrollPaneAdjustable java.awt.ScrollPane.hAdjustable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个可调整的水平滚动条。注意到<em>不必</em> 调用三种 <code>Adjustable</code> 方法非常重要，这三种方法是：<code>setMinimum()</code>、<code>setMaximum()</code> 和 <code>setVisibleAmount()</code>。
+
+@serial
+@see #getHAdjustable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.ScrollPane.wheelScrollingEnabled
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否应该在接收 MouseWheelEvent 时进行滚动。
+
+@serial
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.ScrollPane() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有滚动条策略 &quot;as needed&quot; 的新滚动窗格容器。
+@throws HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.ScrollPane(int scrollbarDisplayPolicy) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的滚动窗格容器。
+@param scrollbarDisplayPolicy 显示滚动条时使用的策略
+@throws IllegalArgumentException 如果指定的滚动条显示策略无效
+@throws HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.awt.ScrollPane.addImpl(Component comp, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的组件添加到此滚动窗格容器。如果滚动窗格有一个现有子组件，则移除该组件，并添加新的组件。
+@param comp 要添加的组件
+@param constraints  不适用
+@param index 子组件的位置（必须 &lt;= 0）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.ScrollPane.getScrollbarDisplayPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回滚动条的显示策略。
+@return 滚动条的显示策略
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.ScrollPane.getViewportSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回滚动条窗格视口的当前大小。
+@return 滚动条视口的大小，以像素为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.ScrollPane.getHScrollbarHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回水平滚动条占用的高度，它与当前是否由滚动窗格显示无关。
+@return 水平滚动条的高度，以像素为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.ScrollPane.getVScrollbarWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回垂直滚动条占用的宽度，它与当前是否由滚动窗格显示无关。
+@return 垂直滚动条的宽度，以像素为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Adjustable java.awt.ScrollPane.getVAdjustable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示垂直滚动条状态的 <code>ScrollPaneAdjustable</code> 对象。为了维护向后兼容性，所声明的此方法的返回类型是 <code>Adjustable</code>。
+@see java.awt.ScrollPaneAdjustable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Adjustable java.awt.ScrollPane.getHAdjustable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示水平滚动条状态的 <code>ScrollPaneAdjustable</code> 对象。为了维护向后兼容性，所声明的此方法的返回类型是 <code>Adjustable</code>。
+@see java.awt.ScrollPaneAdjustable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.setScrollPosition(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动到子组件中的指定位置。只在滚动窗格包含一个子组件时，调用此方法才有效。指定一个子组件合法滚动边界之外的位置将会滚动到最近的合法位置。定义的合法边界是矩形：x = 0、y = 0、width =（子组件 width - 视口 width），height =（子组件 height - 视口 height）。这是与表示滚动条状态的 Adjustable 对象进行连接的一个便捷方法。
+@param x 要滚动到的 x 位置
+@param y 要滚动到的 y 位置
+@throws NullPointerException 如果滚动窗格未包含子组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.setScrollPosition(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动到子组件中的指定位置。只在滚动窗格包含一个子组件，且指定位置在子组件的合法滚动边界内时，调用此方法才有效。指定一个子组件合法滚动边界之外的位置将会滚动到最近的合法位置。定义的合法边界是矩形：x = 0、y = 0、width =（子组件 width - 视口 width），height =（子组件 height - 视口 height）。这是与表示滚动条状态的 Adjustable 对象进行连接的一个便捷方法。
+@param p 表示滚动到的位置的 Point
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point java.awt.ScrollPane.getScrollPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回子组件中的当前 x,y 位置，子组件显示在滚动窗格视口的 0,0 位置。这是与表示滚动条状态的可调整对象进行连接的一个便捷方法。
+@return 当前滚动位置的坐标位置
+@throws NullPointerException 如果滚动窗格未包含子组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.ScrollPane.setLayout(LayoutManager mgr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此容器的布局管理器。重写此方法可以防止设置布局管理器。
+@param mgr 指定的布局管理器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.doLayout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过将子组件的大小调整为其首选大小来布置此容器。如果子组件的新首选大小使当前滚动位置无效，则将滚动位置设置为最接近的有效位置。
+
+@see Component#validate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.layout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>doLayout()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.printComponents(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示此滚动窗格中的组件。
+@param g 指定的 Graphics 窗口
+@see Component#print
+@see Component#printAll
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建滚动窗格的同位体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.ScrollPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>ScrollPane</code> 的状态的字符串。此方法仅用于调试目的，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+
+@return     此滚动窗格的参数字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.ScrollPane.processMouseWheelEvent(MouseWheelEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理通过滚动适当量而传递给此 <code>ScrollPane</code> 的鼠标滚轮事件。
+<p>注意，如果事件参数为 <code>null</code>，则未指定行为并且可能导致异常。
+
+@param e  鼠标滚轮事件
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.ScrollPane.eventTypeEnabled(int type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果启用滚轮滚动，则对 MouseWheelEvents 返回 true
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ScrollPane.setWheelScrollingEnabled(boolean handleWheel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用/禁用对鼠标滚轮滚动的移动响应。默认情况下启用滚轮滚动。
+
+@param handleWheel   如果为 MouseWheelEvent 自动完成滚动，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see #isWheelScrollingEnabled
+@see java.awt.event.MouseWheelEvent
+@see java.awt.event.MouseWheelListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.ScrollPane.isWheelScrollingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否进行滚动来响应鼠标滚轮。默认情况下启用滚轮滚动。
+
+@see #setWheelScrollingEnabled(boolean)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.ScrollPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 ScrollPane 相关的 AccessibleContext。对于滚动窗格，AccessibleContext 采用的是 AccessibleAWTScrollPane 的形式。如有必要，将创建一个新的 AccessibleAWTScrollPane 实例。
+
+@return 充当此 ScrollPane 的 AccessibleContext 的 AccessibleAWTScrollPane
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.ScrollPane.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException, java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认可序列化字段读入流中。
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.ScrollPane.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认可序列化字段写入流中。
+
+<!-- END DATA -->

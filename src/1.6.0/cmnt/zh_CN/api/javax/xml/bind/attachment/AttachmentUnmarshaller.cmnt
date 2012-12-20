@@ -1,0 +1,106 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.bind.attachment.AttachmentUnmarshaller extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>启用包含优化的二进制数据格式的根文档的 JAXB 解组。</p>
+
+<p>此 API 支持 JAXB 2.0 实现与基于 MIME 的包处理器（MTOM/XOP 和 WS-I AP 1.0）之间的协作，有效地处理优化的二进制数据格式。JAXB 解组包的正文，把理解将使用的打包格式这项任务委托给实现此抽象类的基于 MIME 的包处理器。</p>
+
+<p>此抽象类标识包是否需要 XOP 处理（{@link #isXOPPackage()}），并提供对使用内容 id 存储为附件的二进制内容的检索。</p>
+
+<h2>标识要传递给 <code>getAttachment*(String cid)</code> 的内容 id（即 cid）。</h2>
+ <ul>
+ <li>
+对于 XOP 处理，cid 的信息集表示形式在 <a href="http://www.w3.org/TR/2005/REC-xop10-20050125/#interpreting_xop_packages">3.2 节 Interpreting XOP Packages</a> 步骤 2a 中描述。
+ </li>
+ <li>
+对于 WS-I AP 1.0，cid 被标识为一个元素，或者 <a href="http://www.ws-i.org/Profiles/AttachmentsProfile-1.0-2004-08-24.html#Referencing_Attachments_from_the_SOAP_Envelope">4.4 节 Referencing Attachments from the SOAP Envelope</a> 中指定的类型 <code>ref:swaRef</code> 的属性。
+ </li>
+ </ul>
+ 
+@author Marc Hadley 
+@author Kohsuke Kawaguchi 
+@author Joseph Fialli
+ 
+@since JAXB 2.0
+ 
+@see javax.xml.bind.Unmarshaller#setAttachmentUnmarshaller(AttachmentUnmarshaller)
+
+@see <a href="http://www.w3.org/TR/2005/REC-xop10-20050125/">XML-binary Optimized Packaging</a> 
+@see <a href="http://www.ws-i.org/Profiles/AttachmentsProfile-1.0-2004-08-24.html">WS-I Attachments Profile Version 1.0.</a>
+@see <a href="http://www.w3.org/TR/xml-media-types/">Describing Media Content of Binary Data in XML</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.activation.DataHandler javax.xml.bind.attachment.AttachmentUnmarshaller.getAttachmentAsDataHandler(String cid)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>通过内容 id（即 <code>cid</code>）查找 MIME 内容，并作为 {@link DataHandler} 返回。</p>
+ 
+<p>返回的 <code>DataHandler</code> 实例必须配置为满足以下必需的映射关系约束条件。 
+ <table border="2" rules="all" cellpadding="4">
+   <thead>
+     <tr>
+       <th align="center" colspan="2">
+MIME 和 Java 类型之间的必需的映射关系
+       </tr>
+     <tr>
+<th>MIME 类型</th>
+<th>Java 类型</th>
+     </tr>
+     </tr>
+     <tr>
+<th><code>DataHandler.getContentType()</code></th>
+<th><code>instanceof DataHandler.getContent()</code></th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>image/gif</td>
+<td>java.awt.Image</td>
+     </tr>
+     <tr>
+<td>image/jpeg</td>
+<td>java.awt.Image</td>
+     </tr>
+     <tr>
+<td>text/xml  or application/xml</td>
+<td>javax.xml.transform.Source</td>
+     </tr>
+   </tbody>
+  </table>
+注意，允许支持其他映射关系。</p>
+ 
+@param cid 需要它是 XML 模式 <code>xs:anyURI</code> 数据类型的有效词法形式。如果 <code>{@link #isXOPPackage()} ==true</code>，则对于每个 <code>cid:</code> URI 模式，它都必须是有效的 URI（参见 <a href="http://www.ietf.org/rfc/rfc2387.txt">RFC 2387</a>）。
+ 
+@return 表示 MIME 附件的 {@link DataHandler}。
+
+@throws IllegalArgumentException 如果未找到给定 cid 的附件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] javax.xml.bind.attachment.AttachmentUnmarshaller.getAttachmentAsByteArray(String cid)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>以 <tt>byte[]</tt> 形式检索由内容 id（即 <code>cid</code>）标识的附件。</p>.
+
+@param cid 需要它是 XML 模式 <code>xs:anyURI</code> 数据类型的有效词法形式。如果 <code>{@link #isXOPPackage()} ==true</code>，则对于每个 <code>cid:</code> URI 模式，它都必须是有效的 URI（参见 <a href="http://www.ietf.org/rfc/rfc2387.txt">RFC 2387</a>）。
+
+@return 由 cid 所标识的附件的 byte[] 表示形式。
+ 
+@throws IllegalArgumentException 如果未找到给定 cid 的附件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.attachment.AttachmentUnmarshaller.isXOPPackage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>只读属性，如果 JAXB 解组程序需要执行 XOP 处理，则返回 true。</p>
+
+<p>当满足 <a href="http://www.w3.org/TR/2005/REC-xop10-20050125/#identifying_xop_documents">Identifying XOP Documents</a> 中指定的约束条件时，此方法返回 <code>true</code>。解组过程中此值不得更改。</p>
+
+@return 当 MIME 上下文是一个 XOP 文档时，返回 true。
+
+<!-- END DATA -->
+
+

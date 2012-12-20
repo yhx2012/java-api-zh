@@ -1,0 +1,406 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.plaf.basic.BasicTextUI extends javax.swing.plaf.TextUI implements javax.swing.text.ViewFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+此类是文本组件外观的基础。它提供基本的编辑器视图和控制器服务，在为 <code>JTextComponent</code> 的扩展类创建外观时非常有用。
+ <p>
+大多数状态作为绑定 (bound) 属性保存在关联的 <code>JTextComponent</code> 中，UI 为各种属性安装默认值。此默认值将为所有属性安装某些内容。但是，通常 LAF 实现所做的不止如此。LAF 一般至少会安装键绑定。
+ <p>
+如果与 JTextComponent 关联的 <code>Document</code> 是 <code>AbstractDocument</code> 的子类，则此类还将提供某些并发支持。在任一更改模型的线程与 Swing 事件线程（希望用来呈现、进行模型/视图坐标转换等）之间，对 View（或 View 层次结构）的访问都是序列化的。<em>对根视图的任何访问首先应该获取一个 AbstractDocument 上的读锁 (read-lock)，并在 finally 代码块中释放该锁。</em>
+ <p>
+要定义的一个重要方法是 {@link #getPropertyPrefix} 方法，该方法作为从 UIManager 获取默认值的键的基础。字符串应该反映 TextUI（例如，TextField、TextArea 等）的类型，并且不带名称的特定 LAF 部分（例如，Metal、Motif 等）。
+ <p>
+要构建模型的视图，可以使用以下策略之一。
+ <ol>
+ <li>
+一种策略是简单地重新定义 UI 中的 ViewFactory 接口。默认情况下，此 UI 本身充当 View 实现的工厂。这对于简单工厂很有用。要做到这一点，需要重新实现 {@link #create} 方法。
+ <li>
+创建较复杂的文档类型的常见策略是让 EditorKit 实现返回一个工厂。因为 EditorKit 绑定了维护文档类型所需的全部内容，所以工厂通常是它的一个重要部分，应该由 EditorKit 实现生成。
+ </ol>
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@author Shannon Hickey (drag and drop)
+@version 1.120 08/25/06
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.basic.BasicTextUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的 UI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Caret javax.swing.plaf.basic.BasicTextUI.createCaret()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于插入符的对象。默认情况下创建一个 BasicCaret 的实例。可以重新定义此方法，让它提供实现 InputPosition 接口或 JCaret 子类的一些其他内容。
+
+@return 插入符对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Highlighter javax.swing.plaf.basic.BasicTextUI.createHighlighter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于添加高亮显示的对象。默认情况下创建一个 BasicHighlighter 的实例。可以重新定义此方法，让它提供实现 Highlighter 接口或 DefaultHighlighter 子类的一些其他内容。
+
+@return highlighter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.plaf.basic.BasicTextUI.getKeymapName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取默认情况下为此 UI 安装或用于此 UI 的 keymap 的名称。实现此方法来创建基于类名的名称。该名称是移除了包前缀的类名。
+
+@return 名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Keymap javax.swing.plaf.basic.BasicTextUI.createKeymap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于文本组件的 keymap，并在其中安装必需的绑定。默认情况下，keymap 在此 TextUI 类型的所有实例之间共享。keymap 的名称由 getKeymapName 方法定义。如果找不到 keymap，则使用 JTextComponent 的 DEFAULT_KEYMAP。
+ <p>
+用于创建 keymap 的绑定集从 UIManager 获取，方法是使用通过组合 {@link #getPropertyPrefix} 方法和字符串 <code>.keyBindings</code> 而形成的键。期望的类型为 <code>JTextComponent.KeyBinding[]</code>。
+
+@return keymap
+@see #getKeymapName
+@see javax.swing.text.JTextComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.propertyChange(PropertyChangeEvent evt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当关联的 JTextComponent 上有一个绑定属性更改时，此方法被调用。此方法是一个钩子 (hook)，UI 实现可以更改它来反映 UI 显示 JTextComponent 子类的绑定属性的方式。实现此方法并不执行任何操作。（即处理对 JTextComponent 中属性的响应是在调用此方法之前）。
+
+如果可编辑和/或已启用状态发生更改，则此实现更新文本组件的背景。
+
+@param evt 属性更改事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String javax.swing.plaf.basic.BasicTextUI.getPropertyPrefix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取通过 UIManager 查找属性时用作键的名称。它会作为所有标准文本属性的前缀。
+
+@return 名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.installDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化组件属性，例如，字体、前景、背景、插入符颜色、选择颜色、所选文本颜色、禁用文本颜色，以及边框颜色。仅当字体、前景和背景属性的当前值为 null 或 UIResource 时才设置这些属性，其他属性在当前值为 null 时设置。
+ 
+@see #uninstallDefaults
+@see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.uninstallDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将尚未显式重写的组件属性设置为 null。如果某个属性的当前值不是 UIResource，则视为被重写。
+ 
+@see #installDefaults
+@see #uninstallUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.installListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+安装 UI 的侦听器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.uninstallListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+卸载 UI 的侦听器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.paintBackground(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制视图的背景。仅当关联组件上的 isOpaque() 为 true 时才调用此方法。默认情况下绘制组件的背景色。
+
+@param g 图形上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.JTextComponent javax.swing.plaf.basic.BasicTextUI.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 UI 实现关联的文本组件。在安装 UI 之前，此方法将一直为 null。
+
+@return 编辑器组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.modelChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标志模型更改。只要模型更改就会调用此方法。实现此方法来重新构建视图层次结构，从而表示关联模型的默认根元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.swing.plaf.basic.BasicTextUI.setView(View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图层次结构的当前根并调用 invalidate()。如果存在子组件，则将其移除（即假定这些子组件来自嵌入视图的组件）。
+
+@param v 根视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.paintSafely(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+安全地绘制界面，保证模型不会根据此线程的视图发生更改。此方法执行以下操作，从后往前呈现。
+ <ol>
+ <li>
+如果组件被标记为不透明，则以组件的当前背景色绘制背景。
+ <li>
+绘制高亮显示（如果有）。
+ <li>
+绘制视图层次结构。
+ <li>
+绘制插入符。
+ </ol>
+
+@param g 图形上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.installUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+安装组件的 UI。此方法执行以下操作。
+ <ol>
+ <li>
+将关联组件设置为不透明（可以由子类或直接在 JTextComponent 上方便地更改），这种情况是最常见的。此操作将导致绘制组件的背景色。
+ <li>
+将默认的插入符和 highlighter 安装到关联组件中。
+ <li>
+附加到编辑器和模型。如果不存在模型，则创建一个默认模型。
+ <li>
+创建用于表示模型的视图工厂和视图层次结构。
+ </ol>
+
+@param c 编辑器组件
+@see ComponentUI#installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.uninstallUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+卸载组件的 UI。此方法移除侦听器、卸载 highlighter、移除视图并将 keymap 全部设为 null。
+
+@param c 编辑器组件
+@see ComponentUI#uninstallUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.update(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+超类以无法控制的方式绘制背景（即有人可能希望将图像平铺在背景中）。要防止发生两次这样的操作，重新实现此方法以进行简单绘制即可。
+ <p>
+<em>注：</em> 超类在其背景呈现中也不是线程安全的，尽管在默认呈现中不存在这样的问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.plaf.basic.BasicTextUI.paint(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绘制界面。此方法会被传递到 paintSafely 方法中，同时保证模型在呈现时不会根据此线程的视图发生更改（如果关联的模型从 AbstractDocument 派生）。这使得模型能够进行可能的异步更新。
+
+@param g 图形上下文
+@param c 编辑器组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getPreferredSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器组件的首选大小。如果在接收此请求前已经给出了组件的大小，则此方法在请求视图层次结构的首选大小之前将设置视图层次结构的大小，以反映组件的大小。这允许格式化视图在答复请求之前格式化当前组件的大小。其他视图不关心当前的格式化大小，因此均会给出相同的答复。
+
+@param c 编辑器组件
+@return 大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getMinimumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器组件的最小大小。
+
+@param c 编辑器组件
+@return 大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getMaximumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取编辑器组件的最大大小。
+
+@param c 编辑器组件
+@return 大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.getVisibleEditorRect()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给出根 View 的分配。由于一些不适宜的历史事件，此方法的命名并不合适。返回的 Rectangle 与可见性没有任何关系。组件的大小必须为非零正值，才能计算此转换。
+
+@return 根视图的边界框
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.modelToView(JTextComponent tc, int pos) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型中的给定位置转换成视图坐标系统中的某一个位置。组件的大小必须为非零正值，才能计算此转换。
+
+@param tc 文本组件，为其安装此 UI
+@param pos 要转换的模型中的本地位置，该值 &gt;= 0
+@return 作为矩形的坐标；如果没有绘制模型，则返回 null
+@exception BadLocationException  如果给定位置不表示关联文档中的有效位置
+@see TextUI#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.modelToView(JTextComponent tc, int pos, Position.Bias bias) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将模型中的给定位置转换成视图坐标系统中的某一个位置。组件的大小必须为非零正值，才能计算此转换。
+
+@param tc 文本组件，为其安装此 UI
+@param pos 要转换的模型中的本地位置，该值 &gt;= 0
+@return 作为矩形的坐标；如果没有绘制模型，则返回 null
+@exception BadLocationException  如果给定位置不表示关联文档中的有效位置
+@see TextUI#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.viewToModel(JTextComponent tc, Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将视图坐标系统中的给定位置转换成模型中最有代表性的位置。组件的大小必须为非零正值，才能计算此转换。
+
+@param tc 文本组件，为其安装此 UI
+@param pt 视图中要转换的位置。此位置应该与鼠标事件在同一坐标系统中。
+@return 距文档起始位置的偏移量，该值 &gt;= 0；如果没有绘制，则返回 -1
+@see TextUI#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.viewToModel(JTextComponent tc, Point pt, javax.swing.text.Position.Bias[] biasReturn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将视图坐标系统中的给定位置转换成模型中最有代表性的位置。组件的大小必须为非零正值，才能计算此转换。
+
+@param tc 为其安装此 UI 的文本组件
+@param pt 视图中要转换的位置。此位置应该与鼠标事件在同一坐标系统中。
+@return 距文档起始位置的偏移量，该值 &gt;= 0；如果组件的大小为非正值，则返回 -1。
+@see TextUI#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.getNextVisualPositionFrom(JTextComponent t, int pos, Position.Bias b, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.damageRange(JTextComponent tc, int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+促使重新绘制负责模型给定部分的那部分视图。如果当前没有绘制视图，则不执行任何操作。
+
+@param tc 文本组件，为其安装此 UI
+@param p0 范围的开头，该值 &gt;= 0
+@param p1 范围的结尾，该值 &gt;= p0
+@see TextUI#damageRange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.damageRange(JTextComponent t, int p0, int p1, Position.Bias p0Bias, Position.Bias p1Bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+促使重新绘制负责模型给定部分的那部分视图。
+
+@param p0 范围的起始位置，该值 &gt;= 0
+@param p1 范围的结束位置，该值 &gt;= p0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.EditorKit javax.swing.plaf.basic.BasicTextUI.getEditorKit(JTextComponent tc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 UI 的 EditorKit。
+
+@param tc 文本组件，为其安装此 UI
+@return 编辑器功能
+@see TextUI#getEditorKit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.getRootView(JTextComponent tc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取分配了相关文本组件（即层次结构的根）的 View，可通过遍历该视图确定模型在空间中的表示形式。
+ <p>
+<font color=red><b>注：</b>可以从根视图遍历 View 层次结构，其他操作也可以如此。以此方式完成的操作不会像通过 TextUI 的简单方法调用那样受到保护。因此，存在并发操作时必须按照调用此方法的逻辑安排适当的操作！</font>
+
+@param tc 文本组件，为其安装此 UI
+@return 视图
+@see TextUI#getRootView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.plaf.basic.BasicTextUI.getToolTipText(JTextComponent t, Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在传入位置上用作工具提示的字符串。这会将该方法转发到根视图上。
+
+@see javax.swing.text.JTextComponent#getToolTipText
+@see javax.swing.text.View#getToolTipText
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.create(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建元素的视图。如果子类希望直接实现生成视图的工厂，则其应该重新实现此方法。默认情况下，它就返回 null，指示它无法表示该元素。
+
+@param elem 元素
+@return 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.create(Element elem, int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建元素的视图。如果子类希望直接实现生成视图的工厂，则其应该重新实现此方法。默认情况下，它就返回 null，指示它无法表示该元素。
+
+@param elem 元素
+@param p0 开始偏移量，该值 &gt;= 0
+@param p1 结束偏移量，该值 &gt;= p0
+@return 视图
+
+<!-- END DATA -->

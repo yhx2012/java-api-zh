@@ -1,0 +1,147 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.ConvolveOp extends java.lang.Object implements java.awt.image.BufferedImageOp, java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类实现从源到目标的卷积。使用卷积核的卷积是一种通过输入像素来计算输出像素的空间运算，方法是将核与输入像素邻域相乘。这种运算使得直接邻域可按核数学指定的方式影响输出像素。
+<p>
+此类可对颜色分量预乘 alpha 分量的 BufferedImage 数据进行运算。如果源 BufferedImage 有 alpha 分量，并且颜色分量没有预乘 alpha 分量，则在卷积运算前要先预乘该数据。如果 Destination 有未进行预乘的颜色分量，则在存入到 Destination 之前除以 alpha 分量（如果 alpha 为 0，则颜色分量被设置为 0）。如果 Destination 没有 alpha 分量，则在颜色分量除以 alpha 分量之从后即丢弃 alpha 分量。
+ <p>
+Raster 被看作是没有 alpha 通道的。如果不希望对 BufferedImage 中的 alpha 通道进行上述处理，则可以通过获取源 BufferedImage 的 Raster 和使用与 Raster 一起工作的此类的 filter 方法予以避免。
+ <p>
+如果 RenderingHints 对象是在构造方法中指定的，则在需要进行颜色变换时使用颜色呈现提示和抖动提示。
+<p>
+注意，Source 和 Destination 可能不是同一个对象。
+@version 10 Feb 1997
+@see Kernel
+@see java.awt.RenderingHints#KEY_COLOR_RENDERING
+@see java.awt.RenderingHints#KEY_DITHERING
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ConvolveOp.EDGE_ZERO_FILL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+位于目标图像边缘的像素被设置为 0。这是默认设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.image.ConvolveOp.EDGE_NO_OP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将位于源图像边缘的像素复制为目标中相应的像素，不加修改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ConvolveOp(Kernel kernel, int edgeCondition, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造给定 Kernel、边缘条件和 RenderingHint 对象（可以为 null）的 ConvolveOp。
+@param kernel 指定的 <code>Kernel</code>
+@param edgeCondition 指定的边缘条件
+@param hints 指定的 <code>RenderingHints</code> 对象
+@see Kernel
+@see #EDGE_NO_OP
+@see #EDGE_ZERO_FILL
+@see java.awt.RenderingHints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.ConvolveOp(Kernel kernel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造给定了 Kernel 的 ConvolveOp。边缘条件将为 EDGE_ZERO_FILL。
+@param kernel 指定的 <code>Kernel</code>
+@see Kernel
+@see #EDGE_ZERO_FILL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.image.ConvolveOp.getEdgeCondition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回边缘条件。
+@return <code>ConvolveOp</code> 的边缘条件。
+@see #EDGE_NO_OP
+@see #EDGE_ZERO_FILL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.Kernel java.awt.image.ConvolveOp.getKernel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Kernel。
+@return <code>ConvolveOp</code> 的 <code>Kernel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.BufferedImage java.awt.image.ConvolveOp.filter(BufferedImage src, BufferedImage dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对 BufferedImage 执行卷积运算。源图像的每个分量都将被卷积处理（包括 alpha 分量，如果存在）。如果源图像中的颜色模型与目标图像中的不相同，则像素将按目标中像素转换。如果目标图像为 null，则使用源 ColorModel 创建 BufferedImage。如果源与目标相同，则可能抛出 IllegalArgumentException。
+@param src 要过滤的源 <code>BufferedImage</code>
+@param dst 已过滤的 <code>src</code> 的目标 <code>BufferedImage</code>
+@return 已过滤的 <code>BufferedImage</code>
+@throws NullPointerException 如果 <code>src</code> 为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>src</code> 等于 <code>dst</code>
+@throws ImagingOpException 如果 <code>src</code> 不能过滤
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.image.WritableRaster java.awt.image.ConvolveOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对 Raster 执行卷积运算。源 Raster 的每个 band 都将被卷积处理。源和目标必须有相同数量的 band。如果目标 Raster 为 null，则创建新 Raster。如果源与目标相同，则可能抛出 IllegalArgumentException。
+@param src 要过滤的源 <code>Raster</code>
+@param dst 已过滤的 <code>src</code> 的目标 <code>WritableRaster</code>
+@return 已过滤的 <code>WritableRaster</code>
+@throws NullPointerException 如果 <code>src</code> 为 <code>null</code>
+@throws ImagingOpException 如果 <code>src</code> 和 <code>dst</code> 没有相同数量的 band
+@throws ImagingOpException 如果 <code>src</code> 不能过滤
+@throws IllegalArgumentException 如果 <code>src</code> 等于 <code>dst</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage java.awt.image.ConvolveOp.createCompatibleDestImage(BufferedImage src, ColorModel destCM)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有正确 band 大小和数量的归零目标图像。如果 destCM 为 null，则使用适当的 ColorModel。
+@param src  进行过滤操作的源图像。
+@param destCM    目标的 ColorModel。可以为 null。
+@return 具有正确 band 大小和数量的 <code>BufferedImage</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.ConvolveOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建给定源且具有正确 band 大小和数量的归零目标 Raster。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.ConvolveOp.getBounds2D(BufferedImage src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已过滤目标图像的边界框。因为这不是几何操作，所以边界框不变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.ConvolveOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已过滤目标 Raster 的边界框。因为这不是几何操作，所以边界框不变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.ConvolveOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回源中给定点的目标点位置。如果 dstPt 为非 null，则该位置将用来存储返回值。因为这不是几何操作，所以 srcPt 将等于 dstPt。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.ConvolveOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 op 的呈现提示。
+
+<!-- END DATA -->

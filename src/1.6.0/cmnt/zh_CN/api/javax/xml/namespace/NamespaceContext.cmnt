@@ -1,0 +1,204 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.namespace.NamespaceContext
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>用于只读 XML 名称空间上下文处理的接口。</p>
+
+<p>XML 名称空间具有以下属性：</p>
+ <ul>
+<li>名称空间 URI：表示为 URI（前缀将绑定到该 URI）的名称空间名。</li>
+<li>前缀：语法上，这是跟在名称空间声明中的 <code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;) 之后的属性名称的一部分</li>
+ </ul>
+<p> 示例：<code>&lt;element xmlns:prefix=&quot;http://Namespace-name-URI&quot;&gt;</code></p>
+
+<p>所有 <code>get*(*)</code> 方法都在名称空间 URI 和前缀解析的当前范围中进行操作。</p>
+
+<p>注意，可以将名称空间 URI 绑定到当前范围中的<strong>多个</strong> 前缀。当多个 <code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;) 名称空间声明出现在同一 Start 标记中，且引用同一名称空间 URI 时，便发生了这种情况，例如 <br />
+ <pre>
+ &lt;element xmlns:prefix1=&quot;http://Namespace-name-URI&quot;
+          xmlns:prefix2=&quot;http://Namespace-name-URI&quot;&gt;
+ </pre>
+当在逻辑父元素结构层次中的多个 <code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;) 名称空间声明中使用同一名称空间 URI 时，也将发生这种情况。例如 <br />
+ <pre>
+ &lt;parent xmlns:prefix1=&quot;http://Namespace-name-URI&quot;&gt;
+   &lt;child xmlns:prefix2=&quot;http://Namespace-name-URI&quot;&gt;
+     ...
+   &lt;/child&gt;
+ &lt;/parent&gt;
+ </pre></p>
+
+<p>只能将前缀绑定到当前范围中的<strong>单个</strong> 名称空间 URI。</p>
+
+@author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a>
+@version $Revision: 1.4 $, $Date: 2006-10-23 09:14:14 $
+@see javax.xml.XMLConstants
+   有关公共 XML 值的声明，请参见 javax.xml.XMLConstants
+@see <a href="http://www.w3.org/TR/xmlschema-2/#QName">
+   XML Schema Part2: Datatypes</a>
+@see <a href="http://www.w3.org/TR/REC-xml-names/#ns-qualnames">
+   Namespaces in XML</a>
+@see <a href="http://www.w3.org/XML/xml-names-19990114-errata">
+   Namespaces in XML Errata</a>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.namespace.NamespaceContext.getNamespaceURI(String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获取绑定到当前范围中的前缀的名称空间 URI。</p>
+
+<p>当通过前缀请求名称空间 URI 时，下表描述了针对所有可能的前缀值返回的名称空间 URI 值：</p>
+
+ <table border="2" rules="all" cellpadding="4"> 
+   <thead>
+     <tr>
+       <td align="center" colspan="2">
+<code>getNamespaceURI(prefix)</code> 返回指定的前缀值
+       </td>
+     </tr>
+     <tr>
+<td>前缀参数</td>
+<td>名称空间 URI 返回值</td>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+       <td><code>DEFAULT_NS_PREFIX</code> (&quot;&quot;)</td>
+<td>返回当前范围中的默认名称空间 URI；如果不存在，则返回 <code>{@link javax.xml.XMLConstants#NULL_NS_URI XMLConstants.NULL_NS_URI(&quot;&quot;)}</code></td>
+     </tr>
+     <tr>
+       <td>绑定的前缀</td>
+<td>绑定到当前范围中的前缀的名称空间 URI</td>
+     </tr>
+     <tr>
+<td>未绑定的前缀</td>
+       <td><code>{@link javax.xml.XMLConstants#NULL_NS_URI XMLConstants.NULL_NS_URI(&quot;&quot;)}</code> </td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XML_NS_PREFIX</code> (&quot;xml&quot;)</td>
+       <td><code>XMLConstants.XML_NS_URI</code> (&quot;http://www.w3.org/XML/1998/namespace&quot;)</td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;)</td>
+       <td><code>XMLConstants.XMLNS_ATTRIBUTE_NS_URI</code> (&quot;http://www.w3.org/2000/xmlns/&quot;)</td>
+     </tr>
+     <tr>
+       <td><code>null</code></td>
+<td><code>IllegalArgumentException</code> 被抛出</td>
+     </tr>
+    </tbody>
+ </table>
+  
+@param prefix 要查找的前缀
+@return 绑定到当前范围中的前缀的名称空间 URI
+@throws  IllegalArgumentException 当 <code>prefix</code> 为 <code>null</code> 时
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.namespace.NamespaceContext.getPrefix(String namespaceURI)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获取绑定到当前范围中名称空间 URI 的前缀。</p>
+
+<p>要获取绑定到当前范围中名称空间 URI 的所有前缀，请使用 {@link #getPrefixes(String namespaceURI)}。</p>
+
+<p>当通过名称空间 URI 请求前缀时，下表描述了针对所有名称空间 URI 值返回的前缀值：</p>
+
+ <table border="2" rules="all" cellpadding="4">
+   <thead>
+     <tr>
+       <td align="center" colspan="2">
+对指定的名称空间 URI 调用 <code>getPrefix(namespaceURI)</code> 的返回值
+       </th>
+     </tr>
+     <tr>
+<th>名称空间 URI 参数</th>
+<th>返回的前缀值</th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>&lt;默认名称空间 URI&gt;</td>
+       <td><code>XMLConstants.DEFAULT_NS_PREFIX</code> (&quot;&quot;)
+       </td>
+     </tr>
+     <tr>
+<td>绑定名称空间 URI</td>
+<td>绑定到当前范围中名称空间 URI 的前缀，如果将多个前缀绑定到当前范围中的名称空间 URI，则返回其选择与实现有关的任意单个前缀</td>
+     </tr>
+     <tr>
+<td>未绑定的名称空间 URI</td>
+       <td><code>null</code></td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XML_NS_URI</code> (&quot;http://www.w3.org/XML/1998/namespace&quot;)</td>
+       <td><code>XMLConstants.XML_NS_PREFIX</code> (&quot;xml&quot;)</td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XMLNS_ATTRIBUTE_NS_URI</code> (&quot;http://www.w3.org/2000/xmlns/&quot;)</td>
+       <td><code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;)</td>
+     </tr>
+     <tr>
+       <td><code>null</code></td>
+<td><code>IllegalArgumentException</code> 被抛出</td>
+     </tr>
+   </tbody>
+ </table>
+
+@param namespaceURI 要查找的名称空间的 URI
+@return 绑定到当前上下文中名称空间 URI 的前缀
+@throws  IllegalArgumentException 当 <code>namespaceURI</code> 为 <code>null</code> 时
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator javax.xml.namespace.NamespaceContext.getPrefixes(String namespaceURI)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获取绑定到当前范围中名称空间 URI 的所有前缀。</p>
+
+<p>按任意<strong>与实现相关</strong>顺序返回 String 元素上的迭代器。</p>
+
+<p><strong><code>Iterator</code> <em>不</em> 可修改。例如 <code>remove()</code> 方法将抛出 <code>UnsupportedOperationException</code>。</strong></p>
+
+<p>当通过名称空间 URI 请求前缀时，下表描述了针对所有名称空间 URI 值返回的前缀值：</p>
+
+ <table border="2" rules="all" cellpadding="4">
+   <thead>
+     <tr>
+<th align="center" colspan="2">对指定的名称空间 URI 调用 <code>getPrefixes(namespaceURI)</code> 的返回值</th>
+     </tr>
+     <tr>
+<th>名称空间 URI 参数</th>
+<th>返回的前缀值</th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>绑定的名称空间 URI，包括 &lt;默认名称空间 URI&gt;</td>
+<td>前缀上的 <code>Iterator</code>，以任意<strong>与实现相关</strong>顺序绑定到当前范围中的名称空间 URI</td>
+     </tr>
+     <tr>
+<td>未绑定的名称空间 URI</td>
+<td>空 <code>Iterator</code></td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XML_NS_URI</code> (&quot;http://www.w3.org/XML/1998/namespace&quot;)</td>
+<td>一个元素设置为 <code>XMLConstants.XML_NS_PREFIX</code> (&quot;xml&quot;) 的 <code>Iterator</code></td>
+     </tr>
+     <tr>
+       <td><code>XMLConstants.XMLNS_ATTRIBUTE_NS_URI</code> (&quot;http://www.w3.org/2000/xmlns/&quot;)</td>
+<td>一个元素设置为 <code>XMLConstants.XMLNS_ATTRIBUTE</code> (&quot;xmlns&quot;) 的 <code>Iterator</code></td>
+     </tr>
+     <tr>
+       <td><code>null</code></td>
+<td><code>IllegalArgumentException</code> 被抛出</td>
+     </tr>
+   </tbody>
+ </table>
+
+@param namespaceURI 要查找的名称空间的 URI
+@return 用于绑定到当前范围中名称空间 URI 的所有前缀的 <code>Iterator</code>
+@throws  IllegalArgumentException 当 <code>namespaceURI</code> 为 <code>null</code> 时
+
+<!-- END DATA -->

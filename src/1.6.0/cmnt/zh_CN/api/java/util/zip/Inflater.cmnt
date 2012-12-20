@@ -1,0 +1,233 @@
+<!-- BEGIN KEY -->
+public class java.util.zip.Inflater extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类使用流行的 ZLIB 压缩程序库为通用解压缩提供支持。ZLIB 压缩程序库最初是作为 PNG 图形标准的一部分开发的，不受专利的保护。有关该规范的完整描述，请参见 <a href="package-summary.html#package_description">java.util.zip 包描述</a>。
+
+<p>以下代码片段演示使用 <tt>Deflater</tt> 和 <tt>Inflater</tt> 压缩和解压缩字符串的详细过程。
+
+ <blockquote><pre>
+ try {
+ // Encode a String into bytes
+ String inputString = "blahblahblah??";
+ byte[] input = inputString.getBytes("UTF-8");
+
+ // Compress the bytes
+ byte[] output = new byte[100];
+ Deflater compresser = new Deflater();
+ compresser.setInput(input);
+ compresser.finish();
+ int compressedDataLength = compresser.deflate(output);
+
+ // Decompress the bytes
+ Inflater decompresser = new Inflater();
+ decompresser.setInput(output, 0, compressedDataLength);
+ byte[] result = new byte[100];
+ int resultLength = decompresser.inflate(result);
+ decompresser.end();
+
+ // Decode the bytes into a String
+ String outputString = new String(result, 0, resultLength, "UTF-8");
+ } catch(java.io.UnsupportedEncodingException ex) {
+     // handle
+ } catch (java.util.zip.DataFormatException ex) {
+     // handle
+ }
+ </pre></blockquote>
+
+ @see		Deflater
+ @version 	1.41, 12/19/03
+ @author 	David Connelly
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.Inflater(boolean nowrap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的解压缩器。如果参数 'nowrap' 为 true，则不使用 ZLIB 头和校验和字段。这提供了与 GZIP 和 PKZIP 所用压缩格式的兼容性。
+ <p>
+注：使用 'nowrap' 选项时，还需要提供额外的 "dummy" 字节作为输入。当 ZLIB 本机库需要支持某些优化时，这是必需的。
+
+@param nowrap 如果为 true，则支持 GZIP 兼容的压缩
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.Inflater()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的解压缩器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Inflater.setInput(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为解压缩设置输入数据。应该在 needsInput() 返回 true 时进行调用，以指示需要更多的输入数据。
+@param b 输入数据字节
+@param off 输入数据的初始偏移量
+@param len 输入数据的长度
+@see Inflater#needsInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.zip.Inflater.setInput(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为解压缩设置输入数据。应该在 needsInput() 返回 true 时进行调用，以指示需要更多的输入数据。
+@param b 输入数据字节
+@see Inflater#needsInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Inflater.setDictionary(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定的字节数组设置预置字典。应该在 inflate() 返回 0 且 needsDictionary() 返回 true 时进行调用，以指示需要预置字典。可以使用方法 getAdler() 获取所需字典的 Adler-32 值。
+@param b 字典数据字节
+@param off 数据的初始偏移量
+@param len 数据的长度
+@see Inflater#needsDictionary
+@see Inflater#getAdler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.zip.Inflater.setDictionary(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为给定字节的数组设置预置字典。应该在 inflate() 返回 0 且 needsDictionary() 返回 true 时调用，以指示需要预置字典。可以使用方法 getAdler() 获取所需字典的 Adler-32 值。
+@param b 字典数据字节
+@see Inflater#needsDictionary
+@see Inflater#getAdler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.zip.Inflater.getRemaining()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回输入缓冲区中剩余的字节总数。该方法可用于查找在完成解压缩后输入缓冲区中还有哪些字节。
+@return 输入缓冲区中剩余的字节总数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.zip.Inflater.needsInput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果输入缓冲区中没有剩余数据，则返回 true。此方法用于确定是否调用 #setInputThis 以提供更多输入。
+@return 如果缓冲区中没有剩余数据，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.zip.Inflater.needsDictionary()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果解压缩需要预置字典，则返回 true。
+@return 如果解压缩需要预置字典，则返回 true
+@see Inflater#setDictionary
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.zip.Inflater.finished()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已到达压缩数据流的结尾，则返回 true。
+@return 如果已到达压缩数据流的结尾，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.zip.Inflater.inflate(byte[] b, int off, int len) throws java.util.zip.DataFormatException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节解压缩到指定的缓冲区。返回实际的未压缩字节数。返回值为 0 指示应调用 needsInput() 或 needsDictionary()，以确定是否需要更多的输入数据或预置字典。在后一种情况下，getAdler() 可用于获取所需字典的 Adler-32 值。
+@param b 未压缩数据的缓冲区
+@param off 数据的初始偏移量
+@param len 最大未压缩字节数
+@return 实际未压缩字节数
+@exception DataFormatException 如果压缩数据格式无效
+@see Inflater#needsInput
+@see Inflater#needsDictionary
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Inflater.inflate(byte[] b) throws java.util.zip.DataFormatException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节解压缩到指定的缓冲区。返回实际的未压缩字节数。返回值为 0 指示应调用 needsInput() 或 needsDictionary()，以确定是否需要更多的输入数据或预置字典。在后一种情况下，getAdler() 可用于获取所需字典的 Adler-32 值。
+@param b 未压缩数据的缓冲区
+@return 实际未压缩字节数
+@exception DataFormatException 如果压缩数据格式无效
+@see Inflater#needsInput
+@see Inflater#needsDictionary
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.zip.Inflater.getAdler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回未压缩数据的 ADLER-32 值。
+@return 未压缩数据的 ADLER-32 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Inflater.getTotalIn()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输入压缩字节的总数。
+
+<p>由于该字节数可能大于 Integer.MAX_VALUE，因此 {@link #getBytesRead()} 方法现在是获取此信息的首选方法。</p>
+
+@return 到目前为止输入压缩字节的总数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.util.zip.Inflater.getBytesRead()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输入压缩字节的总数。</p>
+
+@return 到目前为止输入压缩字节的总数（非负）。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Inflater.getTotalOut()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输出未压缩字节的总数。
+
+<p>由于该字节数可能大于 Integer.MAX_VALUE，因此 {@link #getBytesWritten()} 方法现在是获取此信息的首选方法。</p>
+
+@return 到目前为止输出未压缩字节的总数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.util.zip.Inflater.getBytesWritten()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输出未压缩字节的总数。</p>
+
+@return 到目前为止输出未压缩字节的总数（非负）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Inflater.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置 inflater 以处理新的输入数据集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Inflater.end()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭解压缩器并放弃所有未处理的输入。此方法应该在不再使用该解压缩器时进行调用，但是也可以由 finalize() 方法自动调用。调用此方法后，Inflater 对象的行为将是不确定的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.zip.Inflater.finalize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+回收垃圾时关闭解压缩器。
+
+<!-- END DATA -->

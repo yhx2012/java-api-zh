@@ -1,0 +1,79 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.CollationKey extends java.lang.Object implements java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>CollationKey</code> 表示遵守特定 <code>Collator</code> 对象规则的 <code>String</code>。比较两个 <code>CollationKey</code> 将返回它们所表示的 <code>String</code> 的相对顺序。使用 <code>CollationKey</code> 来比较 <code>String</code> 通常比使用 <code>Collator.compare</code> 更快。因此，当必须多次比较 <code>String</code> 时（例如，对一个 <code>String</code> 列表进行排序），使用 <code>CollationKey</code> 会更高效。
+
+ <p>
+不能直接创建 <code>CollationKey</code>。而是通过调用 <code>Collator.getCollationKey</code> 来生成。只能比较同一个 <code>Collator</code> 对象生成的 <code>CollationKey</code>。
+
+ <p>
+为一个 <code>String</code> 生成 <code>CollationKey</code> 涉及到检查整个 <code>String</code>，并将它转换成可以按位比较的一系列位。一旦生成了键，就允许进行快速比较。当 <code>String</code> 需要多次比较时，以更快速的比较方式生成键的成本可以忽略不计。另一方面，比较的结果通常由每个 <code>String</code> 的第一对字符确定。<code>Collator.compare</code> 只检查实际需要比较的字符，当进行单次比较时，此比较方式更快。
+ <p>
+以下例子显示如何使用 <code>CollationKey</code> 对一个 <code>String</code> 列表进行排序。
+ <blockquote>
+ <pre>
+ // Create an array of CollationKeys for the Strings to be sorted.
+ Collator myCollator = Collator.getInstance();
+ CollationKey[] keys = new CollationKey[3];
+ keys[0] = myCollator.getCollationKey(&quot;Tom&quot;);
+ keys[1] = myCollator.getCollationKey(&quot;Dick&quot;);
+ keys[2] = myCollator.getCollationKey(&quot;Harry&quot;);
+ sort( keys );
+ <br>
+ //...
+ <br>
+ // Inside body of sort routine, compare keys this way
+ if( keys[i].compareTo( keys[j] ) &gt; 0 )
+    // swap keys[i] and keys[j]
+ <br>
+ //...
+ <br>
+ // Finally, when we've returned from sort.
+ System.out.println( keys[0].getSourceString() );
+ System.out.println( keys[1].getSourceString() );
+ System.out.println( keys[2].getSourceString() );
+ </pre>
+ </blockquote>
+
+@see          Collator
+@see          RuleBasedCollator
+@version      1.18, 05/05/04
+@author       Helena Shih
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.CollationKey(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ CollationKey 构造方法。
+
+ @param source - 源字符串。
+ @exception NullPointerException 如果 <code>source</code> 为 null。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.CollationKey.compareTo(CollationKey target)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此 CollationKey 与目标 CollationKey。创建这些键的 Collator 对象的 collation 规则将被应用。<strong>注：</strong>不能比较由不同 Collator 对象创建的 CollationKey。
+@param target 目标 CollationKey
+@return 一个整数值。如果此 CollationKey 小于目标 CollationKey，则值小于零；如果此 CollationKey 与目标 CollationKey 相等，则值等于零；如果此 CollationKey 大于目标 CollationKey，则值大于零。
+@see java.text.Collator#compare
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.CollationKey.getSourceString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CollationKey 表示的 String。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.text.CollationKey.toByteArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 CollationKey 转换成位序列。如果两个 CollationKey 可以进行合法的比较，则可以比较每个键的字节数组，其结果相同。字节数组从最高有效字节开始组织。
+
+<!-- END DATA -->

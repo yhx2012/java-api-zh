@@ -1,0 +1,124 @@
+<!-- BEGIN KEY -->
+public class java.util.logging.MemoryHandler extends java.util.logging.Handler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>Handler</tt> 在内存中的循环缓冲区中对请求进行缓冲处理。
+ <p>
+通常，此 <tt>Handler</tt> 只将传入的 <tt>LogRecords</tt> 存储到内存缓冲区，并丢弃原来的记录。此缓冲非常经济，并且避免了格式化开销。在一定的触发条件下，<tt>MemoryHandler</tt> 将其当前的缓冲区内容 push 到目标 <tt>Handler</tt> 中，此 Handler 通常将内容发布到外界。
+ <p>
+有三种主要模型用于触发缓冲区的 push 操作：
+ <ul>
+ <li>
+传入的 <tt>LogRecord</tt> 类型大于预先定义的 <tt>pushLevel</tt> 级别。
+ <li>
+外部类显式地调用 <tt>push</tt> 方法。 
+ <li>
+如果记录符合所需的某些标准，则子类重写 <tt>log</tt> 方法，并扫描每个传入的 <tt>LogRecord</tt>，调用 <tt>push</tt>。
+ </ul>
+ <p>
+<b>配置：</b>默认情况下，使用以下 LogManager 配置属性初始化每个 <tt>MemoryHandler</tt>。如果没有定义该属性（或者有无效的值），则使用指定的默认值。如果没有定义默认值，则抛出 RuntimeException。
+ <ul>
+<li>   java.util.logging.MemoryHandler.level 指定 <tt>Handler</tt> 的级别（默认为 <tt>Level.ALL</tt>）。
+<li>   java.util.logging.MemoryHandler.filter 指定要使用的 <tt>Filter</tt> 类的名称（默认为无 <tt>Filter</tt>）。
+<li>   java.util.logging.MemoryHandler.size 定义缓冲区的大小（默认为 1000）。
+<li>   java.util.logging.MemoryHandler.push 定义 <tt>pushLevel</tt>（默认为 <tt>level.SEVERE</tt>）。 
+<li>   java.util.logging.MemoryHandler.target 指定目标 <tt>Handler</tt> 类的名称（无默认值）。
+ </ul>
+
+@version 1.24, 12/19/03
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.MemoryHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <tt>LogManager</tt> 配置属性创建一个 <tt>MemoryHandler</tt>，并对其进行配置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.MemoryHandler(Handler target, int size, Level pushLevel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <tt>MemoryHandler</tt>。
+ <p>
+除了使用给定的 <tt>pushLevel</tt> 参数和缓冲区大小参数之外，其他都按 <tt>LogManager</tt> 的属性（或默认值）进行配置 <tt>MemoryHandler</tt>。
+     
+@param target  将输出发布到的 Handler。
+@param size    缓冲区的日志记录数（必须大于 0）
+@param pushLevel  要 push 的消息级别。
+
+@throws IllegalArgumentException 如果 size &lt;=0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.MemoryHandler.publish(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <tt>LogRecord</tt> 存储在内部缓冲区。
+ <p>
+如果有 <tt>Filter</tt>，则调用其 <tt>isLoggable</tt> 方法以检查给定的日志记录是否为 loggable。如果不是，则返回它。否则，将给定的记录复制到内部循环缓冲区。然后将该记录的级别属性与 <tt>pushLevel</tt> 进行比较。如果给定的级别大于等于 <tt>pushLevel</tt>，则调用 <tt>push</tt> 将所有已缓冲的记录写入到目标输出 <tt>Handler</tt> 中。
+ 
+@param  record  日志事件的描述。忽略 null 记录，并且也不发布它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.MemoryHandler.push()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有已缓冲的输出 push 到目标 <tt>Handler</tt> 中。
+ <p>
+然后清空缓冲区。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.MemoryHandler.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+导致目标 <tt>Handler</tt> 上的刷新。
+ <p>
+注意，<b>不</b>要将 <tt>MemoryHandler</tt> 缓冲区的当前内容全部写出。这样会要求进行 &quot;push&quot; 操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.MemoryHandler.close() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭 <tt>Handler</tt>，并释放所有相关的资源。这也将关闭目标 <tt>Handler</tt>。
+
+@exception SecurityException 如果存在安全管理器并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.MemoryHandler.setPushLevel(Level newLevel) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置 <tt>pushLevel</tt>。将 <tt>LogRecord</tt> 复制到内部缓冲区后，如果它的级别大于等于 <tt>pushLevel</tt>，则调用 <tt>push</tt>。
+
+@param newLevel <tt>pushLevel</tt> 的新值。
+@exception  SecurityException  如果存在安全管理器并且调用者不具有 <tt>LoggingPermission(&quot;control&quot;)</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.logging.Level java.util.logging.MemoryHandler.getPushLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获得 <tt>pushLevel</tt>。
+
+@return <tt>pushLevel</tt> 的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.logging.MemoryHandler.isLoggable(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此 <tt>Handler</tt> 是否实际将给定的 <tt>LogRecord</tt> 记录到其内部缓冲区。
+ <p>
+此方法检查 <tt>LogRecord</tt> 是否有合适的级别，以及是否满足任何的 <tt>Filter</tt>。但是并<b>不</b>检查 <tt>LogRecord</tt> 是否导致 &quot;push&quot; 缓冲区的内容。如果 <tt>LogRecord</tt> 为 Null，则该方法返回 false。
+ <p>
+@param record  一个 <tt>LogRecord</tt>。
+@return 如果记录 <tt>LogRecord</tt>，则返回 true。
+
+<!-- END DATA -->

@@ -1,0 +1,677 @@
+<!-- BEGIN KEY -->
+public class java.awt.Scrollbar extends java.awt.Component implements java.awt.Adjustable, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 类描述了一个滚动条，这是大家都很熟悉的用户界面对象。滚动条提供了一个允许用户在一定范围的值中进行选择的便捷方式。可以将以下三个垂直滚动条用作滑动块控件，以选择红、绿和蓝三种颜色的分量： 
+ <p>
+<img src="doc-files/Scrollbar-1.gif" alt="图像并排显示了三个垂直滑动块。"
+ ALIGN=center HSPACE=10 VSPACE=7>
+ <p>
+在此例中，每个滚动条都是使用类似于下面的代码创建的：
+ <p>
+ <hr><blockquote><pre>
+ redSlider=new Scrollbar(Scrollbar.VERTICAL, 0, 1, 0, 255);
+ add(redSlider);
+ </pre></blockquote><hr>
+ <p>
+此外，滚动条还可以表示某一范围的值。例如，如果滚动条用于滚动文本，则可以使用“滑动块（bubble）”（也称为 &quot;thumb&quot; 或“滚动框”）的宽度来表示可视的文本数。下面是表示某一范围的滚动条：
+ <p>
+<img src="doc-files/Scrollbar-2.gif"
+ alt="图像显示了水平滑动块，其初始范围为 0，终止范围为 300。滑动块被标记为 60。"
+ ALIGN=center HSPACE=10 VSPACE=7>
+ <p>
+在这个例子中，滑动块表示的值范围是<em>可见量</em>。此例中的水平滚动条可以用以下代码来创建：
+ <p>
+ <hr><blockquote><pre>
+ ranger = new Scrollbar(Scrollbar.HORIZONTAL, 0, 60, 0, 300);
+ add(ranger);
+ </pre></blockquote><hr>
+ <p>
+注意，滚动条的实际最大值是 <code>maximum</code> 减去 <code>visible amount</code>。在前面的例子中，因为 <code>maximum</code> 是 300，<code>visible amount</code> 是 60，所以实际最大值是 240。滚动条轨道的范围是 0 - 300。滑动块的左侧指示了滚动条的值。
+ <p>
+通常，用户通过使用鼠标来改变滚动条的值。例如，用户可以上下拖动滚动条的滑动块，或单击滚动条的单位增量或块增量区域。键盘动作也能映射到滚动条。按照惯例，<b>Page&nbsp;Up</b> 和 <b>Page&nbsp;Down</b> 键等同于单击滚动条的块增量和块减量区域。
+ <p>
+当用户改变滚动条的值时，滚动条接收一个 <code>AdjustmentEvent</code> 实例。滚动条处理此事件，将它传递给所有已注册的侦听器。
+ <p>
+任何希望滚动条值发生变化时被通知的对象都应该实现包 <code>java.awt.event</code> 中定义的 <code>AdjustmentListener</code> 接口。调用 <code>addAdjustmentListener</code> 和 <code>removeAdjustmentListener</code> 方法能动态地添加或删除侦听器。
+ <p>
+<code>AdjustmentEvent</code> 类定义了五种调整事件，如下所示：
+ <p>
+ <ul>
+<li>当用户拖动滚动条的滑动块时，发送 <code>AdjustmentEvent.TRACK</code>。
+<li>当用户单击水平滚动条的左箭头或垂直滚动条的上箭头，或从键盘做出等效动作时，发送 <code>AdjustmentEvent.UNIT_INCREMENT</code>。
+<li>当用户单击水平滚动条的右箭头或垂直滚动条的下箭头，或从键盘做出等效动作时，发送 <code>AdjustmentEvent.UNIT_DECREMENT</code>。
+<li>当用户单击水平滚动条滑动块左边的轨道，或垂直滚动条滑动块上边的轨道时，发送 <code>AdjustmentEvent.BLOCK_INCREMENT</code>。按照惯例，如果用户使用定义了 <b>Page Up</b> 键的键盘，则 <b>Page Up</b> 键是等效的。
+<li>当用户单击水平滚动条滑动块右边的轨道，或垂直滚动条滑动块下边的轨道时，发送 <code>AdjustmentEvent.BLOCK_DECREMENT</code>。按照惯例，如果用户使用定义了 <b>Page Down</b> 键的键盘，则 <b>Page Down</b> 键是等效的。
+ </ul>
+ <p>
+为了获得向后兼容，JDK 1.0 事件系统也受到支持，但是该平台的新版本不鼓励使用它。JDK 1.1 中介绍的五种调整事件与以前该平台版本中的有关滚动条的五种事件对应。下面列表给出了调整事件类型和它对应的 JDK 1.0 中的替换事件类型。
+ <p>
+ <ul>
+<li><code>AdjustmentEvent.TRACK</code> 替换 <code>Event.SCROLL_ABSOLUTE</code>
+<li><code>AdjustmentEvent.UNIT_INCREMENT</code> 替换 <code>Event.SCROLL_LINE_UP</code>
+<li><code>AdjustmentEvent.UNIT_DECREMENT</code> 替换 <code>Event.SCROLL_LINE_DOWN</code>
+<li><code>AdjustmentEvent.BLOCK_INCREMENT</code> 替换 <code>Event.SCROLL_PAGE_UP</code>
+<li><code>AdjustmentEvent.BLOCK_DECREMENT</code> 替换 <code>Event.SCROLL_PAGE_DOWN</code>
+ </ul>
+ <p>
+<b>注</b>：我们建议只对值的选择使用 <code>Scrollbar</code>。如果想在容器中实现一个可滚动的组件，那么建议您使用 {@link ScrollPane ScrollPane}。如果使用 <code>Scrollbar</code> 来实现这一目的，那么可能会遇到绘制、键处理、大小调整和定位问题。
+
+@version 	1.112, 07/11/06
+@author 	Sami Shaio
+@see         java.awt.event.AdjustmentEvent
+@see         java.awt.event.AdjustmentListener
+@since       JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Scrollbar.HORIZONTAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示一个水平滚动条的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Scrollbar.VERTICAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示一个垂直滚动条的常量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.value
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 的值。该属性必须大于或等于 <code>minimum</code>，并且小于或等于 <code>maximum - visibleAmount</code>
+
+@serial
+@see #getValue
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.maximum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 的最大值。该值必须大于 <code>minimum</code> 值。<br>
+
+@serial
+@see #getMaximum
+@see #setMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.minimum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 的最小值。该值必须小于 <code>maximum</code> 值。<br>
+
+@serial
+@see #getMinimum
+@see #setMinimum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.visibleAmount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 的滑动块的大小。当使用滚动条选择某一范围的值时，visibleAmount 表示这个范围的大小。可以通过滑动块的大小对此给以直观的指示。 
+
+@serial
+@see #getVisibleAmount
+@see #setVisibleAmount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.orientation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Scrollbar</code> 的方向&mdash;&mdash;水平或垂直。该值应该在创建滚动条时指定。<BR>方向只能是以下两者之一：<code>VERTICAL</code> 或 <code>HORIZONTAL</code>。
+
+@serial
+@see #getOrientation
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.lineIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当滚动条向上或向下移动一行时，滚动条值更改的量。该值必须大于零。
+
+@serial
+@see #getLineIncrement
+@see #setLineIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Scrollbar.pageIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当滚动条向上或向下移动一页时，滚动条值更改的量。该值必须大于零。 
+
+@serial
+@see #getPageIncrement
+@see #setPageIncrement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.Scrollbar.scrollbarSerializedDataVersion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动条的序列化 Data Version。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Scrollbar() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的垂直滚动条。滚动条的默认属性列在下表中：
+ <p> </p>
+ <table border=1 summary="Scrollbar default properties">
+ <tr>
+<th>属性</th>
+<th>描述</th>
+<th>默认值</th>
+ </tr>
+ <tr>
+<td>方向</td>
+<td>指示滚动条是垂直的<br>或水平的</td>
+   <td><code>Scrollbar.VERTICAL</code></td>
+ </tr>
+ <tr>
+<td>值</td>
+<td>控制滚动条的滑动块<br>位置的值</td>
+   <td>0</td>
+ </tr>
+ <tr>
+<td>可见量</td>
+<td>滚动条范围的可见量，<br>通常由滚动条的滑动块<br>的大小表示</td>
+   <td>10</td>
+ </tr>
+ <tr>
+<td>最小值</td>
+<td>滚动条的最小值</td>
+   <td>0</td>
+ </tr>
+ <tr>
+<td>最大值</td>
+<td>滚动条的最大值</td>
+   <td>100</td>
+ </tr>
+ <tr>
+   <td>单元增量</td>
+<td>在按下 Line Up 或 Line Down 键时，<br>或者单击滚动条<br>的末端箭头时，<br>值更改的量 </td>
+   <td>1</td>
+ </tr>
+ <tr>
+   <td>块增量</td>
+<td>在按下 Page Up 或 Page Down 键时，<br>或在滑动块的两侧<br>单击滚动条轨道时，<br>值更改的量 </td>
+   <td>10</td>
+ </tr>
+ </table>
+
+@exception HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Scrollbar(int orientation) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定方向的新滚动条。
+ <p>
+<code>orientation</code> 参数必须是 <code>Scrollbar.HORIZONTAL</code> 或 <code>Scrollbar.VERTICAL</code> 这两个值之一，它们分别指示滚动条是水平滚动条，还是垂直滚动条。
+ 
+@param       orientation   指示滚动条的方向
+@exception   IllegalArgumentException    在提供不合法的 <code>orientation</code> 参数值时
+@exception HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Scrollbar(int orientation, int value, int visible, int minimum, int maximum) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的滚动条，它具有指定的方向、初始值、可见量、最小值和最大值。
+ <p>
+<code>orientation</code> 参数必须是 <code>Scrollbar.HORIZONTAL</code> 或 <code>Scrollbar.VERTICAL</code> 这两个值之一，分别指示滚动条是水平滚动条，还是垂直滚动条。
+ <p>
+为此构造方法提供的参数受到 {@link #setValues(int, int, int, int)} 中描述的约束 (Constraints) 的限制。 
+ 
+@param     orientation 指示滚动条的方向。
+@param     value     滚动条的初始值
+@param     visible   滚动条的可见量，通常由滑动块的大小表示
+@param     minimum   滚动条的最小值
+@param     maximum   滚动条的最大值
+@exception IllegalArgumentException 当提供不合法的 <code>orientation</code> 参数值时
+@exception HeadlessException 如果 GraphicsEnvironment.isHeadless() 返回 true。
+@see #setValues
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建 <code>Scrollbar</code> 的同位体。此同位体允许在不更改 <code>Scrollbar</code> 功能的情况下修改其外观。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此滚动条的方向。
+ 
+@return    此滚动条的方向，可以是 <code>Scrollbar.HORIZONTAL</code> 或 <code>Scrollbar.VERTICAL</code>
+@see       java.awt.Scrollbar#setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setOrientation(int orientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的方向。
+ 
+@param orientation  此滚动条的方向，可以是 <code>Scrollbar.HORIZONTAL</code> 或 <code>Scrollbar.VERTICAL</code>
+@see       java.awt.Scrollbar#getOrientation
+@exception IllegalArgumentException 如果为 <code>orientation</code> 提供的值是非法值
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的当前值。
+ 
+@return      此滚动条的当前值
+@see         java.awt.Scrollbar#getMinimum
+@see         java.awt.Scrollbar#getMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setValue(int newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此滚动条的值设置为指定值。
+ <p>
+如果指定的值小于当前 <code>minimum</code> 或大于当前 <code>maximum - visibleAmount</code>，则对 <code>minimum</code> 或 <code>maximum - visibleAmount</code> 进行适当的替换。
+ <p>
+通常，程序应该只通过调用 <code>setValues</code> 更改滚动条的值。<code>setValues</code> 方法同时且同步地设置滚动条的最小值、最大值、可见量和值属性，因此它们是一致的。
+ <p>
+调用此方法不会触发 <code>AdjustmentEvent</code>。
+ 
+@param       newValue  滚动条的新值
+@see         java.awt.Scrollbar#setValues
+@see         java.awt.Scrollbar#getValue
+@see         java.awt.Scrollbar#getMinimum
+@see         java.awt.Scrollbar#getMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getMinimum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的最小值。
+ 
+@return      此滚动条的最小值
+@see         java.awt.Scrollbar#getValue
+@see         java.awt.Scrollbar#getMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setMinimum(int newMinimum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的最小值。
+ <p>
+在调用 <code>setMinimum</code> 时，最小值会发生更改，并且其他值（包括最大值、可视量和滚动条的当前值）都会随新的最小值发生一致的更改。  
+ <p>
+通常，程序应该只通过调用 <code>setValues</code> 更改滚动条的最小值。<code>setValues</code> 方法同时且同步地设置滚动条的最小值、最大值、可见量和值属性，因此它们是相互一致的。
+ <p>
+注意，将最小值设置为 <code>Integer.MAX_VALUE</code> 将导致新的最小值被设置为 <code>Integer.MAX_VALUE - 1</code>。
+
+@param       newMinimum   此滚动条的新的最小值
+@see         java.awt.Scrollbar#setValues
+@see         java.awt.Scrollbar#setMaximum
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getMaximum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的最大值。
+ 
+@return      此滚动条的最大值
+@see         java.awt.Scrollbar#getValue
+@see         java.awt.Scrollbar#getMinimum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setMaximum(int newMaximum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的最大值。
+ <p>
+在调用 <code>setMaximum</code> 时，最大值会发生更改，并且其他值（包括最小值、可见量和滚动条的当前值）都会随新的最大值发生一致的更改。
+ <p>
+通常，程序应该只通过调用 <code>setValues</code> 更改滚动条的最大值。<code>setValues</code> 方法同时且同步地设置滚动条的最小值、最大值、可见量和值属性，因此它们是相互一致的。
+ <p>
+注意，将最大值设置为 <code>Integer.MIN_VALUE</code> 将导致新的最大值被设置为 <code>Integer.MIN_VALUE + 1</code>。
+ 
+@param       newMaximum   此滚动条的新的最大值
+@see         java.awt.Scrollbar#setValues
+@see         java.awt.Scrollbar#setMinimum
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getVisibleAmount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的可见量。
+ <p>
+当使用滚动条来选择某一范围的值时，可以使用可见量来表示当前可视值的范围。滚动条的滑动块（也称为 thumb 或滚动框）的大小通常给出了滚动条范围与可见量之间关系的直观表示。
+ <p>
+在滚动条的滑动块不可移动时（例如，当它充斥滚动条轨道的整个长度时，或者当禁用滚动条时），它可能不被显示。是否显示滑动块不会影响 <code>getVisibleAmount</code> 返回的值。
+ 
+@return      此滚动条的可见量
+@see         java.awt.Scrollbar#setVisibleAmount
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getVisibleAmount()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setVisibleAmount(int newAmount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的可见量。
+ <p>
+当使用滚动条来选择某一范围的值时，可以使用可见量来表示当前可视值的范围。滚动条的滑动块（也称为 thumb 或滚动框）的大小通常给出了滚动条范围与可见量之间关系的直观表示。
+ <p>
+在滚动条的滑动块不可移动时（例如，当它充斥滚动条轨道的整个长度时，或者当禁用滚动条时），它可能不被显示。是否显示滑动块不会影响 <code>getVisibleAmount</code> 返回的值。
+ <p>
+如果提供的可见量小于 <code>one</code> 或大于当前 <code>maximum - minimum</code>，则对 <code>one</code> 或 <code>maximum - minimum</code> 进行适当的替换。
+ <p>
+通常，程序应该只通过调用 <code>setValues</code> 更改滚动条的值。<code>setValues</code> 方法同时且同步地设置滚动条的最小值、最大值、可见量和值属性，因此它们是一致的。
+ 
+@param       newAmount 新的可见量
+@see         java.awt.Scrollbar#getVisibleAmount
+@see         java.awt.Scrollbar#setValues
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setUnitIncrement(int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的单位增量。
+ <p>
+单位增量是用户激活滚动条的单位增量区域时增加或减少的值，通常通过鼠标或键盘来实现，滚动条将该动作作为一个调整事件来接收。单位增量必须大于零。试图将单位增量设置为小于 1 的值将使该值被设置为 1。  
+ 
+@param        v  滚动条值增加或减少的量
+@see          java.awt.Scrollbar#getUnitIncrement
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Scrollbar.setLineIncrement(int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setUnitIncrement(int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getUnitIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的单位增量。
+ <p>
+单位增量是用户激活滚动条的单位增量区域时增加或减少的值，通常通过鼠标或键盘来实现，滚动条将该动作作为一个调整事件来接收。单位增量必须大于零。
+ 
+@return      此滚动条的单位增量
+@see         java.awt.Scrollbar#setUnitIncrement
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getLineIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getUnitIncrement()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setBlockIncrement(int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的块增量。
+ <p>
+块增量是用户激活滚动条的块增量区域时增加或减少的值，通常通过鼠标或键盘来实现，滚动条将该动作作为一个调整事件来接收。块增量必须大于零。试图将块增量设置为小于 1 的值将使该值被设置为 1。
+ 
+@param        v  滚动条值增加或减少的量
+@see          java.awt.Scrollbar#getBlockIncrement
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Scrollbar.setPageIncrement(int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setBlockIncrement()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getBlockIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动条的块增量。
+ <p>
+块增量是用户激活滚动条的块增量区域时增加或减少的值，通常通过鼠标或键盘来实现，滚动条将该动作作为一个调整事件来接收。块增量必须大于零。
+ 
+@return      此滚动条的块增量
+@see         java.awt.Scrollbar#setBlockIncrement
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.Scrollbar.getPageIncrement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getBlockIncrement()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setValues(int value, int visible, int minimum, int maximum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此滚动条的四个属性值：<code>value</code>、<code>visibleAmount</code>、<code>minimum</code> 和 <code>maximum</code>。如果为这些属性提供的值是不一致或不正确的，则将更改它们，确保它们一致。
+ <p>
+此方法同时且同步地设置滚动条的四个属性值，以确保它们相互一致。它强制执行了以下约束：<code>maximum</code> 必须大于 <code>minimum</code>，<code>maximum - minimum</code> 不能大于 <code>Integer.MAX_VALUE</code>，<code>visibleAmount</code> 必须大于零。<code>visibleAmount</code> 不能大于 <code>maximum - minimum</code>，<code>value</code> 不能小于 <code>minimum</code>，并且 <code>value</code> 不能大于 <code>maximum - visibleAmount</code>
+ <p>
+调用此方法不会触发 <code>AdjustmentEvent</code>。
+
+@param      value 当前窗口的位置
+@param      visible 滚动条的可见量
+@param      minimum 滚动条的最小值
+@param      maximum 滚动条的最大值
+@see        #setMinimum
+@see        #setMaximum
+@see        #setVisibleAmount
+@see        #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Scrollbar.getValueIsAdjusting()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该值作为用户执行动作的结果正处于更改过程中，则返回 true。
+
+@return <code>valueIsAdjusting</code> 属性的值
+@see #setValueIsAdjusting
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Scrollbar.setValueIsAdjusting(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>valueIsAdjusting</code> 属性。
+ 
+@param b 新的调整正处于进行 (adjustment-in-progress) 状态
+@see #getValueIsAdjusting
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Scrollbar.addAdjustmentListener(AdjustmentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的调整侦听器，以接收发自此滚动条的 <code>AdjustmentEvent</code> 实例。如果 l 为 <code>null</code>，则不会抛出异常并且不执行任何动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param        l 调整侦听器
+@see          #removeAdjustmentListener
+@see          #getAdjustmentListeners
+@see          java.awt.event.AdjustmentEvent
+@see          java.awt.event.AdjustmentListener
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Scrollbar.removeAdjustmentListener(AdjustmentListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的调整侦听器，不再接收发自此滚动条的 <code>AdjustmentEvent</code> 实例。如果 l 为 <code>null</code>，则不会抛出异常并且不执行任何动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param	l    调整侦听器
+@see          	#addAdjustmentListener
+@see          	#getAdjustmentListeners
+@see          	java.awt.event.AdjustmentEvent
+@see          	java.awt.event.AdjustmentListener
+@since        	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.AdjustmentListener[] java.awt.Scrollbar.getAdjustmentListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此滚动条上所有已注册调整侦听器组成的数组。
+
+@return 此滚动条的所有 <code>AdjustmentListener</code>，如果当前没有已注册的调整侦听器，则返回一个空数组
+@see          	#addAdjustmentListener
+@see          	#removeAdjustmentListener
+@see          	java.awt.event.AdjustmentEvent
+@see          	java.awt.event.AdjustmentListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.awt.Scrollbar.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目前已在此 <code>Scrollbar</code> 上注册为 <code><em>Foo</em>Listener</code> 的所有对象组成的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+ <p>
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以使用以下代码来查询 <code>Scrollbar</code> <code>c</code> 的鼠标侦听器：
+
+ <pre>MouseListener[] mls = (MouseListener[])(c.getListeners(MouseListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 所请求的侦听器类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 一个在此组件上作为 <code><em>Foo</em>Listener</code> 注册的所有对象组成的数组，如果尚未添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Scrollbar.processEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理在滚动条上发生的事件。如果事件是一个 <code>AdjustmentEvent</code> 实例，则此方法将调用 <code>processAdjustmentEvent</code> 方法。否则，它将调用其超类的 <code>processEvent</code> 方法。
+<p>注意，如果事件参数为 <code>null</code>，则行为是不确定的，并且可能导致异常。
+
+@param        e 事件
+@see          java.awt.event.AdjustmentEvent
+@see          java.awt.Scrollbar#processAdjustmentEvent
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Scrollbar.processAdjustmentEvent(AdjustmentEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理此滚动条上发生的调整事件，方法是将其指派到任意已注册的 <code>AdjustmentListener</code> 对象。
+ <p>
+如果没有在组件上启用调整事件，则不调用此方法。出现以下情况之一时启用调整事件：
+ <p><ul>
+<li>通过 <code>addAdjustmentListener</code> 注册 <code>AdjustmentListener</code> 对象。
+<li>通过 <code>enableEvents</code> 启用调整事件。
+ </ul><p>
+<p>注意，如果事件参数为 <code>null</code>，则行为是不确定的，并且可能导致异常。
+
+@param       e 调整事件
+@see         java.awt.event.AdjustmentEvent
+@see         java.awt.event.AdjustmentListener
+@see         java.awt.Scrollbar#addAdjustmentListener
+@see         java.awt.Component#enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.Scrollbar.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>Scrollbar</code> 当前状态的字符串表示形式。此方法仅用于调试目的，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可以为空，但不可以为 <code>null</code>。
+
+@return     此滚动条的参数字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.Scrollbar.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>Scrollbar</code> 相关的 <code>AccessibleContext</code>。对于滚动条，<code>AccessibleContext</code> 采用的是 <code>AccessibleAWTScrollBar</code> 的形式。如有必要，可以创建一个新的 <code>AccessibleAWTScrollBar</code> 实例。
+
+@return 充当此 <code>ScrollBar</code> 的 <code>AccessibleContext</code> 的 <code>AccessibleAWTScrollBar</code>
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Scrollbar.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException, java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 <code>ObjectInputStream</code>，如果它不为 <code>null</code>，则添加一个侦听器，以接收 <code>Scrollbar</code> 触发的调整事件。忽略未被识别的键或值。
+ 
+@param s 要读取的 <code>ObjectInputStream</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+@see #writeObject(ObjectOutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Scrollbar.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认可序列化字段写入流中。写入可序列化 <code>AdjustmentListeners</code> 的一个列表作为可选数据。检测不可序列化的侦听器并且不尝试对其进行序列化。
+
+@param s 要写入的 <code>ObjectOutputStream</code>
+@serialData <code>null</code> 表示终止 0 或更多对的序列；这种对是由 <code>String</code> 和 <code>Object</code> 组成的；<code>String</code> 指示对象类型，它为以下类型之一：指示 <code>AdjustmentListener</code> 对象的 <code>adjustmentListenerK</code>
+
+@see AWTEventMulticaster#save(ObjectOutputStream, String, EventListener)
+@see java.awt.Component#adjustmentListenerK
+@see #readObject(ObjectInputStream)
+
+<!-- END DATA -->

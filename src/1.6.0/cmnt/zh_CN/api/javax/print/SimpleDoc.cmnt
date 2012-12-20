@@ -1,0 +1,80 @@
+<!-- BEGIN KEY -->
+public final class javax.print.SimpleDoc extends java.lang.Object implements javax.print.Doc
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是接口 <code>Doc</code> 的实现，可用于很多常见的打印请求中。它可处理目前作为 DocFlavor 类中静态变量所定义的所有&ldquo;预定义&rdquo; doc flavor。
+ <p>
+特别是此类实现了某些 Doc 规范所必需的语义：
+ <ul>
+<li>如果请求了并且是合适的，则为服务构造流。
+<li>确保对某个方法的每次调用都返回相同的对象。
+<li>确保多个线程可以访问 Doc。
+<li>对数据是否与 doc flavor 相符执行某种验证。
+ </ul>
+希望在其他作业中重用该 doc 对象或需要 MultiDoc 的客户端不希望使用此类。
+ <p>
+如果打印数据是一个流，或者打印作业以流的形式请求数据，那么当数据传输完成或作业终止后服务正确地关闭该流时，<code>SimpleDoc</code> 不再进行监视。客户端可能优先使用其自己添加了侦听器的 doc 实现，以监视作业的完成并验证是否有诸如流等的可用资源（即是否已关闭）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.SimpleDoc(Object printData, DocFlavor flavor, DocAttributeSet attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定打印数据、doc flavor 和 doc 属性集的 <code>SimpleDoc</code>。
+@param printData 打印数据对象
+@param flavor <code>DocFlavor</code> 对象
+@param attributes <code>DocAttributeSet</code>，可以为 <code>null</code>
+@throws IllegalArgumentException 如果 <code>flavor</code> 或 <code>printData</code> 为 <code>null</code>，或者 <code>printData</code> 不对应于指定的 doc flavor--例如，数据不是 <code>DocFlavor</code> 中的表示形式所指定的类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.DocFlavor javax.print.SimpleDoc.getDocFlavor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定其 doc 对象将提供其部分打印数据的 doc flavor。 
+
+@return DocFlavor。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.DocAttributeSet javax.print.SimpleDoc.getAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 doc 对象的打印属性集。如果返回的属性集包括特定属性 <I>X</I> 的实例，则打印机必须为此 doc 使用该属性值，该值覆盖作业属性集中属性 <I>X</I> 的所有值。如果返回的属性集不包括特定属性 <I>X</I> 的实例，或者返回 null，则打印机必须参考该作业的属性集来获得属性 <I>X</I> 的值，如果在该集合中未找到该属性值，则打印机必须使用一个与实现相关的默认值。返回的属性集是不可修改的。 
+
+@return 此 doc 不可修改的打印属性集，或者为 null，以从该作业的属性集中获得所有属性值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader javax.print.SimpleDoc.getReaderForText() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个从此 doc 中提取字符打印数据的 reader。如果 <code>DocFlavor</code> 具有以下打印数据表示形式类之一，则需要 <code>Doc</code> 实现支持此方法，否则返回 <code>null</code>：
+ <UL>
+ <LI> <code>char[]</code>
+ <LI> <code>java.lang.String</code>
+ <LI> <code>java.io.Reader</code>
+ </UL>
+为了从打印数据表示形式对象中以字符流的形式读取打印数据，使用 doc 的打印数据表示形式对象来构造并返回一个 <code>Reader</code>。但是，如果打印数据表示形式对象本身就是一个 <code>Reader</code>，则只返回该打印数据表示形式对象。
+ <P>
+@return 从此 doc 中读取打印数据字符的 <code>Reader</code>。如果因为此 doc 不符合上述标准而无法提供 reader，则返回 <code>null</code>。 
+
+@exception IOException 如果创建 reader 时存在 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream javax.print.SimpleDoc.getStreamForBytes() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个从此 doc 中提取 byte 打印数据的输入流。如果 <code>DocFlavor</code> 具有以下打印数据表示形式类之一，则需要 <code>Doc</code> 实现支持此方法，否则此方法返回 <code>null</code>：
+ <UL>
+ <LI> <code>byte[]</code>
+ <LI> <code>java.io.InputStream</code>
+ </UL>
+获得该 doc 的打印数据表示形式对象。然后，为了从打印数据表示形式对象中以 byte 流形式读取打印数据，创建并返回一个输入流。但是，如果打印数据表示形式对象本身就是一个输入流，则只返回该打印数据表示形式对象。
+ <P>
+@return 从此 doc 中读取打印数据 byte 的 <code>InputStream</code>。如果因为此 doc 不符合上述标准而无法提供输入流，则返回 <code>null</code>。 
+
+@exception IOException 如果创建输入流时存在 I/O 错误。
+
+<!-- END DATA -->

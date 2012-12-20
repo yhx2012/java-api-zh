@@ -1,0 +1,61 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.AuthProvider extends java.security.Provider
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类定义 provider 的登录和注销方法。
+
+<p> 调用者可以直接调用 <code>login</code>，但如果 provider 确定必须在某些特定操作前执行登录，则其也可以代表调用者调用 <code>login</code>。
+
+@version 1.3, 02/03/04
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.AuthProvider(String name, double version, String info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定名称、版本号和信息的 provider。
+
+@param name provider 的名称。
+@param version provider 的版本号。
+@param info provider 及其服务的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.AuthProvider.login(Subject subject, CallbackHandler handler) throws javax.security.auth.login.LoginException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+登录到此 provider 中。
+
+<p> provider 依靠 <code>CallbackHandler</code> 从调用者（例如，PIN）获取验证信息。如果调用者向此方法传递为 <code>null</code> 的 provider，则 provider 将使用在 <code>setCallbackHandler</code> 方法中设置的处理程序。如果在该方法中没有设置处理程序，则 provider 将查询 <i>auth.login.defaultCallbackHandler</i> 安全属性，以获取默认处理程序实现的完全限定类名称。如果没有设置安全属性，则假定 provider 具有获取验证信息的替代方法。
+
+@param subject <code>Subject</code>，它可能包含用于验证的主体/凭据，或者可以在成功完成验证后利用其他主体/凭据填充。此参数可以为 <code>null</code>。
+@param handler 此 provider 用于从调用者获取验证信息的 <code>CallbackHandler</code>，它可能为 <code>null</code>
+
+@exception LoginException 如果登录操作失败
+@exception SecurityException 如果调用者不传递对 <code>SecurityPermission(&quot;authProvider.<i>name</i>&quot;)</code>（其中 <i>name</i> 为此 provider 的 <code>getName</code> 方法所返回的值）的安全检查。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.AuthProvider.logout() throws javax.security.auth.login.LoginException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此 provider 中注销。
+
+@exception LoginException 如果注销操作失败
+@exception SecurityException 如果调用者不传递 <code>SecurityPermission(&quot;authProvider.<i>name</i>&quot;)</code>（其中 <i>name</i> 为此 provider 的 <code>getName</code> 方法所返回的值）的安全检查。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.AuthProvider.setCallbackHandler(CallbackHandler handler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>CallbackHandler</code>。
+
+<p> 如果没有传递给 <code>login</code> 方法一个处理程序，则 provider 使用此处理程序。如果 provider 代表调用者调用 <code>login</code>，则其也使用此处理程序。在任何一种情况下，如果没有通过此方法中设置处理程序，则 provider 将查询 <i>auth.login.defaultCallbackHandler</i> 安全属性，以获取默认处理程序实现的完全限定类名称。如果没有设置安全属性，则假定 provider 具有获取验证信息的替代方法。
+
+@param handler 用于获取验证信息（可以为 <code>null</code>）的 <code>CallbackHandler</code>
+
+@exception SecurityException 如果调用者不传递 <code>SecurityPermission(&quot;authProvider.<i>name</i>&quot;)</code>（其中 <i>name</i> 为此 provider 的 <code>getName</code> 方法所返回的值）的安全检查。
+
+<!-- END DATA -->

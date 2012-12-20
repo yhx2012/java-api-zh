@@ -1,0 +1,512 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JEditorPane extends javax.swing.text.JTextComponent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可编辑各种内容的文本组件。有关基础知识信息和使用编辑器窗格的示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/text.html">Using Text Components</a> 一节。
+
+ <p>
+此组件使用 <code>EditorKit</code> 的实现来完成其操作。对于给予它的各种内容，它能有效地将其形态变换为适当的文本编辑器种类。该编辑器在任意给定时间的内容类型都由当前已安装的 <code>EditorKit</code> 确定。如果将内容设置为新的 URL，则使用其类型来确定加载该内容所应使用的 <code>EditorKit</code>。
+ <p>
+默认情况下，已知下列内容类型：
+ <dl>
+ <dt><b>text/plain</b>
+<dd>纯文本，即无法识别给定的类型时所使用的默认值。在此情况下使用的工具包是 <code>DefaultEditorKit</code> 的扩展，可生成有换行的纯文本视图。
+ <dt><b>text/html</b>
+<dd>HTML 文本。在此情况下使用的工具包是类 <code>javax.swing.text.html.HTMLEditorKit</code>，支持 HTML 3.2。
+ <dt><b>text/rtf</b>
+<dd>RTF 文本。在此情况下使用的工具包是类 <code>javax.swing.text.rtf.RTFEditorKit</code>，它提供了对多样化文本格式 (Rich Text Format) 的有限支持。
+ </dl>
+ <p>
+有多种方式可将内容加载到此组件中。
+ <ol>
+ <li>
+可使用 {@link #setText setText} 方法来初始化字符串组件。在这种情况下，将使用当前的 <code>EditorKit</code>，且此类型为期望的内容类型。
+ <li>
+可使用 {@link #read read} 方法来初始化 <code>Reader</code> 组件。注意，如果内容类型为 HTML，那么只有使用了 &lt;base&gt; 标记，或者设置了 <code>HTMLDocument</code> 上的 <em>Base</em> 属性时才能解析相关的引用（例如对于类似图像等内容）。在这种情况下，将使用当前的 <code>EditorKit</code>，且此类型为期望的内容类型。
+ <li>
+可使用 {@link #setPage setPage} 方法来初始化 URL 组件。在这种情况下，将根据该 URL 来确定内容类型，并且设置为该内容类型所注册的 <code>EditorKit</code>。
+ </ol>
+ <p>
+某些内容类型可能通过生成超链接事件来提供对超链接的支持。如果 <code>JEditorPane</code> 是<em>不可编辑的</em>（已调用了 <code>JEditorPane.setEditable(false);</code>），则 HTML <code>EditorKit</code> 将生成超链接事件。如果文档中嵌入了 HTML frame，则典型的响应是更改当前文档的某一部分。以下代码片段是一种可能的超链接侦听器实现，它特殊对待 HTML frame 事件，并且简单地显示其他所有已激活的超链接。<code><pre>
+
+&nbsp;    class Hyperactive implements HyperlinkListener {
+&nbsp;
+&nbsp;        public void hyperlinkUpdate(HyperlinkEvent e) {
+&nbsp;	          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+&nbsp;		      JEditorPane pane = (JEditorPane) e.getSource();
+&nbsp;		      if (e instanceof HTMLFrameHyperlinkEvent) {
+&nbsp;		          HTMLFrameHyperlinkEvent  evt = (HTMLFrameHyperlinkEvent)e;
+&nbsp;		          HTMLDocument doc = (HTMLDocument)pane.getDocument();
+&nbsp;		          doc.processHTMLFrameHyperlinkEvent(evt);
+&nbsp;		      } else {
+&nbsp;		          try {
+&nbsp;			      pane.setPage(e.getURL());
+&nbsp;		          } catch (Throwable t) {
+&nbsp;			      t.printStackTrace();
+&nbsp;		          }
+&nbsp;		      }
+&nbsp;	          }
+&nbsp;	      }
+&nbsp;    }
+
+ </pre></code>
+ <p>
+有关自定义如何呈现 <b>text/html</b> 的信息，请参阅 {@link #W3C_LENGTH_UNITS} 和 {@link #HONOR_DISPLAY_PROPERTIES}
+ <p>
+某些文档中与文化相关的信息是通过一种称为字符编码的机制来处理的。字符编码是字符集的成员（字母、象形文字、数字、符号或控制函数）和具体数字代码值的明确映射关系。它表示了文件的存储方式。字符编码有 ISO-8859-1、ISO-8859-5、Shift-jis、Euc-jp 和 UTF-8。将文件传递给用户代理 (<code>JEditorPane</code>) 时，该文件被转换为文档字符集 (ISO-10646 aka Unicode)。
+ <p>
+有多种方式可获得使用 <code>JEditorPane</code> 时所用的字符集映射关系。  
+ <ol>
+ <li>
+一种方式是将字符集指定为 MIME 类型的参数。通过调用 <a href="#setContentType">setContentType</a> 方法来建立此方式。如果通过 <a href="#setPage">setPage</a> 方法加载内容，则其内容类型已根据 URL 的规范进行了设置。如果直接加载文件，则期望在加载前就已设置内容类型。
+ <li>
+指定字符集的另一种方式是在该文档内指定。这需要在确定所需的字符集之前读取该文档。要处理此情况，需要 <code>EditorKit</code>.read 操作抛出将要被捕获的 <code>ChangedCharSetException</code>。然后使用新的 Reader 重新开始该 read 操作，该 Reader 使用 <code>ChangedCharSetException</code>（这是一个 <code>IOException</code>）中所指定的字符集。
+ </ol>
+ <p>
+<dl>
+<dt><b><font size=+1>换行</font></b>
+ <dd>
+有关如何处理换行的讨论，请参阅 <a href="text/DefaultEditorKit.html">DefaultEditorKit</a>。
+ </dl>
+
+ <p>
+ <strong>警告：</strong> Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute: isContainer false description: A text component to edit various types of content.
+
+@author  Timothy Prinzing
+@version 1.125 07/23/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JEditorPane.W3C_LENGTH_UNITS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于客户机属性的关键字，指示是否为 html 呈现使用 <a href="http://www.w3.org/TR/CSS21/syndata.html#length-units">w3c 兼容的</a>长度单位。
+ <p>
+默认不启用此属性；要启用它，可将带有此名称的客户机 {@link #putClientProperty property} 设置为 <code>Boolean.TRUE</code>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JEditorPane.HONOR_DISPLAY_PROPERTIES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于客户机属性的关键字，指示如果在样式化文本中未指定字体或前景色，那么是否使用该组件的默认字体和前景色。  
+ <p>
+根据外观的不同，该默认值有所不同；要启用该属性，可将带有此名称的客户机 {@link #putClientProperty property} 设置为 <code>Boolean.TRUE</code>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ javax.swing.JEditorPane.PageStream javax.swing.JEditorPane.loading
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前正在异步地加载流（可能是可取消的）。对此变量的访问应该是同步的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.text.EditorKit javax.swing.JEditorPane.kit
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该编辑器当前的内容绑定。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Hashtable javax.swing.JEditorPane.typeHandlers
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此编辑器的已注册类型处理程序表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JEditorPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <code>JEditorPane</code>。文档模型被设置为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JEditorPane(URL initialPage) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据用作输入的指定 URL 创建一个 <code>JEditorPane</code>。
+
+@param initialPage URL
+@exception IOException 如果该 URL 为 <code>null</code> 或者无法访问
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JEditorPane(String url) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据包含 URL 规范的字符串创建一个 <code>JEditorPane</code>。
+
+@param url URL
+@exception IOException 如果该 URL 为 <code>null</code> 或者无法访问
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JEditorPane(String type, String text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个已初始化为给定文件的 <code>JEditorPane</code>。这是调用 <code>setContentType</code> 和 <code>setText</code> 方法的便捷构造方法。
+
+@param type 给定文本的 mime 类型
+@param text 初始化所使用的文本；可能为 <code>null</code>
+@exception NullPointerException 如果 <code>type</code> 参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JEditorPane.addHyperlinkListener(HyperlinkListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为了通知所有的更改（例如选中和进入某个链接）而添加一个超链接侦听器。
+
+@param listener 侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.JEditorPane.removeHyperlinkListener(HyperlinkListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除超链接侦听器。
+
+@param listener 侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.event.HyperlinkListener[] javax.swing.JEditorPane.getHyperlinkListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 addHyperlinkListener() 添加到此 JEditorPane 的所有 <code>HyperLinkListener</code> 的数组。
+
+@return 已添加的所有 <code>HyperLinkListener</code>，如果尚未添加侦听器，则返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.fireHyperlinkUpdate(HyperlinkEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知因对此事件类型的通知感兴趣而已注册的所有侦听器。如果支持超链接的内容类型当前处于激活状态并且使用了某个链接，则通常由当前已安装的 <code>EditorKit</code> 调用此方法。从后向前处理侦听器列表。
+
+@param e 事件
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.setPage(URL page) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前要显示的 URL。设置该窗格的内容类型，并且如果该窗格的编辑器工具包是非 <code>null</code> 的，则创建一个新的默认文档并将 URL 读入该文档。如果该 URL 包含并引用了位置，则通过调用 <code>scrollToReference</code> 方法滚动到该位置。如果所需的 URL 就是当前所显示的，则不会重新加载该文档。要强行重新加载某个文档，必须清除该文档的流描述属性。以下代码显示了如何完成该任务：
+
+ <pre>
+   Document doc = jEditorPane.getDocument();
+   doc.putProperty(Document.StreamDescriptionProperty, null);
+ </pre>
+ 
+如果所需的 URL 不是当前所显示的，则调用 <code>getStream</code> 方法，让子类控制所提供的流。
+ <p>
+这可能会同步或异步地加载，具体取决于 <code>EditorKit</code> 所返回的文档。如果该 <code>Document</code> 的类型是 <code>AbstractDocument</code> 并且具有由大于或等于零的 <code>AbstractDocument.getAsynchronousLoadPriority</code> 返回的值，则使用该优先级将该页面加载到单独的线程中。
+ <p>
+如果同步加载文档，则先使用流填充文档，然后通过调用 <code>setDocument</code> 将其安装到编辑器中，而该调用将激发属性更改事件。如果抛出 <code>IOException</code>，则丢弃部分加载的文档，并且不激发文档和页面属性更改事件。如果成功加载并安装了该文档，则由 UI 为其建立一个视图，如有必要，接着滚动该 UI，之后激发页面属性更改事件。
+ <p>
+如果异步加载该文档，则立即通过调用 <code>setDocument</code> （这会激发文档属性更改事件）将该文档安装到编辑器中，然后创建一个线程，而该线程将开始执行实际的加载工作。在这种情况下，直接调用此方法不会激发页面属性更改事件，而在线程加载结束时会激发该事件。在事件调度线程上也会激发该事件。因为调用线程无法在其他线程上出现失败事件的情况下抛出 <code>IOException</code>，所以在其他线程完成任务时（不管加载是否成功）将激发页面属性更改事件。
+ 
+@param page 页面的 URL 
+@exception IOException 对于 <code>null</code> 或无效的页面规范，或者来自所读取的流的异常
+@see #getPage
+@beaninfo description: the URL used to set content bound: true expert: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.read(InputStream in, Object desc) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法根据流进行初始化。如果工具包被设置为 <code>HTMLEditorKit</code> 类型，并且 <code>desc</code> 参数是 <code>HTMLDocument</code>，则此方法调用 <code>HTMLEditorKit</code> 来初始化读取。否则它调用以纯文本的方式加载模型的超类方法。
+
+@param in 从中读取的流
+@param desc 描述流的对象
+@exception IOException 由用于初始化的流抛出 
+@see JTextComponent#read
+@see #setDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.InputStream javax.swing.JEditorPane.getStream(URL page) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定 URL 的流，该 URL 是将要由 <code>setPage</code> 方法加载的。默认情况下，这只是简单地打开该 URL 并返回流。可重新实现此方法以执行有用的任务，例如从缓存中获取流、监视该流的进程等等。
+ <p>
+期望此方法具有的副作用是：建立该内容类型，从而设置加载流所要使用的合适的 <code>EditorKit</code>。
+ <p>
+如果该流为 http 链接，那么接着会进行重定向，并将得到的 URL 设置为 <code>Document.StreamDescriptionProperty</code>，这样即可正确地解析相关的 URL。
+
+@param page  页面 URL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.scrollToReference(String reference)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将视图滚动到给定的参考位置（也就是正在显示的 URL 的 <code>UL.getRef</code> 方法所返回的值）。默认情况下，此方法仅知道如何在 HTMLDocument 中定位一个参考位置。该实现调用 <code>scrollRectToVisible</code> 方法来完成实际的滚动。如果 HTML 之外的文档类型需要滚动到参考位置，则应该重新实现此方法。如果组件不可见，则此方法无效。
+ 
+@param reference 要滚动到的指定位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL javax.swing.JEditorPane.getPage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前正在显示的 URL。如果在文档创建中未指定 URL，则此方法返回 <code>null</code>，并且不解析相关的 URL。
+
+@return URL，如果没有，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.setPage(String url) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前要显示的 URL。
+
+@param url 要显示的 URL 
+@exception IOException 对于 <code>null</code> 或无效的 URL 规范
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JEditorPane.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该 UI 的类 ID。
+
+@return 字符串 &quot;EditorPaneUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.EditorKit javax.swing.JEditorPane.createDefaultEditorKit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+首次创建组件时，创建默认的编辑器工具包 (<code>PlainEditorKit</code>)。
+
+@return 编辑器工具包
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.EditorKit javax.swing.JEditorPane.getEditorKit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于处理内容的、当前已安装的工具包。如有必要，可调用 <code>createDefaultEditorKit</code> 来安装默认的工具包。
+
+@return 编辑器工具包
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.swing.JEditorPane.getContentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得设置此编辑器当前要处理的内容类型。将其定义为与当前已安装的 <code>EditorKit</code> 相关联的类型。
+
+@return 内容类型，如果没有编辑器工具包集，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.JEditorPane.setContentType(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此编辑器所处理的内容类型。如果可以成功地找到编辑器工具包，则调用 <code>getEditorKitForContentType</code>，然后调用 <code>setEditorKit</code>。作为直接调用 <code>setEditorKit</code> 的一种替代方式，这是可用的最便捷的方法。
+ <p>
+如果将字符集定义指定为内容类型规范的参数，则在使用关联的 <code>EditorKit</code> 加载输入流时使用它。例如，如果 type 指定为 <code>text/html; charset=EUC-JP</code>，则用注册为 <code>text/html</code> 的 <code>EditorKit</code> 加载内容，并且提供给该 <code>EditorKit</code> 以便将 unicode 加载到文档中的 Reader 将使用 <code>EUC-JP</code> 字符集转换到 unicode。如果无法识别该 type，则使用为纯文本 <code>text/plain</code> 注册的 <code>EditorKit</code> 加载内容。
+ 
+@param type 支持内容编辑的非 <code>null</code> mime 类型
+@see #getContentType
+@beaninfo description: the type of content
+@throws NullPointerException 如果 <code>type</code> 参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.setEditorKit(EditorKit kit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前为处理内容而安装的工具包。这是建立编辑器内容类型的绑定 (bound) 属性。首先卸载所有旧的工具包，然后如果 kit 不为 <code>null</code>，则安装新的工具包并为其创建默认文档。调用 <code>setEditorKit</code> 时始终激发 <code>PropertyChange</code> 事件 (&quot;editorKit&quot;)。
+ <p>
+<em>注：这具有更改模型的副作用，因为 <code>EditorKit</code> 是模拟特定内容类型的方式的根源。此方法将导致代表调用者来调用 <code>setDocument</code>，以确保内部状态的完整性。</em>
+ 
+@param kit 所需的编辑器行为
+@see #getEditorKit
+@beaninfo description: the currently installed kit for handling content bound: true expert: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.EditorKit javax.swing.JEditorPane.getEditorKitForContentType(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于给定内容类型的编辑器工具包。当请求的类型与当前已安装的类型不匹配时调用此方法。如果组件没有为给定类型注册的 <code>EditorKit</code>，则它会尝试根据默认的 <code>EditorKit</code> 注册表创建一个 <code>EditorKit</code>。如果创建失败，则在假定所有文本文档都可以表示为纯文本的基础上使用 <code>PlainEditorKit</code>。
+ <p>
+可重新实现此方法，以使用某个其他的注册表类型。例如，可重新实现它以使用 Java Activation Framework。
+
+@param type 非 <code>null</code> 的内容类型
+@return 编辑器工具包
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.setEditorKitForContentType(String type, EditorKit k)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+直接设置用于给定类型的编辑器工具包。外观实现可能结合使用此方法和 <code>createEditorKitForContentType</code> 为具有某种外观偏好的内容类型安装处理程序。
+
+@param type 非 <code>null</code> 的内容类型
+@param k 要设置的编辑器工具包
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.replaceSelection(String content)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用由给定字符串表示的新内容替换当前选中的内容。如果没有选中的内容，那么此操作就等效于插入给定文本。如果没有替换文本（也就是 content 字符串为空或为 <code>null</code>），那么就等效于移除当前的选择。替换文本具有当前为输入所定义的各种属性。如果该组件是不可编辑的，则发出蜂鸣声并返回。  
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参见  <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param content  要替换选择内容的内容。此值可以为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.text.EditorKit javax.swing.JEditorPane.createEditorKitForContentType(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据默认的编辑器工具包注册表为给定的类型创建处理程序。如有必要，则创建注册表。如果尚未加载已注册的类，则尝试动态地加载针对给定类型的工具包原型。如果已向某个 <code>ClassLoader</code> 注册了该类型，则使用该 <code>ClassLoader</code> 加载该原型。如果没有已注册的 <code>ClassLoader</code>，则使用 <code>Class.forName</code> 加载该原型。
+ <p>
+一旦成功地找到 <code>EditorKit</code> 实例，则复制它并返回该副本。  
+
+@param type 内容类型
+@return 编辑器工具包，如果没有为给定类型注册的工具包，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JEditorPane.registerEditorKitForContentType(String type, String classname)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+建立 <code>type</code> 到 <code>classname</code> 的默认绑定。实际需要该类时，将在稍后动态地加载该类，并且在使用前可安全地更改，以避免加载不需要的类。使用此方法注册后，将使用 <code>Class.forName</code> 加载 <code>EditorKit</code> 原型。
+
+@param type 非 <code>null</code> 的内容类型
+@param classname 稍后加载的类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JEditorPane.registerEditorKitForContentType(String type, String classname, ClassLoader loader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+建立 <code>type</code> 到 <code>classname</code> 的默认绑定。实际需要该类时，将在稍后使用给定的 <code>ClassLoader</code> 动态地加载该类，并且在使用前可安全地更改，以避免加载不需要的类。
+
+@param type 非 <code>null</code> 的内容类型
+@param classname 稍后加载的类
+@param loader 用于加载该名称的类的 <code>ClassLoader</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JEditorPane.getEditorKitClassNameForContentType(String type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前向类型 <code>type</code> 所注册的 <code>EditorKit</code> 类名。
+
+@param type  非 <code>null</code> 的内容类型
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JEditorPane.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>JEditorPane</code> 的首选大小。<code>JEditorPane</code> 的首选大小与超类的首选大小稍微有所不同。如果视口 (viewport) 的大小已经小于组件的最低大小，则用于跟踪宽度或高度的可滚动定义将变为 false。默认的视口布局将给出首选大小，并且该大小在可滚动定义正在进行跟踪的情况下是不需要的。在这种情况下，将<em>正常的</em> 首选大小调整为最低大小。这就允许将 HTML 表缩小为其最低大小，然后以其最低大小进行布局，而不再做进一步的缩小。
+
+@return 包含首选大小的 <code>Dimension</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JEditorPane.setText(String t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>TextComponent</code> 的文本设置为指定内容，预期以此编辑器的内容类型格式提供该内容。例如，如果将类型设置为 <code>text/html</code>，则应按照 HTML 指定该字符串。  
+ <p>
+实现此方法可移除当前文档的内容，并通过使用当前的 <code>EditorKit</code> 分析给定字符串来替换该内容。这提供了超类的语义，方法是不更改模型，同时支持当前在此组件上所设置的内容类型。前提是以前的内容相对较少，并且以前的内容没有副作用。可以违反这两个前提，但这会导致不需要的结果。为了避免发生此情况，可用 <code>getEditorKit().createDefaultDocument()</code> 创建一个新文档，并用该新文档替换现有的 <code>Document</code>。然后就可以确保以前的 <code>Document</code> 没有任何遗留的状态。
+ <ol>
+ <li>
+保留现有的模型意味着去除旧的视图，并创建一个新视图，而替换文档则可避免去除旧的视图。
+ <li>
+某些格式（如 HTML）可将各种内容放入文档，而这些内容可以影响以后的内容。HTML 可以具有嵌入的样式信息，这将意外地影响后面安装的内容。
+ </ol>
+ <p>
+加载带有字符串的此组件的另一种方式是创建一个 StringReader 并调用 read 方法。在这种情况下，使用字符串内容初始化模型后将替换该模型。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param t 要设置的新文本；如果为 <code>null</code>，则删除旧的文本
+@see #getText
+@beaninfo description: the text of this component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JEditorPane.getText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此编辑器的内容类型返回此 <code>TextComponent</code> 中所包含的文本。如果试图检索文本的同时抛出异常，则返回 <code>null</code>。实现此方法以调用带有 <code>StringWriter</code> 的 <code>JTextComponent.write </code>。
+
+@return 文本
+@see #setText
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JEditorPane.getScrollableTracksViewportWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果某个视口始终应该强迫此 <code>Scrollable</code> 的宽度符合该视口的宽度，则返回 true。  
+ 
+@return 如果某个视口始终应该强迫 Scrollable 的宽度符合其宽度，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JEditorPane.getScrollableTracksViewportHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果某个视口始终应该强迫此 <code>Scrollable</code> 的高度符合该视口的高度，则返回 true。  
+ 
+@return 如果某个视口始终应该强迫 <code>Scrollable</code> 的高度符合其高度，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JEditorPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JEditorPane</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JEditorPane</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JEditorPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JEditorPane 关联的 AccessibleContext。对于编辑器窗格，AccessibleContext 采用 AccessibleJEditorPane 的形式。必要时创建新的 AccessibleJEditorPane 实例。
+
+@return AccessibleJEditorPane，充当此 JEditorPane 的 AccessibleContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JEditorPane.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关在 Swing 中序列化的更多信息，请参阅 <code>JComponent</code> 中的 <code>readObject</code> 和 <code>writeObject</code>。
+
+<!-- END DATA -->

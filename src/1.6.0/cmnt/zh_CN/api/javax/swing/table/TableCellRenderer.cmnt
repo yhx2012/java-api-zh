@@ -1,0 +1,41 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.table.TableCellRenderer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口定义了要成为 <code>JTable</code> 中单元格渲染器的任意对象所需的方法。
+
+@version 1.18 12/19/03
+@author Alan Chung
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.table.TableCellRenderer.getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于绘制单元格的组件。此方法用于在绘制前适当地配置渲染器。
+<p>
+<code>TableCellRenderer</code> 还负责呈现表示该表当前 DnD 放置位置的单元格（如果有）。如果此呈现器负责呈现 DnD 放置位置，则它应该直接查询表以确定给定的行和列是否表示放置位置：
+ <pre>
+     JTable.DropLocation dropLocation = table.getDropLocation();
+     if (dropLocation != null
+             && !dropLocation.isInsertRow()
+             && !dropLocation.isInsertColumn()
+             && dropLocation.getRow() == row
+             && dropLocation.getColumn() == column) {
+
+         // this cell represents the current drop location
+         // so render it specially, perhaps with a different color
+     }
+ </pre>
+<p>
+在打印操作期间，将调用此方法（<code>isSelected</code> 和 <code>hasFocus</code> 为 <code>false</code>）阻止选择和焦点在打印输出中出现。要根据是否打印表进行其他定制，检查 {@link javax.swing.JComponent#isPaintingForPrint()} 的返回值。
+
+@param	table		要求渲染器绘制的 <code>JTable</code>；可以为 <code>null</code>
+@param	value		要呈现的单元格的值。由具体的渲染器解释和绘制该值。例如，如果 <code>value</code> 是字符串 &quot;true&quot;，则它可呈现为字符串，或者也可呈现为已选中的复选框。<code>null</code> 是有效值
+@param	isSelected	如果使用选中样式的高亮显示来呈现该单元格，则为 true；否则为 false
+@param	hasFocus	如果为 true，则适当地呈现单元格。例如，在单元格上放入特殊的边框，如果可以编辑该单元格，则以彩色呈现它，用于指示正在进行编辑
+@param	row	        要绘制的单元格的行索引。绘制头时，<code>row</code> 值是 -1
+@param	column	        要绘制的单元格的列索引
+@see javax.swing.JComponent#isPaintingForPrint()
+
+<!-- END DATA -->

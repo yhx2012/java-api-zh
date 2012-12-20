@@ -1,0 +1,770 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.ORB extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 CORBA 对象请求代理 (Object Request Broker) 特性提供 API 的类。<code>ORB</code> 类还提供&ldquo;可插入 ORB 实现&rdquo;API，该 API 允许使用另一个供应商的 ORB 实现。
+ <P>
+通过连接发送请求的对象（客户端）与响应请求的对象（服务器），ORB 使 CORBA 对象彼此之间能够进行通讯。
+ <P>
+
+<code>ORB</code> 类封装了一些一般的 CORBA 功能，它可执行以下操作：（注意第 5 项和第 6 项，它们包含 <code>ORB</code> 类中的大多数方法，通常与动态调用接口（<code>Dynamic Invocation Interface</code>，DII）和动态框架接口（<code>Dynamic Skeleton Interface</code>，DSI）一起使用。开发人员可以直接使用这些接口，但大多数情况下，这些接口常常由 ORB 内部使用，这对于普通程序员是不可见的。）
+ <OL>
+<li> 通过为预先定义的属性和环境参数提供值来初始化 ORB 实现
+<li> 使用方法 <code>resolve_initial_references</code> 获取对某些服务的初始对象引用（如 NameService）
+<li> 将对象引用转换为字符串，将字符串转换为对象引用
+<li> 将 ORB 连接到 servant（CORBA 对象实现的实例）以及断开 ORB 与 servant 的连接
+<li> 创建如下所示对象
+   <ul>
+   <li><code>TypeCode</code>
+<li><code>Any</code>
+   <li><code>NamedValue</code>
+<li><code>Context</code>
+   <li><code>Environment</code>
+<li>包含这些对象的列表（如 <code>NVList</code>）
+   </ul>
+<li> 在 DII 中发送多条消息
+ </OL>
+
+ <P>
+可以使用 <code>ORB</code> 类获取对网络上任意位置实现的对象的引用。
+ <P>
+应用程序或 applet 通过使用三个 <code>init</code> 方法之一将其自身初始化为 <code>ORB</code>，来访问 CORBA 环境。这三个方法中有两个使用下表中所示的属性（名称与值的关联）。<BR>
+ <TABLE BORDER=1 SUMMARY="Standard Java CORBA Properties">
+<TR><TH> 属性名</TH>   <TH>属性值</TH></TR>
+<CAPTION>标准 Java CORBA 属性：</CAPTION>
+     <TR><TD>org.omg.CORBA.ORBClass</TD>
+<TD>ORB 实现的类名称</TD></TR>
+     <TR><TD>org.omg.CORBA.ORBSingletonClass</TD>
+<TD>由 <code>init()</code> 返回的 ORB 的类名称</TD></TR>
+ </TABLE>
+ <P>
+这些属性允许&ldquo;插入&rdquo;不同供应商的 <code>ORB</code> 实现。
+ <P>
+在创建 ORB 实例时，使用以下标准搜索顺序来定位 ORB 实现的类名称：<P>
+
+ <OL>
+<LI>检查 Applet 参数或应用程序字符串数组（如果有）
+
+<LI>检查属性参数（如果有）
+
+<LI>检查系统属性
+
+<LI>检查位于 user.home 目录中的 orb.properties 文件（如果有）
+
+<LI>检查位于 java.home/lib 目录中的 orb.properties 文件（如果有）
+
+<LI>依靠硬编码 (hardcoded) 的默认行为（使用 Java&nbsp;IDL 实现）
+ </OL>
+ <P>
+注意，Java&nbsp;IDL 提供全功能 ORB 和单件 (Singleton) ORB 的默认实现。当没有为 <code>init</code> 方法提供任何参数时，返回默认单件 ORB。当为 <code>init</code> 方法提供了参数但没有指定 ORB 类时，返回 Java&nbsp;IDL ORB 实现。
+ <P>
+以下代码段创建了一个使用默认 ORB 单件初始化的 <code>ORB</code> 对象。此 ORB 有一个受限制的实现，以防止恶意 applet 执行任何创建 typecode 以外的操作。称它为单件 ORB 是因为整个虚拟机中只有一个实例。
+ <PRE>
+    ORB orb = ORB.init();
+ </PRE>
+ <P>
+以下代码片段创建用于某个应用程序的 <code>ORB</code> 对象。参数 <code>args</code> 表示提供给应用程序的 <code>main</code> 方法的参数。因为该属性指定了 ORB 类为 &quot;SomeORBImplementation&quot;，所以将使用该 ORB 实现初始化新的 ORB。如果 p 为 null，并且参数没有指定 ORB 类，则使用默认 Java&nbsp;IDL 实现初始化新的 ORB。
+ <PRE>
+    Properties p = new Properties();
+    p.put(&quot;org.omg.CORBA.ORBClass&quot;, &quot;SomeORBImplementation&quot;);
+    ORB orb = ORB.init(args, p);
+ </PRE>
+ <P>
+以下代码片段为作为第一个参数提供的 applet 创建 <code>ORB</code> 对象。如果给定 applet 没有指定 ORB 类，则将使用默认 Java&nbsp;IDL 实现初始化新的 ORB。
+ <PRE>
+    ORB orb = ORB.init(myApplet, null);
+ </PRE>
+ <P>
+可以在一个或多个 ORB 中初始化应用程序或 applet。ORB 初始化是进入 CORBA 环境的引导调用。
+@version 1.70, 09/09/97
+@since   JDK1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对象 <code>ORB</code> 单件。此方法总是返回相同的 ORB 实例，该实例是由 <code>org.omg.CORBA.ORBSingletonClass</code> 系统属性所描述的类的实例。
+ <P>
+无参数的 <code>init</code> 方法主要用作 <code>TypeCode</code> 对象的工厂，<code>Helper</code> 类使用该对象来实现 <code>type</code> 方法。还可以使用该方法来创建用于描述 <code>union</code> 标签的 <code>Any</code> 对象（作为创建用于 <code>union</code> 的 <code>TypeCode</code> 对象的一部分）。
+ <P>
+此方法并不适合由 applet 使用，如果在 applet 环境中调用此方法，则该方法返回的 ORB 是受限制的，即它只能用作 <code>TypeCode</code> 对象的工厂。该方法生成的任何 <code>TypeCode</code> 对象都可以在不受信任的 applet 之间安全地共享。
+ <P>
+如果某一 ORB 是使用此方法从 applet 创建的，则将抛出系统异常（如果调用的是用来创建 <code>TypeCode</code> 对象的那些方法以外的方法）。
+
+@return 单件 ORB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init(java.lang.String[] args, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为独立的应用程序创建一个新的 <code>ORB</code> 实例。此方法只能从应用程序调用，每次调用该方法都会返回一个新的全功能 <code>ORB</code> 对象。
+@param args 应用程序的 <code>main</code> 方法的命令行参数，可以为 <code>null</code>
+@param props 特定于应用程序的属性，可以为 <code>null</code>
+@return 新创建的 ORB 实例
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static org.omg.CORBA.ORB org.omg.CORBA.ORB.init(Applet app, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 applet 创建一个新的 <code>ORB</code> 实例。此方法只能从 applet 调用，每次调用该方法都会返回一个新的全功能 <code>ORB</code> 对象。
+@param app applet，可以为 <code>null</code>
+@param props 特定于 applet 的属性，可以为 <code>null</code>
+@return 新创建的 ORB 实例
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void org.omg.CORBA.ORB.set_parameters(java.lang.String[] args, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许使用给定的参数和属性初始化 ORB 实现。此方法只能在应用程序中使用，由子类 ORB 实现来实现，并由适当的 <code>init</code> 方法调用，以传入其参数。
+
+@param args 应用程序的 <code>main</code> 方法的命令行参数，可以为 <code>null</code>
+@param props 特定于应用程序的属性，可以为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void org.omg.CORBA.ORB.set_parameters(Applet app, Properties props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许使用给定 applet 和参数初始化 ORB 实现。此方法只能在 applet 中使用，由子类 ORB 实现来实现，并由适当的 <code>init</code> 方法调用，以传入其参数。
+
+@param app applet，可以为 <code>null</code>
+@param props 特定于 applet 的属性，可以为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.connect(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 servant 对象（作为服务器实现类的实例的 Java 对象）连接到 ORB。servant 类必须扩展对应于服务器所支持的接口的 <code>ImplBase</code> 类。因此 servant 必须是一个 CORBA 对象引用，并且必须继承自 <code>org.omg.CORBA.Object</code>。由用户创建的 servant 可在调用 <code>connect</code> 方法之后开始接收远程调用。如果将 servant 作为非本地对象上的 IDL 方法调用中的 IDL 参数传递，也就是说，如果对 servant 对象进行编组并将它发送到进程地址空间以外，则 servant 也可以自动隐式地连接到 ORB。
+ <P>
+当 servant 对象已经连接到 ORB 时，调用 <code>connect</code> 方法没有任何效果。
+ <P>
+OMG 推荐使用可移植对象适配器 API 取代此方法。
+
+@param obj servant 对象引用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.destroy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁 ORB，以便可以回收其资源。对已销毁的 ORB 引用调用任何操作都将抛出 <code>OBJECT_NOT_EXIST</code> 异常。一旦已销毁 ORB，使用相同的 ORBid 再次调用 <code>init</code> 将返回对新建 ORB 的引用。<p>
+如果对尚未关闭的 ORB 调用 <code>destroy</code>，则在销毁该 ORB 之前将启动关闭进程，并且该方法将一直阻塞到关闭 ORB 为止。<br>如果应用程序在当前正服务于某个调用的线程中调用 <code>destroy</code>，则将抛出 <code>BAD_INV_ORDER</code> 系统异常，并带有 OMG 次要代码 (minor code) 3，因为阻塞将导致死锁。<p>
+为获取最大的可移植性并避免资源泄漏，应用程序应该总是在退出前对所有 ORB 实例调用 <code>shutdown</code> 和 <code>destroy</code>。
+
+@throws org.omg.CORBA.BAD_INV_ORDER 如果当前线程正服务于某一调用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.disconnect(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+断开给定 servant 对象与 ORB 的连接。在此方法返回之后，ORB 将拒绝对已断开 servant 的传入远程请求，并将异常 <code>org.omg.CORBA.OBJECT_NOT_EXIST</code> 发送回远程客户端。因此，从远程客户端看来，该对象似乎已被销毁。不过要注意的是，使用 servant 直接发布的本地请求不通过 ORB，因此，这些请求将继续由 servant 处理。
+ <P>
+如果 servant 没有连接到 ORB，则调用 <code>disconnect</code> 方法没有任何效果。
+ <P>
+OMG 推荐使用可移植对象适配器 API 取代此方法。
+
+@param obj 将与 ORB 断开连接的 servant 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] org.omg.CORBA.ORB.list_initial_services()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最初可用 CORBA 对象引用（比如 &quot;NameService&quot; 和 &quot;InterfaceRepository&quot;）的列表。
+
+@return <code>String</code> 对象数组，这些对象表示此 ORB 中最初可用 CORBA 服务的对象引用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Object org.omg.CORBA.ORB.resolve_initial_references(String object_name) throws org.omg.CORBA.ORBPackage.InvalidName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据可用初始服务名称集解析特定对象引用。
+
+@param object_name 字符串形式的初始服务名称
+@return  与给定名称关联的对象引用
+@exception InvalidName 如果给定名称不与已知服务关联
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.ORB.object_to_string(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 CORBA 对象引用转换为字符串。注意，此字符串的格式由 IIOP 预先定义，允许将不同 ORB 生成的字符串转换回对象引用。
+ <P>
+可以使用能够操作 <code>String</code> 对象的任何方式存储所得 <code>String</code> 对象或与它们进行通信。
+
+@param obj 将字符串化的对象引用
+@return 表示对象引用的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Object org.omg.CORBA.ORB.string_to_object(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将方法 <code>object_to_string</code> 生成的字符串转换回 CORBA 对象引用。
+
+@param str 将转换回对象引用的字符串。它必须是使用 <code>object_to_string</code> 方法将对象引用转换所得到的字符串。
+@return 对象引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.NVList org.omg.CORBA.ORB.create_list(int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定数量的 <code>NamedValue</code> 对象分配具有（可能）足够空间的 <code>NVList</code>。注意，指定的大小只是一个有助于存储分配的提示，并不表示列表的最大大小。
+
+@param count  要分配空间的 <code>NamedValue</code> 对象的建议数量
+@return 新创建的 <code>NVList</code>
+
+@see NVList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.NVList org.omg.CORBA.ORB.create_operation_list(Object oper)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>NVList</code>，并使用给定 <code>OperationDef</code> 对象中所述操作的参数描述进行初始化。此 <code>OperationDef</code> 对象是从接口存储库 (Interface Repository) 中获得的。所返回 <code>NVList</code> 对象中参数的顺序与原始 IDL 操作定义中的顺序相同，这使得能够在动态调用请求中使用该列表。
+
+@param oper	将用来创建列表的 <code>OperationDef</code> 对象
+@return		新创建的 <code>NVList</code> 对象，它包含对给定 <code>OperationDef</code> 对象中所述方法的参数描述
+
+@see NVList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.NamedValue org.omg.CORBA.ORB.create_named_value(String s, Any any, int flags)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定名称、值和参数模式标志创建一个 <code>NamedValue</code> 对象。
+ <P>
+<code>NamedValue</code> 对象可用作 (1) 参数或返回值，或者 (2) 上下文属性。它可以单独使用，也可以作为 <code>NVList</code> 对象中的一个元素使用。
+
+@param s  <code>NamedValue</code> 对象的名称
+@param any  将插入 <code>NamedValue</code> 对象的 <code>Any</code> 值
+@param flags  <code>NamedValue</code> 的参数模式标志：<code>ARG_IN.value</code>、<code>ARG_OUT.value</code> 或 <code>ARG_INOUT.value</code> 之一。
+
+@return	新创建的 <code>NamedValue</code> 对象
+@see NamedValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.ExceptionList org.omg.CORBA.ORB.create_exception_list()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空的 <code>ExceptionList</code> 对象。
+
+@return	新创建的 <code>ExceptionList</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.ContextList org.omg.CORBA.ORB.create_context_list()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空的 <code>ContextList</code> 对象。
+
+@return	新创建的 <code>ContextList</code> 对象
+@see ContextList
+@see Context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Context org.omg.CORBA.ORB.get_default_context()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取默认 <code>Context</code> 对象。
+
+@return 默认 <code>Context</code> 对象
+@see Context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Environment org.omg.CORBA.ORB.create_environment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Environment</code> 对象。
+
+@return	新创建的 <code>Environment</code> 对象
+@see Environment
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.portable.OutputStream org.omg.CORBA.ORB.create_output_stream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <code>org.omg.CORBA.portable.OutputStream</code>，在执行方法调用期间，可在该输出流中对 IDL 方法参数进行编组。
+@return		新创建的 <code>org.omg.CORBA.portable.OutputStream</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.ORB.send_multiple_requests_oneway(org.omg.CORBA.Request[] req)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+异步发送多个动态 (DII) 请求，并且不期望任何响应。注意，不保证单向调用可到达服务器。
+
+
+@param req		请求对象数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.ORB.send_multiple_requests_deferred(org.omg.CORBA.Request[] req)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+异步发送多个动态 (DII) 请求。
+
+
+@param req		<code>Request</code> 对象数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean org.omg.CORBA.ORB.poll_next_response()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+找出是否已经响应了延迟的（异步）调用。
+@return 如果获得响应，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Request org.omg.CORBA.ORB.get_next_response() throws org.omg.CORBA.WrongTransaction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取已接收到响应的下一个 <code>Request</code> 实例。
+
+@return		已获得响应的下一个 <code>Request</code> 对象
+@exception WrongTransaction 如果在不同于发送原始请求的事务处理域中调用 <code>get_next_response</code> 方法。有关详细信息，请参阅 OMG 事务服务 (Transaction Service) 规范。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.get_primitive_tc(TCKind tcKind)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索表示给定基本 IDL 类型的 <code>TypeCode</code> 对象。
+
+@param tcKind	对应于所需基本类型的 <code>TCKind</code> 实例
+@return		所请求的 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_struct_tc(String id, String name, org.omg.CORBA.StructMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>struct</code> 的 <code>TypeCode</code> 对象。使用给定 id、名称和成员初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	<code>struct</code> 的存储库 id
+@param name	<code>struct</code> 的名称
+@param members	描述 <code>struct</code> 成员的数组
+@return		描述 IDL <code>struct</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_union_tc(String id, String name, TypeCode discriminator_type, org.omg.CORBA.UnionMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>union</code> 的 <code>TypeCode</code> 对象。使用给定 id、名称、鉴别符类型和成员初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	<code>union</code> 的存储库 id
+@param name	<code>union</code> 的名称
+@param discriminator_type	<code>union</code> 鉴别符的类型
+@param members	描述 <code>union</code> 成员的数组
+@return		描述 IDL <code>union</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_enum_tc(String id, String name, java.lang.String[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>enum</code> 的 <code>TypeCode</code> 对象。使用给定 id、名称和成员初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	<code>enum</code> 的存储库 id
+@param name	<code>enum</code> 的名称
+@param members	描述 <code>enum</code> 成员的数组
+@return		描述 IDL <code>enum</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_alias_tc(String id, String name, TypeCode original_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>alias</code> 的 <code>TypeCode</code> 对象 (<code>typedef</code>)。使用给定 id、名称和原始类型初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	别名的存储库 id
+@param name	别名的名称
+@param original_type 描述原始类型（该值是其别名）的 <code>TypeCode</code> 对象
+@return		描述 IDL <code>alias</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_exception_tc(String id, String name, org.omg.CORBA.StructMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>exception</code> 的 <code>TypeCode</code> 对象。使用给定 id、名称和成员初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	<code>exception</code> 的存储库 id
+@param name	<code>exception</code> 的名称
+@param members	描述 <code>exception</code> 成员的数组
+@return		描述 IDL <code>exception</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_interface_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>interface</code> 的 <code>TypeCode</code> 对象。使用给定 id 和名称初始化该 <code>TypeCode</code> 对象。
+
+
+@param id	接口的存储库 id
+@param name	接口的名称
+@return		描述 IDL <code>interface</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_string_tc(int bound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示有界 IDL <code>string</code> 的 <code>TypeCode</code> 对象。使用给定 bound 初始化该 <code>TypeCode</code> 对象，bound 表示字符串的最大长度。0 指示此类型代码描述的字符串是无界的。
+
+@param bound	<code>string</code> 的范围，不能为负
+@return		描述有界 IDL <code>string</code> 的新建 <code>TypeCode</code> 对象
+@exception BAD_PARAM 如果 bound 为负值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_wstring_tc(int bound)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示有界 IDL <code>wstring</code> (wide string) 的 <code>TypeCode</code> 对象。使用给定 bound 初始化该 <code>TypeCode</code> 对象，bound 表示宽字符串的最大长度。0 指示此类型代码描述的字符串是无界的。
+
+@param bound	<code>wstring</code> 的范围，不能为负
+@return		描述有界 IDL <code>wstring</code> 的新建 <code>TypeCode</code> 对象
+@exception BAD_PARAM 如果 bound 为负值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_sequence_tc(int bound, TypeCode element_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>sequence</code> 的 <code>TypeCode</code> 对象。使用给定 bound 和元素类型初始化该 <code>TypeCode</code> 对象。
+
+@param bound	<code>sequence</code> 的范围，如果无界，则该值为 0
+@param element_type 描述 <code>sequence</code> 中所包含元素的 <code>TypeCode</code> 对象
+@return		描述 IDL <code>sequence</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_recursive_sequence_tc(int bound, int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示递归 IDL <code>sequence</code> 的 <code>TypeCode</code> 对象。
+ <P>
+对于以下代码片段中的 IDL <code>struct</code> Node，用来创建其序列的 offset 参数将是 1：
+ <PRE>
+    Struct Node {
+        long value;
+        Sequence &lt;Node&gt; subnodes;
+    };
+ </PRE>
+
+@param bound	序列范围，如果无界，则该值为 0
+@param offset	描述此序列元素的封闭 <code>TypeCode</code> 对象的索引
+@return		描述递归序列的 <code>TypeCode</code> 对象
+@deprecated 使用 create_recursive_tc 和 create_sequence_tc 的组合替代它
+@see #create_recursive_tc(String) create_recursive_tc
+@see #create_sequence_tc(int, TypeCode) create_sequence_tc
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_array_tc(int length, TypeCode element_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 IDL <code>array</code> 的 <code>TypeCode</code> 对象。使用给定长度和元素类型初始化该 <code>TypeCode</code> 对象。
+
+@param length	<code>array</code> 的长度
+@param element_type  描述 <code>array</code> 中所包含元素的类型的 <code>TypeCode</code> 对象
+@return		描述 IDL <code>array</code> 的新建 <code>TypeCode</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_native_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 IDL native 类型创建一个 <code>TypeCode</code> 对象。
+
+@param id native 类型的逻辑 id。
+@param name native 类型的名称。
+@return 所请求的 TypeCode。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_abstract_interface_tc(String id, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 IDL 抽象接口创建一个 <code>TypeCode</code> 对象。
+
+@param id        抽象接口类型的逻辑 id。
+@param   name 抽象接口类型的名称。
+@return 所请求的 TypeCode。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_fixed_tc(short digits, short scale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 IDL fixed 类型创建一个 <code>TypeCode</code> 对象。
+
+@param digits    指定数字中总的小数位数，必须在从 1 到 31 的闭区间内。
+@param scale     指定小数点的位置。
+@return 所请求的 TypeCode。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_value_tc(String id, String name, short type_modifier, TypeCode concrete_base, org.omg.CORBA.ValueMember[] members)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 IDL value 类型创建一个 <code>TypeCode</code> 对象。concrete_base 参数是用于 valuetype（将为其创建 TypeCode）直接具体 valuetype 基的 TypeCode。如果 valuetype 没有 concrete 基，则该值为 null。
+
+@param id 值类型的逻辑 id。
+@param name 值类型的名称。
+@param type_modifier 以下值类型修饰符常量之一：VM_NONE、VM_CUSTOM、VM_ABSTRACT 或 VM_TRUNCATABLE
+@param concrete_base      描述具体 valuetype 基的 <code>TypeCode</code> 对象
+@param members            包含 value 类型成员的数组
+@return                   所请求的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_recursive_tc(String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个递归 <code>TypeCode</code> 对象，在创建包含递归的 TypeCodes 期间，该对象充当具体 TypeCode 的占位符。id 参数指定类型（递归 TypeCode 将充当该类型的占位符）的存储库 id。一旦将递归 TypeCode 正确地嵌入到对应于指定存储库 id 的封闭 TypeCode，该 TypeCode 的作用将与普通 TypeCode 一样。如果在将递归 TypeCode 嵌入封闭 TypeCode 之前对该 TypeCode 执行调用操作，则将导致 <code>BAD_TYPECODE</code> 异常。
+ <P>
+例如，以下 IDL 类型声明中包含递归：
+ <PRE>
+    Struct Node {
+        Sequence&lt;Node&gt; subnodes;
+    };
+ </PRE>
+ <P>
+要为 struct Node 创建 TypeCode，应调用 TypeCode 创建操作，如下所示：
+ <PRE>
+ String nodeID = &quot;IDL:Node:1.0&quot;;
+ TypeCode recursiveSeqTC = orb.create_sequence_tc(0, orb.create_recursive_tc(nodeID));
+ StructMember[] members = { new StructMember(&quot;subnodes&quot;, recursiveSeqTC, null) };
+ TypeCode structNodeTC = orb.create_struct_tc(nodeID, &quot;Node&quot;, members);
+ </PRE>
+ <P>
+还要注意的是，以下是一个非法 IDL 类型声明：
+ <PRE>
+    Struct Node {
+        Node next;
+    };
+ </PRE>
+ <P>
+递归类型只能出现在可以为空的序列中。当在 Any 数组中传输 struct 数据时，可以通过这种方式避免编码问题。
+ <P>
+@param id                 所引用类型的逻辑 id
+@return                   所请求的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.CORBA.ORB.create_value_box_tc(String id, String name, TypeCode boxed_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 IDL value box 类型创建一个 <code>TypeCode</code> 对象。
+
+@param id                 值类型的逻辑 id
+@param name               值类型的名称
+@param boxed_type         该类型的 TypeCode
+@return                   所请求的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Any org.omg.CORBA.ORB.create_any()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 IDL <code>Any</code> 对象，初始化后该对象包含一个 <code>kind</code> 字段被设置为 <code>TCKind.tc_null</code> 的 <code>Typecode</code> 对象。
+
+@return		新创建的 <code>Any</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Current org.omg.CORBA.ORB.get_current()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索 <code>Current</code> 对象。<code>Current</code> 接口用于管理由服务使用的特定于线程的信息（比如事务处理和安全）。
+
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+
+@return		新创建的 <code>Current</code> 对象
+@deprecated      使用 <code>resolve_initial_references</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.run()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 ORB 已完成关闭过程前（该过程始于某些线程调用 <code>shutdown</code> 时），此操作将一直阻塞当前线程。此方法可由关闭 ORB 时获取全部通知的多个线程使用。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.shutdown(boolean wait_for_completion)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示关闭 ORB，这将导致关闭所有对象适配器，以准备销毁。<br>如果 <code>wait_for_completion</code> 参数为 true，则在所有 ORB 处理（包括当前执行请求、对象释放和其他对象适配器操作的处理）已完成之前，此操作一直受阻塞。如果应用程序在当前正服务于某个调用的线程中执行该操作，则将抛出 <code>BAD_INV_ORDER</code> 系统异常，并带有 OMG 次要代码 3，因为阻塞将导致死锁。<br>如果 <code>wait_for_completion</code> 参数为 <code>FALSE</code>，则可能在返回时还没完成关闭。<p>
+当 ORB 处于关闭过程中时，ORB 操作照常，继续为传入和传出的请求服务，直到所有请求完成为止。一旦 ORB 已关闭，则只能对该 ORB（或从中获得的任何对象引用）调用对象引用管理操作。应用程序还可以对 ORB 本身调用 <code>destroy</code> 操作。调用任何其他操作将导致抛出 <code>BAD_INV_ORDER</code> 系统异常，并带有 OMG 次要代码 4。<p>
+<code>ORB.run</code> 方法将在调用 <code>shutdown</code> 之后返回。
+
+@param wait_for_completion 如果调用在完成关闭之前应一直受阻塞，则该参数为 <code>true</code>；如果该调用应立即返回，则该参数为 <code>false</code>
+@throws org.omg.CORBA.BAD_INV_ORDER 如果当前线程正服务于某一调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.ORB.work_pending()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 ORB 需要主线程来执行某些操作，则返回 <code>true</code>；如果 ORB 不需要主线程，则返回 <code>false</code>。
+
+@return 如果有些操作正处于挂起状态，则返回 <code>true</code>，这意味着 ORB 需要主线程来执行某些操作；如果没有操作处于挂起状态，从而 ORB 不需要主线程，则返回 <code>false</code>
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.ORB.perform_work()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果该操作由主线程调用，则执行与实现有关的单元操作。否则不执行任何操作。可以组合使用 <code>work_pending</code> 和 <code>perform_work</code> 方法来实现简单的轮询循环，该循环在 ORB 和其他活动中多路传输主线程。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.ORB.get_service_information(short service_type, ServiceInformationHolder service_info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用来获取有关受此 ORB 支持的 CORBA 资源和服务的信息。将为其请求信息的服务类型以 in 参数 <tt>service_type</tt> 的形式传入，该参数值由 CORBA 模块中的常量定义。如果服务信息可用于该类型，则在 out 参数 <tt>service_info</tt> 中返回它，并且该操作将返回 <tt>true</tt> 值。如果对于所请求服务类型没有信息可用，则该操作返回 <tt>false</tt>（即此 ORB 不支持该服务）。
+ <P>
+@param service_type 一个 <code>short</code> 值，指示将为其请求信息的服务类型
+@param service_info 一个 <code>ServiceInformationHolder</code> 对象，该对象将保存此方法生成的 <code>ServiceInformation</code> 对象
+@return 如果服务信息可用于 <tt>service_type</tt>，则返回 <code>true</code>；如果对于所请求的服务类型没有可用信息，则返回 <tt>false</tt>
+@see <a href="package-summary.html#unimpl"> <code>CORBA</code> 包中有关未实现特性的注释</a>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynAny org.omg.CORBA.ORB.create_dyn_any(Any value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>Any</code> 对象创建一个新的 <code>DynAny</code> 对象。
+ <P>
+@param value 据以创建新 <code>DynAny</code> 对象的 <code>Any</code> 对象
+@return 根据给定 <code>Any</code> 对象创建的新 <code>DynAny</code> 对象
+@see <a href="package-summary.html#unimpl"> <code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynAny org.omg.CORBA.ORB.create_basic_dyn_any(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建基本 <code>DynAny</code> 对象。
+ <P>
+@param type 据以创建新 <code>DynAny</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynAny</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynStruct org.omg.CORBA.ORB.create_dyn_struct(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建新的 <code>DynStruct</code> 对象。
+ <P>
+@param type 据以创建新的 <code>DynStruct</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynStruct</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynSequence org.omg.CORBA.ORB.create_dyn_sequence(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建新的 <code>DynSequence</code> 对象。
+ <P>
+@param type 据以创建新 <code>DynSequence</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynSequence</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynArray org.omg.CORBA.ORB.create_dyn_array(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建新的 <code>DynArray</code> 对象。
+ <P>
+@param type 据以创建新 <code>DynArray</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynArray</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynUnion org.omg.CORBA.ORB.create_dyn_union(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建新的 <code>DynUnion</code> 对象。
+ <P>
+@param type 据以创建新 <code>DynUnion</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynUnion</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DynEnum org.omg.CORBA.ORB.create_dyn_enum(TypeCode type) throws org.omg.CORBA.ORBPackage.InconsistentTypeCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 <code>TypeCode</code> 对象创建新的 <code>DynEnum</code> 对象。
+ <P>
+@param type 据以创建新 <code>DynEnum</code> 对象的 <code>TypeCode</code> 对象
+@return 根据给定 <code>TypeCode</code> 对象创建新的 <code>DynEnum</code> 对象
+@throws org.omg.CORBA.ORBPackage.InconsistentTypeCode 如果给定 <code>TypeCode</code> 对象与操作不一致。
+@see <a href="package-summary.html#unimpl"><code>CORBA</code> 包中有关未实现特性的注释</a>
+@deprecated 使用新的 <a href="../DynamicAny/DynAnyFactory.html">DynAnyFactory</a> API 代替
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Policy org.omg.CORBA.ORB.create_policy(int type, Any val) throws org.omg.CORBA.PolicyError
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+可以调用此方法创建特定类型的新策略对象实例，并且其类型具有指定的初始状态。如果 <tt>create_policy</tt> 因为不能解释所请求的类型和策略内容而无法实例化新的 Policy 对象，则它将引发带有恰当原因的 <tt>PolicyError</tt> 异常。
+@param type 要创建的策略对象的 <tt>PolicyType</tt>
+@param val 将用来设置被创建的 <tt>Policy</tt> 对象初始状态的值
+@return 对新建 <tt>Policy</tt> 对象的引用，该对象的类型由 <tt>type</tt> 参数指定，并被初始化为 <tt>val</tt> 参数指定的状态
+@throws <tt>org.omg.CORBA.PolicyError</tt> 当所请求的策略不受支持，或所请求的策略初始状态不受支持时。
+
+<!-- END DATA -->

@@ -1,0 +1,260 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.SelectionKey extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示 {@link SelectableChannel} 在 {@link Selector} 中的注册的标记。
+
+<p> 每次向选择器注册通道时就会创建一个选择键。通过调用某个键的 {@link #cancel cancel} 方法、关闭其通道，或者通过关闭其选择器来<i>取消</i> 该键之前，它一直保持有效。取消某个键不会立即从其选择器中移除它；相反，会将该键添加到选择器的<a
+ href="Selector.html#ks"><i>已取消键集</i></a>，以便在下一次进行选择操作时移除它。可通过调用某个键的 {@link #isValid isValid} 方法来测试其有效性。
+
+ <a name="opsets">
+
+<p> 选择键包含两个表示为整数值的<i>操作集</i>。操作集的每一位都表示该键的通道所支持的一类可选择操作。
+
+ <ul>
+
+<li><p> <i> interest 集合</i> 确定了下一次调用某个选择器的选择方法时，将测试哪类操作的准备就绪信息。创建该键时使用给定的值初始化 interest 集合；之后可通过 {@link #interestOps(int)} 方法对其进行更改。</p></li>
+
+<li><p> <i> ready 集合</i> 标识了这样一类操作，即某个键的选择器检测到该键的通道已为此类操作准备就绪。创建该键时 ready 集合被初始化为零；可以在之后的选择操作中通过选择器对其进行更新，但不能直接更新它。 </p></li>
+
+ </ul>
+
+<p> 选择键的 ready 集合指示，其通道对某个操作类别已准备就绪，该指示只是一个提示，并不保证线程可执行此类别中的操作而不导致被阻塞。ready 集合很可能一完成选择操作就是准确的。ready 集合可能由于外部事件和在相应通道上调用的 I/O 操作而变得不准确。
+
+<p> 此类定义了所有已知的操作集位 (operation-set bit)，但是给定的通道具体支持哪些位则取决于该通道的类型。{@link SelectableChannel} 的每个子类都定义了 {@link SelectableChannel#validOps() validOps()} 方法，该方法返回的集合恰好标识该通道支持的操作。试图设置或测试某个键的通道所不支持的操作集位将导致抛出相应的运行时异常。
+
+<p> 通常必须将某个特定于应用程序的数据与某个选择键相关联，例如表示高级协议状态的对象和为了实现该协议而处理准备就绪通知的对象。因此，选择键支持将单个任意对象<i>附加</i> 到某个键的操作。可通过 {@link #attach attach} 方法附加对象，然后通过 {@link #attachment() attachment} 方法获取该对象。
+
+<p> 多个并发线程可安全地使用选择键。一般情况下，读取和写入 interest 集合的操作将与选择器的某些操作保持同步。具体如何执行该同步与实现有关：在一般实现中，如果正在进行某个选择操作，那么读取或写入 interest 集合可能会无限期地阻塞；在高性能的实现中，可能只会暂时阻塞。无论在哪种情况下，选择操作将始终使用该操作开始时当前的 interest 集合值。  </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.24, 03/12/19
+@since 1.4
+
+@see SelectableChannel
+@see Selector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.nio.channels.SelectionKey.OP_READ
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于读取操作的操作集位。
+
+<p> 假定在<a href="Selector.html#selop">选择操作</a>开始时，选择键的 interest 集合中已包含 <tt>OP_READ</tt>。如果选择器检测到相应的通道已为读取准备就绪、已经到达流的末尾、已经被远程关闭而无法进行进一步的读取，或者有一个挂起的错误，那么它会向该键的 ready 集合中添加 <tt>OP_READ</tt>，并将该键添加到已选择键集中。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.nio.channels.SelectionKey.OP_WRITE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于写入操作的操作集位。  </p>
+
+<p> 假定在<a  href="Selector.html#selop">选择操作</a>开始时，选择键的 interest 集合中已包含 <tt>OP_WRITE</tt>。如果选择器检测到相应的通道已为写入准备就绪、已经被远程关闭而无法进行进一步的写入，或者有一个挂起的错误，那么它会向该键的 ready 集合中添加 <tt>OP_WRITE</tt>，并将该键添加到已选择键集中。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.nio.channels.SelectionKey.OP_CONNECT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于套接字连接操作的操作集位。  </p>
+
+<p> 假定在<a href="Selector.html#selop">选择操作</a>开始时，选择键的 interest 集合中已包含 <tt>OP_CONNECT</tt>。如果选择器检测到相应的套接字通道已为完成其连接序列而准备就绪，或者有一个挂起的错误，那么它会向该键的 ready 集合中添加 <tt>OP_CONNECT</tt>，并将该键添加到已选择键集中。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.nio.channels.SelectionKey.OP_ACCEPT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于套接字接受操作的操作集位。  </p>
+
+<p> 假定在<a  href="Selector.html#selop">选择操作</a>开始时，选择键的 interest 集合中已包含 <tt>OP_ACCEPT</tt>。如果选择器检测到相应的服务器套接字通道已为接受另一个连接而准备就绪，或者有一个挂起的错误，那么它会向该键的 ready 集合中添加 <tt>OP_ACCEPT</tt>，并将该键添加到已选择键集中。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.SelectionKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造此类的一个实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.SelectableChannel java.nio.channels.SelectionKey.channel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为之创建此键的通道。即使已取消该键，此方法仍继续返回通道。  </p>
+
+@return 此键的通道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.Selector java.nio.channels.SelectionKey.selector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为此选择器创建的键。即使已取消该键后，此方法仍将继续返回选择器。  </p>
+
+@return 此键的选择器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.channels.SelectionKey.isValid()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知此键是否有效。
+
+<p> 键在创建时是有效的，并在被取消、其通道已关闭或者其选择器已关闭之前保持有效。  </p>
+
+@return 当且仅当此键有效时才返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.nio.channels.SelectionKey.cancel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求取消此键的通道到其选择器的注册。一旦返回，该键就是无效的，并且将被添加到其选择器的已取消键集中。在进行下一次选择操作时，将从所有选择器的键集中移除该键。
+
+<p> 如果已取消了此键，则调用此方法无效。一旦取消某个键，该键会一直保持无效。 </p>
+
+<p> 可在任意时间调用此方法。此方法与选择器的已取消键集保持同步，因此如果通过涉及同一选择器的取消或选择操作并发调用它，则它可能会暂时受阻塞。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.SelectionKey.interestOps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此键的 interest 集合。
+
+<p> 可保证返回的集合仅包含对于此键的通道而言有效的操作位。
+
+<p> 可在任意时间调用此方法。是否受阻塞，以及阻塞时间长短都是与实现相关的。</p>
+
+@return 此键的 interest 集合
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.SelectionKey java.nio.channels.SelectionKey.interestOps(int ops)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此键的 interest 集合设置为给定值。
+
+<p> 可在任意时间调用此方法。是否受阻塞，以及阻塞时间长短都是与实现相关的。  </p>
+
+@param ops 新的 interest 集合
+
+@return 此选择键
+
+@throws IllegalArgumentException 如果集合中的某个位与此键的通道所支持的某个操作不对应，也就是说，如果 <tt>set &amp; ~(channel().validOps()) != 0</tt>
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.SelectionKey.readyOps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此键的 ready 操作集合。
+
+<p> 可保证返回的集合仅包含对于此键的通道而言有效的操作位。  </p>
+
+@return 此键的 ready 操作集合
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.SelectionKey.isReadable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此键的通道是否已准备好进行读取。
+
+<p> 调用此方法的形式为 <tt>k.isReadable()</tt> ，该调用与以下调用的作用完全相同：
+
+ <blockquote><pre>
+ k.readyOps()&nbsp;&amp;&nbsp;OP_READ&nbsp;!=&nbsp;0</pre></blockquote>
+
+<p> 如果此键的通道不支持读取操作，则此方法始终返回 <tt>false</tt>。  </p>
+
+@return 当且仅当 <tt>readyOps()</tt>&nbsp;<tt>&amp;</tt>&nbsp;<tt>OP_READ</tt> 为非零值时才返回 <tt>true</tt>
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.SelectionKey.isWritable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此键的通道是否已准备好进行写入。
+
+<p> 调用此方法的形式为 <tt>k.isWritable()</tt> ，该调用与以下调用的作用完全相同：
+
+ <blockquote><pre>
+ k.readyOps()&nbsp;&amp;&nbsp;OP_WRITE&nbsp;!=&nbsp;0</pre></blockquote>
+
+<p> 如果此键的通道不支持写入操作，则此方法始终返回 <tt>false</tt>。  </p>
+
+@return 当且仅当 <tt>readyOps()</tt>&nbsp;<tt>&amp;</tt>&nbsp;<tt>OP_WRITE</tt> 为非零值时才返回 <tt>true</tt>
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.SelectionKey.isConnectable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此键的通道是否已完成其套接字连接操作。
+
+<p> 调用此方法的形式为 <tt>k.isConnectable()</tt> ，该调用与以下调用的作用完全相同：
+
+ <blockquote><pre>
+ k.readyOps()&nbsp;&amp;&nbsp;OP_CONNECT&nbsp;!=&nbsp;0</pre></blockquote>
+
+<p> 如果此键的通道不支持套接字连接操作，则此方法始终返回 <tt>false</tt>。  </p>
+
+@return 当且仅当 <tt>readyOps()</tt>&#xA0;<tt>&amp;</tt>&#xA0;<tt>OP_CONNECT</tt> 为非零值时才返回 <tt>true</tt>
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.channels.SelectionKey.isAcceptable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此键的通道是否已准备好接受新的套接字连接。
+
+<p> 调用此方法的形式为 <tt>k.isAcceptable()</tt> 形式，该调用与以下调用的作用完全相同：
+
+ <blockquote><pre>
+ k.readyOps()&nbsp;&amp;&nbsp;OP_ACCEPT&nbsp;!=&nbsp;0</pre></blockquote>
+
+<p> 如果此键的通道不支持套接字接受操作，则此方法始终返回 <tt>false</tt>。  </p>
+
+@return 当且仅当 <tt>readyOps()</tt>&#xA0;<tt>&amp;</tt>&#xA0;<tt>OP_ACCEPT</tt> 为非零值时才返回 <tt>true</tt>
+
+@throws CancelledKeyException 如果已取消此键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.nio.channels.SelectionKey.attach(Object ob)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的对象附加到此键。
+
+<p> 之后可通过 {@link #attachment() attachment} 方法获取已附加的对象。一次只能附加一个对象；调用此方法会导致丢弃所有以前的附加对象。通过附加 <tt>null</tt> 可丢弃当前的附加对象。  </p>
+
+@param ob 要附加的对象，可以为 <tt>null</tt>
+
+@return 先前已附加的对象（如果有），否则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.nio.channels.SelectionKey.attachment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前的附加对象。  </p>
+
+@return 当前已附加到此键的对象，如果没有附加对象，则返回 <tt>null</tt>
+
+<!-- END DATA -->

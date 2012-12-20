@@ -1,0 +1,335 @@
+<!-- BEGIN KEY -->
+public abstract class javax.management.monitor.Monitor extends javax.management.NotificationBroadcasterSupport implements javax.management.monitor.MonitorMBean, javax.management.MBeanRegistration
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Defines the part common to all monitor MBeans.
+ A monitor MBean monitors values of an attribute common to a set of observed
+ MBeans. The observed attribute is monitored at intervals specified by the
+ granularity period. A gauge value (derived gauge) is derived from the values
+ of the observed attribute.
+
+ @version     4.55     12/29/05
+ @author      Sun Microsystems, Inc
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.capacityIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The amount by which the capacity of the monitor arrays are
+ automatically incremented when their size becomes greater than
+ their capacity.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.management.monitor.Monitor.elementCount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The number of valid components in the vector of observed objects.
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.management.monitor.Monitor.alreadyNotified
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Monitor errors that have already been notified.
+ @deprecated equivalent to {@link #alreadyNotifieds}[0].
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int[] javax.management.monitor.Monitor.alreadyNotifieds
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Selected monitor errors that have already been notified.</p>
+
+ <p>Each element in this array corresponds to an observed object
+ in the vector.  It contains a bit mask of the flags {@link
+ #OBSERVED_OBJECT_ERROR_NOTIFIED} etc, indicating whether the
+ corresponding notification has already been sent for the MBean
+ being monitored.</p>
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.management.MBeanServer javax.management.monitor.Monitor.server
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reference to the MBean server.  This reference is null when the
+ monitor MBean is not registered in an MBean server.  This
+ reference is initialized before the monitor MBean is registered
+ in the MBean server.
+ @see #preRegister(MBeanServer server, ObjectName name)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.RESET_FLAGS_ALREADY_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This flag is used to reset the {@link #alreadyNotifieds
+ alreadyNotifieds} monitor attribute.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_OBJECT_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flag denoting that a notification has occurred after changing
+ the observed object.  This flag is used to check that the new
+ observed object is registered in the MBean server at the time
+ of the first notification.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_ATTRIBUTE_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flag denoting that a notification has occurred after changing
+ the observed attribute.  This flag is used to check that the
+ new observed attribute belongs to the observed object at the
+ time of the first notification.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_ATTRIBUTE_TYPE_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flag denoting that a notification has occurred after changing
+ the observed object or the observed attribute.  This flag is
+ used to check that the observed attribute type is correct
+ (depending on the monitor in use) at the time of the first
+ notification.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.RUNTIME_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flag denoting that a notification has occurred after changing
+ the observed object or the observed attribute.  This flag is
+ used to notify any exception (except the cases described above)
+ when trying to get the value of the observed attribute at the
+ time of the first notification.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.management.monitor.Monitor.dbgTag
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This field is retained for compatibility but should not be referenced.
+
+ @deprecated No replacement.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.monitor.Monitor.preRegister(MBeanServer server, ObjectName name) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the monitor MBean to perform any operations it needs
+ before being registered in the MBean server.
+ <P>
+ Initializes the reference to the MBean server.
+
+ @param server The MBean server in which the monitor MBean will
+ be registered.
+ @param name The object name of the monitor MBean.
+
+ @return The name of the monitor MBean registered.
+
+ @exception Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.postRegister(Boolean registrationDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the monitor MBean to perform any operations needed after
+ having been registered in the MBean server or after the
+ registration has failed.
+ <P>
+ Not used in this context.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.preDeregister() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the monitor MBean to perform any operations it needs
+ before being unregistered by the MBean server.
+ <P>
+ Stops the monitor.
+
+ @exception Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.postDeregister()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows the monitor MBean to perform any operations needed after
+ having been unregistered by the MBean server.
+ <P>
+ Not used in this context.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.management.monitor.Monitor.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Starts the monitor.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.management.monitor.Monitor.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Stops the monitor.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.ObjectName javax.management.monitor.Monitor.getObservedObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the object name of the first object in the set of observed
+ MBeans, or <code>null</code> if there is no such object.
+
+ @return The object being observed.
+
+ @see #setObservedObject(ObjectName)
+
+ @deprecated As of JMX 1.2, replaced by {@link #getObservedObjects}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.setObservedObject(ObjectName object) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes all objects from the set of observed objects, and then adds the
+ specified object.
+
+ @param object The object to observe.
+ @exception IllegalArgumentException The specified
+ object is null.
+
+ @see #getObservedObject()
+
+ @deprecated As of JMX 1.2, replaced by {@link #addObservedObject}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.addObservedObject(ObjectName object) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Adds the specified object in the set of observed MBeans, if this object
+ is not already present.
+
+ @param object The object to observe.
+ @exception IllegalArgumentException The specified object is null.
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.removeObservedObject(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes the specified object from the set of observed MBeans.
+
+ @param object The object to remove.
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.Monitor.containsObservedObject(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether the specified object is in the set of observed MBeans.
+
+ @param object The object to check.
+ @return <CODE>true</CODE> if the specified object is present,
+ <CODE>false</CODE> otherwise.
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.ObjectName[] javax.management.monitor.Monitor.getObservedObjects()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an array containing the objects being observed.
+
+ @return The objects being observed.
+
+ @since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String javax.management.monitor.Monitor.getObservedAttribute()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the attribute being observed.
+ <BR>The observed attribute is not initialized by default (set to null).
+
+ @return The attribute being observed.
+
+ @see #setObservedAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.setObservedAttribute(String attribute) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the attribute to observe.
+ <BR>The observed attribute is not initialized by default (set to null).
+
+ @param attribute The attribute to observe.
+ @exception IllegalArgumentException The specified
+ attribute is null.
+
+ @see #getObservedAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.Monitor.getGranularityPeriod()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the granularity period (in milliseconds).
+ <BR>The default value of the granularity period is 10 seconds.
+
+ @return The granularity period value.
+
+ @see #setGranularityPeriod
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.setGranularityPeriod(long period) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the granularity period (in milliseconds).
+ <BR>The default value of the granularity period is 10 seconds.
+
+ @param period The granularity period value.
+ @exception IllegalArgumentException The granularity
+ period is less than or equal to zero.
+
+ @see #getGranularityPeriod
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.Monitor.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether the monitor MBean is active.  A monitor MBean is
+ marked active when the {@link #start start} method is called.
+ It becomes inactive when the {@link #stop stop} method is
+ called.
+
+ @return <CODE>true</CODE> if the monitor MBean is active,
+ <CODE>false</CODE> otherwise.
+
+<!-- END DATA -->

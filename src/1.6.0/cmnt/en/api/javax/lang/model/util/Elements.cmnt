@@ -1,0 +1,229 @@
+<!-- BEGIN KEY -->
+public interface javax.lang.model.util.Elements
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Utility methods for operating on program elements.
+
+ <p><b>Compatibility Note:</b> Methods may be added to this interface
+ in future releases of the platform.
+
+ @author Joseph D. Darcy
+ @author Scott Seligman
+ @author Peter von der Ah&eacute;
+ @version 1.11 06/08/16
+ @see javax.annotation.processing.ProcessingEnvironment#getElementUtils
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.PackageElement javax.lang.model.util.Elements.getPackageElement(CharSequence name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a package given its fully qualified name.
+
+ @param name  fully qualified package name, or "" for an unnamed package
+ @return the named package, or {@code null} if it cannot be found
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.TypeElement javax.lang.model.util.Elements.getTypeElement(CharSequence name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a type element given its canonical name.
+
+ @param name  the canonical name
+ @return the named type element, or {@code null} if it cannot be found
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<? extends javax.lang.model.element.ExecutableElement, ? extends javax.lang.model.element.AnnotationValue> javax.lang.model.util.Elements.getElementValuesWithDefaults(AnnotationMirror a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the values of an annotation's elements, including defaults.
+ 
+ @see AnnotationMirror#getElementValues()
+ @param a  annotation to examine
+ @return the values of the annotation's elements, including defaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.lang.model.util.Elements.getDocComment(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the text of the documentation (&quot;Javadoc&quot;)
+ comment of an element.
+
+ @param e  the element being examined
+ @return the documentation comment of the element, or {@code null}
+		if there is none
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.isDeprecated(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns {@code true} if the element is deprecated, {@code false} otherwise.
+
+ @param e  the element being examined
+ @return {@code true} if the element is deprecated, {@code false} otherwise
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Name javax.lang.model.util.Elements.getBinaryName(TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <i>binary name</i> of a type element.
+
+ @param type  the type element being examined
+ @return the binary name
+
+ @see TypeElement#getQualifiedName
+ @jls3 13.1 The Form of a Binary
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.PackageElement javax.lang.model.util.Elements.getPackageOf(Element type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the package of an element.  The package of a package is
+ itself.
+
+ @param type the element being examined
+ @return the package of an element
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.Element> javax.lang.model.util.Elements.getAllMembers(TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns all members of a type element, whether inherited or
+ declared directly.  For a class the result also includes its
+ constructors, but not local or anonymous classes.
+
+ <p>Note that elements of certain kinds can be isolated using
+ methods in {@link ElementFilter}.
+
+ @param type  the type being examined
+ @return all members of the type
+ @see Element#getEnclosedElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.AnnotationMirror> javax.lang.model.util.Elements.getAllAnnotationMirrors(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns all annotations of an element, whether
+ inherited or directly present.
+
+ @param e  the element being examined
+ @return all annotations of the element
+ @see Element#getAnnotationMirrors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.hides(Element hider, Element hidden)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether one type, method, or field hides another.
+
+ @param hider   the first element
+ @param hidden  the second element
+ @return {@code true} if and only if the first element hides
+		the second
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.overrides(ExecutableElement overrider, ExecutableElement overridden, TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether one method, as a member of a given type,
+ overrides another method.
+ When a non-abstract method overrides an abstract one, the
+ former is also said to <i>implement</i> the latter.
+
+ <p> In the simplest and most typical usage, the value of the
+ {@code type} parameter will simply be the class or interface
+ directly enclosing {@code overrider} (the possibly-overriding
+ method).  For example, suppose {@code m1} represents the method
+ {@code String.hashCode} and {@code m2} represents {@code
+ Object.hashCode}.  We can then ask whether {@code m1} overrides
+ {@code m2} within the class {@code String} (it does):
+
+ <blockquote>
+ {@code assert elements.overrides(m1, m2,
+          elements.getTypeElement("java.lang.String")); }
+ </blockquote>
+ 
+ A more interesting case can be illustrated by the following example
+ in which a method in type {@code A} does not override a
+ like-named method in type {@code B}:
+
+ <blockquote>
+ {@code class A { public void m() {} } }<br>
+ {@code interface B { void m(); } }<br>
+ ...<br>
+ {@code m1 = ...;  // A.m }<br>
+ {@code m2 = ...;  // B.m }<br>
+ {@code assert ! elements.overrides(m1, m2,
+          elements.getTypeElement("A")); }
+ </blockquote>
+ 
+ When viewed as a member of a third type {@code C}, however, 
+ the method in {@code A} does override the one in {@code B}:
+
+ <blockquote>
+ {@code class C extends A implements B {} }<br>
+ ...<br>
+ {@code assert elements.overrides(m1, m2,
+          elements.getTypeElement("C")); }
+ </blockquote>
+
+ @param overrider  the first method, possible overrider
+ @param overridden  the second method, possibly being overridden
+ @param type   the type of which the first method is a member
+ @return {@code true} if and only if the first method overrides
+		the second
+ @jls3 8.4.8 Inheritance, Overriding, and Hiding
+ @jls3 9.4.1 Inheritance and Overriding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.lang.model.util.Elements.getConstantExpression(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the text of a <i>constant expression</i> representing a
+ primitive value or a string.
+ The text returned is in a form suitable for representing the value
+ in source code.
+
+ @param value  a primitive value or string
+ @return the text of a constant expression
+ @throws IllegalArgumentException if the argument is not a primitive
+		value or string
+
+ @see VariableElement#getConstantValue()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.lang.model.util.Elements.printElements(Writer w, javax.lang.model.element.Element[] elements)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Prints a representation of the elements to the given writer in
+ the specified order.  The main purpose of this method is for
+ diagnostics.  The exact format of the output is <em>not</em>
+ specified and is subject to change.
+
+ @param w the writer to print the output to
+ @param elements the elements to print
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Name javax.lang.model.util.Elements.getName(CharSequence cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Return a name with the same sequence of characters as the
+ argument.
+
+ @param cs the character sequence to return as a name
+
+<!-- END DATA -->

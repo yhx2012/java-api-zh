@@ -1,0 +1,150 @@
+<!-- BEGIN KEY -->
+public interface java.rmi.server.RemoteRef extends java.io.Externalizable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RemoteRef</code> 表示远程对象的句柄。<code>RemoteStub</code> 使用远程引用来执行对远程对象的远程方法调用。
+
+@version 1.23, 05/18/04
+@author  Ann Wollrath
+@since   JDK1.1
+@see     java.rmi.server.RemoteStub
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long java.rmi.server.RemoteRef.serialVersionUID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示与类的 JDK 1.1.x 版本的兼容性。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.rmi.server.RemoteRef.packagePrefix
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化服务器包的前缀：假定服务器 ref 类（如 UnicastRef、UnicastServerRef）的实现位于由前缀定义的包中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.rmi.server.RemoteRef.invoke(Remote obj, Method method, java.lang.Object[] params, long opnum) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用某个方法。将方法调用委托给引用的这一形式允许该引用认真设置到远程主机的连接，编组方法和参数的某一表示形式，然后将该方法调用传送到远程主机。此方法既会返回对位于远程主机上远程对象的方法调用的结果，也会在调用失败时抛出 RemoteException，或者在远程调用抛出异常时抛出应用程序级的异常。
+    
+@param obj 包含 RemoteRef（如该对象的 RemoteStub）的对象。
+@param method  要调用的方法
+@param params  参数列表
+@param opnum  可以用于表示该方法的哈希码
+@return  远程方法调用的结果
+@exception Exception 如果在远程方法调用过程中发生任何异常
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.RemoteCall java.rmi.server.RemoteRef.newCall(RemoteObject obj, java.rmi.server.Operation[] op, int opnum, long hash) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个用于对此对象进行新的远程方法调用的适当调用对象。传递操作数组和索引允许 stub 生成器来分配操作索引，并解释它们。远程引用可能需要该操作以便在调用中编码。
+
+@since JDK1.1
+@deprecated  1.2 样式 stub 不再使用此方法。stub 使用远程引用上的单个方法 <code>invoke(Remote, Method, Object[], int)</code> 来执行参数编组、远程方法执行和返回值的解组，而不是使用该 stub 的远程引用（<code>newCall</code>、<code>invoke</code> 和 <code>done</code>）上的方法调用序列。
+
+@param obj 要通过它进行调用的远程 stub
+@param op  stub 操作的数组
+@param opnum 操作数
+@param hash  stub/skeleton 接口哈希码
+@return 表示远程调用的调用对象
+@throws RemoteException 如果初始化新的远程调用失败
+@see #invoke(Remote,java.lang.reflect.Method,Object[],long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.server.RemoteRef.invoke(RemoteCall call) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行远程调用。调用将激活应该通过的但未被 stub 捕获的所有&ldquo;用户&rdquo;异常。如果在远程调用过程中激活任何异常，则调用在激活&ldquo;用户&rdquo;或远程异常之前应小心清除连接。
+
+@since JDK1.1
+@deprecated  1.2 样式 stub 不再使用此方法。stub 使用远程引用上的单个方法 <code>invoke(Remote, Method, Object[], int)</code> 来执行参数编组、远程方法执行和返回值解组，而不是使用对远程引用（<code>newCall</code>、<code>invoke</code> 和 <code>done</code>）的方法调用序列。
+
+@param call 表示远程调用的对象
+@throws Exception 如果在远程方法调用的过程中发生任何异常
+@see #invoke(Remote,java.lang.reflect.Method,Object[],long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.server.RemoteRef.done(RemoteCall call) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许远程引用以清除（或重新使用）连接。只有该调用成功（无例外）返回到 stub 时才调用 Done。
+
+@since JDK1.1
+@deprecated  1.2 样式 stub 不再使用此方法。stub 使用远程引用上的单个方法 <code>invoke(Remote, Method, Object[], int)</code> 来执行参数编组、远程方法执行和返回值解组，而不是使用对远程引用（<code>newCall</code>、<code>invoke</code> 和 <code>done</code>）的方法调用序列。
+
+@param call 表示远程调用的对象
+@throws RemoteException 如果在调用 cleanup 过程中发生远程错误
+@see #invoke(Remote,java.lang.reflect.Method,Object[],long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.server.RemoteRef.getRefClass(ObjectOutput out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要在流 'out' 上序列化的 ref 类型的类名称。
+@param out 要在其中序列化引用的输出流
+@return 引用类型的类名称（不附带包条件）
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.server.RemoteRef.remoteHashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回远程对象的哈希码。引用同一远程对象的两个远程对象 stub 将有相同的哈希码（以便作为哈希表中的键支持远程对象）。
+
+@return 远程对象的哈希码
+@see	java.util.Hashtable
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.server.RemoteRef.remoteEquals(RemoteRef obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个远程对象是否相等。返回指示此远程对象是否与指定对象等效的 boolean。在哈希表中存储远程对象时将使用此方法。
+@param	obj	要与之比较的对象
+@return	如果这些对象相等，则返回 true；否则，返回 false。
+@see		java.util.Hashtable
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.server.RemoteRef.remoteToString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此远程对象的引用的 String。
+@return 表示远程对象引用的字符串
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Externalizable.readExternal(ObjectInput in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对象实现 readExternal 方法来恢复其内容，它通过调用 DataInput 的方法来恢复其基础类型，调用 readObject 来恢复对象、字符串和数组。readExternal 方法必须按照与 writeExternal 方法写入值时使用的相同顺序和类型来读取这些值。
+
+@param in 为了恢复对象而从中读取数据的流
+@exception IOException 如果发生 I/O 错误
+@exception ClassNotFoundException 如果无法找到需要恢复的某个对象的类。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Externalizable.writeExternal(ObjectOutput out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该对象可实现 writeExternal 方法来保存其内容，它可以通过调用 DataOutput 的方法来保存其基本值，或调用 ObjectOutput 的 writeObject 方法来保存对象、字符串和数组。
+
+@serialData 重写方法时应使用该标记来描述此 Externalizable 对象的数据布局。列出元素类型的顺序，如有可能，将元素与某一公共/受保护字段和/或此 Externalizable 类的方法相关联。
+
+@param out 要写入对象的流
+@exception IOException 包含可能发生的所有 I/O 异常
+
+<!-- END DATA -->

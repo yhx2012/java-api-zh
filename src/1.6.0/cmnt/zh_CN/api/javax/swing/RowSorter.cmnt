@@ -1,0 +1,227 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.RowSorter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>RowSorter</code> 提供排序和过滤的基础。创建和安装了 <code>RowSorter</code> 之后，您几乎不需要直接与它交互。有关 <code>JTable</code> 的 <code>RowSorter</code> 具体实现，请参阅 {@link javax.swing.table.TableRowSorter TableRowSorter}。
+ <p>
+<code>RowSorter</code> 的主要功能在于，提供两个坐标系统之间的映射关系：视图的映射关系（例如 <code>JTable</code>）和底层数据源（通常是模型）的映射关系。
+ <p>
+视图调用 <code>RowSorter</code> 的以下方法：
+ <ul>
+<li><code>toggleSortOrder</code> &mdash; 当发生了触发排序操作的恰当用户行为时，视图调用此方法。例如，用户在表中单击列标题时。
+<li>其中一个模型更改方法 &mdash; 当底层模型发生了更改时，视图调用一个模型更改方法。由于在如何交付事件方面可能存在顺序依赖关系，因此在调用这些方法之一之前 <code>RowSorter</code> 不应该更新其映射关系。
+ </ul>
+因为视图大量使用了 <code>convertRowIndexToModel</code>、<code>convertRowIndexToView</code> 和 <code>getViewRowCount</code> 方法，所以这些方法需要很快的运行快速。
+ <p>
+<code>RowSorter</code> 通过 <code>RowSorterListener</code> 提供更改的通知。它发送两种类型的通知：
+ <ul>
+<li><code>RowSorterEvent.Type.SORT_ORDER_CHANGED</code> &mdash; 通知侦听器排序顺序发生了更改。此通知通常后跟一个通知，表示排序发生了更改。
+<li><code>RowSorterEvent.Type.SORTED</code> &mdash; 通知侦听器由 <code>RowSorter</code> 维护的映射关系已经以某种方式发生了更改。
+ </ul>
+<code>RowSorter</code> 实现与底层模型通常没有一对一的映射关系，但它们也可以这样做。例如，如果数据库进行排序操作，则可以通过数据库调用 <code>toggleSortOrder</code> （在后台线程上），并重写映射方法以返回传入的参数。
+ <p>
+<code>RowSorter</code> 的具体实现需要引用一个模型，比如 <code>TableModel</code> 或 <code>ListModel</code>。<code>JTable</code> 和 <code>JList</code> 之类的视图类也将引用该模型。要避免排序依赖关系，<code>RowSorter</code> 实现不应该在模型上安装侦听器。而是在模型更改时，视图类调用 <code>RowSorter</code>。例如，如果在 <code>TableModel</code> 中更新了一行，则 <code>JTable</code> 调用 <code>rowsUpdated</code>。模型更改时，视图可以调用任意以下方法：<code>modelStructureChanged</code>、<code>allRowsChanged</code>、<code>rowsInserted</code>、<code>rowsDeleted</code> 和 <code>rowsUpdated</code>。
+
+@param <M> 底层模型的类型
+@version 1.7 06/23/06
+@see javax.swing.table.TableRowSorter
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.RowSorter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个<code>RowSorter</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract M javax.swing.RowSorter.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回底层模型。
+
+@return 底层模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.toggleSortOrder(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+颠倒指定列的排序顺序。调用此方法时，由子类提供具体行为。通常，如果指定列已经是主要排序列，则此方法将升序变为降序（或将降序变为升序）；否则，使指定列成为主要排序列，并使用升序排序顺序。如果指定列不可排序，则此方法没有任何效果。
+ <p>
+如果此方法导致更改排序顺序和排序操作，则它将发送适当的 <code>RowSorterListener</code> 通知。
+
+@param column 要切换排序顺序的列，就底层模型而言
+@throws IndexOutOfBoundsException 如果列超出底层模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.RowSorter.convertRowIndexToModel(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回基于底层模型的 <code>index</code> 的位置。也就是说，对于视图坐标中的行 <code>index</code>，此方法返回基于底层模型的行索引。
+
+@param index 基于底层视图的行索引
+@return 基于视图的行索引
+@throws IndexOutOfBoundsException 如果 <code>index</code> 超出视图的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.RowSorter.convertRowIndexToView(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回基于视图 <code>index</code> 的位置。也就是说，对于底层模型坐标中的行 <code>index</code>，此方法返回基于视图的行索引。
+
+@param index 基于底层模型的行索引
+@return 返回基于视图的行索引；如果索引已经被过滤出视图，则返回 -1
+@throws IndexOutOfBoundsException 如果 <code>index</code> 超出模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.setSortKeys(java.util.List<? extends javax.swing.RowSorter.SortKey> keys)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前排序键。
+
+@param keys 新的 <code>SortKeys</code>；<code>null</code> 是指定一个空列表的简写，表示视图应该是未排序的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.List<? extends javax.swing.RowSorter.SortKey> javax.swing.RowSorter.getSortKeys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前排序键。此方法必须返回一个{@code 非 null List}，可以返回一个无法修改的 {@code List}。如果需要更改排序键，可创建所返回 {@code List} 的一个副本，更改该副本并使用新列表调用 {@code setSortKeys}。
+
+@return 当前排序顺序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.RowSorter.getViewRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视图中的行数。如果该内容已被过滤，则此值可能不同于底层模型的行数。
+
+@return 视图中的行数
+@see #getModelRowCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.swing.RowSorter.getModelRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回底层模型中的行数。
+
+@return 底层模型中的行数
+@see #getViewRowCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.modelStructureChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当底层模型结构完全更改时，调用此方法。例如，如果 <code>TableModel</code> 中的列数发生了更改，则此方法将被调用。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.allRowsChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当底层模型的内容完全更改时，调用此方法。表的结构相同，只有内容发生了更改。当对于其他方法来说标记此更改的代价太过昂贵时，通常使用此方法。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.rowsInserted(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当行已经插入到指定范围（包括）内的底层模型时，调用此方法。
+ <p>
+参数指定有效范围的索引。第一个参数是基于更改之前的模型的，必须小于等于更改之前的模型的大小。第二个参数是基于更改之后的模型的，必须小于更改之后的模型的大小。例如，如果有一个 5 行的模型并在该模型的尾部添加 3 个项，则其索引为 5、7。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+@param firstRow 第一行
+@param endRow 最后一行
+@throws IndexOutOfBoundsException 如果任一参数无效，或者 <code>firstRow</code> &gt; <code>endRow</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.rowsDeleted(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当行已经从指定范围（包括）内的底层模型中被删除时，调用此方法。
+ <p>
+参数指定有效范围的索引，其基于更改<b>之前</b>的模型。例如，如果有一个 5 行的模型并从模型的尾部删除 3 个项，则其索引为 2、4。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+@param firstRow 第一行
+@param endRow 最后一行
+@throws IndexOutOfBoundsException 如果任一参数超出模型更改之前的范围，或者 <code>firstRow</code> &gt; <code>endRow</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.rowsUpdated(int firstRow, int endRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当行已经在指定范围（包括）内的底层模型中被更改时，调用此方法。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+@param firstRow 第一行，就底层模型而言
+@param endRow 最后一行，就底层模型而言
+@throws IndexOutOfBoundsException 如果任一参数超出模型更改之前的范围，或者 <code>firstRow</code> &gt; <code>endRow</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.swing.RowSorter.rowsUpdated(int firstRow, int endRow, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当行中的列已经在指定范围内的底层模型中被更新时，调用此方法。
+ <p>
+通常不调用此方法。此方法是公共的，允许视图类调用它。
+
+@param firstRow 第一行，就底层模型而言
+@param endRow 最后一行，就底层模型而言
+@param column 已更改的列，就底层模型而言
+@throws IndexOutOfBoundsException 如果任一参数超出底层模型更改之后的范围，<code>firstRow</code> &gt; <code>endRow</code> 或者 <code>column</code> 超出底层模型的范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.RowSorter.addRowSorterListener(RowSorterListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个 <code>RowSorterListener</code> 来接收有关此 <code>RowSorter</code> 的通知。如果多次添加相同的侦听器，则它将接收多个通知。如果 <code>l</code> 为 <code>null</code>，则不执行任何操作。
+
+@param l <code>RowSorterListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.RowSorter.removeRowSorterListener(RowSorterListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除一个 <code>RowSorterListener</code>。如果 <code>l</code> 为 <code>null</code>，则不执行任何操作。
+
+@param l <code>RowSorterListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.RowSorter.fireSortOrderChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知侦听器排序顺序发生了更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.RowSorter.fireRowSorterChanged(int[] lastRowIndexToModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知侦听器映射关系发生了更改。
+
+@param lastRowIndexToModel 模型索引到排序之前视图索引的映射关系，可以为 <code>null</code>
+
+<!-- END DATA -->

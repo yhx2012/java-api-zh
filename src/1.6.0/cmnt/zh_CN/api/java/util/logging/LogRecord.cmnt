@@ -1,0 +1,355 @@
+<!-- BEGIN KEY -->
+public class java.util.logging.LogRecord extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+LogRecord 对象用于在日志框架和单个日志 Handler 之间传递日志请求。
+ <p>
+将 LogRecord 传递到日志框架中后，它在逻辑上已经属于该框架，客户端应用程序不应再使用或更新它。
+ <p>
+注意，如果客户端应用程序尚未显式指定源方法名和源类名，则 LogRecord 类将在第一次访问它们时通过解析调用堆栈来自动推导（根据对 getSourceMethodName 或 getSourceClassName 的调用）。因此，如果日志 Handler 要将 LogRecord 传递给另一个线程或者通过 RMI 传输它，并且如果它希望后续获取方法名或类名信息，则其应该调用 getSourceClassName 和 getSourceMethodName 的其中之一来强制将值填入。
+ <p>
+<b> 序列化注意事项：</b>
+ <ul>
+<li>LogRecord 类是可序列化的。
+
+<li> 因为参数数组中的对象可能不可序列化，所以在序列化过程中，应该写入参数数组中所有对象的相应 String（使用 Object.toString）。
+
+<li> ResourceBundle 不是作为序列化形式的一部分传输的，但是资源包的名称是，而接收对象的 readObject 方法将尝试查找合适的资源包。
+
+ </ul>
+
+@version 1.23, 01/12/04
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.logging.Level java.util.logging.LogRecord.level
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 日志消息级别
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private long java.util.logging.LogRecord.sequenceNumber
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 序列号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.util.logging.LogRecord.sourceClassName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 发出日志调用的类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.util.logging.LogRecord.sourceMethodName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 发出日志调用的方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.util.logging.LogRecord.message
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 非本地化的原始消息文本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.logging.LogRecord.threadID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 发出日志调用的线程的线程 ID。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private long java.util.logging.LogRecord.millis
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 自从 1970 年以毫秒为单位的事件时间
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Throwable java.util.logging.LogRecord.thrown
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 与日志消息相关联的 Throwable（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.util.logging.LogRecord.loggerName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 源 Logger 的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.util.logging.LogRecord.resourceBundleName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 本地化日志消息的资源包名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.LogRecord(Level level, String msg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定级别和消息值构造 LogRecord。
+ <p>
+使用新的唯一值初始化序列属性。这些序列值在 VM 中以升序进行分配。
+ <p>
+将该 millis 属性初始化为当前时间。
+ <p>
+使用当前线程的唯一 ID 初始化该线程的 ID 属性。
+ <p>
+将所有其他属性初始化为 &quot;null&quot;。 
+ 
+@param level  日志级别值
+@param msg  原始的非本地化日志消息（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogRecord.getLoggerName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取源 Logger 名称
+
+@return 源 logger 名称（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setLoggerName(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置源 Logger 名称。
+
+@param name 源 logger 名称（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.ResourceBundle java.util.logging.LogRecord.getResourceBundle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取本地化资源包。
+ <p>
+这是用于本地化消息字符串（格式化前）的 ResourceBundle。如果消息是不可本地化的或者没有合适的 ResourceBundle 可用，则结果可能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setResourceBundle(ResourceBundle bundle)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置本地化资源包。
+
+@param bundle 本地化包（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogRecord.getResourceBundleName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取本地化资源包名称。
+ <p>
+这是用于本地化消息字符串（格式化前）的 ResourceBundle 的名称。如果消息是不可本地化的，则结果可能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setResourceBundleName(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置本地化资源包名称。
+
+@param name 本地化包名称（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.Level java.util.logging.LogRecord.getLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取日志消息级别，例如 Level.SEVERE。
+@return 日志消息级别
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setLevel(Level level)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置日志消息级别，例如 Level.SEVERE。
+@param level 日志消息级别
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.logging.LogRecord.getSequenceNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取序列号。
+ <p>
+序列号通常是在 LogRecord 构造方法中分配的，该构造方法按升序为每个新 LogRecord 分配一个唯一的序列号。
+@return 序列号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setSequenceNumber(long seq)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置序列号。
+ <p>
+序列号通常是在 LogRecord 构造方法中分配的，所以一般不必使用这一方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogRecord.getSourceClassName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取发出日志请求的类的名称。
+ <p>
+注意，此 sourceClassName 未经过验证，可能是欺骗的。此信息可以作为日志调用的一部分提供，也可以通过日志框架自动推导。在后一种情况下，信息可能只是近似的，实际上可能描述的是堆栈帧上的较早调用。
+ <p>
+如果未能获取任何信息，则返回 null。
+
+@return 源类名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setSourceClassName(String sourceClassName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置（可能）发出日志请求的类的名称。
+
+@param sourceClassName 源类名（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogRecord.getSourceMethodName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取（可能）发出日志请求的方法的名称。
+ <p>
+注意，此 sourceMethodName 未经过验证，可能是欺骗的。此信息可以作为日志调用的一部分提供，也可以通过日志框架自动推导。在后一种情况下，信息可能只是近似的，实际上可能描述的是堆栈帧上的较早调用。
+ <p>
+如果未能获取任何信息，则返回 null。
+
+@return 源方法名
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setSourceMethodName(String sourceMethodName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置（可能）发出日志请求的方法的名称。
+
+@param sourceMethodName 源方法名（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LogRecord.getMessage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取本地化或格式化之前的&ldquo;原始&rdquo;日志消息。
+ <p>
+可能为 null，该值等效于空字符串 &quot;&quot;。
+ <p>
+此消息可能是最终文本或本地化键。
+ <p>
+在格式化期间，如果源 logger 具有本地化 ResourceBundle 并且该 ResourceBundle 具有此消息字符串的条目，则使用本地化值替换该消息字符串。
+
+@return 原始消息字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setMessage(String message)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置本地化或格式化之前的&ldquo;原始&rdquo;日志消息。
+
+@param message 原始消息字符串（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.logging.LogRecord.getParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取日志消息的参数。
+
+@return 日志消息参数。如果没有参数，则可能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setParameters(java.lang.Object[] parameters)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置日志消息的参数。
+
+@param parameters 日志消息参数。（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.logging.LogRecord.getThreadID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取产生消息的线程的标识符。
+ <p>
+它是 Java VM 中的线程标识符，可能映射也可能不映射到任何操作系统 ID 中。
+
+@return 线程 ID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setThreadID(int threadID)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置产生消息的线程的标识符。
+@param threadID 线程 ID
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.logging.LogRecord.getMillis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取自从 1970 年以毫秒为单位的事件时间。
+
+@return 自从 1970 年以 millis 为单位的事件时间
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setMillis(long millis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置事件时间。
+
+@param 自从 1970 年以 millis 为单位的事件时间
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Throwable java.util.logging.LogRecord.getThrown()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与日志记录相关联的所有 throwable。
+ <p>
+如果涉及异常，则此为异常对象。否则为 null。
+
+@return 一个 throwable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LogRecord.setThrown(Throwable thrown)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置与日志事件相关联的 throwable。
+
+@param thrown  throwable（可以为 null）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.logging.LogRecord.writeObject(ObjectOutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serialData 默认字段，后跟两个字节的版本号（前面是主字节，后面是次字节），后跟关于日志记录参数数组的信息。如果不存在参数数组，则写入 -1。如果存在参数数组（可能长度为零），则作为整数写入数组长度，后跟每个参数的 String 值。如果参数为 null，则写入 null String。否则，写入 Object.toString() 的输出。
+
+<!-- END DATA -->
+
+

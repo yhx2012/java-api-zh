@@ -1,0 +1,876 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.KeyboardFocusManager extends java.lang.Object implements java.awt.KeyEventDispatcher, java.awt.KeyEventPostProcessor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+KeyboardFocusManager 负责管理激活状态的聚焦 Window 和当前焦点所有者。焦点所有者的定义是：应用程序中的 Component，通常接收用户生成的所有 KeyEvent。聚焦 Window 指本身就是（或者包含）焦点所有者的 Window。只有 Frame 或 Dialog 才能成为活动 Window。本机的窗口操作系统可能使用特殊装饰（如高亮显示标题栏）来表示活动 Window 或其子窗口。活动 Window 要么是聚焦 Window，要么是作为聚焦 Window 所有者的第一个 Frame 或 Dialog。
+ <p>
+KeyboardFocusManager 既是一个用于查询焦点所有者并启动焦点更改的客户端代码的集中位置，同时又是一个用于所有 FocusEvent、与焦点相关的 WindowEvent 和 KeyEvent 的调度程序。
+ <p>
+有些浏览器将使用不同代码基数的 applet 划分为单独的上下文，并在这些上下文之间建墙分隔。在此方案中，每个上下文都将具有一个 KeyboardFocusManager。其他浏览器将所有 applet 置于同一个上下文中，这意味着仅存在一个用于所有 applet 的全局 KeyboardFocusManager。此行为是依赖于实现的。请参考浏览器文档以获取更多信息。然而，不管可能有多少上下文，每个 ClassLoader 的焦点所有者、聚焦 Window 或活动 Window 只能有一个。
+ <p>
+请参见 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/focus.html">How to Use the Focus Subsystem</a>（<em>The Java Tutorial</em> 的一节）和 <a href="../../java/awt/doc-files/FocusSpec.html">Focus Specification</a> 以获取更多信息。
+
+@author David Mendenhall
+@version 1.72, 07/13/06 
+
+@see Window
+@see Frame
+@see Dialog
+@see java.awt.event.FocusEvent
+@see java.awt.event.WindowEvent
+@see java.awt.event.KeyEvent
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Forward 焦点遍历键的标识符。
+
+@see #setDefaultFocusTraversalKeys
+@see #getDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Backward 焦点遍历键的标识符。
+
+@see #setDefaultFocusTraversalKeys
+@see #getDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Up Cycle 焦点遍历键的标识符。
+
+@see #setDefaultFocusTraversalKeys
+@see #getDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Down Cycle 焦点遍历键的标识符。
+
+@see #setDefaultFocusTraversalKeys
+@see #getDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.KeyboardFocusManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化 KeyboardFocusManager。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.KeyboardFocusManager java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回调用线程上下文的当前 KeyboardFocusManager 实例。
+
+@return 此线程上下文的 KeyboardFocusManager
+@see #setCurrentKeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.awt.KeyboardFocusManager.setCurrentKeyboardFocusManager(KeyboardFocusManager newManager) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置调用线程上下文的当前 KeyboardFocusManager 实例。如果指定了 null，则使用 DefaultKeyboardFocusManager 的新实例替换当前 KeyboardFocusManager。
+ <p>
+如果安装了 SecurityManager，则必须授予调用线程 AWTPermission &quot;replaceKeyboardFocusManager&quot; 才能替换当前 KeyboardFocusManager。如果未授予该权限，则此方法将抛出 SecurityException，而当前的 KeyboardFocusManager 不会改变。
+
+@param newManager 此线程上下文的新 KeyboardFocusManager
+@see #getCurrentKeyboardFocusManager
+@see DefaultKeyboardFocusManager
+@throws SecurityException 如果调用线程不具有替换当前 KeyboardFocusManager 的权限
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.KeyboardFocusManager.getFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果焦点所有者与调用线程位于同一个上下文中，则返回该焦点所有者。焦点所有者的定义是：应用程序中的 Component，通常用户生成的所有 KeyEvent 都被接收。如果为焦点所有者启用了焦点遍历键，则不会传递映射到焦点所有者的焦点遍历键的 KeyEvent。此外，KeyEventDispatcher 在到达焦点所有者之前可能重定向或使用 KeyEvent。
+
+@return 焦点所有者；如果焦点所有者调用的不是线程上下文的成员，则返回 null
+@see #getGlobalFocusOwner
+@see #setGlobalFocusOwner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component java.awt.KeyboardFocusManager.getGlobalFocusOwner() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回焦点所有者，即使调用线程处于焦点所有者之外的上下文中。焦点所有者的定义是：应用程序中的 Component，通常接收用户生成的所有 KeyEvent。如果为焦点所有者启用了焦点遍历键，则不会传递映射到焦点所有者的焦点遍历键的 KeyEvent。此外，KeyEventDispatcher 在到达焦点所有者之前可能重定向或使用 KeyEvent。
+ <p>
+如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager，则此方法将抛出 SecurityException。
+
+@return 焦点所有者
+@see #getFocusOwner
+@see #setGlobalFocusOwner
+@throws SecurityException 如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.setGlobalFocusOwner(Component focusOwner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置焦点所有者。如果该 Component 不可以作为焦点，则取消操作。焦点所有者的定义是：应用程序中的 Component，通常接收用户生成的所有 KeyEvent。如果为焦点所有者启用了焦点遍历键，则不会传递映射到焦点所有者的焦点遍历键的 KeyEvent。此外，KeyEventDispatcher 在到达焦点所有者之前可能重定向或使用 KeyEvent。 
+ <p>
+此方法实际上没有将焦点设置为指定的 Component。它只存储该值，以便以后由 <code>getFocusOwner()</code> 返回它。更改焦点所有者需要使用 <code>Component.requestFocus()</code> 或 <code>Component.requestFocusInWindow()</code>，具体的使用因平台而异。
+
+@param focusOwner 焦点所有者
+@see #getFocusOwner
+@see #getGlobalFocusOwner
+@see Component#requestFocus()
+@see Component#requestFocusInWindow()
+@see Component#isFocusable
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.clearGlobalFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Java 和本机级别清除全局焦点所有者。如果存在焦点所有者，则该 Component 将接收持久 FOCUS_LOST 事件。完成此操作后，在用户选择接收焦点的新 Component 或通过调用 <code>requestFocus()</code> 为 Component 显式分配焦点之前，本机窗口操作系统将放弃所有用户生成的 KeyEvent。此操作不改变聚焦或激活状态的 Window。
+
+@see Component#requestFocus()
+@see java.awt.event.FocusEvent#FOCUS_LOST
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.KeyboardFocusManager.getPermanentFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果持久焦点所有者与调用线程位于同一个上下文中，则返回持久焦点所有者。持久焦点所有者的定义是：应用程序中的最后一个 Component，它可以接收持久 FOCUS_GAINED 事件。如果不发生临时焦点更改，则焦点所有者和持久焦点所有者是等效的。在发生临时焦点更改的情形下，临时焦点更改结束后，持久焦点所有者又会变成焦点所有者。
+
+@return 持久焦点所有者；如果持久焦点所有者调用的不是线程上下文的成员，则返回 null
+@see #getGlobalPermanentFocusOwner
+@see #setGlobalPermanentFocusOwner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component java.awt.KeyboardFocusManager.getGlobalPermanentFocusOwner() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回持久焦点所有者，即使调用线程处于该持久焦点所有者之外的上下文中。持久焦点所有者的定义是：应用程序中的最后一个 Component，它可以接收持久 FOCUS_GAINED 事件。如果不发生临时焦点更改，则焦点所有者和持久焦点所有者是等效的。在发生临时焦点更改的情形下，临时焦点更改结束后，持久焦点所有者又会变成焦点所有者。
+ <p>
+如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager，则此方法将抛出 SecurityException。
+
+@return 持久焦点所有者
+@see #getPermanentFocusOwner
+@see #setGlobalPermanentFocusOwner
+@throws SecurityException 如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.setGlobalPermanentFocusOwner(Component permanentFocusOwner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置持久焦点所有者。如果该 Component 不可以作为焦点，则取消该操作。持久焦点所有者的定义是：应用程序中的最后一个 Component，它可以接收持久 FOCUS_GAINED 事件。如果不发生临时焦点更改，则焦点所有者和持久焦点所有者是等效的。在发生临时焦点更改的情形下，临时焦点更改结束后，持久焦点所有者又会变成焦点所有者。
+ <p>
+此方法实际上没有将焦点设置为指定的 Component。它只存储该值，以便以后由 <code>getPermanentFocusOwner()</code> 返回它。更改焦点所有者需要使用 <code>Component.requestFocus()</code> 或 <code>Component.requestFocusInWindow()</code>，因平台而异。
+
+@param permanentFocusOwner 持久焦点所有者
+@see #getPermanentFocusOwner
+@see #getGlobalPermanentFocusOwner
+@see Component#requestFocus()
+@see Component#requestFocusInWindow()
+@see Component#isFocusable
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window java.awt.KeyboardFocusManager.getFocusedWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果聚焦窗口与调用线程位于同一个上下文中，则返回聚焦窗口。聚焦 Window 指本身就是（或者包含）焦点所有者的 Window。
+
+@return 聚焦 Window；如果聚焦 Window 调用的不是线程上下文的成员，则返回 null
+@see #getGlobalFocusedWindow
+@see #setGlobalFocusedWindow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Window java.awt.KeyboardFocusManager.getGlobalFocusedWindow() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回聚焦 Window，即使调用线程处于聚焦 Window 之外的上下文中。聚焦 Window 指本身就是（或者包含）焦点所有者的 Window。
+ <p>
+如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager，则此方法将抛出 SecurityException。
+
+@return 聚焦 Window
+@see #getFocusedWindow
+@see #setGlobalFocusedWindow
+@throws SecurityException 如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.setGlobalFocusedWindow(Window focusedWindow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置聚焦 Window。聚焦 Window 指本身就是（或者包含）焦点所有者的 Window。如果要聚焦的指定 Window 不是可以作为焦点的 Window，则取消该操作。
+ <p>
+此方法不能实际更改与本机窗口操作系统相关的聚焦 Window。它只存储该值，以便以后由 <code>getFocusedWindow()</code> 返回它。更改聚焦 Window 需要使用 <code>Component.requestFocus()</code> 或 <code>Component.requestFocusInWindow()</code>，因平台而异。
+
+@param focusedWindow 聚焦 Window
+@see #getFocusedWindow
+@see #getGlobalFocusedWindow
+@see Component#requestFocus()
+@see Component#requestFocusInWindow()
+@see Window#isFocusableWindow
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window java.awt.KeyboardFocusManager.getActiveWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果活动 Window 与调用线程位于同一个上下文中，则返回活动 Window。只有 Frame 或 Dialog 才能成为活动 Window。本机的窗口操作系统可能使用特殊装饰（如高亮显示标题栏）来表示活动 Window 或其子窗口。活动 Window 要么是聚焦 Window，要么是作为聚焦 Window 所有者的第一个 Frame 或 Dialog。
+
+@return 活动 Window；如果活动 Window 调用的不是线程上下文的成员，则返回 null
+@see #getGlobalActiveWindow
+@see #setGlobalActiveWindow
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Window java.awt.KeyboardFocusManager.getGlobalActiveWindow() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回活动 Window，即使调用线程处于活动 Window 之外的上下文中。只有 Frame 或 Dialog 才能成为活动 Window。本机的窗口操作系统可能使用特殊装饰（如高亮显示标题栏）来表示活动 Window。活动 Window 要么是聚焦 Window，要么是作为聚焦 Window 所有者的第一个 Frame 或 Dialog。
+ <p>
+如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager，则此方法将抛出 SecurityException。
+
+@return 活动 Window
+@see #getActiveWindow
+@see #setGlobalActiveWindow
+@throws SecurityException 如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.setGlobalActiveWindow(Window activeWindow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置活动 Window。只有 Frame 或 Dialog 才能成为活动 Window。本机的窗口操作系统可能使用特殊装饰（如高亮显示标题栏）来表示活动 Window 或其子窗口。活动 Window 要么是聚焦 Window，要么是作为聚焦 Window 所有者的第一个 Frame 或 Dialog。
+ <p>
+此方法不能实际更改与本机窗口操作系统相关的活动 Window。它只存储该值，以便以后由 <code>getActiveWindow()</code> 返回它。更改活动 Window 需要使用 <code>Component.requestFocus()</code> 或 <code>Component.requestFocusInWindow()</code>，因平台而异。
+
+@param activeWindow 活动 Window
+@see #getActiveWindow
+@see #getGlobalActiveWindow
+@see Component#requestFocus()
+@see Component#requestFocusInWindow()
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.FocusTraversalPolicy java.awt.KeyboardFocusManager.getDefaultFocusTraversalPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认 FocusTraversalPolicy。通过显式调用 Container.setFocusTraversalPolicy 初始化自己的焦点遍历策略时，顶层组件会使用该值。
+
+@return 默认 FocusTraversalPolicy。永远不会返回 null。
+@see #setDefaultFocusTraversalPolicy
+@see Container#setFocusTraversalPolicy
+@see Container#getFocusTraversalPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.setDefaultFocusTraversalPolicy(FocusTraversalPolicy defaultPolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置默认 FocusTraversalPolicy。通过显式调用 Container.setFocusTraversalPolicy 初始化自己的焦点遍历策略时，顶层组件会使用此值。注：此调用不影响已经创建的组件，因为它们的策略已经初始化了。只有新组件才会将此策略用作默认策略。
+
+@param defaultPolicy 新的默认 FocusTraversalPolicy
+@see #getDefaultFocusTraversalPolicy
+@see Container#setFocusTraversalPolicy
+@see Container#getFocusTraversalPolicy
+@throws IllegalArgumentException 如果 defaultPolicy 为 null
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.setDefaultFocusTraversalKeys(int id, java.util.Set<? extends java.awt.AWTKeyStroke> keystrokes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置给定遍历操作的默认焦点遍历键。此遍历键 <code>Set</code> 对没有显式定义自己的这种 <code>Set</code> 的所有 <code>Window</code> 均有效。对于没有显式定义自己的这种 <code>Set</code> 的 <code>Windows</code> 而言，此 <code>Set</code> 还可以由其子 <code>Component</code> 递归式继承。
+ <p>
+默认焦点遍历键的默认值是依赖于实现的。Sun 建议特定本机平台的所有实现都使用相同的默认值。下面列出了对 Windows 和 Unix 的建议。这些建议用于 Sun AWT 实现中。
+
+<table border=1 summary="Recommended default values for focus traversal keys">
+<tr>
+  <th>标识符</th>
+  <th>意义</th>
+  <th>默认值</th>
+</tr>
+<tr>
+  <td><code>KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS</code></td>
+  <td>正常向前键盘遍历</td>
+  <td><code>TAB</code> on <code>KEY_PRESSED</code>, <code>CTRL-TAB</code> on <code>KEY_PRESSED</code></td>
+</tr>
+<tr>
+  <td><code>KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS</code></td>
+  <td>正常反向键盘遍历</td>
+  <td><code>SHIFT-TAB</code> on <code>KEY_PRESSED</code>, <code>CTRL-SHIFT-TAB</code> on <code>KEY_PRESSED</code></td>
+</tr>
+<tr>
+  <td><code>KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS</code></td>
+  <td>向上一个焦点遍历循环</td>
+  <td>none</td>
+</tr>
+<tr>
+  <td><code>KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS</code></td>
+  <td>向下一个焦点遍历循环</td>
+  <td>none</td>
+</tr>
+</table>
+
+要禁用遍历键，需要使用空 <code>Set</code>；建议使用 <code>Collections.EMPTY_SET</code>。
+ <p>
+使用 <code>AWTKeyStroke</code> API，客户端代码可以指定在两个特定 <code>KeyEvent</code> 的哪一个上进行焦点遍历，<code>KEY_PRESSED</code> 还是 <code>KEY_RELEASED</code>。不管指定哪一个 <code>KeyEvent</code>，所有与焦点遍历键相关的 <code>KeyEvent</code>（包括关联的 <code>KEY_TYPED</code> 事件）都将被使用，不会将其指派给任何 <code>Component</code>。将 <code>KEY_TYPED</code> 事件指定为映射为焦点遍历操作或将同一事件映射为多个默认焦点遍历操作都是运行时错误。
+
+@param id <code>KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS</code>、<code>KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS</code>、<code>KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS</code> 和 <code>KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS</code> 其中之一
+@param keystrokes 指定操作的 <code>AWTKeyStroke</code> Set
+@see #getDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+@throws IllegalArgumentException 如果 id 不是 <code>KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS</code>、<code>KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS</code>、<code>KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS</code> 和 <code>KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS</code> 其中之一，或者击键为 <code>null</code>，或者击键包含 <code>null</code>，或者击键中的任何 <code>Object</code> 不是 <code>AWTKeyStroke</code>，或者击键表示 <code>KEY_TYPED</code> 事件，或者击键已映射为别的默认焦点遍历操作
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.awt.AWTKeyStroke> java.awt.KeyboardFocusManager.getDefaultFocusTraversalKeys(int id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定遍历操作的默认焦点遍历键的 Set。此遍历键 Set 对没有显式定义自己的这种 Set 的所有 Window 均有效。对于没有显式定义自己的这种 Set 的 Window 而言，此 Set 还可以由其子 Component 递归式继承。（请参见 <code>setDefaultFocusTraversalKeys</code> 以获取每个操作的完整描述。）
+
+@param id KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS、KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 和 KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS 其中之一
+@return 指定操作的 <code>AWTKeyStroke</code> <code>Set</code>；该 <code>Set</code> 不可修改，并且可以为空；永远不会返回 <code>null</code>
+@see #setDefaultFocusTraversalKeys
+@see Component#setFocusTraversalKeys
+@see Component#getFocusTraversalKeys
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS、KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 和 KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS 其中之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container java.awt.KeyboardFocusManager.getCurrentFocusCycleRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前焦点循环根与调用线程位于相同的上下文中，则返回当前焦点循环根。如果焦点所有者本身是一个焦点循环根，则在正常焦点遍历期间，哪些 Component 表示焦点的上一个和下一个 Component 可能不明确。在这种情况下，需要使用当前焦点循环根来区分各种可能性。
+ <p>
+此方法仅供 KeyboardFocusManager 和焦点实现使用。一般客户端不能使用。
+
+@return 当前焦点循环根；如果当前焦点循环根调用的不是线程上下文的成员，则返回 null
+@see #getGlobalCurrentFocusCycleRoot
+@see #setGlobalCurrentFocusCycleRoot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Container java.awt.KeyboardFocusManager.getGlobalCurrentFocusCycleRoot() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前焦点循环根，即使调用线程处于当前焦点循环根之外的上下文中。如果焦点所有者本身是一个焦点循环根，则在正常焦点遍历期间，哪些 Component 表示焦点的上一个和下一个 Component 可能不明确。在这种情况下，需要使用当前焦点循环根来区分各种可能性。
+ <p>
+如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager，则此方法将抛出 SecurityException。
+
+@return 当前焦点循环根；如果当前焦点循环根调用的不是线程上下文的成员，则返回 null
+@see #getCurrentFocusCycleRoot
+@see #setGlobalCurrentFocusCycleRoot
+@throws SecurityException 如果此 KeyboardFocusManager 调用的不是线程上下文的当前 KeyboardFocusManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.setGlobalCurrentFocusCycleRoot(Container newFocusCycleRoot)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前焦点循环根。如果焦点所有者本身是一个焦点循环根，则在正常焦点遍历期间，哪些 Component 表示焦点的上一个和下一个 Component 可能不明确。在这种情况下，需要使用当前焦点循环根来区分各种可能性。
+ <p>
+此方法仅供 KeyboardFocusManager 和焦点实现使用。一般客户端不能使用。
+
+@param newFocusCycleRoot 新焦点循环根
+@see #getCurrentFocusCycleRoot
+@see #getGlobalCurrentFocusCycleRoot
+@beaninfo bound: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到侦听器列表。为此类的所有绑定属性注册侦听器，这些属性包括：
+ <ul>
+<li>KeyboardFocusManager 目前是否管理此应用程序或 applet 浏览器上下文的焦点 (&quot;managingFocus&quot;)</li> 
+<li>焦点所有者 (&quot;focusOwner&quot;)</li>
+<li>持久焦点所有者 (&quot;permanentFocusOwner&quot;)</li>
+<li>聚焦 Window (&quot;focusedWindow&quot;)</li>
+<li>活动 Window (&quot;activeWindow&quot;)</li>
+<li>默认焦点遍历策略 (&quot;defaultFocusTraversalPolicy&quot;)</li>
+<li>默认 FORWARD_TRAVERSAL_KEYS 的 Set (&quot;forwardDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 BACKWARD_TRAVERSAL_KEYS 的 Set (&quot;backwardDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 UP_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;upCycleDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 DOWN_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;downCycleDefaultFocusTraversalKeys&quot;)</li>
+<li>当前焦点循环根 (&quot;currentFocusCycleRoot&quot;)</li>
+ </ul>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param listener 要添加的 PropertyChangeListener
+@see #removePropertyChangeListener
+@see #getPropertyChangeListeners
+@see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除 PropertyChangeListener。可以使用此方法移除曾为此类的所有绑定属性注册的 PropertyChangeListener。
+ <p>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param listener 要移除的 PropertyChangeListener
+@see #addPropertyChangeListener
+@see #getPropertyChangeListeners
+@see #removePropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] java.awt.KeyboardFocusManager.getPropertyChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此键盘焦点管理器上注册的所有属性更改侦听器组成的数组。
+
+@return 返回此键盘焦点管理器的所有 <code>PropertyChangeListener</code>；如果目前没有注册任何属性更改侦听器，则返回空数组
+
+@see #addPropertyChangeListener
+@see #removePropertyChangeListener
+@see #getPropertyChangeListeners(java.lang.String)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到特定属性的侦听器列表。指定属性可能是用户定义的，也可能是以下属性之一：
+ <ul>
+<li>KeyboardFocusManager 目前是否管理此应用程序或 applet 浏览器上下文的焦点 (&quot;managingFocus&quot;)</li> 
+<li>焦点所有者 (&quot;focusOwner&quot;)</li>
+<li>持久焦点所有者 (&quot;permanentFocusOwner&quot;)</li>
+<li>聚焦 Window (&quot;focusedWindow&quot;)</li>
+<li>活动 Window (&quot;activeWindow&quot;)</li>
+<li>默认焦点遍历策略 (&quot;defaultFocusTraversalPolicy&quot;)</li>
+<li>默认 FORWARD_TRAVERSAL_KEYS 的 Set (&quot;forwardDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 BACKWARD_TRAVERSAL_KEYS 的 Set (&quot;backwardDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 UP_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;upCycleDefaultFocusTraversalKeys&quot;)</li>
+<li>默认 DOWN_CYCLE_TRAVERSAL_KEYS 的 Set (&quot;downCycleDefaultFocusTraversalKeys&quot;)</li>
+<li>当前焦点循环根 (&quot;currentFocusCycleRoot&quot;)</li>
+ </ul>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param propertyName 上面列出的属性名之一
+@param listener 要添加的 PropertyChangeListener
+@see #addPropertyChangeListener(java.beans.PropertyChangeListener)
+@see #removePropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+@see #getPropertyChangeListeners(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removePropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从特定属性的侦听器列表移除 PropertyChangeListener。可以使用此方法移除为特定绑定属性注册的 PropertyChangeListener。
+ <p>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param propertyName 有效属性名
+@param listener 要移除的 PropertyChangeListener
+@see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+@see #getPropertyChangeListeners(java.lang.String)
+@see #removePropertyChangeListener(java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.PropertyChangeListener[] java.awt.KeyboardFocusManager.getPropertyChangeListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定属性相关联的所有 <code>PropertyChangeListener</code> 组成的数组。
+
+@return 与指定属性相关联的所有 <code>PropertyChangeListener</code>；如果没有添加过这样的侦听器，则返回空数组。
+
+@see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+@see #removePropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.firePropertyChange(String propertyName, Object oldValue, Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激发 PropertyChangeEvent 以响应绑定属性中的更改。该事件将被传递到所有已注册的 PropertyChangeListener 中。如果 oldValue 和 newValue 相同，则不会传递事件。
+
+@param propertyName 已更改的属性名
+@param oldValue 属性的上一个值
+@param newValue 属性的新值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 VetoableChangeListener 添加到侦听器列表。为此类的所有可否决属性注册侦听器，这些属性包括：
+ <ul>
+<li>焦点所有者 (&quot;focusOwner&quot;)</li>
+<li>持久焦点所有者 (&quot;permanentFocusOwner&quot;)</li>
+<li>聚焦 Window (&quot;focusedWindow&quot;)</li>
+<li>活动 Window (&quot;activeWindow&quot;)</li>
+ </ul>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param listener 要添加的 VetoableChangeListener
+@see #removeVetoableChangeListener
+@see #getVetoableChangeListeners
+@see #addVetoableChangeListener(java.lang.String,java.beans.VetoableChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removeVetoableChangeListener(VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除 VetoableChangeListener。使用此方法可以移除曾为此类的所有可否决属性注册的 VetoableChangeListener。
+ <p>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param listener 要移除的 VetoableChangeListener
+@see #addVetoableChangeListener
+@see #getVetoableChangeListeners
+@see #removeVetoableChangeListener(java.lang.String,java.beans.VetoableChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.VetoableChangeListener[] java.awt.KeyboardFocusManager.getVetoableChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此键盘焦点管理器上注册的所有可否决更改侦听器组成的数组。
+
+@return 此键盘焦点管理器的所有 <code>VetoableChangeListener</code>；如果目前没有注册任何可否决更改侦听器，则返回空数组
+
+@see #addVetoableChangeListener
+@see #removeVetoableChangeListener
+@see #getVetoableChangeListeners(java.lang.String)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addVetoableChangeListener(String propertyName, VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 VetoableChangeListener 添加到特定属性的侦听器列表。指定属性可能是用户定义的，也可能是以下属性之一：
+ <ul>
+<li>焦点所有者 (&quot;focusOwner&quot;)</li>
+<li>持久焦点所有者 (&quot;permanentFocusOwner&quot;)</li>
+<li>聚焦 Window (&quot;focusedWindow&quot;)</li>
+<li>活动 Window (&quot;activeWindow&quot;)</li>
+ </ul>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param propertyName 上面列出的属性名之一
+@param listener 要添加的 VetoableChangeListener
+@see #addVetoableChangeListener(java.beans.VetoableChangeListener)
+@see #removeVetoableChangeListener
+@see #getVetoableChangeListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removeVetoableChangeListener(String propertyName, VetoableChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从特定属性的侦听器列表移除 VetoableChangeListener。可以使用此方法移除为特定绑定属性注册的 VetoableChangeListener。
+ <p>
+如果侦听器为 null，则不抛出异常，也不执行任何动作。
+
+@param propertyName 有效属性名
+@param listener 要移除的 VetoableChangeListener
+@see #addVetoableChangeListener
+@see #getVetoableChangeListeners
+@see #removeVetoableChangeListener(java.beans.VetoableChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.beans.VetoableChangeListener[] java.awt.KeyboardFocusManager.getVetoableChangeListeners(String propertyName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定属性相关联的所有 <code>VetoableChangeListener</code> 组成的数组。
+
+@return 与指定属性相关联的所有 <code>VetoableChangeListener</code>；如果没有添加过这样的侦听器，则返回空数组。
+
+@see #addVetoableChangeListener(java.lang.String,java.beans.VetoableChangeListener)
+@see #removeVetoableChangeListener(java.lang.String,java.beans.VetoableChangeListener)
+@see #getVetoableChangeListeners
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.KeyboardFocusManager.fireVetoableChange(String propertyName, Object oldValue, Object newValue) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激发 PropertyChangeEvent 以响应可否决属性中的更改。该事件将被传递到所有已注册的 VetoableChangeListener 中。如果 VetoableChangeListener 抛出 PropertyVetoException，则激发将所有 VetoableChangeListener 还原为旧值的新事件，并再次抛出异常。如果 oldValue 和 newValue 相同，则不会传递事件。
+
+@param propertyName 已更改的属性名
+@param oldValue 属性以前的值
+@param newValue 属性的新值
+@throws java.beans.PropertyVetoException 如果 <code>VetoableChangeListener</code> 抛出了 <code>PropertyVetoException</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addKeyEventDispatcher(KeyEventDispatcher dispatcher)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 KeyEventDispatcher 添加到此 KeyboardFocusManager 的调度程序链中。此 KeyboardFocusManager 将请求每个 KeyEventDispatcher 在最终指派 KeyEvent 本身之前，首先指派由用户生成的 KeyEvent。KeyEventDispatcher 将按其添加顺序得到通知。一旦一个 KeyEventDispatcher 从其 <code>dispatchKeyEvent</code> 方法返回 <code>true</code>，通知就会暂停。可以添加的 KeyEventDispatcher 的总数没有限制，添加特定 KeyEventDispatcher 实例的次数也没有限制。
+ <p>
+如果指定了 null 指派程序，则不执行动作也不抛出异常。
+ <p>
+在多线程应用程序中，{@link KeyEventDispatcher} 的行为与其他 AWT 侦听器相同。有关更多详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param dispatcher 要添加到指派程序链的 KeyEventDispatcher
+@see #removeKeyEventDispatcher
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removeKeyEventDispatcher(KeyEventDispatcher dispatcher)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前添加到此 KeyboardFocusManager 调度程序链中的 KeyEventDispatcher。此 KeyboardFocusManager 本身不能被移除，除非它是通过调用 <code>addKeyEventDispatcher</code> 显式重新注册的。
+ <p>
+如果指定了 null 调度程序，指定的调度程序没有位于调度程序链中，或者此 KeyboardFocusManager 不是通过显式重新注册指定的，则不执行动作也不抛出异常。
+ <p>
+在多线程应用程序中，{@link KeyEventDispatcher} 的行为与其他 AWT 侦听器相同。有关更多详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param dispatcher 要从调度程序链中移除的 KeyEventDispatcher
+@see #addKeyEventDispatcher
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized java.util.List<java.awt.KeyEventDispatcher> java.awt.KeyboardFocusManager.getKeyEventDispatchers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 List 返回此 KeyboardFocusManager 的 KeyEventDispatcher 链。该 List 不包括此 KeyboardFocusManager，除非它是通过调用 <code>addKeyEventDispatcher</code> 显式重新注册的。如果没有注册其他 KeyEventDispatcher，则实现随意返回 null 或长度为 0 的 List。客户端代码不应假定某种行为多于其他行为，也不应假定建立行为后不能更改。
+
+@return 可能返回 null，也可能返回 KeyEventDispatcher 的空 List
+@see #addKeyEventDispatcher
+@see #removeKeyEventDispatcher
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.addKeyEventPostProcessor(KeyEventPostProcessor processor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 KeyEventPostProcessor 添加到此 KeyboardFocusManager 的后处理器链中。将 KeyEvent 指派给目标并由目标处理后，KeyboardFocusManager 将请求每个 KeyEventPostProcessor 作为 KeyEvent 的最终解析的一部分执行所有必要的后处理操作。KeyEventPostProcessor 将按其添加顺序得到通知；当前 KeyboardFocusManager 将排在最后。一旦一个 KeyEventPostProcessor 从其 <code>postProcessKeyEvent</code> 方法返回 <code>true</code>，通知就会暂停。可以添加的 KeyEventPostProcessors 的总数没有限制，添加特定 KeyEventPostProcessor 实例的次数也没有限制。
+ <p>
+如果指定了 null 后处理器，则不执行动作也不抛出异常。
+ <p>
+在多线程应用程序中，{@link KeyEventPostProcessor} 的行为与其他 AWT 侦听器相同。有关更多详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param processor 要添加到后处理器链的 KeyEventPostProcessor
+@see #removeKeyEventPostProcessor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.KeyboardFocusManager.removeKeyEventPostProcessor(KeyEventPostProcessor processor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 KeyboardFocusManager 的后处理器链中移除以前添加的 KeyEventPostProcessor。从该链中无法将 KeyboardFocusManager 本身完全移除。只能移除通过 <code>addKeyEventPostProcessor</code> 添加的其他引用。
+ <p>
+如果指定了 null 后处理器，指定的后处理器没有位于后处理器链中，或者此 KeyboardFocusManager 不是通过显式添加指定的，则不执行动作也不抛出异常。
+ <p>
+在多线程应用程序中，{@link KeyEventPostProcessor} 的行为与其他 AWT 侦听器相同。有关更多详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param processor 要从后处理器链中移除的 KeyEventPostProcessor
+@see #addKeyEventPostProcessor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.List<java.awt.KeyEventPostProcessor> java.awt.KeyboardFocusManager.getKeyEventPostProcessors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 List 返回此 KeyboardFocusManager 的 KeyEventPostProcessor 链。该 List 不包括此 KeyboardFocusManager，除非它是通过调用 <code>addKeyEventPostProcessor</code> 显式添加的。如果没有注册任何 KeyEventDispatcher，则实现随意返回 null 或长度为 0 的 List。客户端代码不应假定某种行为多于其他行为，也不应假定建立行为后不能更改。
+
+@return 可能返回 null 也可能返回 KeyEventPostProcessor 的空 List
+@see #addKeyEventPostProcessor
+@see #removeKeyEventPostProcessor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.KeyboardFocusManager.dispatchEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+AWT 事件调度程序可以调用此方法，请求当前的 KeyboardFocusManager 为其指派指定的事件。所有 KeyboardFocusManager 需要指派所有 FocusEvent、所有与焦点相关的 WindowEvent 和所有 KeyEvent。这些事件应该基于 KeyboardFocusManager 的焦点所有者和聚焦及活动 Window 概念指派，有时会重写指定的 AWTEvent 的源代码。必须使用 <code>redispatchEvent</code> 完成指派操作，以防 AWT 事件调度程序递归式请求 KeyboardFocusManager 再次指派该事件。如果此方法返回 <code>false</code>，则 AWT 事件调度程序将尝试指派该事件本身。
+
+@param e 要指派的 AWTEvent
+@return 如果此方法指派了该事件，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #redispatchEvent
+@see #dispatchKeyEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.KeyboardFocusManager.redispatchEvent(Component target, AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新指派 AWTEvent 的方式是，AWT 事件调度程序不会递归式请求 KeyboardFocusManager 或任何已安装的 KeyEventDispatcher 再次指派该事件。<code>dispatchEvent</code> 的客户端实现和客户端定义的 KeyEventDispatcher 必须调用 <code>redispatchEvent(target, e)</code> 而不是调用 <code>target.dispatchEvent(e)</code> 来指派事件。
+ <p>
+此方法仅供 KeyboardFocusManager 和 KeyEventDispatcher 使用。一般客户端不能使用。
+
+@param target 应将事件指派到的 Component
+@param e 要指派的事件
+@see #dispatchEvent
+@see KeyEventDispatcher
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.KeyboardFocusManager.dispatchKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通常情况下，如果该指派程序链中的其他 KeyEventDispatcher 没有指派 KeyEvent 或者没有注册其他 KeyEventDispatcher，则 <code>dispatchEvent</code> 将调用此方法。如果此方法的实现返回 <code>false</code>，则 <code>dispatchEvent</code> 可能试图指派 KeyEvent 本身，或者可能简单地返回 <code>false</code>。如果返回 <code>true</code>，则 <code>dispatchEvent</code> 也应该返回 <code>true</code>。
+
+@param e 当前 KeyboardFocusManager 已经请求此 KeyEventDispatcher 指派的 KeyEvent
+@return 如果指派了 KeyEvent，则返回 <code>true</code>；否则，返回 <code>false</code>
+@see #dispatchEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.awt.KeyboardFocusManager.postProcessKeyEvent(KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>dispatchKeyEvent</code> 将调用此方法。默认情况下，此方法将通过使用该事件并激活快捷方式来处理映射到 AWT <code>MenuShortcut</code> 的所有未使用的 KeyEvent。
+
+@param e 要后处理的 KeyEvent
+@return <code>true</code>，指示任何其他 KeyEventPostProcessor 都将得不到该 KeyEvent 的通知。
+@see #dispatchKeyEvent
+@see MenuShortcut
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.KeyboardFocusManager.processKeyEvent(Component focusedComponent, KeyEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当该 KeyEvent 表示指定 focusedComponent 的焦点遍历键时，此方法启动焦点遍历操作。focusedComponent 应该是当前的焦点所有者，尽管这一点不是必需的。如果它不是，焦点遍历仍把 focusedComponent 当作是当前焦点所有者而继续执行操作。
+
+@param focusedComponent 指定的事件表示其焦点遍历键时，将成为焦点遍历操作基础的 Component
+@param e 可能表示焦点遍历键的事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.awt.KeyboardFocusManager.enqueueKeyEvents(long after, Component untilFocused)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的 Component 成为焦点所有者以前由 AWT 调用，以通知 KeyboardFocusManager 延迟指派 KeyEvent。如果客户端代码请求焦点更改，则 AWT 将确定本机窗口操作系统是否批准此请求，然后由 AWT 调用此方法。在指定的 Component 接收 FOCUS_GAINED 事件或 AWT 通过调用 <code>dequeueKeyEvents</code> 或 <code>discardKeyEvents</code> 取消延迟请求以前，KeyboardFocusManager 负责延迟指派时间戳晚于指定时间戳的 KeyEvent。
+
+@param after 当前事件的时间戳，如果当前事件没有时间戳或者 AWT 无法确定目前正在处理哪个事件，则为当前系统时间
+@param untilFocused 挂起 KeyEvent 之前应该接收 FOCUS_GAINED 事件的 Component
+@see #dequeueKeyEvents
+@see #discardKeyEvents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.awt.KeyboardFocusManager.dequeueKeyEvents(long after, Component untilFocused)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 AWT 调用以通知 KeyboardFocusManager 应该取消延迟指派 KeyEvent。应该释放由于使用相同时间戳和 Component 调用 <code>enqueueKeyEvents</code> 而加入队列的 KeyEvent，以将它们正常指派给当前焦点所有者。如果给定的时间戳小于零，则应该取消具有 <b>oldest</b> 时间戳的给定 Component 的未处理排队请求（如果有）。
+
+@param after 在对 <code>enqueueKeyEvents</code> 的调用中指定的时间戳，或者任何小于 0 的值
+@param untilFocused 在对 <code>enqueueKeyEvents</code> 的调用中指定的 Component
+@see #enqueueKeyEvents
+@see #discardKeyEvents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.awt.KeyboardFocusManager.discardKeyEvents(Component comp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 AWT 调用以通知 KeyboardFocusManager 应该取消延迟指派 KeyEvent。应该丢弃由于使用相同 Component 一次或多次调用 <code>enqueueKeyEvents</code> 而加入队列 KeyEvent。
+
+@param comp 对 <code>enqueueKeyEvents</code> 的一次或多次调用中指定的 Component
+@see #enqueueKeyEvents
+@see #dequeueKeyEvents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.KeyboardFocusManager.focusNextComponent(Component aComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+聚焦 aComponent 之后的 Component，通常基于 FocusTraversalPolicy。
+
+@param aComponent 作为焦点遍历操作基础的 Component
+@see FocusTraversalPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.KeyboardFocusManager.focusPreviousComponent(Component aComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+聚焦 aComponent 之前的 Component，通常基于 FocusTraversalPolicy。
+
+@param aComponent 作为焦点遍历操作基础的 Component
+@see FocusTraversalPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.KeyboardFocusManager.upFocusCycle(Component aComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将焦点上移一个焦点遍历循环。通常情况下，将焦点所有者设置为 aComponent 的焦点循环根，而将当前焦点循环根设置为新的焦点所有者的焦点循环根。但是，如果 aComponent 的焦点循环根是一个 Window，则通常将焦点所有者设置为要聚焦的 Window 的默认 Component，当前焦点循环根保持不变。
+
+@param aComponent 作为焦点遍历操作基础的 Component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.awt.KeyboardFocusManager.downFocusCycle(Container aContainer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将焦点下移一个焦点遍历循环。通常情况下，如果 aContainer 是焦点循环根，则将焦点所有者设置为要聚焦的 aContainer 的默认 Component，而将当前焦点循环根设置为 aContainer。如果 aContainer 不是焦点循环根，则不进行焦点遍历操作。
+
+@param aContainer 作为焦点遍历操作基础的 Container
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.KeyboardFocusManager.focusNextComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+聚焦当前焦点所有者之后的 Component。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.KeyboardFocusManager.focusPreviousComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+聚焦当前焦点所有者之前的 Component。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.KeyboardFocusManager.upFocusCycle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从当前焦点所有者将焦点上移一个焦点遍历循环。通常情况下，将新焦点所有者设置为当前焦点所有者的焦点循环根，而将当前焦点循环根设置为新焦点所有者的焦点循环根。但是，如果当前焦点所有者的焦点循环根是一个 Window，则通常将焦点所有者设置为要聚焦的焦点循环根的默认 Component，而当前焦点循环根保持不变。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.KeyboardFocusManager.downFocusCycle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当且仅当当前焦点所有者是一个作为焦点循环根的 Container 时，从当前焦点所有者将焦点下移一个焦点遍历循环。通常情况下，将焦点所有者设置为要聚焦的当前焦点所有者的默认 Component，而将当前焦点循环根设置为当前焦点所有者。如果当前焦点所有者不是作为焦点循环根的 Container，则不进行任何焦点遍历操作。
+
+<!-- END DATA -->

@@ -1,0 +1,163 @@
+<!-- BEGIN KEY -->
+public abstract class java.io.Reader extends java.lang.Object implements java.lang.Readable, java.io.Closeable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于读取字符流的抽象类。子类必须实现的方法只有 read(char[], int, int) 和 close()。但是，多数子类将重写此处定义的一些方法，以提供更高的效率和/或其他功能。
+ 
+@see BufferedReader
+@see   LineNumberReader
+@see CharArrayReader
+@see InputStreamReader
+@see   FileReader
+@see FilterReader
+@see   PushbackReader
+@see PipedReader
+@see StringReader
+@see Writer
+
+@version 	1.30, 06/04/07
+@author	Mark Reinhold
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.io.Reader.lock
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于同步针对此流的操作的对象。为了提高效率，字符流对象可以使用其自身以外的对象来保护重要部分。因此，子类应使用此字段中的对象，而不是 <tt>this</tt> 或者同步的方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.Reader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的字符流 reader，其重要部分将同步其自身的 reader。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.Reader(Object lock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的字符流 reader，其重要部分将同步给定的对象。
+
+@param lock  要同步的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.Reader.read(CharBuffer target) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图将字符读入指定的字符缓冲区。缓冲区可照原样用作字符的存储库：所做的唯一改变是 put 操作的结果。不对缓冲区执行翻转或重绕操作。
+
+@param target 要将字符读入的缓冲区
+@return 添加到缓冲区的字符数量，如果此字符源位于缓冲区末端，则返回 -1
+@throws IOException 如果发生 I/O 错误
+@throws NullPointerException 如果目标为空
+@throws ReadOnlyBufferException 如果目标是一个只读缓冲区
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.Reader.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取单个字符。在字符可用、发生 I/O 错误或者已到达流的末尾前，此方法一直阻塞。
+
+<p> 用于支持高效的单字符输入的子类应重写此方法。
+
+@return     作为整数读取的字符，范围在 0 到 65535 之间 (<tt>0x00-0xffff</tt>)，如果已到达流的末尾，则返回 -1
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.Reader.read(char[] cbuf) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字符读入数组。在某个输入可用、发生 I/O 错误或者已到达流的末尾前，此方法一直阻塞。
+
+@param       cbuf  目标缓冲区
+
+@return     读取的字符数，如果已到达流的末尾，则返回 -1
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.io.Reader.read(char[] cbuf, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字符读入数组的某一部分。在某个输入可用、发生 I/O 错误或者到达流的末尾前，此方法一直阻塞。
+
+@param      cbuf  目标缓冲区
+@param      off   开始存储字符处的偏移量
+@param      len   要读取的最多字符数
+
+@return     读取的字符数，如果已到达流的末尾，则返回 -1
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.io.Reader.skip(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+跳过字符。在某个字符可用、发生 I/O 错误或者已到达流的末尾前，此方法一直阻塞。
+
+@param  n  要跳过的字符数
+
+@return    实际跳过的字符数
+
+@exception  IllegalArgumentException  如果 <code>n</code> 为负。
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.Reader.ready() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断是否准备读取此流。
+
+@return 如果保证下一个 read() 不阻塞输入，则返回 True，否则返回 false。注意，返回 false 并不保证阻塞下一次读取。
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.Reader.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+判断此流是否支持 mark() 操作。默认实现始终返回 false。子类应重写此方法。
+
+@return 当且仅当此流支持此 mark 操作时，返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Reader.mark(int readAheadLimit) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记流中的当前位置。对 reset() 的后续调用将尝试将该流重新定位到此点。并不是所有的字符输入流都支持 mark() 操作。
+
+@param  readAheadLimit  在仍保留该标记的情况下，对可读取字符数量的限制。在读取这样多的字符后，尝试重置流可能会失败。
+
+@exception  IOException  如果该流不支持 mark()，或者发生一些其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Reader.reset() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置该流。如果已标记该流，则尝试在该标记处重新定位该流。如果已标记该流，则以适用于特定流的某种方式尝试重置该流，例如，通过将该流重新定位到其起始点。并不是所有的字符输入流都支持 reset() 操作，有些支持 reset() 而不支持 mark()。
+
+@exception  IOException  如果尚未标记流，或者该标记已失效，或者该流不支持 reset()，或者发生一些其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.io.Reader.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭该流并释放与之关联的所有资源。在关闭该流后，再调用 read()、ready()、mark()、reset() 或 skip() 将抛出 IOException。关闭以前关闭的流无效。
+
+@exception  IOException  如果发生 I/O 错误
+
+<!-- END DATA -->

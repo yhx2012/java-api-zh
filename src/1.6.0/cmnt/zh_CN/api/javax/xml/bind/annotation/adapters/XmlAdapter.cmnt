@@ -1,0 +1,142 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.bind.annotation.adapters.XmlAdapter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+修改 Java 类型以适应自定义编组。
+
+<p> <b>用法： </b> </p>
+
+ <p>
+一些 Java 类型不能自然映射到 XML 表示形式，例如，<tt>HashMap</tt> 或其他非 JavaBean 类。反之，XML 表示形式可以映射到 Java 类型，但是应用程序可能会选择使用另一种 Java 类型访问 XML 表示形式。例如，默认情况下，Java 绑定规则模式将 xs:DateTime 绑定到 XmlGregorianCalendar。但应用程序可能需要将 xs:DateTime 绑定到自定义类型，例如 MyXmlGregorianCalendar。在这两种情况下，应用程序用来访问 XML 内容的<i> bound 类型 </i>与映射到 XML 表示形式的<i> value 类型</i> 不匹配。  
+
+ <p>
+此抽象类定义将 bound 类型修改为 value 类型或将 value 类型修改为 bound 类型的方法。在编组或解组过程中，由 JAXB 绑定框架调用这些方法：
+
+ <ul>
+<li> <b> XmlAdapter.marshal(...)：</b>编组过程中，JAXB 绑定框架调用 XmlAdapter.marshal(..) 将 bound 类型修改为 value 类型，然后将 value 类型编组为 XML 表示形式。 </li> 
+
+<li> <b> XmlAdapter.unmarshal(...)：</b>解组过程中，JAXB 绑定框架首先将 XML 表示形式解组为 value 类型，然后调用 XmlAdapter.unmarshal(..) 将 value 类型修改为 bound 类型。 </li> 
+ </ul>
+
+因此编写一个适配器涉及以下步骤：
+ 
+ <ul>
+<li> 编写实现此抽象类的适配器。 </li>
+<li> 安装使用注释 {@link XmlJavaTypeAdapter} 的适配器。 </li>
+ </ul>
+
+<p><b>示例：</b>自定义 <tt>HashMap</tt> 的映射。</p>
+<p> 以下示例演示了如何使用 <tt>@XmlAdapter</tt> 和 <tt>@XmlJavaTypeAdapter</tt> 自定义 <tt>HashMap</tt> 的映射。
+
+<p> <b>步骤 1：</b>确定 HashMap 需要的 XML 表示形式。
+
+ <pre>
+&lt;hashmap&gt;
+&lt;entry key=&quot;id123&quot;&gt;this is a value&lt;/entry&gt;
+&lt;entry key=&quot;id312&quot;&gt;this is another value&lt;/entry&gt;
+         ...
+&lt;/hashmap&gt;  
+ </pre>
+
+<p> <b>步骤 2：</b>确定上文所示的所需 XML 表示形式应当遵循的模式定义。
+
+ <pre>
+     
+     &lt;xs:complexType name="myHashMapType">
+       &lt;xs:sequence>
+         &lt;xs:element name="entry" type="myHashMapEntryType"
+                        minOccurs = "0" maxOccurs="unbounded"/>
+       &lt;/xs:sequence>
+     &lt;/xs:complexType>
+
+     &lt;xs:complexType name="myHashMapEntryType">
+       &lt;xs:simpleContent>
+         &lt;xs:extension base="xs:string">
+           &lt;xs:attribute name="key" type="xs:int"/>
+         &lt;/xs:extension>
+       &lt;/xs:simpleContent>
+     &lt;/xs:complexType>
+
+ </pre>
+
+<p> <b>步骤 3：</b>编写能够生成上述模式定义的 value 类型。
+
+ <pre>
+     public class MyHashMapType {
+         List&lt;MyHashMapEntryType> entry;
+     }
+
+     public class MyHashMapEntryType {
+         &#64;XmlAttribute
+         public Integer key; 
+
+         &#64;XmlValue
+         public String value;
+     }
+ </pre>
+
+ 
+<p> <b>步骤 4：</b>编写将 value 类型 (MyHashMapType) 修改为 bound 类型（应用程序使用的 HashMap）的适配器。
+
+ <pre>
+public final class MyHashMapAdapter extends
+XmlAdapter&lt;HashMap, MyHashMapType&gt; { ... }
+      
+ </pre>
+
+<p> <b>步骤 5：</b>使用适配器。
+
+ <pre>
+     public class Foo {
+         &#64;XmlJavaTypeAdapter(MyHashMapAdapter.class)
+         HashMap hashmap;
+         ...
+     }
+ </pre>
+
+
+上述代码片段将映射到以下模式：
+ 
+ <pre>
+&lt;xs:complexType name=&quot;Foo&quot;&gt;
+&lt;xs:sequence&gt;
+&lt;xs:element name=&quot;hashmap&quot; type=&quot;myHashMapType&quot;
+&lt;/xs:sequence&gt;
+&lt;/xs:complexType&gt;
+ </pre>
+
+@param <BoundType> JAXB 不知道如何处理的一些类型。编写一个适配器，以便允许通过 <tt>ValueType</tt> 将此类型用作内存表示形式。
+@param <ValueType> JAXB 无需其他操作便知道如何处理的类型。
+
+@author<ul><li>Sekhar Vajjhala, Sun Microsystems Inc.</li> <li> Kohsuke Kawaguchi, Sun Microsystems Inc.</li></ul>
+@see XmlJavaTypeAdapter
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.xml.bind.annotation.adapters.XmlAdapter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+派生类的构造方法，不执行任何操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract BoundType javax.xml.bind.annotation.adapters.XmlAdapter.unmarshal(ValueType v) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 value 类型转换为 bound 类型。
+
+@param v 要转换的值。可以为 null。
+@throws Exception 如果在转换过程中发生错误。调用者通过 {@link javax.xml.bind.ValidationEventHandler} 负责向用户报告错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract ValueType javax.xml.bind.annotation.adapters.XmlAdapter.marshal(BoundType v) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 bound 类型转换为 value 类型。
+
+@param v 要转换的值。可以为 null。
+@throws Exception 如果在转换过程中发生错误。调用者通过 {@link javax.xml.bind.ValidationEventHandler} 负责向用户报告错误。
+
+<!-- END DATA -->

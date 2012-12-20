@@ -1,0 +1,77 @@
+<!-- BEGIN KEY -->
+public class javax.xml.bind.util.JAXBResult extends javax.xml.transform.sax.SAXResult
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解组 JAXB 对象的 JAXP {@link javax.xml.transform.Result} 实现。
+ 
+ <p>
+此实用工具类对于将 JAXB 与其他 Java/XML 技术组合很有用。
+ 
+ <p>
+以下示例显示了如何使用 JAXB 解组 XSLT 转换得到的文档。
+ 
+ <blockquote>
+    <pre>
+JAXBResult result = new JAXBResult(
+JAXBContext.newInstance(&quot;org.acme.foo&quot;) );
+       
+// set up XSLT transformation
+TransformerFactory tf = TransformerFactory.newInstance();
+Transformer t = tf.newTransformer(new StreamSource(&quot;test.xsl&quot;));
+       
+// run transformation
+t.transform(new StreamSource(&quot;document.xml&quot;),result);
+ 
+// obtain the unmarshalled content tree
+Object o = result.getResult();
+    </pre>
+ </blockquote>
+ 
+ <p>
+SAXResult 派生于 JAXBResult 是一个实现细节。因此，通常应用程序最好不要访问 SAXResult 上定义的方法。
+ 
+ <p>
+尤其不能尝试调用 setHandler、setLexicalHandler 和 setSystemId 方法。
+ 
+@author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.util.JAXBResult(JAXBContext context) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个使用指定 JAXBContext 来解组的新实例。
+ 
+@param context 用于创建必需的 Unmarshaller 的 JAXBContext。此参数不能为 null。
+@exception JAXBException 如果创建 JAXBResult 时发生错误，或者上下文参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.bind.util.JAXBResult(Unmarshaller _unmarshaller) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个使用指定 Unmarshaller 来解组对象的新实例。
+ 
+ <p>
+此 JAXBResult 对象将使用指定的 Unmarshaller 实例。在此对象使用某个 Unmarshaller 时，调用者负责保证该 Unmarshaller 不做其他用途。
+ 
+ <p>
+此方法的主要目的是允许客户端配置 Unmarshaller。如果不知道操作的后果，更容易也更安全的方式是传递 JAXBContext。
+ 
+@param _unmarshaller Unmarshaller。此参数不得为 null。
+@throws JAXBException 如果创建 JAXBResult 时遇到错误，或者 Unmarshaller 参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.xml.bind.util.JAXBResult.getResult() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取通过转换创建的已解组对象。
+ 
+@return 总是返回非 null 对象。
+ 
+@throws IllegalStateException 如果在解组对象前调用此方法。
+ 
+@exception JAXBException 如果发生解组错误。注意，允许实现在解析错误期间抛出 SAXException。
+
+<!-- END DATA -->

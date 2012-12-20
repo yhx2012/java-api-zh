@@ -1,0 +1,360 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.StyleContext extends java.lang.Object implements java.io.Serializable, javax.swing.text.AbstractDocument.AttributeContext
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+样式池及其关联的资源。此类用于确定资源组的生存期，假定该资源组是一个容器，它保持各种资源的缓存，这些资源（如字体和颜色等）通过各种样式定义得以重用。如果需要最大化相关资源的共享，则可由多个文档来共享此类。
+ <p>
+此类还对小属性集提供有效支持，并通过共享和利用其不变的特性来压缩这些小属性集。因为许多样式都是重复的，所以共享的潜能非常大，而且复制成本也相当低廉。较大的集合降低了共享的可能性，并因此自动转换回一种空间利用率低的实现。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@version 1.78 05/05/04
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.StyleContext.DEFAULT_STYLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+赋予与段落相关的默认逻辑样式的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.swing.text.StyleContext.unusedSets
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前未使用的不可变集的数目。此方法有助于指示何时需要将集合中存储的哈希表清除掉。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.StyleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的 StyleContext 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.swing.text.StyleContext javax.swing.text.StyleContext.getDefaultStyleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由所有文档共享的默认 AttributeContext，这些文档不影响定义/提供其自己的上下文。
+
+@return 上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.StyleContext.addStyle(String nm, Style parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将新的样式添加到样式层次中。样式属性自下向上进行解析，所以在子级中指定的属性将重写父级中指定的属性。
+
+@param nm 样式的名称（其在文档中命名样式的集合内必须是惟一的）。如果样式未命名，则此名称可能为 null，但是调用者要负责管理返回的引用，因为未命名的样式不能通过其名称获取。未命名的样式可以用于诸如字符属性重写这样的情况（例如在样式运行中）。
+@param parent 父样式。如果未指定的属性不需要以其他样式解析，则此值可以为 null。
+@return 创建的样式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.removeStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除以前添加到文档中的已命名样式。  
+
+@param nm 要移除的样式名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Style javax.swing.text.StyleContext.getStyle(String nm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取以前添加到文档中的已命名样式
+
+@param nm 样式名称
+@return 样式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<?> javax.swing.text.StyleContext.getStyleNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取定义的样式名称。
+
+@return 以枚举形式返回名称列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个侦听器，以跟踪何时添加或删除样式。
+
+@param l 更改侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除一个跟踪正被添加或移除样式的侦听器。
+
+@param l 更改侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.text.StyleContext.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用 addChangeListener() 添加到此 StyleContext 中的所有 <code>ChangeListener</code> 组成的数组。
+
+@return 所有添加的 <code>ChangeListener</code>，或者在没有添加侦听器时返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.text.StyleContext.getFont(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性集中获取字体。实现此方法以便尝试为给定的 AttributeSet 获取缓存字体，如果尝试失败，将解析字体特征，然后从低级字体缓存中获取字体。
+
+@param attr 属性集
+@return 字体
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.StyleContext.getForeground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用一个属性集并将其转换成为一个前景色规范。此方法可以用于指定诸如更亮、更鲜艳等之类的内容。在默认情况下，它只返回由 StyleConstants.Foreground 属性指定的值。
+
+@param attr 属性集
+@return 颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Color javax.swing.text.StyleContext.getBackground(AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用一个属性集并将其转换成为一个背景色规范。此方法可以用于指定诸如更亮、更鲜艳等之类的内容。在默认情况下，它只返回由 StyleConstants.Background 属性指定的值。
+
+@param attr 属性集
+@return 颜色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Font javax.swing.text.StyleContext.getFont(String family, int style, int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取新字体。如果存在缓存字体，则从缓存中返回一种 Font。如果缓存中不存在，则向缓存中添加一种字体。这基本上是一个针对 1.1 字体特征的低级别缓存。
+
+@param family 字体系列（如 &quot;Monospaced&quot;）
+@param style 字体的样式（比如 Font.PLAIN）
+@param size 点大小，该值 &gt;= 1
+@return 新字体
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.FontMetrics javax.swing.text.StyleContext.getFontMetrics(Font f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取某种字体的字体规格。
+
+@param f 字体
+@return 规格
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.AttributeSet javax.swing.text.StyleContext.addAttribute(AttributeSet old, Object name, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向给定的集合中添加属性，并返回新的有代表性的集合。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param old 原有属性集
+@param name 非 null 属性名称
+@param value 属性值
+@return 更新后的属性集
+@see MutableAttributeSet#addAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.AttributeSet javax.swing.text.StyleContext.addAttributes(AttributeSet old, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向元素添加属性集。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param old 原有属性集
+@param attr 要添加的属性
+@return 更新后的属性集
+@see MutableAttributeSet#addAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.AttributeSet javax.swing.text.StyleContext.removeAttribute(AttributeSet old, Object name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从集合中移除一个属性。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param old 原有的属性集
+@param name 非 null 属性名称
+@return 更新后的属性集
+@see MutableAttributeSet#removeAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.AttributeSet javax.swing.text.StyleContext.removeAttributes(AttributeSet old, java.util.Enumeration<?> names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除元素的一个属性集。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param old 原有属性集
+@param names 属性名
+@return 更新后的属性集
+@see MutableAttributeSet#removeAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.swing.text.AttributeSet javax.swing.text.StyleContext.removeAttributes(AttributeSet old, AttributeSet attrs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除元素的属性集。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param old 原有属性集
+@param attrs 属性
+@return 更新后的属性集
+@see MutableAttributeSet#removeAttributes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AttributeSet javax.swing.text.StyleContext.getEmptySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取空 AttributeSet。
+
+@return 集合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.reclaim(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 MutableAttributeSet 实现不再需要的集合。因为在 1.1 以下没有弱引用，所以这对于操作很有用。此方法通常由 MutableAttributeSet 实现的初始化方法所调用。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param a 要回收的集合
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.StyleContext.getCompressionThreshold()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回键/值对的最大数目，尝试将其压缩到一个惟一/不可变的集合中。此限制之上的任何集合都将使用哈希表并且将成为一个 MutableAttributeSet。
+
+@return 阈值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.StyleContext.SmallAttributeSet javax.swing.text.StyleContext.createSmallAttributeSet(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个可能用于共享的压缩属性集。这是想要改变 SmallAttributeSet 行为的子类的一个钩子。重新实现此方法以返回提供某种属性转换的 AttributeSet。
+
+@param a 以压缩形式表示的属性集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.MutableAttributeSet javax.swing.text.StyleContext.createLargeAttributeSet(AttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个以空间来换取时间的大属性集合。此集合将不共享。这是想要改变更大属性存储样式（默认情况下是 SimpleAttributeSet）的子类的一个钩子。重新实现此方法以返回提供某种属性转换的 MutableAttributeSet。
+
+@param a 以更大形式表示的属性集。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.StyleContext.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 StyleContext 转换成为 String。
+
+@return 字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.writeAttributes(ObjectOutputStream out, AttributeSet a) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+写出属性的特定于上下文的处理。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.StyleContext.readAttributes(ObjectInputStream in, MutableAttributeSet a) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读入属性的特定于上下文的处理。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.text.StyleContext.writeAttributeSet(ObjectOutputStream out, AttributeSet a) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性集写入到给定的对象流以便序列化。此方法特别适用于处理使用 <code>registerStaticAttributeKey</code> 方法注册的静态属性键。任何没有注册为静态键的属性键都将被直接序列化。期望将所有的值都序列化。
+
+@param out 输出流
+@param a 属性集
+@exception IOException 如果发生任何 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.text.StyleContext.readAttributeSet(ObjectInputStream in, MutableAttributeSet a) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从以前通过 <code>writeAttributeSet</code> 写出的给定对象输入流中读取一个属性集。这将试图将过去的静态对象键恢复为当前虚拟机中的静态对象键（假定使用 <code>registerStaticAttributeKey</code> 方法只注册了这些键）。从流检索的属性将被放置到给定的可变集合中。
+
+@param in 用来读取属性数据的对象流。
+@param a  放置属性定义的属性集
+@exception ClassNotFoundException 如果在读取对象流时遇到向上传递。
+@exception IOException 如果在读取对象流时遇到向上传递。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.text.StyleContext.registerStaticAttributeKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个对象注册为用作属性集中的一个键的静态对象。序列化时允许特殊对待这种键。
+ <p>
+对于 1.1 版本以下的虚拟机上的操作，这将使用由 <code>toString</code> 连接到类名所返回的值。为了在稍后重新计算时保持一致，由 toString 所返回的值不应该包含类的引用（即应当从 Object 中的定义重新实现）。
+
+@param key 非 null 对象键
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.text.StyleContext.getStaticAttribute(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以前用 <code>registerStaticAttributeKey</code> 注册的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.text.StyleContext.getStaticAttributeKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其 <code>key</code> 将要注册的 String
+@see #getStaticAttribute
+@see #registerStaticAttributeKey
+
+<!-- END DATA -->

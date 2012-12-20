@@ -1,0 +1,86 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.spi.AbstractSelectableChannel extends java.nio.channels.SelectableChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可选择通道的基本实现类。
+
+<p> 此类定义了处理通道注册、注销和关闭机制的各种方法。它会维持此通道的当前阻塞模式及其当前的选择键集。它执行实现 {@link java.nio.channels.SelectableChannel} 规范所需的所有同步。此类中所定义的抽象保护方法的实现不必与同一操作中使用的其他线程同步。  </p>
+
+@author Mark Reinhold
+@author Mike McCloskey
+@author JSR-51 Expert Group
+@version 1.25, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.spi.AbstractSelectableChannel(SelectorProvider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.spi.SelectorProvider java.nio.channels.spi.AbstractSelectableChannel.provider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回创建此通道的提供者。
+
+@return 创建此通道的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.SelectionKey java.nio.channels.spi.AbstractSelectableChannel.register(Selector sel, int ops, Object att) throws java.nio.channels.ClosedChannelException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向给定的选择器注册此通道，返回一个选择键。
+
+<p>  此方法首先验证此通道是否已打开，以及给定的初始相关操作集是否有效。
+
+<p> 如果已向给定的选择器注册了此通道，则在将其相关操作集设置为给定值后，返回表示该注册的选择键。
+
+<p> 如果尚未向给定的选择器注册此通道，则在保持适当锁定的同时调用选择器的 {@link AbstractSelector#register register} 方法。返回前将得到的键添加到此通道的键集中。
+ </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.nio.channels.spi.AbstractSelectableChannel.implCloseChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此通道。
+
+<p> 此方法在 {@link AbstractInterruptibleChannel} 类中指定并且由 {@link java.nio.channels.Channel#close close} 方法调用，为了实际关闭此通道，此方法依次调用 {@link #implCloseSelectableChannel implCloseSelectableChannel} 方法。然后取消此通道的所有键。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.nio.channels.spi.AbstractSelectableChannel.implCloseSelectableChannel() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此可选择通道。
+
+<p> 为了实际关闭此通道，由 {@link java.nio.channels.Channel#close close} 方法调用此方法。仅在此通道尚未关闭时才能调用此方法，并且只能调用一次。
+
+<p> 此方法的实现必须安排阻塞于此通道上 I/O 操作中的所有其他线程立即返回，要么抛出异常，要么正常返回。
+ </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.SelectableChannel java.nio.channels.spi.AbstractSelectableChannel.configureBlocking(boolean block) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整此通道的阻塞模式。
+
+<p> 如果给定的阻塞模式与当前的阻塞模式不同，那么为了改变该模式，此方法调用 {@link #implConfigureBlocking implConfigureBlocking} 方法，同时保持适当的锁定。  </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void java.nio.channels.spi.AbstractSelectableChannel.implConfigureBlocking(boolean block) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整此通道的阻塞模式。
+
+<p> 为了执行实际的更改阻塞模式的工作，由 {@link #configureBlocking configureBlocking} 方法调用此方法。仅在新模式与当前模式不同时才调用此方法。  </p>
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->

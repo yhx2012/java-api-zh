@@ -1,0 +1,136 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.image.RGBImageFilter extends java.awt.image.ImageFilter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供一种便捷方式创建 ImageFilter，创建的 ImageFilter 可修改使用默认 RGB ColorModel 图像的像素。这意味着要与 FilteredImageSource 对象结合使用来生成现有图像的过滤形式。该类是一个抽象类，它提供引导所有像素数据通过单独某个方法所需的调用，其中，无论 ImageProducer 正使用何种 ColorModel，该方法每次都会转换默认 RGB ColorModel 中的一个像素。创建可用图像过滤器需要定义的惟一方法是 filterRGB 方法。以下是定义交换图像中红色分量和蓝色分量过滤器的一个例子：
+ <pre>
+	class RedBlueSwapFilter extends RGBImageFilter {
+	    public RedBlueSwapFilter() {
+		// The filter's operation does not depend on the
+		// pixel's location, so IndexColorModels can be
+		// filtered directly.
+		canFilterIndexColorModel = true;
+	    }
+
+	    public int filterRGB(int x, int y, int rgb) {
+		return ((rgb &amp; 0xff00ff00)
+			| ((rgb &amp; 0xff0000) &gt;&gt; 16)
+			| ((rgb &amp; 0xff) &lt;&lt; 16));
+	    }
+	}
+
+ </pre>
+
+@see FilteredImageSource
+@see ImageFilter
+@see ColorModel#getRGBdefault
+
+@version	1.26 02/14/06
+@author 	Jim Graham
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.ColorModel java.awt.image.RGBImageFilter.origmodel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户调用 {@link #substituteColorModel(ColorModel, ColorModel) substituteColorModel} 时将由 <code>newmodel</code> 替换的 <code>ColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.ColorModel java.awt.image.RGBImageFilter.newmodel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户调用 <code>substituteColorModel</code> 时替换 <code>origmodel</code> 的 <code>ColorModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.image.RGBImageFilter.canFilterIndexColorModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此布尔值指示是否可以接受用 filterRGB 方法的颜色过滤替代逐像素过滤，并应用于 IndexColorModel 对象的颜色表项。如果子类的 filterRGB 方法不依赖过滤像素的坐标，则子类应在其构造方法中将此变量设置为 true。
+@see #substituteColorModel
+@see #filterRGB
+@see IndexColorModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.RGBImageFilter.setColorModel(ColorModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 ColorModel 是 IndexColorModel 且子类将 canFilterIndexColorModel 标志设置为 true，则将此处及 setPixels 方法中任何出现原始 ColorModel 对象的地方替换为过滤后的颜色模型。如果 ColorModel 不是 IndexColorModel 或者为 null，则此方法重写由 ImageProducer 使用的默认 ColorModel，并指定默认 RGB ColorModel。
+ <p>
+注：此方法应由其像素将被过滤的 <code>Image</code> 的 <code>ImageProducer</code> 调用。使用此类过滤图像像素的开发人员应该避免直接调用此方法，因为该操作可能干扰过滤操作。
+@see ImageConsumer
+@see ColorModel#getRGBdefault
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.RGBImageFilter.substituteColorModel(ColorModel oldcm, ColorModel newcm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册两个用于替换的 ColorModel 对象。如果在运行 setPixels 方法期间遇到 oldcm，则用 newcm 替换它，并不加变动地传递像素（但使用新的 ColorModel 对象）。
+@param oldcm 要被动态替换的 ColorModel 对象
+@param newcm 要动态替换 oldcm 的 ColorModel 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.IndexColorModel java.awt.image.RGBImageFilter.filterIndexColorModel(IndexColorModel icm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+过滤 IndexColorModel 对象：通过 filterRGB 函数（RGBImageFilter 子类必须提供该函数）运行该对象颜色表中的每一项。使用坐标 -1 指示将过滤的是颜色表项，而不是实际像素值。
+@param icm 要过滤的 IndexColorModel 对象
+@exception NullPointerException 如果 <code>icm</code> 为 null
+@return 表示已过滤颜色的新 IndexColorModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.RGBImageFilter.filterRGBPixels(int x, int y, int w, int h, int[] pixels, int off, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+过滤缓冲区中使用默认 RGB ColorModel 的像素：将其一个接一个地传递给 filterRGB 方法。
+@param x 像素区域左上角的 X 坐标
+@param y 像素区域左上角的 Y 坐标
+@param w 像素区域的宽度
+@param h 像素区域的高度
+@param pixels 像素数组
+@param off <code>pixels</code> 数组中的偏移量
+@param scansize 数组中从一行像素到下一行像素的距离
+@see ColorModel#getRGBdefault
+@see #filterRGB
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.RGBImageFilter.setPixels(int x, int y, int w, int h, ColorModel model, byte[] pixels, int off, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 ColorModel 对象就是已转换后的对象，则使用转换后的 ColorModel 传递像素。否则，将字节像素的缓冲区转换为默认 RGB ColorModel，并将转换后的缓冲区传递给 filterRGBPixels 方法进行逐一转换。
+ <p>
+注：此方法应由其像素将被过滤的 <code>Image</code> 的 <code>ImageProducer</code> 调用。使用此类过滤图像像素的开发人员应该避免直接调用此方法，因为该操作可能干扰过滤操作。
+@see ColorModel#getRGBdefault
+@see #filterRGBPixels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.RGBImageFilter.setPixels(int x, int y, int w, int h, ColorModel model, int[] pixels, int off, int scansize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 ColorModel 对象就是已转换后的对象，则使用转换后的 ColorModel 传递像素，否则，将整数像素的缓冲区转换为默认 RGB ColorModel，并将转换后的缓冲区传递给 filterRGBPixels 方法进行逐一转换。将整数像素的缓冲区转换为默认 RGB ColorModel，并将转换后的缓冲区传递给 filterRGBPixels 方法。
+ <p>
+注：此方法应由其像素将被过滤的 <code>Image</code> 的 <code>ImageProducer</code> 调用。使用此类过滤图像像素的开发人员应该避免直接调用此方法，因为该操作可能干扰过滤操作。
+@see ColorModel#getRGBdefault
+@see #filterRGBPixels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.image.RGBImageFilter.filterRGB(int x, int y, int rgb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类必须指定该方法，以将使用默认 RGB ColorModel 的单个输入像素转换成单个输出像素。
+@param x 像素的 X 坐标
+@param y 像素的 Y 坐标
+@param rgb 使用默认 RGB 颜色模型的整数像素表示
+@return 使用默认 RGB 颜色模型的过滤后的像素。
+@see ColorModel#getRGBdefault
+@see #filterRGBPixels
+
+<!-- END DATA -->

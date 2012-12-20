@@ -1,0 +1,80 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.Locator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来将 SAX 事件与文档位置关联的接口。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>如果 SAX 解析器为 SAX 应用程序提供位置信息，要实现这一点，则需要先实现此接口，然后使用内容处理程序的 {@link org.xml.sax.ContentHandler#setDocumentLocator setDocumentLocator} 方法将一个实例传递给应用程序。应用程序可以使用此对象获取 XML 源文档中其他任何 SAX 事件的位置。</p>
+
+<p>注意，由该对象返回的结果仅在每个回调方法内有效：如果应用程序尝试在其他任何时间，或在完成解析后使用定位器，则将接收到不可预知的结果。</p>
+
+<p>不要求 SAX 解析器提供定位器，但强烈建议它提供定位器。如果解析器提供定位器，则必须在报告任何其他文档事件之前提供它。如果在应用程序接收 {@link org.xml.sax.ContentHandler#startDocument startDocument} 事件之前尚未设置定位器，则应用程序必须假定定位器不可用。</p>
+
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.ContentHandler#setDocumentLocator 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.Locator.getPublicId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前文档事件的公共标识符。
+
+<p>返回值是文档实体的公共标识符，或在其中出现触发事件标记的外部解析实体的公共标识符。</p>
+
+@return 包含公共标识符的字符串，如果没有可用的，则返回 null。
+@see #getSystemId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.Locator.getSystemId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前文档事件的系统标识符。
+
+<p>返回值是文档实体的系统标识符，或在其中出现触发事件的标记的外部解析实体的系统标识符。</p>
+
+<p>如果系统标识符是 URL，则解析器必须在将它传递给应用程序之前完整解析它。例如，必须始终以 <em>file:...</em> 的形式提供文件。URL 和其他类型的相对 URI 也将根据它们的基来解析。</p>
+
+@return 包含系统标识符的字符串，如果没有可用的，则返回 null。
+@see #getPublicId
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.xml.sax.Locator.getLineNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前文档事件结束处的行号。行由行尾分隔，这在 XML 规范中定义。
+
+<p><strong>警告：</strong>从该方法返回的值只是供诊断用的近似值；并不提供编辑源 XML 文档的字符内容所需的充足信息。在某些情况下，这些&ldquo;行&rdquo;号与将显示为列的号匹配，而在其他一些情况下，因内部实体扩展它们可以与源文本不匹配。  </p>
+
+<p>在文档实体或在其中出现触发事件标记的外部解析实体中，返回值是行号的近似值。</p>
+
+<p>如有可能，SAX 驱动器应该提供与文档事件相关的文本之后的第一个字符的行位置。第一行就是 &quot;line 1&quot;。</p>
+
+@return 行号，如果没有可用的，则返回 -1。
+@see #getColumnNumber
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.xml.sax.Locator.getColumnNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前文档事件结束处的列号。这是自最后一行结束后，从一开始的 Java <code>char</code> 值号。
+
+<p><strong>警告：</strong>从该方法返回的值只是供诊断用的近似值；并不提供编辑源 XML 文档的字符内容所需的充足信息。例如，当行包括组合字符序列、宽字符、代理项对或双向文本组合时，该值可能与文本编辑器中所显示的列不一致。 </p>
+
+<p>在文档实体或在其中出现触发事件标记的外部解析实体中，返回值是列号的近似值。</p>
+
+<p>如有可能，SAX 驱动器应该提供与文档事件相关的文本之后的第一个字符的行位置。每行中的第一列就是 &quot;column 1&quot;。</p>
+
+@return 列号，如果没有可用的，则返回 -1。
+@see #getLineNumber
+
+<!-- END DATA -->

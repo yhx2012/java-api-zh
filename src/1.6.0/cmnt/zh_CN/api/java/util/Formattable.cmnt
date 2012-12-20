@@ -1,0 +1,103 @@
+<!-- BEGIN KEY -->
+public interface java.util.Formattable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<tt>Formattable</tt> 接口必须通过需要执行自定义格式化（使用 {@link java.util.Formatter} 的 <tt>'s'</tt> 转换说明符）的任何类来实现。此接口允许对格式化任意对象的基本控制。
+
+例如，以下类根据标志和长度限制输出股票名称的不同表示形式：
+
+ <blockquote><pre>
+   import java.nio.CharBuffer;
+   import java.util.Formatter;
+   import java.util.Formattable;
+   import java.util.Locale;
+   import static java.util.FormattableFlags.*;
+
+  ...
+ 
+   public class StockName implements Formattable {
+       private String symbol, companyName, frenchCompanyName;
+       public StockName(String symbol, String companyName,
+                        String frenchCompanyName) {
+           ...
+       }
+
+       ...
+
+       public void formatTo(Formatter fmt, int f, int width, int precision) {
+           StringBuilder sb = new StringBuilder();
+
+           // decide form of name 
+           String name = companyName;
+           if (fmt.locale().equals(Locale.FRANCE))
+               name = frenchCompanyName;
+           boolean alternate = (f & ALTERNATE) == ALTERNATE;
+           boolean usesymbol = alternate || (precision != -1 && precision < 10);
+           String out = (usesymbol ? symbol : name);
+
+           // apply precision
+           if (precision == -1 || out.length() < precision) {
+               // write it all
+               sb.append(out);
+           } else {
+               sb.append(out.substring(0, precision - 1)).append('*');
+           }
+
+           // apply width and justification
+           int len = sb.length(); 
+           if (len < width)
+               for (int i = 0; i < width - len; i++)
+                   if ((f & LEFT_JUSTIFY) == LEFT_JUSTIFY)
+                       sb.append(' ');
+                   else
+                       sb.insert(0, ' ');
+
+           fmt.format(sb.toString());
+       }
+
+       public String toString() {
+           return String.format("%s - %s", symbol, companyName);
+       }
+   }
+ </pre></blockquote>
+
+<p> 当与 {@link java.util.Formatter} 一起使用时，上述类会产生以下各种格式的字符串输出。
+
+ <blockquote><pre>
+   Formatter fmt = new Formatter();
+   StockName sn = new StockName("HUGE", "Huge Fruit, Inc.",
+                                "Fruit Titanesque, Inc.");
+   fmt.format("%s", sn);                   //   -> "Huge Fruit, Inc."
+   fmt.format("%s", sn.toString());        //   -> "HUGE - Huge Fruit, Inc."
+   fmt.format("%#s", sn);                  //   -> "HUGE"
+   fmt.format("%-10.8s", sn);              //   -> "HUGE      "
+   fmt.format("%.12s", sn);                //   -> "Huge Fruit,*"
+   fmt.format(Locale.FRANCE, "%25s", sn);  //   -> "   Fruit Titanesque, Inc." 
+ </pre></blockquote>
+
+<p> 可格式化项对于多线程访问而言未必是安全的。线程安全是可选的，并且可以通过扩展和实现此接口的类来强制执行。 
+
+<p> 除非另行指定，否则将 <tt>null</tt> 参数传递给此接口中的任何方法都会抛出 {@link NullPointerException}。
+
+@version 	1.3, 04/21/04
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Formattable.formatTo(Formatter formatter, int flags, int width, int precision)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的{@link Formatter 格式器}来格式化对象。
+
+@param  formatter {@link Formatter 格式器}。实现类可以调用 {@link Formatter#out() formatter.out()} 或 {@link Formatter#locale() formatter.locale()}，以获得分别由此 <tt>formatter</tt> 使用的 {@link Appendable} 或 {@link Locale}。 
+
+@param  flags 这些标志将修改输出格式。该值被解释为位掩码(bitmask)。可以将以下标志的组合设置为：{@link FormattableFlags#LEFT_JUSTIFY}、{@link FormattableFlags#UPPERCASE} 和 {@link FormattableFlags#ALTERNATE}。如果没有设置标志，则应用实现类的默认格式。
+
+@param  width 写入到输出的最少字符数。如果转换值的长度小于 <tt>width</tt>，那么输出将用 <tt>'&nbsp;&nbsp;'</tt> 来填充，直到总字符数等于 width。默认情况下，从开始处进行填充。如果设置了 {@link FormattableFlags#LEFT_JUSTIFY} 标志，则从结尾处进行填充。如果 <tt>width</tt> 为 <tt>-1</tt>，则不存在最少字符数。
+
+@param  precision 写入到输出的最多字符数。precision 应用在 width 之前，因此，即使 <tt>width</tt> 大于 <tt>precision</tt>，输出也将被截断为 <tt>precision</tt> 字符。如果 <tt>precision</tt> 为 <tt>-1</tt>，那么对于字符的数量没有明显限制。
+
+@throws  IllegalFormatException 如果所有参数都无效。有关所有可能的格式设置错误的规范，请参阅格式器类规范的 <a
+          href="../util/Formatter.html#detail">Details</a> 一节。
+
+<!-- END DATA -->

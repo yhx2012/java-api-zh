@@ -1,0 +1,167 @@
+<!-- BEGIN KEY -->
+public interface javax.lang.model.element.Element
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个程序元素，比如包、类或者方法。每个元素都表示一个静态的语言级构造（不表示虚拟机的运行时构造）。
+
+<p> 元素应该使用 {@link #equals(Object)} 方法进行比较。不保证总是使用相同的对象表示某个特定的元素。
+
+<p> 要实现基于 {@code Element} 对象类的操作，可以使用 {@linkplain ElementVisitor visitor} 或者使用 {@link #getKind} 方法的结果。使用 {@code instanceof} 确定此建模层次结构中某一对象的有效类 <em>未必</em> 可靠，因为一个实现可以选择让单个对象实现多个 {@code Element} 子接口。
+
+@author Joseph D. Darcy
+@author Scott Seligman
+@author Peter von der Ah&eacute;
+@version 1.7 06/08/07
+@see Elements
+@see TypeMirror
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.type.TypeMirror javax.lang.model.element.Element.asType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素定义的类型。
+
+<p> 一般元素会定义一个类型系列，而不是只定义一个类型。如果此元素是一般元素，则返回<i>原型</i> 类型。此方法是元素在对应于它自己的形式类型参数的类型变量上的调用。例如，对于一般类元素 {@code C<N extends Number>}，返回参数化类型 {@code C<N>}。{@link Types} 实用工具接口有更多的一般方法来获取某一元素定义的整个范围的类型。
+
+@see Types
+
+@return 此元素定义的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.ElementKind javax.lang.model.element.Element.getKind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素的{@code 类型}。
+ 
+@return 此元素的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.AnnotationMirror> javax.lang.model.element.Element.getAnnotationMirrors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回直接存在于此元素上的注释。
+
+<p> 要获得继承的注释，可使用 {@link Elements#getAllAnnotationMirrors(Element) getAllAnnotationMirrors}。
+
+@see ElementFilter
+ 
+@return 直接存在于此元素上的注释；如果没有，则返回一个空列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public A extends java.lang.annotation.Annotation javax.lang.model.element.Element.getAnnotation(java.lang.Class<A> annotationType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素针对指定类型的注释（如果存在这样的注释），否则返回 {@code null}。注释可以是继承的，也可以是直接存在于此元素上的。
+
+<p> 此方法返回的注释可以包含其值类型为 {@code Class} 的元素。此值无法直接返回：查找并加载某个类的必要信息（比如要使用的类加载器）不可用，该类可能根本无法加载。试图通过对所返回的注释调用相关方法读取 {@code Class} 对象将导致一个 {@link MirroredTypeException}，从中可以提取相应的 {@link TypeMirror}。类似地，试图读取一个值为 {@code Class[]} 的元素将导致 {@link MirroredTypesException}。
+
+ <blockquote>
+<i>注：</i> 此方法与此接口及相关接口中的那些方法不同。它对运行时反射信息（当前已加载到 VM 中的注释类型的表示形式）进行操作，而不是对通过这些接口定义和使用的表示形式进行操作。因此，调用返回注释对象上的方法可能会抛出许多异常，这些异常在调用核心反射所返回的注释对象上的方法时抛出。此方法由被编写为对已知的固定注释类型集上进行操作的调用者使用。
+ </blockquote>
+
+@param <A>  注释类型
+@param annotationType  对应于注释类型的 {@code Class} 对象
+@return 此元素针对指定注释类型的注释（如果此元素上存在这样的注释），否则返回 {@code null}
+
+@see #getAnnotationMirrors()
+@see java.lang.reflect.AnnotatedElement#getAnnotation
+@see EnumConstantNotPresentException
+@see AnnotationTypeMismatchException
+@see IncompleteAnnotationException
+@see MirroredTypeException
+@see MirroredTypesException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<javax.lang.model.element.Modifier> javax.lang.model.element.Element.getModifiers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素的修饰符，不包括注释。但包括显式修饰符，比如接口成员的 {@code public} 和 {@code static} 修饰符。
+
+@return 此元素的修饰符；如果没有，则返回一个空集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Name javax.lang.model.element.Element.getSimpleName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素的简单（未限定）名称。一般类型的名称不包括对其形式类型参数的任何引用。例如，类型元素 {@code java.util.Set<E>} 的简单名称是 {@code "Set"}。如果此元素表示一个未指定的包，则返回一个空名称。如果它表示一个构造方法，则返回名称 &quot;{@code <init>}&quot;。如果它表示一个静态初始化程序，则返回名称 &quot;{@code <clinit>}&quot;。如果它表示一个匿名类或者实例初始化程序，则返回一个空名称。
+
+@return 此元素的简单名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Element javax.lang.model.element.Element.getEnclosingElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回封装此元素（非严格意义上）的最里层元素。
+ <ul>
+<li> 如果此元素的声明在词法上直接封装在另一个元素的声明中，则返回那个封装元素。
+<li> 如果此元素是顶层类型，则返回它的包。
+<li> 如果此元素是一个包，则返回 {@code null}。
+<li> 如果此元素是一个类型参数，则返回 {@code null}。
+ </ul>
+
+@return 封装元素；如果没有，则返回 {@code null}
+@see Elements#getPackageOf
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.Element> javax.lang.model.element.Element.getEnclosedElements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此元素直接封装（非严格意义上）的元素。  
+
+类或接口被认为用于封装它直接声明的字段、方法、构造方法和成员类型。这包括所有（隐式）默认构造方法和枚举类型的隐式 {@code values} 和 {@code valueOf} 方法。
+ 
+包封装位于其中的顶层类和接口，但不认为它封装了子包。
+
+当前不认为其他种类的元素封装了任何元素；但是，随着此 API 或编程语言的发展，这种情况可能发生改变。
+
+<p>注意，使用 {@link ElementFilter} 中的方法可以隔离某一种类的元素。
+
+@return 封装的元素；如果没有，则返回一个空列表
+@see Elements#getAllMembers
+@jls3 8.8.9 Default Constructor
+@jls3 8.9 Enums
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.element.Element.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果参数表示与{@code 此元素}相同的元素，则返回 {@code true}；否则返回 {@code false}。
+
+<p>注意，元素的身份包括无法直接从元素方法获得的隐式状态，包括反映无关类型存在性的状态。这些接口的不同实现所创建的元素对象<i>不</i> 应该是相等的，即使将为&ldquo;相同的&rdquo;元素建模；这正如通过不同类加载器加载的相同类文件的 {@code Class} 对象是不相等的。
+
+@param obj  将与此元素进行比较的对象 
+@return 如果指定对象表示与此元素相同的元素，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.lang.model.element.Element.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+遵守 {@link Object#hashCode Object.hashCode} 的常规协定。
+
+@see #equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public R javax.lang.model.element.Element.accept(javax.lang.model.element.ElementVisitor<R, P> v, P p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 visitor 应用到此元素。
+
+@param <R> visitor 的方法的返回类型
+@param <P> visitor 的方法的附加参数类型
+@param v   对此元素进行操作的 visitor
+@param p visitor 的附加参数
+@return 特定于 visitor 的结果
+
+<!-- END DATA -->

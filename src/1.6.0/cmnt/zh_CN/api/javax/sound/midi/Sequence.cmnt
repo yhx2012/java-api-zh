@@ -1,0 +1,216 @@
+<!-- BEGIN KEY -->
+public class javax.sound.midi.Sequence extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Sequence</code> 是一种数据结构，包含可由 <code>{@link Sequencer}</code> 对象回放的音乐信息（通常是整首歌曲或音乐作品）。特别地，<code>Sequence</code> 包含定时信息和一个或多个轨道。每个 <code>{@link Track track}</code> 包含一系列的 MIDI 事件（例如音符打开、音符关闭、程序更改和元事件）。sequence 的定时信息指定了用于为 sequence 中的事件加时间戳的单位类型。
+ <p>
+<code>Sequence</code> 可从一个 MIDI 文件创建，方法是将该文件读入到输入流并调用 {@link MidiSystem} 的某个 <code>getSequence</code> 方法。还可以从头构建 sequence，方法是将新的 <code>Track</code> 添加到空 <code>Sequence</code> 中，然后将 <code>{@link MidiEvent}</code> 对象添加到这些 <code>Track</code> 中。
+
+@see Sequencer#setSequence(java.io.InputStream stream)
+@see Sequencer#setSequence(Sequence sequence)
+@see Track#add(MidiEvent)
+@see MidiFileFormat
+
+@version 1.28, 05/11/17
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float javax.sound.midi.Sequence.PPQ
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于速度的定时类型，其精度用每四分音符的拍子数（节拍）表示。
+@see #Sequence(float, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float javax.sound.midi.Sequence.SMPTE_24
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于 SMPTE 的定时类型，每秒 24 帧（精度用每帧的节拍数表示）。
+@see #Sequence(float, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float javax.sound.midi.Sequence.SMPTE_25
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于 SMPTE 的定时类型，每秒 25 帧（精度用每帧的节拍数表示）。
+@see #Sequence(float, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float javax.sound.midi.Sequence.SMPTE_30DROP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于 SMPTE 的定时类型，每秒 29.97 帧（精度用每帧的节拍数表示）。
+@see #Sequence(float, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final float javax.sound.midi.Sequence.SMPTE_30
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于 SMPTE 的定时类型，每秒 30 帧（精度用每帧的节拍数表示）。
+@see #Sequence(float, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.sound.midi.Sequence.divisionType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+sequence 的定时 division 类型。
+@see #PPQ
+@see #SMPTE_24
+@see #SMPTE_25
+@see #SMPTE_30DROP
+@see #SMPTE_30
+@see #getDivisionType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.midi.Sequence.resolution
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+sequence 的定时精度。
+@see #getResolution
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector<javax.sound.midi.Track> javax.sound.midi.Sequence.tracks
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 sequence 中的 MIDI 轨道。
+@see #getTracks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequence(float divisionType, int resolution) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定的定时 division 类型和定时精度的新 MIDI Sequence。division 类型必须是可识别的 MIDI 定时类型之一。对于基于速度的定时，<code>divisionType</code> 是 PPQ（每四分音符的节拍数），精度通过每拍的节拍数指定。对于 SMTPE 定时，<code>divisionType</code> 指定每秒的帧数，精度通过每帧的节拍数指定。该 Sequence 不包含任何初始轨道。可从 Sequence 中添加或移除轨道，方法是使用 <code>{@link #createTrack}</code> 和 <code>{@link #deleteTrack}</code>。
+
+@param divisionType 定时 division 类型（PPQ 和某个 SMPTE 类型）
+@param resolution 定时精度
+@throws InvalidMidiDataException 如果 <code>divisionType</code> 无效
+
+@see #PPQ
+@see #SMPTE_24
+@see #SMPTE_25
+@see #SMPTE_30DROP
+@see #SMPTE_30
+@see #getDivisionType
+@see #getResolution
+@see #getTracks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequence(float divisionType, int resolution, int numTracks) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定的定时 division 类型、定时精度和轨道数的新 MIDI Sequence。division 类型必须是可识别的 MIDI 定时类型之一。对于基于速度的定时，<code>divisionType</code> 是 PPQ（每四分音符的节拍数），精度通过每拍的节拍数指定。对于 SMTPE 定时，<code>divisionType</code> 指定每秒的帧数，精度通过每帧的节拍数指定。将使用由 <code>numTracks</code> 指定的轨道数来初始化该 Sequence。这些轨道初始为空（即它们只包含元事件 End of Track）。使用 <code>{@link #getTracks}</code> 方法可检索轨道以供编辑。还可以使用 <code>{@link #createTrack}</code> 和 <code>{@link #deleteTrack}</code> 添加其他的轨道或移除现有的轨道。
+
+@param divisionType 定时 division 类型（PPQ 或某个 SMPTE 类型）
+@param resolution 定时精度
+@param numTracks Sequence 中的初始轨道数。
+@throws InvalidMidiDataException 如果 <code>divisionType</code> 无效
+
+@see #PPQ
+@see #SMPTE_24
+@see #SMPTE_25
+@see #SMPTE_30DROP
+@see #SMPTE_30
+@see #getDivisionType
+@see #getResolution
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.midi.Sequence.getDivisionType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 Sequence 的定时 division 类型。
+@return division 类型（PPQ 或某个 SMPTE 类型）
+
+@see #PPQ
+@see #SMPTE_24
+@see #SMPTE_25
+@see #SMPTE_30DROP
+@see #SMPTE_30
+@see #Sequence(float, int)
+@see MidiFileFormat#getDivisionType()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.Sequence.getResolution()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 Sequence 的定时精度。如果 Sequence 的 division 类型为 PPQ，则精度按每拍的节拍数指定。对于 SMTPE 定时，精度按每帧的节拍数指定。
+
+@return 每拍 (PPQ) 或每帧 (SMPTE) 的节拍数
+@see #getDivisionType
+@see #Sequence(float, int)
+@see MidiFileFormat#getResolution()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Track javax.sound.midi.Sequence.createTrack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的、初始为空的轨道作为此 Sequence 的一部分。轨道初始包含元事件 End of Track。返回新创建的轨道。可使用 <code>{@link #getTracks}</code> 检索 Sequence 中的所有轨道。可使用 <code>{@link #deleteTrack}</code> 从 Sequence 中移除轨道。
+@return 新创建的轨道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequence.deleteTrack(Track track)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Sequence 中移除指定的轨道。
+@param track 要移除的轨道
+@return 如果轨道原先存在但后来被移除，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+@see #createTrack
+@see #getTracks
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Track[] javax.sound.midi.Sequence.getTracks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得包含此 Sequence 中所有轨道的数组。如果 Sequence 中不包含任何轨道，则返回长度为 0 的数组。
+@return 轨道数组
+
+@see #createTrack
+@see #deleteTrack
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequence.getMicrosecondLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 Sequence 的持续时间，用微秒表示。
+@return 此 Sequence 的持续时间，以微秒为单位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequence.getTickLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 Sequence 的持续时间，用 MIDI 节拍数表示。
+
+@return 此 Sequence 的长度，以节拍数为单位
+
+
+@see #getMicrosecondLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Patch[] javax.sound.midi.Sequence.getPatchList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 Sequence 中引用的包列表。使用该包列表可将所需的 <code>{@link Instrument}</code> 对象加载到 <code>{@link Synthesizer}</code> 中。
+
+@return 此 Sequence 中使用的 <code>{@link Patch}</code> 对象数组
+
+@see Synthesizer#loadInstruments(Soundbank, Patch[])
+
+<!-- END DATA -->

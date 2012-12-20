@@ -1,0 +1,395 @@
+<!-- BEGIN KEY -->
+public abstract class javax.net.ssl.SSLSocket extends java.net.Socket
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类扩展 <code>Socket</code> 并提供使用诸如安全套接字层 (Secure Sockets Layer, SSL) 或 IETF 传输层安全性 (Transport Layer Security, TLS) 等协议的安全套接字。
+ <P>
+ 这种套接字是普通的流套接字，只不过它们在底层网络传输协议（如 TCP）上添加了安全保护层。这些保护包括： <UL>
+
+	<LI> <em>完整性保护</em>。SSL 可以防止消息被主动的窃听者修改。
+
+	<LI> <em>验证</em>。在多数模式下，SSL 提供对等验证。服务器通常要进行验证，客户机可以根据服务器的请求进行验证。
+
+	<LI> <em>机密性（私有性保护）</em>。在多数模式下，SSL 加密在客户机和服务器之间发送的数据。这保护了数据的机密性，所以被动的窃听者不能看到各种类型的敏感数据，如财务信息或个人信息。
+
+	</UL>
+
+ <P>这些保护由一个&ldquo;密码套件&rdquo;指定，&ldquo;密码套件&rdquo;是给定的 SSL 连接所使用的加密算法组合。在协商过程中，两个端点必须对可用于双方环境的密码套件达成一致。如果不存在这种公共的套件，就不能建立 SSL 连接，也不能交换数据。
+
+ <P> 通过称为&ldquo;握手&rdquo;的协商过程可建立所用的密码套件。此过程的目的是创建或重新加入一个&ldquo;会话&rdquo;，&ldquo;会话&rdquo;可以防止多个连接超时。握手完成后，可以使用 <em>getSession</em> 方法访问会话的属性。此连接上最初的握手可以用以下三种方式开始： <UL>
+
+      <LI> 调用 <code>startHandshake</code> 显式地开始握手，或者
+      <LI> 任何在此套接字上读取或写入应用数据的尝试将引起隐式握手，或者
+      <LI> 调用 <code>getSession</code> 尝试建立会话（如果当前不存在有效的会话）将进行隐式握手。
+ </UL>
+
+ <P>如果握手由于某些原因失败，则 <code>SSLSocket</code> 将关闭，不进行更多通信。
+
+ <P>管理密码套件时需要知道以下两组密码套件： <UL>
+
+	<LI> <em>支持的</em> 密码套件：SSL 实现支持的所有套件。使用 <em>getSupportedCipherSuites</em> 报告此列表。
+
+	<LI> <em>启用的</em> 密码套件，它可少于完整的支持套件集。此组使用 <em>setEnabledCipherSuites</em> 方法设置，使用 <em>getEnabledCipherSuites</em> 方法查询。最初，在表示最低建议配置的新套接字上启用默认的密码套件集。
+
+	</UL>
+
+ <P> 默认情况下，实现要求只默认启用那些可对服务器进行验证并提供机密性的密码套件。只有双方明确同意非验证和/或非私有的（未加密的）的通信时才选择这种密码套件。
+
+ <P>第一次创建 <code>SSLSocket</code> 时不进行握手，从而应用程序可以首先设置它们的通信首选项：使用哪个密码套件、套接字应该为客户机还是服务器模式等。但是，应用数据在连接上发送时始终提供安全性。
+
+ <P> 可以进行注册以便接收握手结束的事件通知。这涉及到另外两个类的使用。<em>HandshakeCompletedEvent</em> 对象会被传递到由此 API 的用户所注册 <em>HandshakeCompletedListener</em> 实例。
+
+<code>SSLSocket</code> 通过 <code>SSLSocketFactory</code> 创建，或通过从 <code>SSLServerSocket</code> <code>接受</code> 一个连接来创建。
+
+ <P>SSL 套接字必须选择以客户机还是服务器模式操作。这将决定谁来开始握手过程，以及每一方应该发送哪种报文。每个连接都必须有一个客户机和一个服务器，否则握手将无法正确进行。初始握手开始后，套接字就不能在客户机和服务器模式间转换，即使在执行重新协商时也不能。
+
+@see java.net.Socket
+@see SSLServerSocket
+@see SSLSocketFactory
+
+@since 1.4
+@version 1.28
+@author David Brownell
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.SSLSocket()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 仅供子类使用。构造未初始化且未连接的 TCP 套接字。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.SSLSocket(String host, int port) throws java.io.IOException, java.net.UnknownHostException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅供子类使用。构造一个到指定端口指定主机的 TCP 连接。它充当 SSL 客户机。
+
+@param host 要连接的主机的名称
+@param port 服务器的端口号
+@throws IOException 如果创建套接字时发生 I/O 错误
+@throws UnknownHostException 如果主机是未知的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.SSLSocket(InetAddress address, int port) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅供子类使用。构造一个到指定地址和端口的服务器的 TCP 连接。它充当 SSL 客户机。
+
+@param address 服务器的主机
+@param port 服务器主机的端口
+@throws IOException 如果创建套接字时发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.SSLSocket(String host, int port, InetAddress clientAddress, int clientPort) throws java.io.IOException, java.net.UnknownHostException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅供子类使用。构造一个到指定端口指定主机的 SSL 连接，将给定的地址和端口绑定到连接的客户机那端。它充当 SSL 客户机。
+
+@param host 要连接的主机的名称
+@param port 服务器的端口号
+@param clientAddress 客户机的主机
+@param clientPort 客户机的端口号
+@throws IOException 如果创建套接字时发生 I/O 错误
+@throws UnknownHostException 如果主机是未知的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.SSLSocket(InetAddress address, int port, InetAddress clientAddress, int clientPort) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅供子类使用。构造一个到指定地址和 TCP 端口的服务器的 SSL 连接，将给定地址和端口绑定到连接的客户机那端。它充当 SSL 客户机。
+
+@param address 服务器主机
+@param port 服务器主机的端口
+@param clientAddress 客户机的主机
+@param clientPort 客户机端口号
+@throws IOException 如果创建套接字时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.net.ssl.SSLSocket.getSupportedCipherSuites()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回可以启用以供此连接使用的密码套件的名称。通常，此列表可能包含一些默认值不满足服务质量要求的密码套件，所以默认情况下实际只启用了部分密码套件。这种密码套件在特定的应用程序中很有用。
+
+@return 密码套件名称的数组
+@see #getEnabledCipherSuites()
+@see #setEnabledCipherSuites(String [])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.net.ssl.SSLSocket.getEnabledCipherSuites()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回当前启用以供此连接使用的 SSL 密码套件的名称。当第一次创建 SSLSocket 时，所有启用的密码套件都支持最低的服务质量。因此，在某些环境中此值可能为空。
+ <P>
+ 即使密码套件已经被启用，也可能不会使用它。例如，同位体不支持它、密码套件必需的证书（私钥）不可用、启用了匿名的密码套件但需要进行验证等。
+
+@return 密码套件名称数组
+@see #getSupportedCipherSuites()
+@see #setEnabledCipherSuites(String [])
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setEnabledCipherSuites(java.lang.String[] suites)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将密码套件设置为启用以供此连接使用。
+ <P>
+ <code>suites</code> 参数中的每个密码套件都必须已经由 getSupportedCipherSuites() 列出，否则此方法失败。成功调用此方法之后，只有在 <code>suites</code> 参数中列出的套件才能被启用以供连接使用。
+ <P>
+有的密码套件从不被连接使用，有关其原因的更多信息，请参见 {@link #getEnabledCipherSuites()}。
+
+@param suites 将被启用的所有密码套件的名称
+@throws IllegalArgumentException 如果由参数指定的一个或多个协议不受支持，或 protocols 参数为 null。
+@see #getSupportedCipherSuites()
+@see #getEnabledCipherSuites()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.net.ssl.SSLSocket.getSupportedProtocols()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回能够被启用以供 SSL 连接使用的协议的名称。
+
+@return 所支持的协议数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String[] javax.net.ssl.SSLSocket.getEnabledProtocols()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前启用以供此连接使用的协议版本的名称。
+@see #setEnabledProtocols(String [])
+@return 协议数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setEnabledProtocols(java.lang.String[] protocols)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置启用以供此连接使用的协议版本。
+ <P>
+ 协议必须已经由所支持的 <code>getSupportedProtocols()</code> 列出。成功调用此方法之后，只有在 <code>protocols</code> 参数中列出的协议才能被启用以供使用。
+
+@param protocols 将被启用的所有协议的名称。
+@throws IllegalArgumentException 如果由参数指定的一个或多个协议不受支持，或 protocols 参数为 null。
+@see #getEnabledProtocols()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.net.ssl.SSLSession javax.net.ssl.SSLSocket.getSession()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此连接使用的 SSL 会话。它可以是持久会话，并且通常对应于某个用户的整个登录会话过程。该会话指定一个会话中所有连接主动使用的特定密码套件，以及会话客户机和服务器的标识。
+ <P>
+此方法将发起初始握手（如有必要），然后阻塞，直到握手已经建立。
+ <P>
+如果在初始握手期间出现错误，则此方法返回一个无效的会话对象，该对象会报告一个无效的密码套件 "SSL_NULL_WITH_NULL_NULL"。
+
+@return <code>SSLSession</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.addHandshakeCompletedListener(HandshakeCompletedListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 注册一个事件侦听器来接收此连接上的 SSL 握手已经完成的通知。
+
+@param listener “握手已完成” (HandShake Completed) 事件侦听器
+@see #startHandshake()
+@see #removeHandshakeCompletedListener(HandshakeCompletedListener)
+@throws IllegalArgumentException 如果参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.removeHandshakeCompletedListener(HandshakeCompletedListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 移除一个以前注册的握手完成侦听器。
+
+@param listener “握手已完成”事件侦听器
+@throws IllegalArgumentException 如果没有注册此侦听器，或参数为 null。
+@see #addHandshakeCompletedListener(HandshakeCompletedListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.startHandshake() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在此连接上开始 SSL 握手。这样做通常是因为需要使用新的加密密钥、需要更改密码套件或开始新的会话。若要强制完成重新验证，可以在开始此握手之前使当前会话无效。
+
+ <P> 如果数据已经在连接上发送，则在此握手期间数据继续流动。当握手完成时，将使用事件来通知。
+
+ 此方法对于连接上的初始握手是同步的，它在协商的握手完成时返回。一些协议可能不支持在一个已经存在的套接字上的多次握手，并可能抛出 SSLException。
+
+@throws IOException 如果发生网络级别的错误
+@see #addHandshakeCompletedListener(HandshakeCompletedListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setUseClientMode(boolean mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 配置套接字在握手时使用客户机（或服务器）模式。
+ <P>
+ 此方法必须在发生任何握手之前调用。一旦握手开始，在此套接字的生存期内将不能再重置模式。
+ <P>
+ 服务器通常会验证本身，客户机则不要求这么做。
+
+@param mode 如果套接字应该以“客户机”模式开始它的握手，此参数为 true
+@throws IllegalArgumentException 如果初始握手开始后试图更改模式。
+@see #getUseClientMode()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.net.ssl.SSLSocket.getUseClientMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 如果套接字设置为握手时使用客户机模式，则返回 true。
+
+@return 如果套接字应该以“客户机”模式进行握手，则返回 true
+@see #setUseClientMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setNeedClientAuth(boolean need)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 配置套接字<i>要求</i> 客户机验证。此选项只对服务器模式的套接字有用。
+ <P>
+ 套接字的客户机验证设置是以下之一:
+ <ul>
+ <li> 要求的客户机验证
+ <li> 请求的客户机验证
+ <li> 不需要客户机验证
+ </ul>
+ <P>
+ 与 {@link #setWantClientAuth(boolean)} 不同，如果设置了此选项并且客户机选择不提供关于本身的验证信息，<i>协商将会停止且连接将被终止</i>。
+ <P>
+ 调用此方法会重写由此方法或 {@link #setWantClientAuth(boolean)} 以前所做的任何设置。
+
+@param	need 如果要求客户机验证设置，则为 true；如果不需要客户机验证设置，则为 false。
+@see #getNeedClientAuth()
+@see #setWantClientAuth(boolean)
+@see #getWantClientAuth()
+@see #setUseClientMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.net.ssl.SSLSocket.getNeedClientAuth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 如果套接字<i>要求</i> 客户机验证，则返回 true。此选项只对服务器模式的套接字有用。
+
+@return	如果要求客户机验证，返回 true；如果不需要客户机验证，则返回 false。
+@see #setNeedClientAuth(boolean)
+@see #setWantClientAuth(boolean)
+@see #getWantClientAuth()
+@see #setUseClientMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setWantClientAuth(boolean want)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 配置套接字<i>请求</i> 客户机验证。此选项只对服务器模式的套接字有用。
+ <P>
+ 套接字的客户机验证设置是以下之一:
+ <ul>
+ <li> 要求的客户机验证
+ <li> 请求的客户机验证
+ <li> 不需要客户机验证
+ </ul>
+ <P>
+ 与 {@link #setNeedClientAuth(boolean)} 不同，如果设置了此选项并且客户机选择不提供关于本身的验证信息，<i>则协商将会继续</i>。
+ <P>
+ 调用此方法会重写由此方法或 {@link #setNeedClientAuth(boolean)} 以前所做的任何设置。
+
+@param	want 如果请求进行客户机验证，则设置为 true；如果不需要客户机验证，则设置为 false。
+@see #getWantClientAuth()
+@see #setNeedClientAuth(boolean)
+@see #getNeedClientAuth()
+@see #setUseClientMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.net.ssl.SSLSocket.getWantClientAuth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 如果套接字<i>请求</i> 客户机验证，则返回 true。此选项只对服务器模式的套接字有用。
+
+@return	如果请求进行客户机验证，则返回 true；如果不需要客户机验证，则返回 false。
+@see #setNeedClientAuth(boolean)
+@see #getNeedClientAuth()
+@see #setWantClientAuth(boolean)
+@see #setUseClientMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.net.ssl.SSLSocket.setEnableSessionCreation(boolean flag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+控制是否可以使用此套接字建立新的 SSL 会话。如果不允许创建会话，也没有可以恢复的现有会话，则握手不会成功。
+
+@param flag 如果为 true，则指示可以创建会话，这是默认设置；如果为 false，则指示必须恢复一个现有的会话
+@see #getEnableSessionCreation()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.net.ssl.SSLSocket.getEnableSessionCreation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 如果可以使用此套接字建立新的 SSL 会话，则返回 true。
+
+@return 如果为 true，则指示可以创建会话，这是默认设置；如果为 false，则指示必须恢复一个现有的会话
+@see #setEnableSessionCreation(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.net.ssl.SSLParameters javax.net.ssl.SSLSocket.getSSLParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回对此 SSLSocket 有效的 SSLParameters。返回的 SSLParameters 的密码套件和协议始终不为 null。
+
+ @return 对此 SSLSocket 有效的 SSLParameters。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.SSLSocket.setSSLParameters(SSLParameters params)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 对此套接字应用 SSLParameters。
+
+ <p>这意味着：
+ <ul>
+ <li>如果 <code>params.getCipherSuites()</code> 不为 null，则使用该值调用 <code>setEnabledCipherSuites()</code>
+ <li>如果 <code>params.getProtocols()</code> 不为 null，则使用该值调用 <code>setEnabledProtocols()</code> 
+ <li>如果 <code>params.getNeedClientAuth()</code> 或 <code>params.getWantClientAuth()</code> 返回 <code>true</code>，则分别调用 <code>setNeedClientAuth(true)</code> 和 <code>setWantClientAuth(true)</code>；否则调用 <code>setWantClientAuth(false)</code>。
+ </ul>
+
+ @param params 参数
+ @throws IllegalArgumentException 如果 setEnabledCipherSuites() 或 setEnabledProtocols() 调用失败
+ @since 1.6
+
+<!-- END DATA -->

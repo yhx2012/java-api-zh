@@ -1,0 +1,117 @@
+<!-- BEGIN KEY -->
+public abstract class org.omg.CORBA.Context extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于在 <code>Request</code> 操作中指定上下文对象的对象，上下文字符串在与请求调用一起被发送之前，必须在该指定的上下文对象中进行解析。<code>Context</code> 对象包含 <code>NamedValue</code> 对象形式的属性列表。这些属性表示关于客户端、环境或请求情形的信息，它们通常是一些可能不方便作为参数传递的属性。
+ <P>
+<code>Context</code> 对象是通过先调用 <code>ORB</code> 方法 <code>get_default_context</code>，然后在默认上下文上调用 <code>create_child</code> 来创建的。
+ <P>
+<code>Context</code> 对象中的每个属性都由一个 <code>NamedValue</code> 对象表示。属性名称包含在 <code>NamedValue</code> 对象的 <code>name</code> 字段中，与该名称关联的值包含在 <code>Any</code> 对象中，该 Any 已分配给 <code>NamedValue</code> 对象的 <code>value</code> 字段。
+ <P>
+<code>Context</code> 属性可以表示要传播到服务器环境（并使其成为其隐含部分）的部分客户端环境或应用程序环境。（示例有窗口标识符或用户首选项信息）。一旦已经调用服务器（即传播属性之后），服务器可以使用 <code>get_values</code> 方法查询其 <code>Context</code> 对象来获得这些属性。
+
+<P>
+当操作声明中包括上下文子句时，stub 和 skeleton 将有一个为该上下文添加的额外参数。在进行操作调用时，ORB 将在已调用方法的 <code>Context</code> 对象参数中提供使用 IDL 在操作定义中指定的属性以及客户端的 <code>Context</code> 对象中存在的属性。
+ <P>
+多个 <code>Context</code> 属性名称（字符串）通常是以 OMG IDL 标识符（或一系列以句点分隔的 OMG IDL 标识符）的形式出现的。单个 Context 属性名称模式可以是属性名称或后跟单个 &quot;*&quot; 的属性名称。没有结尾 &quot;*&quot; 的属性名称模式被认为只与它自己匹配。&quot;&lt;名称&gt;*&quot;形式的属性名称模式与任何以&lt;名称&gt;开头，且后跟零个或多个附加字符的属性名称匹配。
+ <P>
+属性名称模式用在操作定义的 Context 子句中，作为 <code>Context.get_values</code> 方法的参数。
+ <P>
+<code>Context</code> 对象可能被&ldquo;链接&rdquo;在一起，以完成特定默认行为。使用 <code>create_child</code> 方法创建的 <code>Context</code> 对象将与其父对象（创建该对象的 <code>Context</code> 对象）链接在一起，这意味着在搜索属性名称时，搜索子对象之后将搜索父对象。
+<P>
+在特定 <code>Context</code> 对象中定义的属性会在下一个较高级别有效地重写这些属性。通过指定起始范围并在调用 <code>get_values</code> 方法时使用标志 <code>CTX_RESTRICT_SCOPE</code>，可以限定在搜索属性时使用的范围。
+ <P>
+可以指定一个 <code>Context</code> 对象来指定起始搜索范围。
+
+
+@version 1.11, 09/09/97
+@since   JDK1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String org.omg.CORBA.Context.context_name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 <code>Context</code> 对象的名称。
+
+@return			此 <code>Context</code> 对象的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Context org.omg.CORBA.Context.parent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 <code>Context</code> 对象的父对象。
+
+@return			作为此 <code>Context</code> 父对象的 <code>Context</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.Context org.omg.CORBA.Context.create_child(String child_ctx_name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Context</code> 对象，使用给定字符串作为其名称，并将此 <code>Context</code> 对象设置为其父对象。
+ <P>
+将新的 <code>Context</code> 对象链接到其父 <code>Context</code> 对象中。这意味着在搜索匹配属性名称时，如果在此上下文中没有发现匹配项，则将继续在父对象中进行搜索。如果该搜索还不成功，则继续在祖父对象（如果有）中进行搜索，依此类推。
+
+
+
+@param child_ctx_name	将设置为新 <code>Context</code> 对象名称的 <code>String</code> 对象
+@return			使用指定名称初始化的新建子 <code>Context</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Context.set_one_value(String propname, Any propvalue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>NamedValue</code> 对象，并将它添加到此 <code>Context</code> 对象中。将新 <code>NamedValue</code> 对象的 <code>name</code> 字段设置为给定字符串；将 <code>value</code> 字段设置为给定 <code>Any</code> 对象；将 <code>flags</code> 字段设置为 0。
+
+
+@param propname		要设置的属性名称
+@param propvalue		用来设置属性值的 <code>Any</code> 对象。<code>Any</code> 对象的 <code>value</code> 字段包含将与给定 propname 关联的值；必须将 <code>kind</code> 字段设置为 <code>TCKind.tk_string</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Context.set_values(NVList values)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此 <code>Context</code> 对象中设置一个或多个属性值。提供给此方法的 <code>NVList</code> 包含一个或多个 <code>NamedValue</code> 对象。在每个 <code>NamedValue</code> 对象中，<code>name</code> 字段用于保存属性名称，同时必须将 <code>flags</code> 字段设置为 0。<code>NamedValue</code> 对象的 <code>value</code> 字段包含一个 <code>Any</code> 对象，而该对象中又包含属性的值。因为该值始终是字符串，所以 <code>Any</code> 对象必须将其 <code>TypeCode</code> 的 <code>kind</code> 字段设置为 <code>TCKind.tk_string</code>。
+
+@param values		包含属性名称和要设置的关联值的 NVList
+
+
+@see #get_values
+@see org.omg.CORBA.NamedValue
+@see org.omg.CORBA.Any
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void org.omg.CORBA.Context.delete_values(String propname)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>Context</code> 对象中删除 <code>name</code> 字段与给定属性名称匹配的 <code>NamedValue</code> 对象。如果为 <code>propname</code> 提供的 <code>String</code> 对象具有结尾通配符 (&quot;*&quot;)，则删除所有 <code>name</code> 字段与之匹配的 <code>NamedValue</code> 对象。始终将搜索范围限定为此 <code>Context</code> 对象。
+ <P>
+如果未找到匹配属性，则返回异常。
+
+
+@param propname		要删除的属性名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract org.omg.CORBA.NVList org.omg.CORBA.Context.get_values(String start_scope, int op_flags, String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索 <code>name</code> 字段与给定名称或名称模式匹配的 <code>NamedValue</code> 对象。此方法允许使用通配符进行搜索，这意味着可能存在多个匹配项，所以可能返回多个值。如果在指示的级别上没有找到该属性，则将继续沿上下文对象树向上搜索，直到找到一个匹配项，或者已经搜索完链接中所有的 <code>Context</code> 对象。
+ <P>
+如果没有发现匹配项，则返回错误，不返回任何属性列表。
+
+
+@param start_scope		指示上下文对象级别的 <code>String</code> 对象，将在该级别上启动对指定属性（例如 &quot;_USER&quot;、&quot;_GROUP&quot; 和 &quot;_SYSTEM&quot;）的搜索。有效范围的名称是特定于实现的。如果忽略范围名称，则从指定上下文对象开始搜索。如果没有找到指定范围名称，则返回异常。
+@param op_flags       操作标志。可以指定的一个标志是 <code>CTX_RESTRICT_SCOPE</code>。如果指定此标志，则将搜索限定为指定的 <code>start_scope</code> 或此 <code>Context</code> 对象。
+@param pattern		将检索其值的属性名称。<code>pattern</code> 可以是名称或结尾带通配符 (&quot;*&quot;) 的名称。
+
+@return		一个 <code>NVList</code>，它包含所有关联属性名称与给定名称或名称模式匹配的属性值（以 <code>NamedValue</code> 对象的形式存在）
+@see #set_values
+@see org.omg.CORBA.NamedValue
+
+<!-- END DATA -->

@@ -1,0 +1,636 @@
+<!-- BEGIN KEY -->
+public final class java.awt.font.TextLayout extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+<code>TextLayout</code> 是样式字符数据的不可变图形表示形式。
+ <p>
+它提供以下功能：
+ <ul>
+<li>隐式双向分析和重排序
+<li>光标定位和移动，包括针对混向文本的拆分光标
+<li>，包括针对混向文本的逻辑和可视高亮显示
+<li>多个基线（罗马字体、悬挂和居中）
+<li>命中测试
+<li>调整
+<li>默认字体替换
+<li>规格信息，如 ascent、descent 和 advance
+<li>呈现
+ </ul>
+ <p>
+<code>TextLayout</code> 对象可以使用其 <code>draw</code> 方法呈现。
+ <p>
+可以直接或通过使用 {@link LineBreakMeasurer} 构造 <code>TextLayout</code>。直接构造时，源文本表示一个段落。<code>LineBreakMeasurer</code> 允许带样式的文本断行，以适应特定的宽度。有关更多信息，请参阅 <code>LineBreakMeasurer</code> 文档。
+ <p>
+<code>TextLayout</code> 的逻辑构造过程如下：
+ <ul>
+<li>提取并检查段落属性
+<li>对文本进行双向重排分析，并在需要时计算重排信息
+<li>根据样式排列对文本进行分段
+<li>为样式排列选择的字体，如果存在 {@link TextAttribute#FONT} 属性，则首先使用该字体，否则，通过使用已定义的属性计算默认字体
+<li>如果文本位于多个基线上，则排列或子排列被进一步拆分为共享公共基线的子排列
+<li>使用所选字体为每个排列生成字形向量
+<li>对字形向量执行最后的双向重排
+ </ul>
+ <p>
+从 <code>TextLayout</code> 对象的方法返回的所有图形信息都相对于 <code>TextLayout</code> 的原点，它是 <code>TextLayout</code> 对象的基线与其左边缘的交叉点。同样，假定传递到 <code>TextLayout</code> 对象方法的坐标也相对于 <code>TextLayout</code> 对象的原点。客户端通常需要在 <code>TextLayout</code> 对象的坐标系和另一对象（如 {@link java.awt.Graphics Graphics} 对象）中的坐标系之间进行转换。
+ <p>
+根据样式文本创建 <code>TextLayout</code> 对象，但它们不保留对其源文本的引用。因此，对先前用来生成 <code>TextLayout</code> 文本的改动不会影响 <code>TextLayout</code>。
+ <p>
+<code>TextLayout</code> 对象的三个方法（<code>getNextRightHit</code>、<code>getNextLeftHit</code> 和 <code>hitTestChar</code>）都返回 {@link TextHitInfo} 实例。这些 <code>TextHitInfo</code> 对象中的偏移量相对于 <code>TextLayout</code> 的起始处，而<b>不是</b>相对于用来创建 <code>TextLayout</code> 的文本。同样，接受 <code>TextHitInfo</code> 实例作为参数的 <code>TextLayout</code> 方法将 <code>TextHitInfo</code> 对象的偏移量看做相对于 <code>TextLayout</code>，而不是其他任何基础文本存储模型。
+ <p>
+<strong>示例</strong>：<p>
+构造并绘制 <code>TextLayout</code> 及其边界矩形：
+ <blockquote><pre>
+   Graphics2D g = ...;
+   Point2D loc = ...;
+   Font font = Font.getFont("Helvetica-bold-italic");
+   FontRenderContext frc = g.getFontRenderContext();
+   TextLayout layout = new TextLayout("This is a string", font, frc);
+   layout.draw(g, (float)loc.getX(), (float)loc.getY());
+
+   Rectangle2D bounds = layout.getBounds();
+   bounds.setRect(bounds.getX()+loc.getX(),
+                  bounds.getY()+loc.getY(),
+                  bounds.getWidth(),
+                  bounds.getHeight());
+   g.draw(bounds);
+ </pre>
+ </blockquote>
+ <p>
+对 <code>TextLayout</code> 进行命中测试（确定哪个字符位于特定图形位置上）：
+ <blockquote><pre>
+   Point2D click = ...;
+   TextHitInfo hit = layout.hitTestChar(
+                         (float) (click.getX() - loc.getX()),
+                         (float) (click.getY() - loc.getY()));
+ </pre>
+ </blockquote>
+ <p>
+对按下向右方向键进行响应：
+ <blockquote><pre>
+   int insertionIndex = ...;
+   TextHitInfo next = layout.getNextRightHit(insertionIndex);
+   if (next != null) {
+       // translate graphics to origin of layout on screen
+       g.translate(loc.getX(), loc.getY());
+       Shape[] carets = layout.getCaretShapes(next.getInsertionIndex());
+       g.draw(carets[0]);
+       if (carets[1] != null) {
+           g.draw(carets[1]);
+       }
+   }
+ </pre></blockquote>
+ <p>
+绘制一个对应于源文本中子字符串的选择范围。选择的区域在视觉上可能是不连续的：
+ <blockquote><pre>
+   // selStart, selLimit should be relative to the layout,
+   // not to the source text
+
+   int selStart = ..., selLimit = ...;
+   Color selectionColor = ...;
+   Shape selection = layout.getLogicalHighlightShape(selStart, selLimit);
+   // selection may consist of disjoint areas
+   // graphics is assumed to be tranlated to origin of layout
+   g.setColor(selectionColor);
+   g.fill(selection);
+ </pre></blockquote>
+ <p>
+绘制一个视觉上连续的选择范围。选择范围可能对应源文本中的多个子字符串。通过 <code>getLogicalRangesForVisualSelection()</code> 可以获得相应源文本的子字符串范围：
+ <blockquote><pre>
+   TextHitInfo selStart = ..., selLimit = ...;
+   Shape selection = layout.getVisualHighlightShape(selStart, selLimit);
+   g.setColor(selectionColor);
+   g.fill(selection);
+   int[] ranges = getLogicalRangesForVisualSelection(selStart, selLimit);
+   // ranges[0], ranges[1] is the first selection range,
+   // ranges[2], ranges[3] is the second selection range, etc.
+ </pre></blockquote>
+ <p>
+注：字体旋转可能导致文本基线旋转，多次进行不同的旋转可能够导致基线弯曲或出现 Z 形转角。为了处理好这种（少有的）可能性，需要指定一些 API 返回规格，并采用“相对于基线的坐标中”的参数（比如 ascent 和 advance），以及其他一些“标准坐标中”的规格和参数（比如 getBounds）。相对于基线的坐标中的值将 'x' 坐标映射到沿基线的某段距离处（正 x 表示沿基线的正方向），将 'y' 坐标映射到 'x' 坐标处基线垂直方向的某段距离处（正 y 表示从基线向量顺时针旋转 90 度）。标准坐标中的值是沿 x 轴和 y 轴进行测量的，0,0 是 TextLayout 的原点。用于每个相关 API 的文档都将指示哪些值位于坐标系中。通常，与测量有关的 API 位于与相对于基线的坐标中，而与显示有关的 API 则位于标准坐标中。
+
+ @see LineBreakMeasurer
+ @see TextAttribute
+ @see TextHitInfo
+ @see LayoutPath
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.awt.font.TextLayout.CaretPolicy java.awt.font.TextLayout.DEFAULT_CARET_POLICY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+客户端未指定策略时使用此 <code>CaretPolicy</code>。使用此策略，方向与行方向相同的字符的命中要强于对反方向字符的命中。如果字符的方向相同，则对字符开始边的命中要强于对字符结尾边的命中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextLayout(String string, Font font, FontRenderContext frc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>String</code> 和 {@link Font} 构造一个 <code>TextLayout</code>。使用指定的 <code>Font</code> 样式化所有文本。
+ <p>
+<code>String</code> 必须指定单个文本段，因为双向算法需要整个段落。
+@param string 要显示的文本
+@param font 用于样式化文本的 <code>Font</code>
+@param frc 包含关于正确测量文本所需图形设备的信息。根据设备分辨率和属性（如抗锯齿）的不同，文本测量可能稍有变化。此参数未指定 <code>TextLayout</code> 和用户空间之间的转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextLayout(String string, java.util.Map<? extends java.text.AttributedCharacterIterator.Attribute, ?> attributes, FontRenderContext frc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>String</code> 和属性集构造一个 <code>TextLayout</code>。
+ <p>
+使用提供的属性样式化所有文本。
+ <p>
+<code>String</code> 必须指定单个文本段，因为双向算法需要整个段落。
+@param string 要显示的文本
+@param attributes 用于样式化文本的属性
+@param frc 包含关于正确测量文本所需图形设备的信息。根据设备分辨率和属性（如抗锯齿）的不同，文本测量可能稍有变化。此参数未指定 <code>TextLayout</code> 和用户空间之间的转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextLayout(AttributedCharacterIterator text, FontRenderContext frc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据样式文本上的迭代器构造一个 <code>TextLayout</code>。
+ <p>
+该迭代器必须指定单个文本段，因为双向算法需要整个段落。
+@param text 要显示的样式文本
+@param frc 包含关于正确测量文本所需图形设备的信息。根据设备分辨率和属性（如抗锯齿）的不同，文本测量可能稍有变化。此参数未指定 <code>TextLayout</code> 和用户空间之间的转换。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.awt.font.TextLayout.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此 <code>TextLayout</code> 的副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextLayout java.awt.font.TextLayout.getJustifiedLayout(float justificationWidth)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建调整到指定宽度的此 <code>TextLayout</code> 的一个副本。
+ <p>
+如果已调整了此 <code>TextLayout</code>，则抛出异常。如果此 <code>TextLayout</code> 对象的调整率为零，将返回与此 <code>TextLayout</code> 相同的 <code>TextLayout</code>。
+@param justificationWidth 调整行时使用的宽度。要获得最佳结果，该宽度与行的当前 advance 不应有太大差别。
+@return 调整到指定宽度的 <code>TextLayout</code>。
+@exception Error 如果已调整了此布局，则抛出 Error。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.font.TextLayout.handleJustify(float justificationWidth)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整此布局。子类重写该方法来控制调整（如果存在子类，即……）。
+
+只在段落属性（来自源文本，可以是布局属性的默认值）指示一个非零调整率时才调整布局。将文本调整到指示的宽度。当前实现还调整标点和尾部空白，使其接近于调整宽度。调整布局之后将不会对其进行再调整。
+ <p>
+某些代码依赖于布局的不可变性。因此子类不应直接调用该方法，而应调用 getJustifiedLayout，getJustifiedLayout 将在此布局的副本上调用此方法，并保留原始布局。
+
+@param justificationWidth 调整行时使用的宽度。要获得最佳结果，该宽度与行的当前 advance 不应有太大差别。
+@see #getJustifiedLayout(float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.awt.font.TextLayout.getBaseline()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的基线。基线是 <code>Font</code> 中定义的一个值，它可以是 roman、centered 或 hanging。Ascent 和 descent 相对于此基线。<code>baselineOffsets</code> 也相对于此基线。
+@return 此 <code>TextLayout</code> 的基线。
+@see #getBaselineOffsets()
+@see Font
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.font.TextLayout.getBaselineOffsets()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于此 <code>TextLayout</code> 的基线偏移量数组。
+ <p>
+该数组用 <code>Font</code> 中定义的 roman、centered 或 hanging 值之一进行索引。这些值相对于此 <code>TextLayout</code> 对象的基线，从而 <code>getBaselineOffsets[getBaseline()] == 0</code>。将偏移量添加到 <code>TextLayout</code> 对象基线所在的位置，以获取新基线的位置。
+@return 包含用于此 <code>TextLayout</code> 基线的偏移量数组。
+@see #getBaseline()
+@see Font
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextLayout.getAdvance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的 advance。该 advance 是从原点到最右边（最底部）字符的 advance 的距离。返回值位于相对于基线的坐标中。
+@return 此 <code>TextLayout</code> 的 advance。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextLayout.getVisibleAdvance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的 advance，减去结尾空格。返回值位于相对于基线的坐标中。
+@return 此 <code>TextLayout</code> 的 advance，不包括结尾的空格。
+@see #getAdvance()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextLayout.getAscent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的 ascent。ascent 是从 <code>TextLayout</code> 的顶端（右端）到基线的距离。它始终为正数或零。ascent 足以容纳上标文本，它是每个字形的 ascent、偏移量和基线总和的最大值。该 ascent 是 TextLayout 中所有文本基线的最大 ascent。返回值位于相对于基线的坐标中。
+@return 此 <code>TextLayout</code> 的 ascent。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextLayout.getDescent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的 descent。descent 是从基线到 <code>TextLayout</code> 底部（左端）的距离。它始终为正数或零。descent 足以容纳下标文本，它是每个字形的 descent、偏移量和基线总和的最大值。该 ascent 是 TextLayout 中所有文本基线的最大 descent。返回值位于相对于基线的坐标中。
+@return 此 <code>TextLayout</code> 的 descent。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.font.TextLayout.getLeading()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>TextLayout</code> 的行距。行距是此 <code>TextLayout</code> 的建议行间距。返回值位于相对于基线的坐标中。
+ <p>
+行距通过 <code>TextLayout</code> 中所有字形向量的行距、descent 和基线计算。算法大致如下：
+ <blockquote><pre>
+ maxD = 0;
+ maxDL = 0;
+ for (GlyphVector g in all glyphvectors) {
+    maxD = max(maxD, g.getDescent() + offsets[g.getBaseline()]);
+    maxDL = max(maxDL, g.getDescent() + g.getLeading() +
+                       offsets[g.getBaseline()]);
+ }
+ return maxDL - maxD;
+ </pre></blockquote>
+@return 此 <code>TextLayout</code> 的行距。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.font.TextLayout.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的边界。这些边界位于标准坐标中。因为光栅化效果，这些边界可能没有封装 TextLayout 呈现的所有像素。它可能与 <code>TextLayout</code> 的 ascent、descent、origin 或 advance 并不完全一致。
+@return 作为此 <code>TextLayout</code> 边界的 {@link Rectangle2D}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.font.TextLayout.getPixelBounds(FontRenderContext frc, float x, float y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在图形中使用给定 <code>FontRenderContext</code> 在给定位置处呈现 <code>TextLayout</code> 时的像素边界。图形呈现上下文不必与用来创建此 <code>TextLayout</code> 的 <code>FontRenderContext</code> 相同，并且可以为 null。如果为 null，则使用此 <code>TextLayout</code> 的 <code>FontRenderContext</code>。
+ @param frc <code>Graphics</code> 的 <code>FontRenderContext</code>。
+ @param x 呈现此 <code>TextLayout</code> 处的 x 坐标。
+ @param y 呈现此 <code>TextLayout</code> 处的 y 坐标。
+ @return 封装受影响像素的 <code>Rectangle</code>。
+ @see GlyphVector#getPixelBounds
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextLayout.isLeftToRight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>TextLayout</code> 的基本方向是从左到右，则返回 <code>true</code>；如果基本方向是从右到左，则返回 <code>false</code>。<code>TextLayout</code>  的基本方向是从左到右 (LTR) 或从右到左 (RTL)。基本方向与行中文本的实际方向无关，实际方向可以是 LTR、RTL 或混向。默认情况下，从左到右布局按左对齐来定位。如果布局在制表行上进行，那么制表符将从左到右，从而逻辑连续布局的定位将从左到右。对于 RTL 布局则相反。默认情况下，它们是按左对齐来定位的，制表符将从右到左。
+@return 如果此 <code>TextLayout</code> 的基本方向是从左到右，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextLayout.isVertical()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>TextLayout</code> 是垂直的，则返回 <code>true</code>。
+@return 如果此 <code>TextLayout</code> 是垂直的，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextLayout.getCharacterCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由此 <code>TextLayout</code> 表示的字符数。
+@return 此 <code>TextLayout</code> 中的字符数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.font.TextLayout.getCaretInfo(TextHitInfo hit, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与对应于 <code>hit</code> 的插入符有关的信息。数组的第一个元素是插入符与基线的交集，它是沿基线的一段距离。数组的第二个元素是插入符的反斜面（排列/上升），它是根据位于该点的基线进行测量的。
+ <p>
+此方法仅用于获取信息。要显示插入符，最好使用 <code>getCaretShapes</code>。
+@param hit 此 <code>TextLayout</code> 中的目标字符
+@param bounds 构造插入符位置的边界。这些边界位于相对于基线的坐标中。
+@return 包含插入符位置和斜面的两元素数组。返回的插入符信息位于相对于基线的坐标中。
+@see #getCaretShapes(int, Rectangle2D, TextLayout.CaretPolicy)
+@see Font#getItalicAngle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] java.awt.font.TextLayout.getCaretInfo(TextHitInfo hit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与对应于 <code>hit</code> 的插入符有关的信息。此方法是 <code>getCaretInfo</code> 的便捷用法，它使用了此 <code>TextLayout</code> 的自然边界。
+@param hit 此 <code>TextLayout</code> 中的目标字符
+@return 有关对应于目标字符的插入符的信息。返回的插入符信息位于相对于基线的坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextRightHit(TextHitInfo hit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符右侧（底部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。如果目标字符索引超出范围，则抛出 {@link IllegalArgumentException}。
+@param hit 此布局中的目标字符
+@return 插入符显示在所提供目标字符的插入符右侧（底部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextRightHit(int offset, TextLayout.CaretPolicy policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符右侧（底部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。目标字符位于指定偏移量处根据指定策略确定的强插入符右侧。返回的目标字符是根据指定策略确定的两个可能目标字符中较强的一个。
+@param offset 此 <code>TextLayout</code> 中的插入偏移量。不能小于 0 或大于此 <code>TextLayout</code> 对象的字符计数。
+@param policy 用来选择强插入符的策略
+@return 插入符显示在所提供目标字符的插入符右侧（底部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextRightHit(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符右侧（底部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。目标字符位于指定偏移量处根据默认策略确定的强插入符右侧。返回的目标字符是根据默认策略确定的两个可能目标字符中较强的一个。
+@param offset 此 <code>TextLayout</code> 中的插入偏移量。不能小于 0 或大于该 <code>TextLayout</code> 对象的字符计数。
+@return 插入符显示在所提供目标字符的插入符右侧（底部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextLeftHit(TextHitInfo hit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符左侧（顶部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。如果目标字符索引超出范围，则抛出 <code>IllegalArgumentException</code>。
+@param hit 此 <code>TextLayout</code> 中的目标字符。
+@return 插入符显示在所提供目标字符的插入符左侧（顶部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextLeftHit(int offset, TextLayout.CaretPolicy policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符左侧（顶部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。目标字符位于指定偏移量处根据指定策略确定的强插入符左侧。返回的目标字符是根据指定策略确定的两个可能目标字符中较强的一个。
+@param offset 此 <code>TextLayout</code> 中的插入偏移量。不能小于 0 或大于此 <code>TextLayout</code> 对象的字符计数。
+@param policy 用来选择强插入符的策略
+@return 插入符显示在所提供目标字符的插入符左侧（顶部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getNextLeftHit(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个插入符左侧（顶部）的目标字符；如果没有这样的字符，则返回 <code>null</code>。目标字符位于指定偏移量处根据默认策略确定的强插入符左侧。返回的目标字符是根据默认策略确定的两个可能目标字符中较强的一个。
+@param offset 此 <code>TextLayout</code> 中的插入偏移量。不能小于 0 或大于此 <code>TextLayout</code> 对象的字符计数。
+@return 插入符显示在所提供目标字符的插入符左侧（顶部）下一个位置的目标字符，或者返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.getVisualOtherHit(TextHitInfo hit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回位于指定目标字符插入符另一侧的目标字符。
+@param hit 指定的目标字符
+@return 位于指定字符插入符另一侧的目标字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getCaretShape(TextHitInfo hit, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示指定边界内指定目标字符处插入符的 {@link Shape}。
+@param hit 生成插入符处的目标字符
+@param bounds 用于生成插入符的 <code>TextLayout</code> 的边界。这些边界位于相对于基线的坐标中。
+@return 表示插入符的 <code>Shape</code>。返回的形状位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getCaretShape(TextHitInfo hit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>TextLayout</code> 的自然边界中指定目标字符处插入符的 <code>Shape</code>。
+@param hit 生成插入符处的目标字符
+@return 表示插入符的 <code>Shape</code>。返回的形状位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.awt.font.TextLayout.getCharacterLevel(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>index</code> 处字符的级别。索引 -1 和 <code>characterCount</code> 被分配为此 <code>TextLayout</code> 的基本级别。
+@param index 可获取级别的字符索引
+@return 指定 index 处字符的级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape[] java.awt.font.TextLayout.getCaretShapes(int offset, Rectangle2D bounds, TextLayout.CaretPolicy policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于强插入符和弱插入符的两条路径。
+@param offset 此 <code>TextLayout</code> 中的偏移量
+@param bounds 插入符扩展到的边界。这些边界位于相对于基线的坐标中。
+@param policy 指定的 <code>CaretPolicy</code>
+@return 包含两条路径的数组。元素零是强插入符。如果有两个插入符，则元素 1 为弱插入符，否则为 <code>null</code>。返回的形状位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape[] java.awt.font.TextLayout.getCaretShapes(int offset, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于强插入符和弱插入符的两条路径。此方法是使用默认插入符策略的 <code>getCaretShapes</code> 的便捷用法。
+@param offset 此 <code>TextLayout</code> 中的偏移量
+@param bounds 插入符扩展到的边界。此边界位于相对于基线的坐标中。
+@return 对应于 <code>DEFAULT_CARET_POLICY</code> 定义的强插入符和弱插入符的两条路径。这些路径位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape[] java.awt.font.TextLayout.getCaretShapes(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于强插入符和弱插入符的两条路径。此方法是 <code>getCaretShapes</code> 的便捷用法，后者使用默认插入符策略和此 <code>TextLayout</code> 对象的自然边界。
+@param offset 此 <code>TextLayout</code> 中的偏移量
+@return 对应于 <code>DEFAULT_CARET_POLICY</code> 定义的强插入符和弱插入符的两条路径。这两条路径位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] java.awt.font.TextLayout.getLogicalRangesForVisualSelection(TextHitInfo firstEndpoint, TextHitInfo secondEndpoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于可视选择范围的逻辑文本范围。
+@param firstEndpoint 可视范围的端点
+@param secondEndpoint 可视范围的另一个端点。此端点可以小于 <code>firstEndpoint</code>。
+@return 表示所选范围的开始/限制对的整数数组。
+@see #getVisualHighlightShape(TextHitInfo, TextHitInfo, Rectangle2D)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getVisualHighlightShape(TextHitInfo firstEndpoint, TextHitInfo secondEndpoint, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回封闭指定范围中扩展到 <code>bounds</code> 的可视选择范围的路径。
+ <p>
+如果选择范围包括最左侧（最顶部）的位置，那么它将扩展到 <code>bounds</code> 的左侧（顶部）。如果选择范围包括最右侧（最底部）的位置，那么它将扩展到边界的右侧（底部）。选择范围的高度（垂直行上的宽度）始终扩展到 <code>bounds</code>。
+ <p>
+尽管选择范围始终是连续的，但逻辑选择文本在混向文本的行上可能是不连续的。所选文本的逻辑范围可以使用 <code>getLogicalRangesForVisualSelection</code> 检索。例如，假设文本 "ABCdef" 中的大写字母表示在从右到左的行上呈现的从右到左的文本，可视选择范围从 0L（"A" 的开始边）到 3T（"d" 的结尾边）。文本显示如下，粗体下划线区域表示选择范围：<br><pre>
+    d<u><b>efCBA  </b></u>
+ </pre>
+因为视觉上连续的文本在逻辑上是不连续的，所以逻辑选择范围为 0-3、4-6 (ABC, ef)。还请注意的是，由于选择了布局上最右侧的位置（"A" 的右边），因此选择范围将扩展到边界的右侧。
+@param firstEndpoint 可视选择范围的端点
+@param secondEndpoint 可视选择范围的另一个端点
+@param bounds 选择范围扩展到的边界矩形。此矩形位于相对于基线的坐标中。
+@return 封闭选择范围的 <code>Shape</code>。此形状位于标准坐标中。
+@see #getLogicalRangesForVisualSelection(TextHitInfo, TextHitInfo)
+@see #getLogicalHighlightShape(int, int, Rectangle2D)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getVisualHighlightShape(TextHitInfo firstEndpoint, TextHitInfo secondEndpoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回封闭指定范围中扩展到指定边界的可视选择范围的 <code>Shape</code>。此方法是 <code>getVisualHighlightShape</code> 的便捷用法，后者使用了此 <code>TextLayout</code> 的自然边界。
+@param firstEndpoint 可视选择范围的端点
+@param secondEndpoint 可视选择范围的另一个端点
+@return 封闭选择范围的 <code>Shape</code>。此形状位于标准坐标中。    
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getLogicalHighlightShape(int firstEndpoint, int secondEndpoint, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回封闭指定范围中扩展到指定 <code>bounds</code> 的逻辑选择范围的 <code>Shape</code>。
+ <p>
+如果选择范围包括第一个逻辑字符，那么它将扩展到此 <code>TextLayout</code> 的起点之前的 <code>bounds</code> 部分。如果该范围包括最后的逻辑字符，那么它将扩展到此 <code>TextLayout</code> 的结束点之后的 <code>bounds</code> 部分。选择范围的高度（垂直行上的宽度）始终扩展到 <code>bounds</code>。
+ <p>
+选择范围在混向文本的行上可能是不连续的。只有逻辑范围中开始和限制之间的那些字符才显示为被选中。例如，假定文本 "ABCdef" 的大写字母表示在从右到左的行上呈现从右到左的文本，逻辑选择范围是从 0 到 4 ('ABCd')。文本显示如下，粗体表示选择范围，下划线表示扩展：<br><pre>
+    <u><b>d</b></u>ef<u><b>CBA  </b></u>
+ </pre>
+因为选择的字符在视觉上是不连续的，该选择范围是不连续的。还请注意的是，由于该范围包括第一个逻辑字符 (A)，所以该选择范围将扩展到布局开始之前的 <code>bounds</code> 部分，在本例中（从右到左的行）是 <code>bounds</code> 的右半部。
+@param firstEndpoint 选择的字符范围的端点
+@param secondEndpoint 选择的字符范围的另一个端点。可以小于 <code>firstEndpoint</code>。此范围包括 min(firstEndpoint, secondEndpoint) 处的字符，但不包括 max(firstEndpoint, secondEndpoint) 处的字符。
+@param bounds 选择范围扩展到的边界矩形。此矩形位于相对于基线的坐标中。
+@return 封装该选择范围的区域。此区域位于标准坐标中。
+@see #getVisualHighlightShape(TextHitInfo, TextHitInfo, Rectangle2D)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getLogicalHighlightShape(int firstEndpoint, int secondEndpoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回封装指定范围中逻辑选择范围的 <code>Shape</code>，它扩展到此 <code>TextLayout</code> 的自然边界。此方法是 <code>getLogicalHighlightShape</code> 的便捷用法，后者使用了此 <code>TextLayout</code> 的自然边界。
+@param firstEndpoint 选择的字符范围的端点
+@param secondEndpoint 选择的字符范围的另一个端点。可以小于 <code>firstEndpoint</code>。此范围包括 min(firstEndpoint, secondEndpoint) 处的字符，但不包括 max(firstEndpoint, secondEndpoint) 处的字符。
+@return 封装选择范围的 <code>Shape</code>。 此形状位于标准坐标中。    
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getBlackBoxBounds(int firstEndpoint, int secondEndpoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定范围中字符的黑框边界。黑框边界是所有对应于开始和限制之间字符字形的边界框并集。此区域可以不相交。
+@param firstEndpoint 字符范围的端点
+@param secondEndpoint 字符范围的另一个端点。可以小于 <code>firstEndpoint</code>。
+@return 封装黑框边界的 <code>Shape</code>。此形状位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.hitTestChar(float x, float y, Rectangle2D bounds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于指定点的 <code>TextHitInfo</code>。将 <code>TextLayout</code> 边界之外的坐标映射到第一个逻辑字符开始边上的点，或映射到最后一个逻辑字符结束边上的点（如果合适），而不考虑该字符在行中的位置。该方法只使用基线方向。
+@param x 距离此 <code>TextLayout</code> 原点的 x 偏移量。此偏移量位于标准坐标中。
+@param y 距离此 <code>TextLayout</code> 原点的 y 偏移量。此偏移量位于标准坐标中。
+@param bounds <code>TextLayout</code> 的边界。此边界位于相对于基线的坐标中。
+@return 描述指定点处字符和边缘（开始边或结尾边）的 TextHitInfo。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.font.TextLayout.hitTestChar(float x, float y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对应于指定点的 <code>TextHitInfo</code>。此方法是 <code>hitTestChar</code> 的便捷用法，后者使用了此 <code>TextLayout</code> 的自然边界。
+@param x 距离此 <code>TextLayout</code> 原点的 x 偏移量。此偏移量位于标准坐标中。
+@param y 距离此 <code>TextLayout</code> 原点的 y 偏移量。此偏移量位于标准坐标中。
+@return 描述指定点下字符和边缘（开始边或结尾边）的 TextHitInfo。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.font.TextLayout.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的哈希码。
+@return 此 <code>TextLayout</code> 的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextLayout.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定 <code>Object</code> 是一个 <code>TextLayout</code> 对象，且指定的 <code>Object</code> 等于此 <code>TextLayout</code>，则返回 <code>true</code>。
+@param obj 用于测试相等性的 <code>Object</code>
+@return 如果指定的 <code>Object</code> 等于此 <code>TextLayout</code>，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.font.TextLayout.equals(TextLayout rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果两个布局相等，则返回 <code>true</code>。如果两个布局包含具有相同顺序的相等字形向量，则这两个布局相等。
+@param rhs 要与此 <code>TextLayout</code> 进行比较的 <code>TextLayout</code>
+@return 如果指定的 <code>TextLayout</code> 等于此 <code>TextLayout</code>，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.font.TextLayout.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TextLayout</code> 的调试信息。
+@return 此 <code>TextLayout</code> 的 <code>String</code> 形式的 <code>textLine</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.font.TextLayout.draw(Graphics2D g2, float x, float y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的 {@link java.awt.Graphics2D Graphics2D} 上下文中的指定位置上呈现此 <code>TextLayout</code>。布局的原点置于 x,&nbsp;y。呈现可能涉及此位置的 <code>getBounds()</code> 中的任何点。此方法不改变 <code>g2</code>。文本是沿着基线路径呈现的。
+@param g2 呈现布局的 <code>Graphics2D</code> 上下文
+@param x 此 <code>TextLayout</code> 的 X 坐标
+@param y 此 <code>TextLayout</code> 的 Y 坐标
+@see #getBounds()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape java.awt.font.TextLayout.getOutline(AffineTransform tx)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>TextLayout</code> 的轮廓的 <code>Shape</code>。
+@param tx 应用于此 <code>TextLayout</code> 轮廓的可选 {@link AffineTransform}。
+@return 此 <code>TextLayout</code> 的轮廓的 <code>Shape</code>。此形状位于标准坐标中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.LayoutPath java.awt.font.TextLayout.getLayoutPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 LayoutPath，如果布局路径是默认路径（x 映射到 advance，y 映射到 offset），则返回 null。
+ @return 布局路径
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.font.TextLayout.hitToPoint(TextHitInfo hit, Point2D point)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将一个命中点转换为标准坐标中的一个点。该点在字符的基线上，在适当的情况下，它可以位于字符的开始边或结尾边上。如果路径在通过命中表示的字符边上断开，那么该点将与此字符相邻。
+ @param hit 命中检查。此参数必须是 TextLayout 上的一次有效命中。
+ @param point 返回的点。此点位于标准坐标中。
+ @throws IllegalArgumentException 如果 hit 对于 TextLayout 无效。
+ @throws NullPointerException 如果 hit 或 point 为 null。
+ @since 1.6
+
+<!-- END DATA -->

@@ -1,0 +1,195 @@
+<!-- BEGIN KEY -->
+public class javax.naming.directory.BasicAttribute extends java.lang.Object implements javax.naming.directory.Attribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 <tt>Attribute</tt> 接口的基本实现。
+<p>
+此实现不支持模式方法 <tt>getAttributeDefinition()</tt> 和 <tt>getAttributeSyntaxDefinition()</tt>。它们仅抛出 <tt>OperationNotSupportedException</tt>。如果 <tt>BasicAttribute</tt> 的子类支持它们，则其应该重写这些方法。
+<p>
+在测试相等性或搜索值时，<tt>BasicAttribute</tt> 类默认使用 <tt>Object.equals()</tt> 确定属性值的相等性，值为数组时<em>除外</em>。对于数组，需要使用 <tt>Object.equals()</tt> 检查数组的每个元素。在进行类似的相等性检查时，<tt>BasicAttribute</tt> 的子类可以通过重写那些在其中使用模式具有意义的方法来利用模式信息。类似地，默认情况下 <tt>BasicAttribute</tt> 类返回传递给其构造方法和/或使用添加/移除方法进行操作的值。<tt>BasicAttribute</tt> 的子类可以重写 <tt>get()</tt> 和 <tt>getAll()</tt>，从目录动态获取值（或者直接实现 <tt>Attribute</tt> 接口，而不为 <tt>BasicAttribute</tt> 创建子类）。
+<p>
+注意，更新 <tt>BasicAttribute</tt>（如添加或移除值）对目录中相应的属性表示形式没有影响。只有使用 <tt>DirContext</tt> 接口中的操作才能实现对目录的更新。
+<p>
+<tt>BasicAttribute</tt> 实例与并发多线程访问不同步。试图访问并修改 <tt>BasicAttribute</tt> 的多个线程应该锁定对象。
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.14 05/11/17
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.naming.directory.BasicAttribute.attrID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保存属性的 id。其由公共构造方法初始化且不能为 null，除非已经重写 BasicAttribute 中使用 attrID 的方法。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.util.Vector<java.lang.Object> javax.naming.directory.BasicAttribute.values
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保存属性的值。由公共构造方法初始化。其不能为 null，除非已经重写 BasicAttribute 中使用这些值的方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.naming.directory.BasicAttribute.ordered
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+记录此属性的值是否有序的标志。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个不带值无序属性的新实例。
+
+@param id 属性的 id。它不能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带有单个值的无序属性的新实例。
+
+@param id 属性的 id。它不能为 null。
+@param value 属性的值。如果为 null，则向属性中添加 null 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, boolean ordered)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个不带值的可能为有序属性的新实例。
+
+@param id 属性的 id。它不能为 null。
+@param ordered 为 true 表示属性值将是有序的；为 false 表示其为无序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.BasicAttribute(String id, Object value, boolean ordered)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个带有单个值的可能为有序属性的新实例。
+
+@param id 属性的 id。它不能为 null。
+@param value 属性的值。如果为 null，则向属性中添加 null 值。
+@param ordered 为 true 表示属性值将是有序的；为 false 表示其为无序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定 obj 是否等于此属性。如果两个属性的属性 id、语法和值都相等，则这两个属性相等。如果属性值是无序的，则添加值的顺序无关紧要。如果属性值是有序的，则值必须与顺序匹配。如果 obj 为 null 或者不是 Attribute，则返回 false。
+<p>
+默认情况下，在比较属性 id 及其值时使用 <tt>Object.equals()</tt>，值为数组时除外。对于数组，需要使用 <tt>Object.equals()</tt> 检查数组的每个元素。子类可以重写此方法以利用模式语法信息和匹配规则，其定义了对两个属性的相等有意义的内容。子类如何使用和是否使用模式信息由子类确定。如果子类重写 <tt>equals()</tt>，则其也应该重写 <tt>hashCode()</tt>，这样两个相等的属性才能具有相同的哈希码。
+
+@param obj	要检查的可能为 null 的对象。
+@return 如果 obj 等于此属性，则返回 true，否则返回 false。
+@see #hashCode
+@see #contains
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.directory.BasicAttribute.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算此属性的哈希码。
+<p>
+该哈希码通过将属性 id 及其所有值的哈希码相加来计算，值为数组时除外。对于数组，要加上每个数组元素的哈希码。如果子类重写 <tt>hashCode()</tt>，则其也应该重写 <tt>equals()</tt>，这样两个相等的属性才能具有相同的哈希码。
+
+@return 表示此属性的哈希码的 int。
+@see #equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.directory.BasicAttribute.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成此属性的字符串表示形式。字符串由属性的 id 及其值组成。此字符串用于调试，不以编程方式进行解释。
+@return 此属性的非 null 字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<?> javax.naming.directory.BasicAttribute.getAll() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此属性值的枚举。
+<p>
+默认情况下，返回值就是传递给构造方法的和/或使用添加/替换/移除方法对其进行操作的那些值。子类可以重写此方法以从目录动态检索值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.BasicAttribute.get() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此属性的其中一个值。
+<p>
+默认情况下，返回值就是传递给构造方法的和/或使用添加/替换/移除方法对其进行操作的那些值之一。子类可以重写此方法以从目录动态检索值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.contains(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定值是否在此属性中。
+<p>
+默认情况下，在将 <tt>attrVal</tt> 与此属性的值相比较时使用 <tt>Object.equals()</tt>，<tt>attrVal</tt> 为数组时除外。对于数组，需要使用 <tt>Object.equals()</tt> 检查数组的每个元素。子类可以使用模式信息确定相等性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.add(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此属性添加新值。 
+<p>
+默认情况下，在将 <tt>attrVal</tt> 与此属性的值相比较时使用 <tt>Object.equals()</tt>，<tt>attrVal</tt> 为数组时除外。对于数组，需要使用 <tt>Object.equals()</tt> 检查数组的每个元素。子类可以使用模式信息确定相等性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.BasicAttribute.remove(Object attrval)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此属性中移除指定值。
+<p>
+默认情况下，在将 <tt>attrVal</tt> 与此属性的值相比较时使用 <tt>Object.equals()</tt>，<tt>attrVal</tt> 为数组时除外。对于数组，需要使用 <tt>Object.equals()</tt> 检查数组的每个元素。子类可以使用模式信息确定相等性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.BasicAttribute.getAttributeSyntaxDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索与此属性关联的语法定义。
+<p>
+默认情况下此方法抛出 OperationNotSupportedException。如果子类支持模式，则其应该重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.BasicAttribute.getAttributeDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此属性的模式定义。
+<p>
+默认情况下此方法抛出 OperationNotSupportedException。如果子类支持模式，则其应该重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.directory.BasicAttribute.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写以避免公开实现细节。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.directory.BasicAttribute.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写以避免公开实现细节
+@serialData Default field (the attribute ID -- a String), followed by the number of values (an int), and the individual values.
+
+<!-- END DATA -->

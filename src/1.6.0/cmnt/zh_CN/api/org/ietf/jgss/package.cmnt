@@ -1,0 +1,45 @@
+<!-- BEGIN KEY -->
+org.ietf.jgss
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此包提供一个框架，该框架允许应用程序开发人员通过利用统一的 API 使用一些来自各种基础安全机制（如 Kerberos）的安全服务，如验证、数据完整性和和数据机密性。应用程序可以选择使用的安全机制由唯一的对象标识符标识。此类机制的其中一个示例就是 Kerberos v5 GSS-API 机制（对象标识符 1.2.840.113554.1.2.2）。此机制可以通过 GSSManager 类的默认实例获取。<p>
+
+GSS-API 以一种独立于语言的方式在 &quot;<a href=http://www.ietf.org/rfc/rfc2743.txt>RFC 2743</a>&quot; 中定义。Java 语言绑定在 &quot;<a href=http://www.ietf.org/rfc/rfc2853.txt>RFC 2853</a>&quot; 中定义。<p>
+
+应用程序通过实例化 <code>GSSManager</code> 启动，然后 <code>GSSManager</code> 充当安全上下文的工厂。应用程序可以使用那些也可以利用 GSSManager 创建的特定主体名称和凭据；或者还可以使用系统默认值实例化上下文。然后检查上下文创建环路。一旦与同位体一起建立了上下文，也就完成了验证。诸如完整性和机密性的数据保护则可以从此上下文中获取。<p>
+
+GSS-API 与同位体之间不进行任何通信。它只产生应用程序必须以某种方式传输给其他端的标记。<p>
+
+<h3>凭据获取</h3>
+<a name=useSubjectCredsOnly>GSS-API 本身并不指示基础机制如何获取验证所必需的凭据。它假定，在调用 GSS-API 之前获取这些凭据，并将其存储在一个机制提供者知道的地方。不过，Java 平台中的默认模型将是这样的：机制提供者必须仅从私有或公共凭据集中获取凭据，这些凭据集与当前访问控制上下文中的 {@link javax.security.auth.Subject Subject} 相关。Kerberos v5 机制将在私有凭据集中搜索需要的 INITIATE 和 ACCEPT 凭据（{@link javax.security.auth.kerberos.KerberosTicket KerberosTicket} 和 {@link javax.security.auth.kerberos.KerberosKey KerberosKey}），而其他机制可能要在公共集（或两者）中查找。如果需要的凭据未在当前 Subject 的适当集合中，则 GSS-API 调用一定会失败。<p>
+
+此模型具有凭据管理简单、可从应用程序角度预知这一优势。具有适当权限的应用程序可以使用标准的 Java API 清除 Subject 中的凭据或更新它们。如果应用程序清除了这些凭据，就可以确保 JGSS 机制失败，如果它更新了基于时间的凭据，就可以确保 JGSS 机制能够成功。<p>
+
+此模型要求执行 {@link javax.security.auth.login JAAS login}，以便对 JGSS 机制稍后可以利用的 Subject 进行验证并登录。不过，应用程序能够通过以下系统属性放宽此限制：<code>javax.security.auth.useSubjectCredsOnly</code>。默认情况下，将假定此系统属性为 <code>true</code>（即便在未设置时也是如此），以指示提供者必须仅使用当前 Subject 中存在的凭据。不过，如果通过应用程序将此属性显式设置为 false，则表示该提供者可以随意使用它所选择的任何凭据缓存。此类凭据缓存可以是磁盘缓存、内存缓存，抑或仅仅是当前 Subject 本身。</a>
+
+<h2>相关文档</h2>
+<p>
+有关使用 Java GSS-API 的在线教程，请参阅《<a href="../../../../technotes/guides/security/jgss/tutorials/index.html">Introduction to JAAS and Java GSS-API</a>》。
+</p>
+
+<!--
+<h2>Package Specification</h2>
+
+##### FILL IN ANY SPECS NEEDED BY JAVA COMPATIBILITY KIT #####
+<ul>
+  <li><a href="">##### REFER TO ANY FRAMEMAKER SPECIFICATION HERE #####</a>
+</ul>
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+  <li><a href="">##### REFER TO NON-SPEC DOCUMENTATION HERE #####</a>
+</ul>
+
+-->
+
+@since 1.4
+
+<!-- END DATA -->

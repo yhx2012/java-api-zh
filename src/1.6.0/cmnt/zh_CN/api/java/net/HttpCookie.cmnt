@@ -1,0 +1,418 @@
+<!-- BEGIN KEY -->
+public final class java.net.HttpCookie extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+HttpCookie 对象表示一个 http cookie，该 cookie 带有服务器和用户代理之间的状态信息。广泛采用 Cookie 来创建有状态 (stateful) 会话。
+
+<p>有 3 种 http cookie 规范：
+ <blockquote>
+ Netscape 草案<br> 
+ RFC 2109 - <a href="http://www.ietf.org/rfc/rfc2109.txt">
+ <i>http://www.ietf.org/rfc/rfc2109.txt</i></a><br>
+   RFC 2965 - <a href="http://www.ietf.org/rfc/rfc2965.txt">
+ <i>http://www.ietf.org/rfc/rfc2965.txt</i></a>
+ </blockquote>
+
+<p>HttpCookie 类可以接受所有这 3 种语法形式。
+
+@version 1.5, 05/11/17 
+@author Edward Wang 
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.HttpCookie(String name, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造带有指定名称和值的 cookie。
+
+<p>名称必须遵守 RFC 2965。这意味着它只能包含 ASCII 字母数字字符，不能包含逗号、分号或空格，也不能以 $ 字符开头。cookie 的名称在创建之后不得更改。
+
+<p>该值可以是服务器选择发送的任何值。可能只有该服务器需要其值。cookie 的值在使用 <code>setValue</code> 方法创建后可以更改。
+
+<p>默认情况下，根据 RFC 2965 cookie 规范创建 cookie。可以使用 <code>setVersion</code> 方法更改版本。
+
+
+@param name			指定 cookie 名称的 <code>String</code>
+
+@param value			指定 cookie 值的 <code>String</code>
+
+@throws IllegalArgumentException	如果 cookie 名称包含非法字符，或者它是保留给 cookie 协议使用的标记之一 
+@throws NullPointerException     如果 <tt>name</tt> 为 <tt>null</tt> 
+@see #setValue 
+@see #setVersion
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.List<java.net.HttpCookie> java.net.HttpCookie.parse(String header)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 set-cookie 或 set-cookie2 头字符串构造 cookie。RFC 2965 第 3.2.2 节 set-cookie2 语法指出，一个头行可以包含多个 cookie 定义，因此这是一个静态实用方法，而不是另一个构造方法。
+
+@param header    指定 set-cookie 头的 <tt>String</tt>。头应该以 &quot;set-cookie&quot; 或 &quot;set-cookie2&quot; 标记开始；或者它不应有任何前导标记。
+@return          从头行字符串解析的 cookie 列表 
+@throws IllegalArgumentException 如果头字符串违反 cookie 规范的语法；或者 cookie 名称包含非法字符；或者 cookie 名称是保留给 cookie 协议使用的标记之一 
+@throws NullPointerException     如果头字符串为 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.HttpCookie.hasExpired()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此 http cookie 是否已过期。
+
+@return  如果此 http cookie 已过期，则返回 <tt>true</tt>；否则返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setComment(String purpose)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指定一个描述 cookie 用途的注释。如果浏览器向用户显示 cookie，则注释很有用。Netscape Version 0 cookie 不支持注释。
+
+@param purpose		一个 <code>String</code>，指定要显示给用户的注释
+
+@see #getComment
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getComment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 cookie 用途的注释；如果该 cookie 没有注释，则返回 <code>null</code>。
+
+@return			包含注释的 <code>String</code>；如果没有注释，则返回 <code>null</code>
+
+@see #setComment
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setCommentURL(String purpose)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指定一个描述 cookie 用途的注释 URL。如果浏览器向用户显示 cookie，则注释 URL 很有用。只有 RFC 2965 支持注释 URL。
+
+@param purpose		一个 <code>String</code>，指定要显示给用户的注释 URL
+
+@see #getCommentURL
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getCommentURL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 cookie 用途的注释 URL；如果 cookie 没有注释 URL，则返回 <code>null</code>。
+
+@return			包含注释 URL 的 <code>String</code>；如果没有，则返回 <code>null</code>
+
+@see #setCommentURL
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setDiscard(boolean discard)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定用户代理是否应该无条件丢弃 cookie。只有 RFC 2965 支持此属性。
+
+@param discard   <tt>true</tt> 表示无条件丢弃 cookie
+
+@see #getDiscard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.HttpCookie.getDiscard()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 cookie 的丢弃属性
+
+@return  表示此 cookie 丢弃属性的 <tt>boolean</tt> 值。
+
+@see #setDiscard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setPortlist(String ports)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 cookie 的端口列表，该列表在 Cookie 头中限制可能将 cookie 发送回的端口。
+
+@param ports     指定端口列表的 <tt>String</tt>，它是以逗号分隔的数字序列 
+@see #getPortlist
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getPortlist()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 cookie 的端口列表属性
+
+@return  包含端口列表的 <tt>String</tt>；如果没有，则返回 <tt>null</tt> 
+@see #setPortlist
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setDomain(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+指定应在其中显示此 cookie 的域。
+
+<p>RFC 2965 指定了域名的形式。域名以点 (<code>.foo.com</code>) 开头，意味着在指定域名系统（Domain Name System，DNS）区域中（例如，<code>www.foo.com</code>，但不是 <code>a.b.foo.com</code>）cookie 对于服务器是可见的。默认情况下，cookie 只返回给发送它们的服务器。
+
+
+@param pattern		包含域名（在其中此 cookie 可见）的 <code>String</code>；域名形式符合 RFC 2965
+
+@see #getDomain
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getDomain()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回为此 cookie 设置的域名。域名的形式根据 RFC 2965 设置。
+
+@return			包含域名的 <code>String</code>
+
+@see #setDomain
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setMaxAge(long expiry)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 cookie 的最大生存时间，以秒为单位。
+
+<p>正值表示 cookie 将在经过该值表示的秒数后过期。注意，该值是 cookie 过期的<i>最大</i> 生存时间，不是 cookie 的当前生存时间。
+
+<p>负值意味着 cookie 不会被持久存储，将在 Web 浏览器退出时删除。0 值会导致删除 cookie。
+
+@param expiry		指定 cookie 最大生存时间的整数，以秒为单位；如果为 0，则应立即丢弃 cookie；否则，cookie 的最大生存时间没有指定。
+
+@see #getMaxAge
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.net.HttpCookie.getMaxAge()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以秒为单位指定的 cookie 最大生存时间。默认情况下，<code>-1</code> 表示 cookie 将保留到浏览器关闭为止。
+
+
+@return			指定 cookie 最大生存时间的整数，以秒为单位
+
+
+@see #setMaxAge
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setPath(String uri)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定客户机应该返回 cookie 的路径。
+
+<p>cookie 对于指定目录中的所有页面及该目录子目录中的所有页面都是可见的。cookie 的路径必须包括设置 cookie 的 servlet，例如 <i>/catalog</i>，它使 cookie 对于服务器上 <i>/catalog</i> 下的所有目录都是可见的。
+
+<p>有关设置 cookie 路径名称的更多信息，请参考 RFC 2965（可从 Internet 上获得）。
+
+
+@param uri		指定路径的 <code>String</code>
+
+
+@see #getPath
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回浏览器将此 cookie 返回到的服务器上的路径。cookie 对于服务器上的所有子路径都是可见的。
+
+
+@return		指定包含 servlet 名称的路径的 <code>String</code>，例如 <i>/catalog</i>
+
+@see #setPath
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setSecure(boolean flag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示浏览器是否只能使用安全协议（如 HTTPS 或 SSL）发送 cookie。
+
+<p>默认值为 <code>false</code>。
+
+@param flag	如果为 <code>true</code>，则仅在使用安全协议时将 cookie 从浏览器发送到使用的服务器；如果为 <code>false</code>，则在任何协议上都可以发送
+
+@see #getSecure
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.HttpCookie.getSecure()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果浏览器仅通过安全协议发送 cookie，则返回 <code>true</code>；如果浏览器可以使用任何协议发送 cookie，则返回 <code>false</code>。
+
+@return		如果浏览器可以使用任何标准协议，则返回 <code>true</code>；否则返回 <code>false</code>
+
+@see #setSecure
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 cookie 的名称。名称在创建之后不得更改。
+
+@return		指定 cookie 名称的 <code>String</code>
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setValue(String newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+在创建 cookie 之后将新值分配给 cookie。如果使用二进制值，则可能需要使用 BASE64 编码。
+
+<p>对于 Version 0 cookie，值不应包含空格、方括号、圆括号、等号、逗号、双引号、斜杠、问号、at 符号、冒号和分号。空值在所有浏览器上的行为不一定相同。
+
+@param newValue		指定新值的 <code>String</code> 
+
+
+@see #getValue
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 cookie 的值。
+
+@return			包含 cookie 当前值的 <code>String</code>
+
+@see #setValue
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.HttpCookie.getVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 cookie 遵守的协议版本。版本 1 遵守 RFC 2965/2109，版本 0 遵守 Netscape 起草的原始 cookie 规范。浏览器提供的 cookie 使用并标识该浏览器的 cookie 版本。
+
+
+@return			如果 cookie 遵守原始 Netscape 规范，则返回 0；如果 cookie 遵守 RFC 2965/2109，则返回 1
+
+@see #setVersion
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.net.HttpCookie.setVersion(int v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 cookie 遵守的 cookie 协议版本。版本 0 遵守原始 Netscape cookie 规范。版本 1 遵守 RFC 2965/2109。
+
+
+@param v			如果 cookie 应该遵守原始 Netscape 规范，则 v 为 0；如果 cookie 应该遵守 RFC 2965/2109，则 v 为 1
+
+@throws IllegalArgumentException 如果 <tt>v</tt> 既不为 0，也不为 1
+
+@see #getVersion
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.net.HttpCookie.domainMatches(String domain, String host)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查主机名是否在域中的实用方法。
+
+<p>cookie 规范中描述了这个概念。要理解该概念，首先需要定义一些术语：
+ <blockquote>
+有效主机名 = hostname（如果主机名包含圆点）<br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;或者 = hostname.local（如果主机名不包含圆点）
+ </blockquote>
+<p>如果符合以下条件，则主机 A 的名称在域上匹配主机 B 的名称：
+ <blockquote><ul>
+<li>它们的主机名字符串在字符串上的比较是相同的；或者</li>
+<li>A 是一个 HDN 字符串，且形式为 NB，其中 N 是一个非空名称字符串，B 的形式为 .B'，B'是一个 HDN 字符串。（因此，x.y.com 在域上匹配 .Y.com，但不匹配 Y.com。）</li>
+ </ul></blockquote>
+
+<p>如果符合以下条件，则主机不在域中（RFC 2965 第 3.3.2 节）：
+ <blockquote><ul>
+<li>Domain 属性的值不包含嵌入的圆点，且该值不是 .local。</li>
+<li>派生于请求主机的有效主机名在域上不匹配 Domain 属性。</li>
+<li>请求主机是一个 HDN（而非 IP 地址）且形式为 HD，其中 D 是 Domain 属性的值，H 是包含一个或多个圆点的字符串。</li>
+ </ul></blockquote>
+
+<p>示例：
+ <blockquote><ul>
+<li>对于 Domain=.foo.com，来自请求主机 y.x.foo.com 的 Set-Cookie2 将被拒绝，因为 H 是 y.x，包含一个圆点。</li>
+<li>对于 Domain=.foo.com，来自请求主机 x.foo.com 的 Set-Cookie2 将被接受。</li>
+<li>带有 Domain=.com 或 Domain=.com. 的 Set-Cookie2 将始终被拒绝，因为没有嵌入的圆点。</li>
+<li>带有 Domain=ajax.com 的 Set-Cookie2 将被接受，Domain 的值将被赋予 .ajax.com，因为在值前面加了一个圆点。</li>
+<li>对于 Domain=.local，来自请求主机示例的 Set-Cookie2 将被接受，因为请求主机的有效主机名是 example.local，example.local 在域上匹配 .local。</li>
+ </ul></blockquote>
+
+@param domain    要用于检查主机名的域名 
+@param host      相关主机名 
+@return          如果它们在域上匹配，则返回 <tt>true</tt>；如果不匹配，则返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.HttpCookie.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造此 cookie 的一个 cookie 头字符串表示形式，其格式为对应的 cookie 规范定义的格式，但没有前导 &quot;Cookie:&quot; 标记。
+
+@return  cookie 的字符串形式。该字符串具有定义的格式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.HttpCookie.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试两个 http cookie 的相等性。
+
+<p> 仅当两个 cookie 来自相同域（不区分大小写）、具有相同名称（不区分大小写）并具有相同路径（区分大小写）时，结果才为 <tt>true</tt>。
+
+@return          如果两个 http cookie 彼此相等，则返回 <tt>true</tt>；否则，返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.HttpCookie.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 http cookie 的哈希码。结果是此 cookie 以下三个重要部分的哈希码值之和：名称 (name)、域 (domain) 和路径 (path)。也就是说，哈希码就是以下表达式的值：
+ <blockquote>
+getName().toLowerCase().hashCode()<br> + getDomain().toLowerCase().hashCode()<br> + getPath().hashCode()
+ </blockquote>
+
+@return          此 http cookie 的哈希码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.net.HttpCookie.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回此对象的一个副本。
+
+@return          此 http cookie 的一个副本
+
+<!-- END DATA -->

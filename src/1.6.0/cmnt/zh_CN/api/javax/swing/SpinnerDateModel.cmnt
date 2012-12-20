@@ -1,0 +1,259 @@
+<!-- BEGIN KEY -->
+public class javax.swing.SpinnerDateModel extends javax.swing.AbstractSpinnerModel implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Date</code> 序列的一个 <code>SpinnerModel</code>。序列的上下边界由称为 <code>start</code> 和 <code>end</code> 的属性定义，而通过 <code>nextValue</code> 和 <code>previousValue</code> 方法计算的增加和减少的大小由称作 <code>calendarField</code> 的属性定义。<code>start</code> 和 <code>end</code> 属性可以为 <code>null</code>，以指示序列没有下限和上限。  
+ <p>
+<code>calendarField</code> 属性的值必须是在 <code>Calendar</code> 内指定某个字段的其中一个 <code>java.util.Calendar</code> 常量。<code>getNextValue</code> 和 <code>getPreviousValue</code> 方法将日期向前或向后更改这些量。例如，如果 <code>calendarField</code> 为 <code>Calendar.DAY_OF_WEEK</code>，则 <code>nextValue</code> 生成一个比当前 <code>value</code> 延后 24 小时的 <code>Date</code>，而 <code>previousValue</code> 则生成一个提前 24 小时的 <code>Date</code>。
+ <p>
+<code>calendarField</code> 的合法值为：
+ <ul>
+   <li><code>Calendar.ERA</code>
+   <li><code>Calendar.YEAR</code>
+   <li><code>Calendar.MONTH</code>
+   <li><code>Calendar.WEEK_OF_YEAR</code>
+   <li><code>Calendar.WEEK_OF_MONTH</code>
+   <li><code>Calendar.DAY_OF_MONTH</code>
+   <li><code>Calendar.DAY_OF_YEAR</code>
+   <li><code>Calendar.DAY_OF_WEEK</code>
+   <li><code>Calendar.DAY_OF_WEEK_IN_MONTH</code>
+   <li><code>Calendar.AM_PM</code>
+   <li><code>Calendar.HOUR</code>
+   <li><code>Calendar.HOUR_OF_DAY</code>
+   <li><code>Calendar.MINUTE</code>
+   <li><code>Calendar.SECOND</code>
+   <li><code>Calendar.MILLISECOND</code>
+ </ul>
+但是有些 UI 可能在向光标下旋转字段提交编辑之前设置 calendarField。如果只希望旋转一个字段，则可以为 setCalendarField 调用创建子类并忽略 setCalendarField 调用。
+ <p>
+此模型继承一个 <code>ChangeListener</code>。每当模型 <code>value</code>、<code>calendarField</code>、<code>start</code> 或 <code>end</code> 属性发生变化时，该 <code>ChangeListeners</code> 就会收到通知。
+ 
+@see JSpinner
+@see SpinnerModel
+@see AbstractSpinnerModel
+@see SpinnerListModel
+@see SpinnerNumberModel
+@see Calendar#add
+
+@version 1.11 05/12/04
+@author Hans Muller
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SpinnerDateModel(Date value, java.lang.Comparable start, java.lang.Comparable end, int calendarField)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个表示 <code>start</code> 和 <code>end</code> 之间的日期序列的 <code>SpinnerDateModel</code>。<code>nextValue</code> 和 <code>previousValue</code> 方法通过向前或向后调整由 <code>calendarField</code> 时间单位表示的当前日期 <code>value</code> 计算该序列的元素。有关增加或减少 <code>Calendar</code> <code>field</code> 的含义的精确描述，请参阅 <code>java.util.Calendar</code> 中的 <code>add</code> 方法。
+ <p>
+<code>start</code> 和 <code>end</code> 参数可以为 <code>null</code>，以指示该范围没有上下边界。如果 <code>value</code> 或 <code>calendarField</code> 为 <code>null</code>，或者指定了 <code>start</code> 和 <code>end</code> 且其值为 <code>mininum &gt; maximum</code>，则抛出一个 <code>IllegalArgumentException</code>。同样，如果 <code>(minimum &lt;= value &lt;= maximum)</code> 为 false，则抛出一个 IllegalArgumentException。
+ 
+@param value 该模型的当前（非 <code>null</code>）值
+@param start 该序列中的第一个日期，或 <code>null</code>
+@param end 该序列中的最后一个日期，或 <code>null</code>
+@param calendarField 该参数为下列值之一
+   <ul>
+    <li><code>Calendar.ERA</code>
+    <li><code>Calendar.YEAR</code>
+    <li><code>Calendar.MONTH</code>
+    <li><code>Calendar.WEEK_OF_YEAR</code>
+    <li><code>Calendar.WEEK_OF_MONTH</code>
+    <li><code>Calendar.DAY_OF_MONTH</code>
+    <li><code>Calendar.DAY_OF_YEAR</code>
+    <li><code>Calendar.DAY_OF_WEEK</code>
+    <li><code>Calendar.DAY_OF_WEEK_IN_MONTH</code>
+    <li><code>Calendar.AM_PM</code>
+    <li><code>Calendar.HOUR</code>
+    <li><code>Calendar.HOUR_OF_DAY</code>
+    <li><code>Calendar.MINUTE</code>
+    <li><code>Calendar.SECOND</code>
+    <li><code>Calendar.MILLISECOND</code>
+   </ul>
+ 
+@throws IllegalArgumentException 如果 <code>value</code> 或 <code>calendarField</code> 为 <code>null</code>，如果 <code>calendarField</code> 无效，或者下面的表达式为 false：<code>(start &lt;= value &lt;= end)</code>。
+ 
+@see Calendar#add
+@see #setValue
+@see #setStart
+@see #setEnd
+@see #setCalendarField
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SpinnerDateModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>SpinnerDateModel</code>，其初始 <code>value</code> 为当前日期，<code>calendarField</code> 等于 <code>Calendar.DAY_OF_MONTH</code>，且没有 <code>start</code>/<code>end</code> 限制。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpinnerDateModel.setStart(java.lang.Comparable start)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改此序列中的日期下限。如果 <code>start</code> 为 <code>null</code>，则不存在下限。此处不进行边界检查：新起始值可能会使该构造方法强制执行的 <code>(start &lt;= value &lt;= end)</code> 不变式失效。这是为了简化对该模型的更新。很自然，调用 <code>nextValue</code>、<code>previousValue</code> 或 <code>setValue</code> 方法之前应该确保该不变式为 true。
+ <p>
+该属性通常是一个 <code>Date</code>，但是它可以使用一个具有用于 Date 的 <code>compareTo</code> 方法的 <code>Comparable</code>。例如，<code>start</code> 可以是一个下列形式的类的实例：
+ <pre>
+ MyStartDate implements Comparable { 
+     long t = 12345;
+     public int compareTo(Date d) {
+            return (t &lt; d.getTime() ? -1 : (t == d.getTime() ? 0 : 1));
+     }
+     public int compareTo(Object o) {
+            return compareTo((Date)o);
+     }
+ }
+ </pre>
+注意，如果传递给 <code>compareTo(Object)</code> 的 <code>Object</code> 不是 <code>Date</code>，则上面的示例将抛出一个 <code>ClassCastException</code>。
+ <p>
+如果 <code>start</code> 已经更改，则此方法会触发一个 <code>ChangeEvent</code>。
+ 
+@param start 定义序列中的第一个日期
+@see #getStart
+@see #setEnd
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Comparable javax.swing.SpinnerDateModel.getStart()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中的第一个 <code>Date</code>。
+ 
+@return  <code>start</code> 属性的值
+@see #setStart
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpinnerDateModel.setEnd(java.lang.Comparable end)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+更改此序列中 <code>Date</code> 的上限。如果 <code>start</code> 为 <code>null</code>，则不存在上限。此处不进行边界检查：新起始值可能会使该构造方法强制执行的 <code>(start &lt;= value &lt;= end)</code> 不变式失效。这是为了简化对该模型的更新。很自然，调用 <code>nextValue</code>、<code>previousValue</code> 或 <code>setValue</code> 方法之前应该确保该不变式为 true。
+ <p>
+该属性通常是一个 <code>Date</code>，但是它可以使用一个具有用于 <code>Date</code> 的 <code>compareTo</code> 方法的 <code>Comparable</code>。请参见 <code>setStart</code> 以获得一个示例。
+ <p>
+如果 <code>end</code> 已经更改，则此方法会触发一个 <code>ChangeEvent</code>。
+ 
+@param end 定义序列中的最后一个日期
+@see #getEnd
+@see #setStart
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Comparable javax.swing.SpinnerDateModel.getEnd()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中的最后一个 <code>Date</code>。
+ 
+@return  <code>end</code> 属性的值
+@see #setEnd
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpinnerDateModel.setCalendarField(int calendarField)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改由 <code>nextValue</code> 和 <code>previousValue</code> 方法计算的日期值更改的大小。<code>calendarField</code> 参数必须是其中一个 <code>Calendar</code> 字段常量，如 <code>Calendar.MONTH</code> 或 <code>Calendar.MINUTE</code>。<code>nextValue</code> 和 <code>previousValue</code> 方法使用 <code>Calendar.add</code> 方法将指定 <code>Calendar</code> 字段只向前或向后移动一个单位。要慎重使用此方法，因为有些 UI 可能在向光标下旋转字段提交编辑之前设置 calendarField。如果只希望旋转一个字段，则可以为 setCalendarField 调用创建子类并忽略 setCalendarField 调用。
+ 
+@param calendarField 该参数为下列值之一
+  <ul>
+    <li><code>Calendar.ERA</code>
+    <li><code>Calendar.YEAR</code>
+    <li><code>Calendar.MONTH</code>
+    <li><code>Calendar.WEEK_OF_YEAR</code>
+    <li><code>Calendar.WEEK_OF_MONTH</code>
+    <li><code>Calendar.DAY_OF_MONTH</code>
+    <li><code>Calendar.DAY_OF_YEAR</code>
+    <li><code>Calendar.DAY_OF_WEEK</code>
+    <li><code>Calendar.DAY_OF_WEEK_IN_MONTH</code>
+    <li><code>Calendar.AM_PM</code>
+    <li><code>Calendar.HOUR</code>
+    <li><code>Calendar.HOUR_OF_DAY</code>
+    <li><code>Calendar.MINUTE</code>
+    <li><code>Calendar.SECOND</code>
+    <li><code>Calendar.MILLISECOND</code>
+  </ul>
+ <p>
+如果 <code>calendarField</code> 已经更改，则此方法会触发一个 <code>ChangeEvent</code>。
+ 
+@see #getCalendarField
+@see #getNextValue
+@see #getPreviousValue
+@see Calendar#add
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.SpinnerDateModel.getCalendarField()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 <code>nextValue</code> 和 <code>previousValue</code> 方法添加或去掉的 <code>Calendar</code> 字段。
+ 
+@return  <code>calendarField</code> 属性的值
+@see #setCalendarField
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.SpinnerDateModel.getNextValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中的下一个 <code>Date</code>，如果下一个日期在 <code>end</code> 之后，则返回 <code>null</code>。
+ 
+@return 序列中的下一个 <code>Date</code>，如果下一个日期是在 <code>end</code> 之后，则返回 <code>null</code>。
+ 
+@see SpinnerModel#getNextValue
+@see #getPreviousValue
+@see #setCalendarField
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.SpinnerDateModel.getPreviousValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中上一个 <code>Date</code>，如果上一个日期是在 <code>start</code> 之前，则返回 <code>null</code>。
+ 
+@return 序列中上一个 <code>Date</code>，如果上一个日期在 <code>start</code> 之前，则返回 <code>null</code>
+ 
+@see SpinnerModel#getPreviousValue
+@see #getNextValue
+@see #setCalendarField
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date javax.swing.SpinnerDateModel.getDate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Date</code> 序列中的当前元素。此方法等效于 <code>(Date)getValue</code>。
+
+@return  <code>value</code> 属性
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.SpinnerDateModel.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Date</code> 序列中的当前元素。
+ 
+@return  <code>value</code> 属性
+@see #setValue
+@see #getDate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpinnerDateModel.setValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此序列的当前 <code>Date</code>。如果 <code>value</code> 为 <code>null</code>，则抛出一个 <code>IllegalArgumentException</code>。此处不进行边界检查：新值可能会使该构造方法强制执行的 <code>(start &lt;= value &lt; end)</code> 不变式失效。很自然，调用 <code>nextValue</code>、<code>previousValue</code> 或 <code>setValue</code> 方法之前应该确保 <code>(start &lt;= value &lt;= maximum)</code> 不变式为 true。  
+ <p>
+如果 <code>value</code> 已经更改，则此方法会触发一个 <code>ChangeEvent</code>。
+ 
+@param value 此序列的当前（非 <code>null</code>）<code>Date</code>
+@throws IllegalArgumentException 如果值为 <code>null</code> 或不是一个 <code>Date</code>
+@see #getDate
+@see #getValue
+@see #addChangeListener
+
+<!-- END DATA -->

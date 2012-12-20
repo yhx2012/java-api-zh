@@ -1,0 +1,286 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.ConcurrentSkipListSet extends java.util.AbstractSet implements java.util.NavigableSet, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个基于 {@link ConcurrentSkipListMap} 的可缩放并发 {@link NavigableSet} 实现。set 的元素可以根据它们的{@linkplain Comparable 自然顺序}进行排序，也可以根据创建 set 时所提供的 {@link Comparator} 进行排序，具体取决于使用的构造方法。
+
+<p>此实现为 <tt>contains</tt>、<tt>add</tt>、<tt>remove</tt> 操作及其变体提供预期平均 <i>log(n)</i> 时间开销。多个线程可以安全地并发执行插入、移除和访问操作。迭代器是<i>弱一致</i> 的，返回的元素将反映迭代器创建时或创建后某一时刻的 set 状态。它们<em>不</em> 抛出 {@link ConcurrentModificationException}，可以并发处理其他操作。升序排序视图及其迭代器比降序排序视图及其迭代器更快。
+
+<p>请注意，与在大多数 collection 中不同，这里的 <tt>size</tt> 方法<em>不是</em> 一个固定时间 (constant-time) 操作。由于这些 set 的异步特性，确定元素的当前数目需要遍历元素。此外，批量操作 <tt>addAll</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>containsAll</tt> <em>并不</em> 保证能以原子方式 (atomically) 执行。例如，与 <tt>addAll</tt> 操作一起并发操作的迭代器只能查看某些附加元素。
+
+<p>此类及其迭代器实现 {@link Set} 和 {@link Iterator} 接口的所有<em>可选</em> 方法。与大多数其他并发 collection 实现一样，此类不允许使用 <tt>null</tt> 元素，因为无法可靠地将 <tt>null</tt> 参数及返回值与不存在的元素区分开来。
+
+<p>此类是 <a href="http://java.sun.com/javase/6/docs/technotes/guides/collections/index.html
+">Java Collections Framework</a> 的成员。
+
+@author Doug Lea
+@param <E> 此 set 维护的元素类型
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.util.concurrent.ConcurrentNavigableMap<E, java.lang.Object> java.util.concurrent.ConcurrentSkipListSet.m
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+底层映射。将 Boolean.TRUE 用作每个元素的值。为了线程安全将此字段声明为 final，这会在 clone() 中带来一些丑陋的外观。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的空 set，该 set 按照元素的{@linkplain Comparable 自然顺序}对其进行排序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListSet(java.util.Comparator<? super E> comparator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的空 set，该 set 按照指定的比较器对其元素进行排序。
+
+@param comparator 用于对此 set 进行排序的比较器。如果此参数为 <tt>null</tt>，则使用元素的{@linkplain Comparable 自然顺序}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListSet(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个包含指定 collection 中元素的新 set，这个新 set 按照元素的{@linkplain Comparable 自然顺序}对其进行排序。
+
+@param c 将组成新 set 的元素
+@throws ClassCastException 如果 <tt>c</tt> 中的元素不是 {@link Comparable}，或者无法相互比较
+@throws NullPointerException 如果指定的 collection 或它的任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListSet(java.util.SortedSet<E> s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新 set，该 set 所包含的元素与指定的有序 set 包含的元素相同，使用的顺序也相同。
+
+@param s 有序 set，其元素将组成新的 set
+@throws NullPointerException 如果指定的有序 set 或它的任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.ConcurrentSkipListSet<E> java.util.concurrent.ConcurrentSkipListSet.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>ConcurrentSkipListSet</tt> 实例的浅表副本。(这些元素本身没有复制。）
+
+@return 此 set 的浅表副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.ConcurrentSkipListSet.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 set 中的元素数目。如果此 set 包含的元素数大于 <tt>Integer.MAX_VALUE</tt>，则返回 <tt>Integer.MAX_VALUE</tt>。
+
+<p>请注意，与在大多数 collection 中不同，此方法在这里<em>不是</em> 一个固定时间 (constant-time) 操作。由于这些 set 的异步特性，确定元素的当前数目需要遍历元素以计算其数目。此外，在执行此方法期间大小可能更改，在这种情况下，返回的结果将不准确。因此，此方法在并发应用程序中通常不是很有用。
+
+@return 此 set 中的元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 set 不包含任何元素，则返回 <tt>true</tt>。
+@return 如果此 set 不包含任何元素，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 set 包含指定的元素，则返回 <tt>true</tt>。更确切地讲，当且仅当此 set 包含一个满足 <tt>o.equals(e)</tt> 的元素 <tt>e</tt> 时，返回 <tt>true</tt>。
+
+@param o 检查是否包含在此 set 中的对象
+@return 如果此 set 包含指定的元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定的元素无法与此 set 中的当前元素进行比较
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 set 中不包含指定元素，则添加指定元素。更确切地讲，如果此 set 不包含满足 <tt>e.equals(e2)</tt> 的元素 <tt>e2</tt>，则向 set 中添加指定的元素 <tt>e</tt>。如果此 set 已经包含该元素，则调用不更改该 set 并返回 <tt>false</tt>。
+
+@param e 要添加到此 set 的元素
+@return 如果此 set 尚未包含指定的元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果 <tt>e</tt> 无法与此 set 中的当前元素进行比较
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 set 中存在指定的元素，则将其移除。更确切地讲，如果此 set 中包含满足 <tt>o.equals(e)</tt> 的元素 <tt>e</tt>，则移除该元素。如果此 set 包含该元素（或者此 set 由于调用而发生了更改），则返回 <tt>true</tt>。（一旦调用返回，则此 set 不再包含该元素。）
+
+@param o 要从此 set 中移除的对象（如果存在）
+@return 如果此 set 中包含指定的元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果 <tt>o</tt> 无法与此 set 中的当前元素进行比较
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.ConcurrentSkipListSet.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 set 中移除所有元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.concurrent.ConcurrentSkipListSet.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此 set 的元素上以升序进行迭代的迭代器。
+
+@return 在此 set 的元素上以升序进行迭代的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.concurrent.ConcurrentSkipListSet.descendingIterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此 set 的元素上以降序进行迭代的迭代器。
+
+@return 在此 set 的元素上以降序进行迭代的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此 set 的相等性。如果指定的对象也是一个 set，两个 set 的大小相同，并且指定 set 的所有成员都包含在此 set 中（或者此 set 的所有成员都包含在指定的 set 中），则返回 <tt>true</tt>。此定义确保了 equals 方法可在不同的 set 接口实现间正常工作。
+
+@param o 要与此 set 进行相等性比较的对象
+@return 如果指定的对象等于此 set，则返回 <tt>true</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentSkipListSet.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 set 中移除包含在指定 collection 中的所有元素。如果指定的 collection 也是一个 set，那么此操作将实际修改此 set，从而其值是两个 set 的一个<i>不对称差集</i>。
+
+@param  c 包含要从此 set 中移除的元素的 collection
+@return 如果此 set 由于调用而发生更改，则返回 <tt>true</tt>
+@throws ClassCastException 如果此 set 中一个或多个元素的类型与指定的 collection 不兼容
+@throws NullPointerException 如果指定的 collection 或其任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.lower(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.floor(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.ceiling(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.higher(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.first()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.ConcurrentSkipListSet.last()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws NoSuchElementException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.subSet(E fromElement, boolean fromInclusive, E toElement, boolean toInclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromElement} 或 {@code toElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.headSet(E toElement, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code toElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.tailSet(E fromElement, boolean inclusive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.subSet(E fromElement, E toElement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromElement} 或 {@code toElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.headSet(E toElement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code toElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.tailSet(E fromElement)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@throws ClassCastException {@inheritDoc}
+@throws NullPointerException 如果 {@code fromElement} 为 null
+@throws IllegalArgumentException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.NavigableSet<E> java.util.concurrent.ConcurrentSkipListSet.descendingSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 set 中所包含元素的逆序视图。降序 set 受此 set 的支持，因此对此 set 的更改将反映在降序 set 中，反之亦然。
+
+<p>返回 set 的顺序等于 <tt>{@link Collections#reverseOrder(Comparator) Collections.reverseOrder}(comparator())</tt>。表达式 {@code s.descendingSet().descendingSet()} 返回的 {@code s} 视图基本等效于 {@code s}。
+
+@return 此 set 的逆序视图
+
+<!-- END DATA -->

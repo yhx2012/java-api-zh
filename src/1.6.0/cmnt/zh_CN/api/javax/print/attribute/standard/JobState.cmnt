@@ -1,0 +1,131 @@
+<!-- BEGIN KEY -->
+public class javax.print.attribute.standard.JobState extends javax.print.attribute.EnumSyntax implements javax.print.attribute.PrintJobAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+JobState 是打印属性类，它是一个枚举值，标识了打印作业的当前状态。JobState 类定义了标准的作业状态值。Print Service 实现只需报告适合于特殊实现的作业状态；它不必报告每个定义的作业状态。{@link JobStateReasons JobStateReasons} 属性扩充了 JobState 属性，以给出有关处于给定作业状态的作业的更详细信息。 
+ <P>
+ <B>IPP Compatibility:</B> <CODE>getName()</CODE> 所返回的类别名称为 IPP 属性名称。枚举的整数值为 IPP 枚举值。<code>toString()</code> 方法返回属性值的 IPP 字符串表示形式。
+ <P>
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.UNKNOWN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业状态是未知的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.PENDING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业为要开始处理的候选作业，但尚未开始处理。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.PENDING_HELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于某些原因，作业不是要处理的候选作业，但当这些原因不再存在时，作业将返回 PENDING 状态。作业的 {@link JobStateReasons JobStateReasons} 属性必须指示该作业为什么不再是要处理的候选作业。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.PROCESSING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+正在处理作业。以下一个或多个活动正在发生：
+ <OL TYPE=1>
+ <LI>
+作业正在使用（或正在尝试使用）一个或多个纯软件进程，这些进程正在分析、创建或解释某个 PDL，等等。
+ <P>
+ <LI>
+作业正在使用（或正在尝试使用）一个或多个硬件设备，这些设备正在解释某个 PDL，正在介质上作标记，和/或正在执行结束操作，例如正在装订，等等。
+ <P>
+ <LI>
+如果打印机已经就绪，但输出设备尚未打印它，则要么是因为该作业尚未到达输出设备，要么是因为该作业正在输出设备或某些其他打印缓冲（spooler）中排队, 等待输入设备打印它。
+ </OL>
+ <P>
+当作业处于 PROCESSING 状态时，全部作业状态包括打印机的 {@link PrinterState PrinterState} 和 {@link PrinterStateReasons PrinterStateReasons} 属性中所表示的详细状态。
+ <P>
+实现可能（但不一定）包括作业的 {@link JobStateReasons JobStateReasons} 属性中的额外值，以指示打印进度，例如添加 JOB_PRINTING 值以指示输出设备何时实际在纸张上进行标记，和/或添加 PROCESSING_TO_STOP_POINT 值以指示打印机处于取消或中止作业的进程中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.PROCESSING_STOPPED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于某些原因，正在处理时作业已停止，且当这些原因不再存在时，作业返回到 PROCESSING 状态。
+ <P>
+作业的 {@link JobStateReasons JobStateReasons} 属性可能指示为什么作业已停止处理。例如，如果输出设备停止，则作业的 {@link JobStateReasons JobStateReasons} 属性中可能包含 PRINTER_STOPPED 值。 
+ <P> 
+<I>注：</I>当输出设备停止时，该设备通常以设备上本地可读形式指示其条件。客户机可以通过查询打印机的 {@link PrinterState PrinterState} 和 {@link PrinterStateReasons PrinterStateReasons} 属性，远程获取更完整的设备状态。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.CANCELED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业已被人为操作取消，打印机已完成了正取消的作业，且所有作业状态属性已达到作业的最终值。当打印机正取消作业时，该作业保持其当前状态，但作业的 {@link JobStateReasons JobStateReasons} 属性应包含 PROCESSING_TO_STOP_POINT 值，以及 CANCELED_BY_USER、CANCELED_BY_OPERATOR 或 CANCELED_AT_DEVICE 值之一。当作业变为 CANCELED 状态时，必须移除 PROCESSING_TO_STOP_POINT 值（如果存在），但必须保持 CANCELED_BY_<I>xxx</I> 值（如果存在）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.ABORTED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业已被系统中止（通常当作业处于 PROCESSING 或 PROCESSING_STOPPED 状态时），打印机已完成正在中止的作业，且所有作业状态属性已达到作业的最终值。当打印机正取消作业时，该作业保持其当前状态，但作业的 {@link JobStateReasons JobStateReasons} 属性应包含 PROCESSING_TO_STOP_POINT 和 ABORTED_BY_SYSTEM 值。当作业变为 ABORTED 状态时，必须移除 PROCESSING_TO_STOP_POINT 值（如果存在），但必须保持 ABORTED_BY_SYSTEM 值（如果存在）。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final javax.print.attribute.standard.JobState javax.print.attribute.standard.JobState.COMPLETED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作业已成功完成，或以警告或错误结束，所有作业介质纸张已成功堆栈到适当的输出纸盒（或多个纸盒）中，且所有作业状态已达到作业的最终值。作业的 {@link JobStateReasons JobStateReasons} 属性应包含以下值之一：COMPLETED_SUCCESSFULLY、COMPLETED_WITH_WARNINGS 或 COMPLETED_WITH_ERRORS。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.standard.JobState(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 JobState 枚举值。 
+
+@param  value  整数值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.print.attribute.standard.JobState.getStringTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 JobState 类的字符串表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.EnumSyntax[] javax.print.attribute.standard.JobState.getEnumValueTable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 JobState 类的枚举值表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.JobState.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将被用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于 JobState 类和任何供应商定义的子类，类别为 JobState 类本身。 
+
+@return  打印属性类（类别），它是 {@link java.lang.Class java.lang.Class} 类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.JobState.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别名称，此属性值为该类别的实例。 
+ <P>
+对于 JobState 类和任何供应商定义的子类，类别名称为 <CODE>&quot;job-state&quot;</CODE>。
+
+@return  属性类别名称。
+
+<!-- END DATA -->

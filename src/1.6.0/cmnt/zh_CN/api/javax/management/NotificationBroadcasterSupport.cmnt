@@ -1,0 +1,103 @@
+<!-- BEGIN KEY -->
+public class javax.management.NotificationBroadcasterSupport extends java.lang.Object implements javax.management.NotificationEmitter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>提供 {@link javax.management.NotificationEmitter NotificationEmitter} 接口的实现。该类可以用作发送通知的 MBean 的超类。</p>
+
+<p>默认情况下，通知调度模型是同步的。也就是说，当某一线程调用 sendNotification 时，将在该线程中调用每个侦听器的 <code>NotificationListener.handleNotification</code> 方法。可以通过重写子类中的 <code>handleNotification</code> 或者通过将 Executor 传递给构造方法来重写此默认值。</p>
+
+<p>如果过滤器或侦听器的方法调用抛出 {@link Exception}，则该异常不会阻止调用其他侦听器。不过，如果过滤器、{@code Executor.execute} 或 {@code handleNotification} 的方法调用（未指定任何 {@code Excecutor} 时）抛出 {@link Error}，则将该 {@code Error} 传播到 {@link #sendNotification sendNotification} 的调用者。</p>
+
+<p>通常不会同步调用使用 JMX Remote API 添加的远程侦听器（请参阅 JMXConnector）。也就是说，当 sendNotification 返回时，不保证任何远程侦听器都已经收到通知。</p>
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.NotificationBroadcasterSupport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 NotificationBroadcasterSupport，其中的每个侦听器都由发送通知的线程调用。此构造方法等效于 {@link NotificationBroadcasterSupport#NotificationBroadcasterSupport(Executor, MBeanNotificationInfo[] info) NotificationBroadcasterSupport(null, null)}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.NotificationBroadcasterSupport(Executor executor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 NotificationBroadcasterSupport，其中的每个侦听器都是使用给定 {@link java.util.concurrent.Executor} 调用的。在调用 {@link #sendNotification sendNotification} 时，如果使用 null {@link NotificationFilter} 添加了某个侦听器，或者如果 {@link NotificationFilter#isNotificationEnabled isNotificationEnabled} 为正在发送的通知返回 true，则选择该侦听器。对 <code>NotificationFilter.isNotificationEnabled</code> 的调用发生在调用了 <code>sendNotification</code> 的线程中。然后使用调用 <code>handleNotification</code> 方法的命令为每个选定的侦听器调用 {@link Executor#execute executor.execute}。此构造方法等效于 {@link NotificationBroadcasterSupport#NotificationBroadcasterSupport(Executor, MBeanNotificationInfo[] info) NotificationBroadcasterSupport(executor, null)}。
+@param executor  由方法 <code>sendNotification</code> 用来发送每个通知的执行程序。如果该参数为 null，则调用 <code>sendNotification</code> 的线程将调用 <code>handleNotification</code> 方法本身。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.NotificationBroadcasterSupport(javax.management.MBeanNotificationInfo[] info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用关于可能发送的通知的信息构造一个 NotificationBroadcasterSupport。每个侦听器都由发送通知的线程调用。此构造方法等效于 {@link NotificationBroadcasterSupport#NotificationBroadcasterSupport(Executor, MBeanNotificationInfo[] info) NotificationBroadcasterSupport(null, info)}。</p>
+
+<p>如果 <code>info</code> 数组不为空，则由该构造方法复制它，这类似于使用 {@code info.clone()}，并且对 {@link #getNotificationInfo()} 的每次调用都返回一个新副本。</p>
+
+@param info  一个数组，指示此 MBean 可能发送的每个通知、这些通知的 Java 类的名称和通知类型。该数组可以为 null，它等效于一个空数组。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.NotificationBroadcasterSupport(Executor executor, javax.management.MBeanNotificationInfo[] info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>使用关于可能发送的通知的信息构造一个 NotificationBroadcasterSupport，其中的每个侦听器都是使用给定 {@link java.util.concurrent.Executor} 调用的。</p>
+
+<p>在调用 {@link #sendNotification sendNotification} 时，如果使用 null {@link NotificationFilter} 添加了某个侦听器，或者如果 {@link NotificationFilter#isNotificationEnabled isNotificationEnabled} 为正在发送的通知返回 true，则选择该侦听器。对 <code>NotificationFilter.isNotificationEnabled</code> 的调用发生在调用了 <code>sendNotification</code> 的线程中。然后使用调用 <code>handleNotification</code> 方法的命令为每个选定的侦听器调用 {@link Executor#execute executor.execute}。</p>
+
+<p>如果 <code>info</code> 数组不为空，则由该构造方法复制它，这类似于使用 {@code info.clone()}，并且对 {@link #getNotificationInfo()} 的每次调用都返回一个新副本。</p>
+
+@param executor  由方法 <code>sendNotification</code> 用来发送每个通知的执行程序。如果该参数为 null，则调用 <code>sendNotification</code> 的线程将调用 <code>handleNotification</code> 方法本身。
+
+@param info  一个数组，指示此 MBean 可能发送的每个通知、这些通知的 Java 类的名称和通知类型。该数组可以为 null，它等效于一个空数组。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.NotificationBroadcasterSupport.addNotificationListener(NotificationListener listener, NotificationFilter filter, Object handback)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个侦听器。
+
+@param listener 要接收通知的侦听器。
+@param filter 过滤器对象。如果 filter 为 null，则处理通知前不执行过滤。
+@param handback 发出通知时要发送到侦听器的不透明对象。Notification 广播者对象不能使用此对象。应该不作更改地将通知重新发送到侦听器。
+
+@exception IllegalArgumentException 如果 listener 为 null。
+
+@see #removeNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.NotificationBroadcasterSupport.sendNotification(Notification notification)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发送一个通知。如果在构造方法中指定了一个 {@code Executor}，则为每个选定的侦听器提供一项任务，以便将通知发送给该侦听器。
+
+@param notification 要发送的通知。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.management.NotificationBroadcasterSupport.handleNotification(NotificationListener listener, Notification notif, Object handback)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>为了向侦听器发送通知，由该侦听器的 {@link #sendNotification sendNotification} 调用此方法。在子类中可重写此方法，以更改通知传递的行为，例如在一个单独的线程中传递该通知。</p>
+
+<p>此方法的默认实现等效于
+ <pre>
+listener.handleNotification(notif, handback);
+ </pre>
+
+@param listener 要接收通知的侦听器。
+@param notif 传递给侦听器的通知。
+@param handback 添加侦听器时提供的回调对象。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->

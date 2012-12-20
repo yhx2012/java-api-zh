@@ -1,0 +1,73 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.keyinfo.KeyInfo extends javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>KeyInfo</code> 元素的表示形式。<code>KeyInfo</code> 包含 {@link XMLStructure} 的列表，其中每一个 XMLStructure 都包含支持接受方获取验证 XML 签名所需的密钥的信息。XML Schema Definition 的定义如下：
+
+ <pre>
+&lt;element name=&quot;KeyInfo&quot; type=&quot;ds:KeyInfoType&quot;/&gt; 
+&lt;complexType name=&quot;KeyInfoType&quot; mixed=&quot;true&quot;&gt;
+&lt;choice maxOccurs=&quot;unbounded&quot;&gt;     
+&lt;element ref=&quot;ds:KeyName&quot;/&gt; 
+&lt;element ref=&quot;ds:KeyValue&quot;/&gt; 
+&lt;element ref=&quot;ds:RetrievalMethod&quot;/&gt;
+&lt;element ref=&quot;ds:X509Data&quot;/&gt;
+&lt;element ref=&quot;ds:PGPData&quot;/&gt;
+&lt;element ref=&quot;ds:SPKIData&quot;/&gt;
+&lt;element ref=&quot;ds:MgmtData&quot;/&gt;
+&lt;any processContents=&quot;lax&quot; namespace=&quot;##other&quot;/&gt;
+&lt;!-- (1,1) elements from (0,unbounded) namespaces --&gt;
+&lt;/choice&gt;
+&lt;attribute name=&quot;Id&quot; type=&quot;ID&quot; use=&quot;optional&quot;/&gt; 
+&lt;/complexType&gt;
+ </pre>
+ 
+通过调用 {@link KeyInfoFactory} 类的 {@link KeyInfoFactory#newKeyInfo newKeyInfo} 方法之一，并向其传递一个或多个 <code>XMLStructure</code> 列表以及一个可选的 id 参数，可以创建 <code>KeyInfo</code> 实例，例如：
+ <pre>
+KeyInfoFactory factory = KeyInfoFactory.getInstance(&quot;DOM&quot;);
+KeyInfo keyInfo = factory.newKeyInfo
+	(Collections.singletonList(factory.newKeyName(&quot;Alice&quot;), &quot;keyinfo-1&quot;));
+ </pre>
+
+<p>还可以通过调用 {@link #marshal marshal} 方法将 <code>KeyInfo</code> 对象编组为 XML。
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+@see KeyInfoFactory#newKeyInfo(List)
+@see KeyInfoFactory#newKeyInfo(List, String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.keyinfo.KeyInfo.getContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含密钥信息的 {@link java.util.Collections#unmodifiableList unmodifiable list}。列表中的每一项都是一个 {@link XMLStructure}。
+
+<p>如果有一个表示 <code>XMLStructure</code> 类型的公共子类，那么它将作为该类的实例返回（比如：<code>X509Data</code> 元素将作为 {@link javax.xml.crypto.dsig.keyinfo.X509Data} 的实例返回）。
+
+@return 此 <code>KeyInfo</code> 中的一个或多个 <code>XMLStructure</code> 的不可修改列表。不会返回 <code>null</code> 或空列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.crypto.dsig.keyinfo.KeyInfo.getId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>KeyInfo</code> 的可选 Id 属性，这对于从其他 XML 结构引用此 <code>KeyInfo</code> 可能很有用。
+
+@return 此 <code>KeyInfo</code> 的 Id 属性（如果未指定，则返回 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.crypto.dsig.keyinfo.KeyInfo.marshal(XMLStructure parent, XMLCryptoContext context) throws javax.xml.crypto.MarshalException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将密钥信息编组为 XML。
+
+@param parent 特定于机制的结构，包含将追加已编组密钥信息中的父节点
+@param context 包含其他上下文的 <code>XMLCryptoContext</code>（如果不适用，则为 null）
+@throws ClassCastException 如果 <code>parent</code> 或 <code>context</code> 的类型与此密钥信息不兼容
+@throws MarshalException 如果无法编组密钥信息
+@throws NullPointerException 如果 <code>parent</code> 为 <code>null</code>
+
+<!-- END DATA -->

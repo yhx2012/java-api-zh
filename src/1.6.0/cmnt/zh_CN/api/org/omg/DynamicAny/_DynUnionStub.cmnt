@@ -1,0 +1,593 @@
+<!-- BEGIN KEY -->
+public class org.omg.DynamicAny._DynUnionStub extends org.omg.CORBA.portable.ObjectImpl implements org.omg.DynamicAny.DynUnion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+DynUnion 对象支持对 IDL 联合数据 (union) 的操作。联合数据只能有两个有效的当前位置：
+ <UL>
+<LI>0，表示鉴别符 (discriminator)
+<LI>1，表示活动成员
+ </UL>
+联合数据的 component_count 值依赖于当前鉴别符：其鉴别符指示一个指定成员的联合数据的 component_count 值为 2，其他情况为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny._DynUnionStub.get_discriminator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前鉴别符值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.set_discriminator(DynAny d) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 DynUnion 的鉴别符值设置为指定值。将鉴别符设置为与当前活动联合数据成员一致的值对当前活动成员没有影响。将鉴别符设置为与当前活动成员不一致的值将停用该成员，并将与新鉴别符值一致的成员（如果存在与该值对应的成员）初始化为其默认值，从而激活该成员。如果鉴别符值指示一个不存在的联合数据成员，则设置联合数据鉴别符会将当前位置设置为 0（在此情况下，has_no_active_member 返回 true）。否则，如果鉴别符值指示指定的联合数据成员，则将当前位置设置为 1（在此情况下，has_no_active_member 返回 false，component_count 返回 2）。
+
+@exception TypeMismatch 如果参数的 TypeCode 不等于联合数据鉴别符的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.set_to_default_member() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将鉴别符设置为联合数据的默认 case 的值。它将当前位置设置为 0，并导致 component_count 返回 2。
+
+@exception TypeMismatch 如果联合数据没有显式的默认 case
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.set_to_no_active_member() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将鉴别符设置为与任何联合数据 case 标签都不相应的值。它将当前位置设置为 0，并导致 component_count 返回 1。
+
+@exception TypeMismatch 如果联合数据具有显式的默认 case，或者其显式 case 标签使用了整个鉴别符值范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny._DynUnionStub.has_no_active_member()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果联合数据没有活动成员，即这些联合数据值仅由其鉴别符组成（因为鉴别符的值不作为显式 case 标签列出），则返回 true。对具有默认 case 的联合数据调用此操作将返回 false。对显式 case 标签使用了整个鉴别符值范围的联合数据调用此操作将返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TCKind org.omg.DynamicAny._DynUnionStub.discriminator_kind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回鉴别符 TypeCode 的 TCKind 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TCKind org.omg.DynamicAny._DynUnionStub.member_kind() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员 TypeCode 的 TCKind 值。 
+
+@exception InvalidValue 如果联合数据不具有当前活动成员
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny._DynUnionStub.member() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员。注意，当且仅当当前活动成员没有更改时返回的引用才仍然有效。使用超出当前活动成员生存时间的返回引用将引发 OBJECT_NOT_EXIST。 
+
+@exception InvalidValue 如果联合数据没有活动成员
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.DynamicAny._DynUnionStub.member_name() throws org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前活动成员的名称。如果联合数据 TypeCode 不包含当前活动成员的成员名称，则操作将返回空字符串。
+
+@exception InvalidValue 如果联合数据没有活动成员
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.DynamicAny._DynUnionStub.type()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 DynAny 对象有关联的 TypeCode。DynAny 对象是通过分配给它的 TypeCode 值创建的。此 TypeCode 值确定通过 DynAny 对象处理的值的类型。注意，与 DynAny 对象关联的 TypeCode 在创建 DynAny 时初始化，在 DynAny 对象的生存期间不能更改。
+
+@return 与 DynAny 对象关联的 TypeCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.assign(DynAny dyn_any) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用与另一个 DynAny 对象有关联的值初始化与 DynAny 对象有关联的值。对具有组件的值，将目标 DynAny 的当前位置设置为 0，对不具有组件的值，将该位置设置为 -1。
+
+@param dyn_any
+@exception TypeMismatch 如果传递的 DynAny 的类型不等于目标 DynAny 的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.from_any(Any value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 any 中包含的值初始化与 DynAny 对象有关联的值。对具有组件的值，将目标 DynAny 的当前位置设置为 0，对不具有组件的值，将该位置设置为 -1。
+
+@exception TypeMismatch 如果所传递 Any 的类型不等于目标 DynAny 的类型
+@exception InvalidValue 如果所传递的 Any 不包含合法值（如 null 字符串）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Any org.omg.DynamicAny._DynUnionStub.to_any()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 DynAny 对象创建 any 值。将与 DynAny 对象关联的 TypeCode 的副本分配给所得 any。将与 DynAny 对象关联的值复制到 any 中。
+
+@return 具有相同值和 TypeCode 的新 Any 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny._DynUnionStub.equal(DynAny dyn_any)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个 DynAny 值是否相等。如果两个 DynAny 值的 TypeCode 相等，则它们的值相等；以此类推，所有组件 DynAny 都具有相等的值。将比较的两个 DynAny 的当前位置不影响比较结果。
+
+@return 如果 DynAny 相等，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.destroy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+销毁 DynAny 对象。此操作释放所有用来表示与 DynAny 对象关联的数据值的资源。为了避免资源泄漏，此操作必须在从 ORB 接口的创建操作之一获取的引用或者 DynAny.copy() 返回的引用上调用。在组件 DynAny 对象（例如，current_component 操作返回的对象）上调用 destroy 没有任何效果。销毁 DynAny 对象意味着销毁从其获取的所有 DynAny 对象。即对已销毁 DynAny 组件的引用将变得无效。调用这种引用将引发 OBJECT_NOT_EXIST。如果在销毁可从中获取组件的 DynAny 前使用 copy 操作生成了组件的复本，则可以在该 DynAny 的生存期后操作其组件。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny._DynUnionStub.copy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新 DynAny 对象，其值为调用此方法的 DynAny 的深层复制。该操作是多态的，即对派生自 DynAny 的类型之一（如 DynStruct）调用该操作时，将创建派生的类型，但以 DynAny 基本类型的形式返回其引用。
+
+@return DynAny 对象的深层复制
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_boolean(boolean value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 boolean 值插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_octet(byte value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 byte 值插入 DynAny 中。将 IDL octet 数据类型映射为 Java byte 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_char(char value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 char 值插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_short(short value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 short 值插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_ushort(short value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 short 值插入 DynAny 中。将 IDL ushort 数据类型映射为 Java short 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_long(int value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 integer 值插入 DynAny 中。将 IDL long 数据类型映射为 Java int 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_ulong(int value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 integer 值插入 DynAny 中。将 IDL ulong 数据类型映射为 Java int 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_float(float value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 float 值插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_double(double value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 double 值插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_string(String value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 string 值插入 DynAny 中。有界的和无界的字符串都使用此方法插入。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception InvalidValue 如果插入的字符串的长度超出有界字符串的界限
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_reference(Object value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将对 CORBA 对象的引用插入到 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_typecode(TypeCode value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 TypeCode 对象插入 DynAny 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_longlong(long value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 long 值插入 DynAny 中。将 IDL long 数据类型映射为 Java long 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_ulonglong(long value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 long 值插入 DynAny 中。将 IDL 无符号 long 数据类型映射为 Java long 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_wchar(char value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 char 值插入 DynAny 中。将 IDL wchar 数据类型映射为 Java char 数据类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_wstring(String value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 string 值插入 DynAny 中。有界的和无界的字符串都使用此方法插入。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception InvalidValue 如果插入的字符串的长度超出有界字符串的界限
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_any(Any value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Any 值插入此 DynAny 表示的 Any 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_dyn_any(DynAny value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将参数 DynAny 中所包含的 Any 值插入此 DynAny 表示的 Any 中。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.insert_val(Serializable value) throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将对 Serializable 对象的引用插入此 DynAny 中。将 IDL ValueBase 类型映射为 Java Serializable 类型。
+
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny._DynUnionStub.get_boolean() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 boolean 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte org.omg.DynamicAny._DynUnionStub.get_octet() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 byte 值。将 IDL octet 数据类型映射为 Java byte 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char org.omg.DynamicAny._DynUnionStub.get_char() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 char 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short org.omg.DynamicAny._DynUnionStub.get_short() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 short 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short org.omg.DynamicAny._DynUnionStub.get_ushort() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 short 值。将 IDL ushort 数据类型映射为 Java short 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.omg.DynamicAny._DynUnionStub.get_long() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 integer 值。将 IDL long 数据类型映射为 Java int 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.omg.DynamicAny._DynUnionStub.get_ulong() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 integer 值。将 IDL ulong 数据类型映射为 Java int 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float org.omg.DynamicAny._DynUnionStub.get_float() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 float 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double org.omg.DynamicAny._DynUnionStub.get_double() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 double 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.DynamicAny._DynUnionStub.get_string() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 string 值。有界的和无界的字符串都使用此方法析取。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Object org.omg.DynamicAny._DynUnionStub.get_reference() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取对 CORBA 对象的引用。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.TypeCode org.omg.DynamicAny._DynUnionStub.get_typecode() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 TypeCode 对象。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long org.omg.DynamicAny._DynUnionStub.get_longlong() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 long 值。将 IDL long 数据类型映射为 Java long 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long org.omg.DynamicAny._DynUnionStub.get_ulonglong() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 long 值。将 IDL 无符号 long 数据类型映射为 Java long 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char org.omg.DynamicAny._DynUnionStub.get_wchar() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 long 值。将 IDL wchar 数据类型映射为 Java char 数据类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.omg.DynamicAny._DynUnionStub.get_wstring() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 string 值。有界的和无界的字符串都使用此方法析取。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Any org.omg.DynamicAny._DynUnionStub.get_any() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取由此 DynAny 表示的 Any 中所包含的 Any 值。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny._DynUnionStub.get_dyn_any() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提取由此 DynAny 表示的 Any 中所包含的 Any 值，并将其包装在新 DynAny 中返回。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Serializable org.omg.DynamicAny._DynUnionStub.get_val() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch, org.omg.DynamicAny.DynAnyPackage.InvalidValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 DynAny 中提取 Serializable 对象。将 IDL ValueBase 类型映射为 Java Serializable 类型。
+
+@exception TypeMismatch 如果在 DynAny 中访问的组件类型不等于所请求的类型。
+@exception TypeMismatch 如果在其当前组件本身也有组件的 DynAny 上调用此方法
+@exception InvalidValue 如果此 DynAny 具有组件，但当前位置为 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny._DynUnionStub.seek(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前位置设置为索引。当前位置为索引 0 到 n-1，即索引 0 对应于第一个组件。如果所得当前位置指示 DynAny 的组件，则操作返回 true；如果索引指示的位置不与组件对应，则返回 false。使用负索引调用 seek 是合法的。它将当前位置设置为 -1，指示不存在组件，并返回 false。如果传递相应位置上没有组件的 DynAny 的非负索引值，则会将当前位置设置为 -1 并返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.DynamicAny._DynUnionStub.rewind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 seek(0)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.DynamicAny._DynUnionStub.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前位置推进到下一个组件。如果所得当前位置指示一个组件，则该操作返回 true；否则返回 false。返回值为 false 时当前位置仍为 -1。如果在没有组件的 DynAny 上调用 next，则当前位置仍为 -1 并返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.omg.DynamicAny._DynUnionStub.component_count()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 DynAny 的组件数。对于没有组件的 DynAny，它返回 0。该操作仅计算位于顶层的组件。例如，如果在具有单个成员的 DynStruct 上调用 component_count，则返回值为 1，与成员的类型无关。
+ <UL>
+<LI>对于序列 (sequence)，该操作返回当前的元素数。
+<LI>对于结构 (structure)、异常 (exception) 和值 (value) 类型，该操作返回成员数。
+<LI>对于数组 (array)，该操作返回元素数。
+<LI>对于联合数据 (union)，如果鉴别符指示指定的成员为活动状态，则返回 2；否则，它返回 1。
+<LI>对于 DynFixed 和 DynEnum，该操作返回 0。
+ </UL>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.DynamicAny.DynAny org.omg.DynamicAny._DynUnionStub.current_component() throws org.omg.DynamicAny.DynAnyPackage.TypeMismatch
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前位置上的组件的 DynAny。它不推进当前位置，所以反复调用 current_component 且不插入对 rewind、next 或 seek 的调用将返回相同的组件。返回的 DynAny 对象引用可用于获取/设置当前组件的值。如果当前组件表示复合类型，则可基于 TypeCode 缩小返回引用的范围以获取对应于复合类型的接口。在不能有组件的 DynAny（如 DynEnum 或空异常）上调用 current_component 将引发 TypeMismatch。在其当前位置为 -1 的 DynAny 上调用 current_component 将返回 nil 引用。迭代操作和 current_component 都可用于动态组成 any 值。创建动态 any（如 DynStruct）后，current_component 和 next 可用于初始化值的所有组件。一旦完成初始化动态值，to_any 将创建相应的 any 值。
+
+@exception TypeMismatch 如果在不能有组件的 DynAny（如 DynEnum 或空异常）上调用此方法
+
+<!-- END DATA -->

@@ -1,0 +1,412 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JTextArea extends javax.swing.text.JTextComponent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JTextArea</code> 是一个显示纯文本的多行区域。它作为一个轻量级组件，提供与 <code>java.awt.TextArea</code> 类的源兼容性，理应如此。有关使用所有文本组件的信息和示例，请参阅 <em>The Java Tutorial</em> 中 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/text.html">Using Text Components</a> 一节。
+
+ <p>
+此组件具有 <code>java.awt.TextArea</code> 类中没有的功能。有关其他功能，请参考超类。还有 <code>JTextPane</code> 和 <code>JEditorPane</code> 也是具有更多功能的多行文本类。
+ <p>
+<code>java.awt.TextArea</code> 在内部处理滚动。<code>JTextArea</code> 的不同之处在于，它不管理滚动，但实现了 swing <code>Scrollable</code> 接口。这允许把它放置在 <code>JScrollPane</code> 的内部（如果需要滚动行为），或者直接使用（如果不需要滚动）。
+ <p>
+<code>java.awt.TextArea</code> 具有换行能力。这由水平滚动策略来控制。由于滚动不是由 <code>JTextArea</code> 直接完成的，因此必须通过另一种方式来提供向后兼容性。<code>JTextArea</code> 具有用于换行的绑定 (bound) 属性，该属性控制其是否换行。在默认情况下，换行属性设置为 false（不换行）。
+ <p>
+<code>java.awt.TextArea</code> 具有两个属性 <code>rows</code> 和 <code>columns</code>，这两个属性用来确定首选大小。<code>JTextArea</code> 用这些属性来指示 viewport 的首选大小，此 viewport 被放置到 <code>JScrollPane</code> 中以匹配由 <code>java.awt.TextArea</code> 提供的功能。<code>JTextArea</code> 具有显示所有文本所需的首选大小，以便在 <code>JScrollPane</code> 内部正常工作。如果 <code>rows</code> 或 <code>columns</code> 的值等于 0，则沿该轴的首选大小将用于沿相同轴上 viewport 的首选大小。
+ <p>
+可以通过添加一个 <code>TextEvent</code> 的 <code>TextListener</code> 来对 <code>java.awt.TextArea</code> 的更改进行监视。在基于 <code>JTextComponent</code> 的组件中，更改通过 <code>DocumentEvent</code> 从模型传播到 <code>DocumentListeners</code>。<code>DocumentEvent</code> 给出了更改的位置和更改种类（如果需要）。代码片段如下所示：
+ <pre>
+    DocumentListener myListener = ??;
+    JTextArea myArea = ??;
+    myArea.getDocument().addDocumentListener(myListener);
+ </pre>
+ <p>
+<dl>
+<dt><b><font size=+1>换行</font></b>
+ <dd>
+有关如何处理换行的讨论，请参阅 <a href="text/DefaultEditorKit.html">DefaultEditorKit</a>。
+ </dl>
+
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅　<a
+ href="package-summary.html#threading">Swing's Threading Policy</a>。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@beaninfo attribute: isContainer false 描述：显示纯文本的多行区域。
+
+@author  Timothy Prinzing
+@version 1.92 12/19/03
+@see JTextPane
+@see JEditorPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造新的 TextArea。设置默认的模型，初始字符串为 null，行/列设置为 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea(String text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造显示指定文本的新的 TextArea。创建默认模型，行/列设置为 0。
+
+@param text 要显示的文本，或者为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea(int rows, int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定行数和列数的新的空 TextArea。创建默认模型，初始字符串为 null。
+
+@param rows 行数 &gt;= 0
+@param columns 列数 &gt;= 0
+@exception IllegalArgumentException 如果行或列参数为负数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea(String text, int rows, int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定文本、行数和列数的新的 TextArea。创建默认模型。
+
+@param text 要显示的文本，或者为 null
+@param rows 行数 &gt;= 0
+@param columns 列数 &gt;= 0
+@exception IllegalArgumentException 如果行或列参数为负数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea(Document doc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造新的 JTextArea，使其具有给定的文档模型，所有其他参数均默认为 (null, 0, 0)。
+
+@param doc  要使用的模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JTextArea(Document doc, String text, int rows, int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定行数和列数以及给定模型的新的 JTextArea。所有构造方法均调用此构造方法。
+
+@param doc 要使用的模型，如果为 null，则创建一个默认的模型
+@param text 要显示的文本，如果没有文本，则为 null
+@param rows 行数 &gt;= 0
+@param columns 列数 &gt;= 0
+@exception IllegalArgumentException 如果行或列参数为负数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JTextArea.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 UI 的类 ID。
+
+@return ID (&quot;TextAreaUI&quot;)
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Document javax.swing.JTextArea.createDefaultModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果没有显式给出构造时要使用的模型，则创建该模型的默认实现。返回 PlainDocument 的一个新的实例。
+
+@return    默认的文档模型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setTabSize(int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置选项卡要扩大到的字符数。此数将与可变宽度字体的最大 advance 相乘。当选项卡大小变化时将激发 PropertyChange 事件（&quot;tabSize&quot;）。
+
+@param size 要扩大到的字符数
+@see #getTabSize
+@beaninfo preferred: true bound: true 描述：选项卡要扩大到的字符数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getTabSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于扩展选项卡的字符数。如果文档为 null 或者没有选项卡设置，则返回默认值 8。
+
+@return 字符数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setLineWrap(boolean wrap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置文本区的换行策略。如果设置为 true，则当行的长度大于所分配的宽度时，将换行。如果设置为 false，则始终不换行。当策略更改时，将激发 <code>PropertyChange</code> 事件（&quot;lineWrap&quot;）。此属性默认为 false。
+
+@param wrap 指示是否应该换行
+@see #getLineWrap
+@beaninfo preferred: true bound: true 描述：应该换行
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JTextArea.getLineWrap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本区的换行策略。如果设置为 true，则当行的长度大于所分配的宽度时，将换行。如果设置为 false，则始终不换行。
+
+@return 是否换行
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setWrapStyleWord(boolean word)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置换行方式（如果文本区要换行）。如果设置为 true，则当行的长度大于所分配的宽度时，将在单词边界（空白）处换行。如果设置为 false，则将在字符边界处换行。此属性默认为 false。
+
+@param word 指示是否应该使用单词边界来换行
+@see #getWrapStyleWord
+@beaninfo preferred: false bound: true 描述：换行是否应该发生在单词边界处
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JTextArea.getWrapStyleWord()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取换行方式（如果文本区要换行）。如果设置为 true，则当行的长度大于所分配的宽度时，将在单词边界（即空白）处换行。如果设置为 false，则将在字符边界处换行。
+
+@return 换行方式是否应该为单词边界，而不是字符边界
+@see #setWrapStyleWord
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getLineOfOffset(int offset) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件文本中的偏移量转换为行号。
+
+@param offset 偏移量 &gt;= 0
+@return 行号 &gt;= 0
+@exception BadLocationException 如果偏移量小于 0 或大于文档长度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getLineCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定文本区中所包含的行数。
+
+@return 行数 &gt; 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getLineStartOffset(int line) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给定行起始处的偏移量。
+
+@param line  要转换的行号 &gt;= 0
+@return 偏移量 &gt;= 0
+@exception BadLocationException 如果 line 小于 0 或大于等于文档中所包含的行数（由 getLineCount 进行报告）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getLineEndOffset(int line) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给定行结尾处的偏移量。
+
+@param line  行 &gt;= 0
+@return 偏移量 &gt;= 0
+@exception BadLocationException 如果 line 小于 0 或大于等于文档所包含的行数（由 getLineCount 报告）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.insert(String str, int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定文本插入指定位置。如果模型为 null 或者文本为 null 或空，则不执行任何操作。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。     
+
+@param str 要插入的文本
+@param pos 插入的位置 &gt;= 0
+@exception IllegalArgumentException  如果 pos 在模型中是一个无效的位置
+@see #replaceRange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.append(String str)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定文本追加到文档结尾。如果模型为 null 或者字符串为 null 或空，则不执行任何操作。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。     
+
+@param str 要插入的文本
+@see #insert
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.replaceRange(String str, int start, int end)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的新文本替换从指示的起始位置到结尾位置的文本。如果模型为 null，则不执行任何操作。如果新字符串为 null 或为空，则只执行简单的删除操作。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。     
+
+@param str 要用来替换的文本
+@param start 起始位置 &gt;= 0
+@param end 结尾位置 &gt;= start
+@exception IllegalArgumentException  如果模型中的部分范围是无效的位置
+@see #insert
+@see #replaceRange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getRows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 TextArea 中的行数。
+
+@return 行数 &gt; 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setRows(int rows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 TextArea 的行数。设置新值之后调用 invalidate()。
+
+@param rows 行数 &gt;= 0
+@exception IllegalArgumentException 如果 rows 小于 0
+@see #getRows
+@beaninfo description: 首选显示行数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JTextArea.getRowHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义行高的意义。默认为字体的高度。
+
+@return 高度 &gt;= 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getColumns()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 TextArea 中的列数。
+
+@return 列数 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setColumns(int columns)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 TextArea 中的列数。设置新值之后执行 invalidate()。
+
+@param columns 列数 &gt;= 0
+@exception IllegalArgumentException 如果列小于 0
+@see #getColumns
+@beaninfo description:首选显示列数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JTextArea.getColumnWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取列的宽度。对某些字体而言列的概念不是很有意义。此方法用来定义列的宽度。对于所使用的字体，默认情况下这将被定义为字符 <em>m</em> 的宽度。此方法可以被重新定义为一些其他替代量。
+
+@return 列的宽度 &gt;= 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JTextArea.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 TextArea 的首选大小。这是显示文本所需的大小和 viewport 所要求大小的最大值。
+
+@return 大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JTextArea.setFont(Font f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前字体。这将移除缓存的行高和列宽，以便新的字体能够反映出来，并且调用 revalidate()。
+
+@param f 要使用的当前字体
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JTextArea.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JTextArea 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 JTextArea 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JTextArea.getScrollableTracksViewportWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 viewport 总是强制要求此 Scrollable 的宽度与 viewport 的宽度相匹配，则返回 true。如果换行策略为 true，则此实现返回 true，如果不换行，则返回 false。
+ 
+@return 如果 viewport 应强制要求 Scrollables 宽度与其自己的宽度相匹配，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JTextArea.getPreferredScrollableViewportSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此组件被嵌入 JScrollPane 中，则返回 viewport 的首选大小。这将使用预期的列和行设置（如果已经设置），否则使用超类行为。
+ 
+@return  JViewport 的 preferredSize，其中 JViewport 的视图为此 Scrollable。
+@see JViewport#getPreferredSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JTextArea.getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示逻辑行或列的组件应根据方向的值计算滚动增量，此滚动增量将完全显示一个新行或新列。此实现使用 <code>getRowHeight</code> 和 <code>getColumnWidth</code> 方法返回的值。
+ <p>
+用户每次请求一个单元滚动时，滚动容器（例如 JScrollPane）都将使用此方法。
+ 
+@param visibleRect  viewport 中可见的视图区域
+@param orientation 或者是 SwingConstants.VERTICAL 或者是 SwingConstants.HORIZONTAL.
+@param direction 小于 0 时为向左/上滚动，大于 0 时为向右/下滚动。
+@return 在指定方向滚动的 &quot;单位&quot; 增量
+@exception IllegalArgumentException 如果方向无效
+@see JScrollBar#setUnitIncrement
+@see #getRowHeight
+@see #getColumnWidth
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JTextArea.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JTextArea 关联的 AccessibleContext。对于 JTextAreas，AccessibleContext 采取 AccessibleJTextArea 的形式。必要时创建新的 AccessibleJTextArea 实例。
+
+@return 一个 AccessibleJTextArea，它充当此 JTextArea 的 AccessibleContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JTextArea.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 中序列化的更多信息，请参阅 JComponent 中的 readObject() 和 writeObject()。
+
+<!-- END DATA -->

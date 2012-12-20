@@ -1,0 +1,174 @@
+<!-- BEGIN KEY -->
+public static final class javax.swing.TransferHandler.TransferSupport extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类封装剪贴板或拖放传输的所有相关详细信息，并且还允许自定义拖放过程的各方面。
+ <p>
+此类的主要目的是提供开发人员需要的信息，以便确定传输的适合性或者导入传输中包含的数据。但它同时又是一个控制器，可自定义拖放过程中的属性，比如是否显示放置位置，使用哪种放置动作等。
+ <p>
+开发人员通常不需要创建此类的实例。它们是 DnD 实现向 <code>TransferHandler</code> 中的某些方法提供的。
+
+@see #canImport(TransferHandler.TransferSupport)
+@see #importData(TransferHandler.TransferSupport)
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler.TransferSupport(Component component, Transferable transferable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定组件和 <code>Transferable</code> 创建一个 <code>TransferSupport</code>，对于该 <code>TransferSupport</code> <code>isDrop()</code> 返回 <code>false</code>。
+
+@param component 目标组件
+@param transferable transferable
+@throws NullPointerException 如果任一参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.TransferSupport.isDrop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>TransferSupport</code> 是否表示一个放置操作。
+
+@return 如果这是一个放置操作，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.TransferHandler.TransferSupport.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此传输的目标组件。
+
+@return 目标组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler.DropLocation javax.swing.TransferHandler.TransferSupport.getDropLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 {@code TransferSupport} 表示一个放置操作时，返回组件的当前放置位置（非 {@code null}）。
+ <p>
+注：对于带内置放置操作支持的组件，此位置将是一个 {@code DropLocation} 的子类，该 {@code DropLocation} 的类型与该组件的 {@code getDropLocation} 方法返回的相同。
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@return 放置位置
+@throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.TransferSupport.setShowDropLocation(boolean showDropLocation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否应该为传输（必须表示一个放置操作）可视地指出放置位置。此方法用于那些在拖放操作过程的适当时候能够自动显示放置位置的组件。默认情况下，只有在 {@code TransferHandler} 已声明它能够接受此 {@code TransferSupport} 表示的导入时才显示放置位置。使用此方法，可以将放置位置强制改为总是显示，或总是不显示。
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@param showDropLocation 是否指示放置位置
+@throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.TransferSupport.setDropAction(int dropAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将传输（必须表示一个放置操作）的放置动作设置为给定动作，而不是默认的用户放置动作。此动作必须受源放置动作的支持，并且必须为 {@code COPY}、{@code MOVE} 或 {@code LINK} 之一。
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@param dropAction 放置动作
+@throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@throws IllegalArgumentException 如果指定了无效的动作
+@see #getDropAction
+@see #getUserDropAction
+@see #getSourceDropActions
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.TransferHandler.TransferSupport.getDropAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当此 {@code TransferSupport} 表示放置操作时，返回为其选择的动作。
+ <p>
+除非通过 {@code setDropAction} 显式地选择，否则此方法返回 {@code getUserDropAction} 提供的用户放置动作。
+ <p>
+可以使用 {@code TransferHandler} 的 {@code importData} 方法查询此动作，以便根据该动作自定义处理方法。
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@return 为放置操作选择的动作 throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@see #setDropAction
+@see #getUserDropAction
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.TransferHandler.TransferSupport.getUserDropAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当此 {@code TransferSupport} 表示一个放置操作时，返回其用户放置动作。
+ <p>
+根据 {@link java.awt.dnd.DropTargetDragEvent} 和 {@link java.awt.dnd.DropTargetDropEvent} 文档中的描述，为放置操作选择用户放置动作。通过 {@code setDropAction} 方法，可以选择不同的动作作为放置动作。
+ <p>
+当要确定放置操作的适合性或者对显式地选择放置动作作决定的时候，可以使用 {@code TransferHandler} 的 {@code canImport} 方法查询此动作。
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@return 用户放置动作
+@throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@see #setDropAction
+@see #getDropAction
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.TransferHandler.TransferSupport.getSourceDropActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当此 {@code TransferSupport} 表示放置操作时，返回拖动源受支持的放置动作。
+ <p>
+源动作表示此传输的源所支持的动作集合，并表示为 {@code COPY}、{@code MOVE} 和 {@code LINK} 的某个按位或组合。当要确定放置操作的适合性或者对显式地选择放置动作作决定的时候，可以使用 {@code TransferHandler} 的 {@code canImport} 方法查询此动作。要确定源是否支持指定动作，可以将该动作与源放置动作进行按位加，然后将结果与初始动作进行比较。例如：
+ <pre>
+boolean copySupported = (COPY &amp; getSourceDropActions()) == COPY;
+ </pre>
+ <p>
+此方法只用于拖放传输。{@code isDrop()} 为 {@code false} 时调用此方法将导致 {@code IllegalStateException}。
+
+@return 拖动源受支持的放置动作
+@throws IllegalStateException 如果此 TransferSupport 不是一个放置操作
+@see #isDrop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor[] javax.swing.TransferHandler.TransferSupport.getDataFlavors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此传输的数据 flavor。
+
+@return 此传输的数据 flavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.TransferSupport.isDataFlavorSupported(DataFlavor df)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否支持给定的数据 flavor。
+
+@param df 要测试的 <code>DataFlavor</code>
+@return 是否支持给定的 flavor。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.Transferable javax.swing.TransferHandler.TransferSupport.getTransferable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此传输关联的 <code>Transferable</code>。
+ <p>
+注：除非有必要直接获取 <code>Transferable</code>，否则使用此类的其他方法之一查询传输。这可能比直接获取 <code>Transferable</code> 并询问它执行得更好。
+
+@return 与此传输关联的 <code>Transferable</code>
+
+<!-- END DATA -->

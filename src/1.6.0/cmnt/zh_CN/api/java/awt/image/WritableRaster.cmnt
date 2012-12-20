@@ -1,0 +1,348 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.WritableRaster extends java.awt.image.Raster
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类扩展了 Raster 以提供像素写入功能。有关 Raster 如何存储像素的描述，请参阅 Raster 的类注释。
+
+<p>此类的构造方法为 protected。要实例化 WritableRaster，需使用 Raster 类中的一个 createWritableRaster 工厂方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.WritableRaster(SampleModel sampleModel, Point origin)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定 SampleModel 的 WritableRaster。WritableRaster 的左上角为原点，其大小与 SampleModel 相同。自动创建一个大小足以描述 WritableRaster 的 DataBuffer。
+@param sampleModel     指定布局的 SampleModel。
+@param origin          指定原点的 Point。
+@throws RasterFormatException 如果 <code>origin.x + sampleModel.getWidth()</code> 或者 <code>origin.y + sampleModel.getHeight()</code> 的计算结果整数溢出
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.WritableRaster(SampleModel sampleModel, DataBuffer dataBuffer, Point origin)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定 SampleModel 和 DataBuffer 的 WritableRaster。WritableRaster 的左上角为原点，其大小与 SampleModel 相同。DataBuffer 是未初始化的，它必须与 SampleModel 兼容。
+@param sampleModel     指定布局的 SampleModel。
+@param dataBuffer      包含图像数据的 DataBuffer。
+@param origin          指定原点的 Point。
+@throws RasterFormatException 如果 <code>origin.x + sampleModel.getWidth()</code> 或 <code>origin.y + sampleModel.getHeight()</code> 的计算结果整数溢出
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.WritableRaster(SampleModel sampleModel, DataBuffer dataBuffer, Rectangle aRegion, Point sampleModelTranslate, WritableRaster parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定 SampleModel、DataBuffer 和父亲的 WritableRaster。aRegion 指定新 Raster 的边界矩形。当向基 Raster 的坐标系转换时，基 Raster 必须包含 aRegion。（基 Raster 是 Raster 的祖先，它没有父亲）sampleModelTranslate 指定新 Raster 的 sampleModelTranslateX 值和 sampleModelTranslateY 值。
+
+注意，此构造方法通常应该由其他构造方法或创建方法调用，不应该直接使用。
+@param sampleModel     指定布局的 SampleModel。
+@param dataBuffer      包含图像数据的 DataBuffer。
+@param aRegion         指定图像区域的 Rectangle。
+@param sampleModelTranslate  指定从 SampleModel 向 Raster 进行坐标转换的 Point。
+@param parent          此 raster 的父亲（如果有）。
+@throws RasterFormatException 如果 <code>aRegion</code> 的宽度和高度小于等于 0，或者 <code>aRegion.x + aRegion.width</code> 或 <code>aRegion.y + aRegion.height</code> 的计算结果整数溢出
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.WritableRaster.getWritableParent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 WritableRaster 的父 WritableRaster（如果有），否则返回 null。
+@return 此 <code>WritableRaster</code> 的父亲，或 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.WritableRaster.createWritableTranslatedChild(int childMinX, int childMinY)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在不同的位置上创建一个与此 WritableRaster 具有相同大小、SampleModel 和 DataBuffer 的 WritableRaster。新 WritableRaster 将具有对当前 WritableRaster 的引用，可以通过其 getParent() 和 getWritableParent() 方法进行访问。
+
+@param childMinX 新 Raster 左上角的 X 坐标。
+@param childMinY 新 Raster 左上角的 Y 坐标。
+@return 除了指定的位置不同外，与此 <code>WritableRaster</code> 相同的 <code>WritableRaster</code>。
+@throws RasterFormatException 如果 <code>childMinX + this.getWidth()</code> 或 <code>childMinY + this.getHeight()</code> 的计算结果整数溢出
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.WritableRaster.createWritableChild(int parentX, int parentY, int w, int h, int childMinX, int childMinY, int[] bandList)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回新的 WritableRaster，它共享此 WritableRaster 的全部或部分 DataBuffer。新 WritableRaster 将具有对当前 WritableRaster 的引用，可以通过其 getParent() 和 getWritableParent() 方法进行访问。
+
+<p>parentX、parentY、width 和 height 参数在此 WritableRaster 坐标空间中形成一个 Rectangle，指示要共享的像素区域。如果此 Rectangle 没有包含在当前 WritableRaster 的边界内部，则会抛出错误。
+
+<p>新 WritableRaster 可以另外转换到与当前 WritableRaster 不同的平面坐标系中。childMinX 和 childMinY 参数给定返回的 WritableRaster 左上角像素的新 (x, y) 坐标；新 WritableRaster 中的坐标 (childMinX, childMinY) 将映射到当前 WritableRaster 中相同像素的坐标 (parentX, parentY)。
+
+<p>新 WritableRaster 可以定义为只包含当前 WritableRaster band 的一个子集，该子集可能通过 bandList 参数进行了重新排序。如果 bandList 为 null，则它将以其当前顺序包含当前 WritableRaster 的所有 band。
+
+<p> 要创建新的 WritableRaster，使其包含当前 WritableRaster 的子区域，但共享其坐标系和 band，此方法在调用时应该令 childMinX 等于 parentX，childMinY 等于 parentY 且 bandList 为 null。
+
+@param parentX    此 WritableRaster 坐标中左上角的 X 坐标。
+@param parentY    此 WritableRaster 坐标中左上角的 Y 坐标。
+@param w          从 (parentX, parentY) 开始的区域宽度。
+@param w          从 (parentX, parentY) 开始的区域高度。
+@param childMinX 返回的 WritableRaster 左上角的 X 坐标。
+@param childMinY 返回的 WritableRaster 左上角的 Y 坐标。
+@param bandList   band 的索引数组，取 null 则使用所有 band。
+@return <code>WritableRaster</code>，它共享此 <code>WritableRaster</code> 全部或部分 <code>DataBuffer</code>。
+@exception RasterFormatException 如果子区域位于光栅边界的外部。
+@throws RasterFormatException 如果 <code>w</code> 或 <code>h</code> 小于等于 0，或者 <code>parentX + w</code>、<code>parentY + h</code>、<code>childMinX + w</code> 或 <code>childMinY + h</code> 中任何一个的计算结果整数溢出
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setDataElements(int x, int y, Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类型 TransferType 基本数组中的单个像素设置数据。对于 Java 2D(tm) API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。数组中的数据可以是打包的格式，从而提高数据传输的效率。如果坐标不在边界内部，或者 inData 的大小不够容纳像素数据，则会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。如果输入对象不为 null 且引用 TransferType 数组之外的任何数组，则会抛出 ClassCastException。
+@see java.awt.image.SampleModel#setDataElements(int, int, Object, DataBuffer)
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param inData   引用类型数组的对象，该类型由 getTransferType() 定义，并且其长度 getNumDataElements() 包含到 x,y 位置的像素数据。
+
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 inData 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setDataElements(int x, int y, Raster inRaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为输入 Raster 中的像素矩形设置数据。输入的 Raster 必须与此 WritableRaster 兼容，因为它们必须具有相同的 band，对应 band 的每个样本必须具有相同的位数，TransferType 和 NumDataElement 必须相同，并且 getDataElements/setDataElements 使用的打包方式必须一致。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param inRaster 包含 x,y 位置数据的 Raster。
+
+@throws NullPointerException 如果 inRaster 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setDataElements(int x, int y, int w, int h, Object inData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为类型 TransferType 基本数组中的像素矩形设置数据。对于 Java 2D API 所支持的图像数据，这将是 DataBuffer.TYPE_BYTE、DataBuffer.TYPE_USHORT、DataBuffer.TYPE_INT、DataBuffer.TYPE_SHORT、DataBuffer.TYPE_FLOAT 或 DataBuffer.TYPE_DOUBLE 中的一个。
+数组中的数据可以是打包的格式，从而提高数据传输的效率。如果坐标不在边界内部，或者 inData 的大小不足以容纳像素数据，则会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。如果输入对象不为 null 且引用除 TransferType 数组之外的其他任何数组，则会抛出 ClassCastException。
+@see java.awt.image.SampleModel#setDataElements(int, int, int, int, Object, DataBuffer)
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w        像素矩形的宽度。
+@param h        像素矩形的高度。
+@param inData   引用类型数组的对象，该类型是由 getTransferType() 定义的，并且它的长度 w*h*getNumDataElements() 包含 x,y 和 x+w-1, y+h-1 位置之间的像素数据。
+
+@throws NullPointerException 如果 inData 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 inData 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setRect(Raster srcRaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将像素从 Raster srcRaster 复制到此 WritableRaster。srcRaster 中的每个像素被复制到此光栅的相同的 x,y 地址，除非地址位于此光栅边界的外部。srcRaster 必须具有与此 WritableRaster 相同的 band 数。这是从源样本到对应的目标样本的简单复制。
+ <p>
+如果源 Raster 和目标 Raster 的所有样本都是整型，且大小小于等于 32 位，则调用此方法等价于对源 Raster 和目标 Raster 中所有有效的 <code>x,y</code> 地址执行以下代码。
+ <pre>
+       Raster srcRaster;
+       WritableRaster dstRaster;
+       for (int b = 0; b &lt; srcRaster.getNumBands(); b++) {
+           dstRaster.setSample(x, y, b, srcRaster.getSample(x, y, b));
+       }
+ </pre>
+因此，当将整型的源复制到整型的目标时，如果对于特定的 band 源样本大小大于目标样本大小，则源样本的高位将被截断。如果特定 band 的源样本大小小于目标样本大小，则根据 srcRaster 的 SampleModel 是将样本作为有符号的量还是无符号的量，对目标样本的高位进行零扩展或符号扩展。
+ <p>
+当从一个 float 型或 double 型的源复制到整型的目标时，每个源样本强制转换为目标类型。当从整形的源复制到 float 型或 double 型的目标时，源首先使用上面的整型转换规则转换为 32-位的 int（如果需要的话），然后此 int 强制转换为 float 型或 double 型。
+ <p>
+@param srcRaster  从其复制像素的 Raster。
+
+@throws NullPointerException 如果 srcRaster 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setRect(int dx, int dy, Raster srcRaster)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将像素从 Raster srcRaster 复制到此 WritableRaster。对于 srcRaster 中的每个 (x, y) 地址，对应的像素被复制到此 WritableRaster 中的地址 (x+dx, y+dy)，除非 (x+dx, y+dy) 位于此光栅边界的外部。srcRaster 必须具有与此 WritableRaster 相同的 band 数。这是从源样本到对应的目标样本的简单复制。有关详细信息，请参见 {@link WritableRaster#setRect(Raster)}。
+
+@param dx        从 src 空间复制到 dst 空间的 X 转换因子。
+@param dy        从 src 空间复制到 dst 空间的 Y 转换因子。
+@param srcRaster  从其复制像素的 Raster。
+
+@throws NullPointerException 如果 srcRaster 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixel(int x, int y, int[] iArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用输入样本的 int 型数组设置 DataBuffer 中的像素。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param iArray 以 int 型数组表示的输入样本。
+
+@throws NullPointerException 如果 iArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 iArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixel(int x, int y, float[] fArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入样本的 float 型数组设置 DataBuffer 中的像素。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param fArray 以 float 型数组表示的输入样本。
+
+@throws NullPointerException 如果 fArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 fArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixel(int x, int y, double[] dArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用输入样本的 double 型数组设置 DataBuffer 中的像素。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param dArray 以 double 型数组表示的输入样本。
+
+@throws NullPointerException 如果 dArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 dArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixels(int x, int y, int w, int h, int[] iArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为每个数组元素包含一个样本的 int 型数组中的像素矩形设置所有样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param iArray   输入的 int 像素数组。
+
+@throws NullPointerException 如果 iArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 iArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixels(int x, int y, int w, int h, float[] fArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为每个数组元素包含一个样本的 float 型数组中的像素矩形设置所有样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param fArray   输入的 float 型像素数组。
+
+@throws NullPointerException 如果 fArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 fArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setPixels(int x, int y, int w, int h, double[] dArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为每个数组元素包含一个样本的 double 型数组中的像素矩形设置所有样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param dArray   输入的 double 型数组。
+
+@throws NullPointerException 如果 dArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标不在边界内部，或者 dArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSample(int x, int y, int b, int s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用 int 型的输入样本，在指定 band 中为位于 DataBuffer 中 (x,y) 位置的像素设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param b        要设置的 band。
+@param s        输入样本。
+
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内部。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSample(int x, int y, int b, float s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用 float 型的输入样本，在指定 band 中为位于 DataBuffer 中 (x,y) 位置的像素设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param b        要设置的 band。
+@param s        以 float 的形式输入的样本。
+
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内部。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSample(int x, int y, int b, double s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 double 型的输入样本，在指定 band 中为位于 DataBuffer 中 (x,y) 位置的像素设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        像素位置的 X 坐标。
+@param y        像素位置的 Y 坐标。
+@param b        要设置的 band。
+@param s        以 double 形式输入的样本。
+
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内部。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSamples(int x, int y, int w, int h, int b, int[] iArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为每个数组元素包含一个样本的 int 型数组中指定的像素矩形在指定 band 中设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w        像素矩形的宽度。
+@param h        像素矩形的高度。
+@param b        要设置的 band。
+@param iArray   输入的 int 型样本数组。
+
+@throws NullPointerException 如果 iArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内部，或者 iArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSamples(int x, int y, int w, int h, int b, float[] fArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为每个数组元素包含一个样本的 float 型数组中指定的像素矩形在指定 band 中设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param b        要设置的 band。
+@param fArray   输入的 float 型样本数组。
+
+@throws NullPointerException 如果 fArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内部，或者 fArray 太小不能容纳输入。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.image.WritableRaster.setSamples(int x, int y, int w, int h, int b, double[] dArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为每个数组元素包含一个样本的 double 型数组中指定的像素矩形在指定 band 中设置样本。如果坐标不在边界内部，则可能会抛出 ArrayIndexOutOfBoundsException。但是，不保证显示的边界检查。
+@param x        左上角像素位置的 X 坐标。
+@param y        左上角像素位置的 Y 坐标。
+@param w       像素矩形的宽度。
+@param h        像素矩形的高度。
+@param b        要设置的 band。
+@param dArray   输入的 double 型样本数组。
+
+@throws NullPointerException 如果 dArray 为 null。
+@throws ArrayIndexOutOfBoundsException 如果坐标或 band 索引不在边界内，或者 dArray 太小不能容纳输入。
+
+<!-- END DATA -->

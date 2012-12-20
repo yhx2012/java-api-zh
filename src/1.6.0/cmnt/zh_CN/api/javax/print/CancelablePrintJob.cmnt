@@ -1,0 +1,23 @@
+<!-- BEGIN KEY -->
+public interface javax.print.CancelablePrintJob extends javax.print.DocPrintJob
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打印应用程序使用此接口来取消打印作业。此接口扩展了 {@link DocPrintJob}。如果打印作业是可取消的，则从 PrintService 所返回的 <code>DocPrintJob</code> 实现来实现此接口。尝试取消某个打印作业之前，客户端需要测试 PrintService 所返回的 <code>DocPrintJob</code> 对象是否实际上实现了此接口。客户端永远不应假定 <code>DocPrintJob</code> 实现了此接口。PrintService 可能仅支持取消某类打印数据和表示形式类名。这意味着只有 PrintService 返回的某些 <code>DocPrintJob</code> 对象才实现此接口。
+ <p>
+如果使用此接口的实现成功地取消了某个作业，则鼓励服务实现程序实现此可选接口，并且向所有侦听器传递 javax.print.event.PrintJobEvent.JOB_CANCELLED 事件。服务还应注意，此方法的实现可能是通过单独的客户端线程完成的，而不是发出打印请求的线程完成的。因此，此接口的实现必须是线程安全的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.print.CancelablePrintJob.cancel() throws javax.print.PrintException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止对打印作业的进一步处理。
+ <p>
+即使某个服务支持此方法，也不能断定作业取消总是能够成功。一旦作业到达或经过其处理过程中的某个点，就无法再取消该作业了。成功的取消仅意味着未打印整个作业，但是在取消返回时可能已经打印完成部分作业。
+ <p>
+如果取消不成功，则该服务抛出 PrintException。尚未提交进行打印的作业应该抛出此异常。对已经成功取消的打印作业再执行取消不视为错误，并且总是可以成功。
+ <p>
+在某些服务中，取消可能是一个很长的过程，这涉及对服务器的请求和对其打印队列的处理。客户端可能希望在不影响应用程序执行的线程中执行取消。
+@throws PrintException 如果无法成功取消该作业。
+
+<!-- END DATA -->

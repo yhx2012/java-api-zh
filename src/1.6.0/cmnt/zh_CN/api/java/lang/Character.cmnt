@@ -1,0 +1,2159 @@
+<!-- BEGIN KEY -->
+public final class java.lang.Character extends java.lang.Object implements java.io.Serializable, java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Character</code> 类在对象中包装一个基本类型 <code>char</code> 的值。<code>Character</code> 类型的对象包含类型为 <code>char</code> 的单个字段。
+ <p>
+此外，该类提供了几种方法，以确定字符的类别（小写字母，数字，等等），并将字符从大写转换成小写，反之亦然。
+ <p>
+字符信息基于 Unicode 标准，版本 4.0。
+ <p>
+<code>Character</code> 类的方法和数据是通过 <i>UnicodeData</i> 文件中的信息定义的，该文件是 Unicode Consortium 维护的 Unicode Character Database 的一部分。此文件指定了各种属性，其中包括每个已定义 Unicode 代码点或字符范围的名称和常规类别。
+ <p>
+此文件及其描述可从 Unicode Consortium 获得，网址如下：
+ <ul>
+<li><a href="http://www.unicode.org">http://www.unicode.org</a>
+ </ul>
+
+ <h4><a name="unicode">Unicode 字符表示形式</a></h4>
+
+<p><code>char</code> 数据类型（和 <code>Character</code> 对象封装的值）基于原始的 Unicode 规范，将字符定义为固定宽度的 16 位实体。Unicode 标准曾做过修改，以允许那些其表示形式需要超过 16 位的字符。合法<em>代码点</em> 的范围现在是从 U+0000 到 U+10FFFF，即通常所说的 <em>Unicode 标量值</em>。（请参阅 Unicode 标准中 U+<i>n</i> 表示法的<a
+ href="http://www.unicode.org/reports/tr27/#notation"><i>定义</i></a>。）
+
+<p>从 U+0000 到 U+FFFF 的字符集有时也称为 <em>Basic Multilingual Plane (BMP)</em>。代码点大于 U+FFFF 的<a
+ name="supplementary">字符</a>称为<em>增补字符</em>。Java 2 平台在 <code>char</code> 数组以及 <code>String</code> 和 <code>StringBuffer</code> 类中使用 UTF-16 表示形式。在这种表现形式中，增补字符表示为一对 <code>char</code> 值，第一个值取自<em>高代理项</em> 范围，即 (\uD800-\uDBFF)，第二个值取自<em>低代理项</em> 范围，即 (\uDC00-\uDFFF)。
+
+<p>所以，<code>char</code> 值表示 Basic Multilingual Plane (BMP) 代码点，其中包括代理项代码点，或 UTF-16 编码的代码单元。<code>int</code> 值表示所有 Unicode 代码点，包括增补代码点。<code>int</code> 的 21 个低位（最低有效位）用于表示 Unicode 代码点，并且 11 个高位（最高有效位）必须为零。除非另有指定，否则与增补字符和代理项 <code>char</code> 值有关的行为如下：
+
+ <ul>
+<li>只接受一个 <code>char</code> 值的方法无法支持增补字符。它们将代理项字符范围内的 <code>char</code> 值视为未定义字符。例如，<code>Character.isLetter('\uD840')</code> 返回 <code>false</code>，即使是特定值，如果在字符串的后面跟着任何低代理项值，那么它将表示一个字母。
+
+<li>接受一个 <code>int</code> 值的方法支持所有 Unicode 字符，其中包括增补字符。例如，<code>Character.isLetter(0x2F81A)</code> 返回 <code>true</code>，因为代码点值表示一个字母（一个 CJK 象形文字）。
+ </ul>
+
+<p>在 Java SE API 文档中，<em>Unicode 代码点</em> 用于范围在 U+0000 与 U+10FFFF 之间的字符值，而 <em>Unicode 代码点</em> 用于作为 <em>UTF-16</em> 编码的代码单元的 16 位 <code>char</code> 值。有关 Unicode 技术的详细信息，请参阅 <a href="http://www.unicode.org/glossary/">Unicode Glossary</a>。
+
+@author  Lee Boynton
+@author  Guy Steele
+@author  Akira Tanaka
+@since   1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.MIN_RADIX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可用于与字符串相互转换的最小基数。此字段的常量值是基数转换方法（比如 <code>Integer</code> 类的 <code>digit</code>、<code>forDigit</code> 和 <code>toString</code> 方法）中所允许的基数参数的最小值。
+
+ @see     java.lang.Character#digit(char, int)
+ @see     java.lang.Character#forDigit(int, int)
+ @see     java.lang.Integer#toString(int, int)
+ @see     java.lang.Integer#valueOf(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.MAX_RADIX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可用于与字符串相互转换的最大基数。此字段的常量值是基数转换方法（比如 <code>Integer</code> 类的 <code>digit</code>、<code>forDigit</code> 和 <code>toString</code> 方法）中所允许的基数参数的最大值。
+
+ @see     java.lang.Character#digit(char, int)
+ @see     java.lang.Character#forDigit(int, int)
+ @see     java.lang.Integer#toString(int, int)
+ @see     java.lang.Integer#valueOf(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MIN_VALUE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段的常量值是 <code>char</code> 类型的最小值，即 <code>'\u0000'</code>。
+
+ @since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MAX_VALUE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段的常量值是 <code>char</code> 类型的最大值，即 <code>'\uFFFF'</code>。
+
+ @since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Class<java.lang.Character> java.lang.Character.TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示基本类型 <code>char</code> 的 <code>Class </code> 实例。
+
+ @since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.UNASSIGNED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Cn&rdquo;。
+
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.UPPERCASE_LETTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Lu&rdquo;。 
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.LOWERCASE_LETTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Ll&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.TITLECASE_LETTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Lt&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.MODIFIER_LETTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Lm&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.OTHER_LETTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Lo&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.NON_SPACING_MARK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Mn&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.ENCLOSING_MARK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Me&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.COMBINING_SPACING_MARK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Mc&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DECIMAL_DIGIT_NUMBER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Nd&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.LETTER_NUMBER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Nl&rdquo;。 
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.OTHER_NUMBER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;No&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.SPACE_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Zs&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.LINE_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Zl&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.PARAGRAPH_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Zp&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.CONTROL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Cc&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.FORMAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Cf&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.PRIVATE_USE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Co&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Cs&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DASH_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Pd&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.START_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Ps&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.END_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Pe&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.CONNECTOR_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Pc&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.OTHER_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Po&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.MATH_SYMBOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Sm&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.CURRENCY_SYMBOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Sc&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.MODIFIER_SYMBOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Sk&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.OTHER_SYMBOL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;So&rdquo;。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.INITIAL_QUOTE_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Pi&rdquo;。
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.FINAL_QUOTE_PUNCTUATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的常规类别&ldquo;Pf&rdquo;。
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_UNDEFINED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+未定义的双向字符类型。未定义的 <code>char</code> 值在 Unicode 规范中具有未定义的方向性。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;L&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;R&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;AL&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_EUROPEAN_NUMBER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;EN&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;ES&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;ET&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_ARABIC_NUMBER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;AN&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_COMMON_NUMBER_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;CS&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_NONSPACING_MARK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;NSM&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_BOUNDARY_NEUTRAL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;BN&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_PARAGRAPH_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的非特定双向字符类型&ldquo;B&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_SEGMENT_SEPARATOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的非特定双向字符类型&ldquo;S&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_WHITESPACE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的非特定双向字符类型&ldquo;WS&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_OTHER_NEUTRALS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的非特定双向字符类型&ldquo;ON&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;LRE&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;LRO&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;RLE&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的强双向字符类型&ldquo;RLO&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final byte java.lang.Character.DIRECTIONALITY_POP_DIRECTIONAL_FORMAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 规范中的弱双向字符类型&ldquo;PDF&rdquo;。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MIN_HIGH_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 高代理项代码单元的最小值。高代理项也称为<i>前导代理项</i>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MAX_HIGH_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 高代理项代码单元的最大值。高代理项也称为<i>前导代理项</i>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MIN_LOW_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 低代理项代码单元的最小值。低代理项也称为<i>尾部代理项</i>。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MAX_LOW_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 低代理项代码单元的最大值。低代理项也称为<i>尾部代理项</i>。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MIN_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 代理项代码单元的最小值。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final char java.lang.Character.MAX_SURROGATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+UTF-16 编码中的 Unicode 代理项代码单元的最大值。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.MIN_SUPPLEMENTARY_CODE_POINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+增补代码点的最小值。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.MIN_CODE_POINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 代码点的最小值。
+ 
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.MAX_CODE_POINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Unicode 代码点的最大值。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.lang.Character.SIZE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来以无符号二进制形式表示 <tt>char</tt> 值的位数。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final char java.lang.Character.value
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Character</code> 的值。
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Character(char value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新分配的 <code>Character</code> 对象，用以表示指定的 <code>char</code> 值。
+
+@param   value   <code>Character</code> 对象表示的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Character java.lang.Character.valueOf(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示指定 <tt>char</tt> 值的 <tt>Character</tt> 实例。如果不需要新的 <tt>Character</tt> 实例，则通常应该优先采用此方法，而不是构造方法 {@link #Character(char)}，因为该方法很可能通过缓存经常请求的值来显著提高空间和时间性能。
+
+@param  c 一个 char 值。
+@return 表示 <tt>c</tt> 的 <tt>Character</tt> 实例。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char java.lang.Character.charValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Character</code> 对象的值。
+@return 此对象表示的基本 <code>char</code> 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.Character.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Character</code> 的哈希码。
+@return 此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Character.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象与指定对象比较。当且仅当参数不是 <code>null</code>，而是一个与此对象包含相同 <code>char</code> 值的 <code>Character</code> 对象时，结果才是 <code>true</code>。
+
+@param   obj   比较的对象。
+@return  如果对象相同，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Character.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>Character</code> 值的 <code>String</code> 对象。结果是一个长度为 1 的字符串，其唯一组件是此 <code>Character</code> 对象表示的基本 <code>char</code> 值。
+
+@return  此对象的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.lang.Character.toString(char c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个表示指定 <code>char</code> 值的 <code>String</code> 对象。结果是长度为 1 的字符串，仅由指定的 <code>char</code> 组成。
+
+@param c 要转换的 <code>char</code> 值
+@return 指定 <code>char</code> 值的字符串表示形式
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isValidCodePoint(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定的代码点是否为从 <code>0x0000</code> 到 <code>0x10FFFF</code> 范围之内的有效 Unicode 代码点值。该方法等效于以下表达式：
+
+ <blockquote><pre>
+ codePoint >= 0x0000 && codePoint <= 0x10FFFF
+ </pre></blockquote>
+
+@param  codePoint 要测试的 Unicode 代码点
+@return 如果指定的代码点值是一个有效的代码点值，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isSupplementaryCodePoint(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否在增补字符范围内。该方法调用以下表达式：
+ <blockquote><pre>
+ codePoint >= 0x10000 && codePoint <= 0x10FFFF
+ </pre></blockquote>
+
+@param  codePoint 要测试的字符（Unicode 代码点）
+@return 如果指定字符在 Unicode 增补字符范围内，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isHighSurrogate(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给出的 <code>char</code> 值是否为一个高代理项代码单元（也称为<i>前导代理项代码单元</i>）。这类值并不表示它们本身的字符，而被用来表示 UTF-16 编码中的<a href="#supplementary">增补字符</a>。
+
+<p>该方法返回 <code>true</code> 的条件是当且仅当
+ <blockquote><pre>ch >= '&#92;uD800' && ch <= '&#92;uDBFF'
+</pre></blockquote>
+ 为 <code>true</code>。
+
+@param   ch   要测试的 <code>char</code> 值。
+@return  如果 <code>char</code> 值在 '\uD800' 与 '\uDBFF' 所包含的范围之间，则返回 <code>true</code>；否则返回 <code>false</code>。 
+@see     java.lang.Character#isLowSurrogate(char)
+@see     Character.UnicodeBlock#of(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLowSurrogate(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定给定 <code>char</code> 值是否一个低代理项代码单元（也称为<i>尾部代理项代码单元</i>）。这类值并不表示它们本身的字符，而被用来表示 UTF-16 编码中的<a  href="#supplementary">增补字符</a>。
+
+<p> 该方法返回 <code>true</code> 的条件是当且仅当
+<blockquote><pre>ch >= '&#92;uDC00' && ch <= '&#92;uDFFF'
+</pre></blockquote>  为 <code>true</code>。
+
+@param   ch   要测试的 <code>char</code> 值。
+@return  如果 <code>char</code> 值在 '\uDC00' 与 '\uDFFF' 所包含的范围之间，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see java.lang.Character#isHighSurrogate(char)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isSurrogatePair(char high, char low)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定的 <code>char</code> 值对是否为有效的代理项对。该方法等效于以下表达式：
+ <blockquote><pre>
+ isHighSurrogate(high) && isLowSurrogate(low)
+ </pre></blockquote>
+
+@param  high 要测试的高代理项代码值
+@param  low 要测试的低代理项代码值
+@return 如果指定的高代理项和低代理项代码值表示的是一个有效的代理项对，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.charCount(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定表示指定字符（Unicode 代码点）所需的 <code>char</code> 值的数量。如果指定字符等于或大于 0x10000，则该方法返回的值为 2。否则，该方法返回的值为 1。
+
+<p>该方法没有验证指定的字符是否为一个有效的 Unicode 代码点。如有必要，调用者必须使用 {@link #isValidCodePoint(int) isValidCodePoint} 验证字符值。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符是一个有效的增补字符，则返回 2；否则返回 1。 
+@see     #isSupplementaryCodePoint(int) 
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.toCodePoint(char high, char low)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的代理项对转换为其增补代码点值。该方法没有验证指定的代理项对。如有必要，调用者必须使用 {@link #isSurrogatePair(char, char) isSurrogatePair} 验证它。
+
+@param  high 高代理项代码单元
+@param  low 低代理项代码单元
+@return 用指定代理项对组成的增补代码点
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointAt(CharSequence seq, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>CharSequence</code> 的给定索引上的代码点。如果 <code>CharSequence</code> 中的给定索引上的 <code>char</code> 值在高代理项范围内，则下列索引的长度小于 <code>CharSequence</code> 的长度，如果下列索引上的 <code>char</code> 值在低代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回给定索引上的 <code>char</code> 值。
+
+@param seq <code>char</code> 值（Unicode 代码单元）的序列
+@param index 要转换的 <code>seq</code> 中的 <code>char</code> 值（Unicode 代码单元）的索引
+@return 给定索引上的 Unicode 代码点
+@exception NullPointerException 如果 <code>seq</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 值为负或不小于 {@link CharSequence#length() seq.length()}。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointAt(char[] a, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组的给定索引上的代码点。如果 <code>char</code> 数组中的给定索引上的 <code>char</code> 值在高代理项范围内，则下一个索引的长度小于 <code>char</code> 数组的长度，如果下一个索引上的 <code>char</code> 值在低代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回给定索引上的 <code>char</code> 值。
+
+@param a <code>char</code> 数组
+@param index 要转换的 <code>char</code> 数组中的 <code>char</code> 值（Unicode 代码单元）的索引
+@return 给定索引上的 Unicode 代码点
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 值为负或不小于 <code>char</code> 数组的长度。
+@since 1.5 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointAt(char[] a, int index, int limit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组的给定索引上的代码点，该数组中只有那些具有小于 <code>limit</code> 的 <code>index</code> 值的数组元素可以使用。如果 <code>char</code> 数组中的给定索引上的 <code>char</code> 值在高代理项范围内，则下一个索引小于 <code>limit</code>，如果下一个索引上的 <code>char</code> 值在低代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回给定索引上的 <code>char</code> 值。
+
+@param a <code>char</code> 数组
+@param index 要转换的 <code>char</code> 数组中的 <code>char</code> 值（Unicode 代码点）的索引
+@param limit 可以在 <code>char</code> 数组中使用的最后一个数组元素后面的索引
+@return 给定索引上的 Unicode 代码点
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 参数为负或不小于 <code>limit</code> 参数，或者 <code>limit</code> 参数为负或大于 <code>char</code> 数组的长度。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointBefore(CharSequence seq, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>CharSequence</code> 的给定索引前面的代码点。如果 <code>CharSequence</code> 中的 <code>(index - 1)</code> 上的 <code>char</code> 值在低代理项范围内，则 <code>(index - 2)</code> 为非负，如果 <code>CharSequence</code> 中的 <code>(index - 2)</code> 上的 <code>char</code> 值在高代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回 <code>(index - 1)</code> 上的 <code>char</code> 值。
+
+@param seq <code>CharSequence</code> 实例 
+@param index 应该返回的代码点后面的索引 
+@return 给定索引前面的 Unicode 代码点值。
+@exception NullPointerException 如果 <code>seq</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 参数小于 1 或者大于 {@link CharSequence#length() seq.length()}。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointBefore(char[] a, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组的给定索引前面的代码点。如果 <code>char</code> 数组中的 <code>(index - 1)</code> 上的 <code>char</code> 值在低代理项范围内，则 <code>(index - 2)</code> 为非负，如果 <code>char</code> 数组中的 <code>(index - 2)</code> 上的 <code>char</code> 值在高代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回 <code>(index - 1)</code> 上的 <code>char</code> 值。
+
+@param a <code>char</code> 数组
+@param index 应该返回的代码点后面的索引
+@return 给定索引前面的 Unicode 代码点值。
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 参数小于 1 或大于 <code>char</code> 数组的长度
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointBefore(char[] a, int index, int start)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组的给定索引前面的代码点，该数组中只有那些具有大于等于 <code>start</code> 的 <code>index</code> 值的数组元素可以使用。如果 <code>char</code> 数组中的 <code>(index - 1)</code> 上的 <code>char</code> 值在低代理项范围内，则 <code>(index - 2)</code> 不小于 <code>start</code>，如果 <code>char</code> 数组中的 <code>(index - 2)</code> 上的 <code>char</code> 值在高代理项范围内，则返回对应于此代理项对的增补代码点。否则，返回 <code>(index - 1)</code> 上的 <code>char</code> 值。
+
+@param a <code>char</code> 数组
+@param index 应该返回的代码点后面的索引
+@param start <code>char</code> 数组中第一个数组元素的索引
+@return 给定索引前面的 Unicode 代码点。
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 参数不大于 <code>start</code> 参数或大于 <code>char</code> 数组的长度，或者 <code>start</code> 参数为负或小于 <code>char</code> 数组的长度。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.toChars(int codePoint, char[] dst, int dstIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定字符（Unicode 代码点）转换为其 UTF-16 表示形式。如果指定代码点是一个 BMP（Basic Multilingual Plane 或 Plane 0）值，则在 <code>dst[dstIndex]</code> 中存储相同的值，并返回 1。如果指定代码点是一个增补字符，则将其代理项值存储在 <code>dst[dstIndex]</code>（高代理项）和 <code>dst[dstIndex+1]</code>（低代理项）中，并返回 2。
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@param  dst <code>char</code> 的一个数组，<code>codePoint</code> 的 UTF-16 值存储在其中。
+@param dstIndex 进入存储已转换值的 <code>dst</code> 数组中的起始索引。
+@return 如果代码点是一个 BMP 代码点，则返回 1，如果代码点是一个增补代码点，则返回 2。
+@exception IllegalArgumentException 如果指定的 <code>codePoint</code> 不是一个有效的 Unicode 代码点。
+@exception NullPointerException 如果指定的 <code>dst</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>dstIndex</code> 为负或不小于 <code>dst.length</code>，或者 <code>dstIndex</code> 上的 <code>dst</code> 没有足够多的数组元素来存储得到的 <code>char</code> 值。（如果 <code>dstIndex</code> 等于 <code>dst.length-1</code> 并且指定的 <code>codePoint</code> 是一个增补字符，则不在 <code>dst[dstIndex]</code> 中存储高代理项值。）
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char[] java.lang.Character.toChars(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的字符（Unicode 代码点）转换成其存储在 <code>char</code> 数组中的 UTF-16 表示形式。如果指定的代码点是一个 BMP（Basic Multilingual Plane 或 Plane 0）值，则得到的 <code>char</code> 数组具有与 <code>codePoint</code> 相同的值。如果指定的代码点是一个增补代码点，则得到的 <code>char</code> 数组具有相应的代理项对。
+
+@param  codePoint 一个 Unicode 代码点
+@return 一个具有 <code>codePoint</code> 的 UTF-16 表示形式的 <code>char</code> 数组。
+@exception IllegalArgumentException 如果指定的 <code>codePoint</code> 不是一个有效的 Unicode 代码点。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointCount(CharSequence seq, int beginIndex, int endIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定字符序列的文本范围内的 Unicode 代码点数量。文本范围始于指定的 <code>beginIndex</code>，并扩展到索引 <code>endIndex - 1</code> 上的 <code>char</code>。因此文本范围的长度（<code>char</code> 形式）为 <code>endIndex-beginIndex</code>。文本范围内的不成对代理项是按一个代码点算作一个项进行计数的。
+
+@param seq 字符序列
+@param beginIndex 文本范围的第一个 <code>char</code> 的索引。
+@param endIndex 文本范围的最后一个 <code>char</code> 后面的索引。
+@return 指定文本范围内的 Unicode 代码点的数量
+@exception NullPointerException 如果 <code>seq</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>beginIndex</code> 为负，或者 <code>endIndex</code> 大于给定序列的长度，或者 <code>beginIndex</code> 大于 <code>endIndex</code>。
+@since 1.5 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.codePointCount(char[] a, int offset, int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>char</code> 数组参数的子数组中 Unicode 代码点的数量。<code>offset</code> 参数是子数组的第一个 <code>char</code> 的索引，<code>count</code> 参数指定了 <code>char</code> 中的子数组的长度。子数组中不成对的代理项是按一个代码点算作一个项进行计数的。
+
+@param a <code>char</code> 数组
+@param offset 给定 <code>char</code> 数组中第一个 <code>char</code> 的索引
+@param count <code>char</code> 中的子数组的长度
+@return 指定子数组中 Unicode 代码点的数量
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>offset</code> 或 <code>count</code> 为负，或者 <code>offset + count</code> 大于给定数组的长度。
+@since  1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.offsetByCodePoints(CharSequence seq, int index, int codePointOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定字符序列中的索引，它是从给定 <code>index</code> 到 <code>codePointOffset</code> 代码点的偏移量。<code>index</code> 和 <code>codePointOffset</code> 给出的文本范围内的不成对代理项是按一个代码点算作一个项进行计数的。
+
+@param seq 字符序列
+@param index 要偏移的索引
+@param codePointOffset 代码点中的偏移量
+@return 字符序列内的索引
+@exception NullPointerException 如果 <code>seq</code> 为 null。
+@exception IndexOutOfBoundsException 如果 <code>index</code> 为负或大于字符序列的长度，或者 <code>codePointOffset</code> 为负并且起始于 <code>index</code> 的子序列拥有的偏移量少于 <code>codePointOffset</code> 代码点，或者 <code>codePointOffset</code> 为负并且 <code>index</code> 前面的子序列的偏移量少于 <code>codePointOffset</code> 代码点的绝对值。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.offsetByCodePoints(char[] a, int start, int count, int index, int codePointOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定 <code>char</code> 子数组中的索引，它是从给定 <code>index</code> 到 <code>codePointOffset</code> 代码点的偏移量。<code>start</code> 和 <code>count</code> 参数指定了 <code>char</code> 数组的一个子数组。<code>index</code> 和 <code>codePointOffset</code> 给出的文本范围内的不成对代理项是按一个代码点算作一个项进行计数的。
+
+@param a <code>char</code> 数组
+@param start 子数组的第一个 <code>char</code> 的索引
+@param count <code>char</code> 中的子数组的长度
+@param index 要偏移的索引
+@param codePointOffset 代码点中的偏移量
+@return 子数组内的索引
+@exception NullPointerException 如果 <code>a</code> 为 null。
+@exception IndexOutOfBoundsException 如果存在以下情况：<code>start</code> 或 <code>count</code> 为负；<code>start + count</code> 大于给定数组的长度；<code>index</code> 小于 <code>start</code> 或大于 <code>start + count</code>；<code>codePointOffset</code> 为负并且起始于 <code>index</code>、终止于 <code>start + count - 1</code> 的文本字段的偏移量少于 <code>codePointOffset</code> 代码点；<code>codePointOffset</code> 为负并且起始于 <code>start</code>、终止于 <code>index - 1</code> 的文本字段的偏移量少于 <code>codePointOffset</code> 代码点的绝对值。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLowerCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为小写字母。
+ <p>
+如果通过 <code>Character.getType(ch)</code> 提供的字符的常规类别类型为 <code>LOWERCASE_LETTER</code>，则字符为小写字母。
+ <p>
+以下是小写字母的示例：
+ <p><blockquote><pre>
+ a b c d e f g h i j k l m n o p q r s t u v w x y z
+ '\u00DF' '\u00E0' '\u00E1' '\u00E2' '\u00E3' '\u00E4' '\u00E5' '\u00E6' 
+ '\u00E7' '\u00E8' '\u00E9' '\u00EA' '\u00EB' '\u00EC' '\u00ED' '\u00EE'
+ '\u00EF' '\u00F0' '\u00F1' '\u00F2' '\u00F3' '\u00F4' '\u00F5' '\u00F6'
+ '\u00F8' '\u00F9' '\u00FA' '\u00FB' '\u00FC' '\u00FD' '\u00FE' '\u00FF'
+ </pre></blockquote>
+<p> 其他许多 Unicode 字符也是小写的。
+
+<p><b>注：</b>此方法无法处理<a
+ href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isLowerCase(int)} 方法。
+
+@param   ch   要测试的字符。
+@return 如果字符为小写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.Character#isTitleCase(char)
+@see     java.lang.Character#toLowerCase(char)
+@see     java.lang.Character#getType(char)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLowerCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为小写字母。
+ <p>
+如果通过 {@link Character#getType getType(codePoint)} 提供的字符的常规类别的类型为 <code>LOWERCASE_LETTER</code>，则字符为小写字母。
+ <p>
+以下是小写字母的示例：
+ <p><blockquote><pre>
+ a b c d e f g h i j k l m n o p q r s t u v w x y z
+ '\u00DF' '\u00E0' '\u00E1' '\u00E2' '\u00E3' '\u00E4' '\u00E5' '\u00E6' 
+ '\u00E7' '\u00E8' '\u00E9' '\u00EA' '\u00EB' '\u00EC' '\u00ED' '\u00EE'
+ '\u00EF' '\u00F0' '\u00F1' '\u00F2' '\u00F3' '\u00F4' '\u00F5' '\u00F6'
+ '\u00F8' '\u00F9' '\u00FA' '\u00FB' '\u00FC' '\u00FD' '\u00FE' '\u00FF'
+ </pre></blockquote>
+<p> 其他许多 Unicode 字符也是小写的。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为小写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.Character#isTitleCase(int)
+@see     java.lang.Character#toLowerCase(int)
+@see     java.lang.Character#getType(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUpperCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为大写字母。
+ <p>
+如果通过 <code>Character.getType(ch)</code> 提供的字符的常规类别类型为 <code>UPPERCASE_LETTER</code>，则字符为大写字母。
+ <p>
+以下是大写字母的示例：
+ <p><blockquote><pre>
+ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+ '\u00C0' '\u00C1' '\u00C2' '\u00C3' '\u00C4' '\u00C5' '\u00C6' '\u00C7'
+ '\u00C8' '\u00C9' '\u00CA' '\u00CB' '\u00CC' '\u00CD' '\u00CE' '\u00CF'
+ '\u00D0' '\u00D1' '\u00D2' '\u00D3' '\u00D4' '\u00D5' '\u00D6' '\u00D8'
+ '\u00D9' '\u00DA' '\u00DB' '\u00DC' '\u00DD' '\u00DE'
+ </pre></blockquote>
+<p> 其他许多 Unicode 字符也是大写的。<p>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isUpperCase(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为大写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.Character#isTitleCase(char)
+@see     java.lang.Character#toUpperCase(char)
+@see     java.lang.Character#getType(char)
+@since   1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUpperCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为大写字母。
+ <p>
+如果通过 {@link Character#getType(int) getType(codePoint)} 提供的字符的常规类别类型为 <code>UPPERCASE_LETTER</code>，则字符为大写字母。
+ <p>
+以下是大写字母的示例：
+ <p><blockquote><pre>
+ A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+ '\u00C0' '\u00C1' '\u00C2' '\u00C3' '\u00C4' '\u00C5' '\u00C6' '\u00C7'
+ '\u00C8' '\u00C9' '\u00CA' '\u00CB' '\u00CC' '\u00CD' '\u00CE' '\u00CF'
+ '\u00D0' '\u00D1' '\u00D2' '\u00D3' '\u00D4' '\u00D5' '\u00D6' '\u00D8'
+ '\u00D9' '\u00DA' '\u00DB' '\u00DC' '\u00DD' '\u00DE'
+ </pre></blockquote>
+<p> 其他许多 Unicode 字符也是大写的。<p>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为大写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.Character#isTitleCase(int)
+@see     java.lang.Character#toUpperCase(int)
+@see     java.lang.Character#getType(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isTitleCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为首字母大写字符。
+ <p> 
+如果通过 <code>Character.getType(ch)</code> 提供的字符的常规类别类型为 <code>TITLECASE_LETTER</code>，则字符为首字母大写字符。
+ <p>
+一些字符看似成对的 Latin 字母。例如，有一个看起来像&ldquo;LJ&rdquo;的大写字母和一个看起来像&ldquo;lj&rdquo;的对应小写字母。第三种形式看起来像&ldquo;Lj&rdquo;，这是呈现首字母大写的小写单词时使用的适当形式，比如用于书籍的标题。
+ <p>
+下面是一些可以让该方法返回 <code>true</code> 的 Unicode 字符：
+ <ul>
+ <li><code>LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON</code>
+ <li><code>LATIN CAPITAL LETTER L WITH SMALL LETTER J</code>
+ <li><code>LATIN CAPITAL LETTER N WITH SMALL LETTER J</code>
+ <li><code>LATIN CAPITAL LETTER D WITH SMALL LETTER Z</code>
+ </ul>
+<p> 其他许多 Unicode 字符也是首字母大写的。<p>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isTitleCase(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为首字母大写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.Character#isUpperCase(char)
+@see     java.lang.Character#toTitleCase(char)
+@see     java.lang.Character#getType(char)
+@since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isTitleCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为首字母大写字符。
+ <p> 
+如果通过 {@link Character#getType(int) getType(codePoint)} 提供的字符的常规类别类型为 <code>TITLECASE_LETTER</code>，则字符为首字母大写字符。
+ <p>
+一些字符看似成对的 Latin 字母。例如，有一个看起来像&ldquo;LJ&rdquo;的大写字母和一个看起来像&ldquo;lj&rdquo;的对应小写字母。第三种形式看起来像&ldquo;Lj&rdquo;，这是呈现首字母大写的小写单词时使用的适当形式，比如用于书籍的标题。
+ <p>
+下面是一些可以让该方法返回 <code>true</code> 的 Unicode 字符：
+ <ul>
+ <li><code>LATIN CAPITAL LETTER D WITH SMALL LETTER Z WITH CARON</code>
+ <li><code>LATIN CAPITAL LETTER L WITH SMALL LETTER J</code>
+ <li><code>LATIN CAPITAL LETTER N WITH SMALL LETTER J</code>
+ <li><code>LATIN CAPITAL LETTER D WITH SMALL LETTER Z</code>
+ </ul>
+<p> 其他许多 Unicode 字符也是首字母大写的。<p>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为首字母大写，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.Character#isUpperCase(int)
+@see     java.lang.Character#toTitleCase(int)
+@see     java.lang.Character#getType(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isDigit(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为数字。
+ <p>
+如果通过 <code>Character.getType(ch)</code> 提供的字符的常规类别类型为 <code>DECIMAL_DIGIT_NUMBER</code>，则字符为数字。
+ <p>
+包含数字的 Unicode 字符范围：
+<ul>
+<li><code>'\u0030'</code> 到 <code>'\u0039'</code>，ISO-LATIN-1 数字（<code>'0'</code> 到 <code>'9'</code>）
+<li><code>'\u0660'</code> 到 <code>'\u0669'</code>，Arabic-Indic 数字
+<li><code>'\u06F0'</code> 到 <code>'\u06F9'</code>，扩展了的 Arabic-Indic 数字
+<li><code>'\u0966'</code> 到 <code>'\u096F'</code>，梵文数字
+<li><code>'\uFF10'</code> 到 <code>'\uFF19'</code>，全形数字
+</ul>
+
+其他许多字符范围也包含数字。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isDigit(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为数字，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#digit(char, int)
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#getType(char)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isDigit(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为数字。
+ <p>
+如果通过 {@link Character#getType(int) getType(codePoint)} 提供的字符的常规类别类型为 <code>DECIMAL_DIGIT_NUMBER</code>，则字符为数字。
+ <p>
+包含数字的 Unicode 字符范围：
+ <ul>
+<li><code>'\u0030'</code> 到 <code>'\u0039'</code>，ISO-LATIN-1 数字（<code>'0'</code> 到 <code>'9'</code>）
+<li><code>'\u0660'</code> 到 <code>'\u0669'</code>，Arabic-Indic 数字
+<li><code>'\u06F0'</code> 到 <code>'\u06F9'</code>，扩展了的 Arabic-Indic 数字
+<li><code>'\u0966'</code> 到 <code>'\u096F'</code>，梵文数字
+<li><code>'\uFF10'</code> 到 <code>'\uFF19'</code>，全形数字
+ </ul>
+
+其他许多字符范围也包含数字。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return 如果字符为数字，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#getType(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isDefined(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定字符是否被定义为 Unicode 中的字符。
+ <p>
+如果以下条件中至少有一个为真，则字符被定义为 Unicode 中的字符：
+ <ul>
+<li>它具有 UnicodeData 文件中的条目。
+<li>它具有 UnicodeData 文件定义的范围中的值。
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isDefined(int)} 方法。
+
+@param   ch   要测试的字符
+@return  如果字符具有为 Unicode 中字符定义的含义，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.Character#isTitleCase(char)
+@see     java.lang.Character#isUpperCase(char)
+@since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isDefined(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定字符（Unicode 代码点）是否被定义为 Unicode 中的字符。
+ <p>
+如果以下条件中至少有一个为真，则字符被定义为 Unicode 中的字符：
+ <ul>
+<li>它具有 UnicodeData 文件中的条目。
+<li>它具有 UnicodeData 文件定义的范围中的值。
+ </ul>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符具有为 Unicode 中字符定义的含义，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(int)
+@see     java.lang.Character#isLetter(int)
+@see     java.lang.Character#isLetterOrDigit(int)
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.Character#isTitleCase(int)
+@see     java.lang.Character#isUpperCase(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLetter(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为字母。
+ <p>
+如果通过 <code>Character.getType(ch)</code> 为字符提供的常规类别的类型为以下类型中的任意一种，则认为该字符为字母：
+ <ul>
+ <li> <code>UPPERCASE_LETTER</code>
+ <li> <code>LOWERCASE_LETTER</code>
+ <li> <code>TITLECASE_LETTER</code>
+ <li> <code>MODIFIER_LETTER</code>
+ <li> <code>OTHER_LETTER</code>
+ </ul>
+
+并非所有的字母都有大小写。许多字符都是字母，但它们既不是大写的，也不是小写的，并且也不是首字母大写的。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isLetter(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为字母，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(char)
+@see     java.lang.Character#isJavaIdentifierStart(char)
+@see     java.lang.Character#isJavaLetter(char)
+@see     java.lang.Character#isJavaLetterOrDigit(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.Character#isTitleCase(char)
+@see     java.lang.Character#isUnicodeIdentifierStart(char)
+@see     java.lang.Character#isUpperCase(char)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLetter(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为字母。
+ <p>
+如果通过 {@link Character#getType(int) getType(codePoint)} 为字符提供的常规类别的类型为以下类型中的任意一种，则认为该字符为字母：
+ <ul>
+ <li> <code>UPPERCASE_LETTER</code>
+ <li> <code>LOWERCASE_LETTER</code>
+ <li> <code>TITLECASE_LETTER</code>
+ <li> <code>MODIFIER_LETTER</code>
+ <li> <code>OTHER_LETTER</code>
+ </ul>
+
+并非所有的字母都有大小写。许多字符都是字母，但它们既不是大写的，也不是小写的，并且也不是首字母大写的。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为字母，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(int)
+@see     java.lang.Character#isJavaIdentifierStart(int)
+@see     java.lang.Character#isLetterOrDigit(int)
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.Character#isTitleCase(int)
+@see     java.lang.Character#isUnicodeIdentifierStart(int)
+@see     java.lang.Character#isUpperCase(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLetterOrDigit(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为字母或数字。
+ <p>
+如果 <code>Character.isLetter(char ch)</code> 或 <code>Character.isDigit(char ch)</code> 对字符返回的是 <code>true</code>，则认为字符是一个字母或数字。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isLetterOrDigit(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为字符或数字，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(char)
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isJavaLetter(char)
+@see     java.lang.Character#isJavaLetterOrDigit(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isUnicodeIdentifierPart(char) 
+@since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isLetterOrDigit(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为字母或数字。
+ <p>
+如果 {@link #isLetter(int) isLetter(codePoint)} 或 {@link #isDigit(int) isDigit(codePoint)} 对字符返回的是 <code>true</code>，则认为字符是一个字母或数字。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为字符或数字，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isDigit(int)
+@see     java.lang.Character#isJavaIdentifierPart(int)
+@see     java.lang.Character#isLetter(int)
+@see     java.lang.Character#isUnicodeIdentifierPart(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaLetter(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许将指定字符作为 Java 标识符中的首字符。
+ <p>
+当且仅当以下条件之一为真时，字符才可以作为 Java 标识符的首字母：
+ <ul>
+<li> {@link #isLetter(char) isLetter(ch)} 返回 <code>true</code>
+<li> {@link #getType(char) getType(ch)} 返回 <code>LETTER_NUMBER</code>
+<li> ch 是一个货币符号（如&ldquo;$&rdquo;）
+<li> ch 是一个连字符（如&ldquo;_&rdquo;）。
+ </ul>
+
+@param   ch   要测试的字符。
+@return  如果字符为 Java 标识符的首字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaLetterOrDigit(char)
+@see     java.lang.Character#isJavaIdentifierStart(char)
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isUnicodeIdentifierStart(char)
+@since   1.02 
+@deprecated 由 isJavaIdentifierStart(char) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaLetterOrDigit(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否可以是 Java 标识符中首字符以外的部分。
+ <p>
+当且仅当以下任何条件为真时，字符才可能是 Java 标识符的一部分：
+<ul>
+<li>  是一个字母
+<li>  是一个货币符号（如 <code>'$'</code>）
+<li>  是一个连字符（如 <code>'_'</code>）。
+<li>  是一个数字
+<li>  是一个数字字母（如罗马数字字符）
+<li>  是个合成标记
+<li>  是一个非空格标记
+<li> <code>isIdentifierIgnorable</code> 对字符返回的是 <code>true</code>。
+</ul>
+
+@param   ch   要测试的字符。
+@return  如果字符可以为 Java 标识符的一部分，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaLetter(char)
+@see     java.lang.Character#isJavaIdentifierStart(char)
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isUnicodeIdentifierPart(char)
+@see     java.lang.Character#isIdentifierIgnorable(char)
+@since   1.02
+@deprecated 由 isJavaIdentifierPart(char) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaIdentifierStart(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许将指定字符作为 Java 标识符中的首字符。
+ <p>
+当且仅当以下条件之一为真时，字符才可以作为 Java 标识符的首字符：
+<ul>
+<li> {@link #isLetter(char) isLetter(ch)} 返回 <code>true</code>
+<li> {@link #getType(char) getType(ch)} 返回 <code>LETTER_NUMBER</code>
+<li> ch 是一个货币符号（如&ldquo;$&rdquo;）
+<li> ch 是一个连字符（如&ldquo;_&rdquo;）。
+</ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isJavaIdentifierStart(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为 Java 标识符的首字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isUnicodeIdentifierStart(char) 
+@see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaIdentifierStart(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许将字符（Unicode 代码点）作为 Java 标识符中的首字符。
+ <p>
+当且仅当以下条件之一为真时，字符才可以作为 Java 标识符的首字符：
+<ul>
+<li> {@link #isLetter(int) isLetter(codePoint)} 返回 <code>true</code>
+<li> {@link #getType(int) getType(codePoint)} 返回 <code>LETTER_NUMBER</code>
+<li> 引用的字符是一个货币符号（如&ldquo;$&rdquo;）
+<li> 引用的字符是一个连字符（如&ldquo;_&rdquo;）。
+</ul>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为 Java 标识符的首字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierPart(int)
+@see     java.lang.Character#isLetter(int)
+@see     java.lang.Character#isUnicodeIdentifierStart(int)
+@see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaIdentifierPart(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否可以是 Java 标识符中首字符以外的部分。
+ <p>
+如果以下任何条件为真，那么字符可能是 Java 标识符的一部分：
+ <ul>
+<li>  是一个字母
+<li>  是一个货币符号（如 <code>'$'</code>）
+<li>  是一个连字符（如 <code>'_'</code>）。
+<li>  是一个数字
+<li>  是一个数字字母（如罗马数字字符）
+<li>  是个合成标记
+<li>  是一个非空格标记
+<li> <code>isIdentifierIgnorable</code> 对字符返回的是 <code>true</code>
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isJavaIdentifierPart(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符可以为 Java 标识符的一部分，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isIdentifierIgnorable(char)
+@see     java.lang.Character#isJavaIdentifierStart(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isUnicodeIdentifierPart(char)
+@see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isJavaIdentifierPart(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定字符（Unicode 代码点）是否可以是 Java 标识符中首字符以外的部分。
+ <p>
+如果以下任何条件为真，那么字符可能是 Java 标识符的一部分：
+ <ul>
+<li>  是一个字母
+<li>  是一个货币符号（如 <code>'$'</code>）
+<li>  是一个连字符（如 <code>'_'</code>）。
+<li>  是一个数字
+<li>  是一个数字字母（如罗马数字字符）
+<li>  是个合成标记
+<li>  是一个非空格标记
+<li> {@link #isIdentifierIgnorable(int) isIdentifierIgnorable(codePoint)} 对字符返回的是 <code>true</code>
+ </ul>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符可以为 Java 标识符的一部分，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isIdentifierIgnorable(int)
+@see     java.lang.Character#isJavaIdentifierStart(int)
+@see     java.lang.Character#isLetterOrDigit(int)
+@see     java.lang.Character#isUnicodeIdentifierPart(int)
+@see     javax.lang.model.SourceVersion#isIdentifier(CharSequence)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUnicodeIdentifierStart(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许将指定字符作为 Unicode 标识符中的首字符。
+ <p>
+当且仅当以下条件之一为真时，字符才可以作为 Unicode 标识符的首字符：
+ <ul>
+<li> {@link #isLetter(char) isLetter(ch)} 返回 <code>true</code>
+<li> {@link #getType(char) getType(ch)} 返回 <code>LETTER_NUMBER</code>。
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isUnicodeIdentifierStart(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符可以作为 Unicode 标识符的首字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierStart(char)
+@see     java.lang.Character#isLetter(char)
+@see     java.lang.Character#isUnicodeIdentifierPart(char) 
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUnicodeIdentifierStart(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否允许将指定字符（Unicode 代码点）作为 Unicode 标识符中的首字符。
+ <p>
+当且仅当以下条件之一为真时，字符才可以作为 Unicode 标识符的首字符：
+ <ul>
+<li> {@link #isLetter(int) isLetter(codePoint)} 返回 <code>true</code>
+<li> {@link #getType(int) getType(codePoint)} 返回 <code>LETTER_NUMBER</code>。
+ </ul>
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符可以作为 Unicode 标识符的首字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierStart(int)
+@see     java.lang.Character#isLetter(int)
+@see     java.lang.Character#isUnicodeIdentifierPart(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUnicodeIdentifierPart(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否可以是 Unicode 标识符中首字符以外的部分。
+ <p>
+当且仅当以下语句之一为真时，字符才可能是 Unicode 标识符的一部分：
+ <ul>
+<li>  是一个字母
+<li>  是一个连字符（如 <code>'_'</code>）。
+<li>  是一个数字
+<li>  是一个数字字母（如罗马数字字符）
+<li>  是个合成标记
+<li>  是一个非空格标记
+<li> <code>isIdentifierIgnorable</code> 对该字符返回的是 <code>true</code>。
+ </ul>
+ 
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isUnicodeIdentifierPart(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符可以为 Unicode 标识符的一部分，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isIdentifierIgnorable(char)
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isLetterOrDigit(char)
+@see     java.lang.Character#isUnicodeIdentifierStart(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isUnicodeIdentifierPart(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否可以是 Unicode 标识符中首字符以外的部分。
+ <p>
+当且仅当以下语句之一为真时，字符才可能是 Unicode 标识符的一部分：
+ <ul>
+<li>  是一个字母
+<li>  是一个连字符（如 <code>'_'</code>）。
+<li>  是一个数字
+<li>  是一个数字字母（如罗马数字字符）
+<li>  是个合成标记
+<li>  是一个非空格标记
+<li> <code>isIdentifierIgnorable</code> 对该字符返回的是 <code>true</code>。
+ </ul>
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符可以为 Unicode 标识符的一部分，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isIdentifierIgnorable(int)
+@see     java.lang.Character#isJavaIdentifierPart(int)
+@see     java.lang.Character#isLetterOrDigit(int)
+@see     java.lang.Character#isUnicodeIdentifierStart(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isIdentifierIgnorable(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否应该认为指定字符是 Java 标识符或 Unicode 标识符中可忽略的一个字符。
+ <p>
+以下 Unicode 字符是 Java 标识符或 Unicode 标识符中可忽略的字符：
+ <ul>
+<li>非空白的 ISO 控制字符
+ <ul>
+<li><code>'\u0000'</code> 到 <code>'\u0008'</code>
+<li><code>'\u000E'</code> 到 <code>'\u001B'</code>
+<li><code>'\u007F'</code> 到 <code>'\u009F'</code>
+ </ul>
+
+<li>拥有 <code>FORMAT</code> 常规类别值的所有字符
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isIdentifierIgnorable(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符是可以成为 Java 或 Unicode 标识符的一部分的可忽略控制字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierPart(char)
+@see     java.lang.Character#isUnicodeIdentifierPart(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isIdentifierIgnorable(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否应该认为指定字符（Unicode 代码点）是 Java 标识符或 Unicode 标识符中可忽略的一个字符。
+ <p>
+以下 Unicode 字符是 Java 标识符或 Unicode 标识符中可忽略的字符：
+ <ul>
+<li>非空白的 ISO 控制字符
+ <ul>
+<li><code>'\u0000'</code> 到 <code>'\u0008'</code>
+<li><code>'\u000E'</code> 到 <code>'\u001B'</code>
+<li><code>'\u007F'</code> 到 <code>'\u009F'</code>
+ </ul>
+
+<li>拥有 <code>FORMAT</code> 常规类别值的所有字符
+ </ul>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return 如果字符是可以成为 Java 或 Unicode 标识符的一部分的可忽略控制字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isJavaIdentifierPart(int)
+@see     java.lang.Character#isUnicodeIdentifierPart(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char java.lang.Character.toLowerCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符参数转换为小写。
+ <p>
+注意，对于某些范围内的字符，特别是那些是符号或表意符号的字符，<code>Character.isLowerCase(Character.toLowerCase(ch))</code> 并不总是返回 <code>true</code>。
+
+<p>通常，应该使用 {@link java.lang.String#toLowerCase()} 将字符映射为小写。<code>String</code> 大小写映射方法有几个胜过 <code>Character</code> 大小写映射方法的优点。<code>String</code> 大小写映射方法可以执行语言环境敏感的映射、上下文相关的映射和 1:M 字符映射，而 <code>Character</code> 大小写映射方法却不能。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #toLowerCase(int)} 方法。
+
+@param   ch   要转换的字符。
+@return  等效于字符的小写形式，如果有的话；否则返回字符本身。
+@see     java.lang.Character#isLowerCase(char)
+@see     java.lang.String#toLowerCase()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.toLowerCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为小写。
+
+<p> 注意，对于某些范围内的字符，特别是那些是符号或表意符号的字符，<code>Character.isLowerCase(Character.toLowerCase(codePoint))</code> 并不总是返回 <code>true</code>。
+
+<p>通常，应该使用 {@link java.lang.String#toLowerCase()} 将字符映射为小写。<code>String</code> 大小写映射方法有几个胜过 <code>Character</code> 大小写映射方法的优点。<code>String</code> 大小写映射方法可以执行语言环境敏感的映射、上下文相关的映射和 1:M 字符映射，而 <code>Character</code> 大小写映射方法却不能。
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@return  等效于字符（Unicode 代码点）的小写形式，如果有的话；否则返回字符本身。
+@see     java.lang.Character#isLowerCase(int)
+@see     java.lang.String#toLowerCase()
+
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char java.lang.Character.toUpperCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符参数转换为大写。
+ <p>
+注意，对于某些范围内的字符，特别是那些是符号或表意符号的字符，<code>Character.isUpperCase(Character.toUpperCase(ch))</code> 并不总是返回 <code>true</code>。
+
+<p>通常，应该使用 {@link java.lang.String#toUpperCase()} 将字符映射为大写。<code>String</code> 大小写映射方法有几个胜过 <code>Character</code> 大小写映射方法的优点。<code>String</code> 大小写映射方法可以执行语言环境敏感的映射、上下文相关的映射和 1:M 字符映射，而 <code>Character</code> 大小写映射方法却不能。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #toUpperCase(int)} 方法。
+
+@param   ch   要转换的字符。
+@return  等效于字符的大写形式，如果有的话；否则返回字符本身。
+@see     java.lang.Character#isUpperCase(char)
+@see     java.lang.String#toUpperCase()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.toUpperCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为大写。
+ 
+<p>注意，对于某些范围内的字符，特别是那些是符号或表意符号的字符，<code>Character.isUpperCase(Character.toUpperCase(codePoint))</code> 并不总是返回 <code>true</code>。
+
+<p>通常，应该使用 {@link java.lang.String#toUpperCase()} 将字符映射为大写。<code>String</code> 大小写映射方法有几个胜过 <code>Character</code> 大小写映射方法的优点。<code>String</code> 大小写映射方法可以执行语言环境敏感的映射、上下文相关的映射和 1:M 字符映射，而 <code>Character</code> 大小写映射方法却不能。
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@return  等效于字符的大写形式，如果有的话；否则返回字符本身。
+@see     java.lang.Character#isUpperCase(int)
+@see     java.lang.String#toUpperCase()
+ 
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char java.lang.Character.toTitleCase(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符参数转换为首字母大写。如果字符没有明确的首字母大写映射，并且根据 UnicodeData，它本身并不是一个首字母大写的 char，则返回大写映射作为等效的首字母大写映射。如果 <code>char</code> 参数总是一个首字母大写的 <code>char</code>，则返回相同的 <code>char</code> 值。
+ <p>
+注意，对于某些范围内的字符，<code>Character.isTitleCase(Character.toTitleCase(ch))</code> 并不总是返回 <code>true</code>。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #toTitleCase(int)} 方法。
+
+@param   ch   要转换的字符。
+@return  如果有的话，则返回等效于字符的首字母大写形式；否则返回字符本身。
+@see     java.lang.Character#isTitleCase(char)
+@see     java.lang.Character#toLowerCase(char)
+@see     java.lang.Character#toUpperCase(char)
+@since   1.0.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.toTitleCase(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用取自 UnicodeData 文件的大小写映射信息将字符（Unicode 代码点）参数转换为首字母大写。如果字符没有明确的首字母大写映射，并且根据 UnicodeData，它本身并不是一个首字母大写的 char，则返回大写映射作为等效的首字母大写映射。如果字符参数总是一个首字母大写的字符，则返回相同的字符值。
+ 
+<p>注意，对于某些范围内的字符，<code>Character.isTitleCase(Character.toTitleCase(codePoint))</code> 并不总是返回 <code>true</code>。
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@return  如果有的话，则返回等效于字符的首字母大写形式；否则返回字符本身。
+@see     java.lang.Character#isTitleCase(int)
+@see     java.lang.Character#toLowerCase(int)
+@see     java.lang.Character#toUpperCase(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.digit(char ch, int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用指定基数的字符 <code>ch</code> 的数值。
+ <p>
+如果基数不在 <code>MIN_RADIX</code>&#xA0;&lt;= <code>radix</code>&#xA0;&lt;= <code>MAX_RADIX</code> 范围之内，或者 <code>ch</code> 的值是一个使用指定基数的无效数字，则返回 <code>-1</code>。如果以下条件中至少有一个为真，则字符是一个有效数字：
+ <ul>
+<li>方法 <code>isDigit</code> 为 <code>true</code>，且字符（或分解的单字符）的 Unicode 十进制数值小于指定的基数。在这种情况下，返回十进制数值。
+<li>字符为 <code>'A'</code> 到 <code>'Z'</code> 范围内的大写拉丁字母之一，且它的代码小于 <code>radix&#xA0;+ 'A'&#xA0;-&#xA0;10</code>。在这种情况下，返回 <code>ch&#xA0;- 'A'&#xA0;+&#xA0;10</code>。
+<li>字符为 <code>'a'</code> 到 <code>'z'</code> 范围内的小写拉丁字母之一，且它的代码小于 <code>radix&#xA0;+ 'a'&#xA0;-&#xA0;10</code>。在这种情况下，返回 <code>ch&#xA0;- 'a'&#xA0;+&#xA0;10</code>。
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #digit(int, int)} 方法。
+
+@param   ch   要转换的字符。
+@param   radix   基数。
+@return  使用指定基数的字符所表示的数值。
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#isDigit(char)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.digit(int codePoint, int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用指定基数的指定字符（Unicode 代码点）的数值。
+ 
+<p>如果基数不在 <code>MIN_RADIX</code>&#xA0;&lt;= <code>radix</code>&#xA0;&lt;= <code>MAX_RADIX</code> 范围之内，或者字符是一个使用指定基数的无效数字，则返回 <code>-1</code>。如果以下条件中至少有一个为真，则字符是一个有效数字：
+ <ul>
+<li>方法 {@link #isDigit(int) isDigit(codePoint)} 为 <code>true</code>，且字符（或分解的单字符）的 Unicode 十进制数值小于指定的基数。在这种情况下，返回十进制数值。
+<li>字符为 <code>'A'</code> 到 <code>'Z'</code> 范围内的大写拉丁字母之一，且它的代码小于 <code>radix&#xA0;+ 'A'&#xA0;-&#xA0;10</code>。在这种情况下，返回 <code>ch&#xA0;- 'A'&#xA0;+&#xA0;10</code>。
+<li>字符为 <code>'a'</code> 到 <code>'z'</code> 范围内的小写拉丁字母之一，且它的代码小于 <code>radix&#xA0;+ 'a'&#xA0;-&#xA0;10</code>。在这种情况下，返回 <code>ch&#xA0;- 'a'&#xA0;+&#xA0;10</code>。
+ </ul>
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@param   radix   基数。
+@return  使用指定基数的字符所表示的数值。
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#isDigit(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.getNumericValue(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定的 Unicode 字符表示的 <code>int</code> 值。例如，字符 <code>'\u216C'</code>（罗马数字 50）将返回一个值为 50 的整数。
+ <p>
+字母 A-Z 的大写（<code>'\u0041'</code> 到 <code>'\u005A'</code>）、小写（<code>'\u0061'</code> 到 <code>'\u007A'</code>）和全形参数（<code>'\uFF21'</code> 到 <code>'\uFF3A'</code> 和 <code>'\uFF41'</code> 到 <code>'\uFF5A'</code>）形式拥有从 10 到 35 的数值。这独立于 Unicode 规范，该规范没有为这些 <code>char</code> 值分配数值。
+ <p>
+如果字符中没有数值，则返回 -1。如果字符中有一个数值，但无法将它表示为非负整数（例如，小数值），则返回 -2。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #getNumericValue(int)} 方法。
+
+@param   ch   要转换的字符。
+@return  以非负 <code>int</code> 值形式返回字符的数值；如果字符中有一个不是非负整数的数值，则返回 -2；如果字符中没有数值，则返回 -1。
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#isDigit(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.getNumericValue(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定字符（Unicode 代码点）表示的 <code>int</code> 值。例如，字符 <code>'\u216C'</code>（罗马数字 50）将返回一个值为 50 的 <code>int</code> 值。
+ <p>
+字母 A-Z 的大写（<code>'\u0041'</code> 到 <code>'\u005A'</code>）、小写（<code>'\u0061'</code> 到 <code>'\u007A'</code>）和全形参数（<code>'\uFF21'</code> 到 <code>'\uFF3A'</code> 和 <code>'\uFF41'</code> 到 <code>'\uFF5A'</code>）形式拥有从 10 到 35 的数值。这独立于 Unicode 规范，该规范没有为这些 <code>char</code> 值分配数值。
+ <p>
+如果字符中没有数字值，则返回 -1。如果字符中有一个数值，但无法将它表示为非负整数（例如，小数值），则返回 -2。
+
+@param   codePoint 要转换的字符（Unicode 代码点）。
+@return  以非负 <code>int</code> 值形式返回字符的数值；如果字符中有一个不是非负整数的数值，则返回 -2；如果字符中没有数值，则返回 -1。
+@see     java.lang.Character#forDigit(int, int)
+@see     java.lang.Character#isDigit(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isSpace(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为 ISO-LATIN-1 空白。该方法只对以下五个字符返回 <code>true</code>：
+ <table>
+ <tr><td><code>'\t'</code></td>            <td><code>'\u0009'</code></td>
+     <td><code>HORIZONTAL TABULATION</code></td></tr>
+ <tr><td><code>'\n'</code></td>            <td><code>'\u000A'</code></td>
+     <td><code>NEW LINE</code></td></tr>
+ <tr><td><code>'\f'</code></td>            <td><code>'\u000C'</code></td>
+     <td><code>FORM FEED</code></td></tr>
+ <tr><td><code>'\r'</code></td>            <td><code>'\u000D'</code></td>
+     <td><code>CARRIAGE RETURN</code></td></tr>
+ <tr><td><code>'&nbsp;'</code></td>  <td><code>'\u0020'</code></td>
+     <td><code>SPACE</code></td></tr>
+ </table>
+
+@param   ch   要测试的字符。
+@return  如果字符为 ISO-LATIN-1 空白，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see        java.lang.Character#isSpaceChar(char)
+@see        java.lang.Character#isWhitespace(char)
+@deprecated 由 isWhitespace(char) 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isSpaceChar(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为 Unicode 空白字符。当且仅当根据 Unicode 标准将字符指定为空白字符时，才认为字符是一个空白字符。如果字符的常规类别的类型为以下类型中的任意一种，则该方法返回 true：
+ <ul>
+ <li> <code>SPACE_SEPARATOR</code>
+ <li> <code>LINE_SEPARATOR</code>
+ <li> <code>PARAGRAPH_SEPARATOR</code>
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isSpaceChar(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为空白字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isWhitespace(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isSpaceChar(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）是否为 Unicode 空白字符。当且仅当根据 Unicode 标准将字符指定为空白字符时，才认为字符是一个空白字符。如果字符的常规类别的类型为以下类型中的任意一种，则该方法返回 true：
+
+ <ul>
+ <li> {@link #SPACE_SEPARATOR}
+ <li> {@link #LINE_SEPARATOR}
+ <li> {@link #PARAGRAPH_SEPARATOR}
+ </ul>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为空白字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isWhitespace(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isWhitespace(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符依据 Java 标准是否为空白字符。当且仅当字符满足以下标准时，该字符才是一个 Java 空白字符：
+ <ul>
+ <li> 它是 Unicode 空格字符（<code>SPACE_SEPARATOR</code>、<code>LINE_SEPARATOR</code> 或 <code>PARAGRAPH_SEPARATOR</code>)，但不是非中断空格（<code>'\u00A0'</code>、<code>'\u2007'</code>、<code>'\u202F'</code>）
+ <li> 它是 <code>'\u0009'</code>，HORIZONTAL TABULATION
+ <li> 它是 <code>'\u000A'</code>，LINE FEED
+ <li> 它是 <code>'\u000B'</code>，VERTICAL TABULATION
+ <li> 它是 <code>'\u000C'</code>，FORM FEED
+ <li> 它是 <code>'\u000D'</code>，CARRIAGE RETURN
+ <li> 它是 <code>'\u001C'</code>，FILE SEPARATOR
+ <li> 它是 <code>'\u001D'</code>，GROUP SEPARATOR
+ <li> 它是 <code>'\u001E'</code>，RECORD SEPARATOR
+ <li> 它是 <code>'\u001F'</code>，UNIT SEPARATOR
+ </ul>
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isWhitespace(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为 Java 空白字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isSpaceChar(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isWhitespace(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）依据 Java 标准是否为空白字符。当且仅当字符满足以下标准时，该字符才是一个 Java 空白字符：
+ <ul>
+<li> 它是一个 Unicode 空白字符（{@link #SPACE_SEPARATOR}、{@link #LINE_SEPARATOR} 或 {@link #PARAGRAPH_SEPARATOR}），但不是一个不间断空格（<code>'\u00A0'</code>、<code>'\u2007'</code> 和 <code>'\u202F'</code>）。
+<li> <code>'\u0009'</code>，水平制表符。
+<li> <code>'\u000A'</code>，换行。
+<li> <code>'\u000B'</code>，纵向制表符。
+<li> <code>'\u000C'</code>，换页。
+<li> <code>'\u000D'</code>，回车。
+<li> <code>'\u001C'</code>，文件分隔符。
+<li> <code>'\u001D'</code>，组分隔符。
+<li> <code>'\u001E'</code>，记录分隔符。
+<li> <code>'\u001F'</code>，单元分隔符。
+ </ul>
+ <p>
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为 Java 空白字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isSpaceChar(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isISOControl(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符是否为 ISO 控制字符。如果字符的代码在从 <code>'\u0000'</code> 到 <code>'\u001F'</code> 或从 <code>'\u007F'</code> 到 <code>'\u009F'</code> 的范围内，则认为该字符是一个 ISO 控制字符。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isISOControl(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  如果字符为 ISO 控制字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+@see     java.lang.Character#isSpaceChar(char)
+@see     java.lang.Character#isWhitespace(char)
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isISOControl(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定引用的字符（Unicode 代码点）是否为 ISO 控制字符。如果字符的代码在从 <code>'\u0000'</code> 到 <code>'\u001F'</code> 或从 <code>'\u007F'</code> 到 <code>'\u009F'</code> 的范围内，则认为该字符是一个 ISO 控制字符。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符为 ISO 控制字符，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.lang.Character#isSpaceChar(int)
+@see     java.lang.Character#isWhitespace(int)
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.getType(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指示字符的常规类别的值。
+
+<p><b>注：</b> 此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #getType(int)} 方法。
+
+@param   ch   要测试的字符。
+@return  表示字符的常规类别的 <code>int</code> 类型的值。
+@see     java.lang.Character#COMBINING_SPACING_MARK
+@see     java.lang.Character#CONNECTOR_PUNCTUATION
+@see     java.lang.Character#CONTROL
+@see     java.lang.Character#CURRENCY_SYMBOL
+@see     java.lang.Character#DASH_PUNCTUATION
+@see     java.lang.Character#DECIMAL_DIGIT_NUMBER
+@see     java.lang.Character#ENCLOSING_MARK
+@see     java.lang.Character#END_PUNCTUATION
+@see     java.lang.Character#FINAL_QUOTE_PUNCTUATION
+@see     java.lang.Character#FORMAT
+@see     java.lang.Character#INITIAL_QUOTE_PUNCTUATION
+@see     java.lang.Character#LETTER_NUMBER
+@see     java.lang.Character#LINE_SEPARATOR
+@see     java.lang.Character#LOWERCASE_LETTER
+@see     java.lang.Character#MATH_SYMBOL
+@see     java.lang.Character#MODIFIER_LETTER
+@see     java.lang.Character#MODIFIER_SYMBOL
+@see     java.lang.Character#NON_SPACING_MARK
+@see     java.lang.Character#OTHER_LETTER
+@see     java.lang.Character#OTHER_NUMBER
+@see     java.lang.Character#OTHER_PUNCTUATION
+@see     java.lang.Character#OTHER_SYMBOL
+@see     java.lang.Character#PARAGRAPH_SEPARATOR
+@see     java.lang.Character#PRIVATE_USE
+@see     java.lang.Character#SPACE_SEPARATOR
+@see     java.lang.Character#START_PUNCTUATION
+@see     java.lang.Character#SURROGATE
+@see     java.lang.Character#TITLECASE_LETTER
+@see     java.lang.Character#UNASSIGNED
+@see     java.lang.Character#UPPERCASE_LETTER
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int java.lang.Character.getType(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指示字符的常规类别的值。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  表示字符的常规类别的 <code>int</code> 类型的值。
+@see     Character#COMBINING_SPACING_MARK COMBINING_SPACING_MARK
+@see     Character#CONNECTOR_PUNCTUATION CONNECTOR_PUNCTUATION
+@see     Character#CONTROL CONTROL
+@see     Character#CURRENCY_SYMBOL CURRENCY_SYMBOL
+@see     Character#DASH_PUNCTUATION DASH_PUNCTUATION
+@see     Character#DECIMAL_DIGIT_NUMBER DECIMAL_DIGIT_NUMBER
+@see     Character#ENCLOSING_MARK ENCLOSING_MARK
+@see     Character#END_PUNCTUATION END_PUNCTUATION
+@see     Character#FINAL_QUOTE_PUNCTUATION FINAL_QUOTE_PUNCTUATION
+@see     Character#FORMAT FORMAT
+@see     Character#INITIAL_QUOTE_PUNCTUATION INITIAL_QUOTE_PUNCTUATION
+@see     Character#LETTER_NUMBER LETTER_NUMBER
+@see     Character#LINE_SEPARATOR LINE_SEPARATOR
+@see     Character#LOWERCASE_LETTER LOWERCASE_LETTER
+@see     Character#MATH_SYMBOL MATH_SYMBOL
+@see     Character#MODIFIER_LETTER MODIFIER_LETTER
+@see     Character#MODIFIER_SYMBOL MODIFIER_SYMBOL
+@see     Character#NON_SPACING_MARK NON_SPACING_MARK
+@see     Character#OTHER_LETTER OTHER_LETTER
+@see     Character#OTHER_NUMBER OTHER_NUMBER
+@see     Character#OTHER_PUNCTUATION OTHER_PUNCTUATION
+@see     Character#OTHER_SYMBOL OTHER_SYMBOL
+@see     Character#PARAGRAPH_SEPARATOR PARAGRAPH_SEPARATOR
+@see     Character#PRIVATE_USE PRIVATE_USE
+@see     Character#SPACE_SEPARATOR SPACE_SEPARATOR
+@see     Character#START_PUNCTUATION START_PUNCTUATION
+@see     Character#SURROGATE SURROGATE
+@see     Character#TITLECASE_LETTER TITLECASE_LETTER
+@see     Character#UNASSIGNED UNASSIGNED
+@see     Character#UPPERCASE_LETTER UPPERCASE_LETTER
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char java.lang.Character.forDigit(int digit, int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定使用指定基数的特定数字的字符表示形式。如果 <code>radix</code> 的值不是一个有效基数，或者 <code>digit</code> 的值不是一个使用指定基数的有效数字，则返回 null 字符（<code>'\u0000'</code>）。
+ <p>
+如果 <code>radix</code> 参数大于等于 <code>MIN_RADIX</code> 并且小于等于 <code>MAX_RADIX</code>，则该参数是有效的。如果 <code>0&nbsp;&lt;=digit&nbsp;&lt;&nbsp;radix</code>，则 <code>digit</code> 参数是有效的。
+ <p>
+如果数字小于 10，则返回 <code>'0'&nbsp;+ digit</code>。否则，返回的值为 <code>'a'&nbsp;+ digit&nbsp;-&nbsp;10</code>。
+
+@param   digit   转换为字符的数字。
+@param   radix   基数。
+@return  使用指定基数的指定数字的 <code>char</code> 表示形式。
+@see     java.lang.Character#MIN_RADIX
+@see     java.lang.Character#MAX_RADIX
+@see     java.lang.Character#digit(char, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static byte java.lang.Character.getDirectionality(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定字符的 Unicode 方向属性。利用字符方向性来计算文本的视觉顺序。未定义的 <code>char</code> 值的方向值是 <code>DIRECTIONALITY_UNDEFINED</code>。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #getDirectionality(int)} 方法。
+
+@param  ch 为其请求方向属性的 <code>char</code>。
+@return <code>char</code> 值的方向属性。
+
+@see Character#DIRECTIONALITY_UNDEFINED
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR
+@see Character#DIRECTIONALITY_ARABIC_NUMBER
+@see Character#DIRECTIONALITY_COMMON_NUMBER_SEPARATOR
+@see Character#DIRECTIONALITY_NONSPACING_MARK
+@see Character#DIRECTIONALITY_BOUNDARY_NEUTRAL
+@see Character#DIRECTIONALITY_PARAGRAPH_SEPARATOR
+@see Character#DIRECTIONALITY_SEGMENT_SEPARATOR
+@see Character#DIRECTIONALITY_WHITESPACE
+@see Character#DIRECTIONALITY_OTHER_NEUTRALS
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE
+@see Character#DIRECTIONALITY_POP_DIRECTIONAL_FORMAT
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static byte java.lang.Character.getDirectionality(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定字符（Unicode 代码点）的 Unicode 方向属性。利用字符方向性来计算文本的视觉顺序。未定义字符的方向值是 {@link #DIRECTIONALITY_UNDEFINED}。
+
+@param   codePoint 为其请求方向属性的字符（Unicode 代码点）。
+@return  字符的方向属性。
+
+@see Character#DIRECTIONALITY_UNDEFINED DIRECTIONALITY_UNDEFINED
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT DIRECTIONALITY_LEFT_TO_RIGHT
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT DIRECTIONALITY_RIGHT_TO_LEFT
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC DIRECTIONALITY_RIGHT_TO_LEFT_ARABIC
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER DIRECTIONALITY_EUROPEAN_NUMBER
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR DIRECTIONALITY_EUROPEAN_NUMBER_SEPARATOR
+@see Character#DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR DIRECTIONALITY_EUROPEAN_NUMBER_TERMINATOR
+@see Character#DIRECTIONALITY_ARABIC_NUMBER DIRECTIONALITY_ARABIC_NUMBER
+@see Character#DIRECTIONALITY_COMMON_NUMBER_SEPARATOR DIRECTIONALITY_COMMON_NUMBER_SEPARATOR
+@see Character#DIRECTIONALITY_NONSPACING_MARK DIRECTIONALITY_NONSPACING_MARK
+@see Character#DIRECTIONALITY_BOUNDARY_NEUTRAL DIRECTIONALITY_BOUNDARY_NEUTRAL
+@see Character#DIRECTIONALITY_PARAGRAPH_SEPARATOR DIRECTIONALITY_PARAGRAPH_SEPARATOR
+@see Character#DIRECTIONALITY_SEGMENT_SEPARATOR DIRECTIONALITY_SEGMENT_SEPARATOR
+@see Character#DIRECTIONALITY_WHITESPACE DIRECTIONALITY_WHITESPACE
+@see Character#DIRECTIONALITY_OTHER_NEUTRALS DIRECTIONALITY_OTHER_NEUTRALS
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING DIRECTIONALITY_LEFT_TO_RIGHT_EMBEDDING
+@see Character#DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE DIRECTIONALITY_LEFT_TO_RIGHT_OVERRIDE
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING DIRECTIONALITY_RIGHT_TO_LEFT_EMBEDDING
+@see Character#DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE DIRECTIONALITY_RIGHT_TO_LEFT_OVERRIDE
+@see Character#DIRECTIONALITY_POP_DIRECTIONAL_FORMAT DIRECTIONALITY_POP_DIRECTIONAL_FORMAT
+@since    1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isMirrored(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符依据 Unicode 规范是否对称。当显示在以从右至左的方式显示的文本中时，对称字符的字形在水平方向上应该是对称的。例如，<code>'\u0028'</code> LEFT PARENTHESIS 在语义上被定义为是<i>开括号</i>。在从左至右显示的文本中，它将显示为&ldquo;(&rdquo;，但在以从右至左的方式显示的文本中，它显示为&ldquo;)&rdquo;。
+
+<p><b>注：</b>此方法无法处理<a  href="#supplementary">增补字符</a>。若要支持所有 Unicode 字符，包括增补字符，请使用 {@link #isMirrored(int)} 方法。
+
+@param  ch 为其请求对称属性的 <code>char</code>
+@return 如果字符是对称的，则返回 <code>true</code>，如果 <code>char</code> 不是对称的或者尚未定义，则返回 <code>false</code>。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.lang.Character.isMirrored(int codePoint)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定字符（Unicode 代码点）依据 Unicode 规范是否对称。当显示在以从右至左的方式显示的文本中时，对称字符的字形在水平方向上应该是对称的。例如，<code>'\u0028'</code> LEFT PARENTHESIS 在语义上被定义为是<i>开括号</i>。在从左至右显示的文本中，它将显示为&ldquo;(&rdquo;，但在以从右至左的方式显示的文本中，它显示为&ldquo;)&rdquo;。
+
+@param   codePoint 要测试的字符（Unicode 代码点）。
+@return  如果字符是对称的，则返回 <code>true</code>，如果字符是不对称的或者尚未定义，则返回 <code>false</code>。
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.Character.compareTo(Character anotherCharacter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据数字比较两个 <code>Character</code> 对象。
+
+@param   anotherCharacter   要比较的 <code>Character</code>。
+
+ @return  如果该 <code>Character</code> 等于此 <code>Character</code>，则返回 <code>0</code>；如果该 <code>Character</code> 的数值小于参数 <code>Character</code>，则返回小于 <code>0</code> 的值；如果该 <code>Character</code> 的数值大于参数 <code>Character</code>，则返回大于 <code>0</code> 的值（有符号比较）。注意，这是一次严格的数字比较；它并不依赖于区域。
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static char java.lang.Character.reverseBytes(char ch)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过反转指定 <tt>char</tt> 值中的字节顺序而获得的值。
+
+@return 通过反转（或者等效于交换）指定 <tt>char</tt> 值中的字节而获得的值。
+@since 1.5
+
+<!-- END DATA -->

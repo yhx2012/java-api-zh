@@ -1,0 +1,112 @@
+<!-- BEGIN KEY -->
+public interface org.w3c.dom.TypeInfo
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>TypeInfo</code> 接口表示从 <code>Element</code> 或 <code>Attr</code> 节点引用的类型，用与文档相关的模式指定。该类型是一对名称空间 URI 和名称属性，且取决于文档的模式。 
+<p> 如果文档的模式为 XML DTD [<a href='http://www.w3.org/TR/2004/REC-xml-20040204'>XML 1.0</a>]，则按以下方式计算值： 
+ <ul>
+<li> 如果此类型是从 <code>Attr</code> 节点引用的，则 <code>typeNamespace</code> 为 <code>&quot;http://www.w3.org/TR/REC-xml&quot;</code> 且 <code>typeName</code> 表示 [<a href='http://www.w3.org/TR/2004/REC-xml-infoset-20040204/'>XML Information Set</a>] 中的 <b>[attribute type]</b> 属性。如果没有属性声明，则 <code>typeNamespace</code> 和 <code>typeName</code> 为 <code>null</code>。 
+ </li>
+<li> 如果此类型是从 <code>Element</code> 节点引用的，则 <code>typeNamespace</code> 和 <code>typeName</code> 为 <code>null</code>。 
+ </li>
+ </ul>
+<p> 如果文档的模式为 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，则使用后模式验证信息集贡献（也称为 PSVI 贡献）按以下方式计算值： 
+ <ul>
+<li> 如果 <b>[validity]</b> 属性存在且是<em>&ldquo;无效的&rdquo;</em> 或<em>&ldquo;未知的&rdquo;</em>，则：为声明类型的 {target namespace} 和 {name} 属性（如果可用）；否则为 <code>null</code>。 
+<p ><b>注：</b>在写入时，XML Schema 规范不要求公开声明的类型。因此，如果有效性是无效的，则 DOM 实现可能选择不提供类型信息。 
+ </li>
+<li> 如果 <b>[validity]</b> 属性存在且是<em>&ldquo;无效的&rdquo;</em>，则： 
+ <ol>
+<li> 如果 <b>[member type definition]</b> 存在，则： 
+ <ol>
+<li>如果 {name} 不存在，则公开 <b>[member type definition]</b> 属性的 {name} 和 {target namespace} 属性；
+ </li>
+<li>否则，公开相应匿名类型名称的名称空间和本地名称。
+ </li>
+ </ol>
+ </li>
+<li> 如果 <b>[type definition]</b> 属性存在： 
+ <ol>
+<li>如果 {name} 不存在，则公开 <b>[type definition]</b> 属性的 {name} 和 {target namespace} 属性；
+ </li>
+<li>否则，公开相应匿名类型名称的名称空间和本地名称。
+ </li>
+ </ol> 
+ </li>
+<li> 如果 <b>[member type definition anonymous]</b> 存在： 
+ <ol>
+<li>如果它为 false，则公开 <b>[member type definition name]</b> 和 <b>[member type definition namespace]</b> 属性；
+ </li>
+<li>否则，公开相应匿名类型名称的名称空间和本地名称。
+ </li>
+ </ol> 
+ </li>
+<li> 如果 <b>[type definition anonymous]</b> 存在：
+ <ol>
+<li>如果它为 false，则公开 <b>[type definition name]</b> 和 <b>[type definition namespace]</b> 属性；
+ </li>
+<li>否则，公开相应匿名类型名称的名称空间和本地名称。
+ </li>
+ </ol> 
+ </li>
+ </ol>
+ </li>
+ </ul>
+<p ><b>注：</b>其他模式语言不在 W3C 的范围内，因此应该使用 <code>TypeInfo</code> 定义如何表示它们的类型系统。 
+<p>另请参见 <a href='http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407'>Document Object Model (DOM) Level 3 Core Specification</a>。
+@since DOM Level 3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int org.w3c.dom.TypeInfo.DERIVATION_RESTRICTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果文档的模式为 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，则此常量表示通过 <a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/#key-typeRestriction'>restriction</a> 进行的派生（如果涉及复杂的类型）或 <a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/#element-restriction'>restriction</a>（如果涉及简单的类型）。<br>如果其他类型定义与引用类型定义相同，或者如果遵循引用类型定义中的 {base type definition} 属性可以递归式到达其他类型定义，并且涉及的所有 <em>derivation methods</em> 都是限制，则引用类型定义由限制从其他类型定义中派生。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int org.w3c.dom.TypeInfo.DERIVATION_EXTENSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果文档的模式为 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，则此常量表示由 <a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/#key-typeExtension'>extension</a> 派生出的。<br>如果遵循引用类型定义中的 {base type definition} 属性可以递归式到达其他类型定义，且至少一个涉及到的 <em>derivation methods</em> 是扩展，则引用类型定义由扩展从其他类型定义中派生。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int org.w3c.dom.TypeInfo.DERIVATION_UNION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果文档的模式为 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，则此常量表示 <a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/#element-union'>union</a>（如果涉及简单类型）。<br>如果存在两种类型定义 T1 和 T2，T1 具有 {各种} <em>union</em>，而其中一个 {成员类型定义} 为 T2，则引用类型定义由 union 从其他类型定义派生，例如，引用类型定义是通过 <code>DERIVATION_RESTRICTION</code> 或 <code>DERIVATION_EXTENSION</code> 从 T1 派生的，T2 是通过 <code>DERIVATION_RESTRICTION</code> 从其他类型定义派生。注意，T1 可以与引用类型定义相同，T2 可以与其他类型定义相同。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int org.w3c.dom.TypeInfo.DERIVATION_LIST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果文档的模式为 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，则此常量表示 <a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/#element-list'>列表</a>。<br> 如果存在两种类型定义 T1 和 T2，例如，引用类型定义由 <code>DERIVATION_RESTRICTION</code> 或 <code>DERIVATION_EXTENSION</code> 从 T1 派生，T2 由 <code>DERIVATION_RESTRICTION</code> 从其他类型定义派生，则引用类型定义由列表从其他类型派生，T1 具有 {各种} <em>列表</em>，T2 为 {项类型定义}。注意，T1 可以与引用类型定义相同，T2 可以与其他类型定义相同。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.w3c.dom.TypeInfo.getTypeName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为相关元素或属性声明的类型的名称；如果未知，则为 <code>null</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.w3c.dom.TypeInfo.getTypeNamespace()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为相关元素或属性声明的类型的名称空间；如果该元素没有声明或如果没有名称空间信息可用，则为 <code>null</code>。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.w3c.dom.TypeInfo.isDerivedFrom(String typeNamespaceArg, String typeNameArg, int derivationMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回引用类型定义（即在其上调用该方法的 <code>TypeInfo</code>）和其他类型定义（即作为参数传递的类型定义）之间是否存在派生。
+@param typeNamespaceArg 其他类型定义的名称空间。
+@param typeNameArg 其他类型定义的名称。
+@param derivationMethod 在两种类型之间应用的派生类型和条件，如在此接口中提供的常量列表中描述的。
+@return 如果文档的模式为 DTD 或者没有与此文档相关的模式，则此方法将总是返回 <code>false</code>。如果文档的模式为 XML Schema，则该方法将为 <code>true</code>（如果按照派生参数从其他类型定义派生引用类型定义）。如果参数的值为 <code>0</code>（没有将 <code>derivationMethod</code> 参数的任何一位设置为 <code>1</code>），则该方法将返回 <code>true</code>（如果可以通过从引用类型定义递归{基本类型定义}、{项类型定义}或{成员类型定义} 组合到达其他类型定义）。 
+
+<!-- END DATA -->

@@ -1,0 +1,231 @@
+<!-- BEGIN KEY -->
+public class javax.swing.undo.AbstractUndoableEdit extends java.lang.Object implements javax.swing.undo.UndoableEdit, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An abstract implementation of <code>UndoableEdit</code>,
+ implementing simple responses to all boolean methods in
+ that interface. 
+
+ @version 1.31 04/07/06
+ @author Ray Ryan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.String javax.swing.undo.AbstractUndoableEdit.UndoName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ String returned by <code>getUndoPresentationName</code>;
+ as of Java 2 platform v1.3.1 this field is no longer used. This value
+ is now localized and comes from the defaults table with key
+ <code>AbstractUndoableEdit.undoText</code>.
+
+ @see javax.swing.UIDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.lang.String javax.swing.undo.AbstractUndoableEdit.RedoName
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ String returned by <code>getRedoPresentationName</code>;
+ as of Java 2 platform v1.3.1 this field is no longer used. This value
+ is now localized and comes from the defaults table with key
+ <code>AbstractUndoableEdit.redoText</code>.
+
+ @see javax.swing.UIDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.undo.AbstractUndoableEdit.hasBeenDone
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Defaults to true; becomes false if this edit is undone, true
+ again if it is redone.  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.undo.AbstractUndoableEdit.alive
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ True if this edit has not received <code>die</code>; defaults
+ to <code>true</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.undo.AbstractUndoableEdit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates an <code>AbstractUndoableEdit</code> which defaults
+ <code>hasBeenDone</code> and <code>alive</code> to <code>true</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.die()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets <code>alive</code> to false. Note that this
+ is a one way operation; dead edits cannot be resurrected.
+ Sending <code>undo</code> or <code>redo</code> to
+ a dead edit results in an exception being thrown.
+
+ <p>Typically an edit is killed when it is consolidated by 
+ another edit's <code>addEdit</code> or <code>replaceEdit</code>
+ method, or when it is dequeued from an <code>UndoManager</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.undo() throws javax.swing.undo.CannotUndoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Throws <code>CannotUndoException</code> if <code>canUndo</code>
+ returns <code>false</code>. Sets <code>hasBeenDone</code>
+ to <code>false</code>. Subclasses should override to undo the
+ operation represented by this edit. Override should begin with
+ a call to super.
+
+ @exception CannotUndoException if <code>canUndo</code>
+    returns <code>false</code>
+ @see	#canUndo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.canUndo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns true if this edit is <code>alive</code>
+ and <code>hasBeenDone</code> is <code>true</code>.
+
+ @return true if this edit is <code>alive</code>
+    and <code>hasBeenDone</code> is <code>true</code>
+
+ @see     #die
+ @see	#undo
+ @see	#redo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.AbstractUndoableEdit.redo() throws javax.swing.undo.CannotRedoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Throws <code>CannotRedoException</code> if <code>canRedo</code>
+ returns false. Sets <code>hasBeenDone</code> to <code>true</code>.
+ Subclasses should override to redo the operation represented by
+ this edit. Override should begin with a call to super.
+
+ @exception CannotRedoException if <code>canRedo</code>
+     returns <code>false</code>
+ @see	#canRedo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.canRedo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns <code>true</code> if this edit is <code>alive</code>
+ and <code>hasBeenDone</code> is <code>false</code>.
+
+ @return <code>true</code> if this edit is <code>alive</code>
+   and <code>hasBeenDone</code> is <code>false</code>
+ @see     #die
+ @see	#undo
+ @see	#redo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.addEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This default implementation returns false. 
+
+ @param anEdit the edit to be added
+ @return false
+
+ @see UndoableEdit#addEdit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.replaceEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This default implementation returns false. 
+
+ @param anEdit the edit to replace
+ @return false
+
+ @see UndoableEdit#replaceEdit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.AbstractUndoableEdit.isSignificant()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This default implementation returns true. 
+
+ @return true
+ @see UndoableEdit#isSignificant
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This default implementation returns "". Used by
+ <code>getUndoPresentationName</code> and 
+ <code>getRedoPresentationName</code> to
+ construct the strings they return. Subclasses should override to
+ return an appropriate description of the operation this edit
+ represents.
+
+ @return the empty string ""
+
+ @see	#getUndoPresentationName
+ @see	#getRedoPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getUndoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retreives the value from the defaults table with key
+ <code>AbstractUndoableEdit.undoText</code> and returns
+ that value followed by a space, followed by
+ <code>getPresentationName</code>.
+ If <code>getPresentationName</code> returns "",
+ then the defaults value is returned alone.
+
+ @return the value from the defaults table with key
+    <code>AbstractUndoableEdit.undoText</code>, followed
+    by a space, followed by <code>getPresentationName</code>
+    unless <code>getPresentationName</code> is "" in which
+    case, the defaults value is returned alone.
+ @see #getPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.getRedoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retreives the value from the defaults table with key
+ <code>AbstractUndoableEdit.redoText</code> and returns
+ that value followed by a space, followed by
+ <code>getPresentationName</code>.
+ If <code>getPresentationName</code> returns "",
+ then the defaults value is returned alone.
+
+ @return the value from the defaults table with key
+    <code>AbstractUndoableEdit.redoText</code>, followed
+    by a space, followed by <code>getPresentationName</code>
+    unless <code>getPresentationName</code> is "" in which
+    case, the defaults value is returned alone.
+ @see #getPresentationName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.AbstractUndoableEdit.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a string that displays and identifies this
+ object's properties.
+
+ @return a String representation of this object
+
+<!-- END DATA -->

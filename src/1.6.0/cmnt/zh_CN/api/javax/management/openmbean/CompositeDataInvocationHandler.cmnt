@@ -1,0 +1,71 @@
+<!-- BEGIN KEY -->
+public class javax.management.openmbean.CompositeDataInvocationHandler extends java.lang.Object implements java.lang.reflect.InvocationHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>将获取方法转发给 {@link CompositeData} 的 {@link InvocationHandler}。如果有只包含获取方法（如 {@code String getName()} 或 {@code boolean isActive()}）的接口，则可以将此类与 {@link Proxy} 类一起使用，以产生一个接口实现，在该接口中，每个设置方法都返回 {@code CompositeData} 中对应项的值。</p>
+
+<p>例如，假定您有如下所示接口：
+
+   <blockquote>
+   <pre>
+public interface NamedNumber {
+public int getNumber();
+public String getName();
+   }
+   </pre>
+   </blockquote>
+
+以及使用以下方式构造的 {@code CompositeData}：
+
+   <blockquote>
+   <pre>
+CompositeData cd =
+new {@link CompositeDataSupport}(
+someCompositeType,
+new String[] {&quot;number&quot;, &quot;name&quot;},
+new Object[] {<b>5</b>, &quot;five&quot;}
+       );
+   </pre>
+   </blockquote>
+
+那么您可以构造一个实现 {@code NamedNumber} 且受对象 {@code cd} 支持的对象，如下所示：
+
+   <blockquote>
+   <pre>
+InvocationHandler handler =
+new CompositeDataInvocationHandler(cd);
+NamedNumber nn = (NamedNumber)
+Proxy.newProxyInstance(NamedNumber.class.getClassLoader(),
+new Class[] {NamedNumber.class},
+handler);
+   </pre>
+   </blockquote>
+
+对 {@code nn.getNumber()} 的调用将返回 <b>5</b>。</p>
+
+<p>如果设置方法定义的属性的第一个字母是大写字母，则此处理程序将首先在 {@code CompositeData} 中查找以大写字母开头的项，然后，如果找不到这样的项，则查找以相应的小写字母或代码点开头的项。对于名为 {@code getNumber()} 的获取方法，该处理程序将首先查找名为 {@code Number} 的项，然后查找名为 {@code number} 的项。如果设置方法名为 {@code getnumber()}，则查找项必须名为 {@code number}。</p>
+
+<p>如果为 {@link #invoke invoke} 提供的方法是从 {@code Object} 继承的方法 {@code boolean equals(Object)}，则当且仅当参数是一个其 {@code InvocationHandler} 也是 {@code CompositeDataInvocationHandler} 且其后备 {@code CompositeData} 等于（不必相同）此对象的 {@code CompositeData} 的 {@code Proxy} 时，它将返回 true。如果为 {@code invoke} 提供的方法是从 {@code Object} 继承的方法 {@code int hashCode()}，那么它将返回一个与 {@code equals} 的定义一致的值：如果根据 {@code equals} 判断两个对象是相等的，则它们将具有相同的 {@code hashCode}。</p>
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.CompositeDataInvocationHandler(CompositeData compositeData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个受给定 {@code CompositeData} 支持的处理程序。  </p>
+
+@param compositeData  将为设置方法提供信息的 {@code CompositeData}。
+
+@throws IllegalArgumentException  如果 {@code compositeData} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.openmbean.CompositeData javax.management.openmbean.CompositeDataInvocationHandler.getCompositeData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回提供给构造方法的 {@code CompositeData}。
+@return  返回支持此处理程序的 {@code CompositeData}。返回值永远不可以为 null。
+
+<!-- END DATA -->

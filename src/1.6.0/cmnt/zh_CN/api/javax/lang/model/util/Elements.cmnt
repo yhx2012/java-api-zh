@@ -1,0 +1,189 @@
+<!-- BEGIN KEY -->
+public interface javax.lang.model.util.Elements
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来对程序元素进行操作的实用工具方法。
+
+<p><b>兼容性注意事项：</b> 在将来的平台版本中可能会向此接口添加一些方法。
+
+@author Joseph D. Darcy
+@author Scott Seligman
+@author Peter von der Ah&eacute;
+@version 1.11 06/08/16
+@see javax.annotation.processing.ProcessingEnvironment#getElementUtils
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.PackageElement javax.lang.model.util.Elements.getPackageElement(CharSequence name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已给出其完全限定名称的包。
+
+@param name  完全限定的包名称；对于未命名的包，该参数为 &quot;&quot;
+@return 指定的包；如果没有找到这样的包，则返回 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.TypeElement javax.lang.model.util.Elements.getTypeElement(CharSequence name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已给出其规范名称的类型元素。
+
+@param name  规范名称
+@return 指定的类型元素；如果没有找到这样的元素，则返回 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<? extends javax.lang.model.element.ExecutableElement, ? extends javax.lang.model.element.AnnotationValue> javax.lang.model.util.Elements.getElementValuesWithDefaults(AnnotationMirror a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回注释元素的值，包括默认值。
+ 
+@see AnnotationMirror#getElementValues()
+@param a  要检查的注释
+@return 注释元素的值，包括默认值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.lang.model.util.Elements.getDocComment(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回元素的文档（&quot;Javadoc&quot;）注释文本。
+
+@param e  将被检查的元素
+@return 元素的文档注释；如果没有，则返回 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.isDeprecated(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果元素已过时，则返回 {@code true}，否则返回 {@code false}。
+
+@param e  将被检查的元素
+@return 如果元素已过时，则返回 {@code true}，否则返回 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Name javax.lang.model.util.Elements.getBinaryName(TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类型元素的<i>二进制名称</i>。
+
+@param type  将被检查的类型元素
+@return 二进制名称
+
+@see TypeElement#getQualifiedName
+@jls3 13.1 The Form of a Binary
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.PackageElement javax.lang.model.util.Elements.getPackageOf(Element type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回元素的包。包的包是它本身。
+
+@param type 将被检查的元素
+@return 元素的包
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.Element> javax.lang.model.util.Elements.getAllMembers(TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回类型元素的所有成员，不管是继承的还是直接声明的。对于一个类，结果还包括其构造方法，但不包括局部类或匿名类。
+
+<p>注意，使用 {@link ElementFilter} 中的方法可以隔离某个种类的元素。
+
+@param type  将被检查的类型
+@return 类型的所有成员
+@see Element#getEnclosedElements
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<? extends javax.lang.model.element.AnnotationMirror> javax.lang.model.util.Elements.getAllAnnotationMirrors(Element e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回元素的所有注释，不管是继承的还是直接存在的。
+
+@param e  将被检查的元素
+@return 元素的所有注释
+@see Element#getAnnotationMirrors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.hides(Element hider, Element hidden)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试一个类型、方法或字段是否隐藏了另一个类型、方法或字段。
+
+@param hider   第一个元素
+@param hidden  第二个元素
+@return 当且仅当第一个元素隐藏了第二个元素时返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.lang.model.util.Elements.overrides(ExecutableElement overrider, ExecutableElement overridden, TypeElement type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试一个方法（作为给定类型的成员）是否重写了另一个方法。当非抽象方法重写抽象方法时，还可以说成是前者<i>实现</i> 了后者。
+
+<p> 在最简单且最典型的用法中，{@code type} 参数的值就是直接封装 {@code overrider}（可能重写的方法）的类或接口。例如，假设 {@code m1} 表示方法 {@code String.hashCode}，而 {@code m2} 表示 {@code Object.hashCode}。可以询问 {@code m1} 是否重写了 {@code String} 类中的 {@code m2}（它的确重写了该方法）：
+
+ <blockquote>
+{@code assert elements.overrides(m1, m2, elements.getTypeElement(&quot;java.lang.String&quot;)); }
+ </blockquote>
+ 
+下例描述了一种更有趣的情况，在这种情况下，类型 {@code A} 中的方法没有重写类型 {@code B} 中名称类似的方法：
+
+ <blockquote>
+{@code class A { public void m() {} } }<br> {@code interface B { void m(); } }<br> ...<br>{@code m1 = ...;  // A.m }<br> {@code m2 = ...;  // B.m }<br> {@code assert ! elements.overrides(m1, m2, elements.getTypeElement(&quot;A&quot;)); }
+ </blockquote>
+ 
+当时，当被视为第三种类型 {@code C} 的成员时，{@code A} 中的方法重写了 {@code B} 中的方法：
+
+ <blockquote>
+{@code class C extends A implements B {} }<br> ...<br>{@code assert elements.overrides(m1, m2, elements.getTypeElement(&quot;C&quot;)); }
+ </blockquote>
+
+@param overrider  第一个方法，可能是 overrider
+@param overridden  第二个方法，可能被重写
+@param type   第一个方法是其成员的类型
+@return 当且仅当第一个方法重写第二个方法时返回 {@code true}
+@jls3 8.4.8 Inheritance, Overriding, and Hiding
+@jls3 9.4.1 Inheritance and Overriding
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.lang.model.util.Elements.getConstantExpression(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示基本值或字符串的<i>常量表达式</i> 文本。返回文本的形式是一种适合于表示源代码中的值的形式。
+
+@param value  基本值或字符串
+@return 常量表达式的文本
+@throws IllegalArgumentException 如果参数不是基本值或字符串
+
+@see VariableElement#getConstantValue()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.lang.model.util.Elements.printElements(Writer w, javax.lang.model.element.Element[] elements)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按指定顺序将元素的表示形式打印到给定 writer。此方法的主要用途是诊断。输出的具体格式<em>没有</em> 指定并且是可以更改的。
+
+@param w 输出打印到的 writer
+@param elements 要打印的元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.lang.model.element.Name javax.lang.model.util.Elements.getName(CharSequence cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与参数具有相同字符序列的名称。
+
+@param cs 将以名称形式返回的字符序列
+
+<!-- END DATA -->

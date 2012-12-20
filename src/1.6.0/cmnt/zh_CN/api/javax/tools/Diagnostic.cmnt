@@ -1,0 +1,108 @@
+<!-- BEGIN KEY -->
+public interface javax.tools.Diagnostic
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于来自工具的诊断的接口。诊断通常报告源文件中指定位置处的问题。但是，并非所有的诊断都与位置或文件关联。
+
+<p>位置是指距文件开始位置的字符偏移量（从 0 开始）。负值（除 {@link #NOPOS} 以外）不是有效位置。
+
+<p>行号和列号从 1 开始。负值（除 {@link #NOPOS} 以外）和 0 不是有效的行号或列号。
+
+@param <S> 此诊断使用的源对象类型
+
+@author Peter von der Ah&eacute;
+@author Jonathan Gibbons
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.tools.Diagnostic.NOPOS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示没有可用的位置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.Diagnostic.Kind javax.tools.Diagnostic.getKind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此诊断的类型，例如，错误或者警告。
+@return 此诊断的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public S javax.tools.Diagnostic.getSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此诊断关联的源对象。
+
+@return 与此诊断关联的源对象。如果没有源对象与此诊断关联，则返回 {@code null}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.tools.Diagnostic.getPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取距源对象开始位置的字符偏移量，其中源对象与指示问题位置的此诊断关联。此外，以下表达式必须为 true：
+
+<p>{@code getStartPostion() &lt;= getPosition()}
+<p>{@code getPosition() &lt;= getEndPosition()}
+
+@return 距源开始位置的字符偏移量；如果 {@link #getSource()} 返回 {@code null} 或者没有合适的位置，则返回 {@link #NOPOS}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.tools.Diagnostic.getStartPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取距文件开始位置的字符偏移量，其中文件与指示问题开始位置的此诊断关联。
+
+@return 距文件开始位置的偏移量；当且仅当 {@link #getPosition()} 返回 {@link #NOPOS} 时，返回 {@link #NOPOS}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.tools.Diagnostic.getEndPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取距文件开始位置的字符偏移量，其中文件与指示问题结束位置的此诊断关联。
+
+@return 距文件开始位置的偏移量；当且仅当 {@link #getPosition()} 返回 {@link #NOPOS} 时，返回 {@link #NOPOS}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.tools.Diagnostic.getLineNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 {@linkplain #getPosition()} 返回的字符偏移量的行号。
+
+@return 行号；当且仅当 {@link #getPosition()} 返回 {@link #NOPOS} 时，返回 {@link #NOPOS}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.tools.Diagnostic.getColumnNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 {@linkplain #getPosition()} 返回的字符偏移量的列号。
+
+@return 列号；当且仅当 {@link #getPosition()} 返回 {@link #NOPOS} 时，返回 {@link #NOPOS}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.tools.Diagnostic.getCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取指示诊断类型的诊断代码。该代码是依赖于实现的，可以为 {@code null}。
+
+@return 诊断代码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.tools.Diagnostic.getMessage(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定语言环境的本地化消息。实际消息是依赖于实现的。如果 locale 为 {@code null}，则使用默认的语言环境。
+
+@param locale 语言环境；可以为 {@code null}
+@return 本地化消息
+
+<!-- END DATA -->

@@ -1,0 +1,68 @@
+<!-- BEGIN KEY -->
+public class javax.sound.midi.Track extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+MIDI 音轨是一个可随其他音轨存储在标准 MIDI 文件中的独立的 MIDI 事件流（带时间戳的 MIDI 数据）。MIDI 规范只允许 16 通道的 MIDI 数据，音轨是一个绕过此限制的方法。一个 MIDI 文件可包含任何数量的音轨，每个音轨包含其自身的多达 16 个通道的 MIDI 数据流。
+ <p>
+<code>Track</code> 占用 <code>{@link Sequencer}</code> 演奏的数据层次中的一个中间层。sequencer 演奏 sequence，它包含音轨，而音轨包含 MIDI 事件。Sequencer 可能提供 mute 或 solo 具体音轨的控制。
+ <p>
+音轨的计时信息和精度由包含该音轨的 sequence 控制并存储在其中。给定的 <code>Track</code> 被当作属于维持其计时的特定的 <code>{@link Sequence}</code>。因此，新（空）音轨通过调用 <code>{@link Sequence#createTrack}</code> 方法创建，而不是直接调用 <code>Track</code> 构造方法。
+ <p>
+<code>Track</code> 类通过从其添加或移除 <code>MidiEvent</code> 对象提供了用于编辑音轨的方法。这些操作使事件列表保持正确的时间顺序。还包括用于获得有关其包含的事件数或刻度持续时间的音轨大小的方法。
+
+@see Sequencer#setTrackMute
+@see Sequencer#setTrackSolo
+
+@version 1.23, 05/11/17
+@author Kara Kytle
+@author Florian Bomers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Track.add(MidiEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将新事件添加至音轨。如果事件已包含在音轨中，则不再添加。事件列表按时间顺序排列，这意味着此事件将插入到列表中的适当位置，而不一定是最后。
+
+@param event 要添加的事件
+@return 如果该事件在音轨中原先不存在并进行了添加，则返回 <code>true</code>，否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Track.remove(MidiEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从音轨中移除指定的事件。
+@param event 要移除的事件
+@return 如果事件原先在音轨中存在但后来被移除，则返回 <code>true</code>，否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.MidiEvent javax.sound.midi.Track.get(int index) throws java.lang.ArrayIndexOutOfBoundsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得位于指定索引处的事件。
+@param index 事件向量中所需事件的位置
+@throws <code>ArrayIndexOutOfBoundsException</code>  如果指定的索引为负或小于此音轨的当前大小。
+@see #size
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.Track.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此音轨中的事件数。
+@return 音轨的事件向量的大小
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Track.ticks()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得音轨的长度，用 MIDI 刻度表示。（刻度持续的秒数由包含此音轨的 <code>Sequence</code> 的计时精度确定，同时也取决于由 sequencer 设置的音乐的节拍。）
+@return 持续时间，以刻度为单位
+@see Sequence#Sequence(float, int)
+@see Sequencer#setTempoInBPM(float)
+@see Sequencer#getTickPosition()
+
+<!-- END DATA -->

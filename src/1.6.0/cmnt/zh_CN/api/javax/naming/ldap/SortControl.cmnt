@@ -1,0 +1,112 @@
+<!-- BEGIN KEY -->
+public final class javax.naming.ldap.SortControl extends javax.naming.ldap.BasicControl
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求 LDAP 服务器在返回搜索操作的结果前对这些结果进行排序。使用一个或多个排序键所组成的有序列表与关联的排序参数一起指定排序标准。搜索结果根据排序控件中提供的参数在 LDAP 服务器排序，然后返回给请求方。如果服务器上不支持排序（而排序控件被标记为关键），则不执行搜索操作并返回错误。
+ <p>
+以下代码示例展示了使用该类的方式：
+ <pre>
+
+     // Open an LDAP association
+     LdapContext ctx = new InitialLdapContext();
+
+     // Activate sorting
+     String sortKey = &quot;cn&quot;;
+     ctx.setRequestControls(new Control[]{ 
+         new SortControl(sortKey, Control.CRITICAL) });
+
+     // Perform a search
+     NamingEnumeration results =
+         ctx.search(&quot;&quot;, &quot;(objectclass=*)&quot;, new SearchControls());
+
+     // Iterate over search results
+     while (results != null &amp;&amp; results.hasMore()) {
+         // Display an entry
+         SearchResult entry = (SearchResult)results.next();
+         System.out.println(entry.getName());
+         System.out.println(entry.getAttributes());
+
+         // Handle the entry's response controls (if any)
+         if (entry instanceof HasControls) {
+             // ((HasControls)entry).getControls();
+         }
+     }
+     // Examine the sort control response 
+     Control[] controls = ctx.getResponseControls();
+     if (controls != null) {
+         for (int i = 0; i &lt; controls.length; i++) {
+             if (controls[i] instanceof SortResponseControl) {
+                 SortResponseControl src = (SortResponseControl)controls[i];
+                 if (! src.isSorted()) {
+                     throw src.getException();
+                 }
+             } else {
+                 // Handle other response controls (if any)
+             }
+         }
+     }
+
+     // Close the LDAP association
+     ctx.close();
+     ...
+
+ </pre>
+ <p>
+此类实现在 <a href="http://www.ietf.org/rfc/rfc2891.txt">RFC 2891</a> 中定义的用于服务器端排序的 LDAPv3 请求控件。
+
+控件值具有以下 ASN.1 定义：
+ <pre>
+
+     SortKeyList ::= SEQUENCE OF SEQUENCE {
+         attributeType     AttributeDescription,
+         orderingRule  [0] MatchingRuleId OPTIONAL,
+         reverseOrder  [1] BOOLEAN DEFAULT FALSE }
+
+ </pre>
+
+@since 1.5
+@see SortKey
+@see SortResponseControl
+@author Vincent Ryan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.ldap.SortControl.OID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+服务器端排序控件的分配对象标识符为 1.2.840.113556.1.4.473。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.SortControl(String sortBy, boolean criticality) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个控件来按升序对单个属性进行排序。使用为指定属性定义的排序匹配规则执行排序。
+
+@param	sortBy	用于排序的属性 ID。
+@param   criticality    如果为 true，则服务器属性遵从控件，按照请求返回搜索结果或拒绝执行搜索。如果为 false，则服务器不必遵从控件。
+@exception IOException 如果在编码控件中提供的参数时遇到错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.SortControl(java.lang.String[] sortBy, boolean criticality) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个控件来按升序对属性列表进行排序。使用为每个指定属性定义的排序匹配规则执行排序。
+
+@param	sortBy	用于排序的非 null 属性 ID 列表。列表按从高到低的排序键优先级顺序排列。
+@param   criticality     如果为 true，则服务器属性遵从控件，按照请求返回搜索结果或拒绝执行搜索。如果为 false，则服务器不必遵从控件。
+@exception IOException 如果在编码控件中提供的参数时遇到错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.SortControl(javax.naming.ldap.SortKey[] sortBy, boolean criticality) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个控件来对排序键列表进行排序。每个排序键都指定要使用的排序顺序和排序匹配规则。
+
+@param	sortBy	    用于排序的非 null 键列表。列表按从高到低的排序键优先级顺序排列。
+@param   criticality     如果为 true，则服务器属性遵从控件，按照请求返回搜索结果或拒绝执行搜索。如果为 false，则服务器不必遵从控件。
+@exception IOException 如果在编码控件中提供的参数时遇到错误。
+
+<!-- END DATA -->

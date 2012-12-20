@@ -1,0 +1,657 @@
+<!-- BEGIN KEY -->
+public interface class javax.management.MXBean implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>显式地标记某一接口是否为 MXBean 接口的注释。默认情况下，如果接口的名称以 {@code MXBean} 结尾（如 {@code SomethingMXBean}），则该接口为 MXBean 接口。以下接口是 MXBean 接口：</p>
+
+    <pre>
+    public interface WhatsitMXBean {}
+
+    &#64;MXBean
+    public interface Whatsit1Interface {}
+
+    &#64;MXBean(true)
+    public interface Whatsit2Interface {}
+    </pre>
+
+<p>以下接口不是 MXBean 接口：</p>
+
+    <pre>
+    public interface Whatsit3Interface{}
+
+    &#64;MXBean(false)
+    public interface MisleadingMXBean {}
+    </pre>
+
+<h3><a name="MXBean-spec">MXBean 规范</a></h3>
+
+<p>MXBean 概念提供了一种对 MBean 进行编码的简单方式，这种方式只引用一组预定义的类型，这些类型由 {@link javax.management.openmbean} 定义。使用这种方式可以确保任何客户端（包括远程客户端）都可以使用您的 MBean，无需客户端具有访问表示 MBean 类型的<em>特定于模型的类</em> 的权限。</p>
+
+<p>与 Standard MBean 概念相比，这些概念更容易理解一些。以下是将管理对象表示为 Standard MBean 和 MXBean 的方式：</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+public interface MemoryPool<b>MBean</b> {
+String getName();
+MemoryUsage getUsage();
+    // ...
+}
+          </pre></td>
+        <td><pre>
+public interface MemoryPool<b>MXBean</b> {
+String getName();
+MemoryUsage getUsage();
+    // ...
+}
+          </pre></td>
+      </tr>
+    </table>
+
+<p>如您所见，这些定义非常相似。唯一的不同是命名接口的约定将使用 MXBean 的 <code><em>Something</em> MXBean</code>，而不是 Standard MBean 的 <code><em>Something</em> MBean</code>。</p>
+
+<p>在此管理对象中，有一种类型为 {@link MemoryUsage} 的称作 <code>Usage</code> 的属性。此类属性的要点是，它给出了一组数据项的统一快照。例如，它可能包括内存池中目前已使用的内存量，以及内存池的当前最大量。如果这些是单独的项（通过单独的 {@link MBeanServer#getAttribute getAttribute} 调用获得），那么我们可以在不同时间查看不一致的值。我们可能获得大于 <code>max</code> 值的 <code>used</code> 值。</p>
+
+<p>因此，可以按如下形式定义 <code>MemoryUsage</code>：</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+public class MemoryUsage <b>implements Serializable</b> {
+// standard JavaBean conventions with getters
+
+public MemoryUsage(long init, long used,
+long committed, long max) {...}
+long getInit() {...}
+long getUsed() {...}
+long getCommitted() {...}
+long getMax() {...}
+}
+          </pre></td>
+        <td><pre>
+public class MemoryUsage {
+// standard JavaBean conventions with getters
+<b>@ConstructorProperties({&quot;init&quot;, &quot;used&quot;, &quot;committed&quot;, &quot;max&quot;})</b>
+public MemoryUsage(long init, long used,
+long committed, long max) {...}
+long getInit() {...}
+long getUsed() {...}
+long getCommitted() {...}
+long getMax() {...}
+}
+          </pre></td>
+      </tr>
+    </table>
+
+<p>两种情况下的定义是相同的（使用 MXBean 的情况除外），不再需要将 <code>MemoryUsage</code> 标记为 <code>Serializable</code>（尽管可以这样做）。另一方面，我们添加了一个 {@code @ConstructorProperties} 注释，以便将构造方法参数链接到相应的获取方法。下面将看到更多这方面的信息。</p>
+
+<p><code>MemoryUsage</code> 是一个<em>特定于模型的类</em>。使用 Standard MBean 时，如果 <code>MemoryUsage</code> 类对于 MBean Server 的客户端为未知类，那么该客户端将无法访问 <code>Usage</code> 属性。假定该客户端是一个基于 JMX 技术的通用控制台。那么必须使用该控制台可以连接到的每个应用程序的特定于模型的类来配置此控制台。对于未用 Java 语言编写的客户端，问题甚至更为严重。此时可能无法通知客户端 <code>MemoryUsage</code> 是什么样的。</p>
+
+<p>这就是 MXBean 与 Standard MBean 的不同之处。尽管我们以几乎完全相同的方式定义了管理接口，但 MXBean 框架会从 Java 平台将特定于模型的类<em>转换</em> 为标准类。使用数组以及标准 {@link javax.management.openmbean} 包中的 {@link javax.management.openmbean.CompositeData CompositeData} 和 {@link javax.management.openmbean.TabularData TabularData} 类，就有可能只使用标准类来构建任意复杂度的数据结构。</p>
+
+<p>如果比较两种模型的客户端的外观，这将变得更清楚：</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+String name = (String)
+mbeanServer.{@link MBeanServer#getAttribute
+getAttribute}(objectName, &quot;Name&quot;);
+<b>MemoryUsage</b> usage = (<b>MemoryUsage</b>)
+mbeanServer.getAttribute(objectName, &quot;Usage&quot;);
+<b>long used = usage.getUsed();</b>
+          </pre></td>
+        <td><pre>
+String name = (String)
+mbeanServer.{@link MBeanServer#getAttribute
+getAttribute}(objectName, &quot;Name&quot;);
+<b>{@link CompositeData}</b> usage = (<b>CompositeData</b>)
+mbeanServer.getAttribute(objectName, &quot;Usage&quot;);
+<b>long used = (Long) usage.{@link CompositeData#get get}(&quot;used&quot;);</b>
+          </pre></td>
+    </table>
+
+<p>对于具有简单类型（如 <code>String</code>）的属性，代码是相同的。但对于具有复杂类型的属性，Standard MBean 代码要求客户端知道特定于模型的类 <code>MemoryUsage</code>，而 MXBean 代码则不需要任何非标准类。</p>
+
+<p>此处显示的客户端代码对于 MXBean 客户端而言更加复杂。但是，如果客户端确实知道该模型、此处的接口 <code>MemoryPoolMXBean</code> 和 <code>MemoryUsage</code> 类，则该客户端可以构造一个<em>代理</em>。在预先知道模型的情况下，建议您使用这种方式与管理对象进行交互，不必考虑正在使用的是 Standard MBean 还是 MXBean：</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+MemoryPool<b>MBean</b> proxy =
+JMX.<b>{@link JMX#newMBeanProxy(MBeanServerConnection, ObjectName,
+Class) newMBeanProxy}</b>(
+mbeanServer,
+objectName,
+MemoryPool<b>MBean</b>.class);
+String name = proxy.getName();
+MemoryUsage usage = proxy.getUsage();
+long used = usage.getUsed();
+          </pre></td>
+        <td><pre>
+MemoryPool<b>MXBean</b> proxy =
+JMX.<b>{@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName,
+Class) newMXBeanProxy}</b>(
+mbeanServer,
+objectName,
+MemoryPool<b>MXBean</b>.class);
+String name = proxy.getName();
+MemoryUsage usage = proxy.getUsage();
+long used = usage.getUsed();
+          </pre></td>
+      </tr>
+    </table>
+
+<p>对于 Standard MBean 和 MXBean 而言，实现 MemoryPool 对象的方式是类似的。</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+public class MemoryPool
+implements MemoryPool<b>MBean</b> {
+public String getName() {...}
+public MemoryUsage getUsage() {...}
+    // ...
+}
+          </pre></td>
+        <td><pre>
+public class MemoryPool
+implements MemoryPool<b>MXBean</b> {
+public String getName() {...}
+public MemoryUsage getUsage() {...}
+    // ...
+}
+          </pre></td>
+      </tr>
+    </table>
+
+<p>在两种情况下，在 MBean Server 中注册 MBean 的方式是相同的：</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Standard MBean</th><th>MXBean</th>
+      </tr>
+      <tr>
+        <td><pre>
+{
+MemoryPool<b>MBean</b> pool = new MemoryPool();
+mbeanServer.{@link MBeanServer#registerMBean
+registerMBean}(pool, objectName);
+}
+          </pre></td>
+        <td><pre>
+{
+MemoryPool<b>MXBean</b> pool = new MemoryPool();
+mbeanServer.{@link MBeanServer#registerMBean
+registerMBean}(pool, objectName);
+}
+          </pre></td>
+      </tr>
+    </table>
+
+
+<h2><a name="mxbean-def">MXBean 的定义</a></h2>
+
+<p>MXBean 是一种 MBean。MXBean 对象可以直接在 MBean Server 中注册，也可以用作在 MBean Server 中注册的 {@link StandardMBean} 和结果 MBean 的参数。</p>
+
+<p>当使用 {@link MBeanServer} 接口的 {@code registerMBean} 或 {@code createMBean} 方法在 MBean Server 中注册某个对象时，要检查该对象的类来确定 MBean 的类型：</p>
+
+    <ul>
+<li>如果该类实现了接口 {@link DynamicMBean}，则 MBean 是一个 Dynamic MBean。注意，因为 {@code StandardMBean} 类实现了此接口，所以这种情况可应用于使用 {@code StandardMBean} 类创建的 Standard MBean 或 MXBean。</li>
+
+<li>否则，如果该类与 Standard MBean 命名约定匹配，则 MBean 是一个 Standard MBean。</li>
+
+<li>否则它可能是一个 MXBean。检查由对象实现的那组接口，以获得具有以下特性的接口：
+
+        <ul>
+<li>具有一个类名称 <code><em>S</em>MXBean</code>（其中的 <code><em>S</em></code> 为非空字符串），且没有注释 {@code @MXBean(false)}；</li>
+<li>具有注释 {@code @MXBean(true)} 或只有 {@code @MXBean}。</li>
+        </ul>
+
+如果确实有这样一个接口，或者如果有一个作为其他所有接口的子接口的接口，则该对象是一个 MXBean。相关接口是 <em>MXBean 接口</em>。在上述示例中，MXBean 接口是 {@code MemoryPoolMXBean}。
+
+<li>如果这些条件都不满足，则 MBean 无效，并且试图对其进行注册将生成 {@link NotCompliantMBeanException}。
+    </ul>
+
+<p>作为参数出现的每个 Java 类型或 MXBean 接口中某一方法的返回类型在使用下面的规则进行转换时，必须是<em>可转换的</em>。此外，参数必须是<em>可重新构造的</em>，正如下面所定义的那样。</p>
+
+<p>尝试构造不符合上述规则的 MXBean 将产生一个异常。</p>
+
+
+<h2><a name="naming-conv">命名约定</a></h2>
+
+<p>与在 Standard MBean 中一样，相同的命名约定可应用于 MXBean 中的各种方法：</p>
+
+    <ol>
+<li>方法 <code><em>T</em> get<em>N</em>()</code> 明确说明存在一个名为 <code><em>N</em></code> 的可读属性，该方法中的 <code><em>T</em></code> 是一种 Java 类型（不可以为 <code>void</code>），<code><em>N</em></code> 为非空字符串。该属性的 Java 类型和 Open 类型是根据下面的映射规则确定的。在查找获取方法时，将忽略从 {@code Object} 继承的方法 {@code final Class getClass()}。</li>
+
+<li>方法 <code>boolean is<em>N</em>()</code> 明确说明存在一个名为 <code><em>N</em></code> 的可读属性，且该属性的 Java 类型为 <code>boolean</code>，Open 类型为 <code>SimpleType.Boolean</code>。</li>
+
+<li>方法 <code>void set<em>N</em>(<em>T</em> x)</code> 明确说明存在一个名为 <code><em>N</em></code> 的可写属性。该属性的 Java 类型和 Open 类型是根据下面的映射规则确定的。（当然，参数的名称 <code>x</code> 无关紧要。）</li>
+
+<li>其他每个方法都明确说明存在一个名称与该方法相同的操作。返回值和每个参数的 Java 类型和 Open 类型是根据下面的映射规则确定的。</li>
+    </ol>
+
+<p><code>get<em>N</em></code> 和 <code>is<em>N</em></code> 的规则共同定义了 <em>getter</em> 的概念。<code>set<em>N</em></code> 的规则定义了 <em>setter</em> 的概念。</p>
+
+<p>两个获取方法具有相同名称或者两个设置方法具有相同名称是一种错误。如果一个获取方法和一个设置方法具有相同的名称，则二者的类型 <code><em>T</em></code> 必须相同。在这种情况下，属性为 read/write。如果只有一个获取方法或只有一个设置方法，则属性分别为 read-only 或 write-only。</p>
+
+
+<h2><a name="mapping-rules">类型映射规则</a></h2>
+
+<p>MXBean 是一种 Open MBean，由 {@link javax.management.openmbean} 包定义。这意味着属性类型、操作参数和操作返回值都必须是可以使用 <em>Open Types</em>（即 {@link javax.management.openmbean.OpenType} 的四个标准子类）描述的。MXBean 通过将 Java 类型映射为 Open Types 来实现此操作。</p>
+
+<p>对于每个 Java 类型 <em>J</em>，MXBean 映射关系根据以下信息来描述：</p>
+
+    <ul>
+<li>相应的 Open Type，即 <em>opentype(J)</em>。这是 {@link javax.management.openmbean.OpenType} 的子类的一个实例。</li>
+<li><em>映射的</em> Java 类型（<em>opendata(J)</em>）对于任何给定的 <em>opentype(J)</em> 都是相同的。这是一个 Java 类。</li>
+<li>将值从类型 <em>J</em> 转换为类型 <em>opendata(J)</em> 的方式。</li>
+<li>将值从类型 <em>opendata(J)</em> 转换为类型 <em>J</em> 的方式（如果可以转换）。</li>
+    </ul>
+
+<p>例如，对于 Java 类型 {@code List<String>}：</p>
+
+    <ul>
+<li>Open Type <em>opentype(</em>{@code List<String>}<em>)</em> 是 {@link ArrayType}<code>(1, </code>{@link SimpleType#STRING}<code>)</code>，表示 <code>String</code> 的一个一维数组。</li>
+<li>映射的 Java 类型 <em>opendata(</em>{@code List<String>}<em>)</em> 是 {@code String[]}。</li>
+<li>使用 {@link List#toArray(Object[]) List.toArray(new String[0])} 可以将 {@code List<String>} 转换为 {@code String[]}。</li>
+<li>使用 {@link Arrays#asList Arrays.asList} 可以将 {@code String[]} 转换为 {@code List<String>}。</li>
+    </ul>
+
+<p>如果没有用来从 <em>J</em> 中派生 <em>opentype(J)</em> 的映射规则，则 <em>J</em> 不能是 MXBean 接口中方法参数或返回值的类型。</p>
+
+<p>如果有办法将 <em>opendata(J)</em> 转换回 <em>J</em>，则我们说 <em>J</em> 是<em>可重新构造的</em>。MXBean 接口中的所有方法参数必须是可重新构造的，这是因为当 MXBean 框架调用某一方法时，它需要将这些参数从 <em>opendata(J)</em> 转换为 <em>J</em>。在由 {@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMXBeanProxy} 生成的代理中，MXBean 接口中方法的返回值必须是可重新构造的。</p>
+
+<p>所有 Java 类型和 Open Types 都允许使用 null 值，不可能使用 null 值的一些基本 Java 类型除外。当从类型 <em>J</em> 转换为类型 <em>opendata(J)</em> 或从类型 <em>opendata(J)</em> 转换为类型 <em>J</em> 时，null 值被映射为一个 null 值。</p>
+
+<p>下表总结了类型映射规则。</p>
+
+    <table border="1" cellpadding="5">
+      <tr>
+<th>Java 类型 <em>J</em></th>
+<th><em>opentype(J)</em></th>
+<th><em>opendata(J)</em></th>
+      </tr>
+      <tbody cellvalign="top">
+        <tr>
+<td>{@code int}、{@code boolean} 等<br>（8 个基本 Java 类型）</td>
+<td>{@code SimpleType.INTEGER}、<br>{@code SimpleType.BOOLEAN} 等</td>
+<td>{@code Integer}、{@code Boolean} 等<br>（相应的 boxed 类型）</td>
+        </tr>
+        <tr>
+<td>{@code Integer}、{@code ObjectName} 等<br>（{@link SimpleType} 包含的类型）</td>
+<td>相应的 {@code SimpleType}</td>
+<td><em>J</em>，相同类型</td>
+        </tr>
+        <tr>
+<td>{@code int[]} 等<br>（具有<br>基本元素类型的一维数组）</td>
+<td>{@code ArrayType.getPrimitiveArrayType(int[].class)} 等</td>
+<td><em>J</em>，相同类型</td>
+        <tr>
+<td><em>E</em>{@code []}<br>（具有非基本元素类型 <em>E</em> 的数组；这包括 {@code int[][]}，其中 <em>E</em> 为 {@code int[]}）</td>
+<td>{@code ArrayType.getArrayType(}<em>opentype(E)</em>{@code )}</td>
+<td><em>opendata(E)</em>{@code []}</td>
+        </tr>
+        <tr>
+<td>{@code List&lt;}<em>E</em>{@code &gt;}<br> {@code Set&lt;}<em>E</em>{@code &gt;}<br> {@code SortedSet&lt;}<em>E</em>{@code &gt;}（参见以下内容）</td>
+<td>与 <em>E</em>{@code []} 相同</td>
+<td>与 <em>E</em>{@code []} 相同</td>
+        </tr>
+        <tr>
+<td>枚举 <em>E</em><br>（在 Java 中被声明为 {@code enum }<em>E</em> {@code {...}}）</td>
+<td>{@code SimpleType.STRING}</td>
+<td>{@code String}</td>
+        </tr>
+        <tr>
+<td>{@code Map&lt;}<em>K</em>,<em>V</em>{@code &gt;}<br> {@code SortedMap&lt;}<em>K</em>,<em>V</em>{@code &gt;}</td>
+<td>{@link TabularType}<br>（参见以下内容）</td>
+<td>{@link TabularData}<br>（参见以下内容）</td>
+        </tr>
+        <tr>
+<td>MXBean 接口</td>
+<td>{@code SimpleType.OBJECTNAME}<br>（参见以下内容）</td>
+<td>{@link ObjectName}<br>（参见以下内容）</td>
+        </tr>
+        <tr>
+<td>任何其他类型</td>
+<td>{@link CompositeType}，如果可能<br>（参见以下内容）</td>
+<td>{@link CompositeData}</td>
+      </tbody>
+    </table>
+
+<p>以下几节将详细解释这些规则。</p>
+
+
+<h3>基本类型的映射</h3>
+
+<p>8 种基本 Java 类型（{@code boolean}、{@code byte}、{@code short}、{@code int}、{@code long}、{@code float}、{@code double}、{@code char}）都可映射到 {@code java.lang} 中的相应 boxed 类型，即 {@code Boolean}、{@code Byte} 等。Open Type 是相应的 {@code SimpleType}。因此，<em>opentype(</em>{@code long}<em>)</em> 是 {@code SimpleType.LONG}，<em>opendata(</em>{@code long}<em>)</em> 是 {@code java.lang.Long}。</p>
+
+<p>诸如 {@code long[]} 之类的基本类型的数组可以直接表示为一种 Open Type。因此，<em>openType(</em>{@code long[]}<em>)</em> 是 {@code ArrayType.getPrimitiveArrayType(long[].class)}，<em>opendata(</em>{@code long[]}<em>)</em> 是 {@code long[]}。</p>
+
+<p>实际上，普通 {@code int} 和 {@code Integer} 等之间的差异不会显现出来，因为 JMX API 中的操作总是在 Java 对象上进行，而不是在基本类型上进行。但是，数组中<em>确实</em> 存在这种差异。</p>
+
+
+<h3>集合的映射（{@code List&lt;}<em>E</em>{@code &gt;} 等）</h3>
+
+<p>{@code List&lt;}<em>E</em>{@code &gt;} 或 {@code Set&lt;}<em>E</em>{@code &gt;}（如 {@code List<String>} 或 {@code Set<ObjectName>}）以相同方式映射为相同元素类型的数组，如 {@code String[]} 或 {@code ObjectName[]}。</p>
+
+<p>也可以用相同方式将 {@code SortedSet&lt;}<em>E</em>{@code &gt;} 映射为 <em>E</em>{@code []}，但是只有在 <em>E</em> 是实现 {@link java.lang.Comparable} 的类或接口时，它才是可转换的。因此，{@code SortedSet<String>} 或 {@code SortedSet<Integer>} 是可转换的，但 {@code SortedSet<int[]>} 或 {@code SortedSet<List<String>&gt;} 是不可转换的。如果 {@code SortedSet} 实例包含一个非 null {@link java.util.SortedSet#comparator() comparator()}，那么对该实例的转换将失败，并抛出 {@code IllegalArgumentException}。</p>
+
+<p>{@code List&lt;}<em>E</em>{@code &gt;} 被重新构造为一个 {@code java.util.ArrayList&lt;}<em>E</em>{@code &gt;}；{@code Set&lt;}<em>E</em>{@code &gt;} 被重新构造为一个 {@code java.util.HashSet&lt;}<em>E</em>{@code &gt;}；{@code SortedSet&lt;}<em>E</em>{@code &gt;} 被重新构造为一个 {@code java.util.TreeSet&lt;}<em>E</em>{@code &gt;}。</p>
+
+
+<h3>映射的映射关系（{@code Map&lt;}<em>K</em>,<em>V</em>{@code &gt;} 等）</h3>
+
+<p>{@code Map&lt;}<em>K</em>,<em>V</em>{@code &gt;} 或 {@code SortedMap&lt;}<em>K</em>,<em>V</em>{@code &gt;}（如 {@code Map<String,ObjectName>}）包含 Open Type {@link TabularType}，并且可映射为一个 {@link TabularData}。{@code TabularType} 有两个称为 {@code key} 和 {@code value} 的项。{@code key} 的 Open Type 为 <em>opentype(K)</em>，{@code value} 的 Open Type 为 <em>opentype(V)</em>。{@code TabularType} 的索引是单个项 {@code key}。</p>
+
+<p>例如，用于 {@code Map<String,ObjectName>} 的 {@code TabularType} 可以使用如下代码构造：</p>
+
+    <pre>
+String typeName =
+&quot;java.util.Map&lt;java.lang.String, javax.management.ObjectName&gt;&quot;;
+String[] keyValue =
+new String[] {&quot;key&quot;, &quot;value&quot;};
+OpenType[] openTypes =
+new OpenType[] {SimpleType.STRING, SimpleType.OBJECTNAME};
+CompositeType rowType =
+new CompositeType(typeName, typeName, keyValue, keyValue, openTypes);
+TabularType tabularType =
+new TabularType(typeName, typeName, rowType, new String[] {&quot;key&quot;});
+    </pre>
+
+<p>此处的 {@code typeName} 由下面将详细介绍的<a href="#type-names">类型名称规则</a>确定。
+
+<p>{@code SortedMap&lt;}<em>K</em>,<em>V</em>{@code &gt;} 以相同的方式映射，但只有在 <em>K</em> 是实现 {@link java.lang.Comparable} 的类或接口时才是可转换的。因此，{@code SortedMap<String,int[]>} 是可转换的，但 {@code SortedMap<int[],String>} 是不可转换的。如果 {@code SortedMap} 实例包含一个非 null {@link java.util.SortedMap#comparator() comparator()}，那么该实例的转换将失败，并将抛出 {@code IllegalArgumentException}。</p>
+
+<p>{@code Map&lt;}<em>K</em>,<em>V</em>{@code &gt;} 被重新构造为一个 {@code java.util.HashMap&lt;}<em>K</em>,<em>V</em>{@code &gt;}；{@code SortedMap&lt;}<em>K</em>,<em>V</em>{@code &gt;} 被重新构造为一个 {@code java.util.TreeMap&lt;}<em>K</em>,<em>V</em>{@code &gt;}。</p>
+
+<p>{@code TabularData} 是一个接口。用于将 {@code Map&lt;}<em>K</em>,<em>V</em>{@code &gt;} 表示为 Open Data 的具体类是 {@link TabularDataSupport}，或是实现作为 {@code TabularDataSupport} 序列化的 {@code TabularData} 的另一个类。</p>
+
+
+<h3><a name="mxbean-map">MXBean 接口的映射</a></h3>
+
+<p>MXBean 接口（或 MXBean 接口中引用的类型）可以引用另一个 MXBean 接口 <em>J</em>。这时 <em>opentype(J)</em> 是 {@code SimpleType.OBJECTNAME}，<em>opendata(J)</em> 是 {@code ObjectName}。</p>
+
+<p>例如，假设您有两个如下所示的 MXBean 接口：</p>
+
+    <pre>
+public interface ProductMXBean {
+public ModuleMXBean[] getModules();
+}
+
+public interface ModuleMXBean {
+public ProductMXBean getProduct();
+}
+    </pre>
+
+<p>实现 {@code ModuleMXBean} 接口的对象从其 {@code getProduct} 方法返回一个实现 {@code ProductMXBean} 接口的对象。{@code ModuleMXBean} 对象和返回的 {@code ProductMXBean} 对象都必须注册为相同 MBean Server 中的 MXBean。</p>
+
+<p>方法 {@code ModuleMXBean.getProduct()} 定义了一个称为 {@code Product} 的属性。此属性的 Open Type 为 {@code SimpleType.OBJECTNAME}，并且相应的 {@code ObjectName} 值将是所引用的 {@code ProductMXBean} 在 MBean Server 中注册的名称。</p>
+
+<p>如果为 {@code ModuleMXBean} 构造一个 MXBean 代理，并调用其 {@code getProduct()} 方法，则该代理将通过构造另一个 MXBean 代理将 {@code ObjectName} 映射回 {@code ProductMXBean}。更正式地说，当使用 {@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMXBeanProxy(mbeanServerConnection, objectNameX, interfaceX)} 构造一个代理需要将 {@code objectNameY} 映射回 {@code interfaceY}（另一个 MXBean 接口）时，可以使用 {@code JMX.newMXBeanProxy(mbeanServerConnection, objectNameY, interfaceY)} 来完成此操作。该实现可以返回一个以前通过使用相同参数调用 {@code JMX.newMXBeanProxy} 创建的代理，或创建一个新代理。</p>
+
+<p>通过对 {@code ModuleMXBean} 接口进行以下更改来解释反向映射：</p>
+
+    <pre>
+public interface ModuleMXBean {
+public ProductMXBean getProduct();
+public void setProduct(ProductMXBean c);
+}
+    </pre>
+
+<p>{@code setProduct} 方法的存在现在意味着 {@code Product} 属性为 read/write。与以前一样，该属性的值是一个 {@code ObjectName}。设置属性时，必须将 {@code ObjectName} 转换成 {@code setProduct} 方法所需要的 {@code ProductMXBean} 对象。此对象将是相同 MBean Server 中给定 {@code ObjectName} 的 MXBean 代理。</p>
+
+<p>如果为 {@code ModuleMXBean} 构造一个 MXBean 代理并调用其 {@code setProduct} 方法，则该代理会将其 {@code ProductMXBean} 参数映射回 {@code ObjectName}。只有在该参数实际上是另一代理时，才能如此操作，这也可用于相同 {@code MBeanServerConnection} 中的 {@code ProductMXBean}。可以从另一代理（如返回 {@code ProductMXBean} 的代理的 {@code ModuleMXBean.getProduct()}）返回代理；或由 {@link JMX#newMXBeanProxy(MBeanServerConnection, ObjectName, Class) JMX.newMXBeanProxy} 创建代理；或使用带有调用处理程序的 {@link java.lang.reflect.Proxy Proxy} 创建，该调用处理程序是 {@link MBeanServerInvocationHandler} 或一个子类。</p>
+
+<p>如果相同的 MXBean 在两个不同的 {@code ObjectName} 下注册，那么对哪个 MXBean 进行引用将是不明确的。因此，如果某个 MXBean 对象已经在 MBean Server 中注册并且尝试在相同 MBean Server 的另一名称下对其进行注册，结果将是抛出 {@link InstanceAlreadyExistsException}。通常不鼓励在多个名称下注册同一 MBean 对象，因为它显然不适合那些是 {@link NotificationBroadcaster} 的 MBean。</p>
+
+<h3><a name="composite-map">其他类型的映射</a></h3>
+
+<p>如果给定的 Java 类或接口 <em>J</em> 与上述表中的其他规则不匹配，则 MXBean 框架会尝试按照以下方式将其映射到 {@link CompositeType}。此 {@code CompositeType} 的类型名称是根据以下<a href="#type-names">类型名称规则</a>确定的。</p>
+
+<p>使用<a href="#naming-conv">上述</a>约定检查获取方法的类。（Getter 必须是公共实例方法。）如果没有获取方法，或任何获取方法都有一个不可转换的类型，则 <em>J</em> 是不可转换的。</p>
+
+<p>如果至少有一个获取方法并且每个获取方法都有一个可转换的类型，则 <em>opentype(J)</em> 是一个 {@code CompositeType}，它对于每个获取方法都有一个项。如果获取方法为
+
+    <blockquote>
+<code><em>T</em> get<em>Name</em>()</code>
+    </blockquote>
+
+则 {@code CompositeType} 中的项被称为 {@code name}，且类型为 <em>opentype(T)</em>。例如，如果该项为
+
+    <blockquote>
+<code>String getOwner()</code>
+    </blockquote>
+
+则该项被称为 {@code owner}，且 Open Type 为 {@code SimpleType.STRING}。如果该获取方法为
+
+    <blockquote>
+<code>boolean is<em>Name</em>()</code>
+    </blockquote>
+
+则 {@code CompositeType} 中的项被称为 {@code name}，且类型为 {@code SimpleType.BOOLEAN}。</p>
+
+<p>注意，第一个字符（或代码点）要转换为小写。这遵守 Java Bean 约定，由于历史原因，该约定与 Standard MBean 约定不同。在 Standard MBean 或 MXBean 接口中，方法 {@code getOwner} 定义了名为 {@code Owner} 的属性，而在 Java Bean 或映射的 {@code CompositeType} 中，方法 {@code getOwner} 定义了名为 {@code owner} 的属性或项。</p>
+
+<p>如果两个方法生成了相同的项名称（如 {@code getOwner} 和 {@code isOwner}，或 {@code getOwner} 和 {@code getowner}），则该类型是不可转换的。</p>
+
+<p>当 Open Type 为 {@code CompositeType} 时，相应的映射 Java 类型 (<em>opendata(J)</em>) 是 {@link CompositeData}。从 <em>J</em> 的实例到对应于刚描述的 {@code CompositeType} 的 {@code CompositeData} 的映射是按以下方式完成的。首先，如果 <em>J</em> 实现了接口 {@link CompositeDataView}，则调用该接口的 {@link CompositeDataView#toCompositeData toCompositeData} 方法来完成转换。否则，通过对每个项调用获取方法并将其转换为相应的 Open Data 类型来构造 {@code CompositeData}。因此，如下所示的获取方法</p>
+
+    <blockquote>
+{@code List<String> getNames()}
+    </blockquote>
+
+<p>将被映射到名称为 &quot;{@code names}&quot; 且 Open Type 为 {@code ArrayType(1, SimpleType.STRING)} 的项。对 {@code CompositeData} 的转换将调用 {@code getNames()}，并将结果 {@code List<String>} 转换为项 &quot;{@code names}&quot; 的 {@code String[]}。</p>
+
+<p>{@code CompositeData} 是一个接口。用于将类型表示为 Open Data 的具体类是 {@link CompositeDataSupport}，或者是实现作为 {@code CompositeDataSupport} 序列化的 {@code CompositeData} 的另一个类。</p>
+
+
+<h4>从 {@code CompositeData} 重新构造 Java 类型 <em>J</em> 的实例</h4>
+
+<p>如果 <em>opendata(J)</em> 是 Java 类型 <em>J</em> 的 {@code CompositeData}，则要么从 {@code CompositeData} 重新构造 <em>J</em> 的实例，要么 <em>J</em> 是不可重新构造的。如果 {@code CompositeData} 中的任何项都是不可重新构造的，则 <em>J</em> 也是不可重新构造的。</p>
+
+<p>对于任何给定的 <em>J</em>，都可参考以下规则来确定如何从 {@code CompositeData} 重新构造 <em>J</em> 的实例。列表中的第一个适用规则是将被使用的规则。</p>
+
+    <ol>
+
+<li><p>如果 <em>J</em> 拥有方法<br> {@code public static }<em>J </em>{@code from(CompositeData cd)}<br>，则调用该方法来重新构造一个 <em>J</em> 实例。</p></li>
+
+<li><p>否则，如果 <em>J</em> 至少有一个带有 {@link ConstructorProperties} 注释的公共构造方法，则将调用这些构造方法之一（不一定总是同一个构造方法）来重新构造一个 <em>J</em> 实例。每个这样的注释都必须列出与构造方法的参数数量相同的字符串；每个字符串必须命名一个对应于 <em>J</em> 的获取方法的属性；此获取方法的类型必须与对应构造方法参数的类型相同。如果存在 {@code ConstructorProperties} 注释中未提到的获取方法（这些获取方法可能对应于重新构造对象所不需要的信息），这不算是一种错误。</p>
+
+<p>通过使用 {@code CompositeData} 中经过适当重新构造的项来调用构造方法，可以重新构造一个 <em>J</em> 实例。要调用的构造方法将在运行的时候根据实际出现在 {@code CompositeData} 中的项来确定，在这种情况下，此 {@code CompositeData} 可能来自 <em>J</em> 的较早版本，该版本中没有包含所有的项。如果在构造方法的 {@code ConstructorProperties} 注释中命名的所有属性都作为项出现在 {@code CompositeData} 中，则该构造方法是<em>适用的</em>。如果没有构造方法是适用的，则尝试重新构造 <em>J</em> 将失败。</p>
+
+<p>对于任何可能的属性组合，必须是以下情况：(a) 没有适用的构造方法，或 (b) 恰恰有一个适用的构造方法，或 (c) 适用的构造方法之一命名了由其他每个适用构造方法命名的属性的适当超集。（换句话说，在选择构造方法时永远不应该有混淆现象。）如果此条件不为 true，则 <em>J</em> 是不可重新构造的。</p></li>
+
+<li><p>否则，如果 <em>J</em> 具有不带参数的公共构造方法，并且对于类型为 <em>T</em> 且名称为 <em>N</em> 的 <em>J</em> 中的每个获取方法，都有一个具有相同名称和类型的相应设置方法，则 <em>J</em> 的实例是使用不带参数的构造方法构造的 ，并使用 {@code CompositeData} 中经过重新构造的项来调用这些设置方法，以恢复某些值。例如，如果具有方法<br> {@code public List<String> getNames()}<br>，则还必须有一个应用此规则的方法<br> {@code public void setNames(List<String> names)}<br>。</p>
+
+<p>如果 {@code CompositeData} 来自 <em>J</em> 的较早版本，则有些项可能不会出现。在这种情况下，不会调用相应的设置方法。</p></li>
+
+<li><p>否则，如果 <em>J</em> 是一个除了获取方法之外没有其他方法的接口，则使用具有 {@link CompositeDataInvocationHandler}（受正在转换的 {@code CompositeData} 支持）的 {@link java.lang.reflect.Proxy} 来构造一个 <em>J</em> 实例。</p></li>
+
+<li><p>否则，<em>J</em> 是不可重新构造的。</p></li>
+    </ol>
+
+<p>下面的示例显示了对那些由 {@code int} 和 {@code String} 组成的类型 {@code NamedNumber} 进行编码的不同方式。{@code CompositeType} 在各种情况下的形式如下：</p>
+
+    <blockquote>
+      <pre>
+{@link CompositeType}(
+&quot;NamedNumber&quot;,			// typeName
+&quot;NamedNumber&quot;,			// description
+new String[] {&quot;number&quot;, &quot;name&quot;},	// itemNames
+new String[] {&quot;number&quot;, &quot;name&quot;},	// itemDescriptions
+new OpenType[] {SimpleType.INTEGER,
+SimpleType.STRING}  // itemTypes
+);
+      </pre>
+    </blockquote>
+
+    <ol>
+<li>静态 {@code from} 方法：
+
+        <blockquote>
+          <pre>
+public class NamedNumber {
+public int getNumber() {return number;}
+public String getName() {return name;}
+private NamedNumber(int number, String name) {
+this.number = number;
+this.name = name;
+    }
+<b>public static NamedNumber from(CompositeData cd)</b> {
+return new NamedNumber((Integer) cd.get(&quot;number&quot;),
+(String) cd.get(&quot;name&quot;));
+    }
+private final int number;
+private final String name;
+}
+          </pre>
+        </blockquote>
+      </li>
+
+<li>带有 <code>@ConstructorProperties</code> 注释的公共构造方法：
+
+        <blockquote>
+          <pre>
+public class NamedNumber {
+public int getNumber() {return number;}
+public String getName() {return name;}
+<b>@ConstructorProperties({&quot;number&quot;, &quot;name&quot;})
+public NamedNumber(int number, String name)</b> {
+this.number = number;
+this.name = name;
+    }
+private final int number;
+private final String name;
+}
+          </pre>
+        </blockquote>
+      </li>
+
+<li>针对每个获取方法的设置方法：
+
+        <blockquote>
+          <pre>
+public class NamedNumber {
+public int getNumber() {return number;}
+public void <b>setNumber</b>(int number) {this.number = number;}
+public String getName() {return name;}
+public void <b>setName</b>(String name) {this.name = name;}
+<b>public NamedNumber()</b> {}
+private int number;
+private String name;
+}
+          </pre>
+        </blockquote>
+      </li>
+
+<li>只带有获取方法的接口：
+
+        <blockquote>
+          <pre>
+public interface NamedNumber {
+public int getNumber();
+public String getName();
+}
+          </pre>
+        </blockquote>
+      </li>
+    </ol>
+
+<p>通常，它更适合只将数据集合表示为<em>不可变</em> 的类。不可变类的实例在被构造之后无法进行更改。注意，{@code CompositeData} 本身是不可变的。不可变性有许多优点，最为明显的是线程安全和安全性。因此，如有可能，通常应该采用避免使用设置方法的方式。</p>
+
+<h3>递归类型</h3>
+
+    <p>递归（自引用）类型不能在 MXBean 接口中使用。这是 {@link
+      CompositeType} 的不变性导致的。例如，以下类型不能是属性的类型，因为属性引用了自身：</p>
+
+    <pre>
+public interface <b>Node</b> {
+    public String getName();
+    public int getPriority();
+    public <b>Node</b> getNext();
+}
+</pre>
+
+    <p>总是可以像这样重写递归接口，使之不再递归。重写可能需要引入新类型。例如：</p>
+
+    <pre>
+public interface <b>NodeList</b> {
+    public List&lt;Node&gt; getNodes();
+}
+
+public interface Node {
+    public String getName();
+    public int getPriority();
+}
+</pre>
+
+
+<h3>MXBean 的 MBeanInfo 内容</h3>
+
+<p>MXBean 是 Open MBean 的一种类型。但是，出于兼容性考虑，其 {@link MBeanInfo} 不是一个 {@link OpenMBeanInfo}。需要特别指出的是，如果属性、参数或操作返回值的类型是 {@code int} 之类的基本类型，或者是 {@code void}（针对返回类型），则属性、参数或操作将被分别表示为其 {@code getType()} 或 {@code getReturnType()} 返回基本名称（&quot;{@code int}&quot; 等）的 {@link MBeanAttributeInfo}、{@link MBeanParameterInfo} 或 {@link MBeanOperationInfo}。即使上面的映射规则指定 <em>opendata</em> 映射是包装类型（{@code Integer} 等），情况也是这样。</p>
+
+<p>由直接在 MBean Server 中注册的 MXBean 的 {@link MBeanInfo#getConstructors()} 返回的公共构造方法数组，将包含该 MXBean 的所有公共构造方法。如果 MXBean 的类不是公共类，则其构造方法也被视为非公共构造方法。MXBean 的返回列表是使用 {@link StandardMBean} 类构造的，其派生方式与 Standard MBean 的相同。不管 MXBean 是如何构造的，其构造方法参数都不服从 MXBean 映射规则，且没有对应的 {@code OpenType}。</p>
+
+<p>如果直接在 MBean Server 中注册的 MXBean 没有实现 {@link NotificationBroadcaster} 接口，则由其 {@link MBeanInfo#getNotifications()} 返回的通知类型的数组将为空。否则，它将是在注册 MXBean 时调用 {@link NotificationBroadcaster#getNotificationInfo()} 的结果。即使此方法的结果以后发生更改，{@code MBeanInfo.getNotifications()} 的结果也不会发生更改。MXBean 的返回列表是使用 {@link StandardMBean} 或 {@link StandardEmitterMBean} 类构造的，其派生方式与 Standard MBean 的相同。</p>
+
+<p>{@code MBeanInfo} 中包含的所有 {@code MBeanAttributeInfo}、{@code MBeanParameterInfo} 和 {@code MBeanOperationInfo} 对象的 {@link Descriptor} 都将包含一个字段 {@code openType}，其值为由上述映射规则指定的 {@link OpenType}。因此，即使在 {@code getType()} 为 &quot;{@code int}&quot; 时，{@code getDescriptor().getField(&quot;openType&quot;)} 仍将是 {@link SimpleType#INTEGER}。</p>
+
+<p>每个对象的 {@code Descriptor} 还有一个 {@code originalType} 字段，该字段是一个表示 MXBean 接口中出现的 Java 类型的字符串。此字符串的格式将在下面的<a href="#type-names">类型名称</a>一节中描述。</p>
+
+<p>{@code MBeanInfo} 的 {@code Descriptor} 将包含一个 {@code mxbean} 字段，该字段值是字符串 &quot;{@code true}&quot;。</p>
+
+
+<h3><a name="type-names">类型名称</a></h3>
+
+<p>有时必须将 MXBean 中方法参数或返回值的未映射类型 <em>T</em> 表示为一个字符串。如果 <em>T</em> 是非一般类型，则此字符串是由 {@link Class#getName()} 返回的值。否则，它是 <em>genericstring(T)</em> 的值，定义方式如下：
+
+    <ul>
+
+<li>如果 <em>T</em> 为特殊的非数组类型，则 <em>genericstring(T)</em> 是由 {@link Class#getName()} 返回的值，如 {@code &quot;int&quot;} 或 {@code &quot;java.lang.String&quot;}。
+
+<li>如果 <em>T</em> 是数组 <em>E[]</em>，则 <em>genericstring(T)</em> 是后跟 {@code &quot;[]&quot;} 的 <em>genericstring(E)</em>。例如，<em>genericstring({@code int[]})</em> 是 {@code &quot;int[]&quot;}，而 <em>genericstring({@code List<String>[][]})</em> 是 {@code &quot;java.util.List<java.lang.String>[][]&quot;}。
+
+<li>否则，<em>T</em> 是一个参数化类型（如 {@code List<String>}）并且 <em>genericstring(T)</em> 由以下内容组成：由 {@code Class.getName()} 返回的参数化类型的完全限定名称；左尖角括号 ({@code &quot;&lt;&quot;})；<em>genericstring(A)</em>（其中 <em>A</em> 是第一个类型参数）；如果存在第二个类型参数 <em>B</em>，则是一个后跟 <em>genericstring(B)</em> 的 {@code &quot;, &quot;}（即逗号加一个空格）；右尖角括号 ({@code &quot;&gt;&quot;})。
+
+    </ul>
+
+<p>注意，如果某一方法返回 {@code int[]}，则这将由 {@code Class.getName()} 返回的字符串 {@code &quot;[I&quot;} 表示，但如果某一方法返回 {@code List<int[]>}，则这将由字符串 {@code &quot;java.util.List<int[]>&quot;} 表示。
+
+<h3>异常</h3>
+
+<p><em>从</em> Java 类型映射<em>到</em> Open 类型时存在的一个问题是会出现 {@link OpenDataException} 信号。这可能发生在分析 MXBean 接口时，例如，如果它引用一个类似于没有获取方法的 {@link java.util.Random java.util.Random} 的类型。或者发生在转换实例（将返回值从 MXBean 中的方法或参数转换为 MXBean 代理中的方法）时，例如在 {@code SortedSet} 拥有非 null {@code Comparator} 的情况下从 {@code SortedSet<String>} 转换为 {@code String[]} 时。</p>
+
+<p><em>从</em> Open 类型映射<em>到</em> Java 类型时存在的一个问题是会出现 {@link InvalidObjectException} 信号。这可能发生在分析 MXBean 接口时，例如，当上下文需要可重新构造的类型时，根据上述规则引用了一个<em>不可重新构造的</em> 类型。或者发生在转换实例（MXBean 中某一方法的参数或 MXBean 代理中某一方法的返回值）时，例如在没有具备该名称的 Enum 常量的情况下将 String 转换为 Enum 时。</p>
+
+<p>根据上下文，{@code OpenDataException} 或 {@code InvalidObjectException} 可以包装在另一个异常（如 {@link RuntimeMBeanException} 或 {@link UndeclaredThrowableException}）中。 对于每个抛出的异常，条件 <em>C</em> 将为 true：&quot;<em>e</em> 为 {@code OpenDataException} 或 {@code InvalidObjectException}（如果合适），或者 <em>C</em> 在 <em>e</em>.{@link Throwable#getCause() getCause()}&quot; 中为 ture。</p>
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.MXBean.value()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果被注释的接口是一个 MXBean 接口，则为 true。
+@return   如果被注释的接口是一个 MXBean 接口，则返回 true。
+
+<!-- END DATA -->
+
+

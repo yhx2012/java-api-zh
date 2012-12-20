@@ -1,0 +1,123 @@
+<!-- BEGIN KEY -->
+public class javax.management.remote.rmi.RMIConnector extends java.lang.Object implements javax.management.remote.JMXConnector, java.io.Serializable, javax.management.remote.JMXAddressable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>一个到远程 RMI 连接器的连接。通常使用 {@link javax.management.remote.JMXConnectorFactory JMXConnectorFactory} 建立这样的连接。但是，专门的应用程序可直接使用此类，例如获得 {@link RMIServer} 桩模块 (stub) 则不需要通过 JNDI。</p>
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final javax.management.remote.rmi.RMIServer javax.management.remote.rmi.RMIConnector.rmiServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial The RMIServer stub of the RMI JMX Connector server to which this client connector is (or will be) connected.当 <var>jmxServiceURL</var> 不为 null 时，此字段可以为 null。这包括了 <var>jmxServiceURL</var> 包含序列化的 RMIServer stub 的情况。如果 <var>rmiServer</var> 和 <var>jmxServiceURL</var> 都为 null，则序列化将失败。
+
+@see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final javax.management.remote.JMXServiceURL javax.management.remote.rmi.RMIConnector.jmxServiceURL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial The JMXServiceURL of the RMI JMX Connector server to which this client connector will be connected.当 <var>rmiServer</var> 不为 null 时，此字段可以为 null。如果 <var>rmiServer</var> 和 <var>jmxServiceURL</var> 都为 null，则序列化将失败。
+
+@see #RMIConnector(JMXServiceURL,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIConnector(JMXServiceURL url, java.util.Map<java.lang.String, ?> environment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个将 RMI 连接器服务器连接到给定地址的 <code>RMIConnector</code>。</p>
+
+<p>地址可直接引用连接器服务器，可使用如下语法之一：</p>
+
+ <pre>
+ service:jmx:rmi://<em>[host[:port]]</em>/stub/<em>encoded-stub</em>
+ service:jmx:iiop://<em>[host[:port]]</em>/ior/<em>encoded-IOR</em>
+ </pre>
+
+<p>（这里的方括号 <code>[]</code> 不属于地址的组成部分，只表示主机和端口为可选项）。</p>
+
+<p>地址还可表示使用 JNDI 查找 RMI stub 的位置，使用如下语法之一：</p>
+
+ <pre>
+ service:jmx:rmi://<em>[host[:port]]</em>/jndi/<em>jndi-name</em>
+ service:jmx:iiop://<em>[host[:port]]</em>/jndi/<em>jndi-name</em>
+ </pre>
+
+<p>实现还可识别其他地址语法，如下所示：</p>
+
+ <pre>
+ service:jmx:iiop://<em>[host[:port]]</em>/stub/<em>encoded-stub</em>
+ </pre>
+
+@param url RMI 连接器服务器的地址。
+
+@param environment 指定如何进行连接的其他属性。对于基于 JNDI 的地址，这些属性可有效地包含可由 {@link InitialContext#InitialContext(Hashtable) InitialContext} 识别的 JNDI 属性。此参数可以为 null，它等效于一个空映射。
+
+@exception IllegalArgumentException 如果 <code>url</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIConnector(RMIServer rmiServer, java.util.Map<java.lang.String, ?> environment)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>用给定的 RMI stub 构造一个 <code>RMIConnector</code>。
+
+@param rmiServer 代表 RMI 连接器服务器的一个 RMI 桩模块。
+@param environment 指定如何进行连接的其他属性。此参数可以为 null，其等效于一个空映射。
+
+@exception IllegalArgumentException 如果 <code>rmiServer</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.rmi.RMIConnector.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此对象的字符串表示形式。通常，<code>toString</code> 方法会返回一个&ldquo;按文本方式表示&rdquo;此对象的字符串。结果应是一个简明而丰富的表示形式，以方便人们阅读。</p>
+
+@return 此对象的字符串表示形式。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXServiceURL javax.management.remote.rmi.RMIConnector.getAddress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>此连接器的地址。</p>
+
+ @return 此连接器的地址；如果没有任何地址，则返回 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.management.remote.rmi.RMIConnector.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 {@link java.io.ObjectInputStream ObjectInputStream} 读入 RMIConnector 字段。调用 <code>s.defaultReadObject()</code> 并接着初始化所有需要初始化的中间变量。
+@param s 要从其读入的 ObjectInputStream。
+@exception InvalidObjectException 如果 <var>rmiServer</var> stub 或 <var>jmxServiceURL</var> 均未设置。
+@see #RMIConnector(JMXServiceURL,Map)
+@see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.management.remote.rmi.RMIConnector.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 RMIConnector 字段写入到 {@link java.io.ObjectOutputStream ObjectOutputStream}。
+<p>如果需要的话，在初始化之前，将基础 RMIServer stub 连接到一个 ORB。通过使用为构造方法提供的环境映射（如果有）来完成此连接，如在 {@link javax.management.remote.rmi} 中描述的那样。</p>
+<p>然后此方法调用 <code>s.defaultWriteObject()</code>。通常，如果此对象是使用 JMXServiceURL 构造的，则 <var>rmiServer</var> 为 null，如果此对象是使用 RMIServer stub 构造的，则 <var>jmxServiceURL</var> 为 null。
+<p>注意，环境 Map 并未序列化，因为假定它包含的对象只对于本地环境（类加载器、ORB，等等）而言是上下文相关的。</p>
+<p>对 RMIConnector 反序列化后，假定用户将调用 {@link #connect(Map)}，则它提供了一个包含与新本地环境上下文相关的值的 Map。</p>
+<p>由于在序列化之前需要连接到 ORB，并且要连接到的 ORB 为上下文相关的参数之一，不建议对刚刚序列化过的对象重新序列化，因为反序列化的对象不具有映射。因此，需要将一个 RMIConnector 对象序列化或传输到一个远程应用程序时，建议通过调用 {@link RMIConnectorServer#toJMXConnector(Map)} 获得新的 RMIConnector stub。</p>
+@param s 要写入到的 ObjectOutputStream。
+@exception InvalidObjectException 如果 <var>rmiServer</var> stub 或 <var>jmxServiceURL</var> 均未设置。
+@see #RMIConnector(JMXServiceURL,Map)
+@see #RMIConnector(RMIServer,Map)
+
+<!-- END DATA -->

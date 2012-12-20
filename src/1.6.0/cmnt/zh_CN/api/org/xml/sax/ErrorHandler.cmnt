@@ -1,0 +1,74 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.ErrorHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+SAX 错误处理程序的基本接口。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>如果 SAX 应用程序需要实现自定义的错误处理，则它必须实现此接口，然后使用 {@link org.xml.sax.XMLReader#setErrorHandler setErrorHandler} 方法向 XML 阅读器注册一个实例。然后解析器将通过此接口报告所有的错误和警告。</p>
+
+<p><strong>警告：</strong>如果应用程序<em>不</em> 注册 ErrorHandler，则将不报告 XML 解析错误，除了对严重的错误将抛出 <em>SAXParseException</em> 外。为了检测有效性错误，必须注册用 {@link #error error()} 调用处理某些事情的 ErrorHandler。</p>
+
+<p>对于 XML 处理错误，SAX 驱动器必须优先于抛出异常使用此接口：需要应用程序来决定是否对不同类型的错误和警告抛出异常。但是要注意，不要求解析器在调用 {@link #fatalError fatalError} 之后继续报告另外的错误。换句话说，SAX 驱动器类可以在报告任何 fatalError 之后抛出异常。另外，解析器可以对非 XML 错误抛出适当的异常。例如，{@link XMLReader#parse XMLReader.parse()} 将对访问实体或文档的错误抛出 IOException。</p>
+
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1+ (sax2r3pre1)
+@see org.xml.sax.XMLReader#setErrorHandler
+@see org.xml.sax.SAXParseException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ErrorHandler.warning(SAXParseException exception) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收警告的通知。
+
+<p>SAX 解析器将使用此方法报告不属于 XML 推荐标准定义的错误或严重的错误的情形。默认行为是不采取任何措施。</p>
+
+<p>SAX 解析器必须在调用此方法后继续提供正常的解析事件：应用程序应该仍能够处理文档直到结尾。</p>
+
+<p>过滤器也可以使用此方法报告其他的非 XML 警告。</p>
+
+@param exception 封装在 SAX 解析异常中的警告信息。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see org.xml.sax.SAXParseException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ErrorHandler.error(SAXParseException exception) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收可恢复的错误的通知。
+
+<p>这符合 &quot;W3C XML 1.0 Recommendation&quot; 的 1.2 节中对&ldquo;错误&rdquo;的定义。例如，验证解析器将使用此回调来报告违反有效性约束。默认行为是不采取任何措施。</p>
+
+<p>SAX 解析器必须在调用此方法后继续提供正常的解析事件应用程序应该仍能够处理文档直到结尾如果应用程序不能这样做，则解析器必须报告一个严重的错误，即使 XML 推荐标准未要求这样做。</p>
+
+<p>过滤器也可以使用此方法报告其他的非 XML 错误。</p>
+
+@param exception 封装在 SAX 解析异常中的错误信息。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see org.xml.sax.SAXParseException 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.ErrorHandler.fatalError(SAXParseException exception) throws org.xml.sax.SAXException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收不可恢复的错误的通知。
+
+<p><strong>在此方法的文档和 {@link org.xml.sax.ContentHandler#endDocument} 的文档之间存在着明显的矛盾。直到在未来的主版本中解决了这一不明确问题后，客户才不必假定在解析器报告 fatalError() 或抛出异常后是否将调用 endDocument()。</strong></p>
+
+<p>这符合 &quot;W3C XML 1.0 Recommendation&quot; 的 1.2 节对&ldquo;严重的错误&rdquo;的定义。例如，解析器将使用此回调来报告违背了格式良好性的约束。</p>
+
+<p>应用程序必须假定在解析器调用此方法之后该文档不可用，并且应该仅为收集更多的错误消息而继续进行：事实上，一旦调用了此方法，SAX 解析器就可以随意停止对其他任何事件的报告。</p>
+
+@param exception 封装在 SAX 解析异常中的错误信息。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@see org.xml.sax.SAXParseException
+
+<!-- END DATA -->

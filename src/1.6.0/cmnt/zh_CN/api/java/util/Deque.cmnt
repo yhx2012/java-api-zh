@@ -1,0 +1,435 @@
+<!-- BEGIN KEY -->
+public interface java.util.Deque extends java.util.Queue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个线性 collection，支持在两端插入和移除元素。名称 <i>deque</i> 是&ldquo;double ended queue（双端队列）&rdquo;的缩写，通常读为&ldquo;deck&rdquo;。大多数 <tt>Deque</tt> 实现对于它们能够包含的元素数没有固定限制，但此接口既支持有容量限制的双端队列，也支持没有固定大小限制的双端队列。
+
+<p>此接口定义在双端队列两端访问元素的方法。提供插入、移除和检查元素的方法。每种方法都存在两种形式：一种形式在操作失败时抛出异常，另一种形式返回一个特殊值（<tt>null</tt> 或 <tt>false</tt>，具体取决于操作）。插入操作的后一种形式是专为使用有容量限制的 <tt>Deque</tt> 实现设计的；在大多数实现中，插入操作不能失败。
+
+<p>下表总结了上述 12 种方法：
+
+ <p>
+ <table BORDER CELLPADDING=3 CELLSPACING=1>
+  <tr>
+    <td></td>
+<td ALIGN=CENTER COLSPAN = 2> <b>第一个元素（头部）</b></td>
+<td ALIGN=CENTER COLSPAN = 2> <b>最后一个元素（尾部）</b></td>
+  </tr>
+  <tr>
+    <td></td>
+<td ALIGN=CENTER><em>抛出异常</em></td>
+<td ALIGN=CENTER><em>特殊值</em></td>
+<td ALIGN=CENTER><em>抛出异常</em></td>
+<td ALIGN=CENTER><em>特殊值</em></td>
+  </tr>
+  <tr>
+<td><b>插入</b></td>
+<td>{@link #addFirst addFirst(e)}</td>
+<td>{@link #offerFirst offerFirst(e)}</td>
+<td>{@link #addLast addLast(e)}</td>
+<td>{@link #offerLast offerLast(e)}</td>
+  </tr>
+  <tr>
+<td><b>移除</b></td>
+<td>{@link #removeFirst removeFirst()}</td>
+<td>{@link #pollFirst pollFirst()}</td>
+<td>{@link #removeLast removeLast()}</td>
+<td>{@link #pollLast pollLast()}</td>
+  </tr>
+  <tr>
+<td><b>检查</b></td>
+<td>{@link #getFirst getFirst()}</td>
+<td>{@link #peekFirst peekFirst()}</td>
+<td>{@link #getLast getLast()}</td>
+<td>{@link #peekLast peekLast()}</td>
+  </tr>
+ </table>
+
+<p>此接口扩展了 {@link Queue} 接口。在将双端队列用作队列时，将得到 FIFO（先进先出）行为。将元素添加到双端队列的末尾，从双端队列的开头移除元素。从 <tt>Queue</tt> 接口继承的方法完全等效于 <tt>Deque</tt> 方法，如下表所示：
+
+ <p>
+ <table BORDER CELLPADDING=3 CELLSPACING=1>
+  <tr>
+<td ALIGN=CENTER> <b><tt>Queue</tt> 方法</b></td>
+<td ALIGN=CENTER> <b>等效 <tt>Deque</tt> 方法</b></td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#add add(e)}</td>
+<td>{@link #addLast addLast(e)}</td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#offer offer(e)}</td>
+<td>{@link #offerLast offerLast(e)}</td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#remove remove()}</td>
+<td>{@link #removeFirst removeFirst()}</td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#poll poll()}</td>
+<td>{@link #pollFirst pollFirst()}</td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#element element()}</td>
+<td>{@link #getFirst getFirst()}</td>
+  </tr>
+  <tr>
+<td>{@link java.util.Queue#peek peek()}</td>
+<td>{@link #peek peekFirst()}</td>
+  </tr>
+ </table>
+
+<p>双端队列也可用作 LIFO（后进先出）堆栈。应优先使用此接口而不是遗留 {@link Stack} 类。在将双端队列用作堆栈时，元素被推入双端队列的开头并从双端队列开头弹出。堆栈方法完全等效于 <tt>Deque</tt> 方法，如下表所示：
+
+ <p>
+ <table BORDER CELLPADDING=3 CELLSPACING=1>
+  <tr>
+<td ALIGN=CENTER> <b>堆栈方法</b></td>
+<td ALIGN=CENTER> <b>等效 <tt>Deque</tt> 方法</b></td>
+  </tr>
+  <tr>
+<td>{@link #push push(e)}</td>
+<td>{@link #addFirst addFirst(e)}</td>
+  </tr>
+  <tr>
+<td>{@link #pop pop()}</td>
+<td>{@link #removeFirst removeFirst()}</td>
+  </tr>
+  <tr>
+<td>{@link #peek peek()}</td>
+<td>{@link #peekFirst peekFirst()}</td>
+  </tr>
+ </table>
+
+<p>注意，在将双端队列用作队列或堆栈时，{@link #peek peek} 方法同样正常工作；无论哪种情况下，都从双端队列的开头抽取元素。
+
+<p>此接口提供了两种移除内部元素的方法：{@link #removeFirstOccurrence removeFirstOccurrence} 和 {@link #removeLastOccurrence removeLastOccurrence}。
+
+<p>与 {@link List} 接口不同，此接口不支持通过索引访问元素。
+
+<p>虽然 <tt>Deque</tt> 实现没有严格要求禁止插入 null 元素，但建议最好这样做。建议任何事实上允许 null 元素的 <tt>Deque</tt> 实现用户最好<i>不</i> 要利用插入 null 的功能。这是因为各种方法会将 <tt>null</tt> 用作特殊的返回值来指示双端队列为空。
+
+<p><tt>Deque</tt> 实现通常不定义基于元素的 <tt>equals</tt> 和 <tt>hashCode</tt> 方法，而是从 <tt>Object</tt> 类继承基于身份的 <tt>equals</tt> 和 <tt>hashCode</tt> 方法。
+
+<p>此接口是 <a
+ href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author Doug Lea
+@author Josh Bloch
+@since  1.6
+@param <E> 此 collection 中保存的元素类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Deque.addFirst(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素插入此双端队列的开头（如果可以直接这样做而不违反容量限制）。在使用有容量限制的双端队列时，通常首选 {@link #offerFirst} 方法。
+
+@param e 要添加的元素
+@throws IllegalStateException 如果此时由于容量限制而无法添加元素
+@throws ClassCastException 如果指定元素的类不允许将它添加此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Deque.addLast(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素插入此双端队列的末尾（如果可以直接这样做而不违反容量限制）。在使用有容量限制的双端队列时，通常首选 {@link #offerLast} 方法。
+
+<p>此方法等效于 {@link #add}。
+
+@param e 要添加的元素
+@throws IllegalStateException 如果此时由于容量限制而无法添加元素
+@throws ClassCastException 如果指定元素的类不允许将它添加此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.offerFirst(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在不违反容量限制的情况下，将指定的元素插入此双端队列的开头。当使用有容量限制的双端队列时，此方法通常优于 {@link #addFirst} 方法，后者可能无法插入元素，而只是抛出一个异常。
+
+@param e 要添加的元素
+@return 如果元素被添加到此双端队列，则返回 <tt>true</tt>，否则返回 <tt>false</tt>
+@throws ClassCastException 如果指定元素的类不允许将它添加到此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.offerLast(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在不违反容量限制的情况下，将指定的元素插入此双端队列的末尾。当使用有容量限制的双端队列时，此方法通常优于 {@link #addLast} 方法，后者可能无法插入元素，而只是抛出一个异常。
+
+@param e 要添加的元素
+@return 如果元素被添加到此双端队列，则返回 <tt>true</tt>，否则返回 <tt>false</tt>
+@throws ClassCastException 如果指定元素的类不允许将它添加到此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.removeFirst()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列第一个元素。此方法与 {@link #pollFirst pollFirst} 唯一的不同在于：如果此双端队列为空，它将抛出一个异常。
+
+@return 此双端队列的头部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.removeLast()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列的最后一个元素。此方法与 {@link #pollLast pollLast} 唯一的不同在于：如果此双端队列为空，它将抛出一个异常。
+
+@return 此双端队列的尾部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.pollFirst()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列的第一个元素；如果此双端队列为空，则返回 <tt>null</tt>。
+
+@return 此双端队列的头部；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.pollLast()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列的最后一个元素；如果此双端队列为空，则返回 <tt>null</tt>。
+
+@return 此双端队列的尾部；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.getFirst()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列的第一个元素。
+
+此方法与 {@link #peekFirst peekFirst} 唯一的不同在于：如果此双端队列为空，它将抛出一个异常。
+
+@return 此双端队列的头部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.getLast()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列的最后一个元素。此方法与 {@link #peekLast peekLast} 唯一的不同在于：如果此双端队列为空，它将抛出一个异常。
+
+@return 此双端队列的尾部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.peekFirst()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列的第一个元素；如果此双端队列为空，则返回 <tt>null</tt>。
+
+@return 此双端队列的头部；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.peekLast()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列的最后一个元素；如果此双端队列为空，则返回 <tt>null</tt>。
+
+@return 此双端队列的尾部；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.removeFirstOccurrence(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此双端队列移除第一次出现的指定元素。如果此双端队列不包含该元素，则不作更改。更确切地讲，移除第一个满足 <tt>(o==null&#xA0;?&#xA0;e==null&#xA0;:&#xA0;o.equals(e))</tt> 的元素 <tt>e</tt>（如果存在这样的元素）。如果此双端队列包含指定的元素（或者此双端队列由于调用而发生了更改），则返回 <tt>true</tt>。
+
+@param o 要从此双端队列移除的元素（如果存在）
+@return 如果由于此调用而移除了一个元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定元素的类与此双端队列不兼容（可选）
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.removeLastOccurrence(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此双端队列移除最后一次出现的指定元素。如果此双端队列不包含该元素，则不作更改。更确切地讲，移除最后一个满足 <tt>(o==null&#xA0;?&#xA0;e==null&#xA0;:&#xA0;o.equals(e))</tt> 的元素 <tt>e</tt>（如果存在这样的元素）。如果此双端队列包含指定的元素（或者此双端队列由于调用而发生了更改），则返回 <tt>true</tt>。
+
+@param o 要从此双端队列移除的元素（如果存在）
+@return 如果由于此调用而移除了一个元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定元素的类与此双端队列不兼容（可选）
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素插入此双端队列所表示的队列（换句话说，此双端队列的尾部），如果可以直接这样做而不违反容量限制的话；如果成功，则返回 <tt>true</tt>，如果当前没有可用空间，则抛出 <tt>IllegalStateException</tt>。当使用有容量限制的双端队列时，通常首选 {@link #offer(Object) offer}。
+
+<p>此方法等效于 {@link #addLast}。
+
+@param e 要添加的元素
+@return <tt>true</tt> （根据 {@link Collection#add} 的规定）
+@throws IllegalStateException 如果此时由于容量限制而无法添加元素
+@throws ClassCastException 如果指定元素的类不允许将它添加到此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不支持 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.offer(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素插入此双端队列所表示的队列（换句话说，此双端队列的尾部），如果可以直接这样做而不违反容量限制的话；如果成功，则返回 <tt>true</tt>，如果当前没有可用的空间，则返回 <tt>false</tt>。当使用有容量限制的双端队列时，此方法通常优于 {@link #add} 方法，后者可能无法插入元素，而只是抛出一个异常。
+
+<p>此方法等效于 {@link #offerLast}。
+
+@param e 要添加的元素
+@return 如果元素被添加到此双端队列，则返回 <tt>true</tt>，否则返回 <tt>false</tt>
+@throws ClassCastException 如果指定元素的类不允许将它添加到此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.remove()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列所表示的队列的头部（换句话说，此双端队列的第一个元素）。此方法与 {@link #poll poll} 的唯一不同在于：如果此双端队列为空，它将抛出一个异常。
+
+<p>此方法等效于 {@link #removeFirst()}。
+
+@return 此双端队列表示的队列的头部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.poll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此双端队列所表示的队列的头部（换句话说，此双端队列的第一个元素）；如果此双端队列为空，则返回 <tt>null</tt>。
+
+<p>此方法等效于 {@link #pollFirst()}。
+
+@return 此双端队列的第一个元素；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.element()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列所表示的队列的头部（换句话说，此双端队列的第一个元素）。此方法与 {@link #peek peek} 唯一的不同在于：如果此双端队列为空，它将抛出一个异常。
+
+<p>此方法等效于 {@link #getFirst()}。
+
+@return 此双端队列表示的队列的头部
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.peek()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取，但不移除此双端队列所表示的队列的头部（换句话说，此双端队列的第一个元素）；如果此双端队列为空，则返回 <tt>null</tt>。
+
+<p>此方法等效于 {@link #peekFirst()}。
+
+@return 此双端队列所表示的队列的头；如果此双端队列为空，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Deque.push(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个元素推入此双端队列所表示的堆栈（换句话说，此双端队列的头部），如果可以直接这样做而不违反容量限制的话；如果成功，则返回 <tt>true</tt>，如果当前没有可用空间，则抛出 <tt>IllegalStateException</tt>。
+
+<p>此方法等效于 {@link #addFirst}。
+
+@param e 要推入的元素
+@throws IllegalStateException 如果此时由于容量限制而无法添加元素
+@throws ClassCastException 如果指定元素的类不允许将它添加此双端队列
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素
+@throws IllegalArgumentException 如果指定元素的某些属性不允许将它添加到此双端队列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.Deque.pop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此双端队列所表示的堆栈中弹出一个元素。换句话说，移除并返回此双端队列第一个元素。
+
+<p>此方法等效于 {@link #removeFirst()}。
+
+@return 此双端队列开头的元素（它是此双端队列所表示的堆栈的顶部）
+@throws NoSuchElementException 如果此双端队列为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此双端队列中移除第一次出现的指定元素。如果此双端队列不包含该元素，则不作更改。更确切地讲，移除第一个满足 <tt>(o==null&#xA0;?&#xA0;e==null&#xA0;:&#xA0;o.equals(e))</tt> 的元素 <tt>e</tt>（如果存在这样的元素）。如果此双端队列包含指定的元素（或者此双端队列由于调用而发生了更改），则返回 <tt>true</tt>。
+
+<p>此方法等效于 {@link #removeFirstOccurrence}。
+
+@param o 要从此双端队列移除的元素（如果存在）
+@return 如果由于此调用而移除了一个元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定元素的类与此双端队列不兼容（可选）
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Deque.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此双端队列包含指定元素，则返回 <tt>true</tt>。更确切地讲，当且仅当此双端队列至少包含一个满足 <tt>(o==null&#xA0;?&#xA0;e==null&#xA0;:&#xA0;o.equals(e))</tt> 的元素 <tt>e</tt> 时，返回 <tt>true</tt>。
+
+@param o 要测试其是否存在于此双端队列的元素
+@return 如果此双端队列包含指定元素，则返回 <tt>true</tt>
+@throws ClassCastException 如果指定的元素类型与此双端队列不兼容（可选）
+@throws NullPointerException 如果指定元素为 null，并且此双端队列不允许 null 元素（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Deque.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此双端队列的元素数。
+
+@return 此双端队列的元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.Deque.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以恰当顺序在此双端队列的元素上进行迭代的迭代器。元素将按从第一个（头部）到最后一个（尾部）的顺序返回。
+
+@return 按恰当顺序在此双端队列的元素上进行迭代的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.Deque.descendingIterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以逆向顺序在此双端队列的元素上进行迭代的迭代器。元素将按从最后一个（尾部）到第一个（头部）的顺序返回。
+
+@return 以逆向顺序在此双端队列中的元素上进行迭代的迭代器
+
+<!-- END DATA -->

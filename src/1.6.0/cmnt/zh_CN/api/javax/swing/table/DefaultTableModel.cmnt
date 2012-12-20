@@ -1,0 +1,396 @@
+<!-- BEGIN KEY -->
+public class javax.swing.table.DefaultTableModel extends javax.swing.table.AbstractTableModel implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这是 <code>TableModel</code> 的一个实现，它使用一个 <code>Vector</code> 来存储单元格的值对象，该 <code>Vector</code> 由多个 <code>Vector</code> 组成。
+<p>
+<strong>警告：</strong> <code>DefaultTableModel</code> 返回 <code>Object</code> 的一个列类。<code>DefaultTableModel</code> 与 <code>TableRowSorter</code> 一起使用时将导致大量使用 <code>toString</code>，这对于非 <code>String</code> 数据类型代价昂贵。如果与 <code>TableRowSorter</code> 一起使用 <code>DefaultTableModel</code>，建议最好重写 <code>getColumnClass</code> 以返回适当的类型。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行远程方法调用（Remote Method Invocation，RMI）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.39 12/19/03
+@author Philip Milne
+
+@see TableModel
+@see #getDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector javax.swing.table.DefaultTableModel.dataVector
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Vector</code>，由包含多个 <code>Object</code> 值的 <code>Vector</code> 组成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Vector javax.swing.table.DefaultTableModel.columnIdentifiers
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Vector</code>，由多个列标识符组成。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造默认的 <code>DefaultTableModel</code>，它是一个零列零行的表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel(int rowCount, int columnCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有 <code>rowCount</code> 行和 <code>columnCount</code> 列的 <code>null</code> 对象值的 <code>DefaultTableModel</code>。
+
+@param rowCount 表的行数
+@param columnCount 表的列数
+
+@see #setValueAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel(java.util.Vector columnNames, int rowCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>DefaultTableModel</code>，它的列数与 <code>columnNames</code> 中元素的数量相同，并具有 <code>rowCount</code> 行 <code>null</code> 对象值。每列的名称都取自 <code>columnNames</code> 向量。
+
+@param columnNames  包含新的列名称的 <code>vector</code>；如果该参数为 <code>null</code>，则该模型没有列
+@param rowCount 表的行数
+@see #setDataVector
+@see #setValueAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel(java.lang.Object[] columnNames, int rowCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>DefaultTableModel</code>，它的列数与 <code>columnNames</code> 中元素的数量相同，并具有 <code>rowCount</code> 行 <code>null</code> 对象值。每列的名称都取自 <code>columnNames</code> 数组。
+
+@param columnNames   包含新的列名称的 <code>array</code>；如果该参数为 <code>null</code>，则该模型没有列
+@param rowCount  表的行数
+@see #setDataVector
+@see #setValueAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel(java.util.Vector data, java.util.Vector columnNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>DefaultTableModel</code>，并通过将 <code>data</code> 和 <code>columnNames</code> 传递到 <code>setDataVector</code> 方法来初始化该表。
+
+@param data 表的数据，它是一个 <code>Vector</code>，由包含多个 <code>Object</code> 值的 <code>Vector</code> 组成 
+@param columnNames 包含新的列名称的 <code>vector</code> 
+@see #getDataVector
+@see #setDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.table.DefaultTableModel(java.lang.Object[][] data, java.lang.Object[] columnNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>DefaultTableModel</code>，并通过将 <code>data</code> 和 <code>columnNames</code> 传递到 <code>setDataVector</code> 方法来初始化该表。<code>Object[][]</code> 数组中的第一个索引是行索引，第二个索引是列索引。
+
+@param data 表的数据
+@param columnNames 列的名称
+@see #getDataVector
+@see #setDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector javax.swing.table.DefaultTableModel.getDataVector()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由多个包含表数据值的 <code>Vector</code> 组成的 <code>Vector</code>。外层 vector 中包含的每个 vector 都是一行的值。换句话说，要获得第 1 行、第 5 列的单元格，可以使用以下代码：<p>
+
+  <code>((Vector)getDataVector().elementAt(1)).elementAt(5);</code><p>
+
+@return  vector，由包含表数据值的多个 vector 组成  
+
+@see #newDataAvailable
+@see #newRowsAdded
+@see #setDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setDataVector(java.util.Vector dataVector, java.util.Vector columnIdentifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用新的行 <code>Vector</code>（<code>dataVector</code>）替换当前的 <code>dataVector</code> 实例变量。每一行都用 <code>dataVector</code> 表示，<code>dataVector</code> 是由多个 <code>Object</code> 值组成的 <code>Vector</code>。<code>columnIdentifiers</code> 是新列的名称。<code>columnIdentifiers</code> 中的第一个名称映射为 <code>dataVector</code> 中第 0 列。将 <code>dataVector</code> 中每一行调整为与 <code>columnIdentifiers</code> 中的列数匹配，这通过在 <code>Vector</code> 太长时截短它、在 <code>Vector</code> 太短时添加 <code>null</code> 值来实现。 
+<p>注意，为 <code>dataVector</code> 传入 <code>null</code> 值会导致未指定的行为，可能抛出异常。
+
+@param   dataVector 新的数据向量
+@param   columnIdentifiers 列的名称
+@see #getDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setDataVector(java.lang.Object[][] dataVector, java.lang.Object[] columnIdentifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用数组 <code>dataVector</code> 中的值替换 <code>dataVector</code> 实例变量中的值。<code>Object[][]</code> 数组中第一个索引是行索引，第二个索引是列索引。<code>columnIdentifiers</code> 是新列名称。
+
+@param dataVector		新的数据向量
+@param columnIdentifiers	列的名称
+@see #setDataVector(Vector, Vector)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.newDataAvailable(TableModelEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <code>fireTableChanged</code>。
+
+@param event 更改事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.newRowsAdded(TableModelEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确保新行的列数正确。这是通过使用 <code>Vector</code> 中的 <code>setSize</code> 方法来完成的，该方法在 Vector 太长时将其截短，在 Vector 太短时追加 <code>null</code>。此方法还向所有侦听器发送 <code>tableChanged</code> 通知消息。
+
+@param e 此 <code>TableModelEvent</code> 描述添加行的位置。如果为 <code>null</code>，则此方法假定所有行都是新添加的
+@see #getDataVector
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.rowsRemoved(TableModelEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+等效于 <code>fireTableChanged</code>。
+
+@param event 更改事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setNumRows(int rowCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Java 2 platform v1.3 开始已过时。请使用 <code>setRowCount</code> 替代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setRowCount(int rowCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型中的行数。如果新的大小大于当前大小，则将新行添加到该模型的结尾，如果新的大小小于当前大小，则丢弃索引 <code>rowCount</code> 处及其之后的所有行。 <p>
+
+@see #setColumnCount
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.addRow(java.util.Vector rowData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一行到模型的结尾。如果未指定 <code>rowData</code>，则新行将包含 <code>null</code> 值。将生成添加行的通知。
+
+@param   rowData  要添加的行数据（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.addRow(java.lang.Object[] rowData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一行到模型的结尾。如果未指定 <code>rowData</code>，则新行将包含 <code>null</code> 值。将生成添加行的通知。
+
+@param   rowData  要添加的行数据（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.insertRow(int row, java.util.Vector rowData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在模型中的 <code>row</code> 位置插入一行。如果未指定 <code>rowData</code>，则新行将包含 <code>null</code> 值。将生成添加行的通知。
+
+@param   row   要插入的行的行索引
+@param   rowData  要添加的行数据（可选）
+@exception  ArrayIndexOutOfBoundsException  如果 row 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.insertRow(int row, java.lang.Object[] rowData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在模型中的 <code>row</code> 位置插入一行。如果未指定 <code>rowData</code>，则新行将包含 <code>null</code> 值。将生成添加行的通知。
+
+@param   row  要插入的行的行索引
+@param   rowData 要添加的行数据（可选）
+@exception  ArrayIndexOutOfBoundsException  如果 row 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.moveRow(int start, int end, int to)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>start</code>（包含）到 <code>end</code>（包含）范围中的一行或多行移到模型中的 <code>to</code> 位置。进行移动操作后，原先索引为 <code>start</code> 的行的索引将变为 <code>to</code>。此方法将向所有侦听器发送 <code>tableChanged</code> 通知消息。 <p>
+
+  <pre>
+以下是移动操作的示例：
+  <p>
+  1. moveRow(1,3,5);
+          a|B|C|D|e|f|g|h|i|j|k   - 移动前
+          a|e|f|g|h|B|C|D|i|j|k   - 移动后
+  <p>
+  2. moveRow(6,7,1);
+          a|b|c|d|e|f|G|H|i|j|k   - 移动前
+          a|G|H|b|c|d|e|f|i|j|k   - 移动后
+  <p> 
+  </pre>
+
+@param   start 要移动的起始行索引
+@param   end 要移动的结束行索引
+@param   to 行要移动到的目标位置
+@exception  ArrayIndexOutOfBoundsException  如果任意元素将被移出该表的范围
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.removeRow(int row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除模型中 <code>row</code> 位置的行。向所有侦听器发送移除行的通知。
+
+@param   row      要移除的行的行索引
+@exception  ArrayIndexOutOfBoundsException 如果 row 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setColumnIdentifiers(java.util.Vector columnIdentifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替换模型中的列标识符。如果 <code>newIdentifier</code> 数大于当前的列数，则将新列添加到模型中每一行的结尾。如果 <code>newIdentifier</code> 数小于当前的列数，则丢弃每行结尾处所有多余的列。 <p>
+
+@param   columnIdentifiers  列标识符的向量。如果为 <code>null</code>，则将该模型设置为具有零列
+@see #setNumRows
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setColumnIdentifiers(java.lang.Object[] newIdentifiers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+替换模型中的列标识符。如果 <code>newIdentifier</code> 数大于当前的列数，则将新列添加到模型中每一行的结尾。如果 <code>newIdentifier</code> 数小于当前的列数，则丢弃每行结尾处所有多余的列。 <p>
+
+@param   newIdentifiers  列标识符的数组。如果为 <code>null</code>，则将该模型设置为具有零列
+@see #setNumRows
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setColumnCount(int columnCount)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模型中的列数。如果新大小大于当前大小，则将新列添加到模型结尾并使其具有 <code>null</code> 单元格值。如果新大小小于当前大小，则将丢弃索引 <code>columnCount</code> 处及其之后的所有列。 
+
+@param columnCount  模型中新的列数
+
+@see #setColumnCount
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.addColumn(Object columnName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一列添加到模型中。新列的标识符将为 <code>columnName</code>，它可以为 null。此方法将向所有侦听器发送 <code>tableChanged</code> 通知消息。此方法覆盖了 <code>addColumn(Object, Vector)</code>，它使用 <code>null</code> 作为数据向量。
+
+@param   columnName 要添加的列的标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.addColumn(Object columnName, java.util.Vector columnData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一列添加到模型中。新列的标识符将为 <code>columnName</code>，它可以为 null。<code>columnData</code> 是列的可选数据向量。如果它为 <code>null</code>，则使用 <code>null</code> 值填充该列。否则，将新数据添加到模型中，第一个元素将添加到第 0 行，依此类推。此方法将向所有侦听器发送 <code>tableChanged</code> 通知消息。
+
+@param   columnName 要添加的列的标识符
+@param   columnData   要添加的列的数据（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.addColumn(Object columnName, java.lang.Object[] columnData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一列添加到模型中。新列的标识符将为 <code>columnName</code>。<code>columnData</code> 是该列的可选数据数组。如果它为 <code>null</code>，则使用 <code>null</code> 值填充该列。否则，将新数据添加到模型中，第一个元素添加到第 0 行，依此类推。此方法将向所有侦听器发送 <code>tableChanged</code> 通知消息。
+
+@see #addColumn(Object, Vector)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.table.DefaultTableModel.getRowCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此数据表中的行数。
+@return 该模型中的行数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.table.DefaultTableModel.getColumnCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此数据表中的列数。
+@return 该模型中的列数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.table.DefaultTableModel.getColumnName(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列名称。
+
+@return 此列的名称，它使用 <code>columnIdentifiers</code> 中适当成员的字符串值。如果 <code>columnIdentifiers</code> 不具有此索引的条目，则返回由超类提供的默认名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.table.DefaultTableModel.isCellEditable(int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+无论参数值是多少都返回 true。
+
+@param   row 要查询其值的行
+@param column  要查询其值的列
+@return true
+@see #setValueAt
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.table.DefaultTableModel.getValueAt(int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>row</code> 和 <code>column</code> 处单元格的属性值。
+
+@param   row 要查询其值的行
+@param   column 要查询其值的列
+@return 指定单元格处的值 Object
+@exception  ArrayIndexOutOfBoundsException  如果给定了无效的 row 或 column
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.DefaultTableModel.setValueAt(Object aValue, int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>column</code> 和 <code>row</code> 处单元格的对象值。<code>aValue</code> 是新值。此方法将生成一个 <code>tableChanged</code> 通知。
+
+@param   aValue  新值，可以为 null
+@param   row  要更改其值的行
+@param   column 要更改其值的列
+@exception  ArrayIndexOutOfBoundsException  如果给定了无效的 row 或 column
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static java.util.Vector javax.swing.table.DefaultTableModel.convertToVector(java.lang.Object[] anArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回一个包含与该数组相同的对象的向量。
+@param anArray  要转换的数组
+@return  新的向量；如果 <code>anArray</code> 为 <code>null</code>，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static java.util.Vector javax.swing.table.DefaultTableModel.convertToVector(java.lang.Object[][] anArray)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回一个 vector，该 vector 由包含与该数组相同的对象的多个 vector 组成。
+@param anArray  要转换的二维数组
+@return 由多个 vector 组成的新 vector；如果 <code>anArray</code> 为 <code>null</code>，则返回 <code>null</code>
+
+<!-- END DATA -->

@@ -1,0 +1,158 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.IdentityScope extends java.security.Identity
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>此类表示身份的作用域。它本身也是 Identity，因此有名称和作用域。它也可以选择有一个公钥和关联的证书。
+
+<p>IdentityScope 可以包括各种类型的 Identity 对象，包括 Signer。所有类型的 Identity 对象都可以使用相同的方法获取、添加和删除。注意，对于在各种类型的 Identity 上的各种操作，不同类型的身份作用域将应用不同的策略，这是可能的，实际上也期望如此。
+
+<p>密钥和身份是一对一的映射关系，在每个作用域内一个密钥只能有一个副本。例如，假定 <b>Acme Software, Inc</b> 是用户已知的软件发行人。假定它是一个 Identity，也就是说，它有公钥和关联的证书集合。它在某个作用域内使用名称 &quot;Acme Software&quot; 命名。该作用域内没有其他指定 Identity 具有相同的公钥。当然，也没有相同的名称。
+
+@see Identity
+@see Signer
+@see Principal
+@see Key
+
+@version 1.54 04/05/18
+@author Benjamin Renaud
+
+@deprecated 此类不再被使用。其功能已经由 <code>java.security.KeyStore</code>、<code>java.security.cert</code> 包和 <code>java.security.Principal</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.IdentityScope()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此构造方法只用于序列化，不能被子类使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.IdentityScope(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定名称的新身份作用域。
+
+@param name 作用域名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.IdentityScope(String name, IdentityScope scope) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有指定名称和作用域的新身份作用域。
+ 
+@param name 作用域名称。
+@param scope 新身份作用域的作用域。
+ 
+@exception KeyManagementException 在此作用域内已经存在一个具有相同名称的 Identity。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.IdentityScope java.security.IdentityScope.getSystemScope()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回系统的身份作用域。
+ 
+@return 系统的身份作用域。
+ 
+@see #setSystemScope
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static void java.security.IdentityScope.setSystemScope(IdentityScope scope)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置系统的身份作用域。
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;setSystemScope&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以设置身份作用域。
+ 
+@param scope 要设置的作用域。
+ 
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许设置身份作用域。
+ 
+@see #getSystemScope
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.security.IdentityScope.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此身份作用域内身份的数目。
+ 
+@return 此身份作用域内身份的数目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.Identity java.security.IdentityScope.getIdentity(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此作用域内具有指定名称的身份（如果有的话）。
+ 
+@param name 要获取的身份的名称。
+ 
+@return 名称为 <code>name</code> 的身份，如果在此作用域内没有名称为 <code>name</code> 的身份，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Identity java.security.IdentityScope.getIdentity(Principal principal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取名称与指定的主体相同的身份。（注：Identity 实现 Principal。）
+
+@param principal 相应于要获取的身份的主体。
+ 
+@return 名称与指定的主体相同的身份，如果在此作用域内没有具有该名称的身份，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.Identity java.security.IdentityScope.getIdentity(PublicKey key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取具有指定公钥的身份。
+
+@param key 要返回的身份的公钥。
+
+@return 具有给定密钥的身份，如果此作用域内没有具有该密钥的身份，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.IdentityScope.addIdentity(Identity identity) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向此身份作用域添加一个身份。
+
+@param identity 要添加的身份。
+
+@exception KeyManagementException 如果身份是无效的、出现了名称冲突、另一个身份与要添加的身份有相同的公钥，或者出现其他异常
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.IdentityScope.removeIdentity(Identity identity) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此身份作用作用域移除一个身份。
+
+@param identity 要移除的身份。
+
+@exception KeyManagementException 如果身份丢失或出现其他的异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Enumeration<java.security.Identity> java.security.IdentityScope.identities()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此身份作用域内所有身份的枚举。
+ 
+@return 此身份作用域内所有身份的枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.IdentityScope.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此身份作用域的字符串表示形式，包括其名称、作用域名称和此身份作用域中身份的数目。
+
+@return  此身份作用域的字符串表示形式。
+
+<!-- END DATA -->

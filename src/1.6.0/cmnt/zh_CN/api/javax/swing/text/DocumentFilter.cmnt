@@ -1,0 +1,53 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.DocumentFilter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DocumentFilter</code>，顾名思义，它是 <code>Document</code> 改变方法的一个过滤器。修改包含 <code>DocumentFilter</code> 的 <code>Document</code> 时（通过 <code>insert</code> 或 <code>remove</code>），它将适当的方法调用转发给 <code>DocumentFilter</code>。该默认实现允许进行修改。通过有条件地调用超类方法，或在传入的 <code>FilterBypass</code> 上调用必要的方法，子类可以过滤修改。子类不应回调 Document 进行修改，而应调用超类或 <code>FilterBypass</code>。
+ <p>
+在 <code>DocumentFilter</code> 上调用 <code>remove</code> 或 <code>insertString</code> 时，<code>DocumentFilter</code> 可能多次回调 <code>FilterBypass</code>，或针对不同的区域，但它不应在从 <code>remove</code> 或 <code>insertString</code> 方法返回后回调 <code>FilterBypass</code>。
+
+@see javax.swing.text.Document
+
+@version 1.6 12/19/03
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DocumentFilter.remove(DocumentFilter.FilterBypass fb, int offset, int length) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定 Document 中的指定区域之前调用。希望有条件地允许移除的子类应重写此方法，并只在必要的时候调用超类实现，或者根据需要直接调用 <code>FilterBypass</code>。
+
+@param fb 可用于改动 Document 的 FilterBypass
+@param offset 起始位置处的偏移量，该值 &gt;= 0
+@param length 要移除的字符数，该值 &gt;= 0
+@exception BadLocationException  移除范围的有些部分不是文档的有效部分。异常中的位置为遇到的第一个损坏位置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DocumentFilter.insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将文本插入指定的 Document 之前调用。希望有条件地允许插入的子类应重写此方法，并只在必要的时候调用超类实现，或者直接调用 FilterBypass。
+
+@param fb  可用于改动 Document 的 FilterBypass
+@param offset  要插入内容的偏移量，该值 &gt;= 0。跟踪给定的位置或其后位置的更改的所有位置都将移动。
+@param string 要插入的字符串
+@param attr 要与插入的内容关联的属性。如果没有属性，它可能为 null。
+@exception BadLocationException  给定的插入位置不是文档中的有效位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DocumentFilter.replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在替换指定的 Document 中的文本区域之前调用。希望有条件地允许替换的子类应重写此方法，并只在必要的时候调用超类实现，或者直接调用 FilterBypass。
+
+@param fb 可用于改动 Document 的 FilterBypass
+@param offset Document 中的 Location
+@param length 要删除的文本的长度
+@param text 要插入的文本，null 指示没有要插入的文本
+@param attrs 指示插入的文本的属性的 AttributeSet，null 也为合法。
+@exception BadLocationException  给定的插入位置不是文档中的有效位置
+
+<!-- END DATA -->

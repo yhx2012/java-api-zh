@@ -1,0 +1,43 @@
+<!-- BEGIN KEY -->
+public interface java.nio.channels.ReadableByteChannel extends java.nio.channels.Channel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可读取字节的通道。
+
+<p> 在任意给定时刻，一个可读取通道上只能进行一个读取操作。如果某个线程在通道上发起读取操作，那么在第一个操作完成之前，将阻塞其他所有试图发起另一个读取操作的线程。其他种类的 I/O 操作是否继续与读取操作并发执行取决于该通道的类型。 </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.16, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.nio.channels.ReadableByteChannel.read(ByteBuffer dst) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道中读入给定的缓冲区。
+
+<p> 尝试最多从该通道中读取 <i>r</i> 个字节，其中 <i>r</i> 是调用此方法时缓冲区中剩余的字节数，即 <tt>dst.remaining()</tt>。
+
+<p> 假定读取的字节序列长度为 <i>n</i>，其中 <tt>0</tt>&nbsp;<tt>&lt;=</tt>&nbsp;<i>n</i>&nbsp;<tt>&lt;=</tt>&nbsp;<i>r</i>。此字节序列将被传输到缓冲区中，序列中的第一个字节位于索引 <i>p</i> 处，最后一个字节则位于索引 <i>p</i>&nbsp;<tt>+</tt>&nbsp;<i>n</i>&nbsp;<tt>-</tt>&nbsp;<tt>1</tt> 处，其中 <i>p</i> 是调用此方法时缓冲区的位置。返回时，该缓冲区的位置将等于 <i>p</i>&nbsp;<tt>+</tt>&nbsp;<i>n</i>；其限制不会更改。
+
+<p> 读取操作可能不填充缓冲区，实际上它可能根本不读取任何字节。是否如此执行取决于通道的性质和状态。例如，处于非阻塞模式的套接字通道只能从该套接字的输入缓冲区中读取立即可用的字节；类似地，文件通道只能读取文件中剩余的字节。但是可以保证，如果某个通道处于阻塞模式，并且缓冲区中至少剩余一个字节，则在读取至少一个字节之前将阻塞此方法。
+
+<p> 可在任意时间调用此方法。但是如果另一个线程已经在此通道上发起了一个读取操作，则在该操作完成前此方法的调用被阻塞。 </p>
+
+@param dst 要向其中传输字节的缓冲区
+
+@return 读取的字节数，可能为零，如果该通道已到达流的末尾，则返回 <tt>-1</tt>
+
+@throws  NonReadableChannelException 如果不允许从此通道进行读取操作
+
+@throws ClosedChannelException 如果此通道已关闭
+
+@throws AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->

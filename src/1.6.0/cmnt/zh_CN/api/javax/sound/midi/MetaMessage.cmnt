@@ -1,0 +1,79 @@
+<!-- BEGIN KEY -->
+public class javax.sound.midi.MetaMessage extends javax.sound.midi.MidiMessage
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MetaMessage</code> 是一个 <code>{@link MidiMessage}</code>，它对于合成器没有任何意义，但可存储在一个 MIDI 文件中然后由 sequencer 程序解释。（请参阅 <code>MidiMessage</code> 类描述中的论述。）Standard MIDI Files 规范定义了各种元事件类型，例如序列号、歌词、提示点和设置的速度。还有针对类似歌词、版权、速度指示、时间和主要签名、制造者等信息的元事件。有关更多的信息，请参见 Standard MIDI Files 1.0 规范，它是由 MIDI 制造商协会 (<a href = http://www.midi.org>http://www.midi.org</a>) 发布的 Complete MIDI 1.0 Detailed Specification 的一部分。
+
+ <p>
+使用 MIDI wire 协议传输数据时，<code>{@link ShortMessage}</code> 带状态值 <code>0xFF</code> 表示系统重置消息。在 MIDI 文件中，此相同的状态值表示 <code>MetaMessage</code>。各个元消息类型通过状态字节 <code>0xFF</code> 后面的第一个字节进行区分。后续的字节是数据字节。与系统独占消息相同，其中还有任意个数据字节，具体取决于 <code>MetaMessage</code> 的类型。
+
+@see MetaEventListener
+
+@version 1.25, 05/11/17
+@author David Rivas
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sound.midi.MetaMessage.META
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MetaMessage</code> 的状态字节（0xFF 或 255），供在 MIDI 文件中使用。它与 SYSTEM_RESET 具有相同的值，用于实时 &quot;MIDI wire&quot; 协议中。
+@see MidiMessage#getStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.MetaMessage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>MetaMessage</code>。在此不设置消息的内容；可随后使用 {@link #setMessage(int, byte[], int) setMessage} 对其进行设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.midi.MetaMessage(byte[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>MetaMessage</code>。
+@param data 包含完整消息的 byte 数组。使用 <code>setMessage</code> 方法可更改消息数据。
+@see #setMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MetaMessage.setMessage(int type, byte[] data, int length) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 <code>MetaMessage</code> 设置消息参数。由于元消息只允许有一个状态字节值 <code>0xFF</code>，因此在这里不需要对其进行指定。对于所有的元消息，调用 <code>{@link MidiMessage#getStatus getStatus}</code> 都返回 <code>0xFF</code>。
+ <p>
+<code>type</code> 参数应该是一个 <code>MetaMessage</code> 中的状态字节后的 byte 有效值。<code>data</code> 参数应包含 <code>MetaMessage</code> 的所有后续字节。换句话说，不将指定 <code>MetaMessage</code> 类型的字节认为是数据字节。
+
+@param type		元消息类型（不超过 128）
+@param data		MIDI 消息中的数据字节
+@param length	<code>data</code> byte 数组中的字节数
+@throws			<code>InvalidMidiDataException</code> 如果参数值未指定有效的 MIDI 元消息
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MetaMessage.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 <code>MetaMessage</code> 的类型。
+@return 一个表示 <code>MetaMessage</code> 类型的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.sound.midi.MetaMessage.getData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得元消息数据的副本。返回的 byte 数组不包括状态字节或消息长度数据。元消息的数据长度就是数组的长度。注意，整个消息的长度包括了状态字节和元消息类型字节，因此可能比返回的数组更长。
+@return 包含元消息数据的数组。
+@see MidiMessage#getLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.sound.midi.MetaMessage.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个与此对象具有相同类和相同内容的新对象。
+@return 此实例的一个副本。
+
+<!-- END DATA -->

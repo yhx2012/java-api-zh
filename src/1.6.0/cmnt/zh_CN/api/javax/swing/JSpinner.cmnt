@@ -1,0 +1,307 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JSpinner extends javax.swing.JComponent implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+让用户从一个有序序列中选择一个数字或者一个对象值的单行输入字段。Spinner 通常提供一对带小箭头的按钮以便逐步遍历序列元素。键盘的向上/向下方向键也可循环遍历元素。也允许用户在 spinner 中直接输入合法值。尽管组合框提供了相似的功能，但因为 spinner 不要求可隐藏重要数据的下拉列表，所以有时它也成为首要选择。
+ <p>
+<code>JSpinner</code> 序列的值由其 <code>SpinnerModel</code> 定义。此 <code>model</code> 可指定为构造方法的参数，并且可通过 <code>model</code> 属性进行更改。提供了针对某些常见类型的 <code>SpinnerModel</code> 类：<code>SpinnerListModel</code>、<code>SpinnerNumberModel</code> 和 <code>SpinnerDateModel</code>。
+ <p>
+<code>JSpinner</code> 具有一个负责显示和潜在地更改当前元素或者模型 <i>value</i> 的惟一子组件，被称为 <code>editor</code>。此编辑器由 <code>JSpinner</code> 的构造方法创建，并且可通过 <code>editor</code> 属性进行更改。<code>JSpinner</code> 的编辑器通过侦听 <code>ChangeEvent</code> 而与模型保持同步。如果用户更改了 <code>editor</code> 所显示的值，则有可能 <code>model</code> 的值与 <code>editor</code> 的值不一样。为保证 <code>model</code> 与编辑器具有相同的值，请使用 <code>commitEdit</code> 方法，例如：
+ <pre>
+   try {
+       spinner.commitEdit();
+   }
+   catch (ParseException pe) {{
+       // Edited value is invalid, spinner.getValue() will return
+       // the last valid value, you could revert the spinner to show that:
+       JComponent editor = spinner.getEditor()
+       if (editor instanceof DefaultEditor) {
+           ((DefaultEditor)editor).getTextField().setValue(spinner.getValue();
+       }
+       // reset the value to some known value:
+       spinner.setValue(fallbackValue);
+       // or treat the last valid value as the current, in which
+       // case you don't need to do anything.
+   }
+   return spinner.getValue();
+ </pre>
+ <p>
+有关使用微调器的信息和示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/doc/books/tutorial/uiswing/components/spinner.html">How to Use Spinners</a> 一节。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+ 
+@beaninfo attribute: isContainer false description: 让用户从一个有序集合中选择一个数字或一个对象值的单行输入字段。  
+ 
+@see SpinnerModel
+@see AbstractSpinnerModel
+@see SpinnerListModel
+@see SpinnerNumberModel
+@see SpinnerDateModel
+@see JFormattedTextField
+ 
+@version 1.38 05/12/04
+@author Hans Muller
+@author Lynn Monsanto (accessibility)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSpinner(SpinnerModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有一对 next/previous 按钮和 <code>SpinnerModel</code> 编辑器的完整 spinner。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSpinner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 spinner，使其具有初始值为 0 并且无任何最小值或者最大值限制的 <code>Integer SpinnerNumberModel</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.SpinnerUI javax.swing.JSpinner.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的外观 (L&F) 对象。
+
+@return 呈现此组件的 <code>SpinnerUI</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.setUI(SpinnerUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的外观 (L&F) 对象。
+
+@param ui <code>SpinnerUI</code> L&F 对象
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JSpinner.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于构造呈现此组件外观 (L&F) 类的名称的后缀。
+
+@return 字符串 &quot;SpinnerUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用取自当前外观的值重设 UI 属性。
+
+@see UIManager#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JComponent javax.swing.JSpinner.createEditor(SpinnerModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法由构造方法调用，以创建显示序列当前值的 <code>JComponent</code>。编辑器也可能允许用户直接输入序列中的元素。编辑器必须侦听 <code>model</code> 上的 <code>ChangeEvents</code>，并且让显示的值与模型的值保持同步。
+ <p>
+子类可能重写此方法以便添加对新 <code>SpinnerModel</code> 类的支持。作为一种选择，用户可只替换此处使用 <code>setEditor</code> 方法创建的编辑器。从模型类型到编辑器的默认映射是：
+ <ul>
+ <li> <code>SpinnerNumberModel =&gt; JSpinner.NumberEditor</code>
+ <li> <code>SpinnerDateModel =&gt; JSpinner.DateEditor</code>
+ <li> <code>SpinnerListModel =&gt; JSpinner.ListEditor</code>
+ <li> <i>all others</i> =&gt; <code>JSpinner.DefaultEditor</code>
+ </ul>
+ 
+@return 显示序列当前值的组件
+@param model getModel 的值
+@see #getModel
+@see #setEditor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.setModel(SpinnerModel model)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改表示此 spinner 值的模型。如果没有显式地设置编辑器属性，将在调用 <code>&quot;model&quot;</code> 的 <code>PropertyChangeEvent</code> 后（隐式地）设置编辑器属性。编辑器属性设置为 <code>createEditor</code> 所返回的值，如：
+ <pre>
+ setEditor(createEditor(model));
+ </pre>
+ 
+@param model 新的 <code>SpinnerModel</code>
+@see #getModel
+@see #getEditor
+@see #setEditor
+@throws IllegalArgumentException 如果 model 为 <code>null</code>
+ 
+@beaninfo bound: true attribute: visualUpdate true description: 表示此 spinner 值的模型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SpinnerModel javax.swing.JSpinner.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回定义此 spinner 值序列的 <code>SpinnerModel</code>。
+ 
+@return 模型属性的值
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JSpinner.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回模型的当前值，通常此值是 <code>editor</code> 所显示的值。如果用户已更改 <code>editor</code> 所显示的值，则 <code>model</code> 的值可能与 <code>editor</code> 的值不一样，关于如何处理这种情况的示例，请参阅类级别 javadoc。
+ <p>
+此方法只委托给 <code>model</code>。它等效于：
+ <pre>
+ getModel().getValue()
+ </pre>
+ 
+@see #setValue
+@see SpinnerModel#getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.setValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改模型的当前值，通常此值是 <code>editor</code> 所显示的值。如果 <code>SpinnerModel</code> 的实现不支持指定的值，则抛出 <code>IllegalArgumentException</code>。  
+ <p>
+此方法只委托给 <code>model</code>。它等效于：
+ <pre>
+ getModel().setValue(value)
+ </pre>
+ 
+@throws IllegalArgumentException 如果不允许为 <code>value</code>
+@see #getValue
+@see SpinnerModel#setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JSpinner.getNextValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中由 <code>getValue()</code> 所返回的对象之后的对象。如果已达到序列结尾，则返回 <code>null</code>。调用此方法不影响 <code>value</code>。
+ <p>
+此方法只委托给 <code>model</code>。它等效于：
+ <pre>
+ getModel().getNextValue()
+ </pre>
+ 
+@return 下一个有效值，如果不存在，则返回 <code>null</code>
+@see #getValue
+@see #getPreviousValue
+@see SpinnerModel#getNextValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.addChangeListener(ChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为每次发生模型更改时要通知的列表添加侦听器。传递到 <code>ChangeListeners</code> 的 <code>ChangeEvents</code> 源将是此 <code>JSpinner</code>。还要注意到替换模型将不会影响直接添加到 JSpinner 的侦听器。应用程序可以直接向模型添加侦听器。在这种情况下，事件源将是 <code>SpinnerModel</code>。  
+ 
+@param listener 要添加的 <code>ChangeListener</code>
+@see #removeChangeListener
+@see #getModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.removeChangeListener(ChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 spinne 中移除 <code>ChangeListener</code>。
+
+@param listener 要移除的 <code>ChangeListener</code>
+@see #fireStateChanged
+@see #addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.JSpinner.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个通过 addChangeListener() 方法添加到此 JSpinner 的所有 <code>ChangeListener</code> 的数组。
+
+@return 所有被添加的 <code>ChangeListener</code>，如果没有添加任何侦听器，则返回空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JSpinner.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个其源为此 <code>JSpinner</code> 的 <code>ChangeEvent</code> 发送到每个 <code>ChangeListener</code>。当向此 spinner 添加一个 <code>ChangeListener</code> 时，则每一次从模型接收到 <code>ChangeEvent</code> 都会调用此方法。
+ 
+@see #addChangeListener
+@see #removeChangeListener
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JSpinner.getPreviousValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回序列中由 <code>getValue()</code> 所返回对象之前的对象。如果已达到序列末尾，则返回 <code>null</code>。调用此方法不影响 <code>value</code>。
+ <p>
+此方法只委托给 <code>model</code>。它等效于：
+ <pre>
+ getModel().getPreviousValue()
+ </pre>
+ 
+@return 前一个有效值；如果不存在有效值，则返回 <code>null</code>
+@see #getValue
+@see #getNextValue
+@see SpinnerModel#getPreviousValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.setEditor(JComponent editor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改显示 <code>SpinnerModel</code> 当前值的 <code>JComponent</code>。此方法负责将原编辑器从模型<i>断开</i> 并连接新的编辑器。这可能意味着将从模型中或者 spinner 本身移除原编辑器的 <code>ChangeListener</code>，并为新编辑器添加一个侦听器。
+ 
+@param editor 新编辑器
+@see #getEditor
+@see #createEditor
+@see #getModel
+@throws IllegalArgumentException 如果编辑器为 <code>null</code>
+ 
+@beaninfo bound: true attribute: visualUpdate true description: 显示模型当前值的 JComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JComponent javax.swing.JSpinner.getEditor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回显示和潜在更改模型值的组件。
+ 
+@return 显示和潜在更改模型值的组件
+@see #setEditor
+@see #createEditor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.commitEdit() throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前编辑的值提交给 <code>SpinnerModel</code>。
+ <p>
+如果此编辑器是 <code>DefaultEditor</code> 的一个实例，调用会转发给编辑器；否则不执行任何操作。
+
+@throws ParseException 如果当前编辑的值不能提交。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JSpinner.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>JSpinner</code> 的 <code>AccessibleContext</code>
+
+@return  此 <code>JSpinner</code> 的 <code>AccessibleContext</code>
+@since 1.5 
+
+<!-- END DATA -->

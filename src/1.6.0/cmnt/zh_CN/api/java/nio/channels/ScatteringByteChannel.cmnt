@@ -1,0 +1,79 @@
+<!-- BEGIN KEY -->
+public interface java.nio.channels.ScatteringByteChannel extends java.nio.channels.ReadableByteChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可将字节读入缓冲区序列的通道。
+
+<p> <i>分散</i> 读取操作可在单个调用中将一个字节序列读入一个或多个给定的缓冲区序列。分散读取通常在实现网络协议或文件格式时很有用，例如将数据分组放入段中（这些段由一个或多个长度固定的头，后跟长度可变的正文组成）。在 {@link GatheringByteChannel} 接口中定义了类似的<i>集中</i> 写入操作。  </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.13, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.nio.channels.ScatteringByteChannel.read(java.nio.ByteBuffer[] dsts, int offset, int length) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道读入给定缓冲区的子序列中。
+
+<p> 调用此方法会尝试最多从此通道读取 <i>r</i> 个字节，其中 <i>r</i> 是给定缓冲区数组的指定子序列中剩余的字节数，也就是
+
+ <blockquote><pre>
+ dsts[offset].remaining()
+     + dsts[offset+1].remaining()
+     + ... + dsts[offset+length-1].remaining()</pre></blockquote>
+
+
+<p> 假定读取的字节序列长度为 <i>n</i>，其中 <tt>0</tt>&#xA0;<tt>&lt;=</tt>&#xA0;<i>n</i>&#xA0;<tt>&lt;=</tt>&#xA0;<i>r</i>。将此序列的前 <tt> dsts[offset].remaining()</tt> 个字节传输到缓冲区 <tt>dsts[offset]</tt> 中，然后将后面的 <tt>dsts[offset+1].remaining()</tt> 个字节传输到缓冲区 <tt>dsts[offset+1]</tt> 中，依此类推，直到将整个字节序列传输到给定缓冲区中。向每个缓冲区中传输尽可能多的字节，因为要保证每个已更新缓冲区（最后一个已更新缓冲区除外）的最终位置等于该缓冲区的限制。
+
+<p> 可在任意时间调用此方法。但是如果另一个线程已经在此通道上发起了一个读取操作，则在该操作完成前此方法的调用被阻塞。 </p>
+
+@param dsts 要向其中传输字节的缓冲区
+
+@param offset 第一个缓冲区（字节传输到该缓冲区中）在缓冲区数组中的偏移量；必须为非负数并且不能大于 <tt>dsts.length</tt>
+
+@param length 要访问的最大缓冲区数；必须为非负数并且不能大于 <tt>dsts.length</tt>&#xA0;-&#xA0;<tt>offset</tt>
+
+@return 读取的字节数，可能为零，如果该通道已到达流的末尾，则返回 <tt>-1</tt>
+
+@throws  IndexOutOfBoundsException 如果关于 <tt>offset</tt> 和 <tt>length</tt> 参数的前提不成立
+
+@throws  NonReadableChannelException 如果不允许从此通道进行读取操作
+
+@throws ClosedChannelException 如果此通道已关闭
+
+@throws AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.nio.channels.ScatteringByteChannel.read(java.nio.ByteBuffer[] dsts) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道读入给定的缓冲区。
+
+<p> 调用此方法的形式为 <tt>c.read(dsts)</tt>，该调用与以下调用完全相同：
+
+ <blockquote><pre>
+ c.read(dsts, 0,dsts.length);</pre></blockquote>
+
+@param dsts 要向其中传输字节的缓冲区
+
+@return 读取的字节数，可能为零，如果该通道已到达流的末尾，则返回 <tt>-1</tt>
+
+@throws  NonReadableChannelException 如果不允许从此通道进行读取操作
+
+@throws ClosedChannelException 如果此通道已关闭
+
+@throws AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->

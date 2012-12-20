@@ -1,0 +1,184 @@
+<!-- BEGIN KEY -->
+public abstract class java.rmi.activation.ActivationGroup extends java.rmi.server.UnicastRemoteObject implements java.rmi.activation.ActivationInstantiator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ActivationGroup</code> 负责创建组中&ldquo;可激活&rdquo;对象的新实例，在以下情况通知其 <code>ActivationMonitor</code>：它的对象变成活动的或者不活动的，或者整个组变成不活动的。 <p>
+
+<code>ActivationGroup</code> 通过以下方式之一被<i>初始</i> 创建： <ul>
+<li>一方面，为组中的第一个可激活对象创建一个不带显式 <code>ActivationGroupID</code> 的 <code>ActivationDesc</code>，或者
+<li>通过 <code>ActivationGroup.createGroup</code> 方法
+<li>另一方面，激活只有 <code>ActivationGroupDesc</code> 被注册的组中的第一个对象。</ul><p>
+
+只有激活器能<i>重建</i> 一个 <code>ActivationGroup</code>。激活器根据需要为每个已注册的激活组生成一个单独的 VM（例如，作为一个子进程），并且将激活请求导向适当的组。它是如何生成 VM 的特定实现。一个激活组通过 <code>ActivationGroup.createGroup</code> 静态方法创建。<code>createGroup</code> 方法在创建组方面有两个需求：1) 组必须是 <code>ActivationGroup</code> 的一个具体子类，以及 2) 组必须具有带两个参数的构造方法：
+
+ <ul>
+<li> 组的 <code>ActivationGroupID</code> ，以及
+<li> 组的初始化数据（在 <code>java.rmi.MarshalledObject</code> 中）</ul><p>
+
+组被创建后，<code>ActivationGroup</code> 的默认实现将在创建 <code>ActivationGroupDesc</code> 时用请求的属性重写系统属性，并且将设置一个 <code>java.rmi.RMISecurityManager</code> 作为默认的系统安全管理器。如果应用程序需要对象在组中被激活时设置特定的属性，则应用程序应当创建一个特殊的包含这些属性的 <code>Properties</code> 对象，然后使用此 <code>Properties</code> 对象创建一个 <code>ActivationGroupDesc</code>，并且在创建任何 <code>ActivationDesc</code> 之前使用 <code>ActivationGroup.createGroup</code>（在默认的 <code>ActivationGroupDesc</code> 被创建之前）。如果应用程序需要使用安全管理器而不是 <code>java.rmi.RMISecurityManager</code>，则在 ActivativationGroupDescriptor 属性列表中可以将 <code>java.security.manager</code> 属性设置为想要安装的安全管理器的名称。
+
+@author 	Ann Wollrath
+@version	1.44, 03/12/19
+@see 	ActivationInstantiator
+@see		ActivationGroupDesc
+@see		ActivationGroupID
+@since	1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.activation.ActivationGroupID java.rmi.activation.ActivationGroup.groupID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 组标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.activation.ActivationMonitor java.rmi.activation.ActivationGroup.monitor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 组监视器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private long java.rmi.activation.ActivationGroup.incarnation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+@serial 组的代号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.ActivationGroup(ActivationGroupID groupID) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的激活组标识符创建一个激活组。该组将作为一个 <code>java.rmi.server.UnicastRemoteObject</code> 被导出。
+
+@param	groupID 组标识符
+@throws	RemoteException 如要组不能被导出
+@since	1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.activation.ActivationGroup.inactiveObject(ActivationID id) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>Activatable.inactive</code> 方法间接地调用组的 <code>inactiveObject</code> 方法。当该对象不活动（对象认为它不再活动）时，远程对象实现必须调用 <code>Activatable</code> 的 <code>inactive</code> 方法。当对象不活动时，如果对象未调用 <code>Activatable.inactive</code>，则该对象永远不被垃圾回收，因为组保持对它创建的对象的强引用。 <p>
+
+<p>组的 <code>inactiveObject</code> 方法从 RMI 运行时取消导出远程对象，因此该对象无法再接收传入的 RMI 调用。如果对象没有任何挂起或者执行的调用，则该对象将仅仅被取消导出。<code>ActivationGroup</code> 的子类必须重写此方法并且取消导出该对象。 <p>
+
+<p>从 RMI 运行时移除该对象之后，组必须通知其 <code>ActivationMonitor</code>（通过 <code>inactiveObject</code> 方法），该远程对象当前不是活动的，因此远程对象将在后续激活请求上由激活器重新激活。<p>
+
+<p>此方法简单地通知组的监视器，该对象是不活动的。由 ActivationGroup 的具体子类来实现取消导出该对象的附加需求。 <p>
+
+@param id 对象的激活标识符
+@return 如果该对象被成功地取消激活，则返回 true，否则返回 false。
+@exception UnknownObjectException 如果对象未知（可能已经是不活动的）
+@exception RemoteException 如果调用通知监视器失败
+@exception ActivationException 如果组是不活动的
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.rmi.activation.ActivationGroup.activeObject(ActivationID id, Remote obj) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当对象被导出时（通过 <code>Activatable</code> 对象的构造或者通过显式调用 <code>Activatable.exportObject</code>），组的 <code>activeObject</code> 方法被调用。组必须通知其 <code>ActivationMonitor</code> 对象是不活动的（通过监视器的 <code>activeObject</code> 方法），如果该组还没有这么做的话。
+
+@param id 对象的标识符
+@param obj 远程对象实现
+@exception UnknownObjectException 如果对象未注册
+@exception RemoteException 如果调用通知监视器失败
+@exception ActivationException 如果组是不活动的
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.rmi.activation.ActivationGroup java.rmi.activation.ActivationGroup.createGroup(ActivationGroupID id, ActivationGroupDesc desc, long incarnation) throws java.rmi.activation.ActivationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为当前 VM 创建并设置激活组。仅当当前尚未设置激活组时才设置激活组。当 <code>Activator</code> 初始化激活组的重建以执行传入的 <code>activate</code> 请求时，激活组使用 <code>createGroup</code> 方法来设置。在组可以通过此方法创建之前，该组必须首先通过 <code>ActivationSystem</code> 注册。
+
+<p>由 <code>ActivationGroupDesc</code> 指定的组类必须是 <code>ActivationGroup</code> 的具体子类，并且具有一个公共的带两个参数的构造方法：组的 <code>ActivationGroupID</code> 和包含组的初始化数据的 <code>MarshalledObject</code>（从 <code>ActivationGroupDesc</code> 获得）。
+
+<p>如果 <code>ActivationGroupDesc</code> 中指定的组类名为 <code>null</code>，则此方法将像组描述符包含默认激活组实现类的名称一样执行。
+
+<p>注意，如果应用程序创建其自己的自定义激活组，则必须为该组设置安全管理器。否则，该组中的对象不能被激活，默认设置为 <code>java.rmi.RMISecurityManager</code>。
+
+<p>如果在该组的 VM 中已经设置安全管理器，此方法首先调用该安全管理器的 <code>checkSetFactory</code> 方法。这可能会导致抛出 <code>SecurityException</code>。如果应用程序需要设置不同的安全管理器，则必须确保由组的 <code>ActivationGroupDesc</code> 所指定的策略文件授予该组必要的权限来设置一个新的安全管理器。（注：如果组下载并设置一个安全管理器，这将是必要的）。
+
+<p>在组被创建之后，通过调用 <code>activeGroup</code> 方法通知 <code>ActivationSystem</code> 该组是活动的，返回该组的 <code>ActivationMonitor</code>。应用程序无需独立调用 <code>activeGroup</code>，因为它通过此方法来维护。
+
+<p>一旦组被创建，对 <code>currentGroupID</code> 方法的后续调用将返回此组的标识符，直到组变为不活动的。
+
+@param id 激活组的标识符
+@param desc 激活组的描述符
+@param incarnation 组的代号（在组初始化创建时为零）
+@return 针对该 VM 的激活组
+@exception ActivationException 如果组已经存在或者如果在组创建过程中发生错误
+@exception SecurityException 如果创建组的权限被拒绝。（注：安全管理器 <code>checkSetFactory</code> 方法的默认实现需要 RuntimePermission 的 &quot;setFactory&quot;）
+@see SecurityManager#checkSetFactory
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.rmi.activation.ActivationGroupID java.rmi.activation.ActivationGroup.currentGroupID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前激活组的标识符。如果此 VM 当前没有任何组是活动的，则返回 null。
+@return 激活组的标识符
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.rmi.activation.ActivationGroup.setSystem(ActivationSystem system) throws java.rmi.activation.ActivationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置该 VM 的激活系统。仅当当前没有组是活动的，才可以设置激活系统。如果激活系统未通过此调用来设置，则 <code>getSystem</code> 方法尝试通过在 Activator 注册表中查找名称 &quot;java.rmi.activation.ActivationSystem&quot; 来获取对 <code>ActivationSystem</code> 的引用。默认情况下，用于查找该激活系统的端口号由 <code>ActivationSystem.SYSTEM_PORT</code> 定义。此端口可通过设置属性 <code>java.rmi.activation.port</code> 而被重写。
+
+<p>如果存在安全管理器，则此方法首先调用安全管理器的 <code>checkSetFactory</code> 方法。这可能会导致抛出 SecurityException 异常。
+
+@param system 对 <code>ActivationSystem</code> 的远程引用
+@exception ActivationException 如果已经设置激活系统
+@exception SecurityException 如果设置激活系统的权限被拒绝。（注：安全管理器 <code>checkSetFactory</code> 方法的默认实现需要 RuntimePermission 的 &quot;setFactory&quot;）
+@see #getSystem
+@see SecurityManager#checkSetFactory
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.rmi.activation.ActivationSystem java.rmi.activation.ActivationGroup.getSystem() throws java.rmi.activation.ActivationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 VM 的激活系统。激活系统可以通过 <code>setSystem</code> 方法设置。如果激活系统未通过 <code>setSystem</code> 方法设置，则 <code>getSystem</code> 方法尝试通过在 Activator 注册表中查找名称 &quot;java.rmi.activation.ActivationSystem&quot; 来获取对 <code>ActivationSystem</code> 的引用。默认情况下，用于查找该激活系统的端口号由 <code>ActivationSystem.SYSTEM_PORT</code> 定义。此端口可通过设置属性 <code>java.rmi.activation.port</code> 而被重写。
+
+@return 该 VM/组的激活系统
+@exception ActivationException 如果激活系统无法获得或者未绑定（意味着它没有运行）
+@see #setSystem
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.rmi.activation.ActivationGroup.activeObject(ActivationID id, java.rmi.MarshalledObject<? extends java.rmi.Remote> mobj) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果子类要进行对组监视器的 <code>activeObject</code> 回调，则此 protected 方法是必要的。此调用简单地转发到组的 <code>ActivationMonitor</code>。
+
+@param id 对象的标识符
+@param mobj 包含远程对象的 stub 的编组对象
+@exception UnknownObjectException 如果对象未注册
+@exception RemoteException 如果调用通知监视器失败
+@exception ActivationException 如果发生激活错误
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.rmi.activation.ActivationGroup.inactiveGroup() throws java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果子类要进行对组监视器的 <code>inactiveGroup</code> 回调，则此 protected 方法是必要的。此调用简单地转发到组的 <code>ActivationMonitor</code>。同时，该 VM 的当前组被设置为 null。
+
+@exception UnknownGroupException 如果组未注册
+@exception RemoteException 如果调用通知监视器失败
+@since 1.2
+
+<!-- END DATA -->

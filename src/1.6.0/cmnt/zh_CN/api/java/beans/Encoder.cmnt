@@ -1,0 +1,140 @@
+<!-- BEGIN KEY -->
+public class java.beans.Encoder extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Encoder 是这样的类，它可用于创建根据其公共 API 对 JavaBeans 集合状态进行编码的文件或流。<code>Encoder</code> 结合其持久委托，负责将对象图形拆分成一系列可用于创建它的 <code>Statements</code> 和 <code>Expression</code>。子类通常使用某种可读形式（比如 Java 源代码或 XML）提供这些表达式的语法。 
+ 
+@since 1.4
+
+@version 1.3 11/15/00
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.Encoder.writeObject(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定对象写入输出流中。序列化的形式将表示一系列的表达式，在读取输入流时，这种形式的组合效果将创建等效的对象。默认情况下，假定对象是具有 null 构造方法的 <em>JavaBean</em>，其状态通过 Introspector 返回的 &quot;setter&quot; 和 &quot;getter&quot; 方法的匹配对来定义。 
+
+@param o 要写入流中的对象。 
+ 
+@see XMLDecoder#readObject
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.Encoder.setExceptionListener(ExceptionListener exceptionListener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将此流的异常处理程序设置为 <code>exceptionListener</code>。当此流捕获可恢复的异常时，异常处理程序会获得通知。
+ 
+@param exceptionListener 此流的异常处理程序；如果该参数为 <code>null</code>，则使用默认异常侦听器。
+
+@see #getExceptionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.ExceptionListener java.beans.Encoder.getExceptionListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此流的异常处理程序。 
+ 
+@return 此流的异常处理程序；如果没有显式设置此处理程序，则返回默认异常侦听器。
+
+@see #setExceptionListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.PersistenceDelegate java.beans.Encoder.getPersistenceDelegate(java.lang.Class<?> type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定类型的持久委托。持久委托是通过按顺序应用以下规则来计算的：   
+ <ul>
+ <li>
+如果 type 是一个数组，则返回内部持久委托，它将实例化适当类型和长度数组，初始化其每个元素，就好像它们是属性一样。 
+ <li>
+如果 type 是一个代理，则返回内部持久委托，它将使用 Proxy 类中定义的静态 &quot;newProxyInstance&quot; 方法实例化一个新的代理实例。 
+ <li>
+如果此类型的 BeanInfo 有一个定义了 &quot;persistenceDelegate&quot; 属性的 <code>BeanDescriptor</code>，则返回此值。 
+ <li>
+在其他所有情况下返回默认持久委托。默认持久委托假定 type 是一个 <em>JavaBean</em>，这意味着它有一个默认构造方法，其状态通过 Introspector 返回的 &quot;setter&quot; 和 &quot;getter&quot; 方法的匹配对来定义。默认构造方法是有 {@link ConstructorProperties} 注释的、参数最多的构造方法。如果没有一个构造方法有 {@code ConstructorProperties} 注释，则使用 null 构造方法。例如，在下列语句中，对于 {@code Foo} 将使用 null 构造方法；对于 {@code Bar} 将使用有两个参数的构造方法。
+<code>
+   public class Foo {
+     public Foo() { ... }
+     public Foo(int x) { ... }
+   }
+   public class Bar {
+     public Bar() { ... }
+     @ConstructorProperties({"x"})
+     public Bar(int x) { ... }
+     @ConstructorProperties({"x", "y"})
+     public Bar(int x, int y) { ... }
+   }
+ </code> 
+ </ul>
+ 
+@param type 对象类型。
+@return 此对象类型的持久委托。 
+
+@see #setPersistenceDelegate
+@see java.beans.Introspector#getBeanInfo
+@see java.beans.BeanInfo#getBeanDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.Encoder.setPersistenceDelegate(java.lang.Class<?> type, PersistenceDelegate persistenceDelegate)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将与此 <code>type</code> 相关联的持久委托设置为 <code>persistenceDelegate</code>。
+ 
+@param  type 对其应用 <code>persistenceDelegate</code> 的对象的类。
+@param  persistenceDelegate 用于 <code>type</code> 的实例的持久委托。 
+ 
+@see #getPersistenceDelegate
+@see java.beans.Introspector#getBeanInfo
+@see java.beans.BeanInfo#getBeanDescriptor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.beans.Encoder.remove(Object oldInstance)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此实例的条目，返回旧条目。  
+ 
+@param oldInstance 应该移除的条目。
+@return 被移除的条目。 
+
+@see #get 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.beans.Encoder.get(Object oldInstance)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在由此流创建的环境中返回 <code>oldInstance</code> 的一个实验值。持久委托可以使用其 <code>mutatesTo</code> 方法来确定是否可以初始化此值，以便输出时形成等效的对象，或者确定新对象是否必须被重新实例化。如果流未发现此值，则返回 null。  
+ 
+@param oldInstance 要查找的实例。
+@return 该对象，如果以前没有看见该对象，则返回 null。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.Encoder.writeStatement(Statement oldStm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将语句 <code>oldStm</code> 写入流中。<code>oldStm</code> 应该完全根据调用者环境写入，也就是说，目标和所有参数都应该是将被写入的对象图形的一部分。这些表达式表示一系列的“发生了什么”表达式，告知输出流如何生成类似源对象图形的对象图形。 
+ <p>
+此方法的实现将产生另一个表达式，它表示读取流时将存在的环境中的同一表达式。通过在目标和所有参数上调用 <code>writeObject</code> 并使用结果构建一个新的表达式可以做到这一点。 
+ 
+@param oldStm 要写入流中的表达式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.Encoder.writeExpression(Expression oldExp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该实现首先查看使用此值的表达式是否已经被写入。如果尚未写入，则使用与 <code>writeStatement</code> 相同的过程复制该表达式，通过调用 <code>writeObject</code> 方法使表达式的值与复制表达式的值一致。 
+ 
+@param oldExp 要写入流中的表达式。
+
+<!-- END DATA -->

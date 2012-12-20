@@ -1,0 +1,327 @@
+<!-- BEGIN KEY -->
+public static interface java.util.jar.Pack200.Packer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打包器引擎把各种转换应用到输入 JAR 文件，从而可以通过压缩器（如 gzip 或 zip）高度压缩打包流。可使用 {@link #newPacker} 获得该引擎的实例。高度压缩是通过使用 JSR 200 规范中描述的大量技术来实现的。一些技术包括排序、重排序和常量池的共处。
+ <p>
+根据下面所述的打包引擎属性，将打包引擎初始化为初始状态。可以通过获取引擎属性（使用 {@link #properties}）并在映射上存储已修改属性来操作该初始状态。资源文件根本不做任何改动即可通过。类文件将不会包含相同的字节，因为解包器可以随意改变次要类文件的特性，比如常量池的顺序。但是类文件在语义上将是相同的，这在下面网址的 Java Virtual Machine Specification 中作了规定：<a href="http://java.sun.com/docs/books/vmspec/html/ClassFile.doc.html">http://java.sun.com/docs/books/vmspec/html/ClassFile.doc.html</a>。
+ <p>
+默认情况下，打包器不改变 JAR 元素的顺序。而且不改变每个 JAR 元素的修改时间和压缩提示。任何其他 ZIP 存档信息（如给出 Unix 文件权限的额外属性）将会丢失。
+ <p>
+注意，打包和解包 JAR 通常将修改 JAR 中类文件的字节内容。这意味着打包和解包通常将使依赖于 JAR 元素字节图像的任何数字签名无效。为了签名并打包 JAR，您必须首先打包和解包 JAR 来&ldquo;规范化&rdquo;它，然后计算解包后 JAR 元素上签名，最后重新打包签名的 JAR。打包步骤应该准确地使用相同的选项，可能还需要把段范围设置为 &quot;-1&quot;，以防止在类文件大小有所改变时段边界的意外变化。
+ <p>
+（其工作原理如下：打包器对任何类文件结构的任何重新排序是幂等的，因此，第二次打包不会改变第一次打包所生成的顺序。而且，JSR 200 规范保证解包器可为存档元素的任何给定传输顺序生成指定的字节图像。）
+ <p>
+为了维护向后兼容性，如果输入 JAR 文件仅由 1.5（或更低版本）类文件组成，则生成 1.5 兼容的包文件。否则，生成 1.6 兼容的 pack200 文件。 
+ <p>     
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.SEGMENT_LIMIT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此属性是一个数字，给出了每个存档段的估计目标大小 N（以字节为单位）。如果单个输入文件要求超过 N 字节，那么将给出它自己的存档段。
+ <p>
+作为特殊情况，值 -1 将生成使用所有输入文件的单个大段，而值 0 将为每个类生成一个段。较大的存档段将带来较少的碎片和更好的压缩，但处理它们要求更多的内存。
+ <p>
+每个段的大小是通过计算段中要传输的每个输入文件的大小，以及它的名称和其他要传输的属性的大小来估算的。
+ <p>
+默认为 1000000（1 百万字节）。这允许在一个段中传输中等大小的输入 JAR 文件。它也限制了打包器和解包器的内存要求。
+ <p>
+如果没有此限制，打包一个 10 Mb 的 JAR 通常要小 10%，但打包器可能要求较大的 Java 堆（大约是段范围的 10 倍）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.KEEP_FILE_ORDER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将此属性设置为 {@link #TRUE}，则打包器将按它们在源存档中的原始顺序传输所有元素。
+ <p>
+如果将其设置为 {@link #FALSE}，则打包器可能重新排序元素，并且移除携带无用信息（针对 Java 应用程序来说）的 JAR 目录条目。（通常这支持更好的压缩。）
+ <p>
+默认为 {@link #TRUE}，这保存了输入信息，但可能不必要地增大了所传输的存档。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.EFFORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将此属性设置为单个十进制数字，则打包器将在压缩存档时使用指定压缩级别。1 级可能生成较大的尺寸但压缩速度较快，而 9 级将花费较长的时间，但可能生成更好的压缩。
+ <p>
+特殊值 0 指示打包器直接复制原始的 JAR 文件（无压缩）。JSR 200 标准要求任何解包器将此特殊情况作为直接传输整个存档来理解。
+ <p>
+默认为 5，花费适量的时间来生成合理的压缩。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.DEFLATE_HINT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将此属性设置为 {@link #TRUE} 或 {@link #FALSE}，则打包器将在输出存档中设置相应的压缩提示，并且不传输存档元素的单个压缩提示。
+ <p>
+如果将此属性设置为特殊字符串 {@link #KEEP}，则打包器将尝试确定输入存档中每个可用元素的单个压缩提示，并单独传输此提示。
+ <p>
+默认为 {@link #KEEP}，这保存了输入信息，但可能不必要地增大了所传输的存档。
+ <p>
+这取决于解包器实现在提示上采取的行动，以便合适地压缩得到的未打包 jar 的元素。
+ <p>
+ZIP 或 JAR 元素的压缩提示指出元素是压缩的还是直接存储的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.MODIFICATION_TIME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果将此属性设置为特殊的字符串 {@link #LATEST}，则打包器将尝试在原始存档中的所有可用条目中确定最后修改时间，或者确定每个段中所有可用条目的最后修改时间。此单值将作为段的一部分传输，并应用到每个段 ({@link #SEGMENT_LIMIT}) 的所有条目。
+ <p>
+这或多或少可以减少存档的传输大小，其代价是将所有已安装文件设置为单一日期。
+ <p>
+如果将此属性设置为特殊字符串 {@link #KEEP}，则打包器传输每个输入元素的单独修改时间。
+ <p>
+默认为 {@link #KEEP}，这保存了输入信息，但可能不必要地增大了所传输的存档。
+ <p>
+这取决于解包器实现所采取的行动，以便合适地设置其输出文件中每个元素的修改时间。
+@see #SEGMENT_LIMIT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.PASS_FILE_PFX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指出文件应该按字节传递（无压缩）。通过指定添加有不同字符串的其他属性，以生成具有公共前缀的属性系列，可以指定多个文件。
+ <p>
+除了用 JAR 文件分隔符 '/' 替代系统文件分隔符以外，无任何路径名转换。
+ <p>
+得到的文件名必须正好匹配其在 JAR 文件中出现的字符串。
+ <p>
+如果属性值是一个目录名称，那么还将传递该目录下的所有文件。
+ <p>
+示例：
+ <pre><code>
+     Map p = packer.properties();
+     p.put(PASS_FILE_PFX+0, "mutants/Rogue.class");
+     p.put(PASS_FILE_PFX+1, "mutants/Wolverine.class");
+     p.put(PASS_FILE_PFX+2, "mutants/Storm.class");
+     # Pass all files in an entire directory hierarchy:
+     p.put(PASS_FILE_PFX+3, "police/");
+ </pre></code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.UNKNOWN_ATTRIBUTE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指出遇到包含有未知属性的类文件时所采取的行动。可能值为字符串 {@link #ERROR}、{@link #STRIP} 和 {@link #PASS}。
+ <p>
+字符串 {@link #ERROR} 意味着整体打包操作将失败，并抛出 <code>IOException</code> 类型的异常。字符串 {@link #STRIP} 意味着该属性将被删除。字符串 {@link #PASS} 意味着整个类文件将在无压缩下通过（就像它是一个资源文件一样），并有合适的警告。这是此属性的默认值。
+ <p>
+示例：
+ <pre><code>
+     Map p = pack200.getProperties();
+     p.put(UNKNOWN_ATTRIBUTE, ERROR);
+     p.put(UNKNOWN_ATTRIBUTE, STRIP);
+     p.put(UNKNOWN_ATTRIBUTE, PASS);
+ </pre></code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.CLASS_ATTRIBUTE_PFX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当与类属性名称连在一起时，使用 JSR 200 规范中指定的布局语言指出该属性的格式。
+ <p>
+例如，此选项的效果内置于：<code>pack.class.attribute.SourceFile=RUH</code>。
+ <p>
+还允许特殊字符串 {@link #ERROR}、{@link #STRIP} 和 {@link #PASS}，与 {@link #UNKNOWN_ATTRIBUTE} 具有相同的含义。这提供了一种方式，让用户可以请求按位拒绝、清除或传递特定的属性（不进行类压缩）。
+ <p>
+下面的代码可用于支持 JCOV 属性：
+ <pre><code>
+     Map p = packer.properties();
+     p.put(CODE_ATTRIBUTE_PFX+&quot;CoverageTable&quot;,       &quot;NH[PHHII]&quot;);
+     p.put(CODE_ATTRIBUTE_PFX+&quot;CharacterRangeTable&quot;, &quot;NH[PHPOHIIH]&quot;);
+     p.put(CLASS_ATTRIBUTE_PFX+&quot;SourceID&quot;,           &quot;RUH&quot;);
+     p.put(CLASS_ATTRIBUTE_PFX+&quot;CompilationID&quot;,      &quot;RUH&quot;);
+ </code></pre>
+ <p>
+下面的代码可用于清除调试属性：
+ <pre><code>
+     Map p = packer.properties();
+     p.put(CODE_ATTRIBUTE_PFX+&quot;LineNumberTable&quot;,    STRIP);
+     p.put(CODE_ATTRIBUTE_PFX+&quot;LocalVariableTable&quot;, STRIP);
+     p.put(CLASS_ATTRIBUTE_PFX+&quot;SourceFile&quot;,        STRIP);
+ </code></pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.FIELD_ATTRIBUTE_PFX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当与字段属性名称连在一起时，指出该属性的格式。例如，此选项的效果内置于：<code>pack.field.attribute.Deprecated=</code>。还允许特殊字符串 {@link #ERROR}、{@link #STRIP} 和 {@link #PASS}。
+@see #CLASS_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.METHOD_ATTRIBUTE_PFX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当与方法属性名称连在一起时，指出该属性的格式。例如，此选项的效果内置于：<code>pack.method.attribute.Exceptions=NH[RCH]</code>。还允许特殊字符串 {@link #ERROR}、{@link #STRIP} 和 {@link #PASS}。
+@see #CLASS_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.CODE_ATTRIBUTE_PFX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当与代码属性名称连在一起时，指出该属性的格式。例如，此选项的效果内置于：<code>pack.code.attribute.LocalVariableTable=NH[PHOHRUHRSHH]</code>。还允许特殊字符串 {@link #ERROR}、{@link #STRIP} 和 {@link #PASS}。
+@see #CLASS_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.PROGRESS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解包器的百分比进度，由解包器定期更新。值 0 - 100 是正常的，-1 指示停止。用 {@link PropertyChangeListener} 观察此属性。
+ <p>
+至少，解包器必须在打包操作开始时把进度设置为 0，在结束时把进度设置为 100。
+@see  #addPropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.KEEP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "keep"，某些属性的可能值。
+@see #DEFLATE_HINT
+@see #MODIFICATION_TIME
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.PASS
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "pass"，某些属性的可能值。
+@see #UNKNOWN_ATTRIBUTE
+@see #CLASS_ATTRIBUTE_PFX
+@see #FIELD_ATTRIBUTE_PFX
+@see #METHOD_ATTRIBUTE_PFX
+@see #CODE_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.STRIP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "strip"，某些属性的可能值。
+@see #UNKNOWN_ATTRIBUTE
+@see #CLASS_ATTRIBUTE_PFX
+@see #FIELD_ATTRIBUTE_PFX
+@see #METHOD_ATTRIBUTE_PFX
+@see #CODE_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.ERROR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "error"，某些属性的可能值。
+@see #UNKNOWN_ATTRIBUTE
+@see #CLASS_ATTRIBUTE_PFX
+@see #FIELD_ATTRIBUTE_PFX
+@see #METHOD_ATTRIBUTE_PFX
+@see #CODE_ATTRIBUTE_PFX
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.TRUE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "true"，某些属性的可能值。
+@see #KEEP_FILE_ORDER
+@see #DEFLATE_HINT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.FALSE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "false"，某些属性的可能值。
+@see #KEEP_FILE_ORDER
+@see #DEFLATE_HINT
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.util.jar.Pack200.Packer.LATEST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+字符串 "latest"，某些属性的可能值。
+@see #MODIFICATION_TIME
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<java.lang.String, java.lang.String> java.util.jar.Pack200.Packer.properties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此引擎属性集。此集合是“实时视图”，所以更改其内容可立即影响 Packer 引擎，并且在映射中可立即见到引擎中的变化（如进度指示）。
+
+<p>属性映射可能包含指定和默认属性的预定义实现。鼓励用户在修改已存在的属性前阅读该信息，并完全理解其含意。
+ <p>
+特定实现的属性是用与实现者相关的包名称作前缀的，以 <tt>com.</tt> 或类似前缀开头。以 <tt>pack.</tt> 和 <tt>unpack.</tt> 开头的所有属性名称保留给此 API 使用。
+ <p>
+未知属性可以用未指定的错误忽略或拒绝，并且无效的条目可能导致抛出未指定的错误。
+
+ <p>
+返回的映射实现了所有可选的 {@link SortedMap} 操作。
+@return 属性键字符串到属性值的有序关联。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Packer.pack(JarFile in, OutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收 JarFile 并将其转换为 Pack200 存档。
+ <p>
+关闭其输入，但并不关闭其输出。（Pack200 存档是可添加的。）
+@param in 一个 JarFile
+@param out 一个 OutputStream
+@exception IOException 如果遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Packer.pack(JarInputStream in, OutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收 JarInputStream 并将其转换成 Pack200 存档。
+ <p>
+关闭其输入，但并不关闭其输出。（Pack200 存档是可添加的。）
+ <p>
+对于 JAR 清单文件及其包含的目录，修改时间和压缩提示属性是不可用的。
+
+@see #MODIFICATION_TIME
+@see #DEFLATE_HINT
+@param in 一个 JarInputStream
+@param out 一个 OutputStream
+@exception IOException 如果遇到错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Packer.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为属性映射上的 PropertyChange 事件注册一个侦听器。通常应用程序使用它来更新进度条。
+
+@see #properties
+@see #PROGRESS
+@param listener 更改属性时要调用的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.jar.Pack200.Packer.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除由 {@link #addPropertyChangeListener} 所添加的 PropertyChange 事件侦听器。
+
+@see #addPropertyChangeListener
+@param listener  要移除的 PropertyChange 侦听器。
+
+<!-- END DATA -->

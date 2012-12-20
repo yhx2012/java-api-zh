@@ -1,0 +1,58 @@
+<!-- BEGIN KEY -->
+public interface javax.print.MultiDoc
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接口 MultiDoc 指定某个对象的接口，该对象为 PrintJob 提供多部分打印数据。&quot;Doc&quot; 是一个简短、易于发音的术语，指&ldquo;部分打印数据&rdquo;，而 &quot;multidoc&quot; 指一组多个 doc。客户端向 PrintJob 传递一个实现了接口 MultiDoc 的对象，PrintJob 则在该对象上调用方法来获得打印数据。
+ <P>
+接口 MultiDoc 提供了类似于多个 doc&ldquo;链接列表&rdquo;的抽象概念。一个 multidoc 对象就像该链接列表中的一个节点，包含列表中的当前 doc 和一个指向列表中下一个节点 (multidoc) 的指针。PrintJob 可以调用 multidoc 的 {@link #getDoc() <CODE>getDoc()</CODE>} 方法来获得当前的 doc。当转至下一个 doc 时，PrintJob 可以调用 multidoc 的 {@link #next() <CODE>next()</CODE>} 方法来获得下一个 multidoc，它包含下一个 doc。所以访问 multidoc 的 PrintJob 代码可能如下所示：
+ <PRE>
+      void processMultiDoc(MultiDoc theMultiDoc) {
+          
+          MultiDoc current = theMultiDoc;
+
+          while (current != null) {
+              processDoc (current.getDoc());
+              current = current.next();
+          }
+      }
+ </PRE>
+ <P>
+当然，可以满足协定的任意方式来实现接口 MultiDoc；不必在实现中使用链接列表。 
+ <P>
+要获得 multidoc PrintJob 的所有打印数据，PrintService 代理可以使用以下两种模式： 
+ <OL TYPE=1>
+ <LI>
+<B>interleaved</B> 模式：从当前 multidoc 中获得 doc。从当前 doc 中获得打印数据表示形式对象。从打印数据表示形式对象中获得所有打印数据。根据当前的 multidoc 获得下一个 multidoc，重复执行该过程，直到不再有 multidoc 为止。（上述代码示例使用了交错模式。） 
+ <P>
+ <LI>
+<B>all-at-once</B> 模式：从当前 multidoc 中获得 doc，并将 doc 保存在列表中。根据当前的 multidoc 获得下一个 multidoc，并重复执行该过程，直到没有 multidoc 为止。然后在已保存的 doc 列表上进行迭代。从当前 doc 中获得打印数据表示形式对象。从打印数据表示形式对象中获得所有打印数据。转到列表中的下一个 doc，并重复执行该过程，直到不再有 doc 为止。 
+ </OL>
+现在，考虑一个随时生成打印数据，并且不具有一次存储多份打印数据的资源的打印客户端。如果 PrintService 代理使用 all-at-once 模式来获得打印数据，则会为这种客户端造成难题；在 PrintService 代理回来处理并请求打印数据之前，该客户端必须保存所有 doc 的打印数据，而该客户端是无法这样做的。要让这种客户端正常打印，PrintService 代理必须使用 interleaved 模式。 
+ <P>
+为了解决此问题并简化客户端向 PrintJob 提供多个 doc 的设计，必需让所有支持 multidoc PrintJob 的 PrintService 代理使用 interleaved 模式来访问 MultiDoc 对象。也就是说，如果给定了 MultiDoc 对象，则 PrintService 代理将调用 {@link #getDoc() <CODE>getDoc()</CODE>} 一次或多次，直到它成功获得当前 Doc 对象为止。然后 PrintService 代理将获得当前 doc 的打印数据，在获得所有打印数据或出现不可恢复的错误之前，不会执行其他操作。如果能够继续执行其他操作，那么在 PrintService 代理成功获得下一个 MultiDoc 对象或说明没有 MultiDoc 的指示之前，PrintService 代理将接着调用 {@link #next() <CODE>next()</CODE>} 一次或多次。接口 MultiDoc 的实现可以假定 PrintService 代理将使用此 interleaved 模式；对于任意其他模式的使用，未指定 MultiDoc 实现的行为。
+ <P>
+对于同时访问同一 multidoc 的客户端线程的数目没有限制。因此，必须将接口 MultiDoc 的所有实现设计为多线程安全的。实际上，在 PrintJob 线程从 doc 列表（概念上的列表）的开始获取 doc 的同时，客户端线程可以向该列表的末尾添加 doc；只要 multidoc 对象可正确地对这些线程实现同步，这两个线程将互不干扰。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.Doc javax.print.MultiDoc.getDoc() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前的 doc 对象。
+
+@return 当前的 doc 对象。
+
+@exception IOException 如果读取文档时出现错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.MultiDoc javax.print.MultiDoc.next() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+转到包含 doc 对象序列中下一个 doc 对象的 multidoc 对象。
+
+@return 包含下一个 doc 对象的 Multidoc 对象，如果没有任何其他 doc 对象，则返回 null。
+
+@exception IOException 如果查找下一个文档时出现错误
+
+<!-- END DATA -->

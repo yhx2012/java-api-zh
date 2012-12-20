@@ -1,0 +1,394 @@
+<!-- BEGIN KEY -->
+public interface java.lang.instrument.Instrumentation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供检测 Java 编程语言代码所需的服务。检测是向方法中添加字节码，以搜集各种工具所使用的数据。由于更改完全是进行添加，所以这些工具不修改应用程序的状态或行为。这种无害工具的例子包括镜像代理、分析器、覆盖分析器和事件记录器。
+
+ <P>
+获取 <code>Instrumentation</code> 接口的实例有两种方式：
+
+ <ol>
+   <li><p>当 JVM 以指示一个代理类的方式启动时，将传递给代理类的 <code>premain</code> 方法一个 <code>Instrumentation</code> 实例。
+     </p></li>
+   <li><p> 当 JVM 提供某种机制在 JVM 启动之后某一时刻启动代理时，将传递给代理代码的 <code>agentmain</code> 方法一个 <code>Instrumentation</code> 实例。</p> </li> 
+ </ol>
+ <p> 
+ 这些机制在{@linkplain java.lang.instrument 包规范}中描述。
+ <p>如果某个代理获得了 <code>Instrumentation</code> 实例，它便可以在任何时候调用该实例上的方法。
+
+ @since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.addTransformer(ClassFileTransformer transformer, boolean canRetransform)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册提供的转换器。所有以后的类定义对于该转换器都是可见的，任何已注册转换器所依赖的类定义除外。
+加载类、{@linkplain #redefineClasses 重定义}类时将调用该转换器。如果 <code>canRetransform</code> 为 true，那么{@linkplain #retransformClasses 重转换}类时也将调用该转换器。 
+有关转换调用的顺序，请参见 {@link java.lang.instrument.ClassFileTransformer#transform
+ ClassFileTransformer.transform}。
+如果转换器在执行过程中抛出异常，JVM 将仍然按顺序调用其他已注册转换器。可以多次添加相同的转换器，但建议最好创建一个新的转换器类实例来避免这样做。
+ <P>
+此方法旨在用于检测，正如{@linkplain Instrumentation 类规范}所述。
+
+ @param transformer          要注册的转换器
+ @param canRetransform       此转换器的转换是否可以重转换
+ @throws java.lang.NullPointerException 如果传递了 <code>null</code> 转换器
+ @throws java.lang.UnsupportedOperationException 如果 <code>canRetransform</code> 为 true 但当前 JVM 的配置不允许重转换（{@link #isRetransformClassesSupported} 为 false）。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.addTransformer(ClassFileTransformer transformer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册提供的转换器。
+ <P>
+ 与 <code>addTransformer(transformer, false)</code> 相同。
+
+@param transformer          要注册的转换器
+@throws java.lang.NullPointerException 如果传递了一个 <code>null</code> 转换器
+@see    #addTransformer(ClassFileTransformer,boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.instrument.Instrumentation.removeTransformer(ClassFileTransformer transformer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注销提供的转换器。以后的类定义将不再向该转换器显示。移除最新添加的转换器的匹配实例。由于类加载的多线程特性，在调用被移除后，转换器还可能接收调用。所以编写转换器时应防止出现这种情况。 
+
+@param transformer         要注销的转换器
+@return  如果找到并移除转换器，则返回 true；如果找不到转换器，则返回 false
+@throws java.lang.NullPointerException 如果传递了一个 <code>null</code> 转换器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.instrument.Instrumentation.isRetransformClassesSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前 JVM 配置是否支持类的重转换。
+转换已加载类是 JVM 的一个可选性能。
+仅当 <code>Can-Retransform-Classes</code> 清单属性在代理 JAR 文件中设置为 <code>true</code>（如{@linkplain java.lang.instrument 包规范}所述），且 JVM 支持此性能时，才支持重转换。
+ 在单个 JVM 的单个实例化过程中，多次调用此方法将总是返回相同的答案。
+ @return  如果当前 JVM 配置支持类的重转换，则返回 true；如果不支持，则返回 false。
+ @see #retransformClasses
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.retransformClasses(java.lang.Class[] classes) throws java.lang.instrument.UnmodifiableClassException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 重转换提供的类集。
+
+ <P>
+ 此函数为检测已加载类提供了方便。
+当最初加载了类或{@linkplain #redefineClasses 重定义}了类时，初始类文件字节可以使用 {@link java.lang.instrument.ClassFileTransformer ClassFileTransformer} 转换。
+ 此函数返回转换进程（以前是否发生过转换）。
+ 此转换按以下步骤进行：
+  <ul>
+    <li>从初始类文件字节开始
+    </li>
+    <li>对于每个添加时 <code>canRetransform</code> 设为 false 的转换器，上一次类加载或重定义期间 {@link java.lang.instrument.ClassFileTransformer#transform transform} 返回的字节将被重新用于转换的输出；注意，这等价于不做更改地重新应用前一个转换；没有调用 {@link java.lang.instrument.ClassFileTransformer#transform transform} 的情况除外。
+    </li>
+    <li>对于每个添加时 <code>canRetransform</code> 设为 true 的转换器，在这些转换器中调用 {@link java.lang.instrument.ClassFileTransformer#transform transform} 方法
+    </li>
+    <li>转换的类文件字节将作为类的新定义安装
+    </li>
+  </ul>
+ <P>
+
+转换的顺序在 {@link java.lang.instrument.ClassFileTransformer#transform transform} 方法中描述。在自动重新应用不可重转换的转换时，也将使用这一顺序。 
+ <P>
+
+ 最初的类文件字节表示（应用转换前）传递给 {@link java.lang.ClassLoader#defineClass ClassLoader.defineClass} 或 {@link #redefineClasses redefineClasses} 的字节，但有可能不完全匹配。常量池的布局或内容可能不同。常量池的条目可能多一些或少一些。常量池条目的顺序可能不同，但是，方法字节码中常量池的索引将是对应的。一些属性可能不存在。在顺序没有意义的地方（例如，方法的顺序），可能不保留顺序。
+
+ <P>
+ 此方法在一个集合上操作，以便允许同时对多个类进行相互依赖的更改（重转换类 A 要求重转换类 B）。
+ <P>
+ 如果重转换的方法有活动的堆栈帧，那么这些活动的帧将继续运行原方法的字节码。重转换的方法将用于新的调用。
+
+ <P>
+此方法不会引起任何初始化操作，JVM 惯例语义下发生的初始化除外。换句话说，重定义一个类不会引起其初始化方法的运行。静态变量的值将与调用之前的值一样。
+
+ <P>
+ 重转换类的实例不受影响。
+
+ <P>
+ 重转换可能会更改方法体、常量池和属性。重转换不得添加、移除、重命名字段或方法；不得更改方法签名、继承关系。在以后的版本中，可能会取消这些限制。在应用转换之前，类文件字节不会被检查、验证和安装。如果结果字节错误，此方法将抛出异常。
+
+ <P>
+如果此方法抛出异常，则不会重转换任何类。
+ <P>
+此方法旨在用于检测，正如{@linkplain Instrumentation 类规范}所述。
+
+ @param classes 要转换的类数组；
+                允许长度为 0 数组，在这种情况下，此方法不执行任何操作
+ @throws java.lang.instrument.UnmodifiableClassException 如果不能修改指定的类（{@link #isModifiableClass} 返回 <code>false</code>）
+ @throws java.lang.UnsupportedOperationException 如果 JVM 的当前配置不允许重转换（{@link #isRetransformClassesSupported} 为 false），或者重转换试图做出不受支持的更改
+ @throws java.lang.ClassFormatError 如果数据不包含有效的类
+ @throws java.lang.NoClassDefFoundError 如果类文件中的名称不等于类的名称
+ @throws java.lang.UnsupportedClassVersionError 如果类文件版本号不受支持
+ @throws java.lang.ClassCircularityError 如果新类包含循环
+ @throws java.lang.LinkageError 如果发生链接错误
+ @throws java.lang.NullPointerException 如果提供的类数组或其任意组件为 <code>null</code>。
+
+ @see #isRetransformClassesSupported
+ @see #addTransformer
+ @see java.lang.instrument.ClassFileTransformer
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.instrument.Instrumentation.isRedefineClassesSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前 JVM 配置是否支持类的重定义。重定义已加载类是 JVM 的一个可选性能。
+仅当 <code>Can-Retransform-Classes</code> 清单属性在代理 JAR 文件中设置为 <code>true</code>（如{@linkplain java.lang.instrument 包规范}所述），且 JVM 支持此性能时，才支持重转换。
+在执行单个 JVM 的单实例化过程中，对此方法的多次调用将始终返回同一应答。
+@return  如果当前 JVM 配置支持类的重定义，则为 true，否则为 false。
+@see #redefineClasses
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.redefineClasses(java.lang.instrument.ClassDefinition[] definitions) throws java.lang.ClassNotFoundException, java.lang.instrument.UnmodifiableClassException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的类文件重定义提供的类集。
+ <P>
+此方法用于替代类的定义，而不引用现有的类文件字节，这与 fix-and-continue 调试过程中重新编译源代码时所做的一样。需要转换现有类文件字节的地方（例如，字节码检测中）应该使用 {@link #retransformClasses retransformClasses}。
+<P>
+此方法在一个集合上操作，以便允许同时对多个类进行相互依赖的更改（重定义类 A 要求重定义类 B）。
+
+ <P>
+如果重定义的方法有活动的堆栈帧，那么这些活动的帧将继续运行原方法的字节码。将在新的调用上使用此重定义的方法。
+
+ <P>
+此方法不会引起任何初始化操作，JVM 惯例语义下发生的初始化除外。换句话说，重定义一个类不会引起其初始化方法的运行。静态变量的值将与调用之前的值一样。
+
+ <P>
+重定义类的实例不受影响。
+
+ <P>
+重定义可能会更改方法体、常量池和属性。重定义不得添加、移除、重命名字段或方法；不得更改方法签名、继承关系。在以后的版本中，可能会取消这些限制。在应用转换之前，类文件字节不会被检查、验证和安装。如果结果字节错误，此方法将抛出异常。
+
+
+ <P>
+如果此方法抛出异常，则不会重定义任何类。
+ <P>
+此方法旨在用于检测，正如{@linkplain Instrumentation 类规范}所述。
+
+@param definitions 要使用相应定义来进行重定义的类数组；允许长度为 0 数组，在这种情况下，此方法不执行任何操作
+
+@throws java.lang.instrument.UnmodifiableClassException 如果无法修改指定的类（{@link #isModifiableClass} 返回 <code>false</code>）
+@throws java.lang.UnsupportedOperationException 如果 JVM 的当前配置不允许重定义（{@link #isRedefineClassesSupported} 为 false）或重定义试图做出不受支持的更改
+@throws java.lang.ClassFormatError 如果数据不包含有效类
+@throws java.lang.NoClassDefFoundError 如果类文件中的名称与类名称不相等
+@throws java.lang.UnsupportedClassVersionError 如果类文件版本号不受支持
+@throws java.lang.ClassCircularityError 如果新类包含循环
+@throws java.lang.LinkageError 如果发生链接错误
+@throws java.lang.NullPointerException 如果提供的定义数组或其任何组件为 <code>null</code>。
+@throws java.lang.ClassNotFoundException 不会抛出（存在只是为了兼容）
+@see #isRedefineClassesSupported
+@see #addTransformer
+@see java.lang.instrument.ClassFileTransformer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.instrument.Instrumentation.isModifiableClass(java.lang.Class<?> theClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定一个类是否可以被 {@linkplain #retransformClasses retransformation} 或 {@linkplain #redefineClasses redefinition} 修改。
+如果类可以被修改，那么此方法返回 <code>true</code>。
+如果类不能被修改，那么此方法返回 <code>false</code>。
+ <P>
+对于要重转换的类，{@link #isRetransformClassesSupported} 也必须为 true。但 <code>isRetransformClassesSupported()</code> 的值不影响此函数返回的值。
+对于要重定义的类，{@link #isRedefineClassesSupported} 也必须为 true。但 <code>isRedefineClassesSupported()</code> 的值不影响此函数返回的值。
+ <P>
+基本类（例如 <code>java.lang.Integer.TYPE</code>）和数组类不可修改。
+
+ @throws java.lang.NullPointerException 如果指定的类为 <code>null</code>。
+
+ @see #retransformClasses
+ @see #isRetransformClassesSupported
+ @see #redefineClasses
+ @see #isRedefineClassesSupported
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] java.lang.instrument.Instrumentation.getAllLoadedClasses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 JVM 当前加载的所有类的数组。
+
+@return 包含 JVM 加载的所有类的数组；如果没有，则返回长度为 0 数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] java.lang.instrument.Instrumentation.getInitiatedClasses(ClassLoader loader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有初始化加载器是 <code>loader</code> 的类的数组。如果提供的加载器为 <code>null</code>，则返回由引导类加载器初始化的类。
+
+@param loader          将返回其初始化类列表的加载器
+@return 包含初始化加载器是 <code>loader</code> 的类的数组；如果没有，则返回长度为 0 数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.instrument.Instrumentation.getObjectSize(Object objectToSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定对象使用的特定于实现的近似存储量。该结果可能包括对象的部分或全部开销，因此，在一个实现中进行比较时较为有用，但不能用于实现之间的比较。
+
+该估计值在 JVM 的单个调用期间可能发生变化。
+
+@param objectToSize     需要确定大小的对象
+@return 指定对象使用的特定于实现的近似存储量
+@throws java.lang.NullPointerException 如果提供的 Object 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.appendToBootstrapClassLoaderSearch(JarFile jarfile)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 JAR 文件，检测类由引导类加载器定义。
+
+ <p> 当虚拟机的内置类加载器（称为“引导类加载器”）未能成功搜索到类时，{@link
+ java.util.jar.JarFile JAR 文件}中的条目也将被搜索。 
+ 
+ <p> 可以多次使用此方法，按照调用此方法的顺序添加多个要搜索的 JAR 文件。
+ 
+ <p> 除了需要引导类加载器为检测而定义的类或资源外，代理应该注意确保 JAR 不包含任何其他类或资源。
+违反此规定将导致难以诊断的不可预料行为。例如，假设有加载器 L，L 的代理父加载器为引导类加载器。
+此外，有一个类 C 的方法，有一个 L 定义的类，引用了非公共存取类 C$1。如果 JAR 文件包含类 C$1，那么引导类加载器的代理将导致 C$1 被引导类加载器定义。此例中将抛出 <code>IllegalAccessError</code>，这可能导致应用程序失败。一个避免这类问题的办法是，对检测类使用唯一的包名称。
+
+ <p> <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>规定，后续尝试解析 Java 虚拟机以前未能成功解析的符号引用将总是失败，并抛出与最初解析尝试失败时相同的错误。因此，如果 JAR 文件包含的某个条目对应于 Java 虚拟机未能成功解析引用的类，那么后续尝试解析该引用将总是失败，并抛出与最初解析尝试失败时相同的错误。
+
+ @param	jarfile
+		当引导类加载器未成功搜索到类时要搜索的 JAR 文件。
+
+ @throws	NullPointerException
+		如果 <code>jarfile</code> 为 <code>null</code>。
+
+ @see     #appendToSystemClassLoaderSearch
+ @see	java.lang.ClassLoader
+ @see	java.util.jar.JarFile
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.appendToSystemClassLoaderSearch(JarFile jarfile)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 JAR 文件，检测类由系统类加载器定义。 
+
+当代理的系统类加载器（参见 {@link java.lang.ClassLoader#getSystemClassLoader getSystemClassLoader()}）未能成功搜索到类时，{@link
+ java.util.jar.JarFile JarFile} 中的条目也将被搜索。
+
+ <p> 可以多次使用此方法，按照调用此方法的顺序添加多个要搜索的 JAR 文件。
+
+
+ <p> 除了需要系统类加载器为检测而定义的类或资源外，代理应该注意确保 JAR 不包含任何其他类或资源。
+违反此规定将导致难以诊断的不可预料行为。（参见 {@link #appendToBootstrapClassLoaderSearch 
+ appendToBootstrapClassLoaderSearch}）。
+
+ <p> 如果实现了名为 <code>appendToClassPathForInstrumentation</code> 的方法（带有一个类型为 <code>java.lang.String</code> 的参数），那么系统类加载器支持添加要搜索的 JAR 文件。不要求该方法具有 <code>public</code> 访问权。JAR 文件名可以通过对 <code>jarfile</code> 调用 {@link java.util.zip.ZipFile#getName 
+ getName()} 方法获取，并将作为参数提供给 <code>appendtoClassPathForInstrumentation</code> 方法。
+
+ <p> <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>规定，后续尝试解析 Java 虚拟机以前未能成功解析的符号引用将总是失败，并抛出与最初解析尝试失败时相同的错误。因此，如果 JAR 文件包含的某个条目对应于 Java 虚拟机未能成功解析引用的类，那么后续尝试解析该引用将总是失败，并抛出与最初解析尝试失败时相同的错误。
+
+ <p> 此方法不更改 <code>java.class.path</code> {@link java.lang.System#getProperties 系统属性}的值。
+
+ @param   jarfile
+          当系统类加载器未成功搜索到类时要搜索的 JAR 文件。
+
+
+ @throws	UnsupportedOperationException
+		如果系统类加载器不支持添加要搜索的 JAR 文件。
+
+ @throws  NullPointerException
+          如果 <code>jarfile</code> 为 <code>null</code>。
+
+ @see     #appendToBootstrapClassLoaderSearch
+ @see     java.lang.ClassLoader#getSystemClassLoader
+ @see     java.util.jar.JarFile
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.instrument.Instrumentation.isNativeMethodPrefixSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前 JVM 配置是否支持{@linkplain #setNativeMethodPrefix(ClassFileTransformer,String)
+ 设置本机方法前缀}。
+设置本机方法前缀是 JVM 的一个可选性能。
+仅当 <code>Can-Set-Native-Method-Prefix</code> 清单属性在代理 JAR 文件中设置为 <code>true</code>（如{@linkplain java.lang.instrument 包规范}所述），且 JVM 支持此性能时，才支持设置本机方法前缀。
+ 在单个 JVM 的单个实例化过程中，多次调用此方法将总是返回相同的应答。
+ @return  如果当前 JVM 配置支持设置本机方法前缀，则返回 true；否则返回 false。
+ @see #setNativeMethodPrefix
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.lang.instrument.Instrumentation.setNativeMethodPrefix(ClassFileTransformer transformer, String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过允许重试，将前缀应用到名称，此方法修改本机方法解析的失败处理。
+当与 {@link java.lang.instrument.ClassFileTransformer ClassFileTransformer} 一起使用时，它允许检测本机方法。
+ <p/>
+由于本机方法不能直接检测（它们没有字节码），因此必须使用可以检测的非本机方法包装它们。例如，如果有：
+ <pre>
+   native boolean foo(int x);</pre>
+ <p/>
+那么可以转换类文件（在类的初始定义过程中使用 ClassFileTransformer），使之变成：
+ <pre>
+   boolean foo(int x) {
+     <i>... record entry to foo ...</i>
+     return wrapped_foo(x);
+   }
+   
+   native boolean wrapped_foo(int x);</pre>
+ <p/>
+其中 <code>foo</code> 变为实际本机方法的包装器，并带有附加前缀 "wrapped_"。注意，将 "wrapped_" 作为前缀并不合适，因为它很有可能与现有方法重名，因此 "$$$MyAgentWrapped$$$_" 之类更加合适，但那将减少这些示例的可读性。
+ <p/>
+包装器将允许在本机方法调用上收集数据，但现在的问题在于如何连接包装的方法与本机实现。 
+也就是说，方法 <code>wrapped_foo</code> 需要被解析为 <code>foo</code> 的本机实现，即：
+ <pre>
+   Java_somePackage_someClass_foo(JNIEnv* env, jint x)</pre>
+ <p/>
+ 此函数允许指定前缀并进行恰当的解析。
+明确地说，当标准解析失败时，解析将重新尝试考虑前缀。进行解析有两种方式，使用 JNI 函数 <code>RegisterNatives</code> 的显式解析和常规自动解析。对于 <code>RegisterNatives</code>，JVM 将尝试以下关联：
+
+ <pre>
+   method(foo) -> nativeImplementation(foo)</pre>
+ <p/>
+若此操作失败，解析将重试，将指定的前缀添加到方法名，生成校正解析：
+ <pre>
+   method(wrapped_foo) -> nativeImplementation(foo)</pre>
+ <p/>
+ 对于自动解析，JVM 将尝试： 
+ <pre>
+   method(wrapped_foo) -> nativeImplementation(wrapped_foo)</pre>
+ <p/>
+若此操作失败，解析将重试，从实现名删除指定的前缀，生成校正解析：
+ <pre>
+   method(wrapped_foo) -> nativeImplementation(foo)</pre>
+ <p/>
+ 注意，前缀只在标准解析失败时使用，因此可以有选择地包装本机方法。
+ <p/>
+ 每个 <code>ClassFileTransformer</code> 可以执行其本身的字节代码转换，因此可能要应用多个包装器层。所以每个转换器需要其自己的前缀。转换是按顺序应用的，因此前缀（如果应用）也将按相同的顺序应用（参见 {@link #addTransformer(ClassFileTransformer,boolean) addTransformer}）。
+所以，如果三个转换器应用了包装器，<code>foo</code> 将变为 <code>$trans3_$trans2_$trans1_foo</code>。但是，如果第二个转换器没有对 <code>foo</code> 应用包装器，那么它将是 <code>$trans3_$trans1_foo</code>。要有效的确定前缀序列，仅当其非本机包装器存在时才应用中间前缀。因此，在最后一个示例中，即使 <code>$trans1_foo</code> 不是本机方法，<code>$trans1_</code> 前缀也将应用，因为 <code>$trans1_foo</code> 存在。
+
+ @param   transformer
+          使用此前缀包装的 ClassFileTransformer。
+ @param   prefix
+          已应用到包装的本机方法的前缀。
+ @throws java.lang.NullPointerException 如果传入 <code>null</code> 转换器。
+ @throws java.lang.UnsupportedOperationException 如果 JVM 的当前配置不允许设置本机方法前缀（{@link #isNativeMethodPrefixSupported} 为 false）。
+ @throws java.lang.IllegalArgumentException 如果转换器没有注册（参见 {@link #addTransformer(ClassFileTransformer,boolean) addTransformer}）。
+
+ @since 1.6
+
+<!-- END DATA -->

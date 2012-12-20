@@ -1,0 +1,284 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.bind.Binder extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 XML 信息集节点和表示相同 XML 文档的 JAXB 对象之间启用同步。
+
+ <p>
+此类的实例维护了保留视图的信息集的 XML 节点与 XML 文档的 JAXB 表示形式之间的关联。两个视图之间的导航由方法 {@link #getXMLNode(Object)} 和 {@link #getJAXBNode(Object)} 提供。
+ 
+ <p>
+可以在其他视图保持不变的情况下，对保留视图的信息集或文档的 JAXB 表示形式进行修改。Binder 能够使用适当的 Binder 更新方法（{@link #updateXML(Object, Object)} 或 {@link #updateJAXB(Object)}）将在修改视图中所做的更改同步到其他视图中。 
+ 
+ <p>
+下面是一个典型的使用场景：
+ <ul>
+<li>将 XML 文档加载为 XML 信息集表示形式</li>
+<li>将 {@link #unmarshal(Object)} XML 信息集视图加载到 JAXB 视图。（注意保存资源，可以只将 XML 信息集视图的子树解组为 JAXB 视图。）</li>
+<li>XML 文档的应用程序访问/更新 JAXB 视图。</li>
+<li>{@link #updateXML(Object)} 可将对 JAXB 视图的修改同步到 XML 信息集视图中。更新操作将尽可能多地保留原始 XML 信息集（如注释、PI 等等）</li>
+ </ul>
+ 
+ <p>
+Binder 实例是使用工厂方法 {@link JAXBContext#createBinder()} 或 {@link JAXBContext#createBinder(Class)} 创建的。
+
+ <p>
+模板参数 <code>XmlNode</code> 是保留表示形式的 XML 信息集的根接口/类。Binder 实现至少需要支持 <code>org.w3c.dom.Node.class</code> 的一个 <code>XmlNode</code> 值。Binder 实现可以支持保留表示形式的备用 XML 信息集。
+
+@author Kohsuke Kawaguchi (kohsuke.kawaguchi@sun.com) Joseph Fialli
+ 
+@since JAXB 2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.bind.Binder.unmarshal(XmlNode xmlNode) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 XML 信息集视图解组为 JAXB 对象树。
+
+ <p>
+此方法类似于添加了维持 XML 节点与生成的 JAXB 对象之间关联功能的 {@link Unmarshaller#unmarshal(Node)}，它还支持未来更新操作，如 {@link #updateXML(Object, Object)} 或 {@link #updateJAXB(Object)}。
+
+ <p>
+当 {@link #getSchema()} 为非 null 时，可以在执行此操作期间验证 <code>xmlNode</code> 及其子节点。
+
+ <p>
+当 Binder 的 {@link JAXBContext} 不存在将 <tt>xmlNode</tt> 的 XML 元素名称或类型（通过 <tt>@xsi:type</tt> 指定）映射到 JAXB 映射类的映射关系时，此方法抛出 {@link UnmarshalException}。{@link #unmarshal(Object, Class)} 方法使应用程序能够指定 <tt>xmlNode</tt> 应该映射到哪个 JAXB 映射类。 
+
+@param xmlNode 要解组其中的 XML 数据的文档/元素。
+
+@return JAXB 对象树的新创建的根对象。
+
+@throws JAXBException
+      如果进行解组期间发生不可预料的错误
+
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Binder</tt> 不能执行 XML 到 Java 的绑定。
+@throws IllegalArgumentException 如果节点参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.bind.JAXBElement<T> javax.xml.bind.Binder.unmarshal(XmlNode xmlNode, java.lang.Class<T> declaredType) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据提供的 <tt>declaredType</tt> 将 XML 根元素解组为 JAXB 对象树。
+
+ <p>
+<a href="Unmarshaller.html#unmarshalByDeclaredType">通过声明的类型实现解组</a>
+ 
+ <p>
+此方法类似于添加了维持 XML 节点与生成的 JAXB 对象之间关联功能的 {@link Unmarshaller#unmarshal(Node, Class)}，它还支持未来更新操作，如 {@link #updateXML(Object, Object)} 或 {@link #updateJAXB(Object)}。
+
+ <p>
+当 {@link #getSchema()} 为非 null 时，可以在执行此操作期间验证 <code>xmlNode</code> 及其子节点。
+
+@param xmlNode 要解组其中的 XML 数据的文档/元素。
+@param declaredType 用来保存 <tt>node</tt> 的 XML 数据的适当 JAXB 映射类。
+
+@return <tt>node</tt> 的 <a href="#unmarshalDeclaredTypeReturn">JAXB 元素</a>表示形式
+
+@throws JAXBException
+      如果进行解组期间发生不可预料的错误
+
+@throws UnmarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Binder</tt> 不能执行 XML 到 Java 的绑定。
+@throws IllegalArgumentException 如果任何输入参数为 null
+@since JAXB2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.bind.Binder.marshal(Object jaxbObject, XmlNode xmlNode) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 JAXB 对象树编组为新的 XML 文档。
+
+ <p>
+此方法类似于添加了维持 JAXB 对象和产生的 XML 节点之间关联功能的 {@link Marshaller#marshal(Object, Node)}，它还支持未来更新操作，如 {@link #updateXML(Object, Object)} 或 {@link #updateJAXB(Object)}。
+
+ <p>
+当 {@link #getSchema()} 为非 null 时，可在执行此操作期间验证已编组的 xml 内容。
+
+@param jaxbObject 将被编组的内容树。
+@param xmlNode 该参数必须是一个接受子节点的节点。
+
+@throws JAXBException
+      如果进行解组期间发生不可预料的错误。
+
+@throws MarshalException 如果 {@link ValidationEventHandler ValidationEventHandler} 从其 <tt>handleEvent</tt> 方法返回 false，或者 <tt>Binder</tt> 不能编组 <tt>jaxbObject</tt>（或任何可从 <tt>jaxbObject</tt> 获得的对象）。
+ 
+@throws IllegalArgumentException 如果任何方法的参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract XmlNode javax.xml.bind.Binder.getXMLNode(Object jaxbObject)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与给定 JAXB 对象关联的 XML 元素。
+
+ <p>
+一旦 JAXB 对象树与 XML 片段关联，此方法将在两树之间启用导航。
+
+ <p>
+XML 元素与 JAXB 对象之间的关联是通过 bind 方法和 update 方法建立的。注意，此关联是片面的；并不是所有 XML 元素都有关联的 JAXB 对象，也不是所有 JAXB 对象都有关联的 XML 元素。
+
+@param jaxbObject 可从以前对返回 JAXB 对象树的 bind 或 update 方法的调用中获得的实例。
+
+@return 如果指定的 JAXB 对象对于此 {@link Binder} 为未知对象，或者该对象与 XML 元素没有任何关联，则返回 null。
+
+@throws IllegalArgumentException
+      如果 jaxbObject 参数为 null
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.bind.Binder.getJAXBNode(XmlNode xmlNode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与给定 XML 元素关联的 JAXB 对象。
+
+ <p>
+一旦 JAXB 对象树与 XML 片段关联，此方法将在两树之间启用导航。
+
+ <p>
+XML 元素和 JAXB 对象之间的关联是通过 unmarshal、marshal 和 update 方法建立的。注意，此关联是片面的；并不是所有 XML 元素都有关联的 JAXB 对象，也不是所有 JAXB 对象都有关联的 XML 元素。
+
+@return 如果 XML 节点对于此 {@link Binder} 为未知节点，或者该节点与 JAXB 对象没有任何关联，则返回 null。
+
+@throws IllegalArgumentException
+      如果节点参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract XmlNode javax.xml.bind.Binder.updateXML(Object jaxbObject) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取一个 JAXB 对象，并更新与其关联的 XML 节点和该节点的子级。
+
+ <p>
+这是如下调用的一种便捷方法：
+ <pre>
+updateXML( jaxbObject, getXMLNode(jaxbObject));
+ </pre>
+
+@throws JAXBException
+      如果更新相应的 XML 内容时出现任何不可预料的问题。
+ @throws IllegalArgumentException
+      如果 jaxbObject 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract XmlNode javax.xml.bind.Binder.updateXML(Object jaxbObject, XmlNode xmlNode) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+JAXB 对象树中所做的更改在与其关联的 XML 解析树中得到更新。
+
+ <p>
+可将此操作视为&ldquo;原地（in-place）&rdquo;编组。不同点在于，此操作不是创建一个全新的 XML 树，而是在试图尽可能多地保留 XML 的同时更新现有的树。
+
+ <p>
+例如，没有绑定到 JAXB 的 XML 中的未知元素/属性将保持不变（而编组操作将创建一个不包含任何元素/属性的新树。）
+
+ <p>
+另一方面，此操作会更新 XML 节点与 JAXB 对象之间的关联。
+
+@param jaxbObject 可能已修改的 JAXB 对象树的根
+@param xmlNode 更新目标 XML 解析树的根
+
+@return 返回已更新的 XML 节点。通常，此节点是作为 <i>xmlNode</i> 传入的同一节点，但可能是不同的对象，例如在对象的标记名称发生更改时。
+
+@throws JAXBException
+      如果更新相应 XML 内容时出现任何不可预料的问题。
+ @throws IllegalArgumentException
+      如何任何输入参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.bind.Binder.updateJAXB(XmlNode xmlNode) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取一个 XML 节点，并更新与其关联的 JAXB 对象和该对象的子级。
+
+ <p>
+可将此操作视为&ldquo;原地&rdquo;解组。不同点在于，此操作不是创建一个全新 JAXB 树，而是更新现有的树，尽可能多地重用 JAXB 对象。
+
+ <p>
+另一方面，此操作会更新 XML 节点与 JAXB 对象之间的关联。
+
+@return 返回已更新的 JAXB 对象。通常，此对象是从较早的 {@link #marshal(Object,Object)} 或 {@link #updateJAXB(Object)} 方法调用中返回的同一对象，但可以是不同的对象，例如在 XML 元素的名称发生更改时。
+ 
+@throws JAXBException
+      如果更新相应的 JAXB 映射内容时出现任何不可预料的问题。
+ @throws IllegalArgumentException
+      如果节点参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.bind.Binder.setSchema(Schema schema)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定 marshal、unmarshal 和 update 方法是否在其 XML 内容上执行验证。
+
+@param schema 可将此参数设置为 null 来禁用验证。
+
+@see Unmarshaller#setSchema(Schema)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.validation.Schema javax.xml.bind.Binder.getSchema()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 {@link #setSchema(Schema)} 方法设置的最后一个 {@link Schema} 对象（包括 null）。
+
+@return 用于验证的 Schema 对象，如果不存在这样的对象，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.bind.Binder.setEventHandler(ValidationEventHandler handler) throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序注册 <tt>ValidationEventHandler</tt>。
+ <p>
+如果在调用任何 Binder 的 unmarshal、marshal 和 update 方法期间遇到验证错误，JAXB 提供者将调用 <tt>ValidationEventHandler</tt>。  
+ 
+ <p>
+调用带有 null 参数的此方法将导致 Binder 转而调用默认事件处理程序。
+
+@param handler 验证事件处理程序
+@throws JAXBException 如果在设置事件处理程序时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.bind.ValidationEventHandler javax.xml.bind.Binder.getEventHandler() throws javax.xml.bind.JAXBException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前的事件处理程序；如果没有设置，则返回默认事件处理程序。
+
+@return 当前的 ValidationEventHandler；如果没有设置，则返回默认的事件处理程序
+@throws JAXBException 如果获取当前的事件处理程序时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.bind.Binder.setProperty(String name, Object value) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+设置 <tt>Binder</tt> 的基础实现中的特定属性。此方法只用于设置某个标准 JAXB 定义的 unmarshal/marshal 属性或者特定于提供者的 binder、unmarshal 或 marshal 属性。试图设置未定义的属性将导致抛出 PropertyException。请参阅<a href="Unmarshaller.html#supportedProps">受支持的 Unmarshal 属性</a>和<a href="Marshaller.html#supportedProps">受支持的 Marshal 属性</a>。
+
+@param name 要设置的属性的名称。此值可以使用一个常量字段来指定，也可以是一个用户提供的字符串。
+@param value 要设置的属性值
+
+@throws PropertyException 如果处理给定属性或值时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.bind.Binder.getProperty(String name) throws javax.xml.bind.PropertyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <tt>Binder</tt> 的基础实现中的特定属性。此方法只用于获取某个标准 JAXB 定义的 unmarshal/marshal 属性或者特定于提供者的 binder、unmarshal 或 marshal 属性。试图获取未定义的属性将导致抛出 PropertyException。请参阅<a href="Unmarshaller.html#supportedProps">受支持的 Unmarshal 属性</a>和<a href="Marshaller.html#supportedProps">受支持的 Marshal 属性</a>。
+
+@param name 将检索的属性名称
+@return 所请求属性的值
+
+@throws PropertyException 如果检索给定属性或值属性名称时发生错误
+@throws IllegalArgumentException 如果 name 参数为 null
+
+<!-- END DATA -->

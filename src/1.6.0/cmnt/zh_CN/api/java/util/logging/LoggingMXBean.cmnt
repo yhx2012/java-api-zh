@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public interface java.util.logging.LoggingMXBean
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+日志记录设施的管理接口。
+
+<p>存在单个 <tt>LoggingMXBean</tt> 的全局实例。此实例是一个  <a href="../../lang/management/ManagementFactory.html#MXBean">MXBean</a>，可通过调用 {@link LogManager#getLoggingMXBean} 得到，或者从 {@link java.lang.management.ManagementFactory#getPlatformMBeanServer platform <tt>MBeanServer</tt>} 方法得到。
+
+<p>在 MBeanServer 中唯一标识 <tt>LoggingMXBean</tt> 的 {@link javax.management.ObjectName ObjectName} 是：
+ <blockquote>
+    {@link LogManager#LOGGING_MXBEAN_NAME
+           <tt>java.util.logging:type=Logging</tt>}
+ </blockquote>
+
+@see java.lang.management.ManagementFactory
+
+@author  Ron Mann
+@author  Mandy Chung
+@version 1.7, 04/20/04
+@since   1.5
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> java.util.logging.LoggingMXBean.getLoggerNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回当前已注册的 logger 列表。此方法调用 {@link LogManager#getLoggerNames}，并返回 logger 的名称列表。
+ 
+@return <tt>String</tt> 列表，其中每一项都是一个当前已注册的 <tt>Logger</tt> 名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LoggingMXBean.getLoggerLevel(String loggerName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取与指定 logger 相关的日志级别名称。如果指定 logger 不存在，则返回 <tt>null</tt>。此方法首先查找给定名称的 logger ，然后返回日志级别的名称，这通过调用以下方法来实现：
+ <blockquote>
+   {@link Logger#getLevel Logger.getLevel()}.{@link Level#getName getName()};
+ </blockquote>
+  
+ <p>
+如果指定 logger 的 <tt>Level</tt> 为 <tt>null</tt>（这意味着此 logger 的有效级别继承自它的父 logger），则返回一个空字符串。
+ 
+@param loggerName 要获取的 <tt>Logger</tt> 的名称。
+
+@return 指定 logger 的日志级别的名称；如果指定 logger 的日志级别为 <tt>null</tt>，则返回一个空字符串。如果指定 logger 不存在，则返回 <tt>null</tt>。
+
+@see Logger#getLevel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.LoggingMXBean.setLoggerLevel(String loggerName, String levelName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定 logger 设置为指定的新级别。如果 <tt>levelName</tt> 不为 <tt>null</tt>，则将指定 logger 的级别设置为与 <tt>levelName</tt> 匹配的、解析后的 <tt>Level</tt>。如果 <tt>levelName</tt> 为 <tt>null</tt>，则将指定 logger 的级别设置为 <tt>null</tt>，并且其有效级别继承自最近的祖先（带特定的非 null 级别值）。
+
+@param loggerName 要设置的 <tt>Logger</tt> 的名称。必须为非 null。
+@param levelName 指定 logger 所要设置的级别名称，如果设置该级别继承其最近的祖先，则为 <tt>null</tt>。
+
+@throws IllegalArgumentException 如果指定 logger 不存在，或 <tt>levelName</tt> 不是一个有效的级别名称。
+
+@throws SecurityException 如果安全管理器存在并且调用者不具有 LoggingPermission("control")。
+
+@see Logger#setLevel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.LoggingMXBean.getParentLoggerName(String loggerName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定 logger 的父 logger 名称。如果指定 logger 不存在，则返回 <tt>null</tt>。如果指定 logger 是名称空间中的根 <tt>Logger</tt>，则结果是一个空字符串。
+
+@param loggerName  <tt>Logger</tt> 的名称。
+
+@return 最近的现有父 logger 的名称；如果指定的 logger 是根 logger ，则返回一个空字符串。如果指定 logger 不存在，则返回 <tt>null</tt>。 
+
+<!-- END DATA -->
+
+

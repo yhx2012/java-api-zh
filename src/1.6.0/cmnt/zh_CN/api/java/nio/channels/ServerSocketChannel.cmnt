@@ -1,0 +1,91 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.ServerSocketChannel extends java.nio.channels.spi.AbstractSelectableChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对面向流的侦听套接字的可选择通道。
+
+<p> 服务器套接字通道不是侦听网络套接字的完整抽象。必须通过调用 {@link #socket() socket} 方法所获得的关联 {@link java.net.ServerSocket} 对象来完成对套接字选项的绑定和操作。不可能为任意的已有服务器套接字创建通道，也不可能指定与服务器套接字通道关联的服务器套接字所使用的 {@link java.net.SocketImpl} 对象。
+
+<p> 通过调用此类的 {@link #open open} 方法创建服务器套接字通道。新创建的服务器套接字通道已打开，但尚未绑定。试图调用未绑定的服务器套接字通道的 {@link #accept() accept} 方法会导致抛出 {@link NotYetBoundException}。可通过调用相关服务器套接字的某个 {@link java.net.ServerSocket#bind(java.net.SocketAddress,int) bind} 方法来绑定服务器套接字通道。
+
+<p> 多个并发线程可安全地使用服务器套接字通道。
+ </p>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.24, 03/12/19
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.ServerSocketChannel(SelectorProvider provider)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.nio.channels.ServerSocketChannel java.nio.channels.ServerSocketChannel.open() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开服务器套接字通道。
+
+<p> 通过调用系统级默认 {@link java.nio.channels.spi.SelectorProvider} 对象的 {@link java.nio.channels.spi.SelectorProvider#openServerSocketChannel openServerSocketChannel} 方法来创建新的通道。
+
+<p> 新通道的套接字最初是未绑定的；可以接受连接之前，必须通过它的某个套接字的 {@link java.net.ServerSocket#bind(SocketAddress) bind} 方法将其绑定到具体的地址。  </p>
+
+@return 新的套接字通道
+
+@throws IOException 如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.channels.ServerSocketChannel.validOps()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个操作集，标识此通道所支持的操作。
+
+<p> 服务器套接字通道仅支持接受新的连接，所以此方法返回 {@link SelectionKey#OP_ACCEPT}。
+ </p>
+
+@return 有效操作集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.net.ServerSocket java.nio.channels.ServerSocketChannel.socket()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此通道关联的服务器套接字。
+
+<p> 返回的对象不会声明任何在 {@link java.net.ServerSocket} 类中未声明的公共方法。</p>
+
+@return 与此通道关联的服务器套接字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.SocketChannel java.nio.channels.ServerSocketChannel.accept() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接受到此通道套接字的连接。
+
+<p> 如果此通道处于非阻塞模式，那么在不存在挂起的连接时，此方法将直接返回 <tt>null</tt>。否则，在新的连接可用或者发生 I/O 错误之前会无限期地阻塞它。
+
+<p> 不管此通道的阻塞模式如何，此方法返回的套接字通道（如果有）将处于阻塞模式。
+
+<p> 此方法执行的安全检查与 {@link java.net.ServerSocket} 类的 {@link java.net.ServerSocket#accept accept} 方法执行的安全检查完全相同。也就是说，如果已安装了安全管理器，则对于每个新的连接，此方法都会验证安全管理器的 {@link java.lang.SecurityManager#checkAccept checkAccept} 方法是否允许使用该连接的远程端点的地址和端口号。  </p>
+
+@return 用于新连接的套接字通道，或者如果此通道处于非阻塞模式并且没有要接受的可用连接，则返回 <tt>null</tt>
+
+@throws ClosedChannelException 如果此通道已关闭
+
+@throws AsynchronousCloseException 如果正在进行接受操作时另一个线程关闭了此通道
+
+@throws ClosedByInterruptException 如果正在进行接受操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程的状态设置为中断
+
+@throws NotYetBoundException 如果尚未绑定此通道的套接字
+
+@throws SecurityException 如果已安装安全管理器并且它不允许对新连接的远程端点进行访问
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->

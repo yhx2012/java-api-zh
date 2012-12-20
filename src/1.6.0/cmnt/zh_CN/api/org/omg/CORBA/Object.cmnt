@@ -1,0 +1,165 @@
+<!-- BEGIN KEY -->
+public interface org.omg.CORBA.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+CORBA 对象引用的定义。
+ <p>
+CORBA 对象引用是服务器实现的特定 CORBA 对象的句柄。每次使用 CORBA 对象引用对对象调用方法时，该对象引用都标识同一 CORBA 对象。CORBA 对象可以有多个不同的对象引用。
+ <p>
+<code>org.omg.CORBA.Object</code> 接口是 Java 编程语言中所有 CORBA 对象引用继承层次结构的根，类似于用于 RMI 远程对象的 <code>java.rmi.Remote</code>。
+ <p>
+CORBA 对象可以是本地的，也可以是远程的。如果该对象是一个本地对象（即与客户端运行在同一 VM 中），则可以直接在该对象实例上进行调用，对象引用可以指向实际的对象实现类实例。如果 CORBA 对象是一个远程对象（即与客户端运行在不同的 VM 中），则对象引用指向某一 stub（代理），该 stub 使用 ORB 机制在对象实现驻留的服务器上进行远程调用。
+ <p>
+<code>org.omg.CORBA.portable.ObjectImpl</code> 类中提供接口 <code>org.omg.CORBA.Object</code> 中方法的默认实现，该类是 stub 和对象实现的基类。
+ <p>
+
+@see org.omg.CORBA.portable.ObjectImpl
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.Object._is_a(String repositoryIdentifier)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此对象是否是实现给定接口的类的实例。
+
+@param repositoryIdentifier 要检查的接口
+@return 如果此对象引用是实现接口的类的实例，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.Object._is_equivalent(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 ORB 确定时所需开销不大的范围内确定两个对象引用是否相等。两个等同的对象引用是相等的。两个实际引用相同对象的不同对象引用也是相等的。但是，ORB 不需要尝试确定两个不同的对象引用是否引用了相同的对象，因为这种确定所需的开销可能非常昂贵。
+@param other 用来检查相等性的另一个对象引用
+@return 如果已知此对象引用与给定对象引用相等，则返回 <code>true</code>。注意，<code>false</code> 仅指示两个对象引用是不同的，它们不一定引用不同的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.omg.CORBA.Object._non_existent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此对象引用的 server 对象是否已经被销毁。
+@return 如果 ORB 确信 server 对象不存在，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.omg.CORBA.Object._hash(int maximum)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象引用的 ORB 内部标识符。这是一个哈希标识符，在对象引用的生存期间该标识符不会发生更改，因此该标识符的任何哈希函数也不会发生更改。不保证返回值是唯一的；换句话说，另一个对象引用可以有相同的哈希值。如果两个对象引用的哈希值不同，则它们是不同的对象引用，但是它们仍然可以引用相同的 CORBA 对象。
+
+@param maximum ORB 返回的哈希值的上限
+@return 此对象引用的 ORB 内部哈希标识符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Object org.omg.CORBA.Object._duplicate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CORBA 对象引用的副本。server 对象实现不涉及创建副本，并且该实现无法区分请求时使用的是原始对象引用还是副本。
+ <P>
+注意，此方法在 Java 平台上不是很有用，因为内存管理由 VM 处理。包含此方法是为了与 CORBA API 保持一致。
+ <P>
+<code>_duplicate</code> 方法可能返回此对象引用本身。
+
+@return 此对象引用的副本或此对象引用本身
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.CORBA.Object._release()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出信号，指示此对象引用调用者已经使用完毕，因而可以释放与此对象引用关联的内部 ORB 资源。注意，此操作中不涉及对象实现，并且不影响对同一对象的其他引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Object org.omg.CORBA.Object._get_interface_def()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象引用所引用的对象实现的 <code>InterfaceDef</code>。可以使用 <code>InterfaceDef</code> 对象对此对象引用所引用对象的方法、属性和其他类型信息进行内省。
+
+@return Repository 接口中的 <code>InterfaceDef</code> 对象，它提供了有关此对象引用所引用的对象的类型信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Request org.omg.CORBA.Object._request(String operation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个在动态调用接口 (Dynamic Invocation Interface) 中使用的 <code>Request</code> 实例。
+
+@param operation  使用 <code>Request</code> 实例调用的方法的名称
+@return 新创建的 <code>Request</code> 实例
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Request org.omg.CORBA.Object._create_request(Context ctx, String operation, NVList arg_list, NamedValue result)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Request</code> 实例，并使用给定上下文、方法名称、参数列表和用于该方法返回值的容器进行初始化。
+
+@param ctx			包含属性列表的 <code>Context</code> 对象
+@param operation    要调用的方法的名称
+@param arg_list		一个 <code>NVList</code>，包含将调用的方法的实际参数
+@param result		作为该方法返回值容器的 <code>NamedValue</code> 对象
+@return			新创建的 <code>Request</code> 对象
+
+
+@see Request
+@see NVList
+@see NamedValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Request org.omg.CORBA.Object._create_request(Context ctx, String operation, NVList arg_list, NamedValue result, ExceptionList exclist, ContextList ctxlist)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>Request</code> 实例，并使用给定上下文、方法名称、参数列表、用于该方法返回值的容器、可能的异常列表以及需要被解析的上下文字符串所组成的列表进行初始化。
+
+@param ctx			包含属性列表的 <code>Context</code> 对象
+@param operation    要调用的方法的名称
+@param arg_list		一个 <code>NVList</code>，包含将调用的方法的实际参数
+@param result		作为该方法返回值容器的 <code>NamedValue</code> 对象
+@param exclist		一个 <code>ExceptionList</code> 对象，包含该方法可能抛出的异常所组成的列表
+@param ctxlist		一个 <code>ContextList</code> 对象，包含需要被解析的上下文字符串所组成的列表，这些字符串随 <code>Request</code> 实例一起发送
+@return			新创建的 <code>Request</code> 对象
+
+
+@see Request
+@see NVList
+@see NamedValue
+@see ExceptionList
+@see ContextList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Policy org.omg.CORBA.Object._get_policy(int policy_type)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回应用于此对象的指定类型的 <code>Policy</code> 对象。
+ 
+@param policy_type 将获取的策略类型
+@return 由 policy_type 参数指定的类型的 <code>Policy</code> 对象
+@exception org.omg.CORBA.BAD_PARAM 当由于此 ORB 不支持指定类型或者该类型的策略对象没有与此对象关联而导致策略类型值无效时
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.DomainManager[] org.omg.CORBA.Object._get_domain_managers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此对象的 <code>DomainManager</code>。这允许管理服务（和应用程序）检索域管理程序，从而使得安全性和其他策略能应用于作为该域成员的各个对象。
+ 
+@return 此类直接封装的域管理程序列表。至少有一个域管理程序总是返回在列表中，因为默认情况下，每个类在创建时至少关联一个域管理程序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Object org.omg.CORBA.Object._set_policy_override(org.omg.CORBA.Policy[] policies, SetOverrideType set_add)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个新的 <code>Object</code>，使用给定策略替换此 <code>Object</code> 中的所有现有策略，或者根据给定 <code>SetOverrideType</code> 对象的值将给定策略添加到现有策略。
+ 
+@param policies 一个 <code>Policy</code> 对象数组，包含将添加或用作替代策略的策略
+@param set_add 该值可以为 <code>SetOverrideType.SET_OVERRIDE</code>，指示给定策略将替换所有现有策略；也可以为 <code>SetOverrideType.ADD_OVERRIDE</code>，指示应该添加到所有现有策略的给定策略
+@return 一个新 <code>Object</code>，此 <code>Object</code> 中的策略已使用给定策略替换或添加
+
+<!-- END DATA -->

@@ -1,0 +1,106 @@
+<!-- BEGIN KEY -->
+public interface javax.annotation.processing.Filer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口支持通过注释处理器创建新文件。以这种方式创建的文件对于实现此接口的注释处理工具将是已知的，这比启用工具来管理它们更好。在对用来编写文件内容的 {@code Writer} 或 {@code OutputStream} 调用 {@code close} 方法之后，以这种方式创建的源文件和类文件被认为将由管理它们的工具处理。有三类文件要加以区分：源文件、类文件和辅助资源文件。
+
+<p> 新创建的文件被放置在两个不同的受支持位置（逻辑文件系统中的子树）：一个用于{@linkplain javax.tools.StandardLocation#SOURCE_OUTPUT 新的源文件}，一个用于{@linkplain javax.tools.StandardLocation#CLASS_OUTPUT 新的类文件}。（这可以在工具的命令行上指定，例如，使用 {@code -s} 和 {@code -d} 之类的标志。）新的源文件和类文件的实际位置在工具的特定运行时刻可能是不同的，也可能是相同的。资源文件可以在其中一个位置上创建。用来读取和写入资源的方法采用了一个相对名称参数。相对名称是用 {@code '/'} 分隔的、非 null、非空的路径段序列；{@code '.'} 和 {@code '..'} 都是无效的路径段。有效的相对名称必须符合 <a
+ href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a> 的第 3.3 节的&ldquo;无根路径&rdquo;规则。
+
+<p>文件创建方法带有可变数量的参数，以允许提供<em>原始元素</em> 作为工具基础设施的提示，从而更好地管理依赖关系。原始元素是造成注释处理器试图创建新文件的类型或包（表示 {@code package-info} 文件）。例如，如果注释处理器试图创建一个源文件 {@code GeneratedFromUserSource} 以响应处理
+
+ <blockquote><pre>@Generate
+public class UserSource {}
+ </pre></blockquote>
+ 
+那么 {@code UserSource} 的类型元素应该作为创建方法调用的一部分传入，如下所示：
+
+ <blockquote><pre>
+filer.createSourceFile(&quot;GeneratedFromUserSource&quot;,
+eltUtils.getTypeElement(&quot;UserSource&quot;));
+ </pre></blockquote>
+
+如果没有原始元素，则什么都不需要传递。此信息可以在增量环境中使用，以确定是需要重新运行处理器还是移除生成的文件。非增量环境可以忽略原始元素信息。
+
+<p> 在每次运行注释处理工具期间，具有给定路径名的文件只能被创建一次。如果该文件在第一次试图创建它之前就已经存在，则将删除原有的内容。在运行期间，任何试图创建相同文件的后续尝试都将抛出 {@link FilerException}，试图针对相同的类型名称和相同的包名称创建类文件和源文件也将如此。工具的{@linkplain Processor 初始输入}被认为是由第 0 个 round 创建的；因此，试图创建一个与那些输入之一对应的源文件或类文件将导致 {@link FilerException}。
+
+<p> 通常，处理器不得有意尝试重写不是由某个处理器生成的现有文件。{@code Filer} 可能拒绝尝试打开与现有类型对应的文件，如 {@code java.lang.Object}。同样，注释处理工具的调用者不得有意配置该工具，使得已发现的处理器将尝试重写尚未生成的现有文件。
+
+<p> 处理器可以通过包含 {@link javax.annotation.Generated @Generated} 注释来指示生成源文件或类文件。
+
+<p> 注意，重写文件的某些效果可通过使用<i>装饰</i> 风格模式来实现。类被设计为其超类由注释处理生成，或者其子类由注释处理生成，而不是直接修改该类。如果生成子类，则父类可以被设计为使用工厂而不是公共构造方法，这样只有子类实例被呈现给父类的客户端。
+
+@author Joseph D. Darcy
+@author Scott Seligman
+@author Peter von der Ah&eacute;
+@version 1.10 06/08/28
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.JavaFileObject javax.annotation.processing.Filer.createSourceFile(CharSequence name, javax.lang.model.element.Element[] originatingElements) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的源文件，并返回一个对象以允许写入它。文件的名称和路径（相对于{@linkplain StandardLocation#SOURCE_OUTPUT 源文件的根目录输出位置}）基于该文件中声明的类型。如果声明的类型不止一个，则应该使用主要顶层类型的名称（例如，声明为 public 的那个）。还可以创建源文件来保存有关某个包的信息，包括包注释。要为指定包创建源文件，可以用 {@code name} 作为包名称，后跟 {@code &quot;.package-info&quot;}；要为未指定的包创建源文件，可以使用 {@code &quot;package-info&quot;}。
+ 
+<p> 注意，若要使用特定 {@linkplain java.nio.charset.Charset charset} 来编码文件内容，可以从返回对象的 {@code OutputStream} 创建具有选定字符集的 {@code OutputStreamWriter}。如果将所返回对象中的 {@code Writer} 直接用于写入操作，则其字符集由实现确定。注释处理工具可以有一个用来指出这一点的 {@code -encoding} 标志或类似选项；否则，它通常将是平台的默认编码。
+
+<p>为了避免后续错误，源文件的内容应该与将用于此运行的{@linkplain ProcessingEnvironment#getSourceVersion 源版本}兼容。
+
+@param name 将在此文件中声明的主要类型的规范（完全限定）名称；对于包信息文件，则是后跟 {@code &quot;.package-info&quot;} 的包名称
+@param originatingElements 与此文件的创建有因果关联的类型或包元素，该参数可以省略或者为 {@code null}
+@return 写入新源文件的 {@code JavaFileObject}
+@throws FilerException 如果创建了相同的路径名，创建了相同的类型，或者名称对于某一类型无效
+@throws IOException 如果无法创建文件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.JavaFileObject javax.annotation.processing.Filer.createClassFile(CharSequence name, javax.lang.model.element.Element[] originatingElements) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的类文件，并返回一个对象以允许写入它。文件的名称和路径（相对于{@linkplain StandardLocation#CLASS_OUTPUT 类文件的根目录输出位置}）基于将写入的类型名称。还可以创建类文件来保存有关某个包的信息，包括包注释。要为指定包创建类文件，可以用 {@code name} 作为包名称，后跟 {@code &quot;.package-info&quot;}；为未指定的包创建类文件不受支持。
+
+<p>为了避免后续错误，类文件的内容应该与将用于此运行的{@linkplain ProcessingEnvironment#getSourceVersion 源版本}兼容。
+
+@param name 将写入的类型的二进制名称；对于包信息文件，是后跟 {@code &quot;.package-info&quot;} 的包名称
+@param originatingElements 与此文件的创建有因果关联的类型或包元素，该参数可以省略或者为 {@code null}
+@return 写入新类文件的 {@code JavaFileObject}
+@throws FilerException 如果创建了相同的路径名，创建了相同的类型，或者名称对于某一类型无效
+@throws IOException 如果无法创建文件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.FileObject javax.annotation.processing.Filer.createResource(JavaFileManager.Location location, CharSequence pkg, CharSequence relativeName, javax.lang.model.element.Element[] originatingElements) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个用于写入操作的新辅助资源文件，并为它返回一个文件对象。该文件可以与新创建的源文件、新创建的二进制文件或者其他受支持的位置一起被查找。位置 {@link StandardLocation#CLASS_OUTPUT CLASS_OUTPUT} 和 {@link StandardLocation#SOURCE_OUTPUT SOURCE_OUTPUT} 必须受支持。资源可以是相对于某个包（该包是源文件和类文件）指定的，并通过相对路径名从中取出。从不太严格的角度说，新文件的完全路径名将是 {@code location}、{@code pkg} 和 {@code relativeName} 的串联。
+
+<p>通过此方法创建的文件并不是为了进行注释处理而注册的，即使文件的完全路径名对应于新的源文件或类文件的完全路径名也是如此。
+ 
+@param location 新文件的位置
+@param pkg 文件将相对于其进行指定的包；如果没有这样的包，则该参数是一个空字符串
+@param relativeName 文件的最终路径名部分
+@param originatingElements 与此文件的创建有因果关联的类型或包元素，该参数可以忽略或者为 {@code null}
+@return 写入新资源的 {@code FileObject}
+@throws IOException 如果无法创建文件
+@throws FilerException 如果创建了相同的路径名
+@throws IllegalArgumentException 如果位置不受支持
+@throws IllegalArgumentException 如果 {@code relativeName} 不是相对名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.tools.FileObject javax.annotation.processing.Filer.getResource(JavaFileManager.Location location, CharSequence pkg, CharSequence relativeName) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个用于读取现有资源的对象。位置 {@link StandardLocation#CLASS_OUTPUT CLASS_OUTPUT} 和 {@link StandardLocation#SOURCE_OUTPUT SOURCE_OUTPUT} 必须受支持。
+
+@param location 文件的位置
+@param pkg 将相对于其进行文件搜索的包；如果没有这样的包，则该参数为一个空字符串
+@param relativeName 文件的最终路径名部分
+@return 读取文件的对象
+@throws FilerException 如果已经为写入操作打开相同的路径名
+@throws IOException 如果无法打开文件
+@throws IllegalArgumentException 如果位置不受支持
+@throws IllegalArgumentException 如果 {@code relativeName} 不是相对名称
+
+<!-- END DATA -->

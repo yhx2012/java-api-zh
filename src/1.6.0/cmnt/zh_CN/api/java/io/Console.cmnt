@@ -1,0 +1,166 @@
+<!-- BEGIN KEY -->
+public final class java.io.Console extends java.lang.Object implements java.io.Flushable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类包含多个方法，可访问与当前 Java 虚拟机关联的基于字符的控制台设备（如果有）。
+
+<p> 虚拟机是否具有控制台取决于底层平台，还取决于调用虚拟机的方式。如果虚拟机从一个交互式命令行开始启动，且没有重定向标准输入和输出流，那么其控制台将存在，并且通常连接到键盘并从虚拟机启动的地方显示。如果虚拟机是自动启动的（例如，由后台作业调度程序启动），那么它通常没有控制台。
+ <p>
+如果此虚拟机具有控制台，那么它将由此类唯一的实例（可通过调用 {@link java.lang.System#console()} 方法获得）表示。如果没有可用的控制台设备，那么对该方法的调用将返回 <tt>null</tt>。
+ <p>
+读写操作是同步的，以保证关键操作能完整地完成；因此调用方法 {@link #readLine()}、{@link #readPassword()}、{@link #format format()}、{@link #printf printf()} 以及对 {@link #reader()} 和 {@link #writer()} 返回对象的读取、格式化和写入操作在多线程情况下可能阻塞。
+ <p>
+在 {@link #reader()} 和 {@link #writer()} 返回的对象上调用 <tt>close()</tt> 不会关闭这些对象的底层流。
+ <p>
+在到达控制台输入流的尾部时，如键入 control-D (Unix) 或键入 control-Z (Windows)，读取控制台的方法将返回 <tt>null</tt>。如果之后在控制台输入设备上输入了其他字符，则后续读取操作将成功执行。
+ <p>
+除非另行指定，否则将 <tt>null</tt> 参数传递给此类中的任何方法都会抛出 {@link NullPointerException}。
+ <p>
+<b>安全注释：</b> 如果应用程序需要读取密码或其他安全数据，则它应该使用 {@link #readPassword()} 或 {@link #readPassword(String, Object...)}，并在执行后手工将返回的字符数组归零，以最大限度地缩短内存中敏感数据的生存期。
+
+ <blockquote><pre>
+Console cons;
+char[] passwd;
+if ((cons = System.console()) != null &amp;&amp;
+(passwd = cons.readPassword(&quot;[%s]&quot;, &quot;Password:&quot;))!= null) {
+     ...
+java.util.Arrays.fill(passwd, ' ');
+ }
+ </pre></blockquote>
+
+@author  Xueming Shen
+@version 1.11, 06/12/06
+@since   1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PrintWriter java.io.Console.writer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此控制台关联的唯一 {@link java.io.PrintWriter PrintWriter} 对象。
+
+@return  与此控制台关联的 Printwriter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Reader java.io.Console.reader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此控制台关联的唯一 {@link java.io.Reader Reader} 对象。
+ <p>
+此方法仅供复杂应用程序（例如，利用 <tt>Scanner</tt> 提供的丰富分析／扫描功能的 {@link java.util.Scanner} 对象）使用：
+ <blockquote><pre>
+Console con = System.console();
+if (con != null) {
+Scanner sc = new Scanner(con.reader());
+     ...
+ }
+ </pre></blockquote>
+ <p>
+对于只需按行读取的简单应用程序，使用 <tt>{@link #readLine}</tt>。
+ <p>
+每次调用时，对返回对象的批量读取操作 {@link java.io.Reader#read(char[]) read(char[]) }、{@link java.io.Reader#read(char[], int, int) read(char[], int, int) } 和 {@link java.io.Reader#read(java.nio.CharBuffer) read(java.nio.CharBuffer)} 不会读入行边界之外的字符，即使目标缓冲区还有可容纳更多字符的空间。下列字符之一被认为是行边界：换行 (<tt>'\n'</tt>)、回车 (<tt>'\r'</tt>)、回车后紧跟换行，或者流末尾。
+
+@return  与此控制台关联的 reader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Console java.io.Console.format(String fmt, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化字符串写入此控制台的输出流中。
+
+@param  fmt <a
+         href="../util/Formatter.html#syntax">格式字符串语法</a>中描述的格式字符串
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>定义的 Java 数组最大维数的限制。<tt>null</tt> 参数的行为取决于<a
+         href="../util/Formatter.html#syntax">转换</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a           href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@return  此控制台
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.Console java.io.Console.printf(String format, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定格式字符串和参数将格式化字符串写入此控制台输出流的便捷方法。
+
+<p> 此方法 <tt>con.printf(format, args)</tt> 形式的调用与以下调用的行为完全相同：
+<pre>con.format(format, args)</pre>.
+
+@param  format <a          href="../util/Formatter.html#syntax">格式字符串语法</a>中描述的格式字符串。
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的数量是可变的，并且可以为零。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>定义的 Java 数组最大维数的限制。<tt>null</tt> 参数的行为取决于<a          href="../util/Formatter.html#syntax">转换</a>。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a           href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@return  此控制台
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.Console.readLine(String fmt, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个格式化提示，然后从控制台读取单行文本。
+
+@param  fmt <a
+         href="../util/Formatter.html#syntax">格式字符串语法</a>中描述的格式字符串。
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>定义的 Java 数组最大维数的限制。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a           href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws IOError 如果发生 I/O 错误。
+
+@return  包含从控制台读取的行的字符串，该字符串不包含任何行终止符；如果已到达流的末尾，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.io.Console.readLine()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从控制台读取单行文本。
+
+@throws IOError 如果发生 I/O 错误。
+
+@return  包含从控制台读取的行的字符串，该字符串不包含任何行终止符；如果已到达流的末尾，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char[] java.io.Console.readPassword(String fmt, java.lang.Object[] args)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个格式化提示，然后从控制台读取密码，禁用回显。
+
+@param  fmt 提示文本的<a
+         href="../util/Formatter.html#syntax">格式字符串语法</a>中描述的格式字符串。
+
+@param  args 格式字符串中的格式说明符引用的参数。如果参数多于格式说明符，则忽略额外的参数。参数的最大数量受到 <a href="http://java.sun.com/docs/books/vmspec/">Java 虚拟机规范</a>定义的 Java 数组最大维数的限制。
+
+@throws  IllegalFormatException 如果格式字符串包含非法语法、与给定参数不兼容的格式说明符、对给定格式字符串而言不够的参数或其他非法条件。有关所有可能的格式错误的规范，请参阅 formatter 类规范的<a           href="../util/Formatter.html#detail">详细信息</a>部分。
+
+@throws IOError 如果发生 I/O 错误。
+
+@return  包含从控制台读取的密码的字符数组，该字符数组不包含任何行终止符；如果已到达流的末尾，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public char[] java.io.Console.readPassword()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从控制台读取密码，禁用回显。
+
+@throws IOError 如果发生 I/O 错误。
+
+@return  包含从控制台读取的密码的字符数组，该字符数组不包含任何行终止符；如果已到达流的末尾，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.Console.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新控制台，并强制立即写入所有缓冲的输出。
+
+<!-- END DATA -->

@@ -1,0 +1,395 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.IIOParam extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有描述应该如何对流进行编码和解码的类的超类。此类包含由 <code>ImageReadParam</code> 和 <code>ImageWriteParam</code> 共享的所有变量和方法。
+ 
+<p> 此类提供指定源区域和目标区域的机制。在进行读取操作时，源区域是流，内存储图像是目标区域。进行写入操作时则正好相反。在进行写入时，目标区域只能伴随支持像素替换的 writer 使用。
+ <p>
+使用可移动的二次取样网格，可以为 reader 和 writer 指定抽取十分之一的二次取样。
+ <p>
+可以选定源 band 和目标 band 的子集。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Rectangle javax.imageio.IIOParam.sourceRegion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+源区域；如果没有设置源区域，则为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.IIOParam.sourceXSubsampling
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在水平方向应用抽取十分之一的二次取样。默认情况下，该值为 <code>1</code>。该值一定不能为负数或 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.IIOParam.sourceYSubsampling
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在垂直方向应用抽取十分之一的二次取样。默认情况下，该值为 <code>1</code>。该值一定不能为负数或 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.IIOParam.subsamplingXOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在进行二次取样之前，将水平偏移量应用于二次取样网格。要使用的第一个像素将距区域或图像（如果没有指定区域）的原点偏移此量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.IIOParam.subsamplingYOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在进行二次取样之前，将垂直偏移量应用于二次取样网格。要使用的第一个像素将距区域或图像（如果没有指定区域）的起点偏移此量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int[] javax.imageio.IIOParam.sourceBands
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示将使用的源 band 的 <code>int</code> 数组，或为 <code>null</code>。如果为 <code>null</code>，则将使用的源 band 集合如 <code>setSourceBands</code> 方法的注释所述。不允许任何为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.ImageTypeSpecifier javax.imageio.IIOParam.destinationType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个 <code>ImageTypeSpecifier</code>，用来在进行读取操作时生成目标图像，或者在进行写入操作时设置输出颜色类型。如果没有设置，则该值将为 <code>null</code>。默认情况下，该值为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Point javax.imageio.IIOParam.destinationOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+目标区域中的偏移量，应将左上部解码像素置于此处。默认情况下，该值为 (0, 0)。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.IIOParamController javax.imageio.IIOParam.defaultController
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>activateController</code> 方法时，将用来为此 <code>IIOParam</code> 对象提供设置值的默认 <code>IIOParamController</code>。此默认控制器应该由子类设置，这些子类可以选择提供自己的默认控制器（通常是一个 GUI）来设置参数。
+
+@see IIOParamController
+@see #getDefaultController
+@see #activateController
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.IIOParamController javax.imageio.IIOParam.controller
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>activateController</code> 方法时，将用来为此 <code>IIOParam</code> 对象提供设置值的 <code>IIOParamController</code>。此值重写任何默认控制器，即使为 null 时也是如此。
+
+@see IIOParamController
+@see #setController(IIOParamController)
+@see #hasController()
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.IIOParam()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+受保护的构造方法，只能由子类调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setSourceRegion(Rectangle sourceRegion)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置感兴趣的源区域。感兴趣的区域被描述为一个矩形，源图像左上角为像素 (0, 0)，该值向下向右递增。所使用的实际像素数将取决于由 <code>setSourceSubsampling</code> 设置的二次取样因子。如果已经在二次取样中将此像素数设置为零，则将抛出 <code>IllegalStateException</code>。
+
+<p> 将根据需要限制此方法指定的感兴趣的源区域，使其适合源区域边界，以及在实际 I/O 时符合目标偏移量、宽度和高度。
+
+<p> <code>sourceRegion</code> 值为 <code>null</code> 表示将取消所有区域限制，这将导致使用整个图像。
+
+@param sourceRegion 指定感兴趣的源区域的 <code>Rectangle</code>；或为 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>sourceRegion</code> 不为 <code>null</code> 且 <code>sourceRegion.x</code> 或 <code>sourceRegion.y</code> 为负。
+@exception IllegalArgumentException 如果 <code>sourceRegion</code> 不为 <code>null</code> 且 <code>sourceRegion.width</code> 或 <code>sourceRegion.height</code> 为负数或 0。
+@exception IllegalStateException 如果二次取样将使此区域有一个为零的二次取样宽度或高度。
+
+@see #getSourceRegion
+@see #setSourceSubsampling
+@see ImageReadParam#setDestinationOffset
+@see ImageReadParam#getDestinationOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.imageio.IIOParam.getSourceRegion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将使用的源区域。返回的值是通过最近一次调用 <code>setSourceRegion</code> 设置的值，如果没有设置区域，则返回值将为 <code>null</code>。
+ 
+@return <code>Rectangle</code> 形式的感兴趣源区域；或者 <code>null</code>。
+
+@see #setSourceRegion
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setSourceSubsampling(int sourceXSubsampling, int sourceYSubsampling, int subsamplingXOffset, int subsamplingYOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定进行 I/O 时应用的抽取十分之一的二次取样。<code>sourceXSubsampling</code> 和 <code>sourceYSubsampling</code> 参数指定二次取样的周期（<i>即</i> 每个源像素之后前进的行数和列数）。具体地说，周期为 1 将对每行或每列使用二次取样；周期为 2 则每隔一行或一列使用。<code>subsamplingXOffset</code> 和 <code>subsamplingYOffset</code> 参数指定距离第一个二次取样像素的区域（或图像）原点的偏移量。在将一个非常大的源图像二次取样到将组合成一个完整的二次取样图像的目标区域中时，调整二次取样网格的原点对避免裂缝很有用。大多数用户只要让这些参数为 0 即可。
+
+<p> 要使用的像素行和扫描行数量的计算如下所示。
+ <p>
+扫描行中二次取样像素数的计算方式如下
+ <p>
+<code>truncate[(width - subsamplingXOffset + sourceXSubsampling - 1) / sourceXSubsampling]</code>。
+ <p>
+如果在该区域中此宽度为零，则抛出 <code>IllegalStateException</code>。
+ <p> 
+可以用类似的方法计算要使用的扫描行数。
+
+<p>可以将二次取样网格设置为从源区域原点以外的其他某个地方开始，如果正使用源区域创建大型图像的二次取样 tile，其中 tile 的宽度和高度不是二次取样周期的倍数，这将非常有用。如果在二次取样网格中不能使 tile 保持一致，则在 tile 的边界上会出现某些误差产物。通过调整每个 tile 的二次取样网格偏移量来校正，可避免这些误差产物。权宜之计是，为了避免出现误差产物，tile 的大小并不都是相同的。在这种情况下使用的网格偏移量的计算方式如下：
+<br> grid offset = [period - (region offset modulo period)] modulo period)
+
+<p> 如果 <code>sourceXSubsampling</code> 或 <code>sourceYSubsampling</code> 为 0 或负数，则将抛出 <code>IllegalArgumentException</code>。
+
+<p> 如果 <code>subsamplingXOffset</code> 或 <code>subsamplingYOffset</code> 为负数或大于等于相应的周期，则将抛出 <code>IllegalArgumentException</code>。
+
+<p> 没有 <code>unsetSourceSubsampling</code> 方法；调用 <code>setSourceSubsampling(1, 1, 0, 0)</code> 来恢复默认值即可。
+
+@param sourceXSubsampling 要在像素之间前进的列数。
+@param sourceYSubsampling 要在像素之间前进的行数。
+@param subsamplingXOffset 该区域或图像（如果没有设置区域）中第一次二次取样的水平偏移量。
+@param subsamplingYOffset 该区域或图像（如果没有设置区域）中第一次二次取样的水平偏移量。
+@exception IllegalArgumentException 如果任意一个周期为负数或 0，或者任意一个网格偏移量为负数或大于相应的周期。
+@exception IllegalStateException 如果源区域中二次取样输出不包含任何像素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.IIOParam.getSourceXSubsampling()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对于每个像素要前进的源列数。
+
+<p>如果尚未调用 <code>setSourceSubsampling</code>，则返回 1（此为修正值）。
+
+@return 源二次取样的 X 周期。
+
+@see #setSourceSubsampling
+@see #getSourceYSubsampling
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.IIOParam.getSourceYSubsampling()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对于每个像素要前进的行数。
+
+<p>如果尚未调用 <code>setSourceSubsampling</code>，则返回 1（此为修正值）。
+
+@return 源二次取样的 Y 周期。
+
+@see #setSourceSubsampling
+@see #getSourceXSubsampling
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.IIOParam.getSubsamplingXOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回二次取样网格的水平偏移量。
+
+<p>如果尚未调用 <code>setSourceSubsampling</code>，则返回 0（此为修正值）。
+
+@return 源二次取样网格的 X 偏移量。
+
+@see #setSourceSubsampling
+@see #getSubsamplingYOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.IIOParam.getSubsamplingYOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回二次取样网格的垂直偏移量。
+
+<p>如果尚未调用 <code>setSourceSubsampling</code>，则返回 0（此为修正值）。
+
+@return 源二次取样网格的 Y 偏移量。
+
+@see #setSourceSubsampling
+@see #getSubsamplingXOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setSourceBands(int[] sourceBands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将要使用的源 band 的索引。索引不能重复。
+
+<p> <code>null</code> 值指示所有源 band 都将被使用。
+ 
+<p> 在进行读取时，如果指定大于最大可用源 band 索引的值，或者要使用的源 band 的数量与目标 band 的数量不同，则 reader 或 writer 将抛出 <code>IllegalArgumentException</code>。可以使用 <code>ImageReader.checkReadParamBandSettings</code> 方法自动进行此测试。
+
+<p> 根据语义，为该数组生成一个副本；调用此方法后对数组内容进行的更改对此 <code>IIOParam</code> 没有影响。
+
+@param sourceBands 将要使用的整数 band 索引组成的数组。
+
+@exception IllegalArgumentException 如果 <code>sourceBands</code> 包含一个负数或重复的值。
+
+@see #getSourceBands
+@see ImageReadParam#setDestinationBands
+@see ImageReader#checkReadParamBandSettings
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.imageio.IIOParam.getSourceBands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要使用的源 band 的集合。返回的值是通过最近一次调用 <code>setSourceBands</code> 设置的值，如果没有调用过 <code>setSourceBands</code>，则返回 <code>null</code>。
+
+<p> 根据语义，返回的数组是一个副本；调用此方法后对数组内容进行的更改对此 <code>IIOParam</code> 没有影响。
+
+@return 要使用的源 band 的集合；或者 <code>null</code>。
+
+@see #setSourceBands
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setDestinationType(ImageTypeSpecifier destinationType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>ImageTypeSpecifier</code> 设置目标图像的所需图像类型。
+
+<p> 在读取时，如果已经使用此方法设置目标区域的布局，则每次调用 <code>ImageReader</code> 的 <code>read</code> 方法都将返回一个新的 <code>BufferedImage</code>，它使用由所提供的类型说明符指定的格式。此方法的一个副作用是，任何由 <code>ImageReadParam.setDestination(BufferedImage)</code> 设置的目标 <code>BufferedImage</code> 将不再被设置为目标。换句话说，在调用 <code>setDestination((BufferedImage)null)</code> 时可以考虑此方法。
+
+<p> 在写入时，或许会使用目标类型确定图像的颜色类型。<code>SampleModel</code> 信息将被忽略，其可以为 <code>null</code>。例如，一个 4 band 的图像可以表示 CMYK 或 RGBA 数据。如果设置了目标类型，则其 <code>ColorModel</code> 将重写该图像自身的所有 <code>ColorModel</code>。这在使用 <code>setSourceBands</code> 时极其重要，因为该图像的 <code>ColorModel</code> 将引用整个图像，而不是被写入的 band 的子集。
+
+@param destinationType 用来确定目标布局和颜色类型的 <code>ImageTypeSpecifier</code>。
+
+@see #getDestinationType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageTypeSpecifier javax.imageio.IIOParam.getDestinationType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>ImageTypeSpecifier</code> 的形式返回将由读取操作返回的图像类型，如果通过调用 <code>setDestination(ImageTypeSpecifier)</code> 设置了类型的话。如果没有设置类型，则返回 <code>null</code>。
+
+@return 描述目标类型的 <code>ImageTypeSpecifier</code>；或者 <code>null</code>。
+
+@see #setDestinationType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setDestinationOffset(Point destinationOffset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定目标图像中的偏移量。在进行读取操作时，将在该处放置以后解码的像素；在进行写入操作时，将在该处写入一个区域。
+
+<p> 在读取时，写入目标 <code>BufferedImage</code> 中的区域将从此偏移量开始，并且其宽度和高度是通过感兴趣的源区域、二次取样参数和目标边界确定的。
+
+<p> 普通写入操作不受此方法的影响，只有使用 <code>ImageWriter.replacePixels</code> 执行的写入操作会受影响。对于此类写入操作，指定的偏移量位于其像素正被修改的输出流图像中。
+
+<p> 没有 <code>unsetDestinationOffset</code> 方法；调用 <code>setDestinationOffset(new Point(0, 0))</code> 来恢复默认值即可。
+
+@param destinationOffset 目标中 <code>Point</code> 形式的偏移量。
+
+@exception IllegalArgumentException 如果 <code>destinationOffset</code> 为 <code>null</code>。
+
+@see #getDestinationOffset
+@see ImageWriter#replacePixels
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.imageio.IIOParam.getDestinationOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目标图像中的偏移量，像素将置于该处。
+
+<p> 如果尚未调用 <code>setDestinationOffsets</code>，则返回 X 和 Y 值为零的 <code>Point</code>（此为修正值）。
+
+@return <code>Point</code> 形式的目标偏移量。
+
+@see #setDestinationOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.IIOParam.setController(IIOParamController controller)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在调用 <code>activateController</code> 方法时用来为 <code>IIOParam</code> 对象提供设置值的 <code>IIOParamController</code>，重写所有默认控制器。如果该参数为 <code>null</code>，则不使用任何控制器，包括所有默认控制器。要恢复默认值，请使用 <code>setController(getDefaultController())</code>。
+
+@param controller 一个适当的 <code>IIOParamController</code>，或者为 <code>null</code>。
+
+@see IIOParamController
+@see #getController
+@see #getDefaultController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.IIOParamController javax.imageio.IIOParam.getController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前已安装的所有 <code>IIOParamController</code>。返回值可以是默认控制器（如果有）、<code>null</code> 或最近一次调用 <code>setController</code> 时使用的参数。
+
+@return 当前安装的 <code>IIOParamController</code>；或者 <code>null</code>。
+
+@see IIOParamController
+@see #setController
+@see #getDefaultController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.IIOParamController javax.imageio.IIOParam.getDefaultController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回默认 <code>IIOParamController</code>（如果有），不考虑当前安装的控制器。如果没有默认安装器，则返回 <code>null</code>。
+
+@return 默认 <code>IIOParamController</code> 或 <code>null</code>。
+
+@see IIOParamController
+@see #setController(IIOParamController)
+@see #getController
+@see #hasController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.IIOParam.hasController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果有一个为此 <code>IIOParam</code> 对象安装的控制器，则返回 <code>true</code>。如果 <code>getController</code> 不返回 <code>null</code>，则此方法将返回 <code>true</code>。
+
+@return 如果安装了一个控制器，则返回 <code>true</code>。
+
+@see IIOParamController
+@see #setController(IIOParamController)
+@see #getController
+@see #getDefaultController
+@see #activateController()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.IIOParam.activateController()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活为此 <code>IIOParam</code> 对象安装的 <code>IIOParamController</code>，并返回得到的值。当此方法返回 <code>true</code> 时，此 <code>IIOParam</code> 对象的所有值都已准备好进行下一次读取或写入操作。如果返回 <code>false</code>，则此对象中没有任何设置会被干扰（<i>也就是说</i>，用户取消了该操作）。
+
+<p> 通常，控制器将是一个 GUI，为特定插件的 <code>IIOParam</code> 的子类提供用户界面。不过，控制器不必一定是 GUI。
+
+@return 如果控制器完全正常，则返回 <code>true</code>。
+
+@exception IllegalStateException 如果当前没有安装控制器。
+
+@see IIOParamController
+@see #setController(IIOParamController)
+@see #getController
+@see #getDefaultController
+@see #hasController
+
+<!-- END DATA -->

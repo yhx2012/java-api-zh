@@ -1,0 +1,144 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.html.parser.Parser extends java.lang.Object implements javax.swing.text.html.parser.DTDConstants
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个简单的 DTD 驱动的 HTML 解析器。该解析器从 InputStream 读取 HTML 文件，并在遇到标记和数据时调用各种方法（在子类中应重写这些方法）。
+ <p>
+遗憾的是，存在许多不良实现的 HTML 解析器，结果导致许多不良格式的 HTML 文件。此解析器尝试解析大多数 HTML 文件。这意味着该实现有时偏离有利于 HTML 的 SGML 规范。
+ <p>
+该解析器将 \r 和 \r\n 视为 \n。开始标记之后和结束标记之前的换行被忽略，正如 SGML/HTML 规范中指定的那样。
+ <p>
+html 规范不指定如何很好地组合空格。明确地说，不讨论下面的情形（注意，此处应使用空格，但我使用了 &nbsp; 来强制显示空格）：
+ <p>
+'&lt;b&gt;blah&nbsp;&lt;i&gt;&nbsp;&lt;strike&gt;&nbsp;foo' 可以被视为：'&lt;b&gt;blah&nbsp;&lt;i&gt;&lt;strike&gt;foo' 
+<p>以及：'&lt;p&gt;&lt;a href=&quot;xx&quot;&gt;&nbsp;&lt;em&gt;Using&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;' 好像被视为：'&lt;p&gt;&lt;a href=&quot;xx&quot;&gt;&lt;em&gt;Using&lt;/em&gt;&lt;/a&gt;&lt;/p&gt;'
+ <p>
+如果 <code>strict</code> 为 false，在遇到中断流的标记 (<code>TagElement.breaksFlows</code>) 或尾部空白时，如果未遇到非空白字符，所有空白都将被忽略。看上去该行为与流行的浏览器的行为更接近。
+
+@see DTD
+@see TagElement
+@see SimpleAttributeSet
+@version 1.38, 12/19/03
+@author Arthur van Hoff
+@author Sunita Mani
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.html.parser.Parser.strict
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此标记确定 Parser 在强制执行 SGML 兼容性方面是否严格。如果为 false，则对某些 HTML 构造有误的通用类比较宽松。无论是否严格，都会记录一个错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.html.parser.Parser.getCurrentLine()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@return 当前解析行的行号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.html.parser.TagElement javax.swing.text.html.parser.Parser.makeTag(Element elem, boolean fictional)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+制作 TagElement。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleText(char[] text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到 PCDATA 时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleTitle(char[] text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到 HTML 标题标记时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleComment(char[] text)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到 HTML 注释时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleEmptyTag(TagElement tag) throws javax.swing.text.ChangedCharSetException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到空标记时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleStartTag(TagElement tag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到开始标记时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleEndTag(TagElement tag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在遇到结束标记时调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.handleError(int ln, String msg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发生了一个错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.error(String err, String arg1, String arg2, String arg3)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用错误处理程序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.startTag(TagElement tag) throws javax.swing.text.ChangedCharSetException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理开始标记。将新标记推送到标记堆栈。在属性列表中检查所需的属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.endTag(boolean omitted)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理结束标记。结束标记从标记堆栈中弹出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.parser.Parser.markFirstTime(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记在文档中首次看到标记
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.text.html.parser.Parser.parseDTDMarkup() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析 Document Type Declaration 标记声明。当前忽略它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.html.parser.Parser.parseMarkupDeclarations(StringBuffer strBuff) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析标记声明。当前仅处理 Document Type Declaration 标记。如果为标记声明，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.text.html.parser.Parser.parse(Reader in) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定 DTD 的情况下，解析 HTML 流。
+
+<!-- END DATA -->

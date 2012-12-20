@@ -1,0 +1,635 @@
+<!-- BEGIN KEY -->
+public class java.beans.beancontext.BeanContextSupport extends java.beans.beancontext.BeanContextChildSupport implements java.beans.beancontext.BeanContext, java.io.Serializable, java.beans.PropertyChangeListener, java.beans.VetoableChangeListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此帮助器类提供 java.beans.beancontext.BeanContext 接口的实用工具实现。
+ </p>
+ <p>
+因为此类直接实现 BeanContext 接口，所以可以通过创建此实现的子类来使用该类，或者由另一个实例对此类实例的特别委托来使用该类。
+ </p>
+
+@author Laurence P. G. Cable
+@version 1.46, 01/13/03
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.util.HashMap java.beans.beancontext.BeanContextSupport.children
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code> protected HashMap children </code> 字段的所有访问在该对象上都将是同步的。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.util.ArrayList java.beans.beancontext.BeanContextSupport.bcmListeners
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code> protected ArrayList bcmListeners </code> 字段的所有访问在该对象上都将是同步的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Locale java.beans.beancontext.BeanContextSupport.locale
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 BeanContext 的当前语言环境。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.beancontext.BeanContextSupport.okToUseGui
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此实例现在能否呈现 GUI 的 <tt>boolean</tt> 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.beancontext.BeanContextSupport.designTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此对象目前是否处于设计时间模式下的 <tt>boolean</tt> 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContextSupport(BeanContext peer, Locale lcle, boolean dTime, boolean visible)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+构造一个 BeanContextSupport 实例。
+ 
+@param peer	将为其提供实现的同位体 <tt>BeanContext</tt>，如果此对象是它自己的同位体，则该参数为 <tt>null</tt>
+@param lcle	此 BeanContext 的当前 Locale。如果 <tt>lcle</tt> 为 <tt>null</tt>，则默认语言环境被分配给 <tt>BeanContext</tt> 实例。
+@param dTime	初始状态，如果在设计模式下，则该参数为 <tt>true</tt>，如果在运行状态下，则该参数为 <tt>false</tt>。
+@param visible	初始可见性。
+@see java.util.Locale#getDefault()
+@see java.util.Locale#setDefault(java.util.Locale)  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContextSupport(BeanContext peer, Locale lcle, boolean dtime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定 Locale 和设计模式创建一个实例。
+
+@param peer	将为其提供实现的同位体 <tt>BeanContext</tt>，如果此对象是它自己的同位体，则该参数为 <tt>null</tt>
+@param lcle	此 <tt>BeanContext</tt> 的当前 Locale。如果 <tt>lcle</tt> 为 <tt>null</tt>，则默认语言环境被分配给 <tt>BeanContext</tt> 实例。
+@param dtime	初始状态，如果在设计模式下，则该参数为 <tt>true</tt>，如果在运行状态下，则该参数为 <tt>false</tt>。
+@see java.util.Locale#getDefault()
+@see java.util.Locale#setDefault(java.util.Locale)  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContextSupport(BeanContext peer, Locale lcle)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定语言环境创建一个实例。
+
+@param peer	将为其提供实现的同位体 BeanContext，如果此对象是它自己的同位体，则该参数为 <tt>null</tt>
+@param lcle	此 <tt>BeanContext</tt> 的当前 Locale。如果 <tt>lcle</tt> 为 <tt>null</tt>，则默认语言环境被分配给 <tt>BeanContext</tt> 实例。
+@see java.util.Locale#getDefault()
+@see java.util.Locale#setDefault(java.util.Locale)   
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContextSupport(BeanContext peer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认语言环境创建一个实例
+
+@param peer	将为其提供实现的同位体 <tt>BeanContext</tt>，如果此对象是它自己的同位体，则该参数为 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContextSupport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建不是另一个对象代理的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.beancontext.BeanContext java.beans.beancontext.BeanContextSupport.getBeanContextPeer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 <tt>BeanContext</tt> 的实例，此对象将为其提供实现。
+@return BeanContext 实例
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.beans.beancontext.BeanContextSupport.instantiateChild(String beanName) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+instantiateChild 方法是 BeanContext 中的便捷钩子 (hook)，用来简化将嵌套的 Bean 实例化为 BeanContext 这项任务。
+ </p>
+ <p>
+beanName 参数的语义由 java.beans.Beans.instantate 定义。
+ </p>
+
+@param beanName 要在此 BeanContext 中实例化的 Bean 的名称
+@throws IOException 如果在该 bean 正被反序列化时发生 I/O 错误
+@throws ClassNotFoundException 如果没有找到由 beanName 参数标识的类
+@return 新对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.beans.beancontext.BeanContextSupport.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前嵌套在此 BeanContext 中的子级数。
+
+@return 子级数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此 <tt>BeanContext</tt> 是否为空。当 <tt>BeanContext</tt> 不包含任何嵌套子级时，可认为它为空。
+@return 如果没有子级
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定对象当前是否是此 <tt>BeanContext</tt> 的子级。
+@param o 相关 Object
+@return 如果此对象是一个子对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.containsKey(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定指定对象当前是否是此 <tt>BeanContext</tt> 的子级。
+@param o 相关 Object
+@return 如果此对象是一个子对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator java.beans.beancontext.BeanContextSupport.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前嵌套在此 <tt>BeanContext</tt> 中的所有 JavaBean 或 <tt>BeanContext</tt> 实例。
+@return 嵌套子级的 <tt>Iterator</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.beans.beancontext.BeanContextSupport.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前嵌套在此 BeanContext 中的所有 JavaBean 或 <tt>BeanContext</tt> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.beans.beancontext.BeanContextSupport.toArray(java.lang.Object[] arry)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得包含与数组中所包含类型匹配的此 <tt>BeanContext</tt> 的所有子级的数组。
+@param arry 感兴趣的对象类型数组。
+@return 子级的数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.beans.beancontext.BeanContextSupport.BCSChild java.beans.beancontext.BeanContextSupport.createBCSChild(Object targetChild, Object peer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+子类可以重写此方法来插入自己的 Child 的子类，而不必重写 add() 或其他将子级添加到集合中的 Collection 方法。
+ </p>
+
+@param targetChild 要创建自己的 Child 的子级
+@param peer        同位体，如果 tragetChild 和同位体通过实现 BeanContextProxy 建立联系
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.add(Object targetChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此 <tt>BeanContext</tt> 中添加/嵌套一个子级。
+ <p>
+作为 java.beans.Beans.instantiate() 的副作用调用。如果子对象对于添加无效，则此方法抛出 IllegalStateException。
+ </p>
+
+@param targetChild 嵌套在此 <tt>BeanContext</tt> 中的子对象
+@return 如果成功添加了子对象，则返回 true。
+@see #validatePendingAdd
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.remove(Object targetChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 BeanContext 中移除一个子对象。如果子对象不适用于添加，则此方法抛出 IllegalStateException。
+@param targetChild 要移除的子对象
+@see #validatePendingRemove
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.beancontext.BeanContextSupport.remove(Object targetChild, boolean callChildSetBC)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当由意外的 <tt>setBeanContext</tt> 或 <tt>remove()</tt> 调用导致移除时使用的内部移除方法。
+@param targetChild 要移除的 JavaBean、BeanContext 或 Object
+@param callChildSetBC 用于指示应该通知子对象它不再嵌套在此 <tt>BeanContext</tt> 中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.containsAll(java.util.Collection c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试以查看指定 <tt>Collection</tt> 中的所有对象是否是此 <tt>BeanContext</tt> 的子对象。
+@param  c 指定的 <tt>Collection</tt> 
+ 
+@return 如果 collection 中的所有对象都是此 <tt>BeanContext</tt> 的子对象，则返回 <tt>true</tt>，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.addAll(java.util.Collection c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Collection 添加到 Children（不受支持的）实现的集合，这些实现在层次结构锁定和 "children" 受保护字段上必须是同步的
+@throws UnsupportedOperationException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.removeAll(java.util.Collection c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除所有指定 Children（不受支持的）实现，这些实现在层次结构锁定和 "children" 受保护字段上必须是同步的
+@throws UnsupportedOperationException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.retainAll(java.util.Collection c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅保留指定子对象（不受支持的）实现，这些实现在层次结构锁定和 "children" 受保护字段上必须是同步的
+@throws UnsupportedOperationException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextSupport.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除子对象（不受支持的）实现，这些实现在分层结构锁定和 "children" 受保护字段上必须是同步的
+@throws UnsupportedOperationException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextSupport.addBeanContextMembershipListener(BeanContextMembershipListener bcml)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个 BeanContextMembershipListener。
+
+@param  bcml 要添加的 BeanContextMembershipListener
+@throws NullPointerException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextSupport.removeBeanContextMembershipListener(BeanContextMembershipListener bcml)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除一个 BeanContextMembershipListener。
+
+@param  bcml 要移除的 BeanContextMembershipListener
+@throws NullPointerException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream java.beans.beancontext.BeanContextSupport.getResourceAsStream(String name, BeanContextChild bcc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@param name 所需资源的名称。
+@param bcc 做出请求的子对象。
+
+@return  以 InputStream 形式返回所需的资源
+@throws  NullPointerException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.beans.beancontext.BeanContextSupport.getResource(String name, BeanContextChild bcc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@param name 所需资源的名称。
+@param bcc 做出请求的子对象。
+
+@return  以 InputStream 形式返回所需的资源
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.beancontext.BeanContextSupport.setDesignTime(boolean dTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 <tt>BeanContext</tt> 设置新的设计时间值。
+@param 新的 designTime 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.beans.beancontext.BeanContextSupport.isDesignTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此对象当前是否处于设计时间模式下。
+@return 如果处于设计时间模式下，则返回 <tt>true</tt>，否则返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.beancontext.BeanContextSupport.setLocale(Locale newLocale) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 BeanContext 的语言环境。
+@param newLocale 新的语言环境。如果 newLocale 为 <CODE>null</CODE>，则此方法调用将无效。
+@throws PropertyVetoException  如果拒绝新值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Locale java.beans.beancontext.BeanContextSupport.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 <tt>BeanContext</tt> 的语言环境。
+
+@return <tt>BeanContext</tt> 的当前 Locale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.beans.beancontext.BeanContextSupport.needsGui()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+此方法通常从环境中调用，以便确定实现者是否“需要” GUI。
+ </p>
+ <p>
+这里使用的算法测试 BeanContextPeer 及其当前子级，以确定它们是 Container 还是 Component，或者确定它们是否实现 Visibility 并返回 needsGui() == true。
+ </p>
+@return 如果实现者需要一个 GUI，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.beancontext.BeanContextSupport.dontUseGui()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此实例它可以不再呈现一个 GUI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.beans.beancontext.BeanContextSupport.okToUseGui()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知此实例它现在可以呈现一个 GUI。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.avoidingGui()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于确定 <tt>BeanContext</tt> 子级是否避免使用其 GUI。
+@return 此实例避免使用其 GUI 吗？
+@see Visibility
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.beans.beancontext.BeanContextSupport.isSerializing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 <tt>BeanContext</tt> 正处于序列化过程中吗？
+@return 此 <tt>BeanContext</tt> 当前是否正被序列化
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Iterator java.beans.beancontext.BeanContextSupport.bcsChildren()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>BeanContext</tt> 所有子级的迭代器。
+@return 用于所有当前 BCSChild 值的迭代器 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.beancontext.BeanContextSupport.bcsPreSerializationHook(ObjectOutputStream oos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在调用 defaultWriteObject() 之后，但在序列化当前可序列化子级之前，由 writeObject 调用。
+
+子类可重写此方法，以在此超类序列化子级之前对其状态执行自定义序列化。
+
+不过，此方法不应由子类用于替换它们自己的 writeObject() 实现（如果有）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.beancontext.BeanContextSupport.bcsPreDeserializationHook(ObjectInputStream ois) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在调用 defaultReadObject() 之后，但在反序列化任意子级之前，由 readObject 调用。
+
+子类可重写此方法，以在此超类反序列化子级之前对其状态执行自定义反序列化。
+
+不过，此方法不应由子类用于替换它们自己的 readObject() 实现（如果有）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.beancontext.BeanContextSupport.childDeserializedHook(Object child, BeanContextSupport.BCSChild bcsc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 readObject 利用新近反序列化的子级和 BCSChild 调用。
+@param child 新近反序列化的子级
+@param bcsc 新近反序列化的 BCSChild
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.beans.beancontext.BeanContextSupport.serialize(ObjectOutputStream oos, java.util.Collection coll) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+writeObject 使用此方法来序列化一个 Collection。
+@param oos 序列化期间将使用的 <tt>ObjectOutputStream</tt>
+@param coll 要序列化的 <tt>Collection</tt>
+@throws IOException 如果序列化失败
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.beans.beancontext.BeanContextSupport.deserialize(ObjectInputStream ois, java.util.Collection coll) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+readObject 使用此方法来反序列化一个 collection。
+@param ois 要使用的 ObjectInputStream
+@param coll Collection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.beans.beancontext.BeanContextSupport.writeChildren(ObjectOutputStream oos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于序列化此 <tt>BeanContext</tt> 的所有子级。
+@param oos 序列化期间将使用的 <tt>ObjectOutputStream</tt>
+@throws IOException 如果序列化失败
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.beans.beancontext.BeanContextSupport.readChildren(ObjectInputStream ois) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在将此类的实例用作 BeanContext 协议（及其子协议）实现的代理时，在反序列化期间存在一个“先有鸡还是先有蛋”的问题。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextSupport.vetoableChange(PropertyChangeEvent pce) throws java.beans.PropertyVetoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类可以封装此方法来监视子类属性的更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.beancontext.BeanContextSupport.propertyChange(PropertyChangeEvent pce)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类可以封装此方法来监视子类属性的更改。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.beancontext.BeanContextSupport.validatePendingAdd(Object targetChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+此类的子类可以重写或封装此方法，以便为 BeanContext 添加有效行为，从而能在将子对象添加到 BeanContext 之前立即检查它们。 
+ </p>
+
+@return 如果可以将子对象添加到此 BeanContext 中，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.beancontext.BeanContextSupport.validatePendingRemove(Object targetChild)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+此类的子类可以重写或封装此方法，以便为 BeanContext 添加有效行为，从而能在将子对象从 BeanContext 中移除之前立即检查它们。 
+ </p>
+
+@return 如果可以从此 BeanContext 中移除子对象，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.beancontext.BeanContextSupport.childJustAddedHook(Object child, BeanContextSupport.BCSChild bcsc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类可以重写此方法，以便在已经添加子对象之后，且在发生事件通知之前，只扩展 add() 语义。该方法使用同步的子对象调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.beancontext.BeanContextSupport.childJustRemovedHook(Object child, BeanContextSupport.BCSChild bcsc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子类可以重写此方法，以便在已经移除子对象之后，且在发生事件通知之前，只扩展 remove() 语义。该方法使用同步的子对象调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.beans.Visibility java.beans.beancontext.BeanContextSupport.getChildVisibility(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定子级相关联的 Component（如果有）。
+@param child 指定子级
+@return 与指定子级相关联的 Component（如果有）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.io.Serializable java.beans.beancontext.BeanContextSupport.getChildSerializable(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与指定 Child 相关联的 Serializable（如果有） 
+@param child 指定子级
+@return 与指定 Child 相关联的 Serializable（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.beans.PropertyChangeListener java.beans.beancontext.BeanContextSupport.getChildPropertyChangeListener(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与指定 Child 相关联的 PropertyChangeListener（如果有）
+@param child 指定子级
+@return 与指定子级相关联的 PropertyChangeListener（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.beans.VetoableChangeListener java.beans.beancontext.BeanContextSupport.getChildVetoableChangeListener(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与指定 Child 相关联的 VetoableChangeListener（如果有）。
+@param child 指定子级
+@return 与指定子级相关联的 VetoableChangeListener（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.beans.beancontext.BeanContextMembershipListener java.beans.beancontext.BeanContextSupport.getChildBeanContextMembershipListener(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与指定 Child 相关联的 BeanContextMembershipListener（如果有）。
+@param child 指定子级
+@return 与指定子级相关联的 BeanContextMembershipListener（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final java.beans.beancontext.BeanContextChild java.beans.beancontext.BeanContextSupport.getChildBeanContextChild(Object child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与指定 Child 相关联的 BeanContextChild（如果有）。
+@param child 指定子级
+@return 与指定子级相关联的 BeanContextChild（如果有）
+@throws  IllegalArgumentException 如果子级既实现 BeanContextChild 又实现 BeanContextProxy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.beans.beancontext.BeanContextSupport.fireChildrenAdded(BeanContextMembershipEvent bcme)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 BeanContextMembershipListener 接口上触发一个 BeanContextshipEvent。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.beans.beancontext.BeanContextSupport.fireChildrenRemoved(BeanContextMembershipEvent bcme)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 BeanContextMembershipListener 接口上触发一个 BeanContextshipEvent。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.beans.beancontext.BeanContextSupport.initialize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从构造方法和 readObject 调用的受保护方法，以初始化 BeanContextSupport 实例的瞬态。
+
+该类使用此方法来实例化用于监视子级上的 PropertyChange 和 VetoableChange 事件的内部类侦听器。
+
+子类可以封装此方法来添加自己的初始化行为。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.lang.Object[] java.beans.beancontext.BeanContextSupport.copyChildren()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 BeanContext 子级的副本。
+@return 当前嵌套子级的副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final boolean java.beans.beancontext.BeanContextSupport.classEquals(java.lang.Class first, java.lang.Class second)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试以查看两个类对象或其名称是否相等。
+@param first 第一个对象
+@param second 第二个对象
+@return 如果两个对象相等，则返回 true，否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.beans.beancontext.BeanContextSupport.readObject(ObjectInputStream ois) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+反序列化内容。如果此实例有截然不同的同位体，则子级在这里&ldquo;不&rdquo;被序列化，同位体的 readObject() 必须在反序列化此实例之后调用 readChildren()。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.beans.beancontext.BeanContextSupport.writeObject(ObjectOutputStream oos) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+序列化 BeanContextSupport，如果此实例有一个截然不同的同位体（即此对象正充当另一个对象的代理），则此实例的子级在这里不被序列化，因为在序列化此实例的同时反序列化其子级会产生&ldquo;先有鸡还是先有蛋&rdquo;的问题。 
+
+所以，在具有此实例的截然不同同位体的情况下，应该总是在调用 writeObject() 之后调用 writeChildren()，并在调用 readObject() 之后调用 readChildren()。
+
+@param oos ObjectOutputStream
+
+<!-- END DATA -->

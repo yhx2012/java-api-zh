@@ -1,0 +1,258 @@
+<!-- BEGIN KEY -->
+public class javax.activation.DataHandler extends java.lang.Object implements java.awt.datatransfer.Transferable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+DataHandler 类为在多种不同源和格式下可用的数据提供一致的接口。它使用 DataContentHandler 管理简单流到字符串的转换以及相关操作。它提供对能够操作数据的命令的访问。使用 CommandMap 可以找到这些命令。 <p>
+
+<b>DataHandler 和 Transferable 接口</b><p>
+DataHandler 实现 Transferable 接口，以便数据能够用于 AWT 数据传输操作，比如，剪切、粘贴和拖放操作。Transferable 接口的实现依赖于已安装的 DataContentHandler 对象的可用性，该 DataContentHandler 对象与 DataHandler 的特定实例中所表示的数据的 MIME 类型相对应。<p>
+
+<b>DataHandler 和 CommandMap</b><p>
+DataHandler 跟踪当前 CommandMap，它用于命令（<code>getCommand</code>、<code>getAllCommands</code>、<code>getPreferredCommands</code>）的服务请求。使用 <code>setCommandMap</code> 方法，DataHandler 的每个实例都可以有一个与其相关的 CommandMap。如果没有设置 CommandMap，则 DataHandler 调用 CommandMap 中的 <code>getDefaultCommandMap</code> 方法，并使用其返回值。有关更多信息，请参见 <i>CommandMap</i>。 <p>
+
+<b>DataHandler 和 URL</b><p>
+当用 URL 构造 DataHandler 时，当前 DataHandler 实现创建一个 URLDataSource 的私有实例。
+
+@see javax.activation.CommandMap
+@see javax.activation.DataContentHandler
+@see javax.activation.DataSource
+@see javax.activation.URLDataSource
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.DataHandler(DataSource ds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建引用指定 DataSource 的 <code>DataHandler</code> 实例。数据以字节流的形式存在。DataSource 将提供一个 InputStream 来访问数据。
+
+@param ds	DataSource
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.DataHandler(Object obj, String mimeType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建表示此 MIME 类型对象的 <code>DataHandler</code> 实例。当应用程序已经有 Java Object 形式的数据内存表示形式 (in-memory representation) 时，使用此构造方法。
+
+@param obj	Java Object
+@param mimeType	对象的 MIME 类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.DataHandler(URL url)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建引用 URL 的 <code>DataHandler</code> 实例。DataHandler 在内部创建一个 <code>URLDataSource</code> 实例来表示 URL。
+
+@param url	URL 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.DataSource javax.activation.DataHandler.getDataSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 DataHandler 实例关联的 DataSource。
+ <p>
+对于已经用 DataSource 实例化的 DataHandler，此方法返回用来创建该 DataHandler 对象的 DataSource。在其他情况下，DataHandler 根据用来构造 DataHandler 的数据构造 DataSource。对于<b>没有</b>用 DataSource 实例化的 DataHandler，为其创建的 DataSource 将被缓存，以提高性能。
+
+@return	对此 DataHandler 有效的 DataSource 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.activation.DataHandler.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回数据对象的名称。如果此 DataHandler 是用 DataSource 创建的，则此方法直接调用 <code>DataSource.getName</code> 方法；否则返回 <i>null</i>。
+
+@return	对象的名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.activation.DataHandler.getContentType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从源对象中获取的此对象的 MIME 类型。注意，这是带有参数的<i>完整</i> 类型。
+
+@return	MIME 类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.InputStream javax.activation.DataHandler.getInputStream() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此对象的 InputSteam。 <p>
+
+对于用 DataSource 实例化的 DataHandler，该 DataHandler 调用 <code>DataSource.getInputStream</code> 方法，并将结果返回给调用者。
+ <p>
+对于用 Object 实例化的 DataHandler，该 DataHandler 首先尝试找到 Object 的 DataContentHandler。如果 DataHandler 找不到此 MIME 类型的 DataContentHandler，则抛出 UnsupportedDataTypeException。如果能够找到，则它将创建一个管道和一个线程。该线程使用 DataContentHandler 的 <code>writeTo</code> 方法将流数据写入管道的一端。管道的另一端返回给调用者。由于为复制数据创建了一个线程，所以在复制过程中发生的 IOException 不能传送回调用者。结果将是一个空流。<p>
+
+@return	表示此数据的 InputStream
+@exception IOException	如果发生 I/O 错误
+
+@see javax.activation.DataContentHandler#writeTo
+@see javax.activation.UnsupportedDataTypeException
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.activation.DataHandler.writeTo(OutputStream os) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将数据写入 <code>OutputStream</code>。<p>
+
+如果 DataHandler 是用 DataSource 创建的，那么 writeTo 获取 InputStream 并将字节从 Inputstream 复制到传入的 Outputstream。
+ <p>
+如果 DataHandler 是用 Object 创建的，则 writeTo 获取对象类型的 DataContentHandler。如果找到了 DataContentHandler，则它对 <code>DataContentHandler</code> 调用 <code>writeTo</code> 方法。
+
+@param os	要写入的 OutputStream
+@exception IOException	如果发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.OutputStream javax.activation.DataHandler.getOutputStream() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 DataHandler 的 OutputStream，以允许重写底层数据。如果 DataHandler 是用 DataSource 创建的，则调用 DataSource 的 <code>getOutputStream</code> 方法。否则，返回 <code>null</code>。
+
+@return OutputStream
+
+@see javax.activation.DataSource#getOutputStream
+@see javax.activation.URLDataSource
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.datatransfer.DataFlavor[] javax.activation.DataHandler.getTransferDataFlavors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此数据在其中可用的 DataFlavor。 <p>
+
+返回能够提供数据的 flavor 的 DataFlavor 对象所组成的数组。该数组通常根据提供数据的首选项来排序（从描述最多的到描述最少的）。<p>
+
+DataHandler 尝试查找与数据的 MIME 类型对应的 DataContentHandler。如果找到，则该 DataHandler 调用 DataContentHandler 的 <code>getTransferDataFlavors</code> 方法。 <p>
+
+如果<i>不</i> 能找到 DataContentHandler，并且 DataHandler 是用 DataSource （或 URL）创建的，则返回一个表示此对象 MIME 类型和 <code>java.io.InputStream</code> 类的 DataFlavor。如果 DataHandler 是用对象和 MIME 类型创建的，则 getTransferDataFlavors 返回一个表示此对象 MIME 类型和对象类的 DataFlavor。
+
+@return	其中可以传输此数据的数据 flavor 所组成的数组
+@see javax.activation.DataContentHandler#getTransferDataFlavors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.activation.DataHandler.isDataFlavorSupported(DataFlavor flavor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象是否支持指定的数据 flavor。<p>
+
+此方法迭代 <code>getTransferDataFlavors</code> 返回的 DataFlavor，将每个 DataFlavor 与指定 flavor 进行比较。
+
+@param flavor	为数据所请求的 flavor
+@return		如果支持该数据 flavor，则返回 true
+@see javax.activation.DataHandler#getTransferDataFlavors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.activation.DataHandler.getTransferData(DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个对象，该对象表示要传输的数据。返回对象的类是由该数据 flavor 的表示形式类定义的。<p>
+
+<b>对于用 DataSource 或 URL 创建的 DataHandler：</b><p>
+
+DataHandler 尝试为此 MIME 类型查找一个 DataContentHandler。如果找到，则将传入的 DataFlavor 和数据的类型传递给其 <code>getTransferData</code> 方法。如果 DataHandler 没有找到 DataContentHandler，并且 flavor 指定了此对象的 MIME 类型和 <code>java.io.InputStream</code> 类，则返回此对象的 InputStream。否则，抛出 UnsupportedFlavorException。 <p>
+
+<b>对于用 Object 创建的 DataHandler：</b><p>
+
+DataHandler 尝试为此 MIME 类型查找一个 DataContentHandler。如果找到，则将传入的 DataFlavor 和数据的类型传递给其 getTransferData 方法。如果 DataHandler 没有找到 DataContentHandler，并且 flavor 指定了此对象的 MIME 类型和它的类，则返回此 DataHandler 的引用对象。否则，抛出 UnsupportedFlavorException。
+
+@param flavor	为数据所请求的 flavor
+@return		对象
+@exception UnsupportedFlavorException	如果不能将该数据转换为所请求的 flavor
+@exception IOException	如果发生 I/O 错误
+@see javax.activation.ActivationDataFlavor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.activation.DataHandler.setCommandMap(CommandMap commandMap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 DataHandler 使用的 CommandMap。将其设置为 <code>null</code> 会使该 CommandMap 还原为 <code>CommandMap.getDefaultCommandMap</code> 方法所返回的 CommandMap。更改该 CommandMap 或将其设置为 <code>null</code> 将清除以前的 CommandMap 所缓存的所有数据。
+
+@param commandMap	此 DataHandler 中使用的 CommandMap
+
+@see javax.activation.CommandMap#setDefaultCommandMap
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.CommandInfo[] javax.activation.DataHandler.getPreferredCommands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此数据类型的<i>首选</i> 命令。此方法调用 CommandMap 中与此 DataHandler 实例关联的 <code>getPreferredCommands</code> 方法。此方法返回一个表示可用命令子集的数组。如果存在由此 DataHandler 表示的 MIME 类型的多个命令，则已安装的 CommandMap 将选择适当的命令。
+
+@return	表示首选命令的 CommandInfo 对象
+
+@see javax.activation.CommandMap#getPreferredCommands
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.CommandInfo[] javax.activation.DataHandler.getAllCommands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此数据类型的所有命令。此方法返回一个数组，此数组包含此 DataHandler 所表示的数据类型的所有命令。此 DataHandler 所表示的底层数据的 MIME 类型用于调用与此 DataHandler 关联的 CommandMap 的 <code>getAllCommands</code> 方法。
+
+@return	表示所有命令的 CommandInfo 对象
+
+@see javax.activation.CommandMap#getAllCommands
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.CommandInfo javax.activation.DataHandler.getCommand(String cmdName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取命令 <i>cmdName</i>。使用此 DataHandler 中已安装的 CommandMap 所定义的搜索语义。此 DataHandler 所表示的底层数据的 MIME 类型用于调用与此 DataHandler 关联的 CommandMap 的 <code>getCommand</code> 方法。
+
+@param cmdName	命令名
+@return	与命令对应的 CommandInfo
+
+@see javax.activation.CommandMap#getCommand
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.activation.DataHandler.getContent() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以其首选 Object 的形式返回数据。 <p>
+
+如果 DataHandler 是用一个对象实例化的，则返回该对象。 <p>
+
+如果 DataHandler 是用 DataSource 实例化的，则此方法使用 DataContentHandler 返回此 DataHandler 所表示数据的内容对象。如果找不到此数据类型的 <code>DataContentHandler</code>，则 DataHandler 返回数据的 InputStream。
+
+@return 内容。
+@exception IOException 如果此操作中发生 IOException。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.activation.DataHandler.getBean(CommandInfo cmdinfo)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个便捷方法，它接受 CommandInfo 对象并且实例化相应的命令，通常是 JavaBean 组件。
+ <p>
+此方法调用 CommandInfo 的 <code>getCommandObject</code> 方法，带有用于加载 <code>javax.activation.DataHandler</code> 类本身的 <code>ClassLoader</code>。
+
+@param cmdinfo	与命令对应的 CommandInfo
+@return	已实例化的命令对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void javax.activation.DataHandler.setDataContentHandlerFactory(DataContentHandlerFactory newFactory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 DataContentHandlerFactory。首先调用 DataContentHandlerFactory 来查找 DataContentHandler。DataContentHandlerFactory 只能被设置一次。
+ <p>
+如果 DataContentHandlerFactory 已经被设置，则此方法抛出 Error。
+
+@param newFactory	DataContentHandlerFactory
+@exception Error	如果工厂已经被定义。
+
+@see javax.activation.DataContentHandlerFactory
+
+<!-- END DATA -->

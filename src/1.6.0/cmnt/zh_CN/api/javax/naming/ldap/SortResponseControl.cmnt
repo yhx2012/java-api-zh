@@ -1,0 +1,120 @@
+<!-- BEGIN KEY -->
+public final class javax.naming.ldap.SortResponseControl extends javax.naming.ldap.BasicControl
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示搜索结果的请求排序是否成功。当结果代码指示成功时，结果已按照请求进行了排序。否则，排序失败，同时服务器可能提供关于错误原因的附加详细信息。
+ <p>
+{@link SortControl} 中的代码示例展示了使用此类的方式。
+ <p>
+此类实现在 <a href="http://www.ietf.org/rfc/rfc2891.txt">RFC 2891</a> 中定义的用于服务器端排序的 LDAPv3 响应控件。
+
+控件值具有以下 ASN.1 定义：
+ <pre>
+
+     SortResult ::= SEQUENCE {
+        sortResult  ENUMERATED {
+            success                   (0), -- results are sorted
+            operationsError           (1), -- server internal failure
+            timeLimitExceeded         (3), -- timelimit reached before
+                                           -- sorting was completed
+            strongAuthRequired        (8), -- refused to return sorted
+                                           -- results via insecure
+                                           -- protocol
+            adminLimitExceeded       (11), -- too many matching entries
+                                           -- for the server to sort
+            noSuchAttribute          (16), -- unrecognized attribute
+                                           -- type in sort key
+            inappropriateMatching    (18), -- unrecognized or inappro-
+                                           -- priate matching rule in
+                                           -- sort key
+            insufficientAccessRights (50), -- refused to return sorted
+                                           -- results to this client
+            busy                     (51), -- too busy to process
+            unwillingToPerform       (53), -- unable to sort
+            other                    (80)
+            },
+      attributeType [0] AttributeType OPTIONAL }
+
+ </pre>
+
+
+@since 1.5
+@see SortControl
+@author Vincent Ryan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.naming.ldap.SortResponseControl.OID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+服务器端排序响应控件的分配对象标识符为 1.2.840.113556.1.4.474。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.naming.ldap.SortResponseControl.resultCode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+排序结果代码。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String javax.naming.ldap.SortResponseControl.badAttrId
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+导致排序失败的属性的 ID。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.SortResponseControl(String id, boolean criticality, byte[] value) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个控件来指示排序请求的结果。
+
+@param   id              此控件的对象标识符字符串。
+@param   criticality     控件的关键性。
+@param   value           控件的 ASN.1 BER 编码值。它不是副本，对值进行的任何更改都将影响控件的内容。
+@exception IOException   如果在解码控件值时遇到错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.SortResponseControl.isSorted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否已成功排序搜索结果。如果在排序过程中出错，则抛出 NamingException。
+
+@return    如果已排序搜索结果，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.SortResponseControl.getResultCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索排序操作的 LDAP 结果代码。
+
+@return    结果代码。值为零指示成功。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.SortResponseControl.getAttributeID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索导致排序失败的属性的 ID。如果服务器没有返回任何 ID，则返回 null。
+
+@return 错误属性的 ID（可能为 null）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingException javax.naming.ldap.SortResponseControl.getException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索适合结果代码的 NamingException。
+
+@return 如果结果代码指示成功，则返回 NamingException 或 null。
+
+<!-- END DATA -->

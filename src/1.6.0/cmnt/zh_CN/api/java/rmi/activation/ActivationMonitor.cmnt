@@ -1,0 +1,54 @@
+<!-- BEGIN KEY -->
+public interface java.rmi.activation.ActivationMonitor extends java.rmi.Remote
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个 <code>ActivationMonitor</code> 特定于一个 <code>ActivationGroup</code>，当一个组通过对 <code>ActivationSystem.activeGroup</code> 的调用（这是内部完成的）被报告为活动时，获得一个 <code>ActivationMonitor</code>。在以下任一情况下，一个激活组负责通知其 <code>ActivationMonitor</code>：它的对象成为活动的或者不活动的，或者整个组成为不活动的。
+
+@author 	Ann Wollrath
+@version	1.15, 12/19/03
+@see		Activator
+@see		ActivationSystem
+@see 	ActivationGroup
+@since	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationMonitor.inactiveObject(ActivationID id) throws java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当组中的一个对象成为不活动（取消激活）时，一个激活组调用其监视器的 <code>inactiveObject</code> 方法。通过调用激活组的 <code>inactiveObject</code> 方法，激活组发现其所参与激活的某个对象在其 VM 中不再为活动的。 <p>
+
+<code>inactiveObject</code> 调用通知 <code>ActivationMonitor</code>，它为具有激活标识符 <code>id</code> 的对象所保持的远程对象引用不再有效。监视器把与 <code>id</code> 关联的引用当作一个旧引用。因为该引用被认为是陈旧的，对相同激活标识符的后续 <code>activate</code> 调用将导致重新激活该远程对象。<p>
+
+@param id 对象的激活标识符
+@exception UnknownObjectException 如果对象未知
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationMonitor.activeObject(ActivationID id, java.rmi.MarshalledObject<? extends java.rmi.Remote> obj) throws java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知某个对象现在是活动的。如果 <code>ActivationGroup</code> 组中的对象通过其他方式而不是被直接激活（即对象被注册并且&ldquo;激活&rdquo;其自身），则 <code>ActivationGroup</code> 将通知其监视器。 
+
+@param id 激活对象的 id
+@param obj 编组形式的对象 stub
+@exception UnknownObjectException 如果对象未知
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.activation.ActivationMonitor.inactiveGroup(ActivationGroupID id, long incarnation) throws java.rmi.activation.UnknownGroupException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知该组现在是不活动的。根据激活该组中对象的后续请求，重新创建该组。当组中所有的对象都报告它们是不活动的时候，组也成为不活动的。
+
+@param id 组 id
+@param incarnation 组的代号
+@exception UnknownGroupException 如果组未知
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->

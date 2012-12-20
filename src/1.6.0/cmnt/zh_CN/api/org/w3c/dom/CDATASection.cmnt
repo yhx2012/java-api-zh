@@ -1,0 +1,13 @@
+<!-- BEGIN KEY -->
+public interface org.w3c.dom.CDATASection extends org.w3c.dom.Text
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+CDATA 节用于转义文本块，该文本块包含的字符如果不转义则会被视为标记。在 CDATA 节中识别的唯一分隔符是结束 CDATA 节的 &quot;]]&gt;&quot; 字符串。CDATA 节不能嵌套。它们的主要目的是包含诸如 XML 片段之类的材料而无需转义所有分隔符。
+<p><code>CharacterData.data</code> 属性保存由 CDATA 节包含的文本。注意，这<em>可以</em> 包含需要在 CDATA 节之外转义的字符，而且根据为序列化选择的字符编码 (&quot;charset&quot;)，它不能作为 CDATA 节的一部分写出某些字符。
+<p><code>CDATASection</code> 接口通过 <code>Text</code> 接口继承自 <code>CharacterData</code> 接口。相邻的 <code>CDATASection</code> 节点不能使用 <code>Node</code> 接口的 <code>normalize</code> 方法合并。
+<p> 不对 CDATA 节的内容进行任何词汇检查，因此在该内容中可能有字符序列 <code>&quot;]]&gt;&quot;</code>，根据 [<a href='http://www.w3.org/TR/2004/REC-xml-20040204'>XML 1.0</a>] 2.7 节该序列在 CDATA 节中是非法的。出现此字符序列一定会在序列化期间生成严重错误，或一定在序列化之前拆分 cdata 节（另请参见 <code>DOMConfiguration</code> 接口中的参数 <code>&quot;split-cdata-sections&quot;</code>）。 
+<p ><b>注：</b> 因为在 <code>CDATASection</code> 内不识别任何标记，所以序列化时不能将字符数字引用用作转义机制。因此，在序列化具有字符编码（其中包含一些字符无法表示）的 <code>CDATASection</code> 时需要采取措施。如果这样做失败了将不会生成格式良好的 XML。
+<p ><b>注：</b> 序列化过程中一个可能的解决方法是在该字符使用字符引用或实体引用输出字符之前结束 CDATA 节，并为文本节点中的所有更多字符打开一个新 CDATA 节。不过要注意的是，在写入时有些代码转换库在编码中丢失字符时不返回错误或异常，加大了确保序列化时不破坏数据的难度。
+<p>另请参见 <a href='http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407'>Document Object Model (DOM) Level 3 Core Specification</a>。
+
+<!-- END DATA -->

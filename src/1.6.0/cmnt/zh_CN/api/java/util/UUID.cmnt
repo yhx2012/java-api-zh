@@ -1,0 +1,238 @@
+<!-- BEGIN KEY -->
+public final class java.util.UUID extends java.lang.Object implements java.io.Serializable, java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+ 表示通用唯一标识符 (UUID) 的类。 UUID 表示一个 128 位的值。
+
+ <p>这些通用标识符具有不同的变体。此类的方法用于操作 Leach-Salz 变体，不过构造方法允许创建任何 UUID 变体（将在下面进行描述）。
+ 
+ <p>变体 2 (Leach-Salz) UUID 的布局如下：
+
+long 型数据的最高有效位由以下无符号字段组成：
+ <pre>
+ 0xFFFFFFFF00000000 time_low
+ 0x00000000FFFF0000 time_mid
+ 0x000000000000F000 version
+ 0x0000000000000FFF time_hi
+ </pre>
+ long 型数据的最低有效位由以下无符号字段组成：
+ <pre>
+ 0xC000000000000000 variant
+ 0x3FFF000000000000 clock_seq
+ 0x0000FFFFFFFFFFFF node
+ </pre>
+
+ <p>variant 字段包含一个表示 <tt>UUID</tt> 布局的值。以上描述的位布局仅在 <tt>UUID</tt> 的 variant 值为 2（表示 Leach-Salz 变体）时才有效。
+
+ <p>version 字段保存描述此 <tt>UUID</tt> 类型的值。有 4 种不同的基本 UUID 类型：基于时间的 UUID、DCE 安全 UUID、基于名称的 UUID 和随机生成的 UUID。 这些类型的 version 值分别为 1、2、3 和 4。
+ 
+<p>有关用于创建 <tt>UUID</tt> 的算法的更多信息，请参阅 <a href="http://www.ietf.org/rfc/rfc4122.txt">
+ <i>RFC&nbsp;4122: 通用唯一标识符 (Universally Unique Identifier) (UUID) URN
+ Namespace</i></a>, section 4.2 &quot；创建基于时间的 UUID&quot 的算法。
+
+@version 1.18, 06/02/06
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.UUID(long mostSigBits, long leastSigBits)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的数据构造新的 <tt>UUID</tt>。<tt>mostSigBits</tt> 用于 <tt>UUID</tt> 的最高有效 64 位，而 <tt>leastSigBits</tt> 将成为 <tt>UUID</tt> 的最低有效 64 位。
+
+@param  mostSigBits
+@param  leastSigBits
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.UUID java.util.UUID.randomUUID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类型 4（伪随机生成的）UUID 的静态工厂。
+
+使用加密的强伪随机数生成器生成该 <code>UUID</code>。
+
+@return  随机生成的 <tt>UUID</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.UUID java.util.UUID.nameUUIDFromBytes(byte[] name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据指定的字节数组获取类型 3（基于名称的）<tt>UUID</tt> 的静态工厂。
+
+@param name 用于构造 <tt>UUID</tt> 的字节数组。
+@return  根据指定数组生成的 <tt>UUID</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.UUID java.util.UUID.fromString(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 {@link #toString} 方法中描述的字符串标准表示形式创建 <tt>UUID</tt>。
+
+@param  name 指定 <tt>UUID</tt> 的字符串。
+@return   具有指定值的 <tt>UUID</tt>。
+@throws IllegalArgumentException 如果 name 与 {@link #toString} 中描述的字符串表示形式不符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.UUID.getLeastSignificantBits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 UUID 的 128 位值中的最低有效 64 位。
+
+@return 此 UUID 的 128 位值中的最低有效 64 位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.UUID.getMostSignificantBits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 UUID 的 128 位值中的最高有效 64 位。
+
+@return 此 UUID 的 128 位值中最高有效 64 位。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.UUID.version()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 <tt>UUID</tt> 相关联的版本号。版本号描述此 <tt>UUID</tt> 是如何生成的。
+
+版本号具有以下含意：<p>
+ <ul>
+ <li>1    基于时间的 UUID
+ <li>2    DCE 安全 UUID
+ <li>3    基于名称的 UUID
+ <li>4    随机生成的 UUID
+ </ul>
+
+@return  此 <tt>UUID</tt> 的版本号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.UUID.variant()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 <tt>UUID</tt> 相关联的变体号。变体号描述 <tt>UUID</tt> 的布局。
+
+变体号具有以下含意：<p>
+ <ul>
+ <li>0    为 NCS 向后兼容保留
+ <li>2    Leach-Salz 变体（由此类使用）
+ <li>6    保留，Microsoft Corporation 向后兼容
+ <li>7    保留供以后定义使用
+ </ul>
+
+@return 此 <tt>UUID</tt> 的变体号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.UUID.timestamp()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 UUID 相关联的时间戳值。
+
+<p>60 位的时间戳值根据此 <tt>UUID</tt> 的 time_low、time_mid 和 time_hi 字段构造。所得到的时间戳以 100 毫微秒为单位，从 UTC（通用协调时间） 1582 年 10 月 15 日零时开始。<p>
+
+时间戳值仅在在基于时间的 UUID（其 version 类型为 1）中才有意义。如果此 <tt>UUID</tt> 不是基于时间的 UUID，则此方法抛出 UnsupportedOperationException。
+ 
+@throws UnsupportedOperationException 如果此 UUID 不是 version 为 1 的 UUID。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.UUID.clockSequence()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 UUID 相关联的时钟序列值。
+
+<p>14 位的时钟序列值根据此 UUID 的 clock_seq 字段构造。clock_seq 字段用于保证在基于时间的 UUID 中的时间唯一性。<p>
+
+clockSequence 值仅在基于时间的 UUID（其 version 类型为 1）中才有意义。如果此 UUID 不是基于时间的 UUID，则此方法抛出 UnsupportedOperationException。
+ 
+@return  此 <tt>UUID</tt> 的时钟序列。
+@throws UnsupportedOperationException 如果此 UUID 的 version 不为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.UUID.node()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与此 UUID 相关的节点值。
+
+ <p>48 位的节点值根据此 UUID 的 node 字段构造。此字段旨在用于保存机器的 IEEE 802 地址，该地址用于生成此 UUID 以保证空间唯一性。<p>
+
+ 节点值仅在基于时间的 UUID（其 version 类型为 1）中才有意义。如果此 UUID 不是基于时间的 UUID，则此方法抛出 UnsupportedOperationException。
+ 
+@return 此 <tt>UUID</tt> 的节点值。
+@throws UnsupportedOperationException 如果此 UUID 的 version 不为 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.UUID.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此 <code>UUID</code> 的 <code>String</code> 对象。
+ 
+ <p>UUID 的字符串表示形式由此 BNF 描述： 
+ <blockquote><pre>
+ {@code
+  UUID                   = <time_low> "-" <time_mid> "-"
+                           <time_high_and_version> "-"
+                           <variant_and_sequence> "-"
+                           <node>
+  time_low               = 4*<hexOctet>
+  time_mid               = 2*<hexOctet>
+  time_high_and_version  = 2*<hexOctet>
+  variant_and_sequence   = 2*<hexOctet>
+  node                   = 6*<hexOctet>
+  hexOctet               = <hexDigit><hexDigit>
+  hexDigit               =
+        "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
+        | "a" | "b" | "c" | "d" | "e" | "f"
+        | "A" | "B" | "C" | "D" | "E" | "F"
+  }</pre></blockquote>
+
+@return  此 <tt>UUID</tt> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.UUID.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>UUID</code> 的哈希码。
+
+@return <tt>UUID</tt> 的哈希码值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.UUID.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象与指定对象比较。当且仅当参数不为 <tt>null</tt>、而是一个 <tt>UUID</tt> 对象、具有与此 <tt>UUID</tt> 相同的 varriant、包含相同的值（每一位均相同）时，结果才为 <tt>true</tt>。
+
+@param   obj 要与之比较的对象。
+@return  如果对象相同，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.UUID.compareTo(UUID val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 UUID 与指定的 UUID 比较。
+ 
+<p>如果两个 UUID 不同，且第一个 UUID 的最高有效字段大于第二个 UUID 的对应字段，则第一个 UUID 大于第二个 UUID。
+
+@param  val 要与此 <tt>UUID</tt> 比较的 <tt>UUID</tt>。
+@return 在此 <tt>UUID</tt> 小于、等于或大于 <tt>val</tt> 时，分别返回 -1、0 或 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.UUID.readObject(ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据流重构 <tt>UUID</tt> 实例（也就是将其反序列化）。这对于将各个 transient 字段设置为其正确的未初始化的值以便按需重新计算很有必要。
+
+<!-- END DATA -->

@@ -1,0 +1,1213 @@
+<!-- BEGIN KEY -->
+public class java.awt.Window extends java.awt.Container implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Window</code> 对象是一个没有边界和菜单栏的顶层窗口。窗口的默认布局是 <code>BorderLayout</code>。
+ <p>
+构造窗口时，它必须拥有窗体、对话框或其他作为其所有者定义的窗口。 
+ <p>
+在多屏幕环境中，通过使用 {@link #Window(Window, GraphicsConfiguration)} 构造 <code>Window</code>，可以在不同的屏幕设备上创建 <code>Window</code>。<code>GraphicsConfiguration</code> 对象是目标屏幕设备的 <code>GraphicsConfiguration</code> 对象之一。  
+ <p>
+在虚拟设备多屏幕环境中（其中桌面区域可以跨越多物理屏幕设备），所有配置的边界都是相对于虚拟设备坐标系的。虚拟坐标系的原点位于主物理屏幕的左上角。是否使用负坐标取决于主物理屏幕在虚拟设备中的位置，如下图所示。
+ <p>
+<img src="doc-files/MultiScreen.gif"
+ alt="图表显示的虚拟设备包含 4 个物理屏幕。主物理屏幕显示坐标 (0,0)，其他屏幕显示 (-80,-100)。"
+ ALIGN=center HSPACE=10 VSPACE=7>
+ <p>  
+在此环境中，调用 <code>setLocation</code> 时，必须传递一个虚拟坐标到此方法中。类似地，对 <code>Frame</code> 调用 <code>getLocationOnScreen</code> 将返回虚拟设备坐标。调用 <code>GraphicsConfiguration</code> 的 <code>getBounds</code> 方法，以查找它在虚拟坐标系中的原点。
+ <p>
+以下代码将 <code>Window</code> 的位置设置在 (10, 10)（相对于相应 <code>GraphicsConfiguration</code> 物理屏幕的原点）。如果不考虑 <code>GraphicsConfiguration</code> 的边界，则 <code>Window</code> 位置应设置在 (10, 10)（相对于虚拟坐标系），并显示在主物理屏幕上，该屏幕可能不同于指定 <code>GraphicsConfiguration</code> 的物理屏幕。
+
+ <pre>
+	Window w = new Window(Window owner, GraphicsConfiguration gc);
+	Rectangle bounds = gc.getBounds();
+	w.setLocation(10 + bounds.x, 10 + bounds.y);
+ </pre>
+
+ <p>
+注：顶层窗口（包括 <code>Window</code>、<code>Frame</code> 和 <code>Dialog</code>）的位置和大小受桌面窗口管理系统的控制。对 <code>setLocation</code>、<code>setSize</code> 和 <code>setBounds</code> 的调用是转发到窗口管理系统的请求（不是指令）。将尽所有努力响应这样的请求。但是，在某些情况下，窗口管理系统可以忽略这样的请求，或修改请求的几何结构，以放置和调整 <code>Window</code> 的大小，使之更好地与桌面设置匹配。
+<p>
+由于本机事件处理的异步特性，在处理完最后一个请求前，<code>getBounds</code>、<code>getLocation</code>、<code>getLocationOnScreen</code> 和 <code>getSize</code> 返回的结果可能不反映屏幕上窗口的实际几何结构。在处理后续请求的过程中，窗口管理系统满足这些请求时，这些值可能会相应地改变。
+<p>
+应用程序可以随意设置不可见 {@code Window} 的大小和位置，但是当 {@code Window} 可见时，窗口管理系统可以随后更改它的大小和/或位置。将生成一个或多个 {@code ComponentEvent} 来表示新的几何结构。
+
+ <p>
+窗口能够生成以下 WindowEvents：WindowOpened、WindowClosed、indowGainedFocus、indowLostFocus。
+
+@version 	1.208, 06/28/04
+@author 	Sami Shaio
+@author 	Arthur van Hoff
+@see WindowEvent
+@see #addWindowListener
+@see java.awt.BorderLayout
+@since       JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.lang.String java.awt.Window.warningString
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这表示将要在非安全窗口中显示的警告消息，例如：针对已安装安全管理器的窗口，调用 SecurityManager.checkTopLevelWindow() 结果为 false。此消息可以显示在窗口的任何地方。
+
+@serial
+@see #getWarningString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.Window.state
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示窗口状态的 Integer 值。
+
+@serial
+@since 1.2
+@see #show
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.Window.alwaysOnTop
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示窗口 always-on-top 状态的布尔值
+@since 1.5
+@serial
+@see #setAlwaysOnTop
+@see #isAlwaysOnTop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.awt.Dialog.ModalExclusionType java.awt.Window.modalExclusionType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @serial
+
+ @see java.awt.Dialog.ModalExclusionType
+ @see #getModalExclusionType
+ @see #setModalExclusionType
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.FocusManager java.awt.Window.focusMgr
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+未使用。为序列化向后兼容性而维护。
+
+@serial
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.Window.focusableWindowState
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此窗口是否可以成为聚焦窗口。
+
+@serial
+@see #getFocusableWindowState
+@see #setFocusableWindowState
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.Window.windowSerializedDataVersion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+窗口序列化的数据版本。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window(Frame owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的、最初不可见的窗口，使用指定的 <code>Frame</code> 作为其所有者。该窗口将不可聚焦，除非其所有者正显示在屏幕上。
+ <p>
+如果存在安全管理器，则此方法首先调用安全管理器的 <code>checkTopLevelWindow</code> 方法（<code>this</code> 作为其参数），以确定是否必须使用警告标志显示该窗口。 
+ 
+@param owner 要充当所有者的 <code>Frame</code>；如果此窗口没有所有者，则该参数为 <code>null</code>
+@exception IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code> 时
+@see java.awt.GraphicsEnvironment#isHeadless
+@see java.lang.SecurityManager#checkTopLevelWindow
+@see #isShowing
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window(Window owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的、最初不可见的窗口，使用指定 <code>Window</code> 作为其所有者。此窗口将不可聚焦，除非其最近拥有的 <code>Frame</code> 或 <code>Dialog</code> 正显示在屏幕上。
+ <p>
+如果存在安全管理器，则此方法首先调用安全管理器的 <code>checkTopLevelWindow</code> 方法（<code>this</code> 作为其参数），以确定是否必须使用警告标志显示该窗口。 
+ 
+@param     owner 要充当所有者的 <code>Window</code>；如果此窗口没有所有者，则该参数为 <code>null</code>
+@exception IllegalArgumentException 如果 <code>owner</code> 的 <code>GraphicsConfiguration</code> 不是来自屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code> 时
+@see       java.awt.GraphicsEnvironment#isHeadless
+@see       java.lang.SecurityManager#checkTopLevelWindow
+@see       #isShowing
+@since     1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window(Window owner, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的、最初不可见的窗口，使用指定的所有者 <code>Window</code> 和屏幕设备的 <code>GraphicsConfiguration</code>。该窗口将不可聚焦，除非其最近拥有的 <code>Frame</code> 或 <code>Dialog</code> 正显示在屏幕上。
+ <p>
+如果存在安全管理器，则此方法首先调用安全管理器的 <code>checkTopLevelWindow</code> 方法（<code>this</code> 作为其参数），以确定是否必须使用警告标志显示该窗口。
+
+@param  owner  要作为所有者的窗口；如果此窗口没有所有者，则该参数为 <code>null</code>
+@param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>；如果 <code>gc</code> 为 <code>null</code>，则使用系统默认的 <code>GraphicsConfiguration</code>
+@exception IllegalArgumentException 如果 <code>gc</code> 不是来自屏幕设备
+@exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+@see       java.awt.GraphicsEnvironment#isHeadless
+@see       java.lang.SecurityManager#checkTopLevelWindow
+@see       GraphicsConfiguration#getBounds
+@see       #isShowing
+@since     1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.awt.Image> java.awt.Window.getIconImages()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回要作为此窗口的图标显示的图像序列。
+ <p>
+此方法返回内部存储列表的一个副本，所以对返回对象的任何操作都不会影响窗口的行为。
+
+ @return    此窗口的图标图像列表的副本；如果此窗口没有图标图像，则返回空列表。
+ @see       #setIconImages
+ @see       #setIconImage(Image)
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.setIconImages(java.util.List<? extends java.awt.Image> icons)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要作为此窗口的图标显示的图像序列。随后调用 {@code getIconImages} 将总是返回 {@code icons} 列表的一个副本。
+ <p>
+各平台根据自身能力的不同，使用不同数量和尺寸的图像作为窗口的图标。
+ <p>
+一开始便扫描 {@code icons} 列表，寻找最佳尺寸的图像。如果列表包含几个大小相同的图像，则使用第一个图像。
+ <p>
+未指定图标的、没有所有者的窗口将使用平台默认的图标。如果没有显示重写，被拥有的窗口的图标可以从其所有者继承。将图标设置为 {@code null} 或空列表将恢复默认行为。
+ <p>
+注：根据上下文的不同（例如，窗口装饰、窗口列表、任务栏等），本机窗口系统可以使用不同尺寸的不同图像表示一个窗口。也可以对所有上下文使用一个图像，或者根本不用图像。
+ 
+ @param  icons   要显示的图标图像列表。
+ @see       #getIconImages()
+ @see       #setIconImage(Image)
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setIconImage(Image image)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置要作为此窗口图标显示的图像。
+ <p>
+将单个图像指定为窗口的图标时，可以使用此方法代替 {@link #setIconImages setIconImages()}。
+ <p>
+ 以下语句：
+ <pre>
+     setIconImage(image);
+ </pre>
+ 等价于：
+ <pre>
+     ArrayList<Image> imageList = new ArrayList<Image>();
+     imageList.add(image);
+     setIconImages(imageList);
+ </pre>
+ <p>
+ 注：根据上下文的不同（例如，窗口装饰、窗口列表、任务栏等），本机窗口系统可以使用不同尺寸的不同图像表示一个窗口。也可以对所有上下文使用一个图像，或者根本不用图像。
+
+ @param     image 要显示的图标图像。
+ @see       #setIconImages
+ @see       #getIconImages()
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过创建到本机屏幕资源的连接，使此窗口变得可显示。此方法由工具包在内部进行调用，并且不应由程序直接调用。
+@see Component#isDisplayable
+@see Container#removeNotify
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.removeNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.pack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整此窗口的大小，以适合其子组件的首选大小和布局。如果该窗口和/或其所有者还不可显示，则在计算首选大小之前都将变得可显示。在计算首选大小之后，将会验证该窗口。
+@see Component#isDisplayable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setMinimumSize(Dimension minimumSize)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此窗口的最小大小设置为一个常量值。随后调用 {@code getMinimumSize} 将总是返回此值。如果当前窗口的大小小于 {@code minimumSize}，则窗口的大小将自动增大到最小大小。
+ <p>
+如果随后调用 {@code setSize} 或 {@code setBounds} 方法，且调用时使用的宽度或高度小于 {@code setMinimumSize} 指定的宽度或高度，则窗口将自动增大到 {@code minimumSize} 值。将最小大小设置为 {@code null} 将还原默认行为。
+ <p>
+如果用户试图将窗口大小调整到 {@code minimumSize} 值以下，则该调整操作将受到限制。
+此行为与平台有关。
+
+ @param minimumSize 此窗口新的最小大小
+ @see Component#setMinimumSize
+ @see #getMinimumSize
+ @see #isMinimumSizeSet
+ @see #setSize(Dimension)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setSize(Dimension d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ <p>
+如果 {@code d.width} 值或 {@code d.height} 值小于之前调用 {@code setMinimumSize} 指定的最小大小，则它将自动增大。
+
+ @see #getSize
+ @see #setBounds
+ @see #setMinimumSize
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setSize(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ <p>
+如果 {@code width} 值或 {@code height} 值小于之前调用 {@code setMinimumSize} 指定的最小大小，则它将自动增大。
+
+ @see #getSize
+ @see #setBounds
+ @see #setMinimumSize
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.reshape(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @deprecated 从 JDK 1.1 版开始，由 <code>setBounds(int, int, int, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setVisible(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据参数 {@code b} 的值显示或隐藏此 {@code Window}。
+ @param b  如为 {@code true}，则使 {@code Window} 可见，否则隐藏 {@code Window}。
+如果 {@code Window} 和/或其所有者还不能显示，则都不显示。在使 {@code Window} 可见之前将验证它。
+如果 {@code Window} 已经可见，则此方法将 {@code Window} 带到最前面。<p>
+如为 {@code false}，则隐藏此 {@code Window}、此 {@code Window} 的子组件，以及它拥有的所有子级。
+调用 {@code #setVisible(true)} 可以重新使 {@code Window} 及其子组件可见。
+ @see java.awt.Component#isDisplayable
+ @see java.awt.Component#setVisible
+ @see java.awt.Window#toFront
+ @see java.awt.Window#dispose
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.show()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使窗口可见。如果窗口和/或其所有者还不能显示，则都不显示。在使窗口可见之前将验证它。如果窗口已经可见，则此方法将窗口带到最前面。
+ @see       Component#isDisplayable
+ @see       #toFront
+@deprecated 从 JDK 1.5 版开始，由 {@link Component#setVisible(boolean) Component.setVisible(boolean)} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.hide()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+隐藏此窗口、此窗口的子组件，以及它拥有的所有子级。调用 {@code show} 可以重新使窗口及其子组件可见。
+ </p>
+ @see #show
+ @see #dispose
+@deprecated 从 JDK 1.5 版开始，由 {@link Component#setVisible(boolean) Component.setVisible(boolean)} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.dispose()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放由此 <code>Window</code>、其子组件及其拥有的所有子组件所使用的所有本机屏幕资源。即这些 <code>Component</code> 的资源将被破坏，它们使用的所有内存都将返回到操作系统，并将它们标记为不可显示。
+ <p>
+通过随后调用 <code>pack</code> 或 <code>show</code> 重新构造本机资源，可以再次显示 <code>Window</code> 及其子组件。重新创建的 <code>Window</code> 及其子组件的状态与释放 <code>Window</code> 时这些对象的状态一致（不考虑这些操作之间的其他更改）。
+ <p>
+<b>注</b>：当 Java 虚拟机 (VM) 中最后的可显示窗口被释放后，虚拟机可能会终止。有关更多信息，请参阅 <a href="doc-files/AWTThreadIssues.html#Autoshutdown">
+ AWT Threading Issues</a>。
+@see Component#isDisplayable
+@see #pack
+@see #show
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.toFront()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此窗口是可见的，则将此窗口置于前端，并可以将其设为焦点 Window。
+ <p>
+将此窗口放在堆栈顺序的顶层，并在此虚拟机中显示在所有其他窗口的上面。如果此窗口不可见，则不会发生任何操作。有些平台不允许拥有其他窗口的窗口显示在它所拥有的窗口之上。有些平台可能不允许此虚拟机将其窗口放在本机应用程序窗口或其他虚拟机窗口之上。此权限可能取决于此虚拟机中的窗口是否已被设为焦点窗口。将进行所有尝试来移动此窗口，使其位于堆栈顺序中尽可能靠前的位置；但是，开发人员不应假定此方法在所有情况下都可以将此窗口移到所有其他窗口之上。
+ <p>
+由于本机窗口系统多种多样，因此无法保证对焦点窗口和活动窗口的更改能够实现。在此窗口接收 WINDOW_GAINED_FOCUS 或 WINDOW_ACTIVATED 事件之前，开发人员不得假定此窗口是焦点窗口或活动窗口。在顶层窗口是焦点窗口的平台上，此方法<b>可能</b>使此窗口成为焦点窗口（如果它还不是焦点窗口）。在堆栈顺序通常不影响焦点窗口的平台上，此方法<b>可能</b>维持焦点窗口和活动窗口不变。
+ <p>
+如果此方法导致此窗口成为焦点窗口，而且此窗口是一个 Frame 或 Dialog，则它也将被激活。如果此窗口是焦点窗口，但它不是一个 Frame 或 Dialog，则拥有此窗口的第一个 Frame 或 Dialog 将被激活。
+ <p>
+如果此窗口被模式对话框 (modal dialog) 阻塞，则阻塞对话框将置于最前端，仍然处于被阻塞窗口的前方。
+
+@see       #toBack
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.toBack()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此窗口是可视的，则将此窗口置于后方，如果它是焦点窗口或活动窗口，则会导致丢失焦点或活动状态。
+ <p>
+在此虚拟机中，将此窗口放在堆栈顺序的底部，并在其他所有窗口之后显示此窗口。如果此窗口不可见，则不发生任何操作。有些平台不允许其他窗口拥有的窗口出现在其所有者下方。将进行所有尝试来移动此窗口，使其位于堆栈顺序中尽可能靠后的位置；不过，开发人员不应假定此方法在所有情况下都可以将此窗口移到所有其他窗口之下。
+ <p>
+由于本机窗口系统多种多样，因此无法保证对焦点窗口和活动窗口的更改能够实现。在此窗口接收 WINDOW_LOST_FOCUS 或 WINDOW_DEACTIVATED 事件之前，开发人员不得假定此窗口不再是焦点窗口或活动窗口。在顶层窗口为焦点窗口的平台上，此方法<b>可能</b>导致此窗口不再是焦点状态。在此情况下，此虚拟机中紧跟其后的可作为焦点的窗口将成为焦点窗口。在堆栈顺序通常不影响焦点窗口的平台上，此方法<b>可能</b>维持焦点窗口和活动窗口不变。
+
+@see       #toFront
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Toolkit java.awt.Window.getToolkit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗体的工具包。
+@return    此窗口的工具包。
+@see       Toolkit
+@see       Toolkit#getDefaultToolkit
+@see       Component#getToolkit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.awt.Window.getWarningString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此窗口中显示的警告字符串。如果此窗口不安全，则警告字符串将在此窗口的可视区域内显示。如果存在安全管理器，并且在窗口作为一个参数传递到安全管理器的 <code>checkTopLevelWindow</code> 方法时，该方法返回 <code>false</code>，那么窗口是不安全的。
+ <p>
+如果此窗口是安全的，则 <code>getWarningString</code> 返回 <code>null</code>。如果此窗口是不安全的，则此方法检查系统属性 <code>awt.appletWarning</code>，并返回此属性的字符串值。
+@return    此窗口的警告字符串。
+@see       java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale java.awt.Window.getLocale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果设置了区域，则获取与此窗口关联的 <code>Locale</code> 对象。如果未设置区域，则返回默认的区域。
+@return    为此窗口设置的区域。
+@see       java.util.Locale
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.im.InputContext java.awt.Window.getInputContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此窗口的输入上下文。窗口始终具有一个输入上下文，如果子组件没有创建并设置自己的输入上下文，则可以共享该输入上下文。
+@see Component#getInputContext
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setCursor(Cursor cursor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定光标的光标图像。
+ <p>
+如果 Java 平台实现和/或本机系统不支持更改鼠标光标形状，那么此方法将没有任何视觉效果。
+@param     cursor 由 <code>Cursor</code> 类定义的常量之一。如果此参数为 null，则此窗口的光标将被设置为类型 Cursor.DEFAULT_CURSOR。
+@see       Component#getCursor
+@see       Cursor
+@since     JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window java.awt.Window.getOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口的所有者。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Window[] java.awt.Window.getOwnedWindows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此窗口当前拥有的所有窗口的数组。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Window[] java.awt.Window.getWindows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，该数组由此应用程序创建的所有 {@code Window}（包括被拥有的和不被拥有的）组成。
+如果从 applet 调用此方法，则返回数组只包括该 applet 可访问的 {@code Window}。
+ <p>
+ <b>警告：</b> 此方法可以返回系统创建的窗口，如打印对话框。应用程序不应该假定这些对话框存在，也不应该假定任何与这些对话框有关的内容（如组件位置、<code>LayoutManager</code> 或序列化）存在。
+
+ @see Frame#getFrames
+ @see Window#getOwnerlessWindows
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Window[] java.awt.Window.getOwnerlessWindows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，该数组由此应用程序创建的所有没有所有者的 {@code Window} 组成。它们包括 {@code Frame} 以及没有所有者的 {@code Dialog} 和 {@code Window}。
+如果从 applet 调用此方法，则返回数组只包括该 applet 可访问的 {@code Window}。
+ <p>
+<b>警告：</b> 此方法可以返回系统创建的窗口，如打印对话框。应用程序不应该假定这些对话框存在，也不应该假定任何与这些对话框有关的内容（如组件位置、<code>LayoutManager</code> 或序列化）存在。
+
+ @see Frame#getFrames
+ @see Window#getWindows
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setModalExclusionType(Dialog.ModalExclusionType exclusionType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定此窗口的模式排斥类型。如果一个窗口是模式排斥的，则该窗口不会被某些模式对话框阻塞。有关可能的模式排斥类型，请参阅 {@link
+ java.awt.Dialog.ModalExclusionType Dialog.ModalExclusionType}。
+ <p>
+ 如果不支持给定类型，则使用 <code>NO_EXCLUDE</code>。
+ <p>
+注：如果将可见窗口更改为模式排斥类型，则只有在该窗口被隐藏然后再次出现后才有效。
+
+ @param exclusionType 此窗口的模式排斥类型；<code>null</code> 值等价于 {@link Dialog.ModalExclusionType#NO_EXCLUDE
+     NO_EXCLUDE}
+ @throws SecurityException 如果调用线程没有权限使用给定 <code>exclusionType</code> 设置窗口的模式排斥属性
+ @see java.awt.Dialog.ModalExclusionType
+ @see java.awt.Window#getModalExclusionType
+ @see java.awt.Toolkit#isModalExclusionTypeSupported
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dialog.ModalExclusionType java.awt.Window.getModalExclusionType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此窗口的模式排斥类型。
+
+ @return 此窗口的模式排斥类型
+
+ @see java.awt.Dialog.ModalExclusionType
+ @see java.awt.Window#setModalExclusionType
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.addWindowListener(WindowListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的窗口侦听器，以从此窗口接收窗口事件。如果 l 为 null，则不抛出任何异常，且不执行任何操作。
+ <p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。 
+
+@param	l 窗口侦听器
+@see #removeWindowListener
+@see #getWindowListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.addWindowStateListener(WindowStateListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的窗口状态侦听器，以从此窗口接收窗口事件。如果 <code>l</code> 为 <code>null</code>，则不抛出任何异常，且不执行任何操作。
+<p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。 
+
+@param   l 窗口状态侦听器
+@see #removeWindowStateListener
+@see #getWindowStateListeners
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.addWindowFocusListener(WindowFocusListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的窗口焦点侦听器，以从此窗口接收窗口事件。如果 l 为 null，则不抛出任何异常，且不执行任何操作。
+<p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。 
+
+@param   l 窗口焦点侦听器
+@see #removeWindowFocusListener
+@see #getWindowFocusListeners
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.removeWindowListener(WindowListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的窗口侦听器，以便不再从此窗口接收窗口事件。如果 l 为 null，则不抛出任何异常，且不执行任何操作。
+<p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。
+
+@param	l 窗口侦听器
+@see #addWindowListener
+@see #getWindowListeners
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.removeWindowStateListener(WindowStateListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的窗口状态侦听器，以便不再从此窗口接收窗口事件。如果 <code>l</code> 为 <code>null</code>，则不抛出任何异常，且不执行任何操作。
+<p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。
+
+@param   l 窗口状态侦听器
+@see #addWindowStateListener
+@see #getWindowStateListeners
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.Window.removeWindowFocusListener(WindowFocusListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的窗口焦点侦听器，以便不再从此窗口接收窗口事件。如果 l 为 null，则不抛出任何异常，且不执行任何操作。
+<p>有关 AWT 线程模式的详细信息，请参考 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT Threading Issues</a>。
+
+@param   l 窗口焦点侦听器
+@see #addWindowFocusListener
+@see #getWindowFocusListeners
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.WindowListener[] java.awt.Window.getWindowListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此窗口注册的所有窗口侦听器所组成的数组。
+
+@return 此窗口的所有 <code>WindowListener</code>；如果当前未注册窗口侦听器，则返回一个空数组
+
+@see #addWindowListener
+@see #removeWindowListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.WindowFocusListener[] java.awt.Window.getWindowFocusListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此窗口注册的所有窗口焦点侦听器所组成的数组。
+
+@return 此窗口的所有 <code>WindowFocusListener</code>；如果当前未注册窗口焦点侦听器，则返回一个空数组
+
+@see #addWindowFocusListener
+@see #removeWindowFocusListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.WindowStateListener[] java.awt.Window.getWindowStateListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此窗口注册的所有窗口状态侦听器所组成的数组。
+
+@return 此窗口的所有 <code>WindowStateListener</code>；如果当前未注册窗口状态侦听器，则返回一个空数组
+
+@see #addWindowStateListener
+@see #removeWindowStateListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.awt.Window.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前在此 <code>Window</code> 上注册为 <code><em>Foo</em>Listener</code> 的所有对象所组成的数组。<code><em>Foo</em>Listener</code> 是使用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+
+可以使用类文本指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以使用以下代码查询 <code>Window</code> <code>w</code>，获取其窗口侦听器：
+
+ <pre>WindowListener[] wls = (WindowListener[])(w.getListeners(WindowListener.class));</pre>
+
+如果不存在此类侦听器，则此方法将返回一个空数组。
+
+@param listenerType 请求的侦听器的类型；此参数应指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 在此窗口注册为 <code><em>Foo</em>Listener</code> 的所有对象所组成的数组；如果未添加此类侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@see #getWindowListeners
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Window.processEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理此窗口上的事件。如果此事件为一个 <code>WindowEvent</code>，它将调用 <code>processWindowEvent</code> 方法，否则将调用其超类的 <code>processEvent</code>。
+<p>注意，如果此事件参数为 <code>null</code>，则此行为是不明确的，可能导致异常。
+
+@param e 事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Window.processWindowEvent(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+处理此窗口上发生的窗口事件：将它们指派到任何注册的 WindowListener 对象。注：只有为此组件启用了窗口事件时，此方法才有可能被调用；这在存在以下条件之一时发生：
+ <ul>
+<li>通过 <code>addWindowListener</code> 注册 WindowListener 对象
+<li>通过 <code>enableEvents</code> 启用窗口事件
+ </ul>
+<p>注意，如果此事件参数为 <code>null</code>，则此行为是不明确的，可能导致异常。
+
+@param e 窗口事件
+@see Component#enableEvents
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Window.processWindowFocusEvent(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理此窗口上发生的窗口焦点事件：将它们指派到任何注册的 WindowFocusListener 对象。注：只有为此组件启用了窗口事件时，此方法才有可能被调用。这在存在以下条件之一时发生：
+ <ul>
+<li>通过 <code>addWindowFocusListener</code> 注册 WindowFocusListener
+<li>通过 <code>enableEvents</code> 启用窗口焦点事件
+ </ul>
+<p>注意，如果此事件参数为 <code>null</code>，则此行为是不明确的，可能导致异常。
+
+@param e 窗口焦点事件
+@see Component#enableEvents
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.Window.processWindowStateEvent(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理此窗口上发生的窗口状态事件：将它们指派到任何注册的 <code>WindowStateListener</code> 对象。注：只有为此组件启用了窗口事件时，此方法才有可能被调用。这在存在以下条件之一时发生：
+ <ul>
+<li>通过 <code>addWindowStateListener</code> 注册 <code>WindowStateListener</code>
+<li>通过 <code>enableEvents</code> 启用窗口状态事件
+ </ul>
+<p>注意，如果此事件参数为 <code>null</code>，则此行为是不明确的，可能导致异常。
+
+@param e 窗口状态事件
+@see java.awt.Component#enableEvents
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.Window.setAlwaysOnTop(boolean alwaysOnTop) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此窗口是否应该始终位于其他窗口上方。如果存在多个 always-on-top 窗口，则它们的相对顺序没有指定，该顺序与平台有关。
+ <p> 
+如果某个其他窗口已经是 always-on-top，则不指定这些窗口之间的相互顺序（与平台有关）。任何窗口都不会置于 always-on-top 窗口之上，除非它也是一个 always-on-top 窗口。
+ <p> 
+所有 always-on-top 窗口拥有的窗口将继承此状态，自动成为 always-on-top 窗口。如果某个窗口不再是 always-on-top 窗口，则它所拥有的窗口也不再是 always-on-top 窗口。当 always-on-top 窗口调用 {@link #toBack
+ toBack} 时，其 always-on-top 状态将设置为 <code>false</code>。
+<p>
+如果对某个窗口调用此方法且参数值为 <code>true</code>，并且该窗口可见，平台也支持此窗口为 always-on-top，那么该窗口将立即向前，“锁定”在最顶层位置。如果窗口当前不可见，那么此方法将 always-on-top 状态设置为 <code>true</code>，但窗口不会向前。如果以后显示该窗口，那么它将 always-on-top。
+ <p> 
+如果 <code>alwaysOnTop</code> 为 <code>true</code>，则此方法可使窗口 always-on-top。如果窗口是可见的（这包括将窗口前置，即 <code>toFront</code>），则将其&ldquo;锁定&rdquo;在最顶层的位置。如果窗口不可见，则除了设置 always-on-top 的属性之外，不执行任何操作。如果以后窗口显示出来，则该窗口将 always-on-top。如果窗口已经位于顶层，则此调用不执行任何操作。
+ <p> 
+如果对某个窗口调用此方法且参数值为 <code>false</code>，则 always-on-top 状态被设置为常规。该窗口保持在最顶层，但对于任何其他窗口来说，其 z-order 可以更改。对已经是常规状态的窗口调用此方法且参数值为 <code>false</code> 将无效。如果没有其他 always-on-top 窗口，将 always-on-top 状态设置为 false 对窗口的相对 z-order 没有影响。
+ <p> 
+<b>注</b>：有些平台可能不支持 always-on-top 窗口。要检测当前平台是否支持 always-on-top 窗口，请使用 {@link Toolkit#isAlwaysOnTopSupported()} 和 {@link Window#isAlwaysOnTopSupported()}。如果工具包或此窗口不支持 always-on-top 模式，则调用此方法无效。
+ <p>
+如果安装了 SecurityManager，则必须授予调用线程 AWTPermission &quot;setWindowAlwaysOnTop&quot; 权限，才能设置此属性值。如果未授予此权限，则此方法将抛出 SecurityException，并且属性的当前值保持不变。
+
+@param alwaysOnTop 如果窗口应该始终位于其他窗口上方，则该参数为 true
+@throws SecurityException 如果调用线程无权设置 always-on-top 属性值。
+@see #isAlwaysOnTop
+@see #toFront
+@see #toBack
+@see AWTPermission
+@see #isAlwaysOnTopSupported
+@see Toolkit#isAlwaysOnTopSupported
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.isAlwaysOnTopSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口是否支持 always-on-top 模式。某些平台不支持 always-on-top 窗口，而另一些只支持某种 top-level（顶层）窗口；例如，某个平台不支持 always-on-top 模式对话框。
+ @return  如果工具包和此窗口支持 always-on-top 模式，则返回 <code>true</code>；如果此窗口不支持 always-on-top 模式，或者工具包不支持 always-on-top 窗口，则返回 <code>false</code>。
+ @see #setAlwaysOnTop(boolean)
+ @see Toolkit#isAlwaysOnTopSupported
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.Window.isAlwaysOnTop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口是否为 always-on-top 窗口。
+@return 如果此窗口处于 always-on-top 状态，则返回 <code>true</code>，否则，返回 <code>false</code>
+@see #setAlwaysOnTop
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.Window.getFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此窗口为焦点窗口，则返回是焦点窗口的子组件；否则返回 null。
+
+@return 具有焦点的子组件；如果此窗口不是焦点窗口，则返回 null
+@see #getMostRecentFocusOwner
+@see #isFocused
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.Window.getMostRecentFocusOwner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口的子组件，该子组件在此窗口为焦点窗口时将接收焦点。如果此窗口当前为焦点窗口，则此方法将返回与 <code>getFocusOwner()</code> 相同的组件。如果此窗口不是焦点窗口，则返回最近请求焦点的子组件。如果没有子组件请求过焦点，并且这是一个可成为焦点的窗口，则返回此窗口最初可成为焦点的组件。如果没有子组件请求过焦点，并且这是一个不能成为焦点的窗口，则返回 null。
+
+@return 在此窗口成为焦点窗口时，将接收焦点的子组件
+@see #getFocusOwner
+@see #isFocused
+@see #isFocusableWindow
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口是否为活动窗口。仅有一个 Frame 或 Dialog 可以处于活动状态。本机窗口系统表示具有特殊修饰的活动窗口或其子窗口，如高亮的标题栏。活动窗口始终是焦点窗口，或者是拥有该焦点窗口的第一个 Frame 或 Dialog。
+
+@return 此窗口是否为活动窗口。
+@see #isFocused
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.isFocused()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口是否为焦点窗口。如果存在焦点所有者，则焦点窗口就是（或者包含）焦点所有者的窗口。如果不存在焦点所有者，则没有作为焦点的窗口。
+ <p>
+如果焦点窗口是一个 Frame 或 Dialog，那么它同时也是一个活动窗口。否则，活动窗口将是拥有焦点窗口的第一个 Frame 或 Dialog。
+
+@return 此窗口是否为焦点窗口。
+@see #isActive
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.awt.AWTKeyStroke> java.awt.Window.getFocusTraversalKeys(int id)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此窗口的焦点遍历键。（有关每个键的完整描述，请参阅 <code>setFocusTraversalKeys</code>。）
+ <p>
+如果未为此窗口显式设置遍历键，则返回此窗口的父窗口的遍历键。如果未为此窗口的任何祖先显式设置遍历键，则返回当前 KeyboardFocusManager 的默认遍历键。
+
+@param id KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS、KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 或 KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS 之一
+@return 指定键的 AWTKeyStroke
+@see Container#setFocusTraversalKeys
+@see KeyboardFocusManager#FORWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#BACKWARD_TRAVERSAL_KEYS
+@see KeyboardFocusManager#UP_CYCLE_TRAVERSAL_KEYS
+@see KeyboardFocusManager#DOWN_CYCLE_TRAVERSAL_KEYS
+@throws IllegalArgumentException 如果 id 不是 KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS、KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS、KeyboardFocusManager.UP_CYCLE_TRAVERSAL_KEYS 或 KeyboardFocusManager.DOWN_CYCLE_TRAVERSAL_KEYS 之一
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.awt.Window.setFocusCycleRoot(boolean focusCycleRoot)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不执行任何操作，因为窗口必须始终是焦点遍历循环的根。忽略传入的值。
+
+@param focusCycleRoot 忽略此值
+@see #isFocusCycleRoot
+@see Container#setFocusTraversalPolicy
+@see Container#getFocusTraversalPolicy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.Window.isFocusCycleRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <code>true</code>，因为所有窗口必须是焦点遍历循环的根。
+
+@return <code>true</code>
+@see #setFocusCycleRoot
+@see Container#setFocusTraversalPolicy
+@see Container#getFocusTraversalPolicy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.Container java.awt.Window.getFocusCycleRootAncestor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <code>null</code>，因为窗口没有祖先；它们表示组件层次结构的顶层。
+
+@return <code>null</code>
+@see Container#isFocusCycleRoot()
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.awt.Window.isFocusableWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗口是否可以成为焦点窗口，也就是说，此窗口或其任何子组件是否可以成为焦点所有者。对于可成为焦点的 Frame 或 Dialog，其可成为焦点的窗口状态必须设置为 <code>true</code>。对于不可成为焦点的 Frame 或 Dialog 的窗口，其可成为焦点的窗口状态必须设置为 <code>true</code>，其最近拥有的 Frame 或 Dialog 必须显示在屏幕上，而且它必须至少包含其焦点遍历循环中的一个组件。如果未满足这些条件中的任何一个条件，则此窗口及其任何子组件都不能成为焦点所有者。
+
+@return 如果此窗口可以成为焦点窗口，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #getFocusableWindowState
+@see #setFocusableWindowState
+@see #isShowing
+@see Component#isFocusable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.getFocusableWindowState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回如果此窗口满足 <code>isFocusableWindow</code> 中列出的其他要求，其是否可以成为焦点窗口。如果此方法返回 <code>false</code>，则 <code>isFocusableWindow</code> 也将返回 <code>false</code>。如果此方法返回 <code>true</code>，则 <code>isFocusableWindow</code> 可能返回 <code>true</code>，也可能返回 <code>false</code>，具体取决于窗口要成为焦点窗口所必须满足的其他要求。
+ <p>
+默认情况下，所有窗口都具有 focusable 的窗口状态 <code>true</code>。
+
+@return 此窗口是否可成为焦点窗口
+@see #isFocusableWindow
+@see #setFocusableWindowState
+@see #isShowing
+@see Component#setFocusable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setFocusableWindowState(boolean focusableWindowState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置如果此窗口满足 <code>isFocusableWindow</code> 中列出的其他要求，其是否可以成为焦点窗口。如果此窗口可成为焦点窗口状态设置为 <code>false</code>，则 <code>isFocusableWindow</code> 将返回 <code>false</code>。如果此窗口的可成为焦点的窗口状态设置为 <code>true</code>，则 <code>isFocusableWindow</code> 可能返回 <code>true</code>，也可能返回 <code>false</code>，具体取决于要成为焦点的窗口所必须满足的其他要求。
+ <p>
+将窗口的焦点状态设置为 <code>false</code> 是 AWT 标识应用程序的标准机制，AWT 是可用作浮动调色板或工具栏的窗口，因此应为是不可为焦点的窗口。在可见的 <code>Window</code> 上设置焦点状态，可能在某些平台上产生延迟的结果 &mdash; 只有在 <code>Window</code> 成为隐藏窗口，然后再可见后才发生实际的更改。为确保行为跨平台的一致性，当 <code>Window</code> 不可见时设置 <code>Window</code> 的焦点状态，然后再显示它。
+
+@param focusableWindowState 此窗口是否可以成为焦点窗口
+@see #isFocusableWindow
+@see #getFocusableWindowState
+@see #isShowing
+@see Component#setFocusable
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到侦听器列表。为此类的所有绑定 (bound) 属性注册侦听器，包括：
+ <ul>
+<li>此窗口的字体 (&quot;font&quot;)</li>
+<li>此窗口的背景色 (&quot;background&quot;)</li>
+<li>此窗口的前景色 (&quot;foreground&quot;)</li>
+<li>此窗口的可聚焦性 (&quot;focusable&quot;)</li>
+<li>此窗口的焦点遍历键启用状态 (&quot;focusTraversalKeysEnabled&quot;)</li>
+<li>此窗口的 FORWARD_TRAVERSAL_KEYS 集 (&quot;forwardFocusTraversalKeys&quot;)</li>
+<li>此窗口的 BACKWARD_TRAVERSAL_KEYS 集 (&quot;backwardFocusTraversalKeys&quot;)</li>
+<li>此窗口的 UP_CYCLE_TRAVERSAL_KEYS 集 (&quot;upCycleFocusTraversalKeys&quot;)</li>
+<li>此窗口的 DOWN_CYCLE_TRAVERSAL_KEYS 集 (&quot;downCycleFocusTraversalKeys&quot;)</li>
+<li>此窗口的焦点遍历策略 (&quot;focusTraversalPolicy&quot;)
+        </li>
+<li>此窗口的可成为焦点的窗口状态 (&quot;focusableWindowState&quot;)
+        </li>
+<li>此窗口的 always-on-top 状态 (&quot;alwaysOnTop&quot;)</li>
+ </ul>
+注意，如果此窗口在继承一个绑定属性，则不触发任何事件来响应继承属性中的更改。
+ <p>
+如果侦听器为 null，则不抛出任何异常，且不执行任何操作。
+
+@param    listener  要添加的 PropertyChangeListener
+
+@see Component#removePropertyChangeListener
+@see #addPropertyChangeListener(java.lang.String,java.beans.PropertyChangeListener)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.addPropertyChangeListener(String propertyName, PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到某个特定属性的侦听器列表。指定的属性可以是用户定义的，也可以是下列属性之一：
+ <ul>
+<li>此窗口的字体 (&quot;font&quot;)</li>
+<li>此窗口的背景色 (&quot;background&quot;)</li>
+<li>此窗口的前景色 (&quot;foreground&quot;)</li>
+<li>此窗口的可聚焦性 (&quot;focusable&quot;)</li>
+<li>此窗口的焦点遍历键启用状态 (&quot;focusTraversalKeysEnabled&quot;)</li>
+<li>此窗口的 FORWARD_TRAVERSAL_KEYS 集 (&quot;forwardFocusTraversalKeys&quot;)</li>
+<li>此窗口的 BACKWARD_TRAVERSAL_KEYS 集 (&quot;backwardFocusTraversalKeys&quot;)</li>
+<li>此窗口的 UP_CYCLE_TRAVERSAL_KEYS 集 (&quot;upCycleFocusTraversalKeys&quot;)</li>
+<li>此窗口的 DOWN_CYCLE_TRAVERSAL_KEYS 集 (&quot;downCycleFocusTraversalKeys&quot;)</li>
+<li>此窗口的焦点遍历策略 (&quot;focusTraversalPolicy&quot;)
+        </li>
+<li>此窗口的可成为焦点的窗口状态 (&quot;focusableWindowState&quot;)
+        </li>
+<li>此窗口的 always-on-top 状态 (&quot;alwaysOnTop&quot;)</li>
+ </ul>
+注意，如果此窗口在继承一个绑定属性，则不触发任何事件来响应继承属性中的更改。
+ <p>
+如果侦听器为 null，则不抛出任何异常，且不执行任何操作。
+
+@param propertyName 上文列出的属性名之一
+@param listener 要添加的 PropertyChangeListener
+
+@see #addPropertyChangeListener(java.beans.PropertyChangeListener)
+@see Component#removePropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.postEvent(Event e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>dispatchEvent(AWTEvent)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.isShowing()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此窗口是否显示在屏幕上。
+@see Component#setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.applyResourceBundle(ResourceBundle rb)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 J2SE 1.4 开始，由 {@link Component#applyComponentOrientation Component.applyComponentOrientation} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.applyResourceBundle(String rbName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 J2SE 1.4 开始，由 {@link Component#applyComponentOrientation Component.applyComponentOrientation} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.Window.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此窗口关联的 AccessibleContext。对于窗口，AccessibleContext 采取 AccessibleAWTWindow 的形式。如有必要，创建新的 AccessibleAWTWindow 实例。
+
+@return 充当此窗口的 AccessibleContext 的 AccessibleAWTWindow
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.GraphicsConfiguration java.awt.Window.getGraphicsConfiguration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法返回由此窗口使用的 GraphicsConfiguration。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setLocationRelativeTo(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置窗口相对于指定组件的位置。
+<p>如果组件当前未显示，或者 <code>c</code> 为 <code>null</code>，则此窗口将置于屏幕的中央。中点可以使用 {@link GraphicsEnvironment#getCenterPoint GraphicsEnvironment.getCenterPoint} 确定。
+<p>如果该组件的底部在屏幕外，则将该窗口放置在 <code>Component</code> 最接近窗口中心的一侧。因此，如果 <code>Component</code> 在屏幕的右部，则 <code>Window</code> 将被放置在左部，反之亦然。
+
+@param c  确定窗口位置涉及的组件
+@see java.awt.GraphicsEnvironment#getCenterPoint
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.createBufferStrategy(int numBuffers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此组件上的多缓冲创建一个新策略。多缓冲对于呈现性能非常有用。此方法试图根据提供的缓冲区数创建可用的最佳策略。它将始终根据该缓冲区数创建 <code>BufferStrategy</code>。首先尝试 page-flipping 策略，然后使用加速缓冲区尝试 blitting 策略。最后使用不加速的 blitting 策略。
+ <p>
+每次调用此方法时，将丢弃此组件的现有缓冲策略。
+@param numBuffers 要创建的缓冲区数
+@exception IllegalArgumentException 如果 numBuffers 小于 1。
+@exception IllegalStateException 如果组件不可显示
+@see #isDisplayable
+@see #getBufferStrategy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.createBufferStrategy(int numBuffers, BufferCapabilities caps) throws java.awt.AWTException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据所需缓冲区能力为此组件上的多缓冲创建新策略。在只需要加速的内存或页面翻转（由缓冲区能力指定）时，这很有用。
+ <p>
+每次调用此方法时，将丢弃此组件的现有缓冲策略。
+@param numBuffers 要创建的缓冲区数，包括前缓冲区
+@param caps 创建缓冲策略所需的能力；不能为 <code>null</code>
+@exception AWTException 如果提供的能力不受支持或未得到满足；这是有可能发生的，例如，如果当前无足够的可用加速内存，或者指定了页翻转，但不可能实现。
+@exception IllegalArgumentException 如果 numBuffers 小于 1，或者 caps 为 <code>null</code>
+@see #getBufferStrategy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferStrategy java.awt.Window.getBufferStrategy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件使用的 <code>BufferStrategy</code>。如果尚未创建或已经释放了 <code>BufferStrategy</code>，那么此方法将返回 null。
+@return 此组件使用的缓冲策略
+@see #createBufferStrategy
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setLocationByPlatform(boolean locationByPlatform)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置窗口下次可见时应该出现的位置：本机窗口系统的默认位置，还是当前位置（由 <code>getLocation</code> 返回）。此行为模拟显示的本机窗口，而不是以编程方式设置其位置。如果未显式设置窗口的位置，那么大多数窗口操作系统将重叠显示窗口。一旦窗口显示在屏幕上，其实际位置就被确定。
+ <p>
+还可以通过将系统属性 &quot;java.awt.Window.locationByPlatform&quot; 设置为 &quot;true&quot; 来启用此行为，但应优先考虑调用此方法。
+ <p>
+在调用 <code>setLocationByPlatform</code> 清除窗口的此属性之后，调用 <code>setVisible</code>、<code>setLocation</code> 和 <code>setBounds</code>。
+ <p>
+例如，在执行以下代码后：
+ <pre><blockquote>
+ setLocationByPlatform(true);
+ setVisible(true);
+ boolean flag = isLocationByPlatform();
+ </blockquote></pre>
+窗口将显示在平台的默认位置，<code>flag</code> 将为 <code>false</code>。
+ <p>
+在以下示例中：
+ <pre><blockquote>
+ setLocationByPlatform(true);
+ setLocation(10, 10);
+ boolean flag = isLocationByPlatform();
+ setVisible(true);
+ </blockquote></pre>
+窗口将显示在 (10, 10) 的位置，<code>flag</code> 将为 <code>false</code>。
+
+@param locationByPlatform 如果此窗口应出现在默认位置，则为 <code>true</code>，如果应出现在当前位置，则为 <code>false</code>
+@throws <code>IllegalComponentStateException</code> 如果此窗口显示在屏幕上，且 locationByPlatform 为 <code>true</code>。
+@see #setLocation
+@see #isShowing
+@see #setVisible
+@see #isLocationByPlatform
+@see java.lang.System#getProperty(String)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Window.isLocationByPlatform()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此窗口下次可见时，出现在本机窗口操作系统的默认位置，则返回 <code>true</code>。如果窗口显示在屏幕上，则此方法始终返回 <code>false</code>。
+
+@return 此窗口是否将出现在默认位置
+@see #setLocationByPlatform
+@see #isShowing
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setBounds(int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ <p>
+如果 {@code width} 值或 {@code height} 值小于之前调用 {@code setMinimumSize} 指定的最小大小，则它的值将自动增加。
+
+ @see #getBounds
+ @see #setLocation(int, int)
+ @see #setLocation(Point)
+ @see #setSize(int, int)
+ @see #setSize(Dimension)
+ @see #setMinimumSize
+ @see #setLocationByPlatform
+ @see #isLocationByPlatform
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Window.setBounds(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ <p>
+如果 {@code r.width} 值或 {@code r.height} 值小于之前调用 {@code setMinimumSize} 指定的最小大小，则它的值将自动增加。
+
+ @see #getBounds
+ @see #setLocation(int, int)
+ @see #setLocation(Point)
+ @see #setSize(int, int)
+ @see #setSize(Dimension)
+ @see #setMinimumSize
+ @see #setLocationByPlatform
+ @see #isLocationByPlatform
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Window.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException, java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 <code>ObjectInputStream</code> 和侦听器的可选列表，以接收由该组件引发的各种事件；并且读取子窗口（可能为 <code>null</code>）的列表。未识别的键或值将被忽略。
+
+@param s 要读取的 <code>ObjectInputStream</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+@see #writeObject
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.Window.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认的可序列化字段写入流中。将可序列化的 <code>WindowListener</code> 和 <code>WindowFocusListener</code> 的列表作为可选数据写入。将子窗口的列表作为可选数据写入。将图标图像的列表作为可选数据写入。
+
+@param s 要写入的 <code>ObjectOutputStream</code>
+@serialData <code>null</code> 表示终止 0 或更多对的序列；这种对是由 <code>String</code> 和 <code>Object</code> 组成的；<code>String</code> 指示对象类型，它为以下类型之一：<code>windowListenerK</code> 指示 <code>WindowListener</code> 对象；<code>windowFocusWindowK</code> 指示 <code>WindowFocusListener</code> 对象；<code>ownedWindowK</code> 指示 <code>Window</code> 子对象
+
+@see AWTEventMulticaster#save(java.io.ObjectOutputStream, java.lang.String, java.util.EventListener)
+@see Component#windowListenerK
+@see Component#windowFocusListenerK
+@see Component#ownedWindowK
+@see #readObject(ObjectInputStream)
+
+<!-- END DATA -->

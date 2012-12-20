@@ -1,0 +1,174 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.spi.ImageReaderSpi extends javax.imageio.spi.ImageReaderWriterSpi
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>ImageReader</code> 的服务提供者接口 (SPI)。有关服务提供者类的更多信息，请参见 <code>IIORegistry</code> 类的注释。
+ 
+<p> 每个 <code>ImageReaderSpi</code> 都提供了有关与之关联的 <code>ImageReader</code> 类的几种类型的信息。
+
+<p> 使用 <code>getVendorName</code>、<code>getDescription</code> 和 <code>getVersion</code> 方法可获得定义 SPI 类和此类简明描述的供应商的名称。可将这些方法进行国际化以提供特定于语言环境的输出。这些方法主要用于提供可用于组织弹出菜单或其他列表的简短可读信息。
+
+<p> 使用 <code>getFormatNames</code>、<code>getFileSuffixes</code> 和 <code>getMIMETypes</code> 方法可获得与此服务有关联的格式名称、文件后缀和 MIME 类型的列表。可以使用这些方法来标识候选 <code>ImageReader</code>，从而基于手动格式选择、文件命名或 MIME 关联（例如，通过 HTTP 访问文件或文件作为电子邮件附件）对特定的文件或流进行解码。
+
+<p> <code>canDecodeInput</code> 方法提供了确定哪些 <code>ImageReader</code> 最有可能解析特定数据流的一条更可靠途径。此方法允许服务提供者检查实际的流内容。
+
+<p> 最后，通过调用 <code>createReaderInstance</code> 方法，可获得与此服务提供者关联的 <code>ImageReader</code> 类的实例。任何重量级的初始化，例如加载本地库或创建大型表，都应推迟，至少应该推迟到完成此方法的第一次调用。
+
+@see IIORegistry
+@see javax.imageio.ImageReader
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Class[] javax.imageio.spi.ImageReaderSpi.STANDARD_INPUT_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将从 <code>getInputTypes</code> 返回的单元素数组，该数组最初包含 <code>ImageInputStream.class</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Class[] javax.imageio.spi.ImageReaderSpi.inputTypes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将从 <code>getInputTypes</code> 返回的 <code>Class</code> 对象数组，该数组最初为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String[] javax.imageio.spi.ImageReaderSpi.writerSpiNames
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将从 <code>getImageWriterSpiNames</code> 返回的字符串数组，该数组最初为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.imageio.spi.ImageReaderSpi()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个空的 <code>ImageReaderSpi</code>。为提供所有方法的可用版本，由子类负责初始化实例变量和/或重写方法实现。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.spi.ImageReaderSpi(String vendorName, String version, java.lang.String[] names, java.lang.String[] suffixes, java.lang.String[] MIMETypes, String readerClassName, java.lang.Class[] inputTypes, java.lang.String[] writerSpiNames, boolean supportsStandardStreamMetadataFormat, String nativeStreamMetadataFormatName, String nativeStreamMetadataFormatClassName, java.lang.String[] extraStreamMetadataFormatNames, java.lang.String[] extraStreamMetadataFormatClassNames, boolean supportsStandardImageMetadataFormat, String nativeImageMetadataFormatName, String nativeImageMetadataFormatClassName, java.lang.String[] extraImageMetadataFormatNames, java.lang.String[] extraImageMetadataFormatClassNames)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的一组值构造 <code>ImageReaderSpi</code>。
+
+@param vendorName 供应商名称，它是一个非 <code>null</code> 的 <code>String</code>。
+@param version 版本标识符，它是一个非 <code>null</code> 的 <code>String</code>。
+@param names 指示格式名称的一个非 <code>null</code> 的 <code>String</code> 数组。必须至少有一个项。
+@param suffixes 指示常用文件后缀的 <code>String</code> 数组。如果没有定义后缀，则应将其指定为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+@param MIMETypes 指示格式的 MIME 类型的 <code>String</code> 数组。如果没有定义 MIME 类型，则应将其指定为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+@param readerClassName 所关联的 <code>ImageReader</code> 类的完全限定名，它为一个非 <code>null</code> 的 <code>String</code>。
+@param inputTypes 指示合法输入类型的长度至少为 1 的 <code>Class</code> 对象的非 <code>null</code> 数组。
+@param writerSpiNames 命名所有与 <code>ImageWriter</code> 关联的类的 <code>String</code> 数组，或者为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+@param supportsStandardStreamMetadataFormat 一个 <code>boolean</code> 值，指示流元数据对象是否可使用由标准元数据格式描述的树。
+@param nativeStreamMetadataFormatName 从 <code>getNativeStreamMetadataFormatName</code> 返回的一个 <code>String</code>，或者为 <code>null</code>。
+@param nativeStreamMetadataFormatClassName 将用于实例化从 <code>getNativeStreamMetadataFormat</code> 返回的元数据格式对象的 <code>String</code>，或者为 <code>null</code>。
+@param extraStreamMetadataFormatNames 从 <code>getExtraStreamMetadataFormatNames</code> 返回的 <code>String</code> 数组，或者为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+@param extraStreamMetadataFormatClassNames 用于实例化从 <code>getStreamMetadataFormat</code> 返回的元数据格式对象的 <code>String</code> 数组，或者为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+@param supportsStandardImageMetadataFormat 一个 <code>boolean</code> 值，指示图像元数据对象是否可使用由标准元数据格式描述的树。
+@param nativeImageMetadataFormatName 从 <code>getNativeImageMetadataFormatName</code> 返回的一个 <code>String</code>，或者为 <code>null</code>。
+@param nativeImageMetadataFormatClassName 用于实例化从 <code>getNativeImageMetadataFormat</code> 返回的元数据格式对象的 <code>String</code>，或者为 <code>null</code>。
+@param extraImageMetadataFormatNames 从 <code>getExtraImageMetadataFormatNames</code> 返回的 <code>String</code> 数组。长度为 0 的数组将被标准化为 <code>null</code>。
+@param extraImageMetadataFormatClassNames 用于实例化从 <code>getImageMetadataFormat</code> 返回的元数据格式对象的 <code>String</code> 数组，或者为 <code>null</code>。长度为 0 的数组将被标准化为 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>vendorName</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>version</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>names</code> 为 <code>null</code> 或长度为 0。
+@exception IllegalArgumentException 如果 <code>readerClassName</code> 为 <code>null</code>。
+@exception IllegalArgumentException 如果 <code>inputTypes</code> 为 <code>null</code> 或长度为 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class[] javax.imageio.spi.ImageReaderSpi.getInputTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Class</code> 对象数组，指示可用作 reader 的 <code>setInput</code> 方法参数的对象类型。
+
+<p> 对于大多数只接受来自 <code>ImageInputStream</code> 的输入的 reader，应返回一个包含 <code>ImageInputStream.class</code> 的单元素数组。
+ 
+@return 非 <code>null</code> 的长度至少为 1 的 <code>Class</code> 对象数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.imageio.spi.ImageReaderSpi.canDecodeInput(Object source) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定的源对象看起来是此 reader 支持的格式，则返回 <code>true</code>。从此方法返回 <code>true</code> 并不保证将成功读取，只表示基于对流内容的简明检查应该有机会成功。如果此源为 <code>ImageInputStream</code>，实现通常将首先检查流的前几个字节以获取与格式关联的&ldquo;幻数&rdquo;。实际的读取已开始后，在解码完成之前的任何时间 reader 仍有可能指示失败。
+
+<p> 对象的状态不受影响非常重要，这样其他的 <code>ImageReaderSpi</code> 才能够正确确定它们是否能解码此对象。特别地，如果该源为 <code>ImageInputStream</code>，应使用 <code>mark</code>/<code>reset</code> 对保护此流的位置。
+
+<p> 对于可能尝试读取几乎所有流的格式（比如&ldquo;原始&rdquo;格式），为避免因采用更相近的匹配而引起调用，应返回 <code>false</code>。
+
+<p> 如果 <code>source</code> 不是由 <code>getInputTypes</code> 返回的类之一的实例，此方法应只返回 <code>false</code>。
+
+@param source 要解码的对象（通常是一个 <code>ImageInputStream</code>）。
+
+@return  如果此流可能解码，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果 <code>source</code> 为 <code>null</code>。
+@exception IOException 如果读取该流时发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageReader javax.imageio.spi.ImageReaderSpi.createReaderInstance() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此服务提供者关联的 <code>ImageReader</code> 实现的实例。返回的对象初始时处于初始状态，好像调用过其 <code>reset</code> 方法。
+
+<p> 默认实现只返回 <code>createReaderInstance(null)</code>。
+
+@return 一个 <code>ImageReader</code> 实例。
+
+@exception IOException 如果加载或初始化 reader 类时发生错误，或在初始化或实例化 reader 对象时发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.imageio.ImageReader javax.imageio.spi.ImageReaderSpi.createReaderInstance(Object extension) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此服务提供者关联的 <code>ImageReader</code> 实现的实例。返回的对象初始时处于初始状态，好像调用过其 <code>reset</code> 方法。
+
+<p> 可以在构造时向插件提供 <code>Object</code>。对象的本质完全由插件决定。
+
+<p> 通常情况下，插件将使用类似 <code>return new MyImageReader(this)</code> 的代码实现此方法。
+
+@param extension 特定于插件的扩展对象，它可以为 <code>null</code>。
+
+@return 一个 <code>ImageReader</code> 实例。
+
+@exception IOException 如果实例化此 reader 的尝试失败。
+@exception IllegalArgumentException 如果 <code>ImageReader</code> 构造方法抛出一个 <code>IllegalArgumentException</code>，以指示此扩展对象不适合在这里使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.spi.ImageReaderSpi.isOwnReader(ImageReader reader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果传入的 <code>ImageReader</code> 对象为与此服务提供者关联的 <code>ImageReader</code> 的实例，则返回 <code>true</code>。
+
+<p> 默认的实现将 <code>reader</code> 参数的完全限定类名与传给构造方法的类名进行比较。如果需要更复杂的检查，可重写此方法。
+
+@param reader 一个 <code>ImageReader</code> 实例。
+
+@return  如果 <code>reader</code> 可识别，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果 <code>reader</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.spi.ImageReaderSpi.getImageWriterSpiNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，其包含所有能够理解由与此服务提供者关联的 <code>ImageReader</code> 使用的内部元数据表示形式的 <code>ImageWriterSpi</code> 类的完全限定名。或者如果没有指定这样的 <code>ImageWriter</code>，则返回 <code>null</code>。如果返回了非 <code>null</code> 的值，则其长度一定不为零。
+
+<p> 数组中的第一项必须是&ldquo;首选&rdquo;writer 的服务提供者的名称，因为它将用于实例化由 <code>ImageIO.getImageWriter(ImageReader)</code> 返回的 <code>ImageWriter</code>。
+
+<p> 使用此机制可获取将能够理解由 <code>ImageReader</code> 生成的非像素元数据的内部结构（请参见 <code>IIOTreeInfo</code>）的 <code>ImageWriters</code>。通过从 <code>ImageReader</code> 获取此数据并将其传给使用此方法获取的 <code>ImageWriters</code> 之一，客户端程序可读取图像、进行某些修改并写回图像，同时保留所有的元数据，而不需要理解有关此元数据的任何事情，甚至图像的格式都不需知道。
+
+@return 包含 <code>ImageWriterSpi</code> 名称的长度至少为 1 的 <code>String</code> 数组，或者返回 <code>null</code>。
+
+@see javax.imageio.ImageIO#getImageWriter(ImageReader)
+
+<!-- END DATA -->

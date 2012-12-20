@@ -1,0 +1,68 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.crypto.dsig.keyinfo.X509Data extends javax.xml.crypto.XMLStructure
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<a href="http://www.w3.org/TR/xmldsig-core/">W3C Recommendation for XML-Signature Syntax and Processing</a> 中定义的 XML <code>X509Data</code> 元素的表示形式。<code>X509Data</code> 对象包含一个或多个密钥标识符或 X.509 证书（或者证书的标识符或撤销列表）。XML Schema Definition 的定义如下：
+ 
+ <pre>
+    &lt;element name="X509Data" type="ds:X509DataType"/&gt;
+    &lt;complexType name="X509DataType"&gt; 
+        &lt;sequence maxOccurs="unbounded"&gt; 
+          &lt;choice&gt; 
+            &lt;element name="X509IssuerSerial" type="ds:X509IssuerSerialType"/&gt;
+            &lt;element name="X509SKI" type="base64Binary"/&gt;
+            &lt;element name="X509SubjectName" type="string"/&gt; 
+            &lt;element name="X509Certificate" type="base64Binary"/&gt;
+            &lt;element name="X509CRL" type="base64Binary"/&gt; 
+            &lt;any namespace="##other" processContents="lax"/&gt;
+          &lt;/choice&gt;  
+        &lt;/sequence&gt;
+    &lt;/complexType&gt;
+
+    &lt;complexType name="X509IssuerSerialType"&gt; 
+      &lt;sequence&gt; 
+        &lt;element name="X509IssuerName" type="string"/&gt; 
+        &lt;element name="X509SerialNumber" type="integer"/&gt; 
+      &lt;/sequence&gt;
+    &lt;/complexType&gt;
+ </pre>
+
+
+通过调用 {@link KeyInfoFactory} 类的 {@link KeyInfoFactory#newX509Data newX509Data} 方法，并向其传递表示 X.509 内容的一个或多个 {@link XMLStructure} 的列表，可以创建 <code>X509Data</code> 实例，例如：
+ <pre>
+KeyInfoFactory factory = KeyInfoFactory.getInstance(&quot;DOM&quot;);
+X509Data x509Data = factory.newX509Data
+(Collections.singletonList(&quot;cn=Alice&quot;));
+ </pre>
+
+@author Sean Mullan
+@author JSR 105 Expert Group
+@since 1.6
+@see KeyInfoFactory#newX509Data(List)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.keyinfo.X509Data.TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识 X509Data KeyInfo 类型的 URI：http://www.w3.org/2000/09/xmldsig#X509Data。可以将其指定为 {@link RetrievalMethod} 类的 <code>type</code> 参数值，以描述远程 <code>X509Data</code> 结构。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.crypto.dsig.keyinfo.X509Data.RAW_X509_CERTIFICATE_TYPE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标识二进制 (ASN.1 DER) X.509 Certificate KeyInfo 类型的 URI：http://www.w3.org/2000/09/xmldsig#rawX509Certificate。可以将其指定为 {@link RetrievalMethod} 类的 <code>type</code> 参数值，以描述远程 X509Data Certificate。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List javax.xml.crypto.dsig.keyinfo.X509Data.getContent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个{@link java.util.Collections#unmodifiableList 不可修改的列表}，由此 <code>X509Data</code> 的内容组成。有效的类型有 {@link String}（主体名称）、<code>byte[]</code>（主体的密钥 id）、{@link java.security.cert.X509Certificate}、{@link X509CRL} 或 {@link XMLStructure}（来自外部名称空间的 {@link X509IssuerSerial} 对象或元素）。 
+
+@return 此 <code>X509Data</code> 的内容的不可修改列表（不能为 <code>null</code> 或空）
+
+<!-- END DATA -->
+
+

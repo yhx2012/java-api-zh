@@ -1,0 +1,192 @@
+<!-- BEGIN KEY -->
+public class com.sun.mirror.util.DeclarationFilter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter for selecting just the items of interest
+ from a collection of declarations.
+ The filter is said to <i>select</i> or to <i>match</i> those declarations.
+ Filters can be created in several ways:
+ by the static methods described below,
+ by negating or composing existing filters,
+ or by subclasses that implement arbitrary matching rules.
+
+ <p> A subclass can create an arbitrary filter simply by implementing
+ the {@link #matches(Declaration)} method.
+
+ <p> Examples.
+ <p> Selecting the <tt>public</tt> declarations from a collection:
+ <blockquote><pre>
+     result = FILTER_PUBLIC.filter(decls);		</pre></blockquote>
+ Selecting class declarations (including enums):
+ <blockquote><pre>
+     classFilter = DeclarationFilter.getFilter(ClassDeclaration.class);
+     result = classFilter.filter(decls);		</pre></blockquote>
+ Selecting class declarations but excluding enums:
+ <blockquote><pre>
+     enumFilter = DeclarationFilter.getFilter(EnumDeclaration.class);
+     compoundFilter = classFilter.and(enumFilter.not());
+     result = compoundFilter.filter(decls);		</pre></blockquote>
+ Selecting declarations named "Bob":
+ <blockquote><pre>
+     nameFilter = new DeclarationFilter() {
+                      public boolean matches(Declaration d) {
+                          return d.getSimpleName().equals("Bob");
+                      }
+                  };
+     result = nameFilter.filter(decls);		</pre></blockquote>
+
+ @author Joseph D. Darcy
+ @author Scott Seligman
+ @version 1.3 05/11/17
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.FILTER_PUBLIC
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter that selects only <tt>public</tt> declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.FILTER_PROTECTED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter that selects only <tt>protected</tt> declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.FILTER_PUBLIC_OR_PROTECTED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter that selects only <tt>public</tt> or <tt>protected</tt>
+ declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.FILTER_PACKAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter that selects only package-private (<i>default</i>)
+ declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.FILTER_PRIVATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A filter that selects only <tt>private</tt> declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public com.sun.mirror.util.DeclarationFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an identity filter:  one that selects all declarations.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.getFilter(java.util.Collection<com.sun.mirror.declaration.Modifier> mods)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a filter that selects declarations containing all of a
+ collection of modifiers.
+
+ @param mods  the modifiers to match (non-null)
+ @return a filter that matches declarations containing <tt>mods</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.getFilter(java.lang.Class<? extends com.sun.mirror.declaration.Declaration> kind)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a filter that selects declarations of a particular kind.
+ For example, there may be a filter that selects only class
+ declarations, or only fields.
+ The filter will select declarations of the specified kind,
+ and also any subtypes of that kind; for example, a field filter
+ will also select enum constants.
+
+ @param kind  the kind of declarations to select
+ @return a filter that selects declarations of a particular kind
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.and(DeclarationFilter f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a filter that selects those declarations selected
+ by both this filter and another.
+
+ @param f  filter to be composed with this one
+ @return a filter that selects those declarations selected by
+		both this filter and another
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.or(DeclarationFilter f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a filter that selects those declarations selected
+ by either this filter or another.
+
+ @param f  filter to be composed with this one
+ @return a filter that selects those declarations selected by
+		either this filter or another
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public com.sun.mirror.util.DeclarationFilter com.sun.mirror.util.DeclarationFilter.not()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a filter that selects those declarations not selected
+ by this filter.
+
+ @return a filter that selects those declarations not selected
+ by this filter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean com.sun.mirror.util.DeclarationFilter.matches(Declaration decl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether this filter matches a given declaration.
+ The default implementation always returns <tt>true</tt>;
+ subclasses should override this.
+
+ @param decl  the declaration to match
+ @return <tt>true</tt> if this filter matches the given declaration
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<D> com.sun.mirror.util.DeclarationFilter.filter(java.util.Collection<D> decls)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the declarations matched by this filter.
+ The result is a collection of the same type as the argument;
+ the {@linkplain #filter(Collection, Class) two-parameter version}
+ of <tt>filter</tt> offers control over the result type.
+
+ @param <D>    type of the declarations being filtered
+ @param decls  declarations being filtered
+ @return the declarations matched by this filter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<D> com.sun.mirror.util.DeclarationFilter.filter(java.util.Collection<? extends com.sun.mirror.declaration.Declaration> decls, java.lang.Class<D> resType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the declarations matched by this filter, with the result
+ being restricted to declarations of a given kind.
+ Similar to the simpler
+ {@linkplain #filter(Collection) single-parameter version}
+ of <tt>filter</tt>, but the result type is specified explicitly.
+
+ @param <D>      type of the declarations being returned
+ @param decls    declarations being filtered
+ @param resType  type of the declarations being returned --
+			the reflective view of <tt>D</tt>
+ @return the declarations matched by this filter, restricted to those
+			of the specified type
+
+<!-- END DATA -->

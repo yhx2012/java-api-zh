@@ -1,0 +1,35 @@
+<!-- BEGIN KEY -->
+public interface java.security.DomainCombiner
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DomainCombiner</code> 提供一个动态更新与当前 <code>AccessControlContext</code> 关联的 ProtectionDomain 的方法。
+
+<p> 将 <code>DomainCombiner</code> 作为参数传递给 <code>AccessControlContext</code> 的适当的构造方法。然后，将新构造的上下文传递给 <code>AccessController.doPrivileged(..., context)</code> 方法来将提供的上下文（以及关联的 <code>DomainCombiner</code>）与当前的执行线程绑定在一起。对 <code>AccessController.getContext</code> 或 <code>AccessController.checkPermission</code> 的后续调用将导致对 <code>DomainCombiner.combine</code> 的调用。
+
+<p> combine 方法带有两个参数。第一个参数表示从最近一次调用 <code>AccessController.doPrivileged</code> 以来当前执行线程中 ProtectionDomain 的数组。如果没有调用 doPrivileged，则第一个参数将包含当前执行线程中的所有 ProtectionDomain。第二个参数表示继承的 ProtectionDomain 的数组，可能为 <code>null</code>。ProtectionDomain 可能是从父线程或特权上下文继承的。如果没有调用 doPrivileged，则第二个参数将包含从父线程继承的 ProtectionDomain。如果对 doPrivileged 进行了一次或多次调用，并且最近一次调用的是 doPrivileged(action, context)，那么第二个参数将包含特权上下文中的 ProtectionDomain。如果最近一次调用的是 doPrivileged(action)，则不存在特权上下文，第二个参数将为 <code>null</code>。
+
+<p> <code>combine</code> 方法研究两个 ProtectionDomain 的输入数组，返回包含更新的 ProtectionDomain 的单个数组。在最简单的情况下，<code>combine</code> 方法将两个堆栈合并为一个。在较复杂的情况下，<code>combine</code> 方法返回 ProtectionDomain 的修改的堆栈。修改操作可能添加新的 ProtectionDomain、移除某些特定的 ProtectionDomain 或者只是更新现有的 ProtectionDomain。对 ProtectionDomain 重新排序及进行其他优化也是允许的。通常，<code>combine</code> 方法基于 <code>DomainCombiner</code> 中封装的信息进行更新。
+
+<p> 在 <code>AccessController.getContext</code> 方法从 <code>DomainCombiner</code> 接收 ProtectionDomain 后备的组合堆栈后，它将返回包含组合 ProtectionDomain 和 <code>DomainCombiner</code> 的新 AccessControlContext。
+ 
+@see AccessController
+@see AccessControlContext
+@version 1.7, 12/19/03
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.ProtectionDomain[] java.security.DomainCombiner.combine(java.security.ProtectionDomain[] currentDomains, java.security.ProtectionDomain[] assignedDomains)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+修改或更新提供的 ProtectionDomain。可以将 ProtectionDomain 添加到给定的 ProtectionDomain 中，也可以从中移除。可以重新排列 ProtectionDomain 的顺序。可以修改个别 ProtectionDomain（例如，利用新的 Permission 的集合）。
+
+ <p>
+
+@param currentDomains 与当前执行线程关联的 ProtectionDomain，直到最近的特权 <code>ProtectionDomain</code>.ProtectionDomain 按执行的顺序列出，最近执行的 <code>ProtectionDomain</code> 位于数组的开头。如果当前执行的线程没有任何关联的 ProtectionDomain，则此参数为 <code>null</code>。<p>
+
+@param assignedDomains 继承的 ProtectionDomain 组成的数组。ProtectionDomain 可能是从父线程或特权 <code>AccessControlContext</code> 继承的。如果不存在任何继承的 ProtectionDomain，则此参数为 <code>null</code>。
+
+@return 由更新的 ProtectionDomain 组成的新数组；或者 <code>null</code>。
+
+<!-- END DATA -->

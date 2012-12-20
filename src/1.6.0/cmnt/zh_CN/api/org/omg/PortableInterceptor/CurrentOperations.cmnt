@@ -1,0 +1,35 @@
+<!-- BEGIN KEY -->
+public interface org.omg.PortableInterceptor.CurrentOperations extends org.omg.CORBA.CurrentOperations
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Portable Interceptor Current（也称为 <code>PICurrent</code>）就是一个槽表 (slot table)，每个服务都使用该表中的槽在其上下文与请求或应答服务上下文之间传输其上下文数据。每个需要使用 PICurrent 的服务都在初始化期间预定了一个或多个槽，然后在处理请求和应答期间使用这些槽。
+ <p>
+在进行调用之前，通过调用 <code>ORB.resolve_initial_references( &quot;PICurrent&quot; )</code> 获取 PICurrent。通过对 <code>RequestInfo</code> 对象进行 <code>get_slot</code> 操作，可从截取点内获取从线程域传送到请求域的 PICurrent 数据。PICurrent 也可以通过 <code>resolve_initial_references</code> 获取，但这样获取的是 Interceptor 的线程域 PICurrent。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.omg.CORBA.Any org.omg.PortableInterceptor.CurrentOperations.get_slot(int id) throws org.omg.PortableInterceptor.InvalidSlot
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索应用程序通过 <code>get_slot</code> 在 PICurrent 中设置的槽数据。该数据以 Any 的形式存在。 
+ <p>
+如果尚未设置给定槽，则返回包含带有 <code>TCKind</code> 值为 <code>tk_null</code> 的类型代码的 Any，并且该 Any 中不包含任何值。 
+
+@param id 将返回数据的槽的 <code>SlotId</code>。
+@return 给定槽标识符的数据，以 Any 的形式存在。
+@exception InvalidSlot 如果对尚未分配的槽调用 get_slot，则抛出此异常。
+@exception BAD_INV_ORDER 如果在 ORB 初始化程序内调用 <code>get_slot</code>，则抛出此异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.omg.PortableInterceptor.CurrentOperations.set_slot(int id, Any data) throws org.omg.PortableInterceptor.InvalidSlot
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在槽中设置数据。该数据以 Any 的形式存在。如果该槽中已存在数据，则将其重写。 
+
+@param id 将设置数据的槽的 <code>SlotId</code>。
+@param data 将对所标识的槽设置的数据，以 Any 的形式存在。
+@exception InvalidSlot 如果对尚未分配的槽调用 <code>set_slot</code>，则抛出此异常。
+@exception BAD_INV_ORDER 如果在 ORB 初始化程序内调用 <code>set_slot</code>，则抛出此异常。 
+
+<!-- END DATA -->

@@ -1,0 +1,368 @@
+<!-- BEGIN KEY -->
+public final class javax.security.auth.Subject extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+      
+<p> <code>Subject</code> 表示某一项（如一个人）的一组相关信息。此类信息包括 Subject 的身份，以及与安全相关的属性（例如，密码和加密密钥）。
+
+<p> Subject 可以潜在地具有多重身份。每个身份被表示为 <code>Subject</code> 中的一个 <code>Principal</code>。Principal 只是把名称绑定到 <code>Subject</code>。例如，<code>Subject</code> 正好是一个人（Alice）时,它可以有两个主体：一个把她驾驶证上的名称 &quot;Alice Bar&quot; 绑定到 <code>Subject</code>，另一个把学生身份证上的号码 &quot;999-99-9999&quot; 绑定到 <code>Subject</code>。即使每个主体具有不同的名称，它们也都指的是同一个 <code>Subject</code>。
+
+<p> <code>Subject</code> 也可以拥有与安全相关的属性，它们被称为证书。敏感的证书需要特殊的保护，例如私有加密密钥存储在私有的证书 <code>Set</code> 中。将证书设计为共享的，例如公钥证书或 Kerberos 服务票据存储在一个公开证书 <code>Set</code> 中。访问和修改不同的证书 Set 需要不同的权限。
+
+<p> 要获取与 <code>Subject</code> 关联的所有 Principal，请调用 <code>getPrincipals</code> 方法。要获取属于一个 <code>Subject</code> 的所有公开的或私有的证书，请分别调用 <code>getPublicCredentials</code> 方法或 <code>getPrivateCredentials</code> 方法。要修改返回的 Principal 和证书的 <code>Set</code>，请使用定义在 <code>Set</code> 类中的方法。例如：
+ <pre>
+	Subject subject;
+	Principal principal;
+	Object credential;
+
+	// add a Principal and credential to the Subject
+	subject.getPrincipals().add(principal);
+	subject.getPublicCredentials().add(credential);
+ </pre>
+
+<p> 此 <code>Subject</code> 类实现 <code>Serializable</code>。但与 <code>Subject</code> 关联的 Principal 是已序列化的，与 <code>Subject</code> 关联的证书不是已序列化的。注意，<code>java.security.Principal</code> 类不会实现 <code>Serializable</code>。因此，与 Subject 关联的所有具体的 <code>Principal</code> 实现必须实现 <code>Serializable</code>。
+
+@version 1.123, 05/05/04
+@see java.security.Principal
+@see java.security.DomainCombiner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Set javax.security.auth.Subject.principals
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供此 Subject 的所有 Principal 视图的 <code>Set</code>。
+
+ <p>
+
+@serial 此集合中的每一个元素都是一个 <code>java.security.Principal</code>。此集合是一个 <code>Subject.SecureSet</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private volatile boolean javax.security.auth.Subject.readOnly
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 Subject 是否为只读的
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.Subject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有空的 Principal <code>Set</code> 和空的公开或私有证书 Set 的 <code>Subject</code> 的一个实例。
+
+<p> 在新构建的 Set 允许进行后续修改前检查此 <code>Subject</code> 是否已设置为只读的。新创建的 Set 还通过确保调用者具有足够权限的方式来防止非法修改。
+
+<p> 要修改 Principal Set，调用者必须具有 <code>AuthPermission(&quot;modifyPrincipals&quot;)</code> 权限。要修改公开证书 Set，调用者必须具有 <code>AuthPermission(&quot;modifyPublicCredentials&quot;)</code> 权限。要修改私有证书 Set，调用者必须具有 <code>AuthPermission(&quot;modifyPrivateCredentials&quot;)</code> 权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.Subject(boolean readOnly, java.util.Set<? extends java.security.Principal> principals, java.util.Set<?> pubCredentials, java.util.Set<?> privCredentials)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带有 Principal 和证书的 <code>Subject</code> 的实例。
+
+<p> 指定将 Set 中的 Principal 和证书复制到新构建的 Set 中。在新创建的 Set 允许进行后续修改前检查此 <code>Subject</code> 是否已设置为只读的。新创建的 Set 还通过确保调用者具有足够权限的方式来防止非法修改。
+
+<p> 要修改 Principal Set，调用者必须具有 <code>AuthPermission(&quot;modifyPrincipals&quot;)</code> 权限。要修改公开证书 Set，调用者必须具有 <code>AuthPermission(&quot;modifyPublicCredentials&quot;)</code> 权限。要修改私有证书 Set，调用者必须具有 <code>AuthPermission(&quot;modifyPrivateCredentials&quot;)</code> 权限。
+ <p>
+
+@param readOnly 如果 <code>Subject</code> 是只读的，则参数为 true，否则为 false。 <p>
+
+@param principals 要与此 <code>Subject</code> 关联的 Principal <code>Set</code>。 <p>
+
+@param pubCredentials 要与此 <code>Subject</code> 关联的公开证书 <code>Set</code>。 <p>
+
+@param privCredentials 要与此 <code>Subject</code> 关联的私有证书 <code>Set</code>。
+
+@exception NullPointerException 如果指定的 <code>principals</code>、<code>pubCredentials</code> 或 <code>privCredentials</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.Subject.setReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Subject</code> 设置为只读的。
+
+<p> 对此 Subject 的 <code>Principal</code> <code>Set</code> 和证书 Set 的修改（添加和移除）将是不允许的。仍然允许在此 Subject 的证书上进行 <code>destroy</code> 操作。
+
+<p> 如果后续企图修改 Subject 的 <code>Principal</code> 和证书 Set，将导致抛出 <code>IllegalStateException</code>。另外，一旦 <code>Subject</code> 是只读的，就不可能再将它重新设置为可写的。
+
+ <p>
+
+@exception SecurityException 如果调用者不具有将此 <code>Subject</code> 设置为只读的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.Subject.isReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询此 <code>Subject</code> 是否为只读的。
+
+ <p>
+
+@return 如果此 <code>Subject</code> 为只读的，则返回 true；否则，返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.security.auth.Subject javax.security.auth.Subject.getSubject(AccessControlContext acc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与提供的 <code>AccessControlContext</code> 关联的 <code>Subject</code>。
+
+<p> <code>AccessControlContext</code> 可以包含很多 Subject（从嵌套的 <code>doAs</code> 调用得到）。在这种情况下，返回与 <code>AccessControlContext</code> 关联的最近的 <code>Subject</code>。
+
+ <p>
+
+@param  acc <code>AccessControlContext</code>，从它获取 <code>Subject</code>。
+
+@return 与所提供的 <code>AccessControlContext</code> 关联的 <code>Subject</code>，如果没有 <code>Subject</code> 与提供的 <code>AccessControlContext</code> 相关联，则返回 <code>null</code>。
+
+@exception SecurityException 如果调用者不具有获取此 <code>Subject</code> 的权限。 <p>
+
+@exception NullPointerException 如果提供的 <code>AccessControlContext</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.security.auth.Subject.doAs(Subject subject, java.security.PrivilegedAction<T> action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为特定的 <code>Subject</code> 的功能。
+
+<p> 此方法首先通过 <code>AccessController.getContext</code> 获取当前 Thread 的 <code>AccessControlContext</code>，接着使用获得的上下文与新的 <code>SubjectDomainCombiner</code> （使用提供的 <code>Subject</code> 构建）实例化一个 <code>AccessControlContext</code>。最后，此方法调用 <code>AccessController.doPrivileged</code>，将提供的 <code>PrivilegedAction</code> 以及新构建的 <code>AccessControlContext</code> 传递到 <code>AccessController.doPrivileged</code>。
+
+ <p>
+
+@param subject 指定的 <code>action</code> 将作为该 <code>Subject</code> 运行。此参数可以为 <code>null</code>。 <p>
+
+@param action 将作为指定的 <code>Subject</code> 运行的代码。 <p>
+
+@return PrivilegedAction 的 <code>run</code> 方法所返回的值。
+
+@exception NullPointerException 如果 <code>PrivilegedAction</code> 为 <code>null</code>。 <p>
+
+@exception SecurityException 如果调用者不具有调用此方法的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.security.auth.Subject.doAs(Subject subject, java.security.PrivilegedExceptionAction<T> action) throws java.security.PrivilegedActionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为特定的 <code>Subject</code> 的功能。
+
+<p> 此方法首先通过 <code>AccessController.getContext</code> 获取当前 Thread 的 <code>AccessControlContext</code>，接着使用获得的上下文与新的 <code>SubjectDomainCombiner</code>（使用提供的 <code>Subject</code> 构建）实例化一个 <code>AccessControlContext</code>。最后，此方法调用 <code>AccessController.doPrivileged</code>，将提供的 <code>PrivilegedExceptionAction</code> 以及新构建的 <code>AccessControlContext</code> 传递到 <code>AccessController.doPrivileged</code>。
+
+ <p>
+
+@param subject 指定的 <code>action</code> 将作为该 <code>Subject</code> 运行。此参数可以为 <code>null</code>。 <p>
+
+@param action 将作为指定的 <code>Subject</code> 运行的代码。 <p>
+
+@return PrivilegedExceptionAction 的 <code>run</code> 方法所返回的值。
+
+@exception PrivilegedActionException 如果 <code>PrivilegedExceptionAction.run</code> 方法抛出经过检查的异常。 <p>
+
+@exception NullPointerException 如果指定的 <code>PrivilegedExceptionAction</code> 为 <code>null</code>。 <p>
+
+@exception SecurityException 如果调用者不具有调用此方法的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.security.auth.Subject.doAsPrivileged(Subject subject, java.security.PrivilegedAction<T> action, AccessControlContext acc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为特定的 <code>Subject</code> 的特权功能。
+
+<p> 除了使用提供的 <code>AccessControlContext</code>，而不是获取当前 Thread 的 <code>AccessControlContext</code> 外，此方法的行为与 <code>Subject.doAs</code> 完全一样。如果提供的 <code>AccessControlContext</code> 为 <code>null</code>，则此方法实例化一个新的带有空 ProtectionDomains 集合的 <code>AccessControlContext</code>。
+
+ <p>
+
+@param subject 指定的 <code>action</code> 将作为该 <code>Subject</code> 运行。此参数可以为 <code>null</code>。 <p>
+
+@param action 将作为指定的 <code>Subject</code> 运行的代码。 <p>
+
+@param acc 限制为指定 <i>subject</i> 和 <i>action</i> 的 <code>AccessControlContext</code>。 <p>
+
+@return PrivilegedAction 的 <code>run</code> 方法所返回的值。
+
+@exception NullPointerException 如果 <code>PrivilegedAction</code> 为 <code>null</code>。 <p>
+
+@exception SecurityException 如果调用者不具有调用此方法的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T javax.security.auth.Subject.doAsPrivileged(Subject subject, java.security.PrivilegedExceptionAction<T> action, AccessControlContext acc) throws java.security.PrivilegedActionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为特定的 <code>Subject</code> 的特权功能。
+
+<p> 除了使用提供的 <code>AccessControlContext</code>，而不是获取当前 Thread 的 <code>AccessControlContext</code> 外，此方法的行为与 <code>Subject.doAs</code> 完全一样。如果提供的 <code>AccessControlContext</code> 为 <code>null</code>，则此方法实例化一个新的带有空 ProtectionDomains 集合的 <code>AccessControlContext</code>。
+
+ <p>
+
+@param subject 指定的 <code>action</code> 将作为该 <code>Subject</code> 运行。此参数可以为 <code>null</code>。 <p>
+
+@param action 将作为指定的 <code>Subject</code> 运行的代码。 <p>
+
+@param acc 限制为指定 <i>subject</i> 和 <i>action</i> 的 <code>AccessControlContext</code>。 <p>
+
+@return PrivilegedExceptionAction 的 <code>run</code> 方法所返回的值。
+
+@exception PrivilegedActionException 如果 <code>PrivilegedExceptionAction.run</code> 方法抛出经过检查的异常。 <p>
+
+@exception NullPointerException 如果指定的 <code>PrivilegedExceptionAction</code> 为 <code>null</code>。 <p>
+
+@exception SecurityException 如果调用者不具有调用此方法的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.security.Principal> javax.security.auth.Subject.getPrincipals()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>Subject</code> 关联的 Principal <code>Set</code>。每个 <code>Principal</code> 表示此 <code>Subject</code> 的一个身份。
+
+<p> 此 Subject 的内部 <code>Principal</code> <code>Set</code> 支持返回的 <code>Set</code>。对返回的 <code>Set</code> 的任何修改也影响内部的 <code>Principal</code> <code>Set</code>。
+
+ <p>
+
+@return	与此 <code>Subject</code> 关联的 Principal <code>Set</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<T> javax.security.auth.Subject.getPrincipals(java.lang.Class<T> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>Subject</code> 关联的 Principal <code>Set</code>，它是指定的 <code>Class</code> 的实例或子类。
+
+<p> 此 Subject 的内部 <code>Principal</code> <code>Set</code> 不支持返回的 <code>Set</code>。每次方法调用都创建和返回一个新的 <code>Set</code>。对返回的 <code>Set</code> 的修改不影响内部的 <code>Principal</code> <code>Set</code>。
+
+ <p>
+
+@param c 返回的 Principal <code>Set</code> 将都是此类的实例。
+
+@return 是指定的 <code>Class</code> 的实例的 Principal <code>Set</code>。
+
+@exception NullPointerException 如果指定的 <code>Class</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.Object> javax.security.auth.Subject.getPublicCredentials()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Subject</code> 中包含的公开证书 <code>Set</code>。
+
+<p> 此 Subject 的内部公开证书 <code>Set</code> 支持返回的 <code>Set</code>。对返回的 <code>Set</code> 的任何修改也影响内部公开证书 <code>Set</code>。
+
+ <p>
+
+@return	此 <code>Subject</code> 中包含的公开证书 <code>Set</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.lang.Object> javax.security.auth.Subject.getPrivateCredentials()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Subject</code> 中包含的私有证书 <code>Set</code>。
+
+<p> 此 Subject 的内部私有证书 <code>Set</code> 支持返回的 <code>Set</code>。对返回的 <code>Set</code> 的任何修改也影响内部私有证书 <code>Set</code>。
+
+<p> 调用者需要权限来访问返回的 <code>Set</code> 中的证书，或修改 <code>Set</code> 本身。如果调用者不具有正确的权限,则会抛出 <code>SecurityException</code>。
+ 
+<p> 当迭代 <code>Set</code> 时，如果调用者不具有访问特定证书的权限，则抛出 <code>SecurityException</code>。<code>Iterator</code> 仍然是前移到 <code>Set</code> 中的下一个元素。
+
+ <p>
+
+@return	此 <code>Subject</code> 中包含的私有证书 <code>Set</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<T> javax.security.auth.Subject.getPublicCredentials(java.lang.Class<T> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>Subject</code> 关联的公开证书 <code>Set</code>，它是指定的 <code>Class</code> 的实例或子类。
+
+<p> 此 Subject 的内部公开证书 <code>Set</code> 不支持返回的 <code>Set</code>。每次方法调用都创建和返回一个新的 <code>Set</code>。对返回的 <code>Set</code> 的修改不影响内部公开证书 <code>Set</code>。
+
+ <p>
+
+@param c 返回的公开证书 <code>Set</code> 将都是此类的实例。
+
+@return 是指定的 <code>Class</code> 的实例的公开证书 <code>Set</code>。	
+
+@exception NullPointerException 如果指定的 <code>Class</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<T> javax.security.auth.Subject.getPrivateCredentials(java.lang.Class<T> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 <code>Subject</code>关联的私有证书 <code>Set</code>，它是指定的 <code>Class</code> 的实例或子类。 
+
+<p> 调用者必须具有访问所有请求证书的权限，否则将抛出 <code>SecurityException</code>。
+
+<p> 此 Subject 的内部私有证书 <code>Set</code> 不支持返回的 <code>Set</code>。每次方法调用都创建和返回一个新的 <code>Set</code>。对返回的 <code>Set</code> 的修改不影响内部私有证书 <code>Set</code>。
+
+ <p>
+
+@param c 返回的私有证书 <code>Set</code> 将都是此类的实例。
+
+@return 是指定的 <code>Class</code> 的实例的私有证书 <code>Set</code>。	
+
+@exception NullPointerException 如果指定的 <code>Class</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.auth.Subject.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此 <code>Subject</code> 的相等性。如果给定对象也是一个 Subject 并且两个 <code>Subject</code> 是等效的，则返回 true。更正式地说，如果两个 <code>Subject</code> 的 <code>Principal</code> 和 <code>Credential</code> Set 是相等的，则它们的实例就是相等的。
+
+ <p>
+
+@param o 要与此 <code>Subject</code> 进行相等性比较的对象。
+
+@return 如果指定的对象与此 <code>Subject</code> 相等，则返回 true。
+
+@exception SecurityException 如果调用者不具有访问此 <code>Subject</code> 的私有证书的权限，或者如果调用者不具有访问所提供的 <code>Subject</code> 的私有证书的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.Subject.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Subject</code> 的字符串表示形式。
+
+ <p>
+
+@return 此 <code>Subject</code> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.security.auth.Subject.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Subject</code> 的哈希码。
+
+ <p>
+
+@return 此 <code>Subject</code> 的哈希码。
+
+@exception SecurityException 如果调用者不具有访问此 Subject 的私有证书的权限。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.Subject.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流读取此对象（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.security.auth.Subject.writeObject(ObjectOutputStream oos) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象写入到流中（也就是将其序列化）。
+
+<!-- END DATA -->

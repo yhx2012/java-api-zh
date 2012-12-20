@@ -1,0 +1,57 @@
+<!-- BEGIN KEY -->
+public class javax.activation.CommandInfo extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+CommandMap 实现使用 CommandInfo 类描述命令请求的结果。它为请求者提供所请求的动词，以及 bean 的一个实例。还有一个方法，它将返回实现命令的类的名称，但是<i>它不保证返回有效值</i>。原因是允许子类化 CommandInfo 的 CommandMap 实现提供特殊行为。例如，CommandMap 能够动态生成 JavaBean。在这种情况下，不太可能仅根据类名称便创建带有全部正确状态信息的对象。
+ 
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.activation.CommandInfo(String verb, String className)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+CommandInfo 的构造方法。
+@param verb 此 CommandInfo 描述的命令动词。
+@param className 命令的完全限定类名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.activation.CommandInfo.getCommandName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回命令动词。
+
+@return 命令动词。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.activation.CommandInfo.getCommandClass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回命令的类名。<i>当 CommandMap 根据其目的子类化 CommandInfo 时，此方法可能返回 null。</i>换句话说，仅知道其类名不太可能创建命令的正确状态。<b>不要依赖此方法来返回有效值！</b>
+
+@return 命令的类名，或 <i>null</i>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.activation.CommandInfo.getCommandObject(DataHandler dh, ClassLoader loader) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已实例化的 JavaBean 组件。
+ <p>
+从用 <code>Beans.instantiate()</code> 实例化组件开始。
+ <p>
+如果 bean 实现了 <code>javax.activation.CommandObject</code> 接口，则调用其 <code>setCommandContext</code> 方法。
+ <p>
+如果 DataHandler 参数为 null，则 bean 被实例化，且不带任何数据。注:如果由于某种原因，此方法试图访问其 InputStream 时传入的 DataHandler 抛出 IOExceptions，那么这将很有用。它将允许调用者获取对 bean 的引用（如果它可以被实例化）。
+ <p>
+如果 bean 不实现 CommandObject 接口，那么此方法将检查它是否实现 java.io.Externalizable 接口。如果它实现 CommandObject 接口，若可以从 DataHandler 获取 InputStream，则将调用 bean 的 readExternal 方法。<p>
+
+@param dh	描述要传递给命令的数据的 DataHandler。
+@param loader	将用于实例化 bean 的 ClassLoader。
+@return bean
+@see java.beans.Beans#instantiate
+@see javax.activation.CommandObject
+
+<!-- END DATA -->

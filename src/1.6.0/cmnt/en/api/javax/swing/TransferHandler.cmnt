@@ -1,0 +1,398 @@
+<!-- BEGIN KEY -->
+public class javax.swing.TransferHandler extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This class is used to handle the transfer of a <code>Transferable</code>
+ to and from Swing components.  The <code>Transferable</code> is used to
+ represent data that is exchanged via a cut, copy, or paste 
+ to/from a clipboard.  It is also used in drag-and-drop operations
+ to represent a drag from a component, and a drop to a component.
+ Swing provides functionality that automatically supports cut, copy,
+ and paste keyboard bindings that use the functionality provided by
+ an implementation of this class.  Swing also provides functionality
+ that automatically supports drag and drop that uses the functionality
+ provided by an implementation of this class.  The Swing developer can 
+ concentrate on specifying the semantics of a transfer primarily by setting
+ the <code>transferHandler</code> property on a Swing component.
+ <p>
+ This class is implemented to provide a default behavior of transferring
+ a component property simply by specifying the name of the property in 
+ the constructor.  For example, to transfer the foreground color from
+ one component to another either via the clipboard or a drag and drop operation
+ a <code>TransferHandler</code> can be constructed with the string "foreground".  The
+ built in support will use the color returned by <code>getForeground</code> as the source
+ of the transfer, and <code>setForeground</code> for the target of a transfer.  
+ <p>
+ Please see
+ <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">
+ How to Use Drag and Drop and Data Transfer</a>,
+ a section in <em>The Java Tutorial</em>, for more information.
+ 
+
+ @author Timothy Prinzing
+ @author Shannon Hickey
+ @version 1.47 06/06/06
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.NONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> representing no transfer action. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.COPY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> representing a &quot;copy&quot; transfer action.
+ This value is used when data is copied to a clipboard
+ or copied elsewhere in a drag and drop operation.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.MOVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> representing a &quot;move&quot; transfer action.
+ This value is used when data is moved to a clipboard (i.e. a cut)
+ or moved elsewhere in a drag and drop operation.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.COPY_OR_MOVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> representing a source action capability of either
+ &quot;copy&quot; or &quot;move&quot;.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.TransferHandler.LINK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> representing a &quot;link&quot; transfer action.
+ This value is used to specify that data should be linked in a drag
+ and drop operation.
+
+ @see java.awt.dnd.DnDConstants#ACTION_LINK
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler(String property)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs a transfer handler that can transfer a Java Bean property
+ from one component to another via the clipboard or a drag and drop
+ operation.
+
+ @param property  the name of the property to transfer; this can
+  be <code>null</code> if there is no property associated with the transfer
+  handler (a subclass that performs some other kind of transfer, for example)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.TransferHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Convenience constructor for subclasses.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getCutAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an {@code Action} that performs cut operations to the
+ clipboard. When performed, this action operates on the {@code JComponent}
+ source of the {@code ActionEvent} by invoking {@code exportToClipboard},
+ with a {@code MOVE} action, on the component's {@code TransferHandler}.
+
+ @return an {@code Action} for performing cuts to the clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getCopyAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an {@code Action} that performs copy operations to the
+ clipboard. When performed, this action operates on the {@code JComponent}
+ source of the {@code ActionEvent} by invoking {@code exportToClipboard},
+ with a {@code COPY} action, on the component's {@code TransferHandler}.
+
+ @return an {@code Action} for performing copies to the clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.Action javax.swing.TransferHandler.getPasteAction()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an {@code Action} that performs paste operations from the
+ clipboard. When performed, this action operates on the {@code JComponent}
+ source of the {@code ActionEvent} by invoking {@code importData},
+ with the clipboard contents, on the component's {@code TransferHandler}.
+
+ @return an {@code Action} for performing pastes from the clipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.exportAsDrag(JComponent comp, InputEvent e, int action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes the Swing drag support to be initiated.  This is called by 
+ the various UI implementations in the <code>javax.swing.plaf.basic</code>
+ package if the dragEnabled property is set on the component. 
+ This can be called by custom UI 
+ implementations to use the Swing drag support.  This method can also be called 
+ by a Swing extension written as a subclass of <code>JComponent</code>
+ to take advantage of the Swing drag support.
+ <p>
+ The transfer <em>will not necessarily</em> have been completed at the
+ return of this call (i.e. the call does not block waiting for the drop).
+ The transfer will take place through the Swing implementation of the
+ <code>java.awt.dnd</code> mechanism, requiring no further effort
+ from the developer. The <code>exportDone</code> method will be called
+ when the transfer has completed.
+
+ @param comp  the component holding the data to be transferred;
+              provided to enable sharing of <code>TransferHandler</code>s
+ @param e     the event that triggered the transfer
+ @param action the transfer action initially requested;
+               either {@code COPY}, {@code MOVE} or {@code LINK};
+               the DnD system may change the action used during the
+               course of the drag operation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.TransferHandler.exportToClipboard(JComponent comp, Clipboard clip, int action) throws java.lang.IllegalStateException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes a transfer from the given component to the
+ given clipboard.  This method is called by the default cut and
+ copy actions registered in a component's action map.  
+ <p>
+ The transfer will take place using the <code>java.awt.datatransfer</code>
+ mechanism, requiring no further effort from the developer. Any data
+ transfer <em>will</em> be complete and the <code>exportDone</code>
+ method will be called with the action that occurred, before this method
+ returns. Should the clipboard be unavailable when attempting to place
+ data on it, the <code>IllegalStateException</code> thrown by
+ {@link Clipboard#setContents(Transferable, ClipboardOwner)} will
+ be propogated through this method. However, 
+ <code>exportDone</code> will first be called with an action
+ of <code>NONE</code> for consistency.
+
+ @param comp  the component holding the data to be transferred;
+              provided to enable sharing of <code>TransferHandler</code>s
+ @param clip  the clipboard to transfer the data into  
+ @param action the transfer action requested; this should
+  be a value of either <code>COPY</code> or <code>MOVE</code>;
+  the operation performed is the intersection  of the transfer
+  capabilities given by getSourceActions and the requested action;
+  the intersection may result in an action of <code>NONE</code>
+  if the requested action isn't supported
+ @throws IllegalStateException if the clipboard is currently unavailable
+ @see Clipboard#setContents(Transferable, ClipboardOwner)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.importData(TransferHandler.TransferSupport support)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes a transfer to occur from a clipboard or a drag and
+ drop operation. The <code>Transferable</code> to be
+ imported and the component to transfer to are contained
+ within the <code>TransferSupport</code>.
+ <p>
+ While the drag and drop implementation calls {@code canImport}
+ to determine the suitability of a transfer before calling this
+ method, the implementation of paste does not. As such, it cannot
+ be assumed that the transfer is acceptable upon a call to
+ this method for paste. It is recommended that {@code canImport} be
+ explicitly called to cover this case.
+ <p>
+ Note: The <code>TransferSupport</code> object passed to this method
+ is only valid for the duration of the method call. It is undefined
+ what values it may contain after this method returns.
+
+ @param support the object containing the details of
+        the transfer, not <code>null</code>.
+ @return true if the data was inserted into the component,
+         false otherwise
+ @throws NullPointerException if <code>support</code> is {@code null}
+ @see #canImport(TransferHandler.TransferSupport)
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.importData(JComponent comp, Transferable t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes a transfer to a component from a clipboard or a 
+ DND drop operation.  The <code>Transferable</code> represents
+ the data to be imported into the component.
+ <p>
+ Note: Swing now calls the newer version of <code>importData</code>
+ that takes a <code>TransferSupport</code>, which in turn calls this
+ method (if the component in the {@code TransferSupport} is a
+ {@code JComponent}). Developers are encouraged to call and override the
+ newer version as it provides more information (and is the only
+ version that supports use with a {@code TransferHandler} set directly
+ on a {@code JFrame} or other non-{@code JComponent}).
+
+ @param comp  the component to receive the transfer;
+              provided to enable sharing of <code>TransferHandler</code>s
+ @param t     the data to import
+ @return  true if the data was inserted into the component, false otherwise
+ @see #importData(TransferHandler.TransferSupport)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.canImport(TransferHandler.TransferSupport support)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This method is called repeatedly during a drag and drop operation
+ to allow the developer to configure properties of, and to return
+ the acceptability of transfers; with a return value of {@code true}
+ indicating that the transfer represented by the given
+ {@code TransferSupport} (which contains all of the details of the
+ transfer) is acceptable at the current time, and a value of {@code false}
+ rejecting the transfer.
+ <p>
+ For those components that automatically display a drop location during
+ drag and drop, accepting the transfer, by default, tells them to show
+ the drop location. This can be changed by calling
+ {@code setShowDropLocation} on the {@code TransferSupport}.
+ <p>
+ By default, when the transfer is accepted, the chosen drop action is that
+ picked by the user via their drag gesture. The developer can override
+ this and choose a different action, from the supported source
+ actions, by calling {@code setDropAction} on the {@code TransferSupport}.
+ <p>
+ On every call to {@code canImport}, the {@code TransferSupport} contains
+ fresh state. As such, any properties set on it must be set on every
+ call. Upon a drop, {@code canImport} is called one final time before
+ calling into {@code importData}. Any state set on the
+ {@code TransferSupport} during that last call will be available in
+ {@code importData}.
+ <p>
+ This method is not called internally in response to paste operations.
+ As such, it is recommended that implementations of {@code importData}
+ explicitly call this method for such cases and that this method
+ be prepared to return the suitability of paste operations as well.
+ <p>
+ Note: The <code>TransferSupport</code> object passed to this method
+ is only valid for the duration of the method call. It is undefined
+ what values it may contain after this method returns.
+
+ @param support the object containing the details of
+        the transfer, not <code>null</code>.
+ @return <code>true</code> if the import can happen,
+         <code>false</code> otherwise
+ @throws NullPointerException if <code>support</code> is {@code null}
+ @see #importData(TransferHandler.TransferSupport)
+ @see javax.swing.TransferHandler.TransferSupport#setShowDropLocation
+ @see javax.swing.TransferHandler.TransferSupport#setDropAction
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.TransferHandler.canImport(JComponent comp, java.awt.datatransfer.DataFlavor[] transferFlavors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Indicates whether a component will accept an import of the given
+ set of data flavors prior to actually attempting to import it. 
+ <p>
+ Note: Swing now calls the newer version of <code>canImport</code>
+ that takes a <code>TransferSupport</code>, which in turn calls this
+ method (only if the component in the {@code TransferSupport} is a
+ {@code JComponent}). Developers are encouraged to call and override the
+ newer version as it provides more information (and is the only
+ version that supports use with a {@code TransferHandler} set directly
+ on a {@code JFrame} or other non-{@code JComponent}).
+
+ @param comp  the component to receive the transfer;
+              provided to enable sharing of <code>TransferHandler</code>s
+ @param transferFlavors  the data formats available
+ @return  true if the data can be inserted into the component, false otherwise
+ @see #canImport(TransferHandler.TransferSupport)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.TransferHandler.getSourceActions(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the type of transfer actions supported by the source;
+ any bitwise-OR combination of {@code COPY}, {@code MOVE}
+ and {@code LINK}.
+ <p>
+ Some models are not mutable, so a transfer operation of {@code MOVE}
+ should not be advertised in that case. Returning {@code NONE}
+ disables transfers from the component.
+ 
+ @param c  the component holding the data to be transferred;
+           provided to enable sharing of <code>TransferHandler</code>s
+ @return {@code COPY} if the transfer property can be found,
+          otherwise returns <code>NONE</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.TransferHandler.getVisualRepresentation(Transferable t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an object that establishes the look of a transfer.  This is
+ useful for both providing feedback while performing a drag operation and for 
+ representing the transfer in a clipboard implementation that has a visual 
+ appearance.  The implementation of the <code>Icon</code> interface should
+ not alter the graphics clip or alpha level. 
+ The icon implementation need not be rectangular or paint all of the
+ bounding rectangle and logic that calls the icons paint method should
+ not assume the all bits are painted. <code>null</code> is a valid return value 
+ for this method and indicates there is no visual representation provided.
+ In that case, the calling logic is free to represent the
+ transferable however it wants.  
+ <p>
+ The default Swing logic will not do an alpha blended drag animation if
+ the return is <code>null</code>.
+
+ @param t  the data to be transferred; this value is expected to have been 
+  created by the <code>createTransferable</code> method
+ @return  <code>null</code>, indicating
+    there is no default visual representation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.datatransfer.Transferable javax.swing.TransferHandler.createTransferable(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a <code>Transferable</code> to use as the source for
+ a data transfer. Returns the representation of the data to
+ be transferred, or <code>null</code> if the component's
+ property is <code>null</code>
+
+ @param c  the component holding the data to be transferred;
+              provided to enable sharing of <code>TransferHandler</code>s
+ @return  the representation of the data to be transferred, or
+  <code>null</code> if the property associated with <code>c</code>
+  is <code>null</code> 
+  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.TransferHandler.exportDone(JComponent source, Transferable data, int action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Invoked after data has been exported.  This method should remove 
+ the data that was transferred if the action was <code>MOVE</code>.
+ <p>
+ This method is implemented to do nothing since <code>MOVE</code>
+ is not a supported action of this implementation
+ (<code>getSourceActions</code> does not include <code>MOVE</code>).
+
+ @param source the component that was the source of the data
+ @param data   The data that was transferred or possibly null
+               if the action is <code>NONE</code>.
+ @param action the actual action that was performed  
+
+<!-- END DATA -->

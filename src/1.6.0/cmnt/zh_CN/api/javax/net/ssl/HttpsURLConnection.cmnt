@@ -1,0 +1,220 @@
+<!-- BEGIN KEY -->
+public abstract class javax.net.ssl.HttpsURLConnection extends java.net.HttpURLConnection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<code>HttpsURLConnection</code> 扩展 <code>HttpURLConnection</code>，支持各种特定于 https 功能。
+ <P>
+有关 https 规范的更多详细信息，请参见 <A HREF="http://www.w3.org/pub/WWW/Protocols/">http://www.w3.org/pub/WWW/Protocols/</A> 和 <A HREF="http://www.ietf.org/">RFC 2818</A>。
+ <P>
+此类使用 <code>HostnameVerifier</code> 和 <code>SSLSocketFactory</code>。为这两个类都定义了默认实现。但是，可以根据每个类（静态的）或每个实例来替换该实现。所有新 <code>HttpsURLConnection</code> 实例在创建时将被分配&ldquo;默认的&rdquo;静态值，通过在<code>连接</code>前调用每个实例适当的 set 方法可以重写这些值。
+
+@since 1.4
+@version 1.25
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.HostnameVerifier javax.net.ssl.HttpsURLConnection.hostnameVerifier
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此对象的 <code>hostnameVerifier</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.net.ssl.HttpsURLConnection(URL url)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用指定的 URL 创建 <code>HttpsURLConnection</code>。
+
+@param url URL
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String javax.net.ssl.HttpsURLConnection.getCipherSuite()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回在此连接上使用的密码套件。
+
+@return 密码套件
+@throws IllegalStateException 如果在连接建立前调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.cert.Certificate[] javax.net.ssl.HttpsURLConnection.getLocalCertificates()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回握手期间发送给服务器的证书。
+ <P>
+注：仅当使用基于证书的密码套件时此方法才有用。
+ <P>
+当在一次握手中有多个证书可供使用时，实现选择它认为是&ldquo;最好的&rdquo;可用证书链，并把它传输到另一方。此方法允许调用者知道实际发送的证书链。
+
+@return 证书的有序数组，客户端的证书在前，后跟所有证书颁发机构。如果没有发送任何证书，则返回 null。
+@throws IllegalStateException 如果在连接建立前调用此方法。
+@see #getLocalPrincipal()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.security.cert.Certificate[] javax.net.ssl.HttpsURLConnection.getServerCertificates() throws javax.net.ssl.SSLPeerUnverifiedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回服务器的证书链，它是作为定义会话的一部分而建立的。
+ <P>
+注：仅当使用基于证书的密码套件时才可以使用此方法；将它与非基于证书的密码套件（如 Kerberos）一起使用将抛出 SSLPeerUnverifiedException。
+
+@return 服务器证书的有序数组，同位体的证书在前，后跟所有证书颁发机构。
+@throws SSLPeerUnverifiedException 如果没有验证同位体。
+@throws IllegalStateException 如果在连接建立前调用此方法。
+@see #getPeerPrincipal()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal javax.net.ssl.HttpsURLConnection.getPeerPrincipal() throws javax.net.ssl.SSLPeerUnverifiedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回服务器的主体，它是作为定义会话的一部分而建立的。
+ <P>
+注：子类应重写此方法。如果没有重写此方法，则对于基于证书的密码套件，它将默认返回服务器终端实体证书的 X500Principal，对于非基于证书的密码套件（如 Kerberos），则抛出 SSLPeerUnverifiedException。
+
+@return 服务器的主体。返回基于 X509 的密码套件的终端实体证书的 X500Principal，以及 Kerberos 的密码套件的 KerberosPrincipal。
+
+@throws SSLPeerUnverifiedException 如果没有验证同位体
+@throws IllegalStateException 如果在连接建立前调用此方法。
+
+@see #getServerCertificates()
+@see #getLocalPrincipal()
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal javax.net.ssl.HttpsURLConnection.getLocalPrincipal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回握手期间发送到服务器的主体。
+ <P>
+注：子类应重写此方法。如果没有重写此方法，则对于基于证书的密码套件，它将默认返回发送到服务器的终端实体证书的 X500Principal，对于非基于证书的密码套件（如 Kerberos），则返回 null。
+
+@return 发送到服务器的主体。返回基于 X509 的密码套件的终端实体证书的 X500Principal，以及 Kerberos 的密码套件的 KerberosPrincipal。如果没有发送任何主体，则返回 null。
+
+@throws IllegalStateException 如果在连接建立前调用此方法。
+
+@see #getLocalCertificates()
+@see #getPeerPrincipal()
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.net.ssl.HttpsURLConnection.setDefaultHostnameVerifier(HostnameVerifier v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此类的新实例所继承的默认 <code>HostnameVerifier</code>。
+ <P>
+如果不调用此方法，则默认的 <code>HostnameVerifier</code> 假定连接不应该被允许。
+
+@param v 默认的主机名校验器
+@throws IllegalArgumentException 如果 <code>HostnameVerifier</code> 参数为 null。
+@throws SecurityException 如果安全管理器存在并且其 <code>checkPermission</code> 方法不允许 <code>SSLPermission("setHostnameVerifier")</code>
+@see #getDefaultHostnameVerifier()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.net.ssl.HostnameVerifier javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取此类的新实例所继承的默认 <code>HostnameVerifier</code>。
+
+@return 默认的主机名校验器
+@see #setDefaultHostnameVerifier(HostnameVerifier)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.HttpsURLConnection.setHostnameVerifier(HostnameVerifier v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此实例的 <code>HostnameVerifier</code>。
+ <P>
+此类的新实例继承由 {@link #setDefaultHostnameVerifier(HostnameVerifier) setDefaultHostnameVerifier} 设置的默认静态主机名校验器。调用此方法会替换此对象的 <code>HostnameVerifier</code>。
+
+@param v 主机名校验器
+@throws IllegalArgumentException 如果 <code>HostnameVerifier</code> 参数为 null。
+@see #getHostnameVerifier()
+@see #setDefaultHostnameVerifier(HostnameVerifier)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.net.ssl.HostnameVerifier javax.net.ssl.HttpsURLConnection.getHostnameVerifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取此实例适当的 <code>HostnameVerifier</code>。
+
+@return 主机名校验器
+@see #setHostnameVerifier(HostnameVerifier)
+@see #setDefaultHostnameVerifier(HostnameVerifier)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.net.ssl.HttpsURLConnection.setDefaultSSLSocketFactory(SSLSocketFactory sf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此类的新实例所继承的默认 <code>SSLSocketFactory</code>。
+ <P>
+当为安全 https URL 连接创建套接字时使用套接字工厂。
+
+@param sf 默认的 SSL 套接字工厂
+@throws IllegalArgumentException 如果 SSLSocketFactory 参数为 null。
+@throws SecurityException 如果安全管理器存在并且其 <code>checkSetFactory</code> 方法不允许指定套接字工厂。
+@see #getDefaultSSLSocketFactory()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.net.ssl.SSLSocketFactory javax.net.ssl.HttpsURLConnection.getDefaultSSLSocketFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取此类的新实例所继承的默认静态 <code>SSLSocketFactory</code>。
+ <P>
+当为安全 https URL 连接创建套接字时使用套接字工厂。
+
+@return 默认的 <code>SSLSocketFactory</code>
+@see #setDefaultSSLSocketFactory(SSLSocketFactory)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.net.ssl.HttpsURLConnection.setSSLSocketFactory(SSLSocketFactory sf)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置当此实例为安全 https URL 连接创建套接字时使用的 <code>SSLSocketFactory</code>。
+ <P>
+此类的新实例继承由 {@link #setDefaultSSLSocketFactory(SSLSocketFactory) setDefaultSSLSocketFactory} 设置的默认静态 <code>SSLSocketFactory</code>。调用此方法会替换此对象的 <code>SSLSocketFactory</code>。
+
+@param sf SSL 套接字工厂
+@throws IllegalArgumentException 如果 <code>SSLSocketFactory</code> 参数为 null。
+@see #getSSLSocketFactory()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.net.ssl.SSLSocketFactory javax.net.ssl.HttpsURLConnection.getSSLSocketFactory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取为安全 https URL 连接创建套接字时使用的 SSL 套接字工厂。
+
+@return <code>SSLSocketFactory</code>
+@see #setSSLSocketFactory(SSLSocketFactory)
+
+<!-- END DATA -->

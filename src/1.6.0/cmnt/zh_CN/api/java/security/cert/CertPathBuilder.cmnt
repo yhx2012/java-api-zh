@@ -1,0 +1,138 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.CertPathBuilder extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构建证书路径（也称为证书链）的类。
+ <p>
+此类使用基于提供者的架构。要创建一个 <code>CertPathBuilder</code>，应调用某个 static <code>getInstance</code> 方法、传入所需的 <code>CertPathBuilder</code> 算法名称，或者所需的提供者名称。
+ <p>
+一旦创建了 <code>CertPathBuilder</code> 对象，则可以通过调用 {@link #build build} 方法并传递一个特定于算法的参数集来构造证书路径。如果成功，则在一个实现 <code>CertPathBuilderResult</code> 接口的对象中返回结果（包括已构建的 <code>CertPath</code>）。
+ <p>
+<b>并发访问</b>
+ <p>
+可保证此类的 static 方法是线程安全的。多个线程可以并发调用此类中定义的 static 方法，而不会产生什么坏的影响。
+ <p>
+但是，对于此类所定义的非 static 方法并非如此。除非具体的提供者另行指定，否则需要并发访问单个 <code>CertPathBuilder</code> 实例的多个线程应该在它们之间实现同步并提供所需的锁定。对于每个线程都操作一个不同 <code>CertPathBuilder</code> 实例的多个线程而言，则无需实现同步。
+ 
+@see CertPath
+
+@version 	1.9 06/28/04
+@since	1.4
+@author	Sean Mullan
+@author	Yassir Elley
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.CertPathBuilder(CertPathBuilderSpi builderSpi, Provider provider, String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个给定算法的 <code>CertPathBuilder</code> 对象，并在其中封装给定的提供者实现（SPI 对象）。
+
+@param builderSpi 提供者实现
+@param provider 提供者
+@param algorithm 算法名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertPathBuilder java.security.cert.CertPathBuilder.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现了指定算法的 <code>CertPathBuilder</code> 对象。
+ 
+<p> 此方法从首选 Provider 开始，遍历已注册安全提供者列表。返回一个封装 CertPathBuilderSpi 实现的新 CertPathBuilder 对象，该实现取自第一个支持指定算法的 Provider。
+
+ <p>注意，已注册提供者列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。
+ 
+@param algorithm 所请求的 <code>CertPathBuilder</code> 算法名称。有关标准算法名称的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 的附录 A。
+
+@return 实现了指定算法的 <code>CertPathBuilder</code> 对象。
+@throws NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 CertPathBuilderSpi 实现。
+ @see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertPathBuilder java.security.cert.CertPathBuilder.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现了指定算法的 <code>CertPathBuilder</code> 对象。
+ 
+<p> 返回一个封装 CertPathBuilderSpi 实现的新 CertPathBuilder 对象，该实现取自指定的提供者。指定的提供者必须已在安全提供者列表中注册。
+
+ <p> 注意，已注册提供者列表可以通过 {@link Security#getProviders() Security.getProviders()} 方法获得。
+
+@param algorithm 所请求的 <code>CertPathBuilder</code> 算法名称。有关标准算法名称的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 的附录 A。
+
+@param provider 提供者的名称。
+@return 实现了指定算法的 <code>CertPathBuilder</code> 对象。
+@throws NoSuchAlgorithmException 如果无法从指定提供者获得指定算法的 CertPathBuilderSpi 实现。
+@throws NoSuchProviderException 如果指定提供者没有在安全提供者列表中注册。
+@exception IllegalArgumentException 如果 <code>provider</code> 为 null 或空。
+
+ @see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertPathBuilder java.security.cert.CertPathBuilder.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现了指定算法的 <code>CertPathBuilder</code> 对象。
+ 
+<p> 返回一个封装 CertPathBuilderSpi 实现的新 CertPathBuilder 对象，该实现取自指定 Provider 对象。注意，指定的 Provider 对象无需在提供者列表中注册。
+
+@param algorithm 所请求的 <code>CertPathBuilder</code> 算法名称。有关标准算法名称的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 的附录 A。
+@param provider 提供者。
+@return 实现了指定算法的 <code>CertPathBuilder</code> 对象
+@exception NoSuchAlgorithmException 如果无法从指定 Provider 对象获得指定算法的 CertPathBuilderSpi 实现。
+@exception IllegalArgumentException 如果 <code>provider</code> 为 null。
+@see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.cert.CertPathBuilder.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>CertPathBuilder</code> 的提供者。
+
+@return 此 <code>CertPathBuilder</code> 的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.cert.CertPathBuilder.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>CertPathBuilder</code> 的算法名称。
+
+@return 此 <code>CertPathBuilder</code> 的算法名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CertPathBuilderResult java.security.cert.CertPathBuilder.build(CertPathParameters params) throws java.security.cert.CertPathBuilderException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试使用指定的算法参数集构建一个证书路径。
+
+@param params 算法参数
+@return 构建算法的结果
+@throws CertPathBuilderException 如果该生成器无法构造一个满足指定参数要求的证书路径
+@throws InvalidAlgorithmParameterException 如果指定的参数不适合此 <code>CertPathBuilder</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.security.cert.CertPathBuilder.getDefaultType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 安全属性文件中所指定的默认 <code>CertPathBuilder</code> 类型，如果没有此属性，则返回字符串 &quot;PKIX&quot;。Java 安全属性文件位于名为 &lt;JAVA_HOME&gt;/lib/security/java.security 文件中。 &lt;JAVA_HOME&gt; 引用 java.home 系统属型的值，并指定安装 JRE 的目录。
+
+<p>如果调用某个 <code>getInstance</code> 方法时不希望使用硬编码 CertPathBuilder 类型，并且在用户未指定所用 CertPathBuilder 类型的情况下希望提供默认类型的应用程序，那么可以使用默认的 <code>CertPathBuilder</code> 类型。
+
+<p>通过将 &quot;certpathbuilder.type&quot; 安全属性（在 Java 安全属性文件中）的值设置为所需的类型，这样就可以更改默认的 <code>CertPathBuilder</code> 类型。
+
+@return Java 安全属性文件中指定的默认 <code>CertPathBuilder</code> 类型，如果没有此属性，则返回字符串 &quot;PKIX&quot;。
+
+<!-- END DATA -->

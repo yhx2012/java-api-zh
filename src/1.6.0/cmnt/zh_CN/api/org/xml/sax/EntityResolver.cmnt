@@ -1,0 +1,66 @@
+<!-- BEGIN KEY -->
+public interface org.xml.sax.EntityResolver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于解析实体的基本接口。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）在公共域中，同时 <strong>没有担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>如果 SAX 应用程序需要实现自定义处理外部实体，则必须实现此接口并使用 {@link org.xml.sax.XMLReader#setEntityResolver setEntityResolver} 方法向 SAX 驱动器注册一个实例。</p>
+
+<p>然后 XML 阅读器将允许应用程序在包含外部实体之前截取任何外部实体（包括外部 DTD 子集和外部参数实体，如果有）。</p>
+
+<p>许多 SAX 应用程序不需要实现此接口，但对于从数据库或其他特定的输入源中构建 XML 文档的应用程序，或者对于使用 URI 类型（而不是 URL ）的应用程序，这特别有用。</p>
+
+<p>下面的解析器将使用系统标识符 &quot;http://www.myhost.com/today&quot; 为应用程序提供用于实体的特定字符流：</p>
+
+ <pre>
+ import org.xml.sax.EntityResolver;
+ import org.xml.sax.InputSource;
+
+ public class MyResolver implements EntityResolver {
+   public InputSource resolveEntity (String publicId, String systemId)
+   {
+     if (systemId.equals(&quot;http://www.myhost.com/today&quot;)) {
+              // return a special input source
+       MyReader reader = new MyReader();
+       return new InputSource(reader);
+     } else {
+              // use the default behaviour
+return null;
+     }
+   }
+ }
+ </pre>
+
+<p>应用程序还可以使用此接口将系统标识符重定向到本地 URI，或者在目录中查找替换（可能使用公共标识符）。</p>
+
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.XMLReader#setEntityResolver
+@see org.xml.sax.InputSource
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.InputSource org.xml.sax.EntityResolver.resolveEntity(String publicId, String systemId) throws org.xml.sax.SAXException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序解析外部实体。
+
+<p>解析器将在打开任何外部实体（顶级文档实体除外）前调用此方法。此类实体包括在 DTD 内引用的外部 DTD 子集和外部参数实体（无论哪种情形，仅在在解析器都读取外部参数实体时）和在文档元素内引用的外部通用实体（如果解析器读取外部通用实体）。应用程序可以请求解析器本身定位实体、使用另外的 URI或者使用应用程序提供的数据（作为字符或字节输入流）。</p>
+
+<p>应用程序编写者可以使用此方法将外部系统标识符重定向到安全的和/或本地的 URI，以便在目录中查找公共标识符或从数据库或其他输入源（其中包括对话框）中读取实体。XML 和 SAX 都不为使用公共或系统 ID 解析资源指定首选策略。但是，SAX 指定了如何解释通过此方法返回的任何 InputSource，并指定如果未返回，则系统 ID 将被重新引用为 URL。  </p>
+
+<p>如果系统标识符是 URL，则 SAX 解析器必须在将它报告给应用程序之前完整解析它。</p>
+
+@param publicId 被引用的外部实体的公共标识符，如果未提供，则为 null。
+@param systemId 被引用的外部实体的系统标识符。
+@return 一个描述新输入源的 InputSource 对象，或者返回 null，以请求解析器打开到系统标识符的常规 URI 连接。
+@exception org.xml.sax.SAXException 任何 SAX 异常，可能包装另外的异常。
+@exception java.io.IOException 特定于 Java 的 IO 异常，可能是由于为 InputSource 创建新的 InputStream 或 Reader 所导致的。
+@see org.xml.sax.InputSource
+
+<!-- END DATA -->

@@ -1,0 +1,212 @@
+<!-- BEGIN KEY -->
+public interface javax.naming.directory.Attribute extends java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口表示与命名对象关联的属性。
+<p>
+在目录中，命名的对象可以与其属性关联。<tt>Attribute</tt> 接口表示与命名对象关联的属性。属性包含 0 个或多个（可能为 null 的）值。属性值可以是有序的也可以是无序的（参阅 <tt>isOrdered()</tt>）。如果值是无序的，则不允许重复。如果值是有序的，则允许重复。
+<p>
+属性的内容和表示形式及其值均由属性的<em>模式</em> 定义。模式包含关于属性语法和属性其他性质的信息。有关基础目录服务支持模式时如何获取关于属性的模式信息的详细信息，请参阅 <tt>getAttributeDefinition()</tt> 和 <tt>getAttributeSyntaxDefinition()</tt>。
+<p>
+两个属性的相等性由实现类确定。简单的实现可以使用 <tt>Object.equals()</tt> 来确定属性值的相等性，而较复杂的实现可能使用模式信息来确定相等性。类似地，一个实现可能提供仅返回传递给其构造方法的值的静态存储结构，另一个实现可能定义 <tt>get()</tt> 和 <tt>getAll()</tt> 从目录动态获取值。
+<p>
+注意，更新 <tt>Attribute</tt>（如添加或移除值）对目录中相应的属性表示形式没有影响。只有使用 <tt>DirContext</tt> 接口中的操作才能实现对目录的更新。
+
+@author Rosanna Lee
+@author Scott Seligman
+@version 1.13 05/11/17
+
+@see BasicAttribute
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final long javax.naming.directory.Attribute.serialVersionUID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 JNDI 1.1.1 中的 serialVersionUID 获取互操作性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.NamingEnumeration<?> javax.naming.directory.Attribute.getAll() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索属性值的枚举。如果正在进行枚举时添加、更改或移除属性值，则此枚举的行为是不确定的。如果属性值是有序的，则枚举的项将是有序的。
+
+@return 属性值的非 null 枚举。每个枚举元素都可能是一个 null 对象。对象的类就是属性值的类。如果属性值为 null，则元素为 null。如果属性的值为零，则返回空枚举。
+@exception NamingException 如果检索值时遇到命名异常。
+@see #isOrdered
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.Attribute.get() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此属性的其中一个值。如果属性具有多个值并且是无序的，则返回其中的任意一个值。如果属性具多个值并且是有序的，则返回第一个值。
+
+@return 表示属性值之一的可能为 null 的对象。如果属性值为 null，则返回 null。
+@exception NamingException 如果检索值时遇到命名异常。
+@exception java.util.NoSuchElementException 如果此属性没有值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.directory.Attribute.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+检索此属性中的值数。
+
+@return 此属性中的非负值数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.directory.Attribute.getID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此属性的 id。
+
+@return 此属性的 id。它不能为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.Attribute.contains(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定某个值是否在属性中。相等性由实现确定，其可能使用 <tt>Object.equals()</tt> 或模式信息来确定相等性。
+
+@param attrVal 要检查的可能为 null 的值。如果为 null，则检查属性是否具有其值不为 null 的属性值。
+@return 如果 attrVal 是此属性的值之一，则返回 true；否则返回 false。
+@see java.lang.Object#equals
+@see BasicAttribute#equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.Attribute.add(Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向属性添加新值。如果属性值是无序的，并且 <tt>attrVal</tt> 已在属性中，则此方法不执行任何操作。如果属性值是有序的，则 <tt>attrVal</tt> 将被添加到属性值列表的末尾。
+<p>
+相等性由实现确定，其可能使用 <tt>Object.equals()</tt> 或模式信息来确定相等性。
+
+@param attrVal 要添加的可能为 null 的新值。如果为 null，则将 null 作为属性值添加。
+@return 如果添加了值，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.Attribute.remove(Object attrval)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性中移除指定值。如果 <tt>attrval</tt> 不在属性中，则此方法不执行任何操作。如果属性值是有序的，则移除第一次出现的 <tt>attrVal</tt>，大于被移除值的索引处的属性值朝列表头方向上移（并将其索引减一）。
+<p>
+相等性由实现确定，其可能使用 <tt>Object.equals()</tt> 或模式信息来确定相等性。
+
+@param attrval 要从此属性中移除的可能为 null 的值。如果为 null，则移除为 null 的属性值。
+@return 如果移除了值，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.directory.Attribute.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此属性移除所有值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.Attribute.getAttributeSyntaxDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索与属性关联的语法定义。属性的语法定义指定属性值的格式。注意，这与作为 Java 对象的属性值的表示形式不同。语法定义指的是目录的<em>语法</em> 概念。
+<p>
+例如，即使值可能为 Java String 对象，其目录语法仍可能为 &quot;Printable String&quot; 或 &quot;Telephone Number&quot;。或者值可能为字节数组，而其目录语法为 &quot;JPEG&quot; 或 &quot;Certificate&quot;。例如，如果此属性的语法为 &quot;JPEG&quot;，则此方法将返回 &quot;JPEG&quot; 的语法定义。
+ <p>
+可以从语法定义检索的信息与目录有关。
+<p>
+如果实现不支持模式，则其将抛出 OperationNotSupportedException。如果实现支持模式，则其应定义此方法以返回适当的信息。
+@return 属性的语法定义。如果实现支持模式但此特定属性不具有任何模式信息，则返回 null。
+@exception OperationNotSupportedException 如果不支持获取模式。
+@exception NamingException 如果在获取模式时发生命名异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.DirContext javax.naming.directory.Attribute.getAttributeDefinition() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索属性的模式定义。属性的模式定义包含的信息有：属性是多值的还是单值的；比较属性值时使用哪些匹配规则，等等。
+
+可以从属性定义检索的信息与目录有关。
+
+<p>
+如果实现不支持模式，则其将抛出 OperationNotSupportedException。如果实现支持模式，则其应定义此方法以返回适当的信息。
+@return 此属性的模式定义。如果实现支持模式但此特定属性不具有任何模式信息，则返回 null。
+@exception OperationNotSupportedException 如果不支持获取模式。
+@exception NamingException 如果在获取模式时发生命名异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.Attribute.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对属性进行复制。副本包含与初始属性相同的属性值：这些属性值不是其本身的副本。对副本的更改不会影响原件，反之亦然。
+
+@return 属性的非 null 副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.directory.Attribute.isOrdered()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此属性的值是否是有序的。如果属性值是有序的，则允许重复的值。如果属性值是无序的，则它们以任意顺序出现，没有重复值。
+@return 如果此属性的值是有序的，则返回 true；否则返回 false。
+@see #get(int)
+@see #remove(int)
+@see #add(int, java.lang.Object)
+@see #set(int, java.lang.Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.Attribute.get(int ix) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性值的有序列表中检索属性值。此方法返回属性值列表中 <tt>ix</tt> 索引处的值。如果属性值是无序的，则此方法返回正好位于该索引处的值。
+@param ix 属性值的有序列表中值的索引。0 &lt;= <tt>ix</tt> &lt; <tt>size()</tt>。
+@return 位于索引 <tt>ix</tt> 处的可能为 null 的属性值；如果属性值为 null，则返回 null。
+@exception NamingException 如果检索值时遇到命名异常。
+@exception IndexOutOfBoundsException 如果 <tt>ix</tt> 位于指定范围之外。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.Attribute.remove(int ix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从属性值的有序列表中移除属性值。此方法移除属性值列表中 <tt>ix</tt> 索引处的值。如果属性值是无序的，则此方法移除正好位于该索引处的值。位于大于 <tt>ix</tt> 的索引处的值朝列表开头上移（并且其索引减一）。
+
+@param ix 要移除的值的索引。0 &lt;= <tt>ix</tt> &lt; <tt>size()</tt>。
+@return 已移除的位于索引 <tt>ix</tt> 处的可能为 null 的属性值；如果属性值为 null，则返回 null。
+@exception IndexOutOfBoundsException 如果 <tt>ix</tt> 位于指定范围之外。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.naming.directory.Attribute.add(int ix, Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将属性值添加到属性值的有序列表中。此方法将 <tt>attrVal</tt> 添加到属性值列表的索引 <tt>ix</tt> 处。位于 <tt>ix</tt> 处的索引的值或大于该处的索引的值朝列表的末尾下移（并且其索引加一）。如果属性值是无序的并且已经具有 <tt>attrVal</tt>，则抛出 <tt>IllegalStateException</tt>。
+
+@param ix 要添加新值的属性值的有序列表中的索引。0 &lt;= <tt>ix</tt> &lt;= <tt>size()</tt>。
+@param attrVal 要添加的可能为 null 的属性值；如果为 null，则 null 即为添加的值。
+@exception IndexOutOfBoundsException 如果 <tt>ix</tt> 位于指定范围之外。
+@exception IllegalStateException 如果属性值是无序的并且 <tt>attrVal</tt> 是这些值之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.directory.Attribute.set(int ix, Object attrVal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置属性值的有序列表中的属性值。此方法将属性值列表中 <tt>ix</tt> 索引处的值设置为 <tt>attrVal</tt>。移除旧值。如果属性值是无序的，则此方法将正好位于该索引处的值设置为 <tt>attrVal</tt>，除非 <tt>attrVal</tt> 已经是这些值中的一个。若其已经是这些值中的一个，则抛出 <tt>IllegalStateException</tt>。
+
+@param ix 属性值的有序列表中值的索引。0 &lt;= <tt>ix</tt> &lt; <tt>size()</tt>。
+@param attrVal 要使用的可能为 null 的属性值。如果为 null，则 'null' 将替换旧值。
+@return 已替换的索引 ix 处的可能为 null 的属性值。如果属性值已为 null，则返回 null。
+@exception IndexOutOfBoundsException 如果 <tt>ix</tt> 位于指定范围之外。
+@exception IllegalStateException 如果 <tt>attrVal</tt> 已存在并且属性值是无序的。
+
+<!-- END DATA -->

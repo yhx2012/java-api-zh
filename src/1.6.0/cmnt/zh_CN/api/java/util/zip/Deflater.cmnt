@@ -1,0 +1,297 @@
+<!-- BEGIN KEY -->
+public class java.util.zip.Deflater extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类使用流行的 ZLIB 压缩程序库为通用压缩提供支持。ZLIB 压缩程序库最初是作为 PNG 图形标准的一部分开发的，不受专利的保护。有关该规范的完整描述，请参见 <a href="package-summary.html#package_description">java.util.zip 包描述</a>。
+
+<p>以下代码片段演示使用 <tt>Deflater</tt> 和 <tt>Inflater</tt> 压缩和解压缩字符串的详细过程。
+
+ <blockquote><pre>
+ try {
+ // Encode a String into bytes
+ String inputString = &quot;blahblahblah??&quot;;
+ byte[] input = inputString.getBytes(&quot;UTF-8&quot;);
+
+ // Compress the bytes
+ byte[] output = new byte[100];
+ Deflater compresser = new Deflater();
+ compresser.setInput(input);
+ compresser.finish();
+ int compressedDataLength = compresser.deflate(output);
+
+ // Decompress the bytes
+ Inflater decompresser = new Inflater();
+ decompresser.setInput(output, 0, compressedDataLength);
+ byte[] result = new byte[100];
+ int resultLength = decompresser.inflate(result);
+ decompresser.end();
+
+ // Decode the bytes into a String
+ String outputString = new String(result, 0, resultLength, &quot;UTF-8&quot;);
+ } catch(java.io.UnsupportedEncodingException ex) {
+     // handle
+ } catch (java.util.zip.DataFormatException ex) {
+     // handle
+ }
+ </pre></blockquote>
+ 
+@see		Inflater
+@version 	1.40, 12/19/03
+@author 	David Connelly
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.DEFLATED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+deflate 算法（当前支持的唯一算法）的压缩方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.NO_COMPRESSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+无压缩的压缩级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.BEST_SPEED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最快压缩的压缩级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.BEST_COMPRESSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最佳压缩的压缩级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.DEFAULT_COMPRESSION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认压缩级别。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.FILTERED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最适用于主要由小值组成并具有某种程度随意分布的数据的压缩策略。强制使用较多的 Huffman 编码和较少的字符串匹配。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.HUFFMAN_ONLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅适用于 Huffman 编码的压缩策略。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.zip.Deflater.DEFAULT_STRATEGY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认压缩策略。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.Deflater(int level, boolean nowrap)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定压缩级别创建新的压缩器。如果 'nowrap' 为 true，则不使用 ZLIB 头和校验和字段，以便支持在 GZIP 和 PKZIP 中使用的压缩格式。
+@param level 压缩级别 (0-9)
+@param nowrap 如果为 true ，则使用 GZIP 兼容的压缩
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.Deflater(int level)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用指定压缩级别创建新的压缩器。压缩的数据将以 ZLIB 格式生成。
+@param level 压缩级别 (0-9)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.zip.Deflater()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认压缩级别创建新的压缩器。压缩的数据将以 ZLIB 格式生成。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.setInput(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为压缩设置输入数据。此方法应该在 needsInput() 返回 true 时调用，以指示需要更多的输入数据。
+@param b 输入数据字节
+@param off 数据的初始偏移量
+@param len 数据的长度
+@see Deflater#needsInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.zip.Deflater.setInput(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为压缩设置输入数据。此方法应该在 needsInput() 返回 true 时调用，以指示需要更多的输入数据。
+@param b 输入数据字节
+@see Deflater#needsInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.setDictionary(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为压缩设置预置字典。预置字典在历史缓冲区可预定时使用。当以后使用 Inflater.inflate() 取消压缩数据时，可以调用 Inflater.getAdler() 来获取解压缩所需字典的 Adler-32 值。
+@param b 字典数据字节
+@param off 数据的初始偏移量
+@param len 数据的长度
+@see Inflater#inflate
+@see Inflater#getAdler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.zip.Deflater.setDictionary(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为压缩预置字典。预置字典在历史缓冲区可预定时使用。当以后使用 Inflater.inflate() 取消压缩数据时，可以调用 Inflater.getAdler() 来获取解压缩所需字典的 Adler-32 值。
+@param b 字典数据字节
+@see Inflater#inflate
+@see Inflater#getAdler
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.setStrategy(int strategy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将压缩策略设置为指定值。
+@param strategy 新的压缩策略
+@exception IllegalArgumentException 如果压缩策略无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.setLevel(int level)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前压缩级别设置为指定值。
+@param level 新的压缩级别 (0-9)
+@exception IllegalArgumentException 如果压缩级别无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.zip.Deflater.needsInput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果输入数据缓冲区为空，并且应调用 setInput() 以提供更多输入，则返回 true。
+@return 如果输入数据缓冲区为空，并且应调用 setInput() 以提供更多输入，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.finish()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用时，指示压缩应当以输入缓冲区的当前内容结尾。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.zip.Deflater.finished()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已到达压缩数据输出流的结尾，则返回 true。
+@return 如果已到达压缩数据输出流的结尾，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.zip.Deflater.deflate(byte[] b, int off, int len)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用压缩数据填充指定缓冲区。返回压缩数据的实际字节数。返回值为 0 指示应调用 needsInput() 来确定是否需要更多的输入数据。
+@param b 压缩数据的缓冲区
+@param off 数据的初始偏移量
+@param len 压缩数据的最大字节数
+@return 压缩数据的实际字节数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Deflater.deflate(byte[] b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用压缩数据填充指定缓冲区。返回压缩数据的实际字节数。返回值为 0 指示应调用 needsInput() 来确定是否需要更多的输入数据。
+@param b 压缩数据的缓冲区
+@return 压缩数据的实际字节数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.zip.Deflater.getAdler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回未压缩数据的 ADLER-32 值。
+@return 未压缩数据的 ADLER-32 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Deflater.getTotalIn()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输入未压缩字节的总数。
+
+<p>由于该字节数可能大于 Integer.MAX_VALUE，因此 {@link #getBytesRead()} 方法现在是获取此信息的首选方法。</p>
+
+@return 到目前为止输入未压缩字节的总数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.util.zip.Deflater.getBytesRead()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输入未压缩字节的总数。</p>
+
+@return 到目前为止输入未压缩字节的总数（非负）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.zip.Deflater.getTotalOut()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输出压缩字节的总数。
+
+<p>由于该字节数可能大于 Integer.MAX_VALUE，因此 {@link #getBytesWritten()} 方法现在是获取此信息的首选方法。</p>
+
+@return 到目前为止输出压缩字节的总数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.util.zip.Deflater.getBytesWritten()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回到目前为止输出压缩字节的总数。</p>
+
+@return 到目前为止输出压缩字节的总数（非负）
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重置 deflater 以处理新的输入数据集。保持当前压缩级别和策略设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.zip.Deflater.end()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭解压缩器并放弃所有未处理的输入。此方法应该在不再使用该压缩器时调用，但是也可以由 finalize() 方法自动调用。调用此方法后，Deflater 对象的行为将是不确定的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.zip.Deflater.finalize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+回收垃圾时关闭压缩器。
+
+<!-- END DATA -->

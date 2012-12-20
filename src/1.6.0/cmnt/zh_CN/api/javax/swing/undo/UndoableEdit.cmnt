@@ -1,0 +1,134 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.undo.UndoableEdit
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>UndoableEdit</code> 表示一个编辑。该编辑可被撤消，如果已撤消，该编辑可恢复。
+<p>
+设计 <code>UndoableEdit</code> 与 <code>UndoManager</code> 一起使用。由于 <code>UndoableEdit</code> 是由 <code>UndoableEditListener</code> 生成的，所以通常将它们添加到 <code>UndoManager</code>。当将 <code>UndoableEdit</code> 添加到 <code>UndoManager</code> 时，会发生以下事件（假定没有在 <code>UndoManager</code> 上调用 <code>end</code>）：
+<ol>
+ <li>如果 <code>UndoManager</code> 包含编辑，则它将在当前编辑上调用 <code>addEdit</code>，传入新的编辑作为参数。如果 <code>addEdit</code> 返回 true，则新的编辑被视为已合并到当前编辑中，并且不会将新的编辑添加到当前编辑列表。编辑可以使用 <code>addEdit</code> 将多个较小编辑合并到较大编辑中，并且将合并后的编辑视为单个编辑。
+ <li>如果 <code>addEdit</code> 返回 false，则以传入的当前编辑对新的编辑调用 <code>replaceEdit</code>。这与 <code>addEdit</code> 截然相反 &#151; 如果新的编辑从 <code>replaceEdit</code> 返回 true，则新的编辑将替换当前编辑。
+</ol>
+<code>UndoManager</code> 使用 <code>isSignificant</code> 确定应该撤消或恢复多少编辑。<code>UndoManager</code> 将撤消或恢复当前编辑与最后一个或下一个有效编辑之间的所有无效编辑（<code>isSignificant</code> 返回 false）。<code>addEdit</code> 和 <code>replaceEdit</code> 可用于将多个编辑视为单个编辑，从 <code>isSignificant</code> 返回 false 允许 treating 可用于一次撤消或恢复多个较小编辑。也可以使用 <code>addEdit</code> 方法完成类似的功能。
+
+@version 1.19, 12/19/03
+@author Ray Ryan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.UndoableEdit.undo() throws javax.swing.undo.CannotUndoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+撤消编辑。
+
+@throws CannotUndoException 如果不能撤消此编辑
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.UndoableEdit.canUndo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果可以撤消此编辑，则返回 true。
+
+@return 如果可以撤消此编辑，则返回 true 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.UndoableEdit.redo() throws javax.swing.undo.CannotRedoException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新应用编辑。
+ 
+@throws CannotRedoException 如果不能恢复此编辑
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.UndoableEdit.canRedo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果可以恢复此编辑，则返回 true。
+
+@return 如果可以恢复此编辑，则返回 true  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.undo.UndoableEdit.die()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知某个编辑不应再使用它。一旦将 <code>UndoableEdit</code> 标记为停用，则不能再对它进行撤消或恢复。
+ <p>
+对于不可能撤消或恢复时清除不再需要的状态而言，这是一个有用的钩子 (hook)。例如，删除不能再恢复的对象所使用的文件资源。<code>UndoManager</code> 在其离开编辑队列之前调用它。
+ <p>
+注意，这是一个单向操作。不存在 &quot;un-die&quot; 方法。
+
+
+@see CompoundEdit#die
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.UndoableEdit.addEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>UndoableEdit</code> 添加到此 <code>UndoableEdit</code>。此方法可用于将多个较小编辑合并为一个较大的复合编辑。例如，文本编辑器通常允许对单词或句子应用撤消操作。文本编辑器可以选择在每个关键事件上生成编辑，但允许将这些编辑合并为一个更加用户友好的单元，比如一个单词。在这种情况下，当可以合并编辑时，<code>UndoableEdit</code> 将重写 <code>addEdit</code> 以返回 true。
+ <p>
+ 返回值为 true 指示已将 <code>anEdit</code> 合并到此编辑。返回值为 false 指示不能将 <code>anEdit</code> 合并到此编辑。
+<p>通常，接收者已经在 <code>UndoManager</code>（或者其他 <code>UndoableEditListener</code>）队列中，并且可以合并 <code>anEdit</code>，而不是将它按顺序添加到队列中。</p>
+
+<p>如果返回 true，则从现在开始，<code>anEdit</code> 必须从 <code>canUndo</code> 和 <code>canRedo</code> 返回 false，并且必须对 <code>undo</code> 或 <code>redo</code> 抛出适当的异常。</p>
+
+@param anEdit 要添加的编辑
+@return 如果可以将 <code>anEdit</code> 合并到此编辑，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.UndoableEdit.replaceEdit(UndoableEdit anEdit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>UndoableEdit</code> 应替换 <code>anEdit</code>，则返回 true。此方法由 <code>CompoundEdit</code> 和 <code>UndoManager</code> 使用；如果不能将 <code>anEdit</code> 添加到当前编辑（<code>addEdit</code> 返回 false），则调用此方法。
+ <p>
+ 此方法提供了某个编辑替换现有编辑的方法。
+
+<p>此消息与 addEdit 相反 -- anEdit 通常已经在 <code>UndoManager</code>（或者其他 UndoableEditListener）的队列中，并且接收者可以替换它。</p>
+
+<p>如果返回 true，则从现在开始，anEdit 必须从 canUndo() 和 canRedo() 返回 false，并且必须对 undo() 或 redo() 抛出适当的异常。</p>
+ 
+@param anEdit 替换当前编辑的编辑 
+@return 如果此编辑应该替换 <code>anEdit</code>，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.undo.UndoableEdit.isSignificant()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果认为此编辑有效，则返回 true。有效编辑通常是指应该呈现给用户的编辑，可能在菜单项或工具提示上。<code>UndoManager</code> 将为下一个有效编辑撤消或恢复所有无效编辑。
+
+@return 如果此编辑有效，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.UndoableEdit.getPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此编辑的本地化可读描述，例如，适于在更改日志中使用。
+ 
+@return 此编辑的描述
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.UndoableEdit.getUndoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此编辑可撤消形式的本地化可读描述，例如，适于用作 &ldquo;Undo&rdquo; 菜单项。此方法通常派生自 <code>getPresentationName</code>。
+
+@return 此编辑可撤消形式的描述 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.undo.UndoableEdit.getRedoPresentationName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此编辑可恢复形式的本地化可读描述，例如，适于用作 &ldquo;Redo&rdquo; 菜单项。此方法通常派生自 <code>getPresentationName</code>。
+
+@return 此编辑可恢复形式的描述
+
+<!-- END DATA -->

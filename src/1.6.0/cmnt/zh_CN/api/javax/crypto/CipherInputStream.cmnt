@@ -1,0 +1,142 @@
+<!-- BEGIN KEY -->
+public class javax.crypto.CipherInputStream extends java.io.FilterInputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+CipherInputStream 由一个 InputStream 和一个 Cipher 组成，这样 read() 方法才能返回从底层 InputStream 读入但已经由该 Cipher 另外处理过的数据。在由 CipherInputStream 使用之前，该 Cipher 必须充分初始化。
+
+<p> 例如，假设 Cipher 初始化为解密，在返回解密的数据之前，CipherInputStream 将尝试读入数据并将其解密。
+
+<p> 此类严格遵守此语义，尤其是其祖先类 java.io.FilterInputStream 和 java.io.InputStream 的失败语义。此类具有在其祖先类中指定的所有方法，并且对所有的这些方法进行了重写。除此之外，此类还对其祖先类未抛出的所有异常进行捕获。特别地，<code>skip</code> 方法跳过，<code>available</code> 方法只计算已由封装的 Cipher 处理过的数据。
+
+<p> 对程序员非常重要的一点是，请不要使用未在此类中定义或重写的方法（例如，后来加入到其超类之一中的新方法或构造方法），因为那些方法的设计和实现可能未考虑到对 CipherInputStream 的安全影响。
+
+@author  Li Gong
+@version 1.27, 10/29/03
+@see     java.io.InputStream
+@see     java.io.FilterInputStream
+@see     javax.crypto.Cipher
+@see     javax.crypto.CipherOutputStream
+ 
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.crypto.CipherInputStream(InputStream is, Cipher c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 InputStream 和 Cipher 构造 CipherInputStream。<br>注：如果指定的输入流或密码为 null，则在后续使用输出流或密码时可能抛出 NullPointerException 异常。
+@param is 将被处理的输入流
+@param c 已初始化的 Cipher 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.crypto.CipherInputStream(InputStream is)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 InputStream 构造 CipherInputStream，不指定 Cipher。它与使用 NullCipher 构造 CipherInputStream 具有相同的效果。<br>注：如果指定的输入流为 null，则在后续使用输出流时可能抛出 NullPointerException 异常。
+@param is 将被处理的输入流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.crypto.CipherInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从该输入流读取下一数据字节。返回一个 <code>0</code> 到 <code>255</code> 范围内的 <code>int</code> 字节值。如果因为到达流末尾而没有可用的字节，则返回值 <code>-1</code>。在输入数据可用、检测到流末尾或抛出异常之前，此方法将一直阻塞。 
+ <p>
+
+@return     下一个数据字节；如果已到达流末尾，则返回 <code>-1</code>。
+@exception  IOException 如果发生 I/O 错误。
+@since JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.crypto.CipherInputStream.read(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从该输入流将 <code>b.length</code> 个数据字节读入到字节数组中。 
+ <p>
+<code>InputStream</code> 的 <code>read</code> 方法将 <code>b</code>、<code>0</code> 和 <code>b.length</code> 作为三个参数来调用 <code>read</code> 方法。 
+
+@param      b     存储读入数据的缓冲区。
+@return     读入缓冲区的总字节数，如果由于流末尾已到达而不再有数据，则返回 <code>-1</code>。
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.InputStream#read(byte[], int, int)
+@since      JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.crypto.CipherInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从该输入流将 <code>len</code> 个字节数据读入到字节数组中。在某些输入可用之前，此方法将阻塞。如果第一个参数为 <code>null</code>，则读取和丢弃的字节数最多为 <code>len</code> 个。 
+
+@param      b     存储读入数据的缓冲区。
+@param      off   目标数组 <code>buf</code> 中的起始偏移量
+@param      len   读取的最大字节数。
+@return     读入缓冲区的总字节数，如果由于已到达流末尾而不再有数据，则返回 <code>-1</code>。
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.InputStream#read()
+@since      JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.crypto.CipherInputStream.skip(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+跳过不发生阻塞地从该输入流读取的字节中的 <code>n</code> 个字节的输入。
+
+<p>可能跳过比请求更少的字节数。实际跳过的字节数等于 <code>n</code> 或等于调用 {@link #available() <code>available</code>} 的结果，总之都较小。如果 <code>n</code> 为小于零，则不跳过任何字节。
+
+<p>返回实际跳过的字节数。 
+
+@param      n   要跳过的字节数。
+@return     实际跳过的字节数。
+@exception  IOException 如果发生 I/O 错误。
+@since JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.crypto.CipherInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回不发生阻塞地从此输入流读取的字节数。<code>InputStream</code> 的 <code>markSupported</code> 方法返回 <code>false</code>。此方法<B>应该</B>由子类重写。 
+
+@return     不发生阻塞地从此输入流读取的字节数。
+@exception  IOException 如果发生 I/O 错误。
+@since	   JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+关闭该输入流并释放任何与该流关联的系统资源。 
+ <p>
+<code>CipherInputStream</code> 的 <code>close</code> 方法调用底层输入流的 <code>close</code> 方法。
+
+@exception  IOException 如果发生 I/O 错误。
+@since JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.crypto.CipherInputStream.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+测试该输入流是否支持 <code>mark</code> 和 <code>reset</code> 方法以及哪一个方法确实不受支持。
+
+@return  因为此类不支持 <code>mark</code> 和 <code>reset</code> 方法，所以返回 <code>false</code>。
+@see     java.io.InputStream#mark(int)
+@see     java.io.InputStream#reset()
+@since   JCE1.2
+
+<!-- END DATA -->

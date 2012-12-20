@@ -1,0 +1,217 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.table.AbstractTableModel extends java.lang.Object implements javax.swing.table.TableModel, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此抽象类为 <code>TableModel</code> 接口中的大多数方法提供默认实现。它负责管理侦听器，并为生成 <code>TableModelEvents</code> 以及将其调度到侦听器提供方便。要创建一个具体的 <code>TableModel</code> 作为 <code>AbstractTableModel</code> 的子类，只需提供对以下三个方法的实现：
+
+  <pre>
+  public int getRowCount();
+  public int getColumnCount();
+  public Object getValueAt(int row, int column);
+  </pre>
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.41 05/05/04
+@author Alan Chung
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.EventListenerList javax.swing.table.AbstractTableModel.listenerList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+侦听器的列表
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.table.AbstractTableModel.getColumnName(int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列默认名称，其中列使用以下工作表约定：A、B、C……Z、AA、AB 等等。如果无法找到 <code>column</code>，则返回一个空字符串。 
+
+@param column 被查询的列
+@return 包含 <code>column</code> 默认名称的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.table.AbstractTableModel.findColumn(String columnName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有给定名称的列。由于实现是未用过的，因此，如果经常调用此方法，则应该重写此方法。此方法不在 <code>TableModel</code> 接口中，也不被 <code>JTable</code> 使用。
+
+@param columnName 包含要查找的列名称的字符串
+@return 名称为 <code>columnName</code> 的列，如果未找到该列，则返回 -1 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> javax.swing.table.AbstractTableModel.getColumnClass(int columnIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Object.class</code> 而不管 <code>columnIndex</code> 是多少。
+
+@param columnIndex 被查询的列
+@return Object.class
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.table.AbstractTableModel.isCellEditable(int rowIndex, int columnIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 false。这是所有单元格的默认实现。
+
+@param  rowIndex 被查询的行
+@param  columnIndex 被查询的列
+@return false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.setValueAt(Object aValue, int rowIndex, int columnIndex)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由于提供了此空实现，因此，如果用户的数据模型是不可编辑的，则他们不必实现此方法。
+
+@param  aValue 要分配给单元格的值
+@param  rowIndex 单元格所在行
+@param  columnIndex 单元格所在列
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.addTableModelListener(TableModelListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每次数据模型发生更改时，就向被通知的列表添加一个侦听器。
+
+@param	l		 TableModelListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.removeTableModelListener(TableModelListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每次数据模型发生更改时，就从被通知的列表移除一个侦听器。
+
+@param	l		 TableModelListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.TableModelListener[] javax.swing.table.AbstractTableModel.getTableModelListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含在此模型上注册的所有表模型侦听器的数组。
+
+@return 此模型的所有 <code>TableModelListener</code>，如果当前没有已注册的表模型侦听器，则返回一个空数组
+
+@see #addTableModelListener
+@see #removeTableModelListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableDataChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，表的所有行单元格值可能已更改。行数也可能已更改，并且 <code>JTable</code> 应该从头开始重新绘制该表。假定表的结构（如同列的顺序）是相同的。
+
+@see TableModelEvent
+@see EventListenerList
+@see javax.swing.JTable#tableChanged(TableModelEvent)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableStructureChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，表的结构已更改。表中的列数，新列的名称和类型可能与以前的状态不同。如果 <code>JTable</code> 接收此事件，并且设置了其 <code>autoCreateColumnsFromModel</code> 标志，则它丢弃之前具有的所有表列，并按列在模型中出现的顺序重新分配默认列。这与对 <code>JTable</code> 调用 <code>setModel(TableModel)</code> 具有相同的效果。
+
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableRowsInserted(int firstRow, int lastRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，已插入范围在 <code>[firstRow, lastRow]</code>（包括）的行。 
+
+@param  firstRow  第一行 
+@param  lastRow  最后一行
+
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableRowsUpdated(int firstRow, int lastRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，已更新范围在 <code>[firstRow, lastRow]</code>（包括）的行。
+
+@param  firstRow  第一行 
+@param  lastRow  最后一行
+
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableRowsDeleted(int firstRow, int lastRow)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，已删除范围在 <code>[firstRow, lastRow]</code>（包括）的行。 
+
+@param  firstRow  第一行 
+@param  lastRow  最后一行
+
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableCellUpdated(int row, int column)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有侦听器，已更新 <code>[row, column]</code> 处的单元格值。
+
+@param row  已更新的单元格所在行
+@param column  已更新的单元格所在列
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.table.AbstractTableModel.fireTableChanged(TableModelEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的通知事件转发到所有将自身注册为此表模型的侦听器的 <code>TableModelListeners</code>。 
+
+@param e  要转发的事件
+
+@see #addTableModelListener
+@see TableModelEvent
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] javax.swing.table.AbstractTableModel.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含当前注册为此 <code>AbstractTableModel</code> 上的 <code><em>Foo</em>Listener</code> 的所有对象的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+
+可以使用 class 字面值（如 <code><em>Foo</em>Listener.class</code>）来指定 <code>listenerType</code> 参数。例如，可以通过以下代码查询模型 <code>m</code>，以获得其表模型侦听器：
+
+ <pre>TableModelListener[] tmls = (TableModelListener[])(m.getListeners(TableModelListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 所请求侦听器的类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 在此组件上注册为 <code><em>Foo</em>Listener</code> 的所有对象组成的数组，如果没有添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 没有指定实现 <code>java.util.EventListener</code> 的类或接口
+ 
+@see #getTableModelListeners
+
+@since 1.3
+
+<!-- END DATA -->

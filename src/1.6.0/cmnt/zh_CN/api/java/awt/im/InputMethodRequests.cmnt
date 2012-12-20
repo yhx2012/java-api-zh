@@ -1,0 +1,119 @@
+<!-- BEGIN KEY -->
+public interface java.awt.im.InputMethodRequests
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+InputMethodRequests 定义文本编辑组件为了与输入方法一起使用而必须处理的请求。该组件可以实现此接口本身，也可以使用实现此接口的单独对象。实现此接口的对象必须根据组件的 getInputMethodRequests 方法返回。
+
+ <p>
+文本编辑组件还必须提供输入方法事件侦听器。
+
+ <p>
+设计此接口的目的是支持两个输入用户界面中的其中一个界面：
+ <ul>
+<li><em>当场</em> 输入，撰写文本作为文本组件的文本正文的一部分显示在此界面中。
+<li><em>场下</em> 输入，在此界面上，撰写文本显示在单独的撰写窗口中，该窗口就在文本提交时要插入的插入点下。注意，如果在组件的文本正文中选定了文本，此文本将由提交时的提交文本替换；因此，不将其视为文本输入其中的上下文的组成部分。
+ </ul>
+
+@see java.awt.Component#getInputMethodRequests
+@see java.awt.event.InputMethodListener
+
+@version 	1.18, 12/19/03
+@author JavaSoft Asia/Pacific
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.im.InputMethodRequests.getTextLocation(TextHitInfo offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前撰写文本中指定偏移量的位置，或已提交文本中的选择位置。例如，此信息用来确定在撰写文本附近的候选窗口的位置，或确定将插入提交文本的位置附近的撰写窗口的位置。
+
+ <p>
+如果组件有撰写文本（因为给它发送的最新 InputMethodEvent 包含撰写文本），则该偏移量是相对于撰写文本的&mdash;&mdash;偏移量 0 指示撰写文本中的第一个字符。返回的位置应该是针对此字符的。
+
+ <p>
+如果组件没有撰写文本，则应该忽略偏移量，返回的位置应该反映出包含已选定文本的最后一行中高亮显示的开始处（行方向）。例如，对于水平方向从左到右排列的文本（如英文），则返回包含已选定文本的最后一行上最左边的字符左边的位置。对于垂直方向从上到下排列的文本，行从右向左排列，则返回包含已选定文本的最左边一行的上端位置。
+
+ <p>
+该位置表示为 0 厚度补字号，也就是说，如果文本是水平排列的，则为 0 宽度，如果文本是垂直排列的，则为 0 高度。其他文本方向需要映射到水平或垂直方向。矩形使用绝对值屏幕坐标。
+
+@param offset 撰写文本中的偏移量（如果有撰写文本）；否则为 null
+@return 表示屏幕偏移量的位置的矩形
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.font.TextHitInfo java.awt.im.InputMethodRequests.getLocationOffset(int x, int y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取撰写文本相对于屏幕上指定 x 和 y 绝对坐标的偏移量。例如，此信息可用来处理鼠标单击和鼠标光标。偏移量是相对于撰写文本的，因此，偏移量 0 指示撰写文本的开始处。
+
+ <p>
+如果位置在撰写文本占用的区域外，则返回 null。
+
+@param x 屏幕上 x 的绝对坐标
+@param y 屏幕上 y 的绝对坐标
+@return 描述撰写文本中偏移量的文本单击信息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.im.InputMethodRequests.getInsertPositionOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本编辑组件中包含的提交文本中的插入位置偏移量。这是通过某个输入方法输入的字符插入位置的偏移量。例如，输入方法使用此信息来检查插入位置周围的文本。
+ 
+@return 插入位置的偏移量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.awt.im.InputMethodRequests.getCommittedText(int beginIndex, int endIndex, java.text.AttributedCharacterIterator.Attribute[] attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取提供对文本编辑组件中包含的除未提交文本外整个文本和属性访问的迭代器。应该在索引计算时忽略未提交（撰写）文本，并且也不应让其通过迭代器访问。
+
+ <p>
+输入方法可以提供一个它感兴趣的属性的列表。在这种情况下，有关实现程序可能具有的其他属性的信息不需要通过迭代器进行访问。如果列表为 null，则应该让所有可用的属性信息都可访问。
+
+@param beginIndex 第一个字符的索引
+@param endIndex 最后一个字符后面的字符的索引
+@param attributes 输入方法感兴趣的属性列表
+@return 提供对文本及其属性访问的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.im.InputMethodRequests.getCommittedTextLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文本编辑组件中包含的除未提交（撰写）文本外整个文本的长度。
+
+@return 除未提交文本外的文本的长度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.awt.im.InputMethodRequests.cancelLatestCommittedText(java.text.AttributedCharacterIterator.Attribute[] attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从文本编辑组件中获取最新的提交文本，并将其从该组件的文本正文中移除。此操作用于某些输入方法中的&ldquo;撤消提交&rdquo;功能，其中的已提交文本将转换成它以前的撰写状态。可以将该撰写文本发送到使用 InputMethodEvent 的组件。
+
+ <p>
+通常，只有在文本提交后才应立即支持此功能，而不是在用户对文本执行了其他操作后才支持。该功能不受支持时，返回 null。
+
+ <p>
+输入方法可以提供一个它感兴趣的属性的列表。在这种情况下，有关实现程序可能具有的其他属性的信息不需要通过迭代器进行访问。如果列表为 null，则应该让所有可用的属性信息都可访问。
+
+@param attributes 输入方法感兴趣的属性的列表
+@return 最新的提交文本，或在不支持&ldquo;撤消提交&rdquo;功能时返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.awt.im.InputMethodRequests.getSelectedText(java.text.AttributedCharacterIterator.Attribute[] attributes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从文本编辑组件中获取当前已选定文本。此操作可以用于各种目的。其中一个就是某些输入方法中的&ldquo;恢复&rdquo;功能。在这种情况下，输入方法通常会发送输入方法事件以用撰写文本替换已选定文本。根据输入方法的功能，这可以是已选定文本的原始撰写文本、在文本中任何位置输入的最新撰写文本、文本中任何地方输入的最新撰写文本或从已选定文本中转换回文本的版本。
+
+ <p>
+输入方法可以提供一个它感兴趣的属性的列表。在这种情况下，有关实现程序可能具有的其他属性的信息不需要通过迭代器进行访问。如果列表为 null，则应该让所有可用的属性信息都可访问。
+
+@param attributes 输入方法感兴趣的属性的列表
+@return 当前已选定的文本
+
+<!-- END DATA -->

@@ -1,0 +1,220 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.ws.Endpoint extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Web 服务端点。
+
+<p>使用在此类中定义的静态方法创建端点。一个端点总是绑定到一个 <code>Binding</code> 和一个实现者，这两项都是在创建端点时设置的。
+
+<p>端点要么处于已发布状态，要么处于未发布状态。可以使用 <code>publish</code> 方法开始发布端点，此时端点开始接受传入请求。相反，可以使用 <code>stop</code> 方法停止接受传入请求并取消端点。一旦停止，就不能再次发布该端点。
+
+<p>可以在端点上设置 <code>Executor</code> 以便更好地控制用来指派传入请求的线程。例如，通过创建 <code>ThreadPoolExecutor</code> 并向端点注册可以启用带有特定参数的线程池。
+
+<p>处理程序链可以使用所含的 <code>Binding</code> 来设置。
+
+<p>端点可以使一个元数据文档（如 WSDL 和 XMLSchema 文档）列表与之绑定。发布时，JAX-WS 实现将根据实现者上存在的注释，尽可能多地重用这些元数据，而不是生成新的元数据。
+
+@since JAX-WS 2.0
+
+@see javax.xml.ws.Binding
+@see javax.xml.ws.BindingType
+@see javax.xml.ws.soap.SOAPBinding
+@see java.util.concurrent.Executor
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.ws.Endpoint.WSDL_SERVICE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标准属性：WSDL 服务的名称。
+<p>类型：javax.xml.namespace.QName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.xml.ws.Endpoint.WSDL_PORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标准属性：WSDL 端口的名称。
+<p>类型：javax.xml.namespace.QName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.ws.Endpoint javax.xml.ws.Endpoint.create(Object implementor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定实现者对象的端点。如果存在通过 BindingType 注释指定的绑定，则必须使用该绑定，否则必须使用默认的 SOAP 1.1 / HTTP 绑定。
+ <p>
+可以通过调用 javax.xml.ws.Endpoint#publish(String) 和 javax.xml.ws.Endpoint#publish(Object) 方法之一来发布新创建的端点。
+
+
+@param implementor 端点实现者。
+
+@return 新创建的端点。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.ws.Endpoint javax.xml.ws.Endpoint.create(String bindingId, Object implementor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定绑定类型和实现者对象的端点。
+ <p>
+可以通过调用 javax.xml.ws.Endpoint#publish(String) 和 javax.xml.ws.Endpoint#publish(Object) 方法之一来发布新创建的端点。
+
+@param bindingId 一个 URI，指定要使用的绑定。如果 bindingID 为 <code>null</code> 并且没有通过 BindingType 注释指定任何绑定，则必须使用默认的 SOAP 1.1 / HTTP 绑定。 
+
+@param implementor 端点实现者。
+
+@return 新创建的端点。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.ws.Binding javax.xml.ws.Endpoint.getBinding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此端点的绑定。
+
+@return 此端点的绑定
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object javax.xml.ws.Endpoint.getImplementor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此端点的实现对象。
+
+@return 此端点的实现者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.publish(String address)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定地址处发布此端点。JAX-WS 实现将使用一些默认的配置创建和配置所需的服务器基础设施。若要更多地控制服务器配置，请使用 javax.xml.ws.Endpoint#publish(Object) 方法。
+
+@param address 一个 URI，指定要使用的地址。地址必须与创建端点时指定的绑定兼容。
+
+@throws java.lang.IllegalArgumentException 如果提供的地址 URI 不能与端点的绑定结合使用。
+
+@throws java.lang.IllegalStateException 如果已发布端点或者已停止端点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.xml.ws.Endpoint javax.xml.ws.Endpoint.publish(String address, Object implementor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定地址处针对指定的实现者对象创建并发布端点。
+ <p>
+JAX-WS 实现将使用一些默认的配置创建和配置所需的服务器基础设施。
+
+若要更多地控制服务器配置，请使用 javax.xml.ws.Endpoint#create(String,Object) 和 javax.xml.ws.Endpoint#publish(Object) 方法。
+
+@param address 一个 URI，指定要使用的地址和传输/协议。http:URI 一定会导致使用 SOAP 1.1/HTTP 绑定。实现可以支持其他 URI 方案。
+@param implementor 端点实现者。
+
+@return 新创建的端点。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.publish(Object serverContext)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在提供的服务器上下文中发布此端点。服务器上下文封装了用于特定传输的服务器基础设施和寻址信息。要成功调用该方法，作为参数传递给它的服务器上下文必须与端点的绑定兼容。
+
+@param serverContext 表示发布端点所用服务器上下文的对象。
+
+@throws java.lang.IllegalArgumentException 如果实现不支持提供的服务器上下文，或者被证明无法与端点的绑定结合使用。
+
+@throws java.lang.IllegalStateException 如果已发布端点或者已停止端点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止发布此端点。
+
+如果端点未处于已发布状态，则此方法无效。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.ws.Endpoint.isPublished()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果端点已处于发布状态，则返回 true。
+
+@return 如果端点已处于发布状态，则返回 <code>true</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.List<javax.xml.transform.Source> javax.xml.ws.Endpoint.getMetadata()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回服务的元数据文档列表。
+
+@return <code>List&lt;javax.xml.transform.Source&gt;</code> 服务的元数据文档列表
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.setMetadata(java.util.List<javax.xml.transform.Source> metadata)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此端点的元数据。
+
+@param metadata 包含端点元数据信息的 XML 文档源（例如，WSDL 或 XML 模式文档）列表
+
+@throws java.lang.IllegalStateException 如果已发布端点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.concurrent.Executor javax.xml.ws.Endpoint.getExecutor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Endpoint</code> 实例的执行程序。
+
+执行程序用于向实现者对象指派传入请求。
+
+@return 将用来指派请求的 <code>java.util.concurrent.Executor</code>。
+ 
+@see java.util.concurrent.Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.setExecutor(Executor executor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Endpoint</code> 实例的执行程序。
+
+执行程序用于向实现者对象指派传入请求。
+
+如果此 <code>Endpoint</code> 使用 <code>publish(Object)</code> 方法发布，并且指定的服务器上下文定义它自己的线程行为，则可以忽略执行程序。
+
+@param executor 将用来指派请求的 <code>java.util.concurrent.Executor</code>。
+
+@throws SecurityException 如果出于安全的原因（例如，缺少必要的权限），实例不支持设置执行程序。
+ 
+@see java.util.concurrent.Executor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Map<java.lang.String, java.lang.Object> javax.xml.ws.Endpoint.getProperties()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Endpoint</code> 实例的属性包。
+
+@return Map&lt;String,Object&gt;，与此实例关联的属性包。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.ws.Endpoint.setProperties(java.util.Map<java.lang.String, java.lang.Object> properties)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Endpoint</code> 实例的属性包。
+
+@param properties 与此实例关联的属性包。
+
+<!-- END DATA -->

@@ -1,0 +1,179 @@
+<!-- BEGIN KEY -->
+public abstract class javax.management.remote.rmi.RMIServerImpl extends java.lang.Object implements java.io.Closeable, javax.management.remote.rmi.RMIServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>表示连接器服务器的 RMI 对象。远程客户端可使用 {@link #newClient(Object)} 方法进行连接。此方法返回表示此连接的 RMI 对象。</p>
+
+<p>用户代码不经常直接引用此类。RMI 连接服务器通常使用 {@link RMIConnectorServer} 类创建。远程客户端通常使用 {@link javax.management.remote.JMXConnectorFactory} 或通过实例化 {@link RMIConnector} 创建连接。</p>
+
+<p>这是一个抽象类。由具体的子类定义客户端连接对象的细节，例如使用的是 JRMP 还是 IIOP。</p>
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIServerImpl(java.util.Map<java.lang.String, ?> env)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>构造一个新的 <code>RMIServerImpl</code>。</p>
+
+@param env 包含新的 <code>RMIServerImpl</code> 属性的环境。可以为 null，它等效于一个空映射。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.management.remote.rmi.RMIServerImpl.export() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>导出此 RMI 对象。</p>
+
+@exception IOException 如果无法导出此 RMI 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.rmi.Remote javax.management.remote.rmi.RMIServerImpl.toStub() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此服务器对象的可远程化的 stub。
+@return 可远程化的 stub。
+@exception IOException 如果无法获得 stub，例如 RMIServerImpl 尚未导出。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.remote.rmi.RMIServerImpl.setDefaultClassLoader(ClassLoader cl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置此连接器服务器的默认 <code>ClassLoader</code>。新客户端连接将使用此 classloader。现有客户端连接不受影响。</p>
+
+@param cl 此连接器服务器将使用的新 <code>ClassLoader</code>。
+
+@see #getDefaultClassLoader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.ClassLoader javax.management.remote.rmi.RMIServerImpl.getDefaultClassLoader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获得此连接器服务器使用的默认 <code>ClassLoader</code>。</p>
+
+@return 此连接器服务器使用的默认 <code>ClassLoader</code>。</p>
+
+@see #setDefaultClassLoader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.remote.rmi.RMIServerImpl.setMBeanServer(MBeanServer mbs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>设置此连接器服务器所连接的 <code>MBeanServer</code>。新的客户端连接将与此 <code>MBeanServer</code> 交互。现有客户端连接不受影响。</p>
+
+@param mbs 新的 <code>MBeanServer</code>。可以为 null，但将在尽可能长的时间内重用新的客户端连接。
+
+
+@see #getMBeanServer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.MBeanServer javax.management.remote.rmi.RMIServerImpl.getMBeanServer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>此连接器服务器所连接的 <code>MBeanServer</code>。这是传递给此对象上的 {@link #setMBeanServer} 的最后一个值，或者如果从未调用过该方法，则为 null。</p>
+
+@return 此连接器所连接的 <code>MBeanServer</code>。
+
+@see #setMBeanServer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.rmi.RMIConnection javax.management.remote.rmi.RMIServerImpl.newClient(Object credentials) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>创建一个新的客户端连接。此方法调用 {@link #makeClient makeClient} 并将返回的客户端连接对象添加到一个内部列表中。当此 <code>RMIServerImpl</code> 使用其 {@link #close()} 方法被关闭时，将调用列表中剩余的每个对象的 {@link RMIConnection#close() close()} 方法。</p>
+
+<p>即使事实上一个客户端连接对象位于内部列表中，也不影响对其进行垃圾回收。</p>
+
+@param credentials 此对象指定用户定义的凭据，其传入此服务器以便在创建 <code>RMIConnection</code> 之前验证调用者。可以为 null。
+
+@return 新创建的 <code>RMIConnection</code>。这通常是由 <code>makeClient</code> 创建的对象，尽管实现可能选择将该对象包装在另一个实现 <code>RMIConnection</code> 的对象中。
+
+@exception IOException 如果无法创建或导出新的客户端对象。
+
+@exception SecurityException 如果给定的凭据不允许服务器成功地验证用户。
+
+@exception IllegalStateException 如果 {@link #getMBeanServer()} 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract javax.management.remote.rmi.RMIConnection javax.management.remote.rmi.RMIServerImpl.makeClient(String connectionId, Subject subject) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>创建一个新的客户端连接。此方法由公共方法 {@link #newClient(Object)} 调用。</p>
+
+@param connectionId 新连接的 ID。由此连接器服务器打开的每个连接将具有不同的 ID。如果此参数为 null，则行为不明确。
+
+@param subject 经验证的 subject。可以为 null。
+
+@return 新创建的 <code>RMIConnection</code>。
+
+@exception IOException 如果无法创建或导出新的客户端对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.management.remote.rmi.RMIServerImpl.closeClient(RMIConnection client) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>关闭由 {@link #makeClient makeClient} 建立的客户端连接。
+
+@param client 由 <code>makeClient</code> 以前返回的一个连接，以前尚未在其上调用过 <code>closeClient</code> 方法。如果违反这些条件，包括 <code>client</code> 为 null 的情况，则行为不明确。
+
+@exception IOException 如果无法关闭客户端连接。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String javax.management.remote.rmi.RMIServerImpl.getProtocol()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回该对象的协议字符串。对于 RMI/JRMP，该字符串为 <code>rmi</code>；对于 RMI/IIOP，该字符串为 <code>iiop</code>。
+
+@return 此对象的协议字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.management.remote.rmi.RMIServerImpl.clientClosed(RMIConnection client) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>关闭由 {@link #makeClient makeClient} 创建的客户端连接时调用的方法。调用结果对象的 {@link RMIConnection#close() close} 方法时，定义 <code>makeClient</code> 的子类必须安排此要调用的方法。这方便从 <code>RMIServerImpl</code> 的连接列表中将其移除。<code>client</code> 不在该列表中并不表示错误。</p>
+
+<p>从连接列表中移除 <code>client</code> 后，此方法调用 {@link #closeClient closeClient(client)}。</p>
+
+@param client 已关闭的客户端连接。
+
+@exception IOException 如果 {@link #closeClient} 抛出此异常。
+
+@exception NullPointerException 如果 <code>client</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.remote.rmi.RMIServerImpl.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>关闭此连接服务器。此方法首先调用 {@link #closeServer()} 方法以便不接受任何新的客户端连接。然后对由 {@link #makeClient makeClient} 返回的其余每个 {@link RMIConnection} 对象调用其 {@link RMIConnection#close() close} 方法。</p>
+
+<p>多次调用此方法时，行为不明确。</p>
+
+<p>如果 {@link #closeServer()} 抛出 <code>IOException</code>，会关闭每个单独的连接，然后从此方法抛出 <code>IOException</code>。</p>
+
+<p>如果 {@link #closeServer()} 正常返回，但有一个或多个单独连接抛出 <code>IOException</code>，则在关闭所有的连接后，从此方法抛出其中的一个 <code>IOException</code>。如果有多个连接抛出 <code>IOException</code>，则无法确定哪一个异常是从此方法抛出的。</p>
+
+@exception IOException 如果 {@link #closeServer()} 或 {@link RMIConnection#close()} 之一调用抛出了 <code>IOException</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract void javax.management.remote.rmi.RMIServerImpl.closeServer() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>由 {@link #close()} 调用以关闭连接器服务器。从此方法返回后，连接器服务器不接受任何新的连接。</p>
+
+@exception IOException 如果关闭连接器服务器的尝试失败。
+
+<!-- END DATA -->

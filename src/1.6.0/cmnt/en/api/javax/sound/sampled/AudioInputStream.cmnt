@@ -1,0 +1,236 @@
+<!-- BEGIN KEY -->
+public class javax.sound.sampled.AudioInputStream extends java.io.InputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An audio input stream is an input stream with a specified audio format and
+ length.  The length is expressed in sample frames, not bytes.
+ Several methods are provided for reading a certain number of bytes from
+ the stream, or an unspecified number of bytes.
+ The audio input stream keeps track  of the last byte that was read.
+ You can skip over an arbitrary number of bytes to get to a later position
+ for reading. An audio input stream may support marks.  When you set a mark,
+ the current position is remembered so that you can return to it later.
+ <p>
+ The <code>AudioSystem</code> class includes many methods that manipulate
+ <code>AudioInputStream</code> objects.
+ For example, the methods let you:
+ <ul>
+ <li> obtain an
+ audio input stream from an external audio file, stream, or URL
+ <li> write an external file from an audio input stream
+ <li> convert an audio input stream to a different audio format
+ </ul>
+
+ @author David Rivas
+ @author Kara Kytle
+ @author Florian Bomers
+ @version 1.34, 05/11/17
+
+ @see AudioSystem
+ @see Clip#open(AudioInputStream) Clip.open(AudioInputStream)
+ @since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.sound.sampled.AudioFormat javax.sound.sampled.AudioInputStream.format
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The format of the audio data contained in the stream.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long javax.sound.sampled.AudioInputStream.frameLength
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This stream's length, in sample frames.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.sound.sampled.AudioInputStream.frameSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The size of each frame, in bytes.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long javax.sound.sampled.AudioInputStream.framePos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The current position in this stream, in sample frames (zero-based).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioInputStream(InputStream stream, AudioFormat format, long length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an audio input stream that has the requested format and length in sample frames,
+ using audio data from the specified input stream.
+ @param stream the stream on which this <code>AudioInputStream</code>
+ object is based
+ @param format the format of this stream's audio data
+ @param length the length in sample frames of the data in this stream
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioInputStream(TargetDataLine line)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constructs an audio input stream that reads its data from the target
+ data line indicated.  The format of the stream is the same as that of
+ the target data line, and the length is AudioSystem#NOT_SPECIFIED.
+ @param line the target data line from which this stream obtains its data.
+ @see AudioSystem#NOT_SPECIFIED
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.AudioFormat javax.sound.sampled.AudioInputStream.getFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Obtains the audio format of the sound data in this audio input stream.
+ @return an audio format object describing this stream's format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.sampled.AudioInputStream.getFrameLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Obtains the length of the stream, expressed in sample frames rather than bytes.
+ @return the length in sample frames
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reads the next byte of data from the audio input stream.  The audio input
+ stream's frame size must be one byte, or an <code>IOException</code>
+ will be thrown.
+
+ @return the next byte of data, or -1 if the end of the stream is reached
+ @throws IOException if an input or output error occurs
+ @see #read(byte[], int, int)
+ @see #read(byte[])
+ @see #available
+ <p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioInputStream.read(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reads some number of bytes from the audio input stream and stores them into
+ the buffer array <code>b</code>. The number of bytes actually read is
+ returned as an integer. This method blocks until input data is
+ available, the end of the stream is detected, or an exception is thrown.
+ <p>This method will always read an integral number of frames.
+ If the length of the array is not an integral number
+ of frames, a maximum of <code>b.length - (b.length % frameSize)
+ </code> bytes will be read.
+
+ @param b the buffer into which the data is read
+ @return the total number of bytes read into the buffer, or -1 if there
+ is no more data because the end of the stream has been reached
+ @throws IOException if an input or output error occurs
+ @see #read(byte[], int, int)
+ @see #read()
+ @see #available
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Reads up to a specified maximum number of bytes of data from the audio
+ stream, putting them into the given byte array.
+ <p>This method will always read an integral number of frames.
+ If <code>len</code> does not specify an integral number
+ of frames, a maximum of <code>len - (len % frameSize)
+ </code> bytes will be read.
+
+ @param b the buffer into which the data is read
+ @param off the offset, from the beginning of array <code>b</code>, at which
+ the data will be written
+ @param len the maximum number of bytes to read
+ @return the total number of bytes read into the buffer, or -1 if there
+ is no more data because the end of the stream has been reached
+ @throws IOException if an input or output error occurs
+ @see #read(byte[])
+ @see #read()
+ @see #skip
+ @see #available
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.sampled.AudioInputStream.skip(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Skips over and discards a specified number of bytes from this
+ audio input stream.
+ @param n the requested number of bytes to be skipped
+ @return the actual number of bytes skipped
+ @throws IOException if an input or output error occurs
+ @see #read
+ @see #available
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.AudioInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the maximum number of bytes that can be read (or skipped over) from this
+ audio input stream without blocking.  This limit applies only to the next invocation of
+ a <code>read</code> or <code>skip</code> method for this audio input stream; the limit
+ can vary each time these methods are invoked.
+ Depending on the underlying stream,an IOException may be thrown if this
+ stream is closed.
+ @return the number of bytes that can be read from this audio input stream without blocking
+ @throws IOException if an input or output error occurs
+ @see #read(byte[], int, int)
+ @see #read(byte[])
+ @see #read()
+ @see #skip
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.AudioInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Closes this audio input stream and releases any system resources associated
+ with the stream.
+ @throws IOException if an input or output error occurs
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.AudioInputStream.mark(int readlimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Marks the current position in this audio input stream.
+ @param readlimit the maximum number of bytes that can be read before
+ the mark position becomes invalid.
+ @see #reset
+ @see #markSupported
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.AudioInputStream.reset() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Repositions this audio input stream to the position it had at the time its
+ <code>mark</code> method was last invoked.
+ @throws IOException if an input or output error occurs.
+ @see #mark
+ @see #markSupported
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.AudioInputStream.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tests whether this audio input stream supports the <code>mark</code> and
+ <code>reset</code> methods.
+ @return <code>true</code> if this stream supports the <code>mark</code>
+ and <code>reset</code> methods; <code>false</code> otherwise
+ @see #mark
+ @see #reset
+
+<!-- END DATA -->

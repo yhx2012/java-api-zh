@@ -1,0 +1,416 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.Signature extends java.security.SignatureSpi
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 Signature 类用来为应用程序提供数字签名算法功能。数字签名用于确保数字数据的验证和完整性。
+
+<p> 在所有算法当中，数字签名可以是 NIST 标准的 DSA，它使用 DSA 和 SHA-1。可以将使用 SHA-1 消息摘要算法的 DSA 算法指定为 <tt>SHA1withDSA</tt>。如果使用 RSA，对消息摘要算法则会有多种选择，因此，可以将签名算法指定为 <tt>MD2withRSA</tt>、<tt>MD5withRSA</tt> 或 <tt>SHA1withRSA</tt>。因为没有默认的算法名称，所以必须为其指定名称。
+
+<p>Signature 对象可用来生成和验证数字签名。
+
+<p>使用 Signature 对象签名数据或验证签名包括以下三个阶段：<ol>
+
+<li>初始化，使用
+
+     <ul>
+
+<li>初始化验证签名的公钥（请参见 {@link #initVerify(PublicKey) initVerify}），或使用
+
+<li>初始化签署签名的私钥（也可以选择&ldquo;安全随机数生成器&rdquo;），（请参见 {@link #initSign(PrivateKey)} 和 {@link #initSign(PrivateKey, SecureRandom)}）。
+
+     </ul><p>
+
+<li>更新<p>
+
+<p>根据初始化类型，这可更新要签名或验证的字节。请参见 {@link #update(byte) update} 方法。<p>
+
+<li>签署或验证所有更新字节的签名。请参见 {@link #sign() sign} 方法和 {@link #verify(byte[]) verify} 方法。
+
+ </ol>
+
+<p>注意，由于历史原因，此类是从 <code>SignatureSpi</code> 中抽象出来的，并进行了扩展。应用程序开发人员只需注意在此 <code>Signature</code> 类中定义的方法即可；超类中的所有方法都是供那些希望提供自己的数字签名算法实现的加密服务提供者使用的。
+
+@author Benjamin Renaud 
+
+@version 1.103, 04/21/06
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.security.Signature.UNINITIALIZED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+可能的 {@link #state} 值，表示尚未初始化此签名对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.security.Signature.SIGN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+可能的 {@link #state} 值，表示此签名对象已经初始化签名。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.security.Signature.VERIFY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+可能的 {@link #state} 值，表示此签名对象已经初始化验证。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.security.Signature.state
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此签名对象的当前状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.Signature(String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建指定算法的 Signature 对象。
+
+@param algorithm 算法的标准字符串名称。有关标准算法名称的信息，请参阅 <a href=  "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">Java Cryptography Architecture API Specification &amp; Reference</a> 中的附录 A。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Signature java.security.Signature.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回实现指定签名算法的 Signature 对象。
+
+ <p> 此方法从首选的提供者开始遍历已注册安全提供者列表。返回封装 SignatureSpi 实现的新 Signature 对象，该实现取自第一个支持指定算法的 Provider。
+
+ <p> 注意，可以通 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 所请求算法的标准名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @return 新 Signature 对象。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 Signature 实现。
+
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Signature java.security.Signature.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回实现指定签名算法的 Signature 对象。
+
+ <p> 返回封装 SignatureSpi 实现的新 Signature 对象，该实现取自指定提供者。指定的提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 所请求算法的标准名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者的名称。
+
+ @return 新 Signature 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 SignatureSpi 实现不能从指定提供者获得。
+
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception IllegalArgumentException 如果提供者的名称为 null 或空。
+ 
+ @see Provider 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.Signature java.security.Signature.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回实现指定签名算法的 Signature 对象。
+
+ <p> 返回封装 SignatureSpi 实现的新 Signature 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。
+
+ @param algorithm 所请求算法的标准名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者。
+
+ @return 新 Signature 对象。
+
+ @exception NoSuchAlgorithmException 如果指定算法的 SignatureSpi 实现不能从指定提供者对象获得。
+
+ @exception IllegalArgumentException 如果 provider 为 null。
+ 
+ @see Provider
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.Signature.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此签名对象的提供者。
+ 
+@return 此签名对象的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.initVerify(PublicKey publicKey) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此用于验证的对象。如果使用其他参数再次调用此方法，此调用的结果将无效。
+
+@param publicKey 将验证其签名的标识的公钥。
+
+@exception InvalidKeyException 如果密钥无效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.initVerify(Certificate certificate) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用来自给定证书的公钥初始化此用于验证的对象。
+<p>如果证书是 X.509 类型且具有标记为重要的 <i>key usage</i> 扩展字段，并且 <i>key usage</i> 扩展字段的值暗示着证书中的公钥及其对应的私钥不允许用于数字签名，则抛出 <code>InvalidKeyException</code>。
+
+@param certificate 将验证其签名的标识的证书。
+
+@exception InvalidKeyException  如果证书中的公钥未被正确解码，或者未包括所请求的参数信息，或者不能用于数字签名。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.initSign(PrivateKey privateKey) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化这个用于签名的对象。如果使用其他参数再次调用此方法，此调用的结果将无效。
+
+@param privateKey 将生成其签名的标识的私钥。
+ 
+@exception InvalidKeyException 如果密钥无效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.initSign(PrivateKey privateKey, SecureRandom random) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化这个用于签名的对象。如果使用其他参数再次调用此方法，此调用的结果将无效。
+
+@param privateKey 将生成其签名的标识的私钥。
+ 
+@param random 此签名的随机源。
+ 
+@exception InvalidKeyException 如果密钥无效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] java.security.Signature.sign() throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有已更新数据的签名字节。签名的格式取决于基础签名方案。
+ 
+<p>对此方法的调用将把此签名对象重新设置到以前为进行签名而通过调用 <code>initSign(PrivateKey)</code> 对其初始化时的状态。也就是说，如果需要，通过重新调用 <code>update</code> 和 <code>sign</code>，可重新设置对象，并且可以通过它从同一个签署者中生成其他人的签名。
+
+@return 签名操作结果的签名字节。
+
+@exception SignatureException 如果此签名对象未得到正确初始化，或者此签名算法不能处理所提供的输入数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.security.Signature.sign(byte[] outbuf, int offset, int len) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+完成签名操作并从 <code>offset</code> 开始，将得到的签名字节存储在提供的缓冲区 <code>outbuf</code> 中。签名的格式取决于基础签名方案。
+ 
+<p>此签名对象将被重新设置到其初始状态（对其中的一种 <code>initSign</code> 方法调用之后所处的状态），并且可重新使用此签名对象，用同一个私钥生成将来的签名。
+
+@param outbuf 输出签名结果的缓冲区。
+
+@param offset 到存储签名的 <code>outbuf</code> 的偏移量。
+
+@param len  <code>outbuf</code> 中分配给签名的字节数。
+
+@return 放入 <code>outbuf</code> 中的字节数。
+
+@exception SignatureException 如果此签名对象未得到正确初始化，如果此签名算法无法处理所提供的输入数据，或者 <code>len</code> 少于实际签名长度。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.security.Signature.verify(byte[] signature) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+验证传入的签名。 
+ 
+<p>对此方法的调用将把此签名对象重新设置到以前为进行验证而通过调用 <code>initVerify(PublicKey)</code> 对其初始化时的状态。也就是说，该对象将被重新设置，并且可以用来验证调用 <code>initVerify</code> 时其公钥所指定的标识中的其他签名。
+      
+@param signature 要验证的签名字节。
+
+@return 如果签名得到验证，则返回 true，否则将返回 false。 
+
+@exception SignatureException 如果此签名对象未得到正确初始化，传入的签名未得到正确解码，或类型错误，如果此签名算法不能处理所提供的输入数据等。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.security.Signature.verify(byte[] signature, int offset, int length) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的偏移量开始，验证指定的 byte 数组中传入的签名。
+ 
+<p>对此方法的调用将把此签名对象重新设置到以前为进行验证而通过调用 <code>initVerify(PublicKey)</code> 对其初始化时的状态。也就是说，该对象将被重新设置，并且可以用来验证调用 <code>initVerify</code> 时其公钥所指定的标识中的其他签名。
+      
+@param signature 要验证的签名字节。
+@param offset  byte 数组中起始处的偏移量。
+@param length 要使用的字节数（从偏移量起始处算起）。
+
+@return 如果签名得到验证，则返回 true，否则将返回 false。 
+
+@exception SignatureException 如果此签名对象未得到正确初始化，传入的签名未得到正确解码，或者类型错误，如果此签名算法无法处理所提供的输入数据等。
+@exception IllegalArgumentException 如果 <code>signature</code> byte 数组为 null，或者 <code>offset</code> 或 <code>length</code> 小于 0，或者 <code>offset</code> 与 <code>length</code> 的和大于 <code>signature</code> byte 数组的长度。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.update(byte b) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新要由字节签名或验证的数据。
+
+@param b 用于更新的字节。
+ 
+@exception SignatureException 如果此签名对象未得到正确初始化。     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.update(byte[] data) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 byte 数组更新要签名或验证的数据。
+
+@param data 用于更新的 byte 数组。       
+ 
+@exception SignatureException 如果此签名对象未得到正确初始化。      
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.update(byte[] data, int off, int len) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的偏移量开始，使用指定的 byte 数组更新要签名或验证的数据。  
+
+@param data  byte 数组。
+@param off 到 byte 数组开始处的偏移量。
+@param len 要使用的字节数，从偏移量起始处算起。
+  
+@exception SignatureException 如果此签名对象未得到正确初始化。          
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.update(ByteBuffer data) throws java.security.SignatureException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 ByteBuffer 更新要签名或验证的数据。处理从 <code>data.position()</code> 处开始的 <code>data.remaining()</code> 字节。返回时，缓冲区的位置将等于其限制；其限制并未改变。
+
+@param data  ByteBuffer
+
+@exception SignatureException 如果此签名对象未得到正确初始化。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.Signature.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此签名对象的算法名称。
+ 
+@return 此签名对象的算法名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Signature.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此签名对象的字符串表示形式，以提供包括对象状态和所用算法名称在内的信息。       
+ 
+@return  此签名对象的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.setParameter(String param, Object value) throws java.security.InvalidParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的算法参数设置为指定的值。此方法提供了一种通用机制，通过它可以设置此对象的各种参数。参数可以是算法的任何可设置参数，如参数大小、签名生成的随机源位（如果适当），或者表示是否执行具体但可选的计算。每个参数都需要统一的、特定于算法的命名方案，但此时尚未指定这种方案。
+
+@param param 参数的字符串标示符。
+@param value 参数值。
+
+@exception InvalidParameterException 如果 <code>param</code> 是此算法引擎的无效参数，或者已经设置参数并且不能重新设置，或者出现了安全异常等等。
+
+@see #getParameter
+
+@deprecated 使用 {@link #setParameter(java.security.spec.AlgorithmParameterSpec) setParameter} 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.security.Signature.setParameter(AlgorithmParameterSpec params) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的参数集初始化此签名引擎。
+
+@param params 参数
+
+@exception InvalidAlgorithmParameterException 如果给定的参数不适合此签名引擎
+
+@see #getParameters
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.AlgorithmParameters java.security.Signature.getParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此签名对象一起使用的参数。
+
+<p>返回的参数可能与用来初始化此签名的参数相同；如果此签名需要算法参数但却未使用任何参数进行初始化，则返回的参数可能会包含由底层签名实现所使用的默认值和随机生成的参数值的组合。
+
+@return 用于此签名的参数，如果此签名不使用任何参数，则返回 null。
+
+@see #setParameter(AlgorithmParameterSpec)
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Object java.security.Signature.getParameter(String param) throws java.security.InvalidParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取指定的算法参数的值。此方法提供了一种通用机制，通过它能够获取此对象的各种参数。参数可以是算法的任何可设置参数，如参数大小、签名生成的随机源位（如果适当），或者表示是否执行具体但可选的计算。每个参数都需要统一的、特定于算法的命名方案，但此时尚未指定这种方案。
+
+@param param 参数的字符串名称。
+
+@return 表示参数值的对象，如果没有，则返回 null。
+
+@exception InvalidParameterException 如果 <code>param</code> 是此引擎的无效参数，或者尝试获取此参数时出现其他异常。
+
+@see #setParameter(String, Object)
+
+@deprecated
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.security.Signature.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此实现可以复制，则返回副本。
+ 
+@return  如果此实现可以复制，则返回一个副本。
+
+@exception CloneNotSupportedException 如果调用一个不支持 <code>Cloneable</code> 的实现。
+
+<!-- END DATA -->

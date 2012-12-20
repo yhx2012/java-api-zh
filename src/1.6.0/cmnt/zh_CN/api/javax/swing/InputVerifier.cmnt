@@ -1,0 +1,78 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.InputVerifier extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类的用途是通过带文本字段的 GUI 帮助客户端支持流畅的焦点导航。在允许用户导航到文本字段以外之前，这类 GUI 常常需要确保用户输入的文本是有效的（例如，文本具有正确的格式）。为做到这一点，客户端要使用 <code>JComponent</code> 的 <code>setInputVerifier</code> 方法创建 <code>InputVerifier</code> 的子类，并将其子类的实例附加到想要验证其输入的 <code>JComponent</code> 中。在将焦点转移到另一个请求它的 Swing 组件之前，要调用输入验证器的 <code>shouldYieldFocus</code> 方法。只在该方法返回 <code>true</code> 时才转移焦点。
+ <p>
+以下示例有两个文本字段，其中第一个字段期望用户输入字符串 &quot;pass&quot;。如果在第一个文本字段中输入该字符串，那么用户可以通过在第二个文本字段上单击或按下 TAB 前进到第二个文本字段。不过，如果将其他字符串输入到第一个文本字段中，则用户无法将焦点转移到第二个文本字段。
+ <p>
+ <pre>
+ import java.awt.*;
+ import java.util.*;
+ import java.awt.event.*;
+ import javax.swing.*;
+ 
+ // This program demonstrates the use of the Swing InputVerifier class.
+ // It creates two text fields; the first of the text fields expects the
+ // string &quot;pass&quot; as input, and will allow focus to advance out of it
+ // only after that string is typed in by the user.
+
+ public class VerifierTest extends JFrame {
+     public VerifierTest() {
+         JTextField tf1 = new JTextField (&quot;Type \&quot;pass\&quot; here&quot;);
+ 	   getContentPane().add (tf1, BorderLayout.NORTH);
+ 	   tf1.setInputVerifier(new PassVerifier());
+ 
+ 	   JTextField tf2 = new JTextField (&quot;TextField2&quot;);
+ 	   getContentPane().add (tf2, BorderLayout.SOUTH);
+ 
+ 	   WindowListener l = new WindowAdapter() {
+ 	       public void windowClosing(WindowEvent e) { 
+ 	           System.exit(0); 
+ 	       }
+ 	   };
+ 	   addWindowListener(l);
+     }
+ 
+     class PassVerifier extends InputVerifier {
+         public boolean verify(JComponent input) {
+ 	       JTextField tf = (JTextField) input;
+ 	       return &quot;pass&quot;.equals(tf.getText());
+         }
+     }
+ 
+     public static void main(String[] args) {
+         Frame f = new VerifierTest();
+ 	   f.pack();
+ 	   f.setVisible(true);
+     }
+ }
+ </pre>
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.swing.InputVerifier.verify(JComponent input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查 JComponent 的输入是否有效。此方法不应有副作用。该方法返回一个指示参数的输入状态的 boolean 值。
+
+@param input 要验证的 JComponent
+@return 在有效时返回 <code>true</code>，在无效时返回 <code>false</code>
+@see JComponent#setInputVerifier
+@see JComponent#getInputVerifier
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.InputVerifier.shouldYieldFocus(JComponent input)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>verify(input)</code> 来确保输入是有效的。此方法可以有副作用。需要特别指出的是，在用户试图将焦点移出参数组件进入此窗口中的另一个 Swing 组件时调用此方法。如果此方法返回 <code>true</code>，那么正常转移焦点；如果该方法返回 <code>false</code>，则焦点仍然留在参数组件中。
+
+@param input 要验证的 JComponent
+@return 在有效时返回 <code>true</code>，在无效时返回 <code>false</code>
+@see JComponent#setInputVerifier
+@see JComponent#getInputVerifier
+
+<!-- END DATA -->

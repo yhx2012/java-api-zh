@@ -1,0 +1,91 @@
+<!-- BEGIN KEY -->
+public class org.ietf.jgss.ChannelBinding extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类封装关于调用者提供的通道绑定信息的概念。通道绑定用来在上下文创建期间加强对同位体实体进行验证的质量。它们使 GSS-API 调用者能够将安全上下文的创建与相关的特征（如地址）或特定于应用程序的数据进行绑定。<p>
+
+初始化安全上下文的调用者必须确定将在 GSSContext 对象中设置的合适的通道绑定值。接受端必须提供一致的绑定，以便确认接收到的标记具有正确的与通道相关的特征。<p>
+
+在 GSS-API 中是否使用通道绑定是可选的。在初次调用 {@link GSSContext#initSecContext(byte[], int, int) initSecContext} 或执行 {@link GSSContext#acceptSecContext(byte[], int, int) acceptSecContext} 之前，可以使用 {@link GSSContext#setChannelBinding(ChannelBinding) setChannelBinding} 方法、针对 {@link GSSContext GSSContext} 来设置 ChannelBinding。除非已将 <code>setChannelBinding</code> 方法用于设置 GSSContext 对象的 ChannelBinding，否则将假定为 <code>null</code> ChannelBinding。 <p>
+
+从概念上讲，GSS-API 将初始端和接受端的地址信息与应用程序提供的字节数组连接在一起，构成一个八位字节字符串。验证机制将通过此八位字节字符串计算 MIC，并且将 MIC 绑定到由 <code>GSSContext</code> 接口的 <code>initSecContext</code> 方法发出的上下文创建标记中。同样的绑定将由上下文接受端为其 <code>GSSContext</code> 对象设置，并且在处理 <code>acceptSecContext</code> 方法期间，将用同样的方法来计算 MIC。将把计算出的 MIC 与标记中的值进行比较，如果这两个 MIC 不同，接受端将抛出 <code>GSSException</code>，主代码被设置为 {@link GSSException#BAD_BINDINGS BAD_BINDINGS}，并且将不建立上下文。有些验证机制可能在标记（而不仅仅在 MIC ）中包括实际的通道绑定数据；因此，应用程序不应将机密数据用作通道绑定组件。<p>
+
+有些验证机制可能会在那些将出现在通道绑定中的地址上施加一些附加限制。例如，有的验证机制会验证通道绑定的初始端地址字段是否包含主机系统的正确网络地址。因此，那些可移植的应用程序必须确保，它们要么能够提供地址字段的正确信息，要么忽略对说明性信息的设置。
+
+@author  Josh Bloch
+@version 1.9, 11/17/05
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.ietf.jgss.ChannelBinding(InetAddress initAddr, InetAddress acceptAddr, byte[] appData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用用户提供的地址信息和数据创建 ChannelBinding 对象。<code>null</code> 值可用于任何应用程序不想指定的字段。
+ 
+@param initAddr 上下文初始端的地址。可通过提供 <code>null</code> 值来表示应用程序不想设置此值。
+@param acceptAddr 上下文接受端的地址。可通过提供 <code>null</code> 值来表示应用程序不想设置此值。
+@param appData 应用程序提供的数据，用作通道绑定的一部分。可通过提供 <code>null</code> 值来表示应用程序不想设置此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.ietf.jgss.ChannelBinding(byte[] appData)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建不带任何说明性信息的 ChannelBinding 对象。
+
+@param appData 应用程序提供的数据，用作通道绑定的一部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetAddress org.ietf.jgss.ChannelBinding.getInitiatorAddress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获得此通道绑定的初始端地址。
+ 
+@return 初始端的地址。如果地址尚未设置，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetAddress org.ietf.jgss.ChannelBinding.getAcceptorAddress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获得此通道绑定的接受端的地址。
+ 
+@return 接受端的地址。如果地址尚未设置，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] org.ietf.jgss.ChannelBinding.getApplicationData()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获得此通道绑定的应用程序指定的数据。
+
+@return 用作 ChannelBinding 一部分的应用程序数据。如果尚未为该通道绑定指定应用程序数据，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.ietf.jgss.ChannelBinding.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+比较 ChannelBinding 的两个实例。
+ 
+@param obj 将与此 ChannelBinding 进行比较的另外一个 ChannelBinding
+@return 如果这两个 ChannelBinding 包括相同的初始端和接受端地址值及应用程序数据，则返回  true。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.ietf.jgss.ChannelBinding.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 ChannelBinding 对象的哈希码值。
+
+@return 哈希码值
+
+<!-- END DATA -->

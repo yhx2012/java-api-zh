@@ -1,0 +1,358 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.midi.MidiChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示一个单独 MIDI 通道的 <code>MidiChannel</code> 对象。通常，每个 <code>MidiChannel</code> 方法处理由 MIDI 规范定义的名称类似 MIDI &ldquo;通道声音&rdquo;或&ldquo;通道模式&rdquo;的消息。除此之外，<code>MidiChannel</code> 还添加了某些 &quot;get&quot; 方法，可检索由某个标准 MIDI 通道消息最近设置的值。类似地，也添加了用于检索每个通道的单声和静音值的方法。
+ <p>
+<code>{@link Synthesizer}</code> 对象有一个 <code>MidiChannel</code> 集合，通常一个 <code>MidiChannels</code> 对应于 MIDI 1.0 规范规定的 16 个通道中的一个。<code>Synthesizer</code> 在其 <code>MidiChannel</code> 接收到 <code>noteOn</code> 消息时生成声音。
+ <p>
+有关已规定的 MIDI 通道消息行为的更多信息，请参见 MIDI 1.0 规范，在此不加赘述。此规范名称为 <code>MIDI Reference:The Complete MIDI 1.0 Detailed Specification</code>，它由 MIDI 制造商协会 (<a href = http://www.midi.org>http://www.midi.org</a>) 发布。
+ <p>
+MIDI 最初是一个用于报告键盘乐师动作的协议。在 <code>MidiChannel</code> API 中可以看出该起源的痕迹, 它保留了类似键号、键速度和键力度等 MIDI 概念。我们应该理解，MIDI 数据并不一定都起源于键盘演奏者（该源可以是另一类乐师或软件）。有些设备可以生成速度和力度的常数值，而不管如何演奏音符。同时，MIDI 规范通常让合成器根据实现程序的需要来决定数据的使用方式。例如，不一定需要始终将速度数据映射到音量和/或声音的亮度。
+
+@see Synthesizer#getChannels
+
+@version 1.44, 11/17/05
+@author David Rivas
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.noteOn(int noteNumber, int velocity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动指定的音符发出声音。键被按下的速度通常控制着音符的音量和/或亮度。如果 <code>velocity</code> 为零，则此方法类似于执行 {@link #noteOff(int)}，终止此音符。
+
+@param noteNumber MIDI 音符号，从 0 到 127（60 = 中央 C）
+@param velocity 键被按下的速度
+
+@see #noteOff(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.noteOff(int noteNumber, int velocity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭指定的音符。键的弹起速度，如果不忽略此值，则它可用于影响音符衰减的速度。任何情况下，音符都不太可能立即消失；它的衰减率取决于 <code>Instrument</code> 的内部情况。如果按下 Hold Pedal（一种控件；请参见 {@link #controlChange(int, int) controlChange}），则此方法的效果要推迟到踏板释放时才能体现。
+
+@param noteNumber MIDI 音符号，从 0 到 127（60 = 中央 C）
+@param velocity 键释放的速度
+
+@see #noteOff(int)
+@see #noteOn
+@see #allNotesOff
+@see #allSoundOff
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.noteOff(int noteNumber)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭指定的音符。
+
+@param noteNumber MIDI 音符号，从 0 到 127（60 = 中央 C）
+
+@see #noteOff(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setPolyPressure(int noteNumber, int pressure)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对指定音符键力度的更改作出反应。复调键力度允许键盘演奏者同时按下多个键，每个键可以有不同的力度值。此力度在不忽略的情况下，通常用于改变音符的不同特性，如音量、亮度或颤音。
+
+基础合成器可能不支持此 MIDI 消息。为了验证 <code>setPolyPressure</code> 设置是否成功，可使用 <code>getPolyPressure</code>。
+
+@param noteNumber MIDI 音符号，从 0 到 127（60 = 中央 C）
+@param pressure 指定键的值，从 0 到 127（127 = 最大力度）
+
+@see #getPolyPressure(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiChannel.getPolyPressure(int noteNumber)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定键被按下的力度。
+
+@param noteNumber MIDI 音符号，从 0 到 127（60 = 中央 C）。
+
+如果设备不支持设置 PolyPressure，则此方法始终返回 0。这种情况下，调用 <code>setPolyPressure</code> 没有任何作用。
+
+@return 该音符的力度值，从 0 到 127（127 = 最大力度）
+
+@see #setPolyPressure(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setChannelPressure(int pressure)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对键盘力度的更改作出反应。通道力度指示键盘演奏者按下整个键盘的力度。此值可以是每个键的力度传感器值的最大值或平均值，它由 <code>setPolyPressure</code> 设置。多数情况下，它是对设备上不实现复调键力度的单一传感器的的度量。力度可用于控制声音的各个方面，如在 {@link #setPolyPressure(int, int) setPolyPressure} 中的描述。
+
+基础合成器可能不支持此 MIDI 消息。为了验证 <code>setChannelPressure</code> 设置是否成功，可使用 <code>getChannelPressure</code>。
+
+@param pressure 键盘被按下的力度，从 0 到 127（127 = 最大力度）
+@see #setPolyPressure(int, int)
+@see #getChannelPressure
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiChannel.getChannelPressure()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得通道的键盘力度。如果设备不支持设置 ChannelPressure，则此方法始终返回 0。这种情况下，调用 <code>setChannelPressure</code> 没有任何作用。
+
+@return 该音符的力度值，从 0 到 127（127 = 最大力度）
+
+@see #setChannelPressure(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.controlChange(int controller, int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对指定控件的值的更改作出反应。控件是指不同于键盘键的其他控制手段，例如开关、滑杆、踏板、滚轮或呼吸力度传感器。MIDI 1.0 Specification 提供了 MIDI 设备上的典型控件的标准号，并对某些控件的效果进行了描述。<code>Instrument</code> 对控件更改的反应方式特定于 <code>Instrument</code>。
+ <p>
+MIDI 1.0 Specification 同时定义了 7 位控件和 14 位控件。连续的控件，例如滚轮和滑杆通常为 14 位（两个 MIDI 字节），而离散的控件，例如开关，通常为 7 位（一个 MIDI 字节）。请参考规范，了解每种控制类型的具体精度。
+ <p>
+控件 64 到 95 (0x40 - 0x5F) 允许 7 位精度。7 位控件的值完全通过 <code>value</code> 参数进行设置。其他的控件集通过使用两个控件号（一个用于最高有效 7 位，另一个用于最低有效 7 位）提供 14 位精度。控件号 0 到 31 (0x00 - 0x1F) 控制着 14 位控件的最高有效 7 位；控件号 32 到 63 (0x20 - 0x3F) 控制着这些控件的最低有效 7 位。例如，控件号 7 (0x07) 控制着通道音量控件的高 7 位，而控件号 39 (0x27) 则控制着低 7 位。14 位控件的值由这两个部分一起确定。当设置了控件的最高有效 7 位（使用控件号 0 到 31）时，低 7 位自动设置为 0。相应的用于低 7 位的控件号可用于进一步调整此控件值。
+
+基础合成器可能不支持特定的控件消息。为了验证是否对 <code>controlChange</code> 进行了成功的调用，可使用 <code>getController</code>。
+
+@param controller 控件号（0 到 127；请参见 MIDI 1.0 Specification 中的解释）
+@param value 将指定的控件更改成的值（0 到 127）
+
+@see #getController(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiChannel.getController(int controller)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定控件的当前值。返回值以 7 位形式表示。对于 14 位控件，需要分别获得 MSB 和 LSB 控件值。例如，要计算音量控件的 14 位值，可将控件 7 的值（0x07, 通道音量 MSB）乘以 128 然后加上控件 39 的值（0x27，通道音量 LSB）即可得到该值。
+
+如果设备不支持设置特定的控件，则对该控件此方法将返回 0。这种情况下调用 <code>controlChange</code> 没有任何作用。
+
+@param controller 需要其值的控件号。允许的范围为 0-127；请参见 MIDI 1.0 Specification 中的解释。
+
+@return 指定控件的当前值（0 到 127）
+
+@see #controlChange(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.programChange(int program)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改一个程序（包）。此方法从当前选定的乐器库中选取一种特定的乐器。
+ <p>
+MIDI 规范并未指示已经能够发声的音符应切换到新的乐器（音色），还是继续使用它们原先的音色，直到由音符关闭来终止。
+ <p>
+程序号从零开始（表示为 0 到 127）。注意，MIDI 硬件显示和有关 MIDI 的文字描述通常使用 1 到 128 的范围。
+
+基础合成器可能不支持特定的程序。为了验证是否对 <code>programChange</code> 进行了成功的调用，请使用 <code>getProgram</code>。
+
+@param program 要切换到的程序号（0 到 127）
+
+@see #programChange(int, int)
+@see #getProgram()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.programChange(int bank, int program)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用库和程序（包）号更改程序。
+
+基础合成器可能不支持特定的库或程序。为了验证是否对 <code>programChange</code> 进行了成功的调用，可使用 <code>getProgram</code> 和 <code>getController</code>。由于要通过控制更改的方式来更改库，所以可使用下面的语句验证当前的库：
+ <pre>
+   int bank = (getController(0) * 128)
+              + getController(32);
+ </pre>
+
+@param bank 要切换到的库号（0 到 16383）
+@param program 在指定的库（0 到 127）中使用的程序（包）
+@see #programChange(int)
+@see #getProgram()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiChannel.getProgram()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此通道的当前程序号。
+@return 当前选定包的程序号
+@see Patch#getProgram
+@see Synthesizer#loadInstrument
+@see #programChange(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setPitchBend(int bend)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改此通道上所有音符的音高偏移量。这影响到所有当前发声的音符和后续的发声音符。（要停止使用弯音 (pitch bend)，需要将此值重置为中心位置）。
+<p> MIDI 规范规定弯音为一个 14 位值，其中，零为最大的向下弯音，16383 为最大的向上弯音，8192 位于中心位置（无弯音）。实际的音高更改量未指定；可由弯音微调设置对其进行更改。但是 General MIDI 规范指明，默认的范围应为距中心向上或向下的两个半音程。
+
+基础合成器可能不支持此 MIDI 消息。为了验证 <code>setPitchBend</code> 设置是否成功，可使用 <code>getPitchBend</code>。
+
+@param bend 音高的更改量，它是一个非负的 14 位值（8192 = 无 bend）
+
+@see #getPitchBend
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.MidiChannel.getPitchBend()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此通道的向上或向下的音高偏移量。如果设备不支持设置弯音，则此方法始终返回 8192。这种情况下，调用 <code>setPitchBend</code> 没有任何作用。
+
+@return 弯音量，它是一个非负的 14 位值（8192 = 无 bend）
+
+@see #setPitchBend(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.resetAllControllers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有实现的控件重置为其默认值。
+
+@see #controlChange(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.allNotesOff()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此通道上当前发声的所有音符。音符不太可能立即消失；它们的衰减率取决于 <code>Instrument</code> 的内部情况。如果按下 Hold Pedal 控件（请参见 {@link #controlChange(int, int) controlChange}），则此方法的效果要推迟到踏板释放时才能体现。
+
+
+@see #allSoundOff
+@see #noteOff(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.allSoundOff()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+立即关闭通道上所有发声的音符，同时忽略当前 <code>Instrument</code> 的 Hold Pedal 状态和内部衰减率。
+
+
+@see #allNotesOff
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiChannel.localControl(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开或关闭本地控制。本地控制在默认情况下是开启的。 &quot;on&quot; 设置表示如果设备能够合成声音并传输 MIDI 消息，则它将合成声音作为对它本身所传输的音符打开和音符关闭消息的响应。它还将响应从其他传输设备接收到的消息。&quot;off&quot; 设置表示合成器将忽略其自身传输的 MIDI 消息，但不忽略从其他设备接收到的消息。
+
+基础合成器可能不支持本地控制。为了验证是否对 <code>localControl</code> 行了成功的调用，请检查返回值。
+
+@param on <code>true</code> 可打开本地控制，<code>false</code> 则关闭本地控制
+@return 新的本地控制值，如果不支持本地控制，则返回 false
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setMono(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开或关闭 mono 模式。在 mono 模式下，通道一次只合成一个音符。在 poly 模式（等效于 mono 模式关闭）下，通道可同步合成多个音符。默认情况下 mono 为关闭（poly 模式为打开）。
+ <p>
+&quot;Mono&quot; 是 &quot;monophonic&quot;（单声道）的简写，在此上下文中与 &quot;polyphonic&quot;（复调）相反，指的是每个 MIDI 通道有单个合成器声音。它与音频通道数没有任何关系（即&ldquo;单声道&rdquo;和&ldquo;立体声&rdquo;录音的情况）。
+
+基础合成器可能不支持 mono 模式。为了验证是否对 <code>setMono</code> 进行了成功的调用，可使用 <code>getMono</code>。
+
+@param on <code>true</code> 为打开 mono 模式，<code>false</code> 为关闭 mono 模式（表示打开 poly 模式）。
+
+@see #getMono
+@see VoiceStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiChannel.getMono()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前的 mono/poly 模式。无论如何调用 <code>setMono</code>，不允许更改 mono/poly 模式的合成器将始终返回相同的值。
+@return 如果 mono 模式为打开，则返回 <code>true</code>，否则返回 <code>false</code>（表示 poly 模式为打开）。
+
+@see #setMono(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setOmni(boolean on)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开或关闭 omni 模式。在 omni 模式下，通道会响应发送到所有通道上的消息。omni 为关闭时，通道只响应发送到其通道号上的消息。默认情况下 omni 为关闭。
+
+基础合成器可能不支持 omni 模式。为了验证 <code>setOmni</code> 设置是否成功，可使用 <code>getOmni</code>。
+
+@param on <code>true</code> 表示开启 omni 模式，<code>false</code> 表示关闭 omni 模式。
+
+@see #getOmni
+@see VoiceStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiChannel.getOmni()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前的 omni 模式。无论如何调用 <code>setOmni</code>，不允许更改 omni 模式的合成器将始终返回相同的值。
+@return 如果 omni 模式为打开，则返回 <code>true</code>，否则返回 <code>false</code>（表示 omni 模式为关闭）。
+
+@see #setOmni(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setMute(boolean mute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此通道的静音状态。值为 <code>true</code> 表示该通道将设置为静音，值为 <code>false</code> 表示该通道可发声（如果其他通道为非 solo）。
+ <p>
+与 {@link #allSoundOff()} 不同，此方法只适用于特定的通道，而不是所有的通道。更进一步地说，它不只将当前发声的音符设置为静音，而且将后续接收的音符都设置为静音。
+
+基础合成器可能不支持静音通道。为了验证是否对 <code>setMute</code> 进行了成功的调用，可使用 <code>getMute</code>。
+
+@param mute 新的静音状态
+
+@see #getMute
+@see #setSolo(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiChannel.getMute()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此通道的当前静音状态。如果基础合成器不支持对此通道的静音设置，则此方法始终返回 <code>false</code>。
+
+@return 通道为静音设置，则返回 <code>true</code>，否则返回 <code>false</code>
+
+@see #setMute(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.MidiChannel.setSolo(boolean soloState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此通道的 solo 状态。如果 <code>solo</code> 为 <code>true</code>，则只有此通道及其他 solo 通道可发声。如果 <code>solo</code> 为 <code>false</code>，则只有其他 solo 通道可发声；除非在没有 solo 通道的情况下，所有非静音通道都发声。
+
+基础合成器可能不支持 solo 通道。为了验证是否对 <code>setSolo</code> 进行了成功的调用，可使用 <code>getSolo</code>。
+
+@param soloState 该通道的新 solo 状态
+@see #getSolo()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.MidiChannel.getSolo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此通道的当前 solo 状态。如果基础合成器不支持此通道上的 solo，则此方法始终返回 <code>false</code>。
+
+@return 如果通道为 solo，则返回 <code>true</code>，否则返回 <code>false</code>
+
+@see #setSolo(boolean)
+
+<!-- END DATA -->

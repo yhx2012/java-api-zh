@@ -1,0 +1,130 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.sampled.Line
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Line</code> 接口表示单声道或多声道音频供给。line 是数字音频&ldquo;管线&rdquo;（如混频器、输入或输出端口，或往返于混频器的数据路径）的元素。
+ <p>
+line 可以有各种控件，如 gain、pan 和 reverb。这些控件本身是扩展基本 <code>{@link Control}</code> 类的那些类的实例。<code>Line</code> 接口提供两个获得 line 控件的存取方法：<code>{@link #getControls getControls}</code> 返回整个集合，<code>{@link #getControl getControl}</code> 返回指定类型的单个控件。
+ <p>
+行在不同的时间以各种状态存在。当行打开时，它保留本身的系统资源；关闭时，这些资源就会为其他对象或应用程序释放。<code>{@link #isOpen()}</code> 方法让您发现行是打开的还是关闭的。但是打开的行不需要处理数据。此类处理通常由 <code>{@link SourceDataLine#write SourceDataLine.write}</code> 和 <code>{@link TargetDataLine#read TargetDataLine.read}</code> 之类的子接口方法初始化。
+<p>
+可以注册一个对象，以便每当行状态更改时接收通知。该对象必须实现 <code>{@link LineListener}</code> 接口，此接口由单个方法 <code>{@link LineListener#update update}</code> 组成。此方法将在行打开和关闭时调用（如果该行在开始和停止时是一个 {@link DataLine}）。
+<p>
+可以注册一个对象来侦听多个行。用其 <code>update</code> 方法接收的事件将指定创建该事件的行、事件的类型（<code>OPEN</code>、<code>CLOSE</code>、<code>START</code> 或 <code>STOP</code>），以及发生事件时该行处理的样本帧的数量。
+ <p>
+如果行是共享的音频资源时由未授权的代码调用，则某些行操作（如 open 和 close）可以生成安全性异常。
+
+@author Kara Kytle
+@version 1.30, 05/11/17
+
+@see LineEvent
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line.Info javax.sound.sampled.Line.getLineInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得描述此行的 <code>Line.Info</code> 对象。
+@return  该行的描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Line.open() throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+打开行，指示它应该获得所有所需系统资源并变得可操作。如果此操作获得成功，则将行标记为 open，且向行的侦听器指派一个 <code>OPEN</code> 事件。
+ <p>
+注意，有些行一旦关闭就无法重新打开。试图重新打开这样的行总是导致 <code>LineUnavailableException</code>。
+ <p>
+某些类型的行具有可能影响资源分配的可配置属性。例如，必须使用特定格式和缓冲区大小打开 <code>DataLine</code>。此类行应该提供配置这些属性的机制，如允许应用程序指定所需设置的其他一个或多个 <code>open</code> 方法。
+ <p>
+此方法不使用任何参数，并使用当前设置打开行。对于 <code>{@link SourceDataLine}</code> 和 <code>{@link TargetDataLine}</code> 对象，这意味着使用默认设置打开该行。但对于 <code>{@link Clip}</code>，缓冲区大小是在加载数据时确定的。由于此方法不允许应用程序指定任何要加载的数据，因此会抛出 IllegalArgumentException。所以用户应该改用 <code>Clip</code> 接口中提供的某一 <code>open</code> 方法将数据加载到 <code>Clip</code> 中。
+ <p>
+对于 <code>DataLine</code>，如果用于检索行的 <code>DataLine.Info</code> 对象至少指定一个完全限定的音频格式，则将使用最后一个格式作为默认格式。
+
+@throws  IllegalArgumentException  如果在 Clip 接口上调用此方法。
+@throws  LineUnavailableException  如果由于资源限制无法打开该行。
+@throws  SecurityException  如果由于安全限制无法打开该行。
+
+@see #close
+@see #isOpen
+@see LineEvent
+@see DataLine
+@see Clip#open(AudioFormat, byte[], int, int)
+@see Clip#open(AudioInputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Line.close()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭行，指示可以释放的该行使用的所有系统资源。如果此操作成功，则将行标记为 closed，并给行的侦听器指派一个 <code>CLOSE</code> 事件。
+@throws  SecurityException  如果由于安全限制无法关闭该行。
+
+@see #open
+@see #isOpen
+@see LineEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.Line.isOpen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示行是否已打开，行已打开则意味着它已保留系统资源并是可操作的，尽管它当前可能没有播放或捕获声音。
+@return 如果行已打开，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+@see #open()
+@see #close()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Control[] javax.sound.sampled.Line.getControls()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与此行相关的控件集合。有些控件可能只在行打开时可用。如果没有控件，则此方法则返回一个长度为 0 的数组 
+@return  控件数组 
+@see #getControl
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.Line.isControlSupported(Control.Type control)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示该行是否支持特定类型的控件。有些控件可能只在行打开时可用。
+@param  control  查询其是否受支持的控件类型 
+@return  如果至少有一个指定类型的控件受支持，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Control javax.sound.sampled.Line.getControl(Control.Type control)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得指定类型的控件，如果有的话。有些控件可能只在行打开时可用。
+@param  control  所请求的控件类型 
+@return  指定类型的控件 
+@throws  IllegalArgumentException 如果指定类型的控件不受支持 
+@see #getControls
+@see #isControlSupported(Control.Type control)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Line.addLineListener(LineListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将侦听器添加到此行。每当行的状态发生更改，就要使用描述更改的 <code>LineEvent</code> 对象调用侦听器的 <code>update()</code> 方法。
+@param  listener  将作为侦听器添加到此行的对象 
+@see #removeLineListener
+@see LineListener#update
+@see LineEvent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Line.removeLineListener(LineListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此行的侦听器列表中移除指定侦听器。
+@param  listener  要移除的侦听器 
+@see #addLineListener
+
+<!-- END DATA -->

@@ -1,0 +1,573 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.midi.Sequencer extends javax.sound.midi.MidiDevice
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+回放 MIDI <code>{@link Sequence sequence}</code> 的硬件或软件设备就是所谓的 <em>sequencer</em>。MIDI sequence 包含加了时间戳的 MIDI 数据列表，例如可从标准 MIDI 文件读取的数据。多数 sequencer 还提供创建和编辑 sequence 的功能。
+ <p>
+<code>Sequencer</code> 接口包括用于以下基本 MIDI sequencer 操作的方法：
+ <ul>
+<li>从 MIDI 文件数据获取一个 sequence</li>
+<li>开始和停止回放</li>
+<li>移动到 sequence 中的任意位置</li>
+<li>更改回放速度</li>
+<li>将回放与内部时钟或接收到的 MIDI 消息同步</li>
+<li>控制另一个设备的定时</li>
+ </ul>
+另外还以直接或间接的方式，通过 <code>Sequencer</code> 可访问的对象支持以下操作：
+ <ul>
+<li>通过添加或删除单独 MIDI 事件或整个轨道来编辑数据</li>
+<li>对 sequence 中的单独轨道静音或执行独奏</li>
+<li>通知 listener 对象有关回放 sequence 时遇到的任何元事件或控制更改事件。</li>
+ </ul>
+
+@see Sequencer.SyncMode
+@see #addMetaEventListener
+@see ControllerEventListener
+@see Receiver
+@see Transmitter
+@see MidiDevice
+
+@version 1.37, 05/11/17
+@author Kara Kytle
+@author Florian Bomers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sound.midi.Sequencer.LOOP_CONTINUOUSLY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个值，指示循环应无限继续而不是在执行完特定次数的循环后停止。
+
+@see #setLoopCount
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setSequence(Sequence sequence) throws javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 sequencer 所操作的当前 sequence。
+
+<p>此方法即使在 <code>Sequencer</code> 关闭时也可调用。
+
+@param sequence 要加载的 sequence。
+@throws InvalidMidiDataException 如果该 sequence 包含无效的 MIDI 数据或不受支持的数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setSequence(InputStream stream) throws java.io.IOException, javax.sound.midi.InvalidMidiDataException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 sequencer 所操作的当前 sequence。该流必须指向 MIDI 文件数据。
+
+<p>此方法即使在 <code>Sequencer</code> 关闭时也可调用。
+
+@param stream 包含 MIDI 文件数据的流。
+@throws IOException 如果读取流时发生 I/O 异常。
+@throws InvalidMidiDataException 如果在流中遇到无效数据，或者流不受支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequence javax.sound.midi.Sequencer.getSequence()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 Sequencer 当前所操作的 sequence。
+
+<p>此方法即使在 <code>Sequencer</code> 关闭时也可调用。
+
+@return 当前的 sequence，如果当前未设置任何 sequence，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+开始回放当前已加载 sequence 中的 MIDI 数据。回放将从当前位置开始。如果回放位置到达循环终点，并且循环计数大于 0，则回放将从循环开始点继续运行 <code>setLoopCount</code> 中设置的重复次数。此后，如果循环计数为 0，则回放将继续播放直到 sequence 末尾。
+
+<p>该实现确保合成器在跳转到循环开始点时通过发送合适的控件、弯音和程序更改事件来保持一致的状态。
+
+@throws IllegalStateException 如果 <code>Sequencer</code> 已关闭。
+
+@see #setLoopStartPoint
+@see #setLoopEndPoint
+@see #setLoopCount
+@see #stop
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止录音（如果处于活动状态）及当前已加载 sequence（如果有）的回放。
+
+@throws IllegalStateException 如果 <code>Sequencer</code> 已关闭。
+
+@see #start
+@see #isRunning
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequencer.isRunning()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 Sequencer 当前是否正在运行。默认值为 <code>false</code>。Sequencer 在调用 <code>{@link #start}</code> 或 <code>{@link #startRecording}</code> 之一时开始运行。然后 <code>isRunning</code> 返回 <code>true</code>，直到 sequence 的回放完成或调用了 <code>{@link #stop}</code>。
+@return 如果 Sequencer 正在运行中，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.startRecording()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+开始录制和回放 MIDI 数据。数据录制到为其启用的通道上的所有已启用音轨上。录制从 sequencer 的当前位置开始。录制会话过程中重写音轨上的全部已有事件。取自当前已加载 sequence 的事件（如果有）随录制过程中接收的消息传递给 sequencer 的传输器。
+ <p>
+注意，默认不允许轨道进行录制。为了录制 MIDI 数据，必须至少指定一个轨道允许录制。
+
+@throws IllegalStateException 如果 <code>Sequencer</code> 已关闭。
+
+@see #startRecording
+@see #recordEnable
+@see #recordDisable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.stopRecording()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止录制（如果处于活动状态）。继续当前 sequence 的回放。
+
+@throws IllegalStateException 如果 <code>Sequencer</code> 已关闭。
+
+@see #startRecording
+@see #isRecording
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequencer.isRecording()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 Sequencer 当前是否正在录制。默认值为 <code>false</code>。Sequencer 在 <code>{@link #startRecording}</code> 调用时开始录制，然后在调用 <code>{@link #stop}</code> 或 <code>{@link #stopRecording}</code> 前，此方法返回 <code>true</code>。
+@return 如果 Sequencer 正在录制中，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.recordEnable(Track track, int channel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为录制特定通道上接收的事件准备指定的轨道。一旦启用，轨道将在录制处于活动状态时接收事件。
+@param track 要录制事件的轨道
+@param channel 接收其上事件的通道。如果通道值指定为 -1，则轨道将从所有通道接收数据。
+@throws IllegalArgumentException 如果 track 不是当前 sequence 的一部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.recordDisable(Track track)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+禁止向指定轨道的录制。事件将不再录制到此轨道中。
+@param track 要禁止录制的轨道，或为 <code>null</code> 以禁止录制到所有轨道。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.midi.Sequencer.getTempoInBPM()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前的速度，用每分钟的拍数表示。实际的回放速度是返回值和速度因子的乘积。
+
+@return 当前的速度，用每分钟的拍数表示
+
+@see #getTempoFactor
+@see #setTempoInBPM(float)
+@see #getTempoInMPQ
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTempoInBPM(float bpm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置速度，以每分钟的拍数为单位。实际的回放速度是指定值和速度因子的乘积。
+
+@param bpm 所需的新速度，以每分钟的拍数为单位
+@see #getTempoFactor
+@see #setTempoInMPQ(float)
+@see #getTempoInBPM
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.midi.Sequencer.getTempoInMPQ()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前的速度，用每四分音符的微秒数表示。实际的回放速度是返回值和速度因子的乘积。
+
+@return 当前的速度，以每四分音符的微秒数为单位
+@see #getTempoFactor
+@see #setTempoInMPQ(float)
+@see #getTempoInBPM
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTempoInMPQ(float mpq)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置速度，以每四分音符的微秒数为单位。实际的回放速度是指定值和速度因子的乘积。
+
+@param mpq 所需的新速度，以每四分音符的微秒数为单位。
+@see #getTempoFactor
+@see #setTempoInBPM(float)
+@see #getTempoInMPQ
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTempoFactor(float factor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据所提供的 factor 按比例提高 sequencer 的实际回放速度。默认值是 1.0。值为 1.0 表示固有的速率（sequence 中指定的速度），2.0 表示速度为两倍大小，依此类推。速度因子并不影响 <code>{@link #getTempoInMPQ}</code> 和 <code>{@link #getTempoInBPM}</code> 返回的值。这些值指示提高速度前的速度。
+ <p>
+注意，在使用外部同步时无法调整速度因子。这种情况下，<code>setTempoFactor</code> 始终将速度因子设置为 1.0。
+
+@param factor 所请求的速度标量
+@see #getTempoFactor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.sound.midi.Sequencer.getTempoFactor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 sequencer 的当前速度因子。默认值是 1.0。
+
+@return 速度因子。
+@see #setTempoFactor(float)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getTickLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前 sequence 的长度，用 MIDI 节拍数表示，如果未设置 sequence，则为 0。
+@return sequence 的长度，以节拍数为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getTickPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 sequence 的当前位置，用 MIDI 节拍数表示。（节拍持续的秒数由速度和存储在 <code>{@link Sequence}</code> 中的定时精度确定。）
+
+@return 当前节拍
+@see #setTickPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTickPosition(long tick)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前 sequencer 位置，以 MIDI 节拍数为单位。
+@param tick 所需的节拍位置
+@see #getTickPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getMicrosecondLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前 sequence 的长度，用微秒表示，如果未设置 sequence，则为 0。
+@return sequence 的长度，用微秒表示。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getMicrosecondPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 sequence 中的当前位置，用微秒表示。
+@return 当前位置，用微秒表示
+@see #setMicrosecondPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setMicrosecondPosition(long microseconds)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 sequence 中的当前位置，用微秒表示
+@param microseconds 所需的位置，以微秒为单位
+@see #getMicrosecondPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setMasterSyncMode(Sequencer.SyncMode sync)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 sequencer 使用的定时信息源。Sequencer 与主同步模式同步，主同步模式为内部时钟、MIDI 时钟和 MIDI 时间代码，具体取决于 <code>sync</code> 的值。<code>sync</code> 参数必须是所支持的模式之一，如 <code>{@link #getMasterSyncModes}</code> 返回的结果。
+
+@param sync 所需的主同步模式
+
+@see SyncMode#INTERNAL_CLOCK
+@see SyncMode#MIDI_SYNC
+@see SyncMode#MIDI_TIME_CODE
+@see #getMasterSyncMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequencer.SyncMode javax.sound.midi.Sequencer.getMasterSyncMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 sequencer 的当前主同步模式。
+
+@return 当前的主同步模式
+
+@see #setMasterSyncMode(Sequencer.SyncMode)
+@see #getMasterSyncModes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequencer.SyncMode[] javax.sound.midi.Sequencer.getMasterSyncModes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 sequencer 支持的主同步模式集。
+
+@return 可用的主同步模式
+
+@see SyncMode#INTERNAL_CLOCK
+@see SyncMode#MIDI_SYNC
+@see SyncMode#MIDI_TIME_CODE
+@see #getMasterSyncMode
+@see #setMasterSyncMode(Sequencer.SyncMode)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setSlaveSyncMode(Sequencer.SyncMode sync)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 sequencer 的从同步模式。这指示由 sequencer 发送到接收器的定时信息类型。<code>sync</code> 参数必须是所支持的模式之一，如 <code>{@link #getSlaveSyncModes}</code> 返回的结果。
+
+@param sync 所需的从同步模式
+
+@see SyncMode#MIDI_SYNC
+@see SyncMode#MIDI_TIME_CODE
+@see SyncMode#NO_SYNC
+@see #getSlaveSyncModes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequencer.SyncMode javax.sound.midi.Sequencer.getSlaveSyncMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 sequencer 的当前从同步模式。
+
+@return 当前的从同步模式
+
+@see #setSlaveSyncMode(Sequencer.SyncMode)
+@see #getSlaveSyncModes
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Sequencer.SyncMode[] javax.sound.midi.Sequencer.getSlaveSyncModes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此 sequencer 支持的从同步模式集。
+
+@return 可用的从同步模式
+
+@see SyncMode#MIDI_SYNC
+@see SyncMode#MIDI_TIME_CODE
+@see SyncMode#NO_SYNC
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTrackMute(int track, boolean mute)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置轨道的静音状态。此方法可能由于某些原因而失败。例如，所指定的轨道号可能对于当前 sequence 无效，或者 sequencer 可能不支持此功能。需要验证此操作是否成功的应用程序应在此调用后调用 <code>{@link #getTrackMute}</code>。
+
+@param track 轨道号。当前 sequence 中的轨道从 0 到 sequence 中的轨道数减 1 来编号。
+@param mute 轨道的新静音状态。<code>true</code> 表示轨道应静音，<code>false</code> 表示轨道应为非静音。
+@see #getSequence
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequencer.getTrackMute(int track)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得轨道的当前静音状态。未静音前所有轨道的默认静音状态都是 false。在任何指定轨道未静音的情况下，此方法应返回 false。这适用于当 sequencer 不支持轨道静音并且指定的轨道索引无效的情况。
+
+@param track 轨道号。当前 sequence 中的轨道从 0 到 sequence 中的轨道数减 1 来编号。
+@return 如果已静音，则返回 <code>true</code>；如果未静音，则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setTrackSolo(int track, boolean solo)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置轨道的 solo 状态。如果 <code>solo</code> 为 <code>true</code>，则只有此轨道及其他 solo 轨道可发声。如果 <code>solo</code> 为 <code>false</code>，则只有其他 solo 轨道可发声，如果没有任何 solo 轨道，则所有非静音轨道都发声。
+ <p>
+此方法可能由于某些原因而失败。例如，所指定的轨道号可能对于当前 sequence 无效，或者 sequencer 可能不支持此功能。需要验证此操作是否成功的应用程序应在此调用后调用 <code>{@link #getTrackSolo}</code>。
+
+@param track 轨道号。当前 sequence 中的轨道从 0 到 sequence 中的轨道数减 1 来编号。
+@param solo 轨道的新 solo 状态。<code>true</code> 表示轨道应为 solo，<code>false</code> 表示轨道应为非 solo。
+@see #getSequence
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequencer.getTrackSolo(int track)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得轨道的当前 solo 状态。未 solo 前所有轨道的默认静音状态都是 false。在任何指定轨道未 solo 的情况下，此方法应返回 false。这适用于当 sequencer 不支持轨道 solo 并且指定的轨道索引无效的情况。
+
+@param track 轨道号。当前 sequence 中的轨道从 0 到 sequence 中的轨道数减 1 来编号。
+@return 如果已为 solo，则返回 <code>true</code>；如果不是，则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Sequencer.addMetaEventListener(MetaEventListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册一个元事件侦听器，以便在 sequence 中遇到元事件并由此 sequencer 处理时接收通知。此方法在此 sequencer 类不支持元事件通知时会失败。
+
+@param listener 要添加的侦听器
+@return 如果成功添加了该侦听器，则返回 <code>true</code>；否则返回 <code>false</code>
+
+
+@see #removeMetaEventListener
+@see MetaEventListener
+@see MetaMessage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.removeMetaEventListener(MetaEventListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 sequencer 的已注册侦听器列表中移除指定的元事件侦听器（如果实际上此侦听器已注册）。
+
+@param listener 要移除的元事件侦听器
+@see #addMetaEventListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.sound.midi.Sequencer.addControllerEventListener(ControllerEventListener listener, int[] controllers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册一个控件事件侦听器，以便在 sequencer 处理所请求的一种或多种类型的控制更改事件时接收通知。类型由 <code>controllers</code> 参数指定，该参数应包含一个 MIDI 控件号的数组。（每个编号应该是 0 到 127（包括）之间的一个数。请参见 MIDI 1.0 规范中与各种类型控件对应的编号。）
+ <p>
+返回的数组包含 MIDI 控件号，侦听器将从现在开始接收其事件。有些 sequencer 可能不支持控件事件通知，这种情况下数组长度为 0。其他 sequencer 可能支持某些控件的通知，但不是全部。此方法可重复调用。每次调用时，返回的数组都指示侦听器将接收其通知的所有控件，而不仅仅是在该特定调用中请求的控件。
+
+@param listener 要添加到已注册侦听器列表中的控件事件侦听器
+@param controllers 为其请求更改通知的 MIDI 控件号
+@return 其更改将报告给指定侦听器的所有 MIDI 控件号
+
+
+@see #removeControllerEventListener
+@see ControllerEventListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.sound.midi.Sequencer.removeControllerEventListener(ControllerEventListener listener, int[] controllers)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除侦听一类或多类控件事件的控件事件侦听器。<code>controllers</code> 参数使用一个 MIDI 号的数组，与侦听器将不再接收其更改通知的控件对应。要将此侦听器从已注册侦听器列表中彻底移除，可为 <code>controllers</code> 传递 <code>null</code>。返回的数组包含 MIDI 控件号，侦听器将从现在开始接收其事件。如果侦听器将不接收任何控件的更改通知，则数组长度为 0。
+
+@param listener 旧的侦听器
+@param controllers 应为其取消更改通知的 MIDI 控件号，或者为 <code>null</code> 以取消所有的控件
+@return 其更改现在将报告给指定侦听器的所有 MIDI 控件号
+
+
+@see #addControllerEventListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setLoopStartPoint(long tick)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在循环中播放的第一个 MIDI 节拍。如果循环数大于 0，则回放到达循环终点时将跳转到此点。
+
+<p>起始点的值为 0 表示已加载 sequence 的开始。起始点必须小于或等于结束点，并且必须位于已加载 sequence 的大小内。
+
+<p>Sequencer 的循环起始点默认为 sequence 的开始。
+
+@param tick 循环的起始位置，以 MIDI 节拍为单位（从零开始）
+@throws IllegalArgumentException 如果所请求的循环起始点无法设置，通常是因为位于 sequence 的持续时间之外或起始点在结束点之后
+
+
+@see #setLoopEndPoint
+@see #setLoopCount
+@see #getLoopStartPoint
+@see #start
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getLoopStartPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得循环的起始位置，以 MIDI 节拍为单位。
+
+@return 循环的起始位置，以 MIDI 节拍为单位（从零开始）
+@see #setLoopStartPoint
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setLoopEndPoint(long tick)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在循环中播放的最后一个 MIDI 节拍。如果循环数为 0，则循环结束点将无效，回放在到达循环结束点时会继续播放。
+
+<p>结束点值为 -1 指示 sequence 的最后节拍。否则，结束点必须大于或等于起始点，并且必须位于已加载 sequence 的大小内。
+
+<p>Sequencer 的循环结束点默认为 -1，表示 sequence 的结束点。
+
+@param tick 循环的结束位置，以 MIDI 节拍为单位（从零开始），-1 指示结束点节拍
+@throws IllegalArgumentException 如果所请求的循环点无法设置，通常是因为位于 sequence 的持续时间之外或结束点在起始点之前
+
+
+@see #setLoopStartPoint
+@see #setLoopCount
+@see #getLoopEndPoint
+@see #start
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Sequencer.getLoopEndPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得循环的结束位置，以 MIDI 节拍为单位。
+
+@return 循环的结束位置，以 MIDI 节拍为单位（从零开始），-1 指示 sequence 的结束点
+@see #setLoopEndPoint
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Sequencer.setLoopCount(int count)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置循环回放的重复次数。当回放位置到达循环结束点时，它将返回到循环起始点 <code>count</code> 次，此后回放将继续播放，直到 sequence 的结束点为止。
+ <p>
+如果此方法调用时，当前位置大于循环结束点，则回放会继续进行至 sequence 的结束点而不循环，除非随后更改了循环结束点。
+ <p>
+<code>count</code> 值为 0 可禁用循环：回放将在循环结束点继续，不会返回到循环起始点。这是 sequencer 的默认方式。
+
+<p>如果回放在循环时停止，则当前循环状态被清除；后续开始请求不受已中断循环操作的影响。
+
+@param count 回放应从循环结束点返回循环起始点的次数，或 <code>{@link #LOOP_CONTINUOUSLY}</code> 指示循环应一直继续直到被中断
+
+@throws IllegalArgumentException 如果 <code>count</code> 为负且不等于 {@link #LOOP_CONTINUOUSLY}
+
+
+@see #setLoopStartPoint
+@see #setLoopEndPoint
+@see #getLoopCount
+@see #start
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.Sequencer.getLoopCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得回放的重复次数。
+
+@return 回放在其播放至 sequence 结束点后的循环数
+@see #setLoopCount
+@see #start
+@since 1.5
+
+<!-- END DATA -->

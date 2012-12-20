@@ -1,0 +1,175 @@
+<!-- BEGIN KEY -->
+public interface javax.tools.StandardJavaFileManager extends javax.tools.JavaFileManager
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于 {@linkplain File java.io.File} 的文件管理器。获取此类实例的一般方法是使用 {@linkplain JavaCompiler#getStandardFileManager getStandardFileManager}，例如：
+
+ <pre>
+JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+{@code DiagnosticCollector<JavaFileObject>} diagnostics =
+new {@code DiagnosticCollector<JavaFileObject>()};
+StandardJavaFileManager fm = compiler.getStandardFileManager(diagnostics, null, null);
+ </pre>
+
+此文件管理器创建的文件对象表示常规{@linkplain File 文件}、{@linkplain java.util.zip.ZipEntry zip 文件条目}或者基于类似文件系统的容器中的条目。从实现此接口的文件管理器返回的任何文件对象都必须遵守以下行为：
+
+ <ul>
+   <li>
+文件名称不需要规范。
+   </li>
+   <li>
+对于表示常规文件的文件对象
+     <ul>
+       <li>
+方法 <code>{@linkplain FileObject#delete()}</code> 等效于 <code>{@linkplain File#delete()}</code>，
+       </li>
+       <li>
+方法 <code>{@linkplain FileObject#getLastModified()}</code> 等效于 <code>{@linkplain File#lastModified()}</code>，
+       </li>
+       <li>
+如果以下代码成功执行（忽略编码问题），则方法 <code>{@linkplain FileObject#getCharContent(boolean)}</code>、<code>{@linkplain FileObject#openInputStream()}</code> 和 <code>{@linkplain FileObject#openReader(boolean)}</code> 必须成功执行：
+         <blockquote>
+<pre>new {@linkplain java.io.FileInputStream#FileInputStream(File) FileInputStream}(new {@linkplain File#File(java.net.URI) File}({@linkplain FileObject fileObject}.{@linkplain FileObject#toUri() toUri}()))</pre>
+         </blockquote>
+       </li>
+       <li>
+如果以下代码成功执行（忽略编码问题），则方法 <code>{@linkplain FileObject#openOutputStream()}</code> 和 <code>{@linkplain FileObject#openWriter()}</code> 必须成功执行：
+         <blockquote>
+<pre>new {@linkplain java.io.FileOutputStream#FileOutputStream(File) FileOutputStream}(new {@linkplain File#File(java.net.URI) File}({@linkplain FileObject fileObject}.{@linkplain FileObject#toUri() toUri}()))</pre>
+         </blockquote>
+       </li>
+     </ul>
+   </li>
+   <li>
+从 <code>{@linkplain FileObject#toUri()}</code> 返回的 {@linkplain java.net.URI URI}
+     <ul>
+       <li>
+必须是{@linkplain java.net.URI#isAbsolute() 绝对的}（有模式），并且
+       </li>
+       <li>
+必须具有{@linkplain java.net.URI#normalize() 标准化的}{@linkplain java.net.URI#getPath() 路径组件}，它能够在没有任何特定于进程的上下文（比如当前目录）的情况下被解析（文件名称必须是绝对的）。
+       </li>
+     </ul>
+   </li>
+ </ul>
+
+根据这些规则，以下 URI 是允许的：
+ <ul>
+   <li>
+<code>file:///C:/Documents%20and%20Settings/UncleBob/BobsApp/Test.java</code>
+   </li>
+   <li>
+<code>jar:///C:/Documents%20and%20Settings/UncleBob/lib/vendorA.jar!com/vendora/LibraryClass.class</code>
+   </li>
+ </ul>
+而以下 URI 不允许（原因在括号中注明）：
+ <ul>
+   <li>
+<code>file:BobsApp/Test.java</code> （文件名称是相对的并且依赖于当前目录）
+   </li>
+   <li>
+<code>jar:lib/vendorA.jar!com/vendora/LibraryClass.class</code> （路径的前半部分依赖于当前路径，而 ! 后面的部分合法）
+   </li>
+   <li>
+<code>Test.java</code> （此 URI 依赖于当前目录并且没有模式）
+   </li>
+   <li>
+<code>jar:///C:/Documents%20and%20Settings/UncleBob/BobsApp/../lib/vendorA.jar!com/vendora/LibraryClass.class</code> （路径没有标准化）
+   </li>
+ </ul>
+
+@author Peter von der Ah&eacute;
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.tools.StandardJavaFileManager.isSameFile(FileObject a, FileObject b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个文件对象，如果它们表示相同的规范文件、zip 文件条目或者基于任何文件系统的容器中的条目，则返回 true。
+
+@param a 文件对象
+@param b 文件对象
+@return 如果给定的文件对象表示相同的规范文件或 zip 文件条目，则返回 true；否则返回 false。
+
+@throws IllegalArgumentException 如果其中一个参数是使用另一个文件管理器实现创建的
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<? extends javax.tools.JavaFileObject> javax.tools.StandardJavaFileManager.getJavaFileObjectsFromFiles(java.lang.Iterable<? extends java.io.File> files)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示给定文件的文件对象。
+
+@param files 文件列表
+@return 文件对象列表
+@throws IllegalArgumentException 如果文件列表包含目录
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<? extends javax.tools.JavaFileObject> javax.tools.StandardJavaFileManager.getJavaFileObjects(java.io.File[] files)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示给定文件的文件对象。一个便捷方法，等效于：
+
+ <pre>
+getJavaFileObjectsFromFiles({@linkplain java.util.Arrays#asList Arrays.asList}(files))
+ </pre>
+
+@param files 文件数组
+@return 文件对象列表
+@throws IllegalArgumentException 如果文件数组包含目录
+@throws NullPointerException 如果给定数组包含 null 元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<? extends javax.tools.JavaFileObject> javax.tools.StandardJavaFileManager.getJavaFileObjectsFromStrings(java.lang.Iterable<java.lang.String> names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示给定文件名称的文件对象。
+
+@param names 文件名称列表
+@return 文件对象列表
+@throws IllegalArgumentException 如果文件名称列表包含目录
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<? extends javax.tools.JavaFileObject> javax.tools.StandardJavaFileManager.getJavaFileObjects(java.lang.String[] names)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取表示给定文件名称的文件对象。一个便捷方法，等效于：
+
+ <pre>
+getJavaFileObjectsFromStrings({@linkplain java.util.Arrays#asList Arrays.asList}(names))
+ </pre>
+
+@param names 文件名称列表
+@return 文件对象列表
+@throws IllegalArgumentException 如果文件名称数组包含目录
+@throws NullPointerException 如果给定数组包含 null 元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.tools.StandardJavaFileManager.setLocation(JavaFileManager.Location location, java.lang.Iterable<? extends java.io.File> path) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定路径与给定位置关联。丢弃所有以前的值。
+
+@param location 位置
+@param path 文件列表，如果为 {@code null}，则使用此位置的默认路径
+@see #getLocation
+@throws IllegalArgumentException 如果位置为一个输出位置并且路径不完全包含一个元素
+@throws IOException 如果位置是一个输出位置并且路径不表示现有目录
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Iterable<? extends java.io.File> javax.tools.StandardJavaFileManager.getLocation(JavaFileManager.Location location)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与给定位置关联的路径。
+
+@param location 位置
+@return 文件列表，如果此位置没有关联路径，则返回 {@code null}
+@see #setLocation
+
+<!-- END DATA -->

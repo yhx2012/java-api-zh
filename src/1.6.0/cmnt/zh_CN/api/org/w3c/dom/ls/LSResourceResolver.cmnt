@@ -1,0 +1,25 @@
+<!-- BEGIN KEY -->
+public interface org.w3c.dom.ls.LSResourceResolver
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>LSResourceResolver</code> 为应用程序提供了将引用重定向到外部资源的方法。 
+<p> 需要对外部资源实现自定义处理的应用程序可以实现此接口并通过设置连接到 <code>LSParser</code> 和 <code>LSSerializer</code> 的 <code>DOMConfiguration</code> 对象的 &quot;resource-resolver&quot; 参数注册其实现。如果受 &quot;LS&quot; 功能受，该应用程序还可以在连接到 <code>Document</code> 的 <code>DOMConfiguration</code> 对象上注册。 
+<p> 然后 <code>LSParser</code> 将允许应用程序在包含它们以前截取任何外部实体，其中包括外部 DTD 子集和外部参数实体。从不会将顶级文档实体传输给 <code>resolveResource</code> 方法。 
+<p> 许多 DOM 应用程序将不需要实现此接口，但对于从数据库或其他特定的输入源中构建 XML 文档的应用程序，或者使用 URN 的应用程序来说，这特别有用。 
+<p ><b>注：</b><code>LSResourceResolver</code> 基于 SAX2 [<a href='http://www.saxproject.org/'>SAX</a>] <code>EntityResolver</code> 接口。 
+<p>另请参见《<a href='http://www.w3.org/TR/2004/REC-DOM-Level-3-LS-20040407'>Document Object Model (DOM) Level 3 Load and Save Specification</a>》。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.ls.LSInput org.w3c.dom.ls.LSResourceResolver.resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序解析外部资源。<br><code>LSParser</code> 将在打开任何外部资源前调用此方法，外部资源包括外部 DTD 子集、在 DTD 中引用的外部实体、在文档元素中引用的外部实体（但是不将顶级文档实体传递给此方法）。应用程序然后可以请求 <code>LSParser</code> 解析使用替换的 URI或者使用完全不同的输入源的外部资源本身。<br>应用程序编写者可以使用此方法将外部系统标识符重定向到安全和/或本地 URI，在目录中查找公共标识符，或从数据库或其他输入源（例如包括对话框）中读取实体。
+@param type 被解析的资源的类型。对于 XML [<a href='http://www.w3.org/TR/2004/REC-xml-20040204'>XML 1.0</a>] 资源（即实体），应用程序必须使用值 <code>&quot;http://www.w3.org/TR/REC-xml&quot;</code>。对于 XML 模式 [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>]，应用程序必须使用值 <code>&quot;http://www.w3.org/2001/XMLSchema&quot;</code>。其他类型的资源在此规范的范围之外，因此为了使用此方法应当推荐绝对 URI。
+@param namespaceURI 被解析资源的名称空间，例如，解析 XML Schema 资源时 XML Schema [<a href='http://www.w3.org/TR/2001/REC-xmlschema-1-20010502/'>XML Schema Part 1</a>] 的目标名称空间。
+@param publicId 被引用的外部实体的公共标识符，如果没有提供公共标识符或者资源不是实体，则为 <code>null</code>。
+@param systemId 公共标识符，它是被引用的外部资源的 URI 引用 [<a href='http://www.ietf.org/rfc/rfc2396.txt'>IETF RFC 2396</a>]，如果没有提供系统标识符，则为 <code>null</code>。
+@param baseURI 被解析资源的绝对基 URI，如果没有基 URI，则为 <code>null</code>。
+@return 一个描述新的输入源的 <code>LSInput</code> 对象，或者返回 <code>null</code> 以请求解析器打开到该资源的规则 URI 连接。 
+
+<!-- END DATA -->

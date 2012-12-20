@@ -1,0 +1,184 @@
+<!-- BEGIN KEY -->
+public abstract class javax.print.attribute.Size2DSyntax extends java.lang.Object implements java.io.Serializable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+类 Size2DSyntax 是一种抽象的基类，它提供表示二维大小的所有属性的公共实现。 
+ <P>
+二维大小属性的值由两项组成：X 维度和 Y 维度。通过提供两个值和指示测量该值的单位可以构造一个二维大小的属性。提供一些方法以返回二维大小属性的值，并指示将返回值的单位。两个最常见的大小单位是英寸 (in) 和毫米 (mm)，为指示这些单位，提供了导出的常量 {@link #INCH <CODE>INCH</CODE>} 和 {@link #MM <CODE>MM</CODE>}。 
+ <P>
+一旦构造之后，二维大小属性的值就是不可变的。 
+ <P>
+<B>设计</B>
+ <P>
+将二维大小属性的 X 和 Y 维度值在内部存储为整数，单位是微米 (&micro;m)，其中 1 微米 = 10<SUP>-6</SUP> 米 = 1/1000 毫米 = 1/25400 英寸。这使要表示的维度精确到 1/1000 毫米 (= 1 &micro;m) 或 1/100 英寸 (= 254 &micro;m)。如果用 2 的负次幂表示小数英寸，这使表示的维度精确到 1/8 英寸 (= 3175 &micro;m)，而不是 1/16 英寸（因为 1/16 英寸不等于一个整数微米）。 
+ <P>
+以通用单位微米的形式内部存储该维度可以比较这两种大小的属性，无需考虑创建它们的单位；例如，8.5 英寸将相当于 215.9 毫米，因为他们都存储为 215900 微米。例如，查询服务可以基于其序列化表示形式的相等性来匹配分辨率属性，无论它们用哪种单位创建。对内部存储使用整数可以允许执行精确的相等性比较，如果使用内部浮点表示形式，则不保证这一点。注意，如果查找公制单位的美国信函大小介质，您必须搜索大小为 215.9 x 279.4 毫米的介质；舍入为整数 216 x 279 毫米将不匹配。 
+ <P>
+导出的常量 {@link #INCH <CODE>INCH</CODE>} 实际上是转换因子，将一个以英寸 为单位的值乘以该转换因子可以获得以微米为单位的值。同样，导出的常量 {@link #MM <CODE>MM</CODE>} 实际上也是转换因子，将一个以毫米为单位的值乘以该转换因子可以获得以微米为单位的值。客户机可以通过提供其自已的转换因子来指定使用某些单位（英寸或毫米除外）的分辨率值。但是，由于选择内部单位微米时只考虑支持外部单位英寸和毫米，所以不能保证针对客户机单位的转换因子是一个准确的整数。如果转换因子不是一个准确的整数，则使用客户机单位的分辨率值不能精确地存储。 
+ <P>
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.attribute.Size2DSyntax.INCH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示单位为英寸 (in) 的值。它实际上是转换因子，英寸乘以该转换因子得到微米 (25400)。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.print.attribute.Size2DSyntax.MM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示单位为毫米 (mm) 的值。它实际上是转换因子，毫米乘以该转换因子得到微米 (1000)。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.print.attribute.Size2DSyntax.x
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以微米 (&#xB5;m) 为单位的 X 维度。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.print.attribute.Size2DSyntax.y
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以微米 (&#xB5;m) 为单位的 Y 维度。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.Size2DSyntax(float x, float y, int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的浮点值构造一个新的二维大小属性。 
+
+@param  x  X 维度。
+@param  y  Y 维度。
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。 
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>x</CODE> &lt; 0 或 <CODE>y</CODE> &lt; 0 或 <CODE>units</CODE> &lt; 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.print.attribute.Size2DSyntax(int x, int y, int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的整数值构造一个新的二维大小属性。 
+
+@param  x  X 维度。
+@param  y  Y 维度。
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。 
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>x</CODE> &lt; 0 或 <CODE>y</CODE> &lt; 0 或 <CODE>units</CODE> &lt; 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float[] javax.print.attribute.Size2DSyntax.getSize(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定单位的此二维大小属性的维度作为浮点值。 
+
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。 
+
+@return  包含索引 0 处的 X 维度和索引 1 处的 Y 维度的两元素数组。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.print.attribute.Size2DSyntax.getX(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此二维大小属性的 X 维度作为浮点值。 
+
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。
+
+@return  X 维度。 
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.print.attribute.Size2DSyntax.getY(int units)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此二维大小属性的 Y 维度作为浮点值。 
+
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。 
+
+@return  Y 维度。 
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.print.attribute.Size2DSyntax.toString(int units, String unitsName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定单位的此二维大小属性的字符串版本。该字符串采用的形式是 <CODE>&quot;<I>X</I>x<I>Y</I> <I>U</I>&quot;</CODE>，其中 <I>X</I> 为 X 维度，<I>Y</I> 为 Y 维度，<I>U</I> 为单位名称。以浮点形式显示该值。 
+
+@param  units 单位转换因子，即 {@link #INCH <CODE>INCH</CODE>} 或 {@link #MM <CODE>MM</CODE>}。
+@param  unitsName 单位名称字符串，即 <CODE>&quot;in&quot;</CODE> 或 <CODE>&quot;mm&quot;</CODE>。如果为 null，则没有任何单位名称附加到该结果。 
+
+@return  此二维大小属性的字符串版本。
+
+@exception  IllegalArgumentException （未经检查的异常）如果 <CODE>units</CODE> &lt; 1，则抛出该异常。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.Size2DSyntax.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此二维大小属性是否等效于传入的对象。若要等效，以下所有条件都必须为 true： 
+ <OL TYPE=1>
+ <LI>
+<CODE>object</CODE> 不为 null。
+ <LI>
+<CODE>object</CODE> 是类 Size2DSyntax 的一个实例。
+ <LI>
+此属性的 X 维度等于 <CODE>object</CODE> 的 X 维度。 
+ <LI>
+此属性的 Y 维度等于 <CODE>object</CODE> 的 Y 维度。 
+ </OL>
+
+@param  object  要比较的对象。
+
+@return  如果 <CODE>object</CODE> 等效于此二维大小属性，则返回 True，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.print.attribute.Size2DSyntax.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此二维大小属性的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.print.attribute.Size2DSyntax.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此二维大小属性的字符串版本。该字符串采用的形式是 <CODE>&quot;<I>X</I>x<I>Y</I> um&quot;</CODE>，其中 <I>X</I> 为 X 维度，<I>Y</I> 为 Y 维度。使用内部单位微米报告该值。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.print.attribute.Size2DSyntax.getXMicrometers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此二维大小属性的 X 维度（以微米为单位）。（在子类中使用。）
+
+@return  X 维度（单位微米）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.print.attribute.Size2DSyntax.getYMicrometers()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此二维大小属性的 Y 维度（以微米为单位）。（在子类中使用。）
+
+@return  Y 维度（微米）。
+
+<!-- END DATA -->

@@ -1,0 +1,141 @@
+<!-- BEGIN KEY -->
+public interface javax.jnlp.ExtensionInstallerService
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The <code>ExtensionInstallerService</code> is used by an extension installer
+ to communicate with the JNLP Client. It provides the following type of
+ functionality:
+ <ul>
+ <li> Access to prefered installation location, and other information about
+      the JNLP Client
+ <li> Manipulation of the JNLP Client's download screen
+ <li> Methods for updating the JNLP Client with the installed code
+ </ul>
+ <p>
+ The normal sequence of events for an installer is:
+ <ol><li>Get service using <code>ServiceManager.lookup("javax.jnlp.ExtensionInstallerService")</code>.
+ <li>Update status, heading, and progress as install progresses
+ (<code>setStatus</code>, <code>setHeading</code> and
+ <code>updateProgress</code>).
+ <li>Invoke either <code>setJREInfo</code> or <code>setNativeLibraryInfo</code> depending
+     on if a JRE or a library is installed
+ <li>If successful invoke <code>installSucceeded</code>, otherwise invoke <code>installFailed</code>.
+ </ol>
+
+ @since 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.jnlp.ExtensionInstallerService.getInstallPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the directory where the installer is recommended to
+ install the extension in. It is not required that the installer
+ install in this directory, this is merely a suggested path.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.jnlp.ExtensionInstallerService.getExtensionVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the version of the extension being installed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL javax.jnlp.ExtensionInstallerService.getExtensionLocation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the location of the extension being installed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.hideProgressBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Hides the progress bar. Any subsequent calls to
+ <code>updateProgress</code> will force it to be visible.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.hideStatusWindow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Hides the status window. You should only invoke this if you are
+ going to provide your own feedback to the user as to the progress
+ of the install.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.setHeading(String heading)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Updates the status of the installer process.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.setStatus(String status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Updates the status of the installer process.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.updateProgress(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Updates the progress bar.
+
+ @param value progress bar value - should be between 0 and 100.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.installSucceeded(boolean needsReboot)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Installers should invoke this upon a succesful installation of
+ the extension. This will cause the JNLP Client to regain control
+ and continue its normal operation.
+
+ @param needsReboot  If true, a reboot is needed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.installFailed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This should be invoked if the install fails. The JNLP Client will continue
+ its operation, and inform the user that the install has failed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.setJREInfo(String platformVersion, String jrePath)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Informs the JNLP Client of the path to the executable for the JRE, if
+ this is an installer for a JRE, and about platform-version this JRE
+ implements.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.jnlp.ExtensionInstallerService.setNativeLibraryInfo(String path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Informs the JNLP Client of a directory where it should search for
+ native libraries.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.jnlp.ExtensionInstallerService.getInstalledJRE(URL url, String version)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the path to the executable for the given JRE. This method can be used
+ by extensions that needs to find information in a given JRE, or enhance a given
+ JRE.
+
+  @param url      product location of the JRE
+  @param version  product version of the JRE
+
+  @return The path to the executable for the given JRE, or <code>null</code> if the
+  JRE is not installed.
+
+<!-- END DATA -->

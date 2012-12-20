@@ -1,0 +1,91 @@
+<!-- BEGIN KEY -->
+public class javax.management.NotificationFilterSupport extends java.lang.Object implements javax.management.NotificationFilter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供 {@link javax.management.NotificationFilter} 接口的实现。针对通知类型这一属性执行过滤。
+ <P>
+管理一个已启用的通知类型列表。方法允许用户根据需要启用/禁用多个通知类型。
+ <P>
+然后在向侦听器（已向某个过滤器注册过）发送通知前，该通知广播器会比较此通知类型和该过滤器所允许的所有通知类型。仅在该侦听器的过滤器允许此通知类型的情况下才将通知发送到该侦听器。
+ <P>
+示例：
+ <BLOCKQUOTE>
+ <PRE>
+ NotificationFilterSupport myFilter = new NotificationFilterSupport();
+ myFilter.enableType(&quot;my_example.my_type&quot;);
+ myBroadcaster.addListener(myListener, myFilter, null);
+ </PRE>
+ </BLOCKQUOTE>
+侦听器 <CODE>myListener</CODE> 仅接收类型等于 &quot;my_example.my_type&quot; 或以其开头的通知。
+
+@see javax.management.NotificationBroadcaster#addNotificationListener
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.List<java.lang.String> javax.management.NotificationFilterSupport.enabledTypes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 包含已启用通知类型的 {@link Vector}。默认值是一个空向量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.NotificationFilterSupport.isNotificationEnabled(Notification notification)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向侦听器发送指定的通知前调用。<BR>此过滤器把指定的通知的类型和所有允许的类型相比较。如果通知类型与某个允许类型匹配，则应该将该通知发送到侦听器并且此方法返回 <CODE>true</CODE>。
+   
+@param notification 要发送的通知。
+@return 如果应该将通知发送到侦听器，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.NotificationFilterSupport.enableType(String prefix) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许将其类型以指定前缀开始的所有通知发送到该侦听器。<BR>如果指定的前缀已经在允许通知类型的列表中，则此方法无效。
+ <P>
+示例：
+ <BLOCKQUOTE>
+ <PRE>
+ // Enables all notifications the type of which starts with &quot;my_example&quot; to be sent.
+ myFilter.enableType(&quot;my_example&quot;);
+ // Enables all notifications the type of which is &quot;my_example.my_type&quot; to be sent.
+ myFilter.enableType(&quot;my_example.my_type&quot;);
+ </PRE>
+ </BLOCKQUOTE>
+   
+注：
+ <BLOCKQUOTE><CODE>myFilter.enableType(&quot;my_example.*&quot;);</CODE></BLOCKQUOTE>
+不匹配任何通知类型。
+
+@param prefix 前缀。
+@exception java.lang.IllegalArgumentException 如果 prefix 参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.NotificationFilterSupport.disableType(String prefix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从前缀列表中移除给定的前缀。<BR>如果指定的前缀不在允许的通知类型的列表中，则此方法无效。
+   
+@param prefix 前缀。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.NotificationFilterSupport.disableAllTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+禁止所有通知类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Vector<java.lang.String> javax.management.NotificationFilterSupport.getEnabledTypes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此过滤器的所有允许通知类型。
+
+@return 包含所有允许的通知类型的列表。
+
+<!-- END DATA -->

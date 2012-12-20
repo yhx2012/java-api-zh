@@ -1,0 +1,308 @@
+<!-- BEGIN KEY -->
+public final class java.security.AccessController extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p> AccessController 类用于与访问控制相关的操作和决定。
+ 
+<p> 更确切地说，AccessController 类用于以下三个目的：
+ 
+ <ul>
+<li> 基于当前生效的安全策略决定是允许还是拒绝对关键系统资源的访问<p> 
+<li>将代码标记为享有&ldquo;特权&rdquo;，从而影响后续访问决定，以及<p>
+<li>获取当前调用上下文的&ldquo;快照&rdquo;，这样便可以相对于已保存的上下文作出其他上下文的访问控制决定。 </ul>
+ 
+<p> {@link #checkPermission(Permission) checkPermission} 方法确定应该批准还是拒绝由指定权限所指示的访问请求。示例调用如下所示。在此例中，<code>checkPermission</code> 将确定是否批准对 &quot;/temp&quot; 目录中名为 &quot;testFile&quot; 的文件的&ldquo;读&rdquo;访问。
+ 
+ <pre>
+ 
+    FilePermission perm = new FilePermission(&quot;/temp/testFile&quot;, &quot;read&quot;);
+    AccessController.checkPermission(perm);
+ 
+ </pre>
+
+<p> 如果允许执行请求的访问，则 <code>checkPermission</code> 正常返回。如果拒绝，则抛出 AccessControlException。如果请求的权限类型不正确或包含无效值，也会抛出 AccessControlException。只要有可能，都会给出此类信息。假定当前线程按照调用方 1 到调用方 2 直到调用方 m 的顺序遍历了 m 个调用方。那么调用方 m 调用 <code>checkPermission</code> 方法。<code>checkPermission</code> 方法基于以下算法确定是批准还是拒绝进行访问：
+ 
+ <pre>
+ i = m;
+ 
+ while (i &gt; 0) {
+ 
+      if (caller i's domain does not have the permission)
+              throw AccessControlException
+ 
+      else if (caller i is marked as privileged) {
+              if (a context was specified in the call to doPrivileged) 
+                 context.checkPermission(permission)
+return;
+      }
+      i = i - 1;
+ };
+
+    // Next, check the context inherited when
+    // the thread was created. Whenever a new thread is created, the
+    // AccessControlContext at that time is
+    // stored and associated with the new thread, as the &quot;inherited&quot;
+// context.
+ 
+ inheritedContext.checkPermission(permission);
+ </pre>
+ 
+<p> 可以将调用方标记为享有&ldquo;特权&rdquo;（请参阅 {@link #doPrivileged(PrivilegedAction) doPrivileged} 及下文）。在做访问控制决定时，如果遇到通过调用不带上下文参数（请参阅下文，以获取关于上下文参数的信息）的 <code>doPrivileged</code> 标记为&ldquo;特权&rdquo;的调用方，则 <code>checkPermission</code> 方法将停止检查。如果该调用方的域具有指定的权限，则不进行进一步检查，并且 <code>checkPermission</code> 正常返回，指示允许所请求的访问。如果该域不具有指定的权限，则通常抛出异常。
+ 
+<p> &ldquo;特权&rdquo;功能的标准用法如下所示。如果不需要从&ldquo;特权&rdquo;块返回值，则使用以下代码：
+
+ <pre>
+   somemethod() {
+        ...normal code here...
+        AccessController.doPrivileged(new PrivilegedAction() {
+            public Object run() {
+                // privileged code goes here, for example:
+                System.loadLibrary(&quot;awt&quot;);
+                return null; // nothing to return
+            }
+        });
+       ...normal code here...
+  }
+ </pre>
+
+ <p>
+PrivilegedAction 是一个具有单个方法的接口，该方法名为 <code>run</code> 并返回一个 Object。上述示例显示该接口的实现的创建；提供了 <code>run</code> 方法的具体实现。调用 <code>doPrivileged</code> 时，将 PrivilegedAction 实现的实例传递给它。<code>doPrivileged</code> 方法在启用特权后从 PrivilegedAction 实现调用 <code>run</code> 方法，并返回 <code>run</code> 方法的返回值作为 <code>doPrivileged</code> 的返回值（在此示例中忽略）。
+
+<p> 如果需要返回值，则可使用以下代码：
+
+ <pre>
+   somemethod() {
+        ...normal code here...
+        String user = (String) AccessController.doPrivileged(
+          new PrivilegedAction() {
+            public Object run() {
+                return System.getProperty(&quot;user.name&quot;);
+            }
+          }
+        );
+        ...normal code here...
+  }
+ </pre>
+
+<p>如果在 <code>run</code> 方法中执行的操作可以抛出&ldquo;已经过检查&rdquo;异常（列在方法的 <code>throws</code> 子句中），则需要使用 <code>PrivilegedExceptionAction</code> 接口代替 <code>PrivilegedAction</code> 接口：
+ 
+ <pre>
+   somemethod() throws FileNotFoundException {
+        ...normal code here...
+      try {
+        FileInputStream fis = (FileInputStream) AccessController.doPrivileged(
+          new PrivilegedExceptionAction() {
+            public Object run() throws FileNotFoundException {
+                return new FileInputStream(&quot;someFile&quot;);
+            }
+          }
+        );
+      } catch (PrivilegedActionException e) {
+        // e.getException() should be an instance of FileNotFoundException,
+        // as only &quot;checked&quot; exceptions will be &quot;wrapped&quot; in a
+        // <code>PrivilegedActionException</code>.
+        throw (FileNotFoundException) e.getException();
+      }
+        ...normal code here...
+  }
+ </pre>
+ 
+<p> 在使用&ldquo;特权&rdquo;构造时务必 * 特别 * 小心，始终让享有特权的代码段尽可能的小。
+ 
+<p> 注意，<code>checkPermission</code> 始终在当前执行线程的上下文中执行安全性检查。有时，本来应该在给定上下文中进行的安全性检查实际需要在<i>另一个</i> 上下文中（例如，在 worker 线程中）完成。{@link #getContext() getContext} 方法和 AccessControlContext 类就是为这种情况提供的。<code>getContext</code> 方法获取当前调用上下文的&ldquo;快照&rdquo;，并将其置于它所返回的 AccessControlContext 对象中。示例调用如下：
+ 
+ <pre>
+ 
+   AccessControlContext acc = AccessController.getContext()
+ 
+ </pre>
+ 
+ <p>
+AccessControlContext 本身具有一个 <code>checkPermission</code> 方法，该方法基于<i>它</i> 所封装的上下文而不是当前执行线程作出访问决定。因此，另一上下文中的代码可以在以前保存的 AccessControlContext 对象上调用该方法。示例调用如下：
+ 
+ <pre>
+ 
+   acc.checkPermission(permission)
+ 
+ </pre> 
+
+<p> 有时候您可能不知道用于检查上下文的权限的优先级。这时可以使用 doPrivileged 方法获取上下文：
+ 
+ <pre>
+   somemethod() {
+         AccessController.doPrivileged(new PrivilegedAction() {
+              public Object run() {
+                 // Code goes here. Any permission checks within this
+                 // run method will require that the intersection of the
+                 // callers protection domain and the snapshot's
+                 // context have the desired permission.
+              }
+         }, acc);
+         ...normal code here...
+   }
+ </pre>
+
+@see AccessControlContext
+
+@version 1.55 04/05/05
+@author Li Gong
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native T java.security.AccessController.doPrivileged(java.security.PrivilegedAction<T> action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用特权，执行指定的 <code>PrivilegedAction</code>。该操作在调用者保护域所拥有的<i>全部</i> 权限下执行。
+ <p>
+如果该操作的 <code>run</code> 方法抛出（未经过检查的）异常，则该异常将通过此方法传播。
+
+<p> 注意，执行该操作时，任何与当前 AccessControlContext 关联的 DomainCombiner 都将被忽略。
+
+@param action 要执行的操作。
+
+@return 操作的 <code>run</code> 方法返回的值。
+
+@exception  NullPointerException  如果该操作为 <code>null</code>。
+
+@see #doPrivileged(PrivilegedAction,AccessControlContext)
+@see #doPrivileged(PrivilegedExceptionAction)
+@see #doPrivilegedWithCombiner(PrivilegedAction)
+@see java.security.DomainCombiner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T java.security.AccessController.doPrivilegedWithCombiner(java.security.PrivilegedAction<T> action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用特权，执行指定的 <code>PrivilegedAction</code>。该操作在调用者保护域所拥有的<i>全部</i> 权限下执行。
+
+ <p> 如果操作的 <code>run</code> 方法抛出（未经过检查的）异常，那么它将通过此方法传播。
+
+ <p> 执行该操作时，此方法保留当前 AccessControlContext 的 DomainCombiner（可能为 null）。
+
+ @param action 要执行的操作。
+
+ @return 操作的 <code>run</code> 方法返回的值。
+
+ @exception NullPointerException 如果 action 为 <code>null</code>
+
+ @see #doPrivileged(PrivilegedAction)
+ @see java.security.DomainCombiner
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native T java.security.AccessController.doPrivileged(java.security.PrivilegedAction<T> action, AccessControlContext context)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过指定的 <code>AccessControlContext</code> 启用和限制特权，执行指定的 <code>PrivilegedAction</code>。该操作在调用方保护域所拥有权限与指定的 <code>AccessControlContext</code> 表示的域所拥有权限的交集下执行。
+ <p>
+如果该操作的 <code>run</code> 方法抛出（未经过检查的）异常，则该异常将通过此方法传播。
+
+@param action 要执行的操作。
+@param context <i>访问控制上下文</i>，表示执行指定操作前应用于调用方的域特权的限制条件。如果上下文为 <code>null</code>，则不应用任何附加限制。
+
+@return 操作的 <code>run</code> 方法返回的值。
+
+@exception  NullPointerException  如果该操作为 <code>null</code>。
+ 
+@see #doPrivileged(PrivilegedAction)
+@see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native T java.security.AccessController.doPrivileged(java.security.PrivilegedExceptionAction<T> action) throws java.security.PrivilegedActionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用特权，执行指定的 <code>PrivilegedExceptionAction</code>。该操作在调用方保护域所拥有的<i>全部</i> 权限下执行。
+ <p>
+如果该操作的 <code>run</code> 方法抛出<i>未经过检查的</i> 异常，则该异常将通过此方法传播。
+ <p> 注意，执行操作时任何与当前 AccessControlContext 关联的 DomainCombiner 都将被忽略。
+
+@param action 要执行的操作
+
+@return 操作的 <code>run</code> 方法返回的值
+
+@exception PrivilegedActionException 如果指定操作的 <code>run</code> 方法抛出<i>未经过检查的</i> 异常
+@exception NullPointerException 如果操作为 <code>null</code>
+ 
+@see #doPrivileged(PrivilegedAction)
+@see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
+ @see #doPrivilegedWithCombiner(PrivilegedExceptionAction)
+ @see java.security.DomainCombiner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static T java.security.AccessController.doPrivilegedWithCombiner(java.security.PrivilegedExceptionAction<T> action) throws java.security.PrivilegedActionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用特权，执行指定的 <code>PrivilegedExceptionAction</code>。该操作在调用者保护域所拥有的<i>全部</i> 权限下执行。
+
+
+ <p> 如果操作的 <code>run</code> 方法抛出（未经过检查的）异常，则该异常将通过此方法传播。
+
+ <p> 执行该操作时，此方法保留当前 AccessControlContext 的 DomainCombiner（可能为 null）。
+
+
+ @param action 要执行的操作。
+
+ @return 操作的 <code>run</code> 方法返回的值
+
+ @exception PrivilegedActionException 如果指定操作的 <code>run</code> 方法抛出<i>经过检查的</i> 异常 
+ @exception NullPointerException 如果操作为 <code>null</code>
+ 
+ @see #doPrivileged(PrivilegedAction)
+ @see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
+ @see java.security.DomainCombiner
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static native T java.security.AccessController.doPrivileged(java.security.PrivilegedExceptionAction<T> action, AccessControlContext context) throws java.security.PrivilegedActionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过指定的 <code>AccessControlContext</code> 启用和限制特权，执行指定的 <code>PrivilegedExceptionAction</code>。操作在调用方保护域所拥有权限与指定的 <code>AccessControlContext</code> 表示的域所拥有权限的交集下执行。
+ <p>
+如果该操作的 <code>run</code> 方法抛出<i>未经过检查的</i> 异常，则该异常将通过此方法传播。
+
+@param action 要执行的操作
+@param context <i>访问控制上下文</i>，表示执行指定操作前应用于调用方的域特权的限制条件。如果上下文为 <code>null</code>，则不应用任何附加限制。
+
+@return 操作的 <code>run</code> 方法返回的值
+
+@exception PrivilegedActionException 如果指定操作的 <code>run</code> 方法抛出<i>未经过检查的</i> 异常
+@exception NullPointerException 如果操作为 <code>null</code>
+ 
+@see #doPrivileged(PrivilegedAction)
+@see #doPrivileged(PrivilegedExceptionAction,AccessControlContext)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.AccessControlContext java.security.AccessController.getContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此方法获取当前调用上下文（包括当前 Thread 的继承 AccessControlContext）的&ldquo;快照&rdquo;，并将其置于 AccessControlContext 对象中。稍后可能在另一个线程中对此上下文进行检查。
+
+@see AccessControlContext
+
+@return 基于当前上下文的 AccessControlContext。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.security.AccessController.checkPermission(Permission perm) throws java.security.AccessControlException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+基于当前 AccessControlContext 和安全策略确定是否允许指定权限所指示的访问请求。如果允许访问请求，此方法正常返回；否则抛出适当的 AccessControlException。 
+
+@param perm 请求的权限。
+ 
+@exception AccessControlException 如果根据当前的安全策略不允许使用指定的权限。
+@exception NullPointerException 如果指定权限为 <code>null</code> 并且基于当前生效的安全策略进行了检查。
+
+<!-- END DATA -->

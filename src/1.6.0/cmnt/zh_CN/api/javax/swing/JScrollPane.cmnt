@@ -1,0 +1,682 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JScrollPane extends javax.swing.JComponent implements javax.swing.ScrollPaneConstants, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供轻量级组件的 scrollable 视图。<code>JScrollPane</code> 管理视口、可选的垂直和水平滚动条以及可选的行和列标题视口。有关 <code>JScrollPane</code> 的面向任务的文档，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/scrollpane.html">How to Use Scroll Panes</a> 一节。注意，<code>JScrollPane</code> 不支持重量级组件。
+ <p>
+ <TABLE ALIGN="RIGHT" BORDER="0" SUMMARY="layout">
+    <TR>
+    <TD ALIGN="CENTER">
+<P ALIGN="CENTER"><IMG SRC="doc-files/JScrollPane-1.gif" 
+      alt="以下文本是对此图像的描述。" 
+      WIDTH="256" HEIGHT="248" ALIGN="BOTTOM" BORDER="0">
+    </TD>
+    </TR>
+ </TABLE>
+<code>JViewport</code> 为数据源提供一个窗口或&ldquo;视口&rdquo;，例如，一个文本文件。该数据源为由 <code>JViewport</code> 视图显示的&ldquo;scrollable 客户端&rdquo;（即数据模型）。<code>JScrollPane</code> 基本上由 <code>JScrollBar</code>、一个 <code>JViewport</code> 以及它们之间的连线组成，如右图所示。 
+ <p>
+除了滚动条和视口之外，<code>JScrollPane</code> 也可以有一个列标题和一个行标题。这二者都是 <code>JViewport</code> 对象，可用 <code>setRowHeaderView</code> 和 <code>setColumnHeaderView</code> 指定。列标题视口自动左右滚动，跟踪主视口的左右滚动。（但是它不会垂直滚动。）行标题的滚动方式与此类似。
+ <p>
+在两个滚动条的交汇处、行标题与列标题的交汇处，或者滚动条与其中一个标题的交汇处，两个组件在很接近角的地方停止，留下一个默认情况下为空的矩形空间。四个角都有可能存在这些空间。在上图中，右上角存在该空间，由标签“角组件”标识。
+ <p>
+可使用 <code>setCorner</code> 方法替换许多的这些空白空间，以便将组件添加到一个特定角。（注：相同的组件不能添加到多个角。）如果想要为滚动窗格增加一些额外的装饰或功能，那么此方法很有用。每个角组件的大小都完全由标题和/或包围它的滚动条的大小确定。
+ <p>
+只有角组件存在于其中的角中有空白空间时该角组件才是可见的。例如，设想一个设置在滚动窗格（带有列标题）右上角的组件。如果滚动窗格的垂直滚动条不存在（可能因为视图组件尚未大到需要它的地步），那么该角组件将不会显示（因为标题和垂直滚动条的交汇点所创建的角中没有空白空间）。要强制使滚动条始终显示，可使用 <code>setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_ALWAYS)</code> 确保该角组件的空间始终存在。
+ <p>
+要围绕主视口添加一个边界，可使用 <code>setViewportBorder</code>。（当然，也可以使用 <code>setBorder</code> 围绕整个滚动窗格添加一个边界。）
+ <p>
+应该执行的一个常见操作是设置背景颜色，此颜色可在主视口小于视口或透明时使用。使用 <code>scrollPane.getViewport().setBackground()</code> 设置视口的背景色可实现此目的。设置视口而不是滚动窗格的颜色的原因是，默认情况下，<code>JViewport</code> 为不透明，还有一些其他属性，这意味着它将用其背景色完全填充背景。因此当 <code>JScrollPane</code> 绘制其背景时，视口通常将在它上面绘制。
+ <p>
+默认情况下，<code>JScrollPane</code> 使用 <code>ScrollPaneLayout</code> 处理其子组件的布局。<code>ScrollPaneLayout</code> 使用以下两个方法之一确定视口视图的大小：
+ <ol>
+<li>如果视图实现了 <code>Scrollable</code>，将使用 <code>getPreferredScrollableViewportSize</code>、<code>getScrollableTracksViewportWidth</code> 和 <code>getScrollableTracksViewportHeight</code> 的组合，否则使用
+<li><code>getPreferredSize</code>。
+ </ol>
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。 
+
+@see JScrollBar
+@see JViewport
+@see ScrollPaneLayout
+@see Scrollable
+@see Component#getPreferredSize
+@see #setViewportView
+@see #setRowHeaderView
+@see #setColumnHeaderView
+@see #setCorner
+@see #setViewportBorder
+ 
+@beaninfo attribute: isContainer true attribute: containerDelegate getViewport description: A specialized container that manages a viewport, optional scrollbars and headers
+
+@version 1.100
+@(#)JScrollPane.java	1.100
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JScrollPane.verticalScrollBarPolicy
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+用于垂直滚动条的显示策略。默认为 <code>ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED</code>。
+@see #setVerticalScrollBarPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JScrollPane.horizontalScrollBarPolicy
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于水平滚动条的显示策略。默认为 <code>ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED</code>。
+@see #setHorizontalScrollBarPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JViewport javax.swing.JScrollPane.viewport
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+滚动窗格的视口子级。默认为一个空的 <code>JViewport</code>。
+@see #setViewport
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JScrollBar javax.swing.JScrollPane.verticalScrollBar
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动窗格的垂直滚动条子级。默认为 <code>JScrollBar</code>。
+@see #setVerticalScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JScrollBar javax.swing.JScrollPane.horizontalScrollBar
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动窗格的水平滚动条子级。默认为 <code>JScrollBar</code>。
+@see #setHorizontalScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JViewport javax.swing.JScrollPane.rowHeader
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+行标题子级。默认为 <code>null</code>。
+@see #setRowHeader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JViewport javax.swing.JScrollPane.columnHeader
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+列标题子级。默认为 <code>null</code>。
+@see #setColumnHeader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JScrollPane.lowerLeft
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在左下角显示的组件。默认为 <code>null</code>。
+@see #setCorner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JScrollPane.lowerRight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在右下角显示的组件。默认为 <code>null</code>。
+@see #setCorner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JScrollPane.upperLeft
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在左上角显示的组件。默认为 <code>null</code>。
+@see #setCorner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JScrollPane.upperRight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在右上角显示的组件。默认为 <code>null</code>。
+@see #setCorner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollPane(Component view, int vsbPolicy, int hsbPolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>JScrollPane</code>，它将视图组件显示在一个视口中，视图位置可使用一对滚动条控制。滚动条策略指定滚动条在何时显示，例如，如果 <code>vsbPolicy</code> 为 <code>VERTICAL_SCROLLBAR_AS_NEEDED</code>，则只有在垂直查看无法完全显示时，垂直滚动条才显示。可用的策略设定在 {@link #setVerticalScrollBarPolicy} 和 {@link #setHorizontalScrollBarPolicy} 中列出。
+ 
+@see #setViewportView
+ 
+@param view 将显示在滚动窗格视口中的组件
+@param vsbPolicy 指定垂直滚动条策略的一个整数
+@param hsbPolicy 指定水平滚动条策略的一个整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollPane(Component view)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示指定组件内容的 <code>JScrollPane</code>，只要组件的内容超过视图大小就会显示水平和垂直滚动条。
+ 
+@see #setViewportView
+@param view 将显示在滚动窗格视口中的组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollPane(int vsbPolicy, int hsbPolicy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定滚动条策略的空（无视口的视图）<code>JScrollPane</code>。可用的策略设定在 {@link #setVerticalScrollBarPolicy} 和 {@link #setHorizontalScrollBarPolicy} 中列出。
+ 
+@see #setViewportView
+ 
+@param vsbPolicy 指定垂直滚动条策略的一个整数
+@param hsbPolicy 指定水平滚动条策略的一个整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个空的（无视口的视图）<code>JScrollPane</code>，需要时水平和垂直滚动条都可显示。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ScrollPaneUI javax.swing.JScrollPane.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的外观 (L&F) 对象。
+
+@return 呈现此组件的 <code>ScrollPaneUI</code> 对象
+@see #setUI
+@beaninfo bound:true hidden:true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setUI(ScrollPaneUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>ScrollPaneUI</code> 对象，它为此组件提供外观 (L&F)。
+
+@param ui <code>ScrollPaneUI</code> L&F 对象
+@see #getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用一个来自当前默认外观的 ScrollPaneUI 替换当前的 <code>ScrollPaneUI</code> 对象。在默认的外观更改时将被调用。
+
+@see JComponent#updateUI
+@see UIManager#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JScrollPane.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于构造呈现此组件时所用 L&F 类的名称的后缀。
+ 
+@return 字符串 &quot;ScrollPaneUI&quot; 
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+ 
+@beaninfo hidden:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setLayout(LayoutManager layout)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置此 <code>JScrollPane</code> 的布局管理器。此方法重写 <code>java.awt.Container</code> 中的 <code>setLayout</code>，这样可确保只有属于 <code>ScrollPaneLayout</code> 的子类的 <code>LayoutManager</code> 才能在 <code>JScrollPane</code> 中使用。如果 <code>layout</code> 为非 null，将在其上调用 <code>syncWithScrollPane</code>。
+ 
+@param layout 指定的布局管理器
+@exception ClassCastException 如果布局不是 <code>ScrollPaneLayout</code>
+@see java.awt.Container#getLayout
+@see java.awt.Container#setLayout
+ 
+@beaninfo hidden:true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JScrollPane.isValidateRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写以返回 true，这样任何在此 <code>JScrollPane</code> 的任何后代上对 <code>revalidate</code> 的调用将使从此 <code>JScrollPane</code> 开始的整个树接受验证。
+ 
+@return true
+@see java.awt.Container#validate
+@see JComponent#revalidate
+@see JComponent#isValidateRoot
+ 
+@beaninfo hidden: true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollPane.getVerticalScrollBarPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回垂直滚动条策略值。
+@return <code>verticalScrollBarPolicy</code> 属性
+@see #setVerticalScrollBarPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setVerticalScrollBarPolicy(int policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定垂直滚动条何时显示在滚动窗格上。合法值是：
+ <ul>
+ <li><code>ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED</code>
+ <li><code>ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER</code>
+ <li><code>ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS</code>
+ </ul>
+
+@param policy 以上列出的三个值之一
+@exception IllegalArgumentException 如果 <code>policy</code> 不是以上列出的合法值之一
+@see #getVerticalScrollBarPolicy
+ 
+ @beaninfo
+   preferred: true
+       bound: true
+ description: The scrollpane vertical scrollbar policy
+        enum: VERTICAL_SCROLLBAR_AS_NEEDED ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+              VERTICAL_SCROLLBAR_NEVER ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER
+              VERTICAL_SCROLLBAR_ALWAYS ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JScrollPane.getHorizontalScrollBarPolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回水平滚动条策略值。
+@return <code>horizontalScrollBarPolicy</code> 属性
+@see #setHorizontalScrollBarPolicy
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setHorizontalScrollBarPolicy(int policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定水平滚动条何时显示在滚动窗格上。选项有：<ul>
+ <li><code>ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED</code>
+ <li><code>ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER</code>
+ <li><code>ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS</code>
+ </ul>
+ 
+@param policy 以上列出的三个值之一
+@exception IllegalArgumentException 如果 <code>policy</code> 不是以上列出的合法值之一
+@see #getHorizontalScrollBarPolicy
+
+ @beaninfo
+   preferred: true
+       bound: true
+ description: The scrollpane scrollbar policy
+        enum: HORIZONTAL_SCROLLBAR_AS_NEEDED ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED
+              HORIZONTAL_SCROLLBAR_NEVER ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+              HORIZONTAL_SCROLLBAR_ALWAYS ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.border.Border javax.swing.JScrollPane.getViewportBorder()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回围绕该视口的 <code>Border</code> 对象。
+
+@return <code>viewportBorder</code> 属性
+@see #setViewportBorder
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setViewportBorder(Border viewportBorder)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+围绕视口添加一个边界。注意，边界并不是直接设置在视口上，<code>JViewport</code> 不支持 <code>JComponent</code> 边界属性。同样，设置 <code>JScrollPane</code> 的视口并不影响 <code>viewportBorder</code> 属性。
+ <p>
+此属性的默认值由外观实现计算。
+
+@param viewportBorder 要添加的边界
+@see #getViewportBorder
+@see #setViewport
+
+ @beaninfo
+   preferred: true
+       bound: true
+ description: The border around the viewport.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.JScrollPane.getViewportBorderBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回视口边界的范围。
+
+@return 一个指定该视口边界的 <code>Rectangle</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar javax.swing.JScrollPane.createHorizontalScrollBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认返回 <code>JScrollPane.ScrollBar</code>。子类可以重写此方法来强制 <code>ScrollPaneUI</code> 实现使用 <code>JScrollBar</code> 子类。<code>ScrollPaneUI</code> 实现用它来创建水平滚动条。
+
+@return 水平方向的 <code>JScrollBar</code>
+@see JScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar javax.swing.JScrollPane.getHorizontalScrollBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回控制视口的水平视图位置的水平滚动条。
+
+@return <code>horizontalScrollBar</code> 属性
+@see #setHorizontalScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setHorizontalScrollBar(JScrollBar horizontalScrollBar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将控制视口水平视图位置的水平滚动条添加到滚动窗格中。这通常是不必要的，因为 <code>JScrollPane</code> 默认创建水平和垂直滚动条。
+ 
+@param horizontalScrollBar 要添加的水平滚动条
+@see #createHorizontalScrollBar
+@see #getHorizontalScrollBar 
+
+@beaninfo expert:true bound:true description: The horizontal scrollbar.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar javax.swing.JScrollPane.createVerticalScrollBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认返回 <code>JScrollPane.ScrollBar</code>。子类可以重写此方法来强制 <code>ScrollPaneUI</code> 实现使用 <code>JScrollBar</code> 子类。<code>ScrollPaneUI</code> 实现用它来创建垂直滚动条。  
+
+@return 垂直方向的 <code>JScrollBar</code>
+@see JScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JScrollBar javax.swing.JScrollPane.getVerticalScrollBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回控制视口垂直视图位置的垂直滚动条。
+
+@return <code>verticalScrollBar</code> 属性
+@see #setVerticalScrollBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setVerticalScrollBar(JScrollBar verticalScrollBar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将控制视口垂直视图位置的滚动条添加到滚动窗格中。这通常是不必要的，因为 <code>JScrollPane</code> 默认创建垂直和水平滚动条。
+ 
+@param verticalScrollBar 要添加的新垂直滚动条
+@see #createVerticalScrollBar
+@see #getVerticalScrollBar
+ 
+@beaninfo expert: true bound: true description: The vertical scrollbar.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JViewport javax.swing.JScrollPane.createViewport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+默认返回新的 <code>JViewport</code>。在 <code>setViewportView</code>、<code>setRowHeaderView</code> 和 <code>setColumnHeaderView</code> 中使用它来创建视口（需要时）。子类可重写此方法来返回 <code>JViewport</code> 的一个子类。
+
+@return 新的 <code>JViewport</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JViewport javax.swing.JScrollPane.getViewport()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前的 <code>JViewport</code>。
+
+@see #setViewport
+@return <code>viewport</code> 属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setViewport(JViewport viewport)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除旧视口（如果有）；强制新视口的 viewPosition 位于 +x,+y 象限中；将行和列标题（如果有）与新视口同步；最后将滚动条和标题与新视口同步。
+ <p>
+在大多数应用程序中，使用 <code>setViewportView</code> 将视口和视图添加到滚动窗格更为方便。
+ 
+@param viewport 要使用的新视口；如果视口为 <code>null</code>，将依旧移除旧视口并将新视口设置为 <code>null</code>
+@see #createViewport
+@see #getViewport
+@see #setViewportView
+ 
+@beaninfo expert: true bound: true attribute: visualUpdate true description: The viewport child for this scrollpane
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setViewportView(Component view)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个视口（如果有必要）并设置其视图。不直接为 <code>JScrollPane</code> 构造方法提供视图的应用程序应使用此方法指定将显示在滚动窗格中的滚动组件子级。例如：
+ <pre>
+ JScrollPane scrollpane = new JScrollPane();
+ scrollpane.setViewportView(myBigComponentToScroll);
+ </pre>
+应用程序不应将子级直接添加到滚动窗格。
+
+@param view 要添加到视口的组件
+@see #setViewport
+@see JViewport#setView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JViewport javax.swing.JScrollPane.getRowHeader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回行标题。
+@return <code>rowHeader</code> 属性
+@see #setRowHeader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setRowHeader(JViewport rowHeader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除旧的 rowHeader，如果存在；如果新的 rowHeader 不为 <code>null</code>，将其 viewPosition 的 y 坐标与视口（如果有）同步然后将其添加到滚动窗格。
+ <p>
+在大多数应用程序中，使用 <code>setRowHeaderView</code> 将行标题组件及其视口添加到滚动窗格更为方便。
+ 
+@param rowHeader 要使用的新行标题；如果为 <code>null</code> 将依旧移除旧行标题并将新行标题设置为 <code>null</code>
+@see #getRowHeader
+@see #setRowHeaderView
+ 
+@beaninfo bound: true expert: true description: The row header child for this scrollpane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setRowHeaderView(Component view)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个行标题视口（如果有必要），设置其视图然后将此行标题视口添加到滚动窗格。例如：
+ <pre>
+ JScrollPane scrollpane = new JScrollPane();
+ scrollpane.setViewportView(myBigComponentToScroll);
+ scrollpane.setRowHeaderView(myBigComponentsRowHeader);
+ </pre>
+
+@see #setRowHeader
+@see JViewport#setView
+@param view 将作为行标题显示的组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JViewport javax.swing.JScrollPane.getColumnHeader()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列标题。
+@return <code>columnHeader</code> 属性
+@see #setColumnHeader
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setColumnHeader(JViewport columnHeader)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除旧的 columnHeader，如果有的话；如果新的 columnHeader 不为 <code>null</code>，将其 viewPosition 的 x 坐标与视口（如果有）同步然后将其添加到滚动窗格。
+ <p>
+在大多数应用程序中，使用 <code>setColumnHeaderView</code> 将列标题组件及其视口添加到滚动窗格更为方便。
+ 
+@see #getColumnHeader
+@see #setColumnHeaderView
+ 
+@beaninfo bound: true description: The column header child for this scrollpane attribute: visualUpdate true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setColumnHeaderView(Component view)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个列标题视口（如果有必要），设置其视图然后将此列标题视口添加到滚动窗格。例如：
+ <pre>
+ JScrollPane scrollpane = new JScrollPane();
+ scrollpane.setViewportView(myBigComponentToScroll);
+ scrollpane.setColumnHeaderView(myBigComponentsColumnHeader);
+ </pre>
+ 
+@see #setColumnHeader
+@see JViewport#setView
+ 
+@param view 将作为列标题显示的组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JScrollPane.getCorner(String key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回位于指定角的组件。指定角的 <code>key</code> 值为下列之一：
+ <ul>
+ <li>ScrollPaneConstants.LOWER_LEFT_CORNER
+ <li>ScrollPaneConstants.LOWER_RIGHT_CORNER
+ <li>ScrollPaneConstants.UPPER_LEFT_CORNER
+ <li>ScrollPaneConstants.UPPER_RIGHT_CORNER
+ <li>ScrollPaneConstants.LOWER_LEADING_CORNER
+ <li>ScrollPaneConstants.LOWER_TRAILING_CORNER
+ <li>ScrollPaneConstants.UPPER_LEADING_CORNER
+ <li>ScrollPaneConstants.UPPER_TRAILING_CORNER
+ </ul>
+
+@param key 如上所示的值之一
+@return 给定键所标识的角组件（可以为 <code>null</code>）；如果该键无效，则返回 <code>null</code>
+@see #setCorner
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setCorner(String key, Component corner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个将显示在一个滚动窗格角中的子级，如果有空间的话。例如，两个滚动条的显示中（在滚动窗格的右边缘和下边缘），左下角组件将显示在两个滚动条两头之间的空间中。<b>key</b> 的合法值有：
+ <ul>
+ <li>ScrollPaneConstants.LOWER_LEFT_CORNER
+ <li>ScrollPaneConstants.LOWER_RIGHT_CORNER
+ <li>ScrollPaneConstants.UPPER_LEFT_CORNER
+ <li>ScrollPaneConstants.UPPER_RIGHT_CORNER
+ <li>ScrollPaneConstants.LOWER_LEADING_CORNER
+ <li>ScrollPaneConstants.LOWER_TRAILING_CORNER
+ <li>ScrollPaneConstants.UPPER_LEADING_CORNER
+ <li>ScrollPaneConstants.UPPER_TRAILING_CORNER
+ </ul>
+ <p>
+尽管 &quot;corner&quot; 不与任何 beans 属性签名匹配，生成的 <code>PropertyChange</code> 事件还是将此属性名设置为 corner key。
+ 
+@param key 标识组件将显示的角
+@param corner 下列组件之一：
+ <ul>
+ <li>lowerLeft
+ <li>lowerRight
+ <li>upperLeft
+ <li>upperRight
+ </ul>
+@exception IllegalArgumentException 如果 corner key 无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setComponentOrientation(ComponentOrientation co)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置由 <code>ComponentOrientation</code> 参数确定的垂直和水平滚动条方向。
+
+@param  co 以下值之一：
+ <ul>
+ <li>java.awt.ComponentOrientation.LEFT_TO_RIGHT
+ <li>java.awt.ComponentOrientation.RIGHT_TO_LEFT
+ <li>java.awt.ComponentOrientation.UNKNOWN
+ </ul>
+
+@see java.awt.ComponentOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JScrollPane.isWheelScrollingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示是否进行滚动以响应鼠标滚轮。默认情况下启用滚轮滚动。
+ 
+@see #setWheelScrollingEnabled
+@since 1.4
+@beaninfo bound: true description: Flag for enabling/disabling mouse wheel scrolling
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JScrollPane.setWheelScrollingEnabled(boolean handleWheel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启用/禁用对鼠标滚轮滚动的移动响应。默认情况下启用滚轮滚动。
+
+@param handleWheel   如果为 MouseWheelEvent 自动完成滚动，则为 <code>true</code>；否则为 <code>false</code>。
+@see #isWheelScrollingEnabled
+@see java.awt.event.MouseWheelEvent
+@see java.awt.event.MouseWheelListener
+@since 1.4
+@beaninfo bound:true description: Flag for enabling/disabling mouse wheel scrolling
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JScrollPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JScrollPane</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JScrollPane</code> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JScrollPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JScrollPane 相关联的 AccessibleContext。对于滚动窗格，AccessibleContext 采用的是 AccessibleJScrollPane 的形式。必要时创建一个新的 AccessibleJScrollPane 实例。
+
+@return 一个 AccessibleJScrollPane，它充当此 JScrollPane 的 AccessibleContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JScrollPane.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+有关 Swing 中序列化的更多信息，请参阅 <code>JComponent</code> 中的 <code>readObject</code> 和 <code>writeObject</code>。
+
+<!-- END DATA -->

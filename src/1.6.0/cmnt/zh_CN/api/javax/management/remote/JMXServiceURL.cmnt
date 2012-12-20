@@ -1,0 +1,187 @@
+<!-- BEGIN KEY -->
+public class javax.management.remote.JMXServiceURL extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>JMX API 连接器服务器的地址。此类的实例是不可变的。</p>
+
+ <p>地址是 SLP 的<em>抽象服务 URL</em>，此内容在 RFC 2609 中进行了定义并在 RFC 3111 中进行了修正。它看起来应该如下所示：</p>
+
+ <blockquote>
+
+ <code>service:jmx:<em>protocol</em>:<em>sap</em></code>
+
+ </blockquote>
+
+ <p>其中 <code><em>protocol</em></code> 为连接到连接器服务器所用的传输协议。它是一个或多个 ASCII 字符所组成的字符串，每个字符为字母、数字或字符 <code>+</code> 或 <code>-</code> 之一。第一个字符必须为字母。大写字母被转换为小写字母。</p>
+
+ <p><code><em>sap</em></code> 是查找到连接器服务器的地址位置。此地址采用了 RFC 2609 中为基于 IP 的协议所定义的语法子集。说它是子集是因为它不支持 <code>user@host</code> 语法。</p>
+
+ <p>此类目前也不支持由 RFC 2609 定义的其他语法。</p>
+
+ <p>所支持的语法为：</p>
+
+ <blockquote>
+
+ <code>//<em>[host[</em>:<em>port]][url-path]</em></code>
+
+ </blockquote>
+
+ <p>方括号 <code>[]</code> 指示地址的可选部分。并不是所有的协议都能识别所有可选部分。</p>
+
+ <p><code><em>host</em></code> 是主机名，它是一个 IPv4 数值主机地址，或是括在方括号中的 IPv6 数值地址。</p>
+
+ <p><code><em>port</em></code> 是一个十进制的端口号。0 表示默认或匿名端口，这取决于协议。</p>
+
+ <p><code><em>host</em></code> 和 <code><em>port</em></code> 均可忽略。必须有了 <code><em>host</em></code> 才能提供 <code><em>port</em></code>。</p>
+
+ <p><code><em>url-path</em></code>（如果有）以一个斜杠 (<code>/</code>) 或分号 (<code>;</code>) 开头直到地址结束。它可以采用 RFC 2609 中指定的分号语法包含属性。此类不对这些属性进行解析，因此无法检测到错误的属性语法。</p>
+
+ <p>尽管根据 RFC 2609 的规定，包含以分号开头的 <code><em>url-path</em></code> 是合法的，但不是所有的 SLP 实现都允许这样，所以建议避免使用这种语法。</p>
+
+ <p>初始 <code>service:jmx:<em>protocol</em></code> 字符串或地址的主机部分并不区分大小写。根据所采用的协议，<code><em>url-path</em></code> 部分可能会区分大小写。</p>
+
+
+@see <a
+ href="ftp://ftp.rfc-editor.org/in-notes/rfc2609.txt">RFC 2609, &quot;Service Templates and <code>Service:</code> Schemes&quot;</a>
+@see <a
+ href="ftp://ftp.rfc-editor.org/in-notes/rfc3111.txt">RFC 3111, &quot;Service Location Protocol Modifications for IPv6&quot;</a>
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.lang.String javax.management.remote.JMXServiceURL.protocol
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 {@link #getProtocol()} 返回的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.lang.String javax.management.remote.JMXServiceURL.host
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 {@link #getHost()} 返回的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final int javax.management.remote.JMXServiceURL.port
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 {@link #getPort()} 返回的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.lang.String javax.management.remote.JMXServiceURL.urlPath
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 {@link #getURLPath()} 返回的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXServiceURL(String serviceURL) throws java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>通过解析 Service URL 字符串来构造 <code>JMXServiceURL</code>。</p>
+
+@param serviceURL 要解析的 URL 字符串。
+
+@exception NullPointerException 如果 <code>serviceURL</code> 为 null。
+
+@exception MalformedURLException 如果 <code>serviceURL</code> 不符合 Abstract Service URL 的语法，或者它不是 JMX Remote API 服务的有效名称。<code>JMXServiceURL</code> 必须以字符串 <code>&quot;service:jmx:&quot;</code> 开头。（不区分大小写）。不允许包含任何不属于可打印 ASCII 字符的字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXServiceURL(String protocol, String host, int port) throws java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>构造具有给定协议、主机和端口的 <code>JMXServiceURL</code>。此构造方法等效于 {@link #JMXServiceURL(String, String, int, String) JMXServiceURL(protocol, host, port, null)}。</p>
+
+@param protocol URL 的协议部分。如果为 null，则默认为 <code>jmxmp</code>。
+
+@param host URL 的主机部分。如果为 null，则默认为本地主机名，它由 <code>InetAddress.getLocalHost().getHostName()</code> 确定。如果它为一个数值 IPv6 地址，可选择将其括在方括号 <code>[]</code> 中。
+
+@param port URL 的端口部分。
+
+@exception MalformedURLException 如果某一部分在语法上不正确，或者如果 <code>host</code> 为 null 并且无法找到本地主机名，或者如果 <code>port</code> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.remote.JMXServiceURL(String protocol, String host, int port, String urlPath) throws java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>构造具有给定部分的 <code>JMXServiceURL</code>。
+
+@param protocol URL 的协议部分。如果为 null，则默认为 <code>jmxmp</code>。
+
+@param host URL 的主机部分。如果为 null，则默认为本地主机名，它由 <code>InetAddress.getLocalHost().getHostName()</code> 确定。如果它为一个数值 IPv6 地址，可选择将其括在方括号 <code>[]</code> 中。
+
+@param port URL 的端口部分。
+
+@param urlPath URL 的 URL Path 部分。如果为 null，则默认为空字符串。
+
+@exception MalformedURLException 如果某一部分在语法上不正确，或者如果 <code>host</code> 为 null 并且无法找到本地主机名，或者如果 <code>port</code> 为负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.JMXServiceURL.getProtocol()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Service URL 的协议部分。
+
+@return Service URL 的协议部分。它从不为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.JMXServiceURL.getHost()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Service URL 的主机部分。如果 Service URL 是用带一个 URL 字符串参数的构造方法所构造的，则结果为该 URL 中指定主机的子字符串。如果此 Service URL 是用带一个独立主机参数的构造方法所构造的，则结果为所指定的字符串。如果该字符串为 null，则结果为 <code>InetAddress.getLocalHost().getHostName()</code>。</p>
+
+ <p>无论是哪种情况，如果主机是使用数值 IPv6 地址的 <code>[...]</code> 语法指定的，则此处的返回值不包括方括号。</p>
+
+@return Service URL 的主机部分。它从不为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.management.remote.JMXServiceURL.getPort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Service URL 的端口部分。如果未指定任何端口，则返回值为 0。</p>
+
+@return Service URL 的端口，如果没有，则返回 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.JMXServiceURL.getURLPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>Service URL 的 URL Path 部分。这是一个空字符串，或以斜杠 (<code>/</code>) 开头的字符串，或以分号 (<code>;</code>) 开头的字符串。
+
+@return Service URL 的 URL Path 部分。它从不为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.remote.JMXServiceURL.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>此 Service URL 的字符串表示形式。如果把此方法的返回值提供给 <code>JMXServiceURL</code> 构造方法，则结果对象等于此值。</p>
+
+ <p>返回字符串的 <code><em>host</em></code> 部分是由 {@link #getHost()} 返回的值。如果该值指定了一个数值 IPv6 地址，则它用方括号 <code>[]</code> 括起。</p>
+
+ <p>返回字符串的 <code><em>port</em></code> 部分是由 {@link #getPort()} 返回的值，以最短的十进制形式表示。如果该值为零，则忽略该值。</p>
+
+@return 此 Service URL 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.management.remote.JMXServiceURL.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>指示是否有其他的对象等于此对象。当且仅当 <code>obj</code> 为 <code>JMXServiceURL</code> 的一个实例，后者的 {@link #getProtocol()}、{@link #getHost()}、{@link #getPort()} 和 {@link #getURLPath()} 方法均返回与此对象相等的值时，此方法才返回 true。{@link #getProtocol()} 和 {@link #getHost()} 的值的大小写可能不同，但不影响二者的相等性。
+
+@param obj 要与之比较的引用对象。
+
+@return 如果此对象与 <code>obj</code> 参数相同，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->

@@ -1,0 +1,211 @@
+<!-- BEGIN KEY -->
+public class java.util.EnumMap extends java.util.AbstractMap implements java.io.Serializable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+与枚举类型键一起使用的专用 {@link Map} 实现。枚举映射中所有键都必须来自单个枚举类型，该枚举类型在创建映射时显式或隐式地指定。枚举映射在内部表示为数组。此表示形式非常紧凑且高效。
+
+<p>枚举映射根据其键的<i>自然顺序</i> 来维护（该顺序是声明枚举常量的顺序）。在 collection 视图（{@link #keySet()}、{@link #entrySet()} 和 {@link #values()}）所返回的迭代器中反映了这一点。
+
+<p>由 collection 视图返回的迭代器是<i>弱一致</i> 的：它们不会抛出 {@link ConcurrentModificationException}，也不一定显示在迭代进行时发生的任何映射修改的效果。
+
+<p>不允许使用 null 键。试图插入 null 键将抛出 {@link NullPointerException}。但是，试图测试是否出现 null 键或移除 null 键将不会抛出异常。允许使用 null 值。
+
+<P>像大多数 collection 一样，<tt>EnumMap</tt> 是不同步的。如果多个线程同时访问一个枚举映射，并且至少有一个线程修改该映射，则此枚举映射在外部应该是同步的。这一般通过对自然封装该枚举映射的某个对象进行同步来完成。如果不存在这样的对象，则应该使用 {@link Collections#synchronizedMap} 方法来“包装”该枚举。最好在创建时完成这一操作，以防止意外的非同步访问：
+
+ <pre>
+     Map&lt;EnumKey, V&gt; m
+         = Collections.synchronizedMap(new EnumMap&lt;EnumKey, V&gt;(...));
+ </pre>
+
+<p>实现注意事项：所有基本操作都在固定时间内执行。虽然并不保证，但它们很可能比其 {@link HashMap} 副本更快。
+
+<p>此类是  <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@author Josh Bloch
+@version 1.10, 07/15/04
+@see EnumSet
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.lang.Class<K> java.util.EnumMap.keyType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此映射所有键的枚举类型的 <tt>Class</tt> 对象。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.EnumMap(java.lang.Class<K> keyType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定键类型的空枚举映射。
+
+@param keyType 此枚举映射的键类型的 class 对象
+@throws NullPointerException 如果 <tt>keyType</tt> 为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.EnumMap(java.util.EnumMap<K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个其键类型与指定枚举映射相同的枚举映射，最初包含相同的映射关系（如果有的话）。
+
+@param m 用于初始化此枚举映射的枚举映射
+@throws NullPointerException 如果 <tt>m</tt> 为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.EnumMap(java.util.Map<K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个枚举映射，从指定映射对其初始化。如果指定的映射是一个 <tt>EnumMap</tt> 实例，则此构造方法的功能与 {@link #EnumMap(EnumMap)} 相同。否则，指定的映射必须至少包含一个映射关系（以确定新枚举映射的键类型）。
+
+@param m 用于初始化此枚举映射的映射
+@throws IllegalArgumentException 如果 <tt>m</tt> 不是一个 <tt>EnumMap</tt> 实例，并且不包含映射关系
+@throws NullPointerException 如果 <tt>m</tt> 为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.EnumMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中的键-值映射关系数。
+
+@return 此映射中的键-值映射关系数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.EnumMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>。
+
+@param value 将要在此映射中测试其是否存在的值
+@return 如果此映射将一个或多个键映射到此值，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.EnumMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射包含指定键的映射关系，则返回 <tt>true</tt>。
+
+@param key 将要在此映射中测试其是否存在的键
+@return 如果此映射包含指定键的映射关系，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.EnumMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定键所映射的值，如果此映射不包含此键的映射关系，则返回 {@code null}。 
+ 
+<p>更确切地讲，如果此映射包含满足 {@code (key == k)} 的从键 {@code k} 到值 {@code v} 的映射关系，则此方法返回 {@code v}；否则，返回 {@code null}。（最多只能有一个这样的映射关系。）
+
+ <p>返回 {@code null} 值并不 <i> 一定 </i> 表示此映射不包含此键的映射关系；也可能是映射显式地将此键映射到了 {@code null}。{@link #containsKey containsKey} 操作可以用于区分这两种情况。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.EnumMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定值与此映射中指定键关联。如果该映射以前包含此键的映射关系，则将原值替换。
+
+@param key 指定值与其关联的键
+@param value 与指定键关联的值
+ 
+@return 与指定键关联的旧值，如果不存在该键的映射关系，则返回 <tt>null</tt>。（返回 <tt>null</tt> 还可能表明以前该映射将 <tt>null</tt> 与指定键关联。）
+@throws NullPointerException 如果指定键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.EnumMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除该键的映射关系（如果存在）。
+
+@param key 其映射关系要从映射中移除的键
+@return 以前与指定键关联的值，如果不存在关联值，则返回 <tt>null</tt>。（返回 <tt>null</tt> 还可能指示以前该映射将 <tt>null</tt> 与指定键关联。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.EnumMap.putAll(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定映射中所有映射关系复制到此映射中。这些映射关系将替换此映射目前针对指定映射的所有键的所有映射关系。
+
+@param m 存储在此映射中的映射关系
+@throws NullPointerException 如果指定映射为 null，或指定映射中一个或多个键为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.EnumMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除所有映射关系。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.EnumMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含键的 {@link Set} 视图。 返回的 set 遵守 {@link Map#keySet()} 中描述的常规协定。该 set 的迭代器将按其自然顺序返回键（此顺序是声明枚举常量的顺序）。
+
+@return 此枚举映射所包含键的 set 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.EnumMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含值的 {@link Collection} 视图。返回的 collection 遵守 {@link Map#keySet()} 中描述的常规协定。该 collection 的迭代器返回值是按照它们相应的键在映射中出现的顺序返回的，即按照它们的自然顺序（此顺序是声明枚举常量的顺序）。
+
+@return 此映射中包含的值的 collection 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.EnumMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射中所包含映射关系的 {@link Set} 视图。返回的 set 遵守 {@link Map#keySet()} 中描述的常规协定。该 set 的迭代器返回映射关系是按照它们的键在映射中出现的顺序返回的，即按照它们的自然顺序（此顺序是声明枚举常量的顺序）。
+
+@return 此枚举映射中包含的映射关系的 set 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.EnumMap.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此映射的相等性。如果给定对象也是一个映射，并且按照 {@link Map#equals(Object)} 协定，两个映射表示的映射关系相同，则返回 <tt>true</tt>。
+
+@param o 要与此映射比较的对象
+@return 如果指定对象等于此映射，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.EnumMap<K, V> java.util.EnumMap.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此枚举映射的浅表副本。（这些值本身没有复制。）
+
+@return 此枚举映射的浅表副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.EnumMap.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新构造来自流的 <tt>EnumMap</tt> 实例（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.EnumMap.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <tt>EnumMap</tt> 实例的状态保存到流中（也就是将其序列化）。
+
+@serialData  发出枚举映射的 <i>size</i>（键-值映射关系数），后跟由枚举映射表示的每个键-值映射关系的键 (Object) 和值 (Object)。
+
+<!-- END DATA -->

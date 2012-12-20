@@ -1,0 +1,1010 @@
+<!-- BEGIN KEY -->
+public final class java.util.Scanner extends java.lang.Object implements java.util.Iterator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个可以使用正则表达式来解析基本类型和字符串的简单文本扫描器。
+
+<p><code>Scanner</code> 使用分隔符模式将其输入分解为标记，默认情况下该分隔符模式与空白匹配。然后可以使用不同的 <tt>next</tt> 方法将得到的标记转换为不同类型的值。
+
+<p>例如，以下代码使用户能够从 <tt>System.in</tt> 中读取一个数：
+ <blockquote><pre>
+     Scanner sc = new Scanner(System.in);
+     int i = sc.nextInt();
+ </pre></blockquote>
+
+<p>再看一个例子，以下代码使 <code>long</code> 类型可以通过 <code>myNumbers</code> 文件中的项分配：
+ <blockquote><pre>
+      Scanner sc = new Scanner(new File("myNumbers"));
+      while (sc.hasNextLong()) {
+          long aLong = sc.nextLong();
+      }</pre></blockquote>
+
+<p>扫描器还可以使用不同于空白的分隔符。下面是从一个字符串读取若干项的例子：
+<blockquote><pre>
+     String input = "1 fish 2 fish red fish blue fish";
+     Scanner s = new Scanner(input).useDelimiter("\\s*fish\\s*");
+     System.out.println(s.nextInt());
+     System.out.println(s.nextInt());
+     System.out.println(s.next());
+     System.out.println(s.next());
+     s.close(); </pre></blockquote>
+ <p>
+输出为：
+ <blockquote><pre>
+     1
+     2
+     red
+     blue </pre></blockquote>
+
+<p>以下代码使用正则表达式同时解析所有的 4 个标记，并可以产生与上例相同的输出结果：
+<blockquote><pre>
+     String input = "1 fish 2 fish red fish blue fish";
+     Scanner s = new Scanner(input);
+     s.findInLine("(\\d+) fish (\\d+) fish (\\w+) fish (\\w+)");
+     MatchResult result = s.match();
+     for (int i=1; i<=result.groupCount(); i++)
+         System.out.println(result.group(i));
+     s.close(); </pre></blockquote>
+
+<p>扫描器所使用的<a name="default-delimiter">默认空白分隔符</a>通过 {@link java.lang.Character}.{@link java.lang.Character#isWhitespace(char) isWhitespace} 来识别。不管以前是否更改，{@link #reset} 方法将把扫描器分隔符的值重置为默认空白分隔符。
+ 
+<p>扫描操作可能被阻塞，而等待信息的输入。
+
+<p>{@link #next} 和 {@link #hasNext} 方法及其基本类型 companion 方法（如 {@link #nextInt} 和 {@link #hasNextInt}）首先跳过与分隔符模式匹配的输入，然后尝试返回下一个标记。在等待更多输入时 <tt>hasNext</tt> 和 <tt>next</tt> 方法都可能阻塞。<tt>hasNext</tt> 方法是否阻塞与其相关的 <tt>next</tt> 方法是否阻塞无关。
+
+<p> {@link #findInLine}、{@link #findWithinHorizon} 和 {@link #skip} 方法的执行与分隔符模式无关。这些方法会尝试匹配与输入中的分隔符无关的指定模式，因此可用于分隔符无关的特殊环境中。在等待更多输入时这些方法可能阻塞。
+
+<p>当某一扫描器抛出 {@link InputMismatchException} 时，该扫描器不会传递导致该异常的标记，因此可以通过其他某种方法来获取或跳过它。
+
+<p>对于某些类型的分隔模式，可能返回空标记。例如，<tt>"\\s+"</tt> 模式不会返回空标记，因为它与该分隔符的多个实例匹配。而分隔模式 <tt>"\\s"</tt> 可能返回空标记，因为它一次只传递一个空格。
+
+<p> 扫描器可以从实现 {@link java.lang.Readable} 接口的任何对象读取文本。如果对底层 readable 的 {@link java.lang.Readable#read} 方法的调用抛出 {@link java.io.IOException}，则扫描器认为已经到达了输入的结尾。底层 readable 最新抛出的 <tt>IOException</tt> 可以通过 {@link #ioException} 方法获取。
+
+<p>如果 <code>Scanner</code> 关闭，且其输入源实现 {@link java.io.Closeable} 接口，则该输入源也将关闭。
+
+<p>若没有外部同步，则 <code>Scanner</code> 的多线程使用是不安全的。
+
+<p>除非另行说明，否则将一个 <code>null</code> 参数传递到 <code>Scanner</code> 的任何一个方法中都将抛出 <code>NullPointerException</code>。
+
+<p>默认情况下扫描器会将数字解释为十进制形式，除非已经使用 {@link #useRadix} 方法设置了不同的基数。不管以前是否更改，{@link #reset} 方法将把扫描器的基数重置为<code>10</code> 。
+
+ <a name="localized-numbers">
+<h4> 本地化数字 </h4>
+
+<p> 此类的一个实例能够以标准格式以及扫描器语言环境的格式扫描数字。扫描器的 <a name="initial-locale"> 初始语言环境 </a> 是 {@link java.util.Locale#getDefault} 方法返回的值；它可以通过 {@link #useLocale} 方法更改。不管以前是否更改，{@link #reset} 方法将把扫描器的语言环境重置为初始语言环境。
+
+<p>本地化格式是根据以下参数定义的，对于某一特定语言环境来说，这些参数取自该语言环境的 {@link java.text.DecimalFormat DecimalFormat} 对象 <tt>df</tt>，及其 {@link java.text.DecimalFormatSymbols DecimalFormatSymbols} 对象 <tt>dfs</tt>。
+
+ <blockquote><table>
+ <tr><td valign="top"><i>LocalGroupSeparator&nbsp;&nbsp;</i></td>
+     <td valign="top">用于分隔数千个组的字符，<i>即</i>&nbsp;<tt>dfs.</tt>{@link java.text.DecimalFormatSymbols#getGroupingSeparator getGroupingSeparator()}</td></tr>
+<tr><td valign="top"><i>LocalDecimalSeparator&nbsp;&nbsp;</i></td>
+    <td valign="top">用于小数点的字符，<i>即</i>&nbsp;<tt>dfs.</tt>{@link java.text.DecimalFormatSymbols#getDecimalSeparator getDecimalSeparator()}</td></tr>
+<tr><td valign="top"><i>LocalPositivePrefix&nbsp;&nbsp;</i></td>
+    <td valign="top">出现在正数前的字符串（可以为空），<i>即</i>&nbsp;<tt>df.</tt>{@link java.text.DecimalFormat#getPositivePrefix getPositivePrefix()}</td></tr>
+<tr><td valign="top"><i>LocalPositiveSuffix&nbsp;&nbsp;</i></td>
+    <td valign="top">出现在正数后的字符串（可以为空），<i>即</i>&nbsp;<tt>df.</tt>{@link java.text.DecimalFormat#getPositiveSuffix getPositiveSuffix()}</td></tr>
+<tr><td valign="top"><i>LocalNegativePrefix&nbsp;&nbsp;</i></td>
+    <td valign="top">出现在负数前的字符串（可以为空），<i>即</i>&nbsp;<tt>df.</tt>{@link java.text.DecimalFormat#getNegativePrefix getNegativePrefix()}</td></tr>
+<tr><td valign="top"><i>LocalNegativeSuffix&nbsp;&nbsp;</i></td>
+    <td valign="top">出现在负数后的字符串（可以为空），<i>即</i>&nbsp;<tt>df.</tt>{@link java.text.DecimalFormat#getNegativeSuffix getNegativeSuffix()}</td></tr>
+<tr><td valign="top"><i>LocalNaN&nbsp;&nbsp;</i></td>
+    <td valign="top">表示浮点值的非数字的字符串，<i>即</i>&nbsp;<tt>dfs.</tt>{@link                       java.text.DecimalFormatSymbols#getNaN
+                      getNaN()}</td></tr>
+<tr><td valign="top"><i>LocalInfinity&nbsp;&nbsp;</i></td>
+    <td valign="top">表示浮点值的无穷大的字符串，<i>即</i>&nbsp;<tt>dfs.</tt>{@link java.text.DecimalFormatSymbols#getInfinity getInfinity()}</td></tr>
+</table></blockquote>
+ 
+<a name="number-syntax">
+<h4> 数字语法 </h4>
+
+<p> 可通过此类的一个实例解析为数字的字符串是根据以下正则表达式语法指定的，在这种情况下 Rmax 是正在使用的基数中的最高数字（例如，在基数 10 中 Rmax 为 9）。
+
+ <p>
+ <table cellspacing=0 cellpadding=0 align=center>
+ 
+   <tr><td valign=top align=right><i>NonASCIIDigit</i>&nbsp;&nbsp;::</td>
+       <td valign=top>= 非 ASCII 字符 c，对于它，{@link java.lang.Character#isDigit Character.isDigit}<tt>(c)</tt> 返回 true</td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>Non0Digit</i>&nbsp;&nbsp;::</td>
+   <td><tt>= [1-</tt><i>Rmax</i><tt>] | </tt><i>NonASCIIDigit</i></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>Digit</i>&nbsp;&nbsp;::</td>
+   <td><tt>= [0-</tt><i>Rmax</i><tt>] | </tt><i>NonASCIIDigit</i></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td valign=top align=right><i>GroupedNumeral</i>&nbsp;&nbsp;::</td>
+       <td valign=top>
+         <table cellpadding=0 cellspacing=0>
+           <tr><td><tt>= (&nbsp;</tt></td>
+               <td><i>Non0Digit</i><tt>
+                   </tt><i>Digit</i><tt>?
+                   </tt><i>Digit</i><tt>?</tt></td></tr>
+           <tr><td></td>
+               <td><tt>(&nbsp;</tt><i>LocalGroupSeparator</i><tt>
+                         </tt><i>Digit</i><tt>
+                         </tt><i>Digit</i><tt>
+                         </tt><i>Digit</i><tt> )+ )</tt></td></tr>
+         </table></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>Numeral</i>&nbsp;&nbsp;::</td>
+       <td><tt>= ( ( </tt><i>Digit</i><tt>+ )
+               | </tt><i>GroupedNumeral</i><tt> )</tt></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+
+   <tr><td valign=top align=right>
+         <a name="Integer-regex"><i>Integer</i>&nbsp;&nbsp;::</td>
+       <td valign=top><tt>= ( [-+]? ( </tt><i>Numeral</i><tt>
+                               ) )</tt></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalPositivePrefix</i><tt> </tt><i>Numeral</i><tt>
+                      </tt><i>LocalPositiveSuffix</i></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalNegativePrefix</i><tt> </tt><i>Numeral</i><tt>
+                 </tt><i>LocalNegativeSuffix</i></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>DecimalNumeral</i>&nbsp;&nbsp;::</td>
+       <td><tt>= </tt><i>Numeral</i></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>Numeral</i><tt>
+                 </tt><i>LocalDecimalSeparator</i><tt>
+                 </tt><i>Digit</i><tt>*</tt></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalDecimalSeparator</i><tt>
+                 </tt><i>Digit</i><tt>+</tt></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>Exponent</i>&nbsp;&nbsp;::</td>
+       <td><tt>= ( [eE] [+-]? </tt><i>Digit</i><tt>+ )</tt></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right>
+         <a name="Decimal-regex"><i>Decimal</i>&nbsp;&nbsp;::</td>
+       <td><tt>= ( [-+]? </tt><i>DecimalNumeral</i><tt>
+                         </tt><i>Exponent</i><tt>? )</tt></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalPositivePrefix</i><tt>
+                 </tt><i>DecimalNumeral</i><tt>
+                 </tt><i>LocalPositiveSuffix</i>
+                 </tt><i>Exponent</i><tt>?</td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalNegativePrefix</i><tt>
+                 </tt><i>DecimalNumeral</i><tt>
+                 </tt><i>LocalNegativeSuffix</i>
+                 </tt><i>Exponent</i><tt>?</td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td align=right><i>HexFloat</i>&nbsp;&nbsp;::</td>
+       <td><tt>= [-+]? 0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+
+                 ([pP][-+]?[0-9]+)?</tt></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+
+   <tr><td align=right><i>NonNumber</i>&nbsp;&nbsp;::</td>
+       <td valign=top><tt>= NaN
+                          | </tt><i>LocalNan</i><tt>
+                          | Infinity
+                          | </tt><i>LocalInfinity</i></td></tr>
+
+   <tr><td>&nbsp;</td></tr>
+
+   <tr><td align=right><i>SignedNonNumber</i>&nbsp;&nbsp;::</td>
+       <td><tt>= ( [-+]? </tt><i>NonNumber</i><tt> )</tt></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalPositivePrefix</i><tt>
+                 </tt><i>NonNumber</i><tt>
+                 </tt><i>LocalPositiveSuffix</i></td></tr>
+   <tr><td></td>
+       <td><tt>| </tt><i>LocalNegativePrefix</i><tt>
+                 </tt><i>NonNumber</i><tt>
+                 </tt><i>LocalNegativeSuffix</i></td></tr>
+ 
+   <tr><td>&nbsp;</td></tr>
+ 
+   <tr><td valign=top align=right>
+         <a name="Float-regex"><i>Float</i>&nbsp;&nbsp;::</td>
+       <td valign=top><tt>= </tt><i>Decimal</i><tt></td></tr>
+       <tr><td></td>
+           <td><tt>| </tt><i>HexFloat</i><tt></td></tr>
+       <tr><td></td>
+           <td><tt>| </tt><i>SignedNonNumber</i><tt></td></tr>
+ 
+ </table>
+ </center>
+
+<p> 上面正则表达式中的空白没有意义。
+
+@version 1.15, 07/15/04
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(Readable source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定源扫描的。
+
+@param  source 实现 {@link Readable} 接口的字符源
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(InputStream source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定的输入流扫描的。取自该流的字节通过底层平台的{@linkplain java.nio.charset.Charset#defaultCharset() 默认字符集}转换成字符。
+
+@param  source 要扫描的输入流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(InputStream source, String charsetName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定的输入流扫描的。来自该流的字节通过指定字符集转换成字符。
+
+@param  source 要扫描的输入流
+@param charsetName 用于将来自该流的字节转换成要扫描的字符的编码类型
+@throws IllegalArgumentException 如果指定字符集不存在
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(File source) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定文件扫描的。来自该文件的字节通过底层平台的{@linkplain java.nio.charset.Charset#defaultCharset() 默认字符集}转换成字符。
+
+@param  source 要扫描的文件
+@throws FileNotFoundException 如果源文件未找到
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(File source, String charsetName) throws java.io.FileNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定文件扫描的。来自该文件的字节通过指定字符集转换成字符。
+
+@param  source 要扫描的文件
+@param charsetName 用于将来自该文件的字节转换成要扫描的字符的编码类型
+@throws FileNotFoundException 如果源文件未找到
+@throws IllegalArgumentException 如果指定的编码未找到
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(String source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定字符串扫描的。
+
+@param  source 要扫描的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(ReadableByteChannel source)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定信道扫描的。来自该源的字节通过底层平台的{@linkplain java.nio.charset.Charset#defaultCharset() 默认字符集}转换成字符。
+
+@param  source 要扫描的信道
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner(ReadableByteChannel source, String charsetName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新的 <code>Scanner</code>，它生成的值是从指定信道扫描的。来自该源的字节通过指定字符集转换成字符。
+
+@param  source 要扫描的信道
+@param charsetName 用于将来自该信道的字节转换成要扫描的字符的编码类型
+@throws IllegalArgumentException 如果指定字符集不存在
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Scanner.close()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此扫描器。
+
+<p> 如果此扫描器尚未关闭，并且其底层 {@linkplain java.lang.Readable readable} 也实现 {@link java.io.Closeable} 接口，则该 readable 的 <tt>close</tt> 方法将被调用。如果此扫描器已经关闭，则调用此方法无效。
+ 
+<p>在扫描器关闭后执行搜索操作将导致 {@link IllegalStateException}。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.IOException java.util.Scanner.ioException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Scanner</code> 的底层 <code>Readable</code> 最后抛出的 <code>IOException</code>。如果不存在这样的异常，则此方法返回 <code>null</code>。
+
+@return 此扫描器的 readable 最后抛出的异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.regex.Pattern java.util.Scanner.delimiter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Scanner</code> 当前正在用于匹配分隔符的 <code>Pattern</code>。
+
+@return 此扫描器的分隔模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.useDelimiter(Pattern pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此扫描器的分隔模式设置为指定模式。
+
+@param pattern 分隔模式
+@return 此扫描器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.useDelimiter(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此扫描器的分隔模式设置为从指定 <code>String</code> 构造的模式。
+
+<p> 此方法调用 <tt>useDelimiter(pattern)</tt> 的行为与调用 <tt>useDelimiter(Pattern.compile(pattern))</tt> 完全相同。
+
+<p> 调用 {@link #reset} 方法将把扫描器的分隔符设置为 <a href= "#default-delimiter">默认</a>。 
+
+@param pattern 指定分隔模式的字符串
+@return 此扫描器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale java.util.Scanner.locale()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此扫描器的语言环境。
+
+<p>扫描器的语言环境会影响其与正则表达式匹配的默认基元的许多元素；参见上面的<a href= "#localized-numbers">本地化数字</a>。
+
+@return 此扫描器的语言环境
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.useLocale(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此扫描器的语言环境设置为指定的语言环境。
+
+<p>扫描器的语言环境会影响其与正则表达式匹配的默认基元的许多元素；参见上面的<a href= "#localized-numbers">本地化数字</a>。
+
+<p>调用 {@link #reset} 方法将把扫描器的语言环境设置为<a href= "#initial-locale">初始语言环境</a>。
+
+@param locale 指定要使用的语言环境的字符串
+@return 此扫描器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Scanner.radix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此扫描器的默认基数。
+
+<p>扫描器的基数会影响其与正则表达式匹配的默认数的元素；参见上面的<a href= "#localized-numbers">本地化数字</a>。
+
+@return 此扫描器的默认基数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.useRadix(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此扫描器的默认基数设置为指定基数。
+
+<p>扫描器的基数会影响其与正则表达式匹配的默认数的元素；参见上面的<a href= "#localized-numbers">本地化数字</a>。
+
+<p>如果该基数小于 <code>Character.MIN_RADIX</code> 或大于 <code>Character.MAX_RADIX</code>，则抛出 <code>IllegalArgumentException</code>。
+
+<p>调用 {@link #reset} 方法将把扫描器的基数设置为 <code>10</code>。
+
+@param radix 扫描数时要使用的基数
+@return 此扫描器
+@throws IllegalArgumentException 如果基数超出范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.regex.MatchResult java.util.Scanner.match()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此扫描器所执行的最后扫描操作的匹配结果。如果未执行匹配操作，或者最后的匹配操作失败，则此方法抛出 <code>IllegalStateException</code>。
+
+<p>如果 <code>Scanner</code> 的不同 <code>next</code> 方法执行结束时未抛出异常，则它们会给出一个匹配结果。例如，调用了 {@link #nextInt} 方法（它返回一个 int）后，此方法返回一个 <code>MatchResult</code>，作为搜索上述 <a href="#Integer-regex"><i>Integer</i></a> 正则表达式的结果。类似地，如果 {@link #findInLine}、{@link #findWithinHorizon} 和 {@link #skip} 方法的调用成功，则它们会给出一个匹配结果。
+
+@return 最后一次匹配操作的匹配结果
+@throws IllegalStateException  如果未给出匹配结果
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此 <code>Scanner</code> 的字符串表示形式。<code>Scanner</code> 的字符串表示形式包含了对调试可能有用的信息。没有指定确切格式。
+
+@return  此扫描器的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此扫描器的输入中有另一个标记，则返回 true。在等待要扫描的输入时，此方法可能阻塞。扫描器将不执行任何输入。
+
+@return 当且仅当此扫描器有另一个标记时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+@see java.util.Iterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找并返回来自此扫描器的下一个完整标记。完整标记的前后是与分隔模式匹配的输入信息。即使以前调用 {@link #hasNext} 返回了 <code>true</code>，在等待要扫描的输入时此方法也可能阻塞。
+
+@return 下一个标记
+@throws NoSuchElementException 如果没有更多标记可用
+@throws IllegalStateException 如果此扫描器已关闭
+@see java.util.Iterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Scanner.remove()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Iterator</code> 的这种实现不支持移除操作。
+
+@throws UnsupportedOperationException 如果调用此方法。
+@see java.util.Iterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNext(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果下一个标记与从指定字符串构造的模式匹配，则返回 true。扫描器不执行任何输入。
+
+<p> 此方法调用 <tt>hasNext(pattern)</tt> 的行为与调用 <tt>hasNext(Pattern.compile(pattern))</tt> 完全相同。
+
+@param pattern 指定要扫描的模式的字符串
+@return 当且仅当此扫描器有另一个标记与指定模式匹配时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.next(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果下一个标记与从指定字符串构造的模式匹配，则返回下一个标记。如果匹配操作成功，则扫描器执行与该模式匹配的输入。
+
+<p> 此方法调用 <tt>next(pattern)</tt> 的行为与调用 <tt>next(Pattern.compile(pattern))</tt> 完全相同。
+
+@param pattern 指定要扫描的模式的字符串
+@return 下一标记
+@throws NoSuchElementException 如果没有这样的标记可用
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNext(Pattern pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果下一个完整标记与指定模式匹配，则返回 true。完整标记以与分隔模式匹配的输入信息为前后缀。在等待输入信息时，此方法可能阻塞。扫描器不执行任何输入。
+
+@param pattern 要扫描的模式
+@return 当且仅当此扫描器有另一个标记与指定模式匹配时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.next(Pattern pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果下一个标记与指定模式匹配，则返回下一个标记。即使以前调用 {@link #hasNext(Pattern)} 返回了 <code>true</code>，在等待要扫描的输入时此方法也可能阻塞。如果此匹配操作成功，则扫描器执行与该模式匹配的输入。
+
+@param pattern 要扫描的模式
+@return 下一个标记
+@throws NoSuchElementException 如果没有更多的标记可用
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextLine()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果在此扫描器的输入中存在另一行，则返回 true。在等待输入信息时，此方法可能阻塞。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器有另一行输入时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.nextLine()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此扫描器执行当前行，并返回跳过的输入信息。
+
+此方法返回当前行的其余部分，不包括结尾处的行分隔符。当前位置移至下一行的行首。
+
+<p>因为此方法会继续在输入信息中查找行分隔符，所以如果没有行分隔符，它可能会缓冲所有输入信息，并查找要跳过的行。
+
+@return 跳过的行
+@throws NoSuchElementException 如果未找到这样的行
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.findInLine(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图在忽略分隔符的情况下查找下一个从指定字符串构造的模式。
+
+<p>此方面调用 <tt>findInLine(pattern)</tt> 的行为与调用 <tt>findInLine(Pattern.compile(pattern))</tt> 完全相同。
+
+@param pattern 指定要搜索的模式的字符串
+@return 与指定模式匹配的文本
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.findInLine(Pattern pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图在忽略分隔符的情况下查找下一个指定模式。如果在下一个行分隔符前找到了该模式，则扫描器执行匹配的输入信息，并返回与该模式匹配的字符串。如果未找到，则返回 <code>null</code>，且扫描器的位置不变。在等待与该模式匹配的输入信息时，此方法可能阻塞。
+
+<p>因为此方法会继续在输入信息中查找指定的模式，所以如果没有行分隔符，它可能会缓冲所有输入信息，并查找所需的标记。
+
+@param pattern 要扫描的模式
+@return 与指定模式匹配的文本
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.findWithinHorizon(String pattern, int horizon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图在忽略分隔符的情况下查找下一个从指定字符串构造的模式。
+
+<p>此方法调用 <tt>findWithinHorizon(pattern)</tt> 的行为与调用 <tt>findWithinHorizon(Pattern.compile(pattern, horizon))</tt> 完全相同。
+
+@param pattern 指定要搜索的模式的字符串
+@return 与指定模式匹配的文本
+@throws IllegalStateException 如果此扫描器已关闭
+@throws IllegalArgumentException 如果 horizon 为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.Scanner.findWithinHorizon(Pattern pattern, int horizon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图查找下一个指定模式。
+
+<p>此方法在忽略分隔符的情况下在指定的搜索范围内搜索输入信息。如果找到了该模式，则扫描器执行匹配的输入信息，并返回与该模式匹配的字符串。如果未找到，则返回 null，且扫描器的位置不变。在等待与该模式匹配的输入信息时，此方法可能阻塞。
+
+<p>扫描器的搜索永远都不超出其当前位置以外的 <code>horizon</code> 代码点。注意，匹配可能被 horizon 剪裁；也就是说，如果 horizon 变大，则任意匹配结果都可能不同。扫描器将 horizon 看作一个不固定的透明边界（请参见 {@link Matcher#useTransparentBounds} 和 {@link Matcher#useAnchoringBounds}）。
+
+<p>如果 horizon 为 <code>0</code>，则忽略 horizon，此方法继续在输入信息中查找指定的模式，且不设边界。在这种情况下，它可能会缓冲所有输入信息，并搜索该模式。
+
+<p>如果 horizon 为负，则抛出 IllegalArgumentException。
+
+@param pattern 要扫描的模式
+@return 与指定模式匹配的文本
+@throws IllegalStateException 如果此扫描器已关闭
+@throws IllegalArgumentException 如果 horizon 为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.skip(Pattern pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在忽略分隔符的情况下跳过与指定模式匹配的输入信息。如果指定模式的固定匹配成功，此方法则跳过输入信息。
+
+<p>如果在当前位置未找到指定模式，则不跳过任何输入信息，并抛出 <tt>NoSuchElementException</tt>。
+
+<p>由于此方法试图从扫描器的当前位置匹配指定模式，因此可与许多输入信息（例如 ".*"）匹配的模式可能会导致扫描器缓冲大量输入信息。
+
+<p>注意，通过使用没有任何匹配项的模式，例如，<code>sc.skip("[ \t]*")</code>，跳过某些信息同时不抛出 <code>NoSuchElementException</code> 是可能的。
+
+@param pattern 指定要跳过的模式的字符串
+@return 此扫描器
+@throws NoSuchElementException 如果未找到指定模式
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.skip(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+跳过与从指定字符串构造的模式匹配的输入信息。
+
+<p> 此方法调用 <tt>skip(pattern)</tt> 的行为与调用 <tt>skip(Pattern.compile(pattern))</tt> 完全相同。
+
+@param pattern 指定要跳过的模式的字符串
+@return 此扫描器
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextBoolean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用一个从字符串 "true|false" 创建的大小写敏感的模式，此扫描器输入信息中的下一个标记可以解释为一个布尔值，则返回 true。扫描器不执行匹配的输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的布尔值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.nextBoolean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+扫描解释为一个布尔值的输入标记并返回该值。如果下一个标记不能转换为有效的布尔值，则此方法将抛出 <code>InputMismatchException</code>。如果此匹配操作成功，则扫描器执行匹配的输入。
+
+@return 从输入信息扫描的布尔值
+@throws InputMismatchException 如果下一标记不是有效的布尔值
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextByte()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextByte} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个字节值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的字节值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextByte(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextByte} 方法，此扫描器输入信息中的下一个标记可以解释为指定基数中的一个字节值，则返回 true。扫描器不执行任何输入。
+
+@param radix 用于将标记解释为一个字节值的基数
+@return 当且仅当此扫描器的下一个标记是有效的字节值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.util.Scanner.nextByte()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>byte</tt>。
+
+<p> 此方法调用 <tt>nextByte()</tt> 的行为与调用 <tt>nextByte(radix)</tt> 完全相同，其中的 <code>radix</code> 是此扫描器的默认基数。
+
+@return 从输入信息扫描的 <tt>byte</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte java.util.Scanner.nextByte(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>byte</tt>。如果下一个标记不能转换为有效的字节值，则此方法将抛出 <code>InputMismatchException</code>，如下所述。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a
+ href="#Integer-regex"><i>Integer</i></a> 正则表达式匹配，则该标记转换成一个 <tt>byte</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，以及将得到的字符串传递给带有指定基数的 {@link Byte#parseByte(String, int) Byte.parseByte}。
+
+@param radix 用于将标记解释为字节值的基数
+@return 从输入信息扫描的 <tt>byte</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextShort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextShort} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 short 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是默认基数中的有效的 short 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextShort(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextShort} 方法，此扫描器输入信息中的下一个标记可以解释为指定基数中的一个 short 值，则返回 true。扫描器不执行任何输入。
+
+@param radix 用于将标记解释为一个 short 值的基数
+@return 当且仅当此扫描器的下一个标记是指定基数中的有效的 short 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.util.Scanner.nextShort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>short</tt>。
+
+<p> 此方法调用 <tt>nextShort()</tt> 行为与调用 <tt>nextShort(radix)</tt> 完全相同，其中的 <code>radix</code> 是此扫描器的默认基数。
+
+@return 从输入信息扫描的 <tt>short</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public short java.util.Scanner.nextShort(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>short</tt>。如果下一个标记不能转换为有效的 short 值，则此方法将抛出 <code>InputMismatchException</code>，如下所述。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a
+ href="#Integer-regex"><i>Integer</i></a> 正则表达式匹配，则该标记转换成一个 <tt>short</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，然后将得到的字符串传递给带有指定基数的 {@link Short#parseShort(String, int) Short.parseShort}。
+
+@param radix 用于将标记解释为 short 值的基数
+@return 从输入信息扫描的 <tt>short</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextInt()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextInt} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 int 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 int 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextInt(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextInt} 方法，此扫描器输入信息中的下一个标记可以解释为指定基数中的一个 int 值，则返回 true。扫描器不执行任何输入。
+
+@param radix 用于将标记解释为一个 int 值的基数
+@return 当且仅当此扫描器的下一个标记是有效的 int 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Scanner.nextInt()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>int</tt>。
+
+<p> 此方法调用 <tt>nextInt()</tt> 的行为与调用 <tt>nextInt(radix)</tt> 完全相同，其中的 <code>radix</code> 是此扫描器的默认基数。
+
+@return 从输入信息扫描的 <tt>int</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Scanner.nextInt(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>int</tt>。如果下一个标记不能转换为有效的 int 值，则此方法将抛出 <code>InputMismatchException</code>，如下所述。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a  href="#Integer-regex"><i>Integer</i></a> 正则表达式匹配，则该标记转换成一个 <tt>int</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，然后将得到的字符串传递给带有指定基数的 {@link Integer#parseInt(String, int) Integer.parseInt}。
+
+@param radix 用于将标记解释为 int 值的基数
+@return 从输入信息扫描的 <tt>int</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextLong()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextLong} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 long 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 long 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextLong(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextLong} 方法，此扫描器输入信息中的下一个标记可以解释为指定基数中的一个 long 值，则返回 true。扫描器不执行任何输入。
+
+@param radix 用于将标记解释为一个 long 值的基数
+@return 当且仅当此扫描器的下一个标记是有效的 long 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.Scanner.nextLong()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>long</tt>。
+
+<p> 此方法调用 <tt>nextLong()</tt> 的行为与调用 <tt>nextLong(radix)</tt> 完全相同，其中的 <code>radix</code> 是此扫描器的默认基数。
+
+@return 从输入信息扫描的 <tt>long</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.Scanner.nextLong(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>long</tt>。如果下一个标记不能转换为有效的 long 值，则此方法将抛出 <code>InputMismatchException</code>，如下所述。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a  href="#Integer-regex"><i>Integer</i></a> 正则表达式匹配，则该标记转换成一个 <tt>long</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，以及将得到的字符串传递给带有指定基数的 {@link Long#parseLong(String, int) Long.parseLong}。
+
+@param radix 用于将标记解释为 long 值的基数
+@return 从输入信息扫描的 <tt>long</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextFloat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextFloat} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 float 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 float 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.util.Scanner.nextFloat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>float</tt>。如果下一个标记不能转换为有效的 float 值，则此方法将抛出 <code>InputMismatchException</code>，如下所述。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a  href="#Float-regex"><i>Float</i></a> 正则表达式匹配，则该标记转换成一个 <tt>float</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，以及将得到的字符串传递给 {@link Float#parseFloat Float.parseFloat}。如果标记与本地化的 NaN 或无穷大字符串匹配，则将 "Nan"  或 "Infinity" 相应地传递给 {@link Float#parseFloat(String) Float.parseFloat}。
+
+@return 从输入信息扫描的 <tt>float</tt>
+@throws InputMismatchException 如果下一个标记与 <i>float</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextDouble()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextDouble} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 double 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 double 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.util.Scanner.nextDouble()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 <tt>double</tt>。如果下一个标记不能转换为有效的 double 值，则此方法将抛出 <code>InputMismatchException</code>。如果此转换成功，则扫描器执行匹配的输入。
+
+<p> 如果下一个标记与上述的 <a  href="#Float-regex"><i>Float</i></a> 正则表达式匹配，则该标记转换成一个 <tt>double</tt> 值，就好像通过移除所有特定于语言环境的前缀、组分隔符和特定于语言环境的后缀，然后通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字, 如果存在特定于语言环境的负前缀和后缀则预先挂起负号 (-)，以及将得到的字符串传递给 {@link Double#parseDouble Double.parseDouble}。如果标记与本地化的 NaN 或无穷大字符串匹配，则将 "Nan" 或 "Infinity" 相应地传递给 {@link Double#parseDouble(String) Double.parseDouble}。
+
+@return 从输入信息扫描的 <tt>double</tt>
+@throws InputMismatchException 如果下一个标记与 <i>float</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextBigInteger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextBigInteger} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 <code>BigInteger</code> 值，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 <code>BigInteger</code> 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextBigInteger(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextBigInteger} 方法，此扫描器输入信息中的下一个标记可以解释为指定基数中的一个 <code>BigInteger</code> 值，则返回 true。扫描器不执行任何输入。
+
+@param radix 用于将标记解释为一个 integer 的基数
+@return 当且仅当此扫描器的下一个标记是有效的 <code>BigInteger</code> 时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.util.Scanner.nextBigInteger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 {@link java.math.BigInteger BigInteger}。
+
+<p> 此方法调用 <tt>nextBigInteger()</tt> 的行为与调用 <tt>nextBigInteger(radix)</tt> 完全相同，其中的 <code>radix</code> 是此扫描器的默认基数。
+
+@return 从输入信息扫描的 <tt>BigInteger</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigInteger java.util.Scanner.nextBigInteger(int radix)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 {@link java.math.BigInteger BigInteger}。
+
+<p> 如果下一个标记与上述的 <a
+ href="#Integer-regex"><i>Integer</i></a> 正则表达式匹配，则该标记转换成一个 <tt>BigInteger</tt> 值，就好像通过移除所有组分隔符，通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字，以及将得到的字符串传递给带有指定基数的 {@link java.math.BigInteger#BigInteger(java.lang.String) BigInteger(String, int)} 构造方法。
+
+@param radix 用于解释标记的基数
+@return 从输入信息扫描的 <tt>BigInteger</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Integer</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Scanner.hasNextBigDecimal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果通过使用 {@link #nextBigDecimal} 方法，此扫描器输入信息中的下一个标记可以解释为默认基数中的一个 <code>BigDecimal</code>，则返回 true。扫描器不执行任何输入。
+
+@return 当且仅当此扫描器的下一个标记是有效的 <code>BigDecimal</code> 值时才返回 true
+@throws IllegalStateException 如果此扫描器已关闭
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.math.BigDecimal java.util.Scanner.nextBigDecimal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将输入信息的下一个标记扫描为一个 {@link java.math.BigDecimal BigDecimal}。
+
+<p> 如果下一个标记与上述的 <a
+ href="#Decimal-regex"><i>Decimal</i></a> 正则表达式匹配，则该标记转换成一个 <tt>BigDecimal</tt> 值，就好像通过移除所有组分隔符，通过 {@link Character#digit Character.digit} 将非 ASCII 数字映射为 ASCII 数字，以及将得到的字符串传递给 {@link java.math.BigDecimal#BigDecimal(java.lang.String) BigDecimal(String)} 构造方法。
+
+@return 从输入信息扫描的 <tt>BigDecimal</tt>
+@throws InputMismatchException 如果下一个标记与 <i>Decimal</i> 正则表达式不匹配，或者超出范围
+@throws NoSuchElementException 如果输入信息已耗尽
+@throws IllegalStateException 如果此扫描器已关闭
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Scanner java.util.Scanner.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 重置此扫描器。
+
+ <p> 重置扫描器会丢弃其所有明确的状态信息，这些状态信息可能通过调用 {@link #useDelimiter}、{@link #useLocale} 或 {@link #useRadix} 已被更改。
+
+ <p> 调用此方法的形式为 <tt>scanner.reset()</tt>，该调用与以下调用的作用完全相同：
+
+ <blockquote><pre>
+   scanner.useDelimiter("\\p{javaWhitespace}+")
+          .useLocale(Locale.getDefault())
+          .useRadix(10);
+ </pre></blockquote>
+
+ @return 此扫描器
+
+ @since 1.6
+
+<!-- END DATA -->

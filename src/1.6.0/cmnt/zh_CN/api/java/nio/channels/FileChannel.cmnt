@@ -1,0 +1,512 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.channels.FileChannel extends java.nio.channels.spi.AbstractInterruptibleChannel implements java.nio.channels.ByteChannel, java.nio.channels.GatheringByteChannel, java.nio.channels.ScatteringByteChannel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于读取、写入、映射和操作文件的通道。
+
+<p> 文件通道在其文件中有一个当前 <i>position</i>，可对其进行{@link #position() </code>查询<code>}和{@link #position(long) </code>修改<code>}。该文件本身包含一个可读写的长度可变的字节序列，并且可以查询该文件的当前{@link #size </code><i>大小</i><code>}。写入的字节超出文件的当前大小时，则增加文件的大小；{@link #truncate </code><i>截取</i><code>} 该文件时，则减小文件的大小。文件可能还有某个相关联的<i>元数据</i>，如访问权限、内容类型和最后的修改时间；此类未定义访问元数据的方法。
+
+<p> 除了字节通道中常见的读取、写入和关闭操作外，此类还定义了下列特定于文件的操作： </p>
+
+ <ul>
+
+<li><p> 以不影响通道当前位置的方式，对文件中绝对位置的字节进行{@link #read(ByteBuffer, long) </code>读取<code>}或{@link #write(ByteBuffer, long) </code>写入<code>}。</p></li>
+
+<li><p> 将文件中的某个区域直接{@link #map </code>映射<code>}到内存中；对于较大的文件，这通常比调用普通的 <tt>read</tt> 或 <tt>write</tt> 方法更为高效。
+   </p></li>
+
+<li><p> {@link #force </code>强制<code>}对底层存储设备进行文件的更新，确保在系统崩溃时不丢失数据。 </p></li>
+
+<li><p> 以一种可被很多操作系统优化为直接向文件系统缓存发送或从中读取的高速传输方法，将字节从文件传输到{@link #transferTo </code>某个其他通道<code>}中，{@link #transferFrom </code>反之亦然<code>}。
+   </p></li>
+
+<li><p> 可以{@link FileLock </code>锁定<code>}某个文件区域，以阻止其他程序对其进行访问。 </p></li>
+
+ </ul>
+
+<p> 多个并发线程可安全地使用文件通道。可随时调用{@link Channel#close 关闭}方法，正如 {@link Channel} 接口中所指定的。对于涉及通道位置或者可以更改其文件大小的操作，在任意给定时间只能进行一个这样的操作；如果尝试在第一个操作仍在进行时发起第二个操作，则会导致在第一个操作完成之前阻塞第二个操作。可以并发处理其他操作，特别是那些采用显式位置的操作；但是否并发处理则取决于基础实现，因此是未指定的。
+
+<p> 确保此类的实例所提供的文件视图与同一程序中其他实例所提供的相同文件视图是一致的。但是，此类的实例所提供的视图不一定与其他并发运行的程序所看到的视图一致，这取决于底层操作系统所执行的缓冲策略和各种网络文件系统协议所引入的延迟。不管其他程序是以何种语言编写的，而且也不管是运行在相同机器还是不同机器上都是如此。此种不一致的确切性质取决于系统，因此是未指定的。
+
+<p> 此类没有定义打开现有文件或创建新文件的方法，以后的版本中可能添加这些方法。在此版本中，可从现有的 {@link java.io.FileInputStream#getChannel FileInputStream}、{@link java.io.FileOutputStream#getChannel FileOutputStream} 或 {@link java.io.RandomAccessFile#getChannel RandomAccessFile} 对象获得文件通道，方法是调用该对象的 <tt>getChannel</tt> 方法，这会返回一个连接到相同底层文件的文件通道。
+
+<p> 文件通道的状态与其 <tt>getChannel</tt> 返回该通道的对象密切相关。显式或者通过读取或写入字节来更改通道的位置将更改发起对象的文件位置，反之亦然。通过文件通道更改此文件的长度将更改通过发起对象看到的长度，反之亦然。通过写入字节更改此文件的内容将更改发起对象所看到的内容，反之亦然。
+
+<a name="open-mode"><p> 此类在各种情况下指定要求&ldquo;允许读取操作&rdquo;、&ldquo;允许写入操作&rdquo;或&ldquo;允许读取和写入操作&rdquo;的某个实例。通过 {@link java.io.FileInputStream} 实例的 {@link java.io.FileInputStream#getChannel getChannel} 方法所获得的通道将允许进行读取操作。通过 {@link java.io.FileOutputStream} 实例的 {@link java.io.FileOutputStream#getChannel getChannel} 方法所获得的通道将允许进行写入操作。最后，如果使用模式 <tt>&quot;r&quot;</tt> 创建 {@link java.io.RandomAccessFile} 实例，则通过该实例的 {@link java.io.RandomAccessFile#getChannel getChannel} 方法所获得的通道将允许进行读取操作，如果使用模式 <tt>&quot;rw&quot;</tt> 创建实例，则获得的通道将允许进行读取和写入操作。
+
+<a name="append-mode"><p> 如果从文件输出流中获得了允许进行写入操作的文件通道，并且该输出流是通过调用 {@link java.io.FileOutputStream#FileOutputStream(java.io.File,boolean) FileOutputStream(File,boolean)} 构造方法且为第二个参数传入 <tt>true</tt> 来创建的，则该文件通道可能处于<i>添加模式</i>。在此模式中，每次调用相关的写入操作都会首先将位置移到文件的末尾，然后再写入请求的数据。在单个原子操作中是否移动位置和写入数据是与系统相关的，因此是未指定的。
+
+@see java.io.FileInputStream#getChannel()
+@see java.io.FileOutputStream#getChannel()
+@see java.io.RandomAccessFile#getChannel()
+
+@author Mark Reinhold
+@author Mike McCloskey
+@author JSR-51 Expert Group
+@version 1.40, 04/01/12
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.channels.FileChannel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+初始化此类的一个新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.FileChannel.read(ByteBuffer dst) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道读入给定的缓冲区。
+
+<p> 从此通道的当前文件位置开始读取字节，然后使用实际读取的字节数更新该文件位置。否则此方法的行为与 {@link ReadableByteChannel} 接口中指定的行为完全相同。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.read(java.nio.ByteBuffer[] dsts, int offset, int length) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道读入给定缓冲区的子序列中。
+
+<p> 从此通道的当前文件位置开始读取字节，然后使用实际读取的字节数更新该文件位置。否则此方法的行为与 {@link ScatteringByteChannel} 接口中指定的行为完全相同。 </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.FileChannel.read(java.nio.ByteBuffer[] dsts) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从此通道读入给定的缓冲区。
+
+<p> 从此通道的当前文件位置开始读取字节，然后使用实际读取的字节数更新该文件位置。否则此方法的行为与 {@link ScatteringByteChannel} 接口中指定的行为完全相同。 </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.FileChannel.write(ByteBuffer src) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从给定的缓冲区写入此通道。
+
+<p> 从此通道的当前文件位置开始写入字节，但是如果该通道处于添加模式，则首先将该位置移到文件的末尾。如有必要，可以扩大文件以容纳写入的字节，然后使用实际写入的字节数更新该文件位置。否则此方法的行为与 {@link WritableByteChannel} 接口所指定的行为完全相同。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.write(java.nio.ByteBuffer[] srcs, int offset, int length) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从给定缓冲区的子序列写入此通道。
+
+<p> 从此通道的当前文件位置开始写入字节，但是如果该通道处于添加模式，则首先将位置移到文件的末尾。如有必要，可以扩大文件以容纳写入的字节，然后使用实际写入的字节数更新该文件位置。否则此方法的行为与 {@link GatheringByteChannel} 接口中指定的行为完全相同。 </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.nio.channels.FileChannel.write(java.nio.ByteBuffer[] srcs) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节序列从给定的缓冲区写入此通道。
+
+<p> 从此通道的当前文件位置开始写入字节，但是如果该通道处于添加模式，则首先将位置移到文件的末尾。如有必要，可以扩大文件以容纳写入的字节，然后使用实际写入的字节数更新该文件位置。否则此方法的行为与 {@link GatheringByteChannel} 接口中指定的行为完全相同。 </p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.position() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此通道的文件位置。 </p>
+
+@return  此通道的文件位置，这是一个非负整数，它计算从文件的开始到当前位置之间的字节数
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.FileChannel java.nio.channels.FileChannel.position(long newPosition) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此通道的文件位置。
+
+<p> 将该位置设置为大于文件当前大小的值是合法的，但这不会更改文件的大小。稍后试图在这样的位置读取字节将立即返回已到达文件末尾的指示。稍后试图在这种位置写入字节将导致文件扩大，以容纳新的字节；在以前文件末尾和新写入字节之间的字节值是未指定的。 </p>
+
+@param  newPosition 新位置，这是一个非负整数，它计算从文件开始的字节数
+
+@return  此文件通道
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws IllegalArgumentException 如果 newPosition 为负
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.size() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此通道的文件的当前大小。</p>
+
+@return  此通道的文件的当前大小，以字节为单位
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.FileChannel java.nio.channels.FileChannel.truncate(long size) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此通道的文件截取为给定大小。
+
+<p> 如果给定大小小于该文件的当前大小，则截取该文件，丢弃文件新末尾后面的所有字节。如果给定大小大于等于该文件的当前大小，则不修改文件。无论是哪种情况，如果此通道的文件位置大于给定大小，则将位置设置为该大小。
+ </p>
+
+@param  size 新的大小，非负的字节计数
+
+@return  此文件通道
+
+@throws  NonWritableChannelException 如果不允许对此通道进行写入操作
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws IllegalArgumentException 如果新的 size 为负
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.nio.channels.FileChannel.force(boolean metaData) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+强制将所有对此通道的文件更新写入包含该文件的存储设备中。
+
+<p> 如果此通道的文件驻留在本地存储设备上，则此方法返回时可保证：在此通道创建后或在最后一次调用此方法后对该文件进行的所有更改都已写入该设备中。这对确保在系统崩溃时不会丢失重要信息特别有用。
+
+<p> 如果该文件不在本地设备上，则无法提供这样的保证。
+
+<p> <tt>metaData</tt> 参数可用于限制此方法必需执行的 I/O 操作数量。为此参数传入 <tt>false</tt> 指示只需将对文件内容的更新写入存储设备；传入 <tt>true</tt> 则指示必须写入对文件内容和元数据的更新，这通常需要一个以上的 I/O 操作。此参数是否实际有效取决于底层操作系统，因此是未指定的。
+
+<p> 调用此方法可能导致发生 I/O 操作，即使该通道仅允许进行读取操作时也是如此。例如，某些操作系统将最后一次访问的时间作为元数据的一部分进行维护，每当读取文件时就更新此时间。实际是否执行操作是与操作系统相关的，因此是未指定的。
+
+<p> 此方法只保证强制进行通过此类中已定义的方法对此通道的文件所进行的更改。此方法不一定强制进行那些通过修改{@link MappedByteBuffer </code>已映射字节缓冲区<code>}（通过调用 {@link #map map} 方法获得）的内容所进行的更改。调用已映射字节缓冲区的 {@link MappedByteBuffer#force force} 方法将强行对要写入缓冲区的内容进行更改。 </p>
+
+@param   metaData 如果为 <tt>true</tt>，则需要此方法强制对要写入存储设备的文件内容和元数据进行更改；否则只需强行写入内容更改
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.transferTo(long position, long count, WritableByteChannel target) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节从此通道的文件传输到给定的可写入字节通道。
+
+<p> 试图读取从此通道的文件中给定 <tt>position</tt> 处开始的 <tt>count</tt> 个字节，并将其写入目标通道。此方法的调用不一定传输所有请求的字节；是否传输取决于通道的性质和状态。如果此通道的文件从给定的 <tt>position</tt> 处开始所包含的字节数小于 <tt>count</tt> 个字节，或者如果目标通道是非阻塞的并且其输出缓冲区中的自由空间少于 <tt>count</tt> 个字节，则所传输的字节数要小于请求的字节数。
+
+<p> 此方法不修改此通道的位置。如果给定的位置大于该文件的当前大小，则不传输任何字节。如果目标通道中有该位置，则从该位置开始写入各字节，然后将该位置增加写入的字节数。
+
+<p> 与从此通道读取并将内容写入目标通道的简单循环语句相比，此方法可能高效得多。很多操作系统可将字节直接从文件系统缓存传输到目标通道，而无需实际复制各字节。 </p>
+
+@param  position 文件中的位置，从此位置开始传输；必须为非负数
+
+@param  count 要传输的最大字节数；必须为非负数
+
+@param  target 目标通道
+
+@return  实际已传输的字节数，可能为零
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+@throws  NonReadableChannelException 如果不允许从此通道进行读取操作
+
+@throws  NonWritableChannelException 如果目标通道不允许进行写入操作
+
+@throws  ClosedChannelException 如果此通道或目标通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行传输时另一个线程关闭了任一通道
+
+@throws  ClosedByInterruptException 如果正在进行传输时另一个线程中断了当前线程，因此关闭了两个通道并将当前线程设置为中断
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract long java.nio.channels.FileChannel.transferFrom(ReadableByteChannel src, long position, long count) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将字节从给定的可读取字节通道传输到此通道的文件中。
+
+<p> 试着从源通道中最多读取 <tt>count</tt> 个字节，并将其写入到此通道的文件中从给定 <tt>position</tt> 处开始的位置。此方法的调用不一定传输所有请求的字节；是否传输取决于通道的性质和状态。如果源通道的剩余空间小于 <tt>count</tt> 个字节，或者如果源通道是非阻塞的并且其输入缓冲区中直接可用的空间小于 <tt>count</tt> 个字节，则所传输的字节数要小于请求的字节数。
+
+<p> 此方法不修改此通道的位置。如果给定的位置大于该文件的当前大小，则不传输任何字节。如果该位置在源通道中，则从该位置开始读取各字节，然后将该位置增加读取的字节数。
+
+<p> 与从源通道读取并将内容写入此通道的简单循环语句相比，此方法可能高效得多。很多操作系统可将字节直接从源通道传输到文件系统缓存，而无需实际复制各字节。 </p>
+
+@param  src 源通道
+
+@param  position 文件中的位置，从此位置开始传输；必须为非负数
+
+@param  count 要传输的最大字节数；必须为非负数
+
+@return  实际已传输的字节数，可能为零
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+@throws  NonReadableChannelException 如果不允许从源通道进行读取操作
+
+@throws  NonWritableChannelException 如果不允许对此通道进行写入操作
+
+@throws  ClosedChannelException 如果此通道或源通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行传输时另一个线程关闭了任一通道
+
+@throws  ClosedByInterruptException 如果正在进行传输时另一个线程中断了当前线程，因此关闭了两个通道并将当前线程设置为中断
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.FileChannel.read(ByteBuffer dst, long position) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定的文件位置开始，从此通道读取字节序列,并写入给定的缓冲区。
+
+<p> 除了从给定的文件位置开始读取各字节，而不是从该通道的当前位置外，此方法的执行方式与 {@link #read(ByteBuffer)} 方法相同。此方法不修改此通道的位置。如果给定的位置大于该文件的当前大小，则不读取任何字节。 </p>
+
+@param  dst 要向其中传输字节的缓冲区
+
+@param  position 开始传输的文件位置；必须为非负数
+
+@return  读取的字节数，可能为零，如果给定的位置大于等于该文件的当前大小，则返回 <tt>-1</tt>
+
+@throws IllegalArgumentException 如果 position 为负
+
+@throws  NonReadableChannelException 如果不允许从此通道进行读取操作
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行读取操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行读取操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程设置为中断状态
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.channels.FileChannel.write(ByteBuffer src, long position) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定的文件位置开始，将字节序列从给定缓冲区写入此通道。
+
+<p> 除了从给定的文件位置开始写入各字节，而不是从该通道的当前位置外，此方法的执行方式与 {@link #write(ByteBuffer)} 方法相同。此方法不修改此通道的位置。如果给定的位置大于该文件的当前大小，则该文件将扩大以容纳新的字节；在以前文件末尾和新写入字节之间的字节值是未指定的。 </p>
+
+@param  src 要传输其中字节的缓冲区
+
+@param  position 开始传输的文件位置；必须为非负数
+
+@return  写入的字节数，可能为零
+
+@throws IllegalArgumentException 如果 position 为负
+
+@throws  NonWritableChannelException 如果不允许对此通道进行写入操作
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果正在进行写入操作时另一个线程关闭了此通道
+
+@throws  ClosedByInterruptException 如果正在进行写入操作时另一个线程中断了当前线程，因此关闭了该通道并将当前线程的状态设置为中断
+
+@throws IOException 如果发生其他 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.MappedByteBuffer java.nio.channels.FileChannel.map(FileChannel.MapMode mode, long position, long size) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此通道的文件区域直接映射到内存中。
+
+<p> 可以通过下列三种模式将文件区域映射到内存中：
+ </p>
+
+ <ul type=disc>
+
+<li><p> <i>只读：</i> 试图修改得到的缓冲区将导致抛出 {@link java.nio.ReadOnlyBufferException}。({@link MapMode#READ_ONLY MapMode.READ_ONLY}) </p></li>
+
+<li><p> <i>读/写：</i> 对得到的缓冲区的更改最终将传播到文件；该更改对映射到同一文件的其他程序不一定是可见的。 ({@link MapMode#READ_WRITE MapMode.READ_WRITE}) </p></li>
+
+<li><p> <i>专用：</i> 对得到的缓冲区的更改不会传播到文件，并且该更改对映射到同一文件的其他程序也不是可见的；相反，会创建缓冲区已修改部分的专用副本。 ({@link MapMode#PRIVATE MapMode.PRIVATE}) </p></li>
+
+ </ul>
+
+<p> 对于只读映射关系，此通道必须可以进行读取操作；对于读取/写入或专用映射关系，此通道必须可以进行读取和写入操作。
+
+<p> 此方法返回的{@link MappedByteBuffer </code>已映射字节缓冲区<code>}具有的位置为零，限制和容量为 <tt>size</tt>；其标记是不确定的。在缓冲区本身被作为垃圾回收之前，该缓冲区及其表示的映射关系都是有效的。
+
+<p> 映射关系一经创建，就不再依赖于创建它时所用的文件通道。特别是关闭该通道对映射关系的有效性没有任何影响。
+
+<p> 很多内存映射文件的细节从根本上是取决于底层操作系统的，因此是未指定的。当所请求的区域没有完全包含在此通道的文件中时，此方法的行为是未指定的。未指定是否将此程序或另一个程序对底层文件的内容或大小所进行的更改传播到缓冲区。未指定将对缓冲区的更改传播到文件的频率。
+
+<p> 对于大多数操作系统而言，与通过普通的 {@link #read read} 和 {@link #write write} 方法读取或写入数千字节的数据相比，将文件映射到内存中开销更大。从性能的观点来看，通常将相对较大的文件映射到内存中才是值得的。 </p>
+
+@param  mode 根据是按只读、读取/写入或专用（写入时拷贝）来映射文件，分别为 {@link MapMode} 类中所定义的 {@link MapMode#READ_ONLY READ_ONLY}、{@link MapMode#READ_WRITE READ_WRITE} 或 {@link MapMode#PRIVATE PRIVATE} 之一
+
+@param  position 文件中的位置，映射区域从此位置开始；必须为非负数
+
+@param  size 要映射的区域大小；必须为非负数且不大于 {@link java.lang.Integer#MAX_VALUE}
+
+@throws NonReadableChannelException 如果 <tt>mode</tt> 是 {@link MapMode#READ_ONLY READ_ONLY}，但是不允许对此通道进行读取操作
+
+@throws NonWritableChannelException 如果 <tt>mode</tt> 是 {@link MapMode#READ_WRITE READ_WRITE} 或 {@link MapMode#PRIVATE PRIVATE}，但是不允许此通道进行读取和写入操作
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+@throws IOException 如果发生其他 I/O 错误
+
+
+@see java.nio.channels.FileChannel.MapMode
+@see java.nio.MappedByteBuffer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.FileLock java.nio.channels.FileChannel.lock(long position, long size, boolean shared) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此通道的文件给定区域上的锁定。
+
+<p> 在可以锁定该区域、已关闭此通道或者已中断调用线程（以先到者为准）之前，将阻塞此方法的调用。
+ 
+<p> 如果在此方法调用期间另一个线程关闭了此通道，则抛出 {@link AsynchronousCloseException}。
+ 
+<p> 如果在等待获取锁定的同时中断了调用线程，则将状态设置为中断并抛出 {@link FileLockInterruptionException}。如果调用此方法时已设置调用方的中断状态，则立即抛出该异常；不更改该线程的中断状态。
+
+<p> 由 <tt>position</tt> 和 <tt>size</tt> 参数所指定的区域无需包含在实际的底层文件中，甚至无需与文件重叠。锁定区域的大小是固定的；如果某个已锁定区域最初包含整个文件，并且文件因扩大而超出了该区域，则该锁定不覆盖此文件的新部分。如果期望文件大小扩大并且要求锁定整个文件，则应该锁定从零开始，到不小于期望最大文件大小的区域。零参数的 {@link #lock()} 方法只是锁定大小为 {@link Long#MAX_VALUE} 的区域。
+
+<p> 某些操作系统不支持共享锁定，在这种情况下，自动将对共享锁定的请求转换为对独占锁定的请求。可通过调用所得锁定对象的 {@link FileLock#isShared() isShared} 方法来测试新获取的锁定是共享的还是独占的。
+
+<p> 文件锁定是以整个 Java 虚拟机来保持的。但它们不适用于控制同一虚拟机内多个线程对文件的访问。 </p>
+
+@param  position 锁定区域开始的位置；必须为非负数
+
+@param  size 锁定区域的大小；必须为非负数，并且 <tt>position</tt>&nbsp;+&nbsp;<tt>size</tt> 的和必须为非负数
+
+@param  shared 要请求共享锁定，则为 <tt>true</tt>，在这种情况下此通道必须允许进行读取（可能是写入）操作；要请求独占锁定，则为 <tt>false</tt>，在这种情况下此通道必须允许进行写入（可能是读取）操作
+
+@return  一个锁定对象，表示新获取的锁定
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果调用线程阻塞于此方法中时另一个线程关闭了此通道
+
+@throws  FileLockInterruptionException 如果调用线程阻塞于此方法中时被中断
+
+@throws  OverlappingFileLockException 如果此 Java 虚拟机已经持有与所请求区域重叠的锁定，或者如果另一个线程已阻塞于此方法中并且正在试图锁定一个重叠区域
+
+@throws  NonReadableChannelException 如果 <tt>shared</tt> 为 <tt>true</tt>，但此通道不允许进行读取操作
+
+@throws  NonWritableChannelException 如果 <tt>shared</tt> 为 <tt>false</tt>，但此通道不允许进行写入操作
+
+@throws IOException 如果发生其他 I/O 错误
+
+
+@see     #lock()
+@see     #tryLock()
+@see     #tryLock(long,long,boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.FileLock java.nio.channels.FileChannel.lock() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取对此通道的文件的独占锁定。
+
+<p> 调用此方法的形式为 <tt>fc.lock()</tt>, 该调用与以下调用完全相同：
+
+ <pre>
+     fc.{@link #lock(long,long,boolean) lock}(0L, Long.MAX_VALUE, false) </pre>
+
+@return  一个锁定对象，表示新获取的锁定
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  AsynchronousCloseException 如果调用线程阻塞于此方法中时另一个线程关闭了此通道
+
+@throws  FileLockInterruptionException 如果调用线程阻塞于此方法中时被中断
+
+@throws  OverlappingFileLockException 如果此 Java 虚拟机已经持有与所请求区域重叠的锁定，或者如果另一个线程已阻塞在此方法中并且正在试图锁定同一文件的重叠区域
+
+@throws  NonWritableChannelException 如果没有为写入打开此通道
+
+@throws IOException 如果发生其他 I/O 错误
+
+
+@see     #lock(long,long,boolean)
+@see     #tryLock()
+@see     #tryLock(long,long,boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.nio.channels.FileLock java.nio.channels.FileChannel.tryLock(long position, long size, boolean shared) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图获取对此通道的文件给定区域的锁定。
+
+<p> 此方法不会阻塞。无论是否已成功地获得请求区域上的锁定，调用总是立即返回。如果由于另一个程序保持着一个重叠锁定而无法获取锁定，则此方法返回 <tt>null</tt>。如果由于任何其他原因而无法获取锁定，则抛出相应的异常。
+
+<p> 由 <tt>position</tt> 和 <tt>size</tt> 参数所指定的区域无需包含在实际的底层文件中，甚至无需与文件重叠。锁定区域的大小是固定的；如果某个已锁定区域最初包含整个文件，但文件因扩大而超出了该区域，则该锁定不覆盖此文件的新部分。如果期望文件大小扩大并且要求锁定整个文件，则应该锁定从零开始，到不小于期望最大文件大小为止的区域。零参数的 {@link #tryLock()} 方法只是锁定大小为 {@link Long#MAX_VALUE} 的区域。
+
+<p> 某些操作系统不支持共享锁定，在这种情况下，自动将对共享锁定的请求转换为对独占锁定的请求。可通过调用所得锁定对象的 {@link FileLock#isShared() isShared} 方法来测试新获取的锁定是共享的还是独占的。
+
+<p> 文件锁定以整个 Java 虚拟机来保持。但它们不适用于控制同一虚拟机内多个线程对文件的访问。 </p>
+
+@param  position 锁定区域开始的位置；必须为非负数
+
+@param  size 锁定区域的大小；必须为非负数，并且 <tt>position</tt>&#xA0;+&#xA0;<tt>size</tt> 的和必须为非负数
+
+@param  shared 要请求共享锁定，则为 <tt>true</tt>，要请求独占锁定，则为 <tt>false</tt>
+
+@return  一个锁定对象，表示新获取的锁定，如果由于另一个程序保持着一个重叠锁定而无法获取锁定，则返回 <tt>null</tt>
+
+@throws  IllegalArgumentException 如果关于参数的前提不成立
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  OverlappingFileLockException 如果此 Java 虚拟机已经持有与所请求区域重叠的锁定，或者如果另一个线程已阻塞在此方法中并且正在试图锁定同一文件的重叠区域
+
+@throws IOException 如果发生其他 I/O 错误
+
+
+@see     #lock()
+@see     #lock(long,long,boolean)
+@see     #tryLock()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.channels.FileLock java.nio.channels.FileChannel.tryLock() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图获取对此通道的文件的独占锁定。
+
+<p> 调用此方法的形式为 <tt>fc.tryLock()</tt>, 该调用与以下调用完全相同：
+
+ <pre>
+     fc.{@link #tryLock(long,long,boolean) tryLock}(0L, Long.MAX_VALUE, false) </pre>
+
+@return  一个锁定对象，表示新获取的锁定，如果由于另一个程序保持着一个重叠锁定而无法获取锁定，则返回 <tt>null</tt>
+
+@throws  ClosedChannelException 如果此通道已关闭
+
+@throws  OverlappingFileLockException 如果此 Java 虚拟机已经持有与所请求区域重叠的锁定，或者如果另一个线程已阻塞于此方法中并且正在试图锁定一个重叠区域
+
+@throws IOException 如果发生其他 I/O 错误
+
+
+@see     #lock()
+@see     #lock(long,long,boolean)
+@see     #tryLock(long,long,boolean)
+
+<!-- END DATA -->

@@ -1,0 +1,193 @@
+<!-- BEGIN KEY -->
+public abstract class javax.imageio.stream.ImageInputStreamImpl extends java.lang.Object implements javax.imageio.stream.ImageInputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现 <code>ImageInputStream</code> 接口的抽象类。此类设计用于减少必须由子类实现的方法数。
+
+<p> 需要特别指出的是，此类处理大部分或全部关于字节顺序解释、缓冲、标记/重置、丢弃、关闭和释放的详细资料。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.nio.ByteOrder javax.imageio.stream.ImageInputStreamImpl.byteOrder
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流的字节顺序，其为枚举类 <code>java.nio.ByteOrder</code> 的实例，其中 <code>ByteOrder.BIG_ENDIAN</code> 指示网络字节顺序，<code>ByteOrder.LITTLE_ENDIAN</code> 指示反向顺序。默认情况下，该值为 <code>ByteOrder.BIG_ENDIAN</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long javax.imageio.stream.ImageInputStreamImpl.streamPos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流中的当前读取位置。子类负责根据其重写的任何会改变读取位置的方法保持此值最新。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.stream.ImageInputStreamImpl.bitOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流中的当前位偏移量。子类负责根据其重写的任何会改变位偏移量的方法保持此值最新。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long javax.imageio.stream.ImageInputStreamImpl.flushedPos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可能丢弃的数据前面的那个位置。不允许查找较小的位置。<code>flushedPos</code> 将总是 &gt;= 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.stream.ImageInputStreamImpl()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>ImageInputStreamImpl</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.imageio.stream.ImageInputStreamImpl.checkClosed() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果已经关闭流，则抛出 <code>IOException</code>。子类可以从其任何要求不关闭流的方法中调用此方法。
+
+@exception IOException 如果已关闭流。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.imageio.stream.ImageInputStreamImpl.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 从流中读取单个字节，并以 <code>int</code>（0 到 255 之间）形式返回该字节。 如果到达 EOF，则返回 <code>-1</code>。
+
+ <p> 子类必须提供此方法的实现。子类实现在退出前应该更新流位置。
+
+ <p> 在发生读取前，流中的位偏移量必须被重置为 0。
+
+ @return 流中下一个字节的值；如果到达 EOF，则返回 <code>-1</code>。
+
+ @exception IOException 如果流已经被关闭。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.stream.ImageInputStreamImpl.read(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>read(b, 0, b.length)</code> 的便捷方法。
+
+<p> 在发生读取前，流中的位偏移量被重置为 0。
+
+@return 实际读取的字节数；或者 <code>-1</code>，指示 EOF。
+
+@exception  NullPointerException  如果 <code>b</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.imageio.stream.ImageInputStreamImpl.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中读取至多 <code>len</code> 个字节，并将其存储到 <code>b</code> 中（从 <code>off</code> 索引处开始）。如果由于到达流末尾而没有读取任何字节，则返回 <code>-1</code>。
+
+<p> 在发生读取前，流中的位偏移量必须被重置为 0。
+
+<p> 子类必须提供此方法的实现。子类实现在退出前应该更新流位置。 
+
+@param b 用来接收写入的字节数组。
+@param off <code>b</code> 中要写入的起始位置。
+@param      len   要读取的最大字节数。
+
+@return 实际读取的字节数；或者 <code>-1</code>，指示 EOF。
+
+@exception IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负或者 <code>off + len</code> 大于 <code>b.length</code>。
+@exception  NullPointerException  如果 <code>b</code> 为 <code>null</code>。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.imageio.stream.ImageInputStreamImpl.length()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>-1L</code>，指示流的长度未知。子类必须重写此方法来提供实际的长度信息。
+
+@return 指示不知道长度的 -1L。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.stream.ImageInputStreamImpl.skipBytes(int n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>seek(getStreamPosition() + n)</code> 推进当前流位置。
+
+<p> 位偏移量被重置为 0。
+
+@param n 要逆向查找的字节数。
+
+@return 一个 <code>int</code>，表示跳过的字节数。
+
+@exception IOException 如果 <code>getStreamPosition</code> 计算起始或结束位置时抛出 <code>IOException</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.imageio.stream.ImageInputStreamImpl.skipBytes(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用 <code>seek(getStreamPosition() + n)</code> 推进当前流位置。
+
+<p> 位偏移量被重置为 0。
+
+@param n 要逆向查找的字节数。
+
+@return 一个 <code>long</code>，表示跳过的字节数。
+
+@exception IOException 如果 <code>getStreamPosition</code> 计算起始或结束位置时抛出 <code>IOException</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageInputStreamImpl.mark()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前流位置推进到标记位置的堆栈上。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.stream.ImageInputStreamImpl.reset() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据标记的堆栈重置当前流字节和位位置。
+
+<p> 如果以前的标记位置位于流的丢弃部分，则抛出 <code>IOException</code>。
+
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.stream.ImageInputStreamImpl.isCached()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+默认实现返回 false。如果子类缓存数据，则其应该重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.stream.ImageInputStreamImpl.isCachedMemory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+默认实现返回 false。如果子类在主存中缓存数据，则其应该重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.stream.ImageInputStreamImpl.isCachedFile()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+默认实现返回 false。如果子类在临时文件中缓存数据，则其应该重写此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.imageio.stream.ImageInputStreamImpl.finalize() throws java.lang.Throwable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在垃圾回收前结束此对象。调用 <code>close</code> 方法来关闭所有开启的输入源。不应该从应用程序代码调用此方法。
+
+@exception Throwable 如果在超类终止过程中发生错误。
+
+<!-- END DATA -->

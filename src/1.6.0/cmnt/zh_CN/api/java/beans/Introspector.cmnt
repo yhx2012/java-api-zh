@@ -1,0 +1,118 @@
+<!-- BEGIN KEY -->
+public class java.beans.Introspector extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Introspector 类为通过工具学习有关受目标 Java Bean 支持的属性、事件和方法的知识提供了一个标准方法。
+ <p>
+对于这三种信息，Introspector 将分别分析 bean 的类和超类，寻找显式或隐式信息，使用这些信息构建一个全面描述目标 bean 的 BeanInfo 对象。
+ <p>
+对于每个 &quot;Foo&quot; 类，如果存在相应的 &quot;FooBeanInfo&quot; 类，显式信息可能是可用的，查询这些信息时，FooBeanInfo 类会提供一个非 null 值。通过获得目标 bean 类的完全受限定包名称并追加 &quot;BeanInfo&quot; 形成一个新类，首先查找 BeanInfo 类。如果此操作失败，则采用此名称的最终类名称组件，在 BeanInfo 包搜索路径中指定的每个包中搜索该类。
+ <p>
+因此对于某个类，比如说 &quot;sun.xyz.OurButton&quot;，首先需要查找称为 &quot;sun.xyz.OurButtonBeanInfo&quot; 的 BeanInfo 类，如果失败，则查找 BeanInfo 搜索路径中的每个包来搜索 OurButtonBeanInfo 类。对于默认搜索路径，这意味着将查找 &quot;sun.beans.infos.OurButtonBeanInfo&quot;。
+ <p>
+如果某个类提供有关其自身的显式 BeanInfo，则将它添加到从分析所有派生类得到的 BeanInfo 信息中，并将显式信息视为当前类及其基类的确定的信息，无需进一步深入超类链进行分析。
+ <p>
+如果没有在某个类上发现显式 BeanInfo，则使用低层次的反射来研究类的方法，并应用标准设计模式来标识属性存储器、事件源或公共方法。然后深入分析类的超类，从它那里（可能在超类链的顶部）添加信息。
+
+ <p>
+因为 Introspector 缓存 BeanInfo 类来获得更好的性能，所以如果在使用多个类加载器的应用程序中使用它，则需小心谨慎。通常，在破坏一个已用于 introspect 类的 <code>ClassLoader</code> 时，应使用 {@link #flushCaches <code>Introspector.flushCaches</code>} 或 {@link #flushFromCaches <code>Introspector.flushFromCaches</code>} 方法从缓存中清除所有内省的类。
+
+ <P>
+有关内省和设计模式的更多信息，请参阅 <a href="http://java.sun.com/products/javabeans/docs/index.html">JavaBeans specification</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.beans.BeanInfo java.beans.Introspector.getBeanInfo(java.lang.Class<?> beanClass) throws java.beans.IntrospectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Java Bean 上进行内省，了解其所有属性、公开的方法和事件。
+ <p>
+如果 Java Bean 的 BeanInfo 类以前已经被内省，则从 BeanInfo 缓存中检索 BeanInfo 类。
+
+@param beanClass  将要分析的 bean 类。
+@return  描述目标 bean 的 BeanInfo 对象。
+@exception IntrospectionException 如果在内省期间发生异常。
+@see #flushCaches
+@see #flushFromCaches
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.beans.BeanInfo java.beans.Introspector.getBeanInfo(java.lang.Class<?> beanClass, int flags) throws java.beans.IntrospectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Java Bean 上进行内省，了解其所有属性、公开的方法和事件，并将结果用一些控制标记表示。
+ <p>
+如果 Java Bean 的 BeanInfo 类以前已经基于相同的参数被内省，则从 BeanInfo 缓存中检索 BeanInfo 类。
+
+@param beanClass  将要分析的 bean 类。
+@param flags  控制内省的标记。如果 flags == USE_ALL_BEANINFO，则使用可以发现的所有 BeanInfo 类。如果 flags == IGNORE_IMMEDIATE_BEANINFO，则忽略与指定 beanClass 相关联的任何 BeanInfo。如果 flags == IGNORE_ALL_BEANINFO，则忽略与指定 beanClass 相关联的所有 BeanInfo 及其所有父类。
+@return  描述目标 bean 的 BeanInfo 对象。
+@exception IntrospectionException 如果在内省期间发生异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.beans.BeanInfo java.beans.Introspector.getBeanInfo(java.lang.Class<?> beanClass, java.lang.Class<?> stopClass) throws java.beans.IntrospectionException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定的&ldquo;断&rdquo;点之下，在 Java Bean 上进行内省，了解其所有属性和公开的方法。
+ <p>
+如果 Java Bean 的 BeanInfo 类以前已经基于相同的参数被内省，则从 BeanInfo 缓存中检索 BeanInfo 类。
+
+@param beanClass  将要分析的 bean 类。
+@param stopClass 从其所在位置开始停止分析的基类。stopClass 或其基类中的所有方法/属性/事件都将在分析中被忽略。
+@exception IntrospectionException 如果在内省期间发生异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String java.beans.Introspector.decapitalize(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得一个字符串并将它转换成普通 Java 变量名称大写形式的实用工具方法。这通常意味着将首字符从大写转换成小写，但在（不平常的）特殊情况下，当有多个字符且第一个和第二个字符都是大写字符时，不执行任何操作。
+ <p>
+因此 &quot;FooBah&quot; 变成 &quot;fooBah&quot;，&quot;X&quot; 变成 &quot;x&quot;，但 &quot;URL&quot; 仍然是 &quot;URL&quot;。
+
+@param  name 要取消大写化的字符串。
+@return  取消大写化的字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.lang.String[] java.beans.Introspector.getBeanInfoSearchPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得将用来查找 BeanInfo 类的包名称的列表。
+
+@return  为了查找 BeanInfo 类而被搜索的包名称数组。此数组的默认值与实现有关，例如 Sun 实现最初设置为 {&quot;sun.beans.infos&quot;}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.beans.Introspector.setBeanInfoSearchPath(java.lang.String[] path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改将用来查找 BeanInfo 类的包名称的列表。如果参数 path 为 null，则此方法的行为是未定义的。
+ 
+<p>如果有安全管理器，则首先调用其 <code>checkPropertiesAccess</code> 方法。这可能会导致 SecurityException 异常。
+ 
+@param path  包名称数组。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkPropertiesAccess</code> 方法不允许设置系统属性。
+@see SecurityManager#checkPropertiesAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.beans.Introspector.flushCaches()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新所有 Introspector 的内部缓存。通常不需要此方法。通常只有高级工具才需要使用此方法，这些工具需要在适当的位置更新现有的 &quot;Class&quot; 对象，并需要使 Introspector 重新分析现有的 Class 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.beans.Introspector.flushFromCaches(java.lang.Class<?> clz)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新给定类的 Introspector 的内部缓存信息。通常不需要此方法。通常只有高级工具才需要使用此方法，这些工具需要在适当的位置更新现有的 &quot;Class&quot; 对象，并需要使 Introspector 重新分析现有的 Class 对象。
+
+注意，只刷新与目标 Class 对象有关联的直接状态。不需要刷新具有相同名称的其他 Class 对象的状态，也不需要刷新所有相关 Class 对象（比如子类）的状态，这些状态甚至可能包括间接从目标 Class 对象中获得的信息。
+
+@param clz  要刷新的 Class 对象。
+@throws NullPointerException 如果 Class 对象为 null。
+
+<!-- END DATA -->

@@ -1,0 +1,194 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.CertStore extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于从存储库中获取 <code>Certificate</code> 和 <code>CRL</code> 的类。
+ <p>
+此类使用基于提供者的架构。要创建一个 <code>CertStore</code>，可调用其中一个静态 <code>getInstance</code> 方法，并传入所需的 <code>CertStore</code> 类型、任何适用的初始化参数，以及所需提供者名称（可选）。
+ <p>
+创建了 <code>CertStore</code> 以后，就可以通过调用其 {@link #getCertificates(CertSelector selector) getCertificates} 和 {@link #getCRLs(CRLSelector selector) getCRLs} 方法来获取 <code>Certificate</code> 和 <code>CRL</code>。
+ <p>
+CertStore 与 {@link java.security.KeyStore KeyStore} 不同，KeyStore 提供对私钥和可信任证书缓存的访问，而 <code>CertStore</code> 提供对不可信任证书和 CRL 存储库（可能很大）的访问。例如，<code>CertStore</code> 的 LDAP 实现使用 LDAP 协议和 RFC 服务属性中定义的方案，提供对存储在一个或多个目录中的证书和 CRL 的访问。有关标准 <code>CertStore</code> 类型的更多信息，请参见 <a href= "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">Java Certification Path API Programmer's Guide</a> 中的附录 A。
+ <p>
+<b>并发访问</b>
+ <p>
+所有 <code>CertStore</code> 对象的公共方法必须是线程安全的。也就是说，多个线程可以在单个 <code>CertStore</code> 对象（或多个对象）上并发调用这些方法，而不产生任何不良影响。例如，允许 <code>CertPathBuilder</code> 在搜索 CRL 的同时搜索其他证书。
+ <p>
+还应确保此类的静态方法是线程安全的。多个线程可以并发调用此类中所定义的静态方法，而不产生任何不良影响。
+
+@version 	1.17 04/21/06
+@since	1.4
+@author	Sean Mullan, Steve Hanna
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.cert.CertStore(CertStoreSpi storeSpi, Provider provider, String type, CertStoreParameters params)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个给定类型的 <code>CertStore</code> 对象，并在其中封装给定提供者实现（SPI 对象）。
+
+@param storeSpi 提供者实现
+@param provider 提供者
+@param type 类型
+@param params 初始化参数（可以为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<? extends java.security.cert.Certificate> java.security.cert.CertStore.getCertificates(CertSelector selector) throws java.security.cert.CertStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定选择器匹配的 <code>Certificate</code> 的 <code>Collection</code>。如果没有与此选择器匹配的 <code>Certificate</code>，则返回一个空 <code>Collection</code>。
+ <p>
+对于某些 <code>CertStore</code> 类型，得到的 <code>Collection</code> 可能并不包含与选择器匹配的<b>所有</b> <code>Certificate</code>。例如，LDAP <code>CertStore</code> 可能并不搜索目录中的所有条目。相反，它只搜索那些可能包含要查找的 <code>Certificate</code> 的条目。 
+ <p>
+如果没有提供一个包含用于查找证书的特定标准的非 null <code>CertSelector</code>，那么某些 <code>CertStore</code> 实现（特别是 LDAP <code>CertStore</code>）将抛出 <code>CertStoreException</code>。发布方和/或主体名称是特别有用的标准。
+
+@param selector 用于选择应该返回哪些 <code>Certificate</code> 的 <code>CertSelector</code>。指定 <code>null</code> 表示返回所有 <code>Certificate</code>（如果支持）。
+@return 与指定选择器匹配的 <code>Certificate</code> 的 <code>Collection</code>（不为 <code>null</code>）
+@throws CertStoreException 如果发生异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<? extends java.security.cert.CRL> java.security.cert.CertStore.getCRLs(CRLSelector selector) throws java.security.cert.CertStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定选择器匹配的 <code>CRL</code> 的 <code>Collection</code>。如果没有与此选择器匹配的 <code>CRL</code>，则返回一个空 <code>Collection</code>。
+ <p>
+对于某些 <code>CertStore</code> 类型，得到的 <code>Collection</code> 可能并不包含与选择器匹配的<b>所有</b> <code>CRL</code>。例如，LDAP <code>CertStore</code> 可能并不搜索目录中的所有条目。相反，它只搜索那些可能包含要查找的 <code>CRL</code> 的条目。 
+ <p>
+如果没有提供一个包含用于查找 CRL 的特定标准的非 null <code>CRLSelector</code>，那么某些 <code>CertStore</code> 实现（特别是 LDAP <code>CertStore</code>）将抛出 <code>CertStoreException</code>。发布方名称和/或要检查的证书特别有用。
+
+@param selector 用于选择应该返回哪些 <code>CRL</code> 的 <code>CRLSelector</code>。指定 <code>null</code> 表示返回所有 <code>CRL</code>（如果支持）。
+@return 与指定选择器匹配的 <code>CRL</code> 的 <code>Collection</code>（不为 <code>null</code>）
+@throws CertStoreException 如果发生异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertStore java.security.cert.CertStore.getInstance(String type, CertStoreParameters params) throws java.security.InvalidAlgorithmParameterException, java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个实现指定 <code>CertStore</code> 类型，并已使用指定参数初始化的 <code>CertStore</code> 对象。
+
+<p> 此方法从首选 Provider 开始遍历已注册安全提供者列表。返回一个封装 CertStoreSpi 实现的新 CertStore 对象，该实现取自第一个支持指定类型的 Provider。
+
+<p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+<p>使用指定的 <code>CertStoreParameters</code> 初始化返回的 <code>CertStore</code>。不同类型的 <code>CertStore</code> 所需的参数类型有所不同。注意，指定的 <code>CertStoreParameters</code> 对象将被复制。
+ 
+@param type 请求的 <code>CertStore</code> 类型的名称。有关标准类型的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 中的附录 A。
+
+@param params 初始化参数（可以为 <code>null</code>）。
+
+@return 实现指定 <code>CertStore</code> 类型的 <code>CertStore</code> 对象。
+
+@throws NoSuchAlgorithmException 如果没有 Provider 支持指定类型的 CertStoreSpi 实现。
+
+@throws InvalidAlgorithmParameterException 如果指定的初始化参数不适合此 <code>CertStore</code>。
+
+@see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertStore java.security.cert.CertStore.getInstance(String type, CertStoreParameters params, String provider) throws java.security.InvalidAlgorithmParameterException, java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个实现指定 <code>CertStore</code> 类型的 <code>CertStore</code> 对象。
+
+<p> 返回一个封装 CertStoreSpi 实现的新 CertStore 对象，该实现取自指定提供者。指定提供者必须在安全提供者列表中注册。
+
+<p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+<p>使用指定的 <code>CertStoreParameters</code> 初始化返回的 <code>CertStore</code>。不同类型的 <code>CertStore</code> 所需的参数类型有所不同。注意，指定的 <code>CertStoreParameters</code> 对象将被复制。
+
+@param type 请求的 <code>CertStore</code> 类型。有关标准类型的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 中的附录 A。
+
+@param params 初始化参数（可以为 <code>null</code>）。
+
+@param provider 提供者名称。
+
+@return 实现指定类型的 <code>CertStore</code> 对象。
+
+@throws NoSuchAlgorithmException 如果不能从指定的提供者获得指定类型的 CertStoreSpi 实现。
+
+@throws InvalidAlgorithmParameterException 如果指定的初始化参数不适合此 <code>CertStore</code>。
+
+@throws NoSuchProviderException 如果指定的提供者未在安全提供者列表中注册。
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 null 或空。
+
+@see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.cert.CertStore java.security.cert.CertStore.getInstance(String type, CertStoreParameters params, Provider provider) throws java.security.NoSuchAlgorithmException, java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个实现指定 <code>CertStore</code> 类型的 <code>CertStore</code> 对象。
+
+<p> 返回一个封装 CertStoreSpi 实现的新 CertStore 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。
+
+<p>使用指定的 <code>CertStoreParameters</code> 初始化返回的 <code>CertStore</code>。不同类型的 <code>CertStore</code> 所需的参数类型有所不同。注意，指定的 <code>CertStoreParameters</code> 对象将被复制。
+
+@param type 请求的 <code>CertStore</code> 类型。有关标准类型的信息，请参阅 <a href=
+  "../../../../technotes/guides/security/certpath/CertPathProgGuide.html#AppA">
+  Java Certification Path API Programmer's Guide </a> 中的附录 A。
+
+@param params 初始化参数（可以为 <code>null</code>）。
+
+@param provider 提供者。
+
+@return 实现指定类型的 <code>CertStore</code> 对象。
+
+@exception NoSuchAlgorithmException 如果不能从指定 Provider 对象获得指定类型的 CertStoreSpi 实现。
+
+@throws InvalidAlgorithmParameterException 如果指定的初始化参数不适合此 <code>CertStore</code>
+
+@exception IllegalArgumentException 如果 <code>provider</code> 为 null。
+
+@see java.security.Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.cert.CertStoreParameters java.security.cert.CertStore.getCertStoreParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回初始化此 <code>CertStore</code> 所用的参数。注意，<code>CertStoreParameters</code> 对象返回之前将被复制。
+
+@return 初始化此 <code>CertStore</code> 所用的参数（可以为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.cert.CertStore.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>CertStore</code> 的类型。
+
+@return 此 <code>CertStore</code> 的类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.cert.CertStore.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>CertStore</code> 的提供者。
+
+@return 此 <code>CertStore</code> 的提供者
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String java.security.cert.CertStore.getDefaultType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 安全属性文件中指定的默认 <code>CertStore</code> 类型；如果没有此属性，则返回字符串 &quot;LDAP&quot;。Java 安全属性文件位于指定的 &lt;JAVA_HOME&gt;/lib/security/java.security 文件中。&lt;JAVA_HOME&gt; 引用 java.home 系统属性的值，并指定安装 JRE 的目录。
+
+<p>调用某个 <code>getInstance</code> 方法时不希望使用固定编码 (hard-coded) CertStore 类型的应用程序，以及用户未指定所用 CertStore 类型时希望提供默认 <code>CertStore</code> 类型的应用程序可以使用默认 <code>CertStore</code> 类型。
+
+<p>通过将 &quot;certstore.type&quot; 安全属性（在 Java 安全属性文件中）的值设置为所需的类型，可以更改默认的 <code>CertStore</code> 类型。
+
+@return Java 安全属性文件中指定的默认 <code>CertStore</code> 类型；如果没有此属性，则返回字符串 &quot;LDAP&quot;。
+
+<!-- END DATA -->

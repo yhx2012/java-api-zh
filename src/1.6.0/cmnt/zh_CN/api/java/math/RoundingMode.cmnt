@@ -1,0 +1,240 @@
+<!-- BEGIN KEY -->
+public final class java.math.RoundingMode extends java.lang.Enum
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为可能丢弃精度的数值操作指定一种<i>舍入行为</i>。每种舍入模式都指示如何计算返回舍入结果位数的最低有效位。如果返回的位数比表示精确数值结果所需的位数少，则舍弃的位数称为<i>舍弃部分</i>，而不管这些位数对数值的作用如何。换句话说，假设是一个数值，舍弃部分的绝对值可能大于 1。
+
+<p>每种舍入模式的描述包括一个表，列出如何在相关的舍入模式下将不同的两位十进制数舍入为一位十进制数。表中的结果栏可以通过以下方式获得：使用指定的值创建一个 <tt>BigDecimal</tt> 数字，形成一个具有适当设置（<tt>precision</tt> 设置为 <tt>1</tt>，<tt>roundingMode</tt> 设置为相关的舍入模式）的 {@link MathContext} 对象，并使用适当的 <tt>MathContext</tt> 对此数字调用 {@link BigDecimal#round round}。下面是一个汇总表，该表显示了在所有舍入模式下这些舍入操作的结果。
+
+<p>
+<table border>
+<caption top><h3>不同舍入模式下的舍入操作汇总</h3></caption>
+<tr><th></th><th colspan=8>根据给定的舍入模式将输入数字舍入为一位数的结果</th>
+ <tr valign=top>
+<th>输入数字</th>	 <th><tt>UP</tt></th> 
+                                           <th><tt>DOWN</tt></th> 
+                                                        <th><tt>CEILING</tt></th>
+                                                                       <th><tt>FLOOR</tt></th>
+                                                                                    <th><tt>HALF_UP</tt></th>
+                                                                                                   <th><tt>HALF_DOWN</tt></th>
+                                                                                                                    <th><tt>HALF_EVEN</tt></th>
+                                                                                                                                     <th><tt>UNNECESSARY</tt></th>
+    
+<tr align=right><td>5.5</td>	 <td>6</td>  <td>5</td>    <td>6</td>    <td>5</td>  <td>6</td>      <td>5</td>       <td>6</td>       <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>2.5</td>	 <td>3</td>  <td>2</td>    <td>3</td>    <td>2</td>  <td>3</td>      <td>2</td>       <td>2</td>       <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>1.6</td>	 <td>2</td>  <td>1</td>    <td>2</td> 	 <td>1</td>  <td>2</td>      <td>2</td>       <td>2</td>       <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>1.1</td>	 <td>2</td>  <td>1</td>    <td>2</td> 	 <td>1</td>  <td>1</td>      <td>1</td>       <td>1</td>       <td>抛出 <tt>ArithmeticException</tt></td>
+ <tr align=right><td>1.0</td>	 <td>1</td>  <td>1</td>    <td>1</td> 	 <td>1</td>  <td>1</td>      <td>1</td>       <td>1</td>       <td>1</td>                                
+ <tr align=right><td>-1.0</td> <td>-1</td> <td>-1</td>   <td>-1</td>	 <td>-1</td> <td>-1</td>     <td>-1</td>      <td>-1</td>      <td>-1</td>                               
+<tr align=right><td>-1.1</td> <td>-2</td> <td>-1</td>   <td>-1</td>	 <td>-2</td> <td>-1</td>     <td>-1</td>      <td>-1</td>      <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-1.6</td> <td>-2</td> <td>-1</td>   <td>-1</td>	 <td>-2</td> <td>-2</td>     <td>-2</td>      <td>-2</td>      <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-2.5</td> <td>-3</td> <td>-2</td>   <td>-2</td>	 <td>-3</td> <td>-3</td>     <td>-2</td>      <td>-2</td>      <td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-5.5</td> <td>-6</td> <td>-5</td>   <td>-5</td>	 <td>-6</td> <td>-6</td>     <td>-5</td>      <td>-6</td>      <td>抛出 <tt>ArithmeticException</tt></td>
+</table>
+
+ 
+<p>此 <tt>enum</tt> 拟用于取代 {@link BigDecimal}（{@link BigDecimal#ROUND_UP}、{@link BigDecimal#ROUND_DOWN} 等）中舍入模式常量的基于整数的枚举。
+
+@see     BigDecimal
+@see     MathContext
+@version 1.x 01/xx/xx
+@author  Josh Bloch
+@author  Mike Cowlishaw
+@author  Joseph D. Darcy
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.UP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+远离零方向舍入的舍入模式。始终对非零舍弃部分前面的数字加 1。注意，此舍入模式始终不会减少计算值的绝对值。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>UP</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>6</td>
+<tr align=right><td>2.5</td>	<td>3</td>
+<tr align=right><td>1.6</td>	<td>2</td>
+<tr align=right><td>1.1</td>	<td>2</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-2</td>
+<tr align=right><td>-1.6</td>	<td>-2</td>
+<tr align=right><td>-2.5</td>	<td>-3</td>
+<tr align=right><td>-5.5</td>	<td>-6</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.DOWN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向零方向舍入的舍入模式。从不对舍弃部分前面的数字加 1（即截尾）。注意，此舍入模式始终不会增加计算值的绝对值。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>DOWN</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>5</td>
+<tr align=right><td>2.5</td>	<td>2</td>
+<tr align=right><td>1.6</td>	<td>1</td>
+<tr align=right><td>1.1</td>	<td>1</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-1</td>
+<tr align=right><td>-1.6</td>	<td>-1</td>
+<tr align=right><td>-2.5</td>	<td>-2</td>
+<tr align=right><td>-5.5</td>	<td>-5</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.CEILING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向正无限大方向舍入的舍入模式。如果结果为正，则舍入行为类似于 <tt>RoundingMode.UP</tt>；如果结果为负，则舍入行为类似于 <tt>RoundingMode.DOWN</tt>。注意，此舍入模式始终不会减少计算值。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>CEILING</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>6</td>
+<tr align=right><td>2.5</td>	<td>3</td>
+<tr align=right><td>1.6</td>	<td>2</td>
+<tr align=right><td>1.1</td>	<td>2</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-1</td>
+<tr align=right><td>-1.6</td>	<td>-1</td>
+<tr align=right><td>-2.5</td>	<td>-2</td>
+<tr align=right><td>-5.5</td>	<td>-5</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.FLOOR
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向负无限大方向舍入的舍入模式。如果结果为正，则舍入行为类似于 <tt>RoundingMode.DOWN</tt>；如果结果为负，则舍入行为类似于 <tt>RoundingMode.UP</tt>。注意，此舍入模式始终不会增加计算值。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>FLOOR</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>5</td>
+<tr align=right><td>2.5</td>	<td>2</td>
+<tr align=right><td>1.6</td>	<td>1</td>
+<tr align=right><td>1.1</td>	<td>1</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-2</td>
+<tr align=right><td>-1.6</td>	<td>-2</td>
+<tr align=right><td>-2.5</td>	<td>-3</td>
+<tr align=right><td>-5.5</td>	<td>-6</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.HALF_UP
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向最接近数字方向舍入的舍入模式，如果与两个相邻数字的距离相等，则向上舍入。如果被舍弃部分 &gt;= 0.5，则舍入行为同 <tt>RoundingMode.UP</tt>；否则舍入行为同 <tt>RoundingMode.DOWN</tt>。注意，此舍入模式就是通常学校里讲的四舍五入。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>HALF_UP</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>6</td>
+<tr align=right><td>2.5</td>	<td>3</td>
+<tr align=right><td>1.6</td>	<td>2</td>
+<tr align=right><td>1.1</td>	<td>1</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-1</td>
+<tr align=right><td>-1.6</td>	<td>-2</td>
+<tr align=right><td>-2.5</td>	<td>-3</td>
+<tr align=right><td>-5.5</td>	<td>-6</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.HALF_DOWN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向最接近数字方向舍入的舍入模式，如果与两个相邻数字的距离相等，则向下舍入。如果被舍弃部分 &gt; 0.5，则舍入行为同 <tt>RoundingMode.UP</tt>；否则舍入行为同 <tt>RoundingMode.DOWN</tt>。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>HALF_DOWN</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>5</td>
+<tr align=right><td>2.5</td>	<td>2</td>
+<tr align=right><td>1.6</td>	<td>2</td>
+<tr align=right><td>1.1</td>	<td>1</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-1</td>
+<tr align=right><td>-1.6</td>	<td>-2</td>
+<tr align=right><td>-2.5</td>	<td>-2</td>
+<tr align=right><td>-5.5</td>	<td>-5</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.HALF_EVEN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向最接近数字方向舍入的舍入模式，如果与两个相邻数字的距离相等，则向相邻的偶数舍入。如果舍弃部分左边的数字为奇数，则舍入行为同 <tt>RoundingMode.HALF_UP</tt>；如果为偶数，则舍入行为同 <tt>RoundingMode.HALF_DOWN</tt>。注意，在重复进行一系列计算时，此舍入模式可以在统计上将累加错误减到最小。此舍入模式也称为&ldquo;银行家舍入法&rdquo;，主要在美国使用。此舍入模式类似于 Java 中对 <tt>float</tt> 和 <tt>double</tt> 算法使用的舍入策略。
+
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>HALF_EVEN</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>6</td>
+<tr align=right><td>2.5</td>	<td>2</td>
+<tr align=right><td>1.6</td>	<td>2</td>
+<tr align=right><td>1.1</td>	<td>1</td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>-1</td>
+<tr align=right><td>-1.6</td>	<td>-2</td>
+<tr align=right><td>-2.5</td>	<td>-2</td>
+<tr align=right><td>-5.5</td>	<td>-6</td>
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.math.RoundingMode java.math.RoundingMode.UNNECESSARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于断言请求的操作具有精确结果的舍入模式，因此不需要舍入。如果对生成精确结果的操作指定此舍入模式，则抛出 <tt>ArithmeticException</tt>。
+<p>示例：
+<table border>
+<tr valign=top><th>输入数字</th>
+<th>使用 <tt>UNNECESSARY</tt> 舍入模式<br>将输入数字舍入为一位数
+<tr align=right><td>5.5</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>2.5</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>1.6</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>1.1</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>1.0</td>	<td>1</td>
+<tr align=right><td>-1.0</td>	<td>-1</td>
+<tr align=right><td>-1.1</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-1.6</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-2.5</td>	<td>抛出 <tt>ArithmeticException</tt></td>
+<tr align=right><td>-5.5</td>	<td>抛出 <tt>ArithmeticException</tt></td>	
+</table>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.math.RoundingMode java.math.RoundingMode.valueOf(int rm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与 {@link BigDecimal} 中遗留整数舍入模式常量对应的 <tt>RoundingMode</tt> 对象。
+
+@param  rm 要转换的遗留整数舍入模式
+@return 与给定整数对应的 <tt>RoundingMode</tt>。
+@throws IllegalArgumentException 整数超出范围
+
+<!-- END DATA -->

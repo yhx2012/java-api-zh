@@ -1,0 +1,64 @@
+<!-- BEGIN KEY -->
+public class javax.naming.ldap.InitialLdapContext extends javax.naming.directory.InitialDirContext implements javax.naming.ldap.LdapContext
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类是执行 LDAPv3 样式的扩展操作和控件的初始上下文。
+<p>
+有关同步的详细信息和如何创建初始上下文的策略，请参阅 <tt>javax.naming.InitialContext</tt> 和 <tt>javax.naming.InitialDirContext</tt>。
+
+<h4>请求控件</h4>
+创建初始上下文 (<tt>InitialLdapContext</tt>) 时，可以指定请求控件列表。这些控件将用作由上下文或从上下文派生的上下文执行的所有隐式 LDAP&ldquo;绑定&rdquo;操作的请求控件。它们被称为<em>连接请求控件</em>。使用 <tt>getConnectControls()</tt> 获取上下文的连接请求控件。
+<p>
+提供给初始上下文构造方法的请求控件<em>不能</em> 用作后续上下文操作（如搜索和查找）的上下文请求控件。上下文请求控件可以通过使用 <tt>setRequestControls()</tt> 设置和更新。
+<p>
+请求控件可以有如下两个与上下文关联的不同集合：连接请求控件和上下文请求控件。对于那些需要发送不能同时应用于上下文操作和任何隐式 LDAP&ldquo;绑定&rdquo;操作的关键控件的应用程序而言，这一点是必需的。典型的用户程序将执行以下操作：
+<blockquote><pre>
+ InitialLdapContext lctx = new InitialLdapContext(env, critConnCtls);
+ lctx.setRequestControls(critModCtls);
+ lctx.modifyAttributes(name, mods);
+ Controls[] respCtls =  lctx.getResponseControls();
+</pre></blockquote>
+它首先指定用于创建初始上下文 (<tt>critConnCtls</tt>) 的关键控件，然后设置上下文的请求控件 (<tt>critModCtls</tt>) 进行上下文操作。如果出于某种原因 <tt>lctx</tt> 需要重新连接到服务器，则它将使用 <tt>critConnCtls</tt>。有关请求控件的更多讨论，请参见 <tt>LdapContext</tt> 接口。
+<p>
+服务提供者的实现方应该参阅 <tt>LdapContext</tt> 类描述中的 &quot;Service Provider&quot; 一节，以获取实现的详细信息。
+ 
+@author Rosanna Lee
+@author Scott Seligman
+@author Vincent Ryan
+@version 1.13 05/11/17
+
+@see LdapContext
+@see javax.naming.InitialContext
+@see javax.naming.directory.InitialDirContext
+@see javax.naming.spi.NamingManager#setInitialContextFactoryBuilder
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.InitialLdapContext() throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不使用任何环境属性或连接请求控件构造初始上下文。与 <tt>new InitialLdapContext(null)</tt> 等效。
+
+@throws	NamingException 如果遇到命名异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.InitialLdapContext(java.util.Hashtable<?, ?> environment, javax.naming.ldap.Control[] connCtls) throws javax.naming.NamingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用环境属性或连接请求控件构造初始上下文。有关环境属性的讨论，请参阅 <tt>javax.naming.InitialContext</tt>。
+
+<p> 此构造方法将不修改其参数或保存对它们的引用，但可能保存一个副本。
+
+<p> <tt>connCtls</tt> 用作基础上下文实例的连接请求控件。有关详细信息请参阅类描述。
+
+@param environment 用于创建初始 DirContext 的环境。null 指示空环境。
+@param connCtls 初始上下文的连接请求控件。如果为 null，则不使用任何连接请求控件。
+
+@throws	NamingException 如果遇到命名异常
+
+@see #reconnect
+@see LdapContext#reconnect
+
+<!-- END DATA -->

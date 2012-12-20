@@ -1,0 +1,166 @@
+<!-- BEGIN KEY -->
+public class java.lang.management.MemoryUsage extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示内存使用量快照的 <tt>MemoryUsage</tt> 对象。<tt>MemoryUsage</tt> 类的实例通常由某些特定的方法构造，这些方法用于获得关于 Java 虚拟机的单个内存池或 Java 虚拟机的全部堆（或非堆）内存的内存使用量信息。
+
+<p> <tt>MemoryUsage</tt> 对象包含四个值：
+<ul>
+<table>
+<tr>
+  <td valign=top> <tt>init</tt> </td>
+  <td valign=top> 表示 Java 虚拟机在启动期间从操作系统请求的用于内存管理的初始内存容量（以字节为单位）。Java 虚拟机可能在运行过程中从操作系统请求更多的内存，也可能将内存释放给系统。<tt>init</tt> 的值可以是不明确的。
+ </td>
+ </tr>
+ <tr>
+<td valign=top> <tt>used</tt> </td>
+<td valign=top> 表示当前已经使用的内存量（以字节为单位）。
+</td>
+</tr>
+<tr>
+<td valign=top> <tt>committed</tt> </td>
+<td valign=top> 表示保证可以由 Java 虚拟机使用的内存量（以字节为单位）。已提交的内存量可以随时间而变化（增加或减少）。Java 虚拟机可能会将内存释放给系统，<tt>committed</tt> 可以小于 <tt>init</tt>。<tt>committed</tt> 将始终大于或等于 <tt>used</tt>。
+</td>
+</tr>
+<tr>
+<td valign=top> <tt>max</tt> </td>
+<td valign=top> 表示可以用于内存管理的最大内存量（以字节为单位）。可以不定义其值。如果定义了该值，最大内存量可能随时间而更改。已使用的内存量和已提交的内存量将始终小于或等于 <tt>max</tt>（如果定义了 <tt>max</tt>）。如果内存分配试图增加满足以下条件的已使用内存将会失败：<tt>used &gt committed</tt>，即使 <tt>used &lt= max</tt> 仍然为 true（例如，当系统的虚拟内存不足时）。
+ </td>
+ </tr>
+ </table>
+ </ul>
+
+以下是内存池的示例图：
+ <p>
+ <pre>
+        +----------------------------------------------+
+        +////////////////           |                  +
+        +////////////////           |                  +
+        +----------------------------------------------+
+
+        |--------|
+           init
+        |---------------|
+               used
+        |---------------------------|
+                  committed 
+        |----------------------------------------------|
+                            max 
+ </pre>
+
+<h4>MXBean 映射</h4>
+<tt>MemoryUsage</tt> 映射到 {@link CompositeData CompositeData}，其具有 {@link #from from} 方法中指定的属性。 
+
+@author   Mandy Chung
+@version 1.16, 05/25/04
+@since   1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.management.MemoryUsage(long init, long used, long committed, long max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <tt>MemoryUsage</tt> 对象。
+
+@param init      Java 虚拟机分配的初始内存量（以字节为单位）；或者，如果未定义，则为 <tt>-1</tt>。
+@param used      已经使用的内存量（以字节为单位）。
+@param committed 已经提交的内存量（以字节为单位）。
+@param max       可以使用的最大内存量（以字节为单位）；或者，如果未定义，则为 <tt>-1</tt>。
+
+@throws IllegalArgumentException 如果
+<ul>
+<li> <tt>init</tt> 或 <tt>max</tt> 的值为负数，但不是 <tt>-1</tt>；或者</li>
+<li> <tt>used</tt> 或 <tt>committed</tt> 的值为负数；或者</li>
+<li> <tt>used</tt> 大于 <tt>committed</tt> 的值；或者</li>
+<li> <tt>committed</tt> 大于 <tt>max</tt> 的值（如果 <tt>max</tt> 已定义）。</li>
+</ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.management.MemoryUsage.getInit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 Java 虚拟机最初从操作系统请求用于内存管理的内存量（以字节为单位）。如果没有定义初始内存大小，此方法将返回 <tt>-1</tt>。
+
+@return 内存的初始大小（以字节为单位）；如果未定义，则返回 <tt>-1</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.management.MemoryUsage.getUsed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回已使用的内存量（以字节为单位）。
+
+@return 已使用的内存量（以字节为单位）。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.management.MemoryUsage.getCommitted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回已提交给 Java 虚拟机使用的内存量（以字节为单位）。此内存量保证可供 Java 虚拟机使用。 
+
+@return 已提交的内存量（以字节为单位）。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.lang.management.MemoryUsage.getMax()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回可以用于内存管理的最大内存量（以字节为单位）。如果没有定义最大内存大小，此方法将返回 <tt>-1</tt>。
+
+<p> 如果此内存量大于已提交的内存量，则不能保证内存管理能够使用此内存量。即使已使用的内存量没有超过这个最大大小，Java 虚拟机也可能会无法分配内存。
+ 
+@return 内存的最大量（以字节为单位）；如果未定义，则返回 <tt>-1</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.management.MemoryUsage.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此内存使用量的描述性表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.management.MemoryUsage java.lang.management.MemoryUsage.from(CompositeData cd)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由给定 <tt>CompositeData</tt> 表示的 <tt>MemoryUsage</tt> 对象。给定的 <tt>CompositeData</tt> 必须包含以下属性：
+ <p>
+ <blockquote>
+ <table border>
+ <tr>
+  <th align=left>属性名称</th>
+  <th align=left>类型</th>
+ </tr>
+ <tr>
+  <td>init</td>
+  <td><tt>java.lang.Long</tt></td>
+ </tr>
+ <tr>
+  <td>used</td>
+  <td><tt>java.lang.Long</tt></td>
+ </tr>
+ <tr>
+  <td>committed</td>
+  <td><tt>java.lang.Long</tt></td>
+ </tr>
+ <tr>
+  <td>max</td>
+  <td><tt>java.lang.Long</tt></td>
+ </tr>
+ </table>
+ </blockquote>
+
+@param cd 表示 <tt>MemoryUsage</tt> 的 <tt>CompositeData</tt>
+
+@throws IllegalArgumentException 如果 <tt>cd</tt> 不表示具有上述属性的 <tt>MemoryUsage</tt>。
+
+@return 如果 <tt>cd</tt> 不为 <tt>null</tt>，则返回由 <tt>cd</tt> 表示的 <tt>MemoryUsage</tt> 对象；否则，返回 <tt>null</tt>。
+
+<!-- END DATA -->

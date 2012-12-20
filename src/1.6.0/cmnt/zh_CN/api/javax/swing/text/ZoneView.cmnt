@@ -1,0 +1,154 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.ZoneView extends javax.swing.text.BoxView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ZoneView 是一个创建分区的 View 实现，该分区中在需要子视图来显示或进行模型/视图转换之前不会创建或存储子视图。在将要表示的模型很大的情况下，此类仅为将要主动地查看/编辑的区域构建视图对象，从而使其在内容消耗上有一个实质性的减少。可以通过某种途径估计子级的大小，或者仅利用保存的结果来异步计算。
+ <p>
+ZoneView 扩展 BoxView 来为其子级提供一个实现分区的框。分区是特殊的 View 实现（此类的一个实例的子级），其仅表示一个 ZoneView 实例所负责的一部分模型。在尝试显示子视图之前，分区不创建子视图。一个框形的视图很合适，这是因为：
+   <ul>
+   <li>
+框是一种常用的视图，有了一个提供此行为的框便有了向视图工厂的视图层次中插入该行为的实质性机会。
+   <li>
+框朝一个方向平铺，因此很容易以一种可靠的方式将其分割成区。
+   <li>
+框通常跟模型有一种简单的联系（即它们创建直接表示子元素的子视图）。
+   <li>
+比起其他形状，更容易估计框的大小。
+   </ul>
+ <p>
+默认的行为由 maxZoneSize 和 maxZonesLoaded 两个属性来控制。将 maxZoneSize 设置为整数 Integer.MAX_VALUE 会导致仅创建一个分区。这将有效地将视图转换为装饰模式的一个实现。将 maxZonesLoaded 设置为 Integer.MAX_VALUE 整数值将导致分区永远不会被卸载。为简单起见，在由视图负责的元素的子元素所表示的边界上创建分区。分区可以是任何 View 实现，但是默认的实现以高效地支持极大分区的 AsyncBoxView 为基础。
+
+@author  Timothy Prinzing
+@version 1.17 12/19/03
+@see     View
+@since   1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.ZoneView(Element elem, int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 ZoneView。
+
+@param elem 此视图负责的元素
+@param axis View.X_AXIS 或者 View.Y_AXIS
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.ZoneView.getMaximumZoneSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前最大的分区大小。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ZoneView.setMaximumZoneSize(int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置所需的最大分区大小。如果单个子视图大于此大小则分区也会大于此大小，因为分区是在子视图边界上形成的。
+
+@param size 在试图将分区拆分成更小的分区前，此分区能显示的字符数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.ZoneView.getMaxZonesLoaded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取当前设置的允许同时加载的分区数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ZoneView.setMaxZonesLoaded(int mzl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当前设置的允许同时加载的分区数。如果 <code>mzl</code> 小于 1，此方法将抛出 <code>IllegalArgumentException</code>。
+
+@param mzl 能主动加载的所需最大分区数，必须大于 0
+@exception IllegalArgumentException 如果 <code>mzl</code> &lt; 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ZoneView.zoneWasLoaded(View zone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当加载某个分区后由该分区调用。这发生在试图在某个处于卸载状态的分区上显示或执行模型/视图转换的时候。实现此方法来检查是否已达到最大的分区数，如果达到则卸载存在最久的分区。
+
+@param zone 刚刚加载的子视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ZoneView.unloadZone(View zone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+卸载一个分区（将分区转换到其内存节省状态）。希望分区来表示此视图负责元素的子元素的一个子集。因此，默认的实现会移除所有子级。
+
+@param zone 需要设置成卸载状态的子视图。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.ZoneView.isZoneLoaded(View zone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定某个分区是否处于加载状态。希望分区来表示此视图负责元素的子元素的一个子集。因此，默认的实现在视图存在子级时返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.ZoneView.createZone(int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对模型中的给定范围（应该在此对象的职责范围内），创建一个视图来表示分区。由分区管理逻辑调用此方法来创建新分区。子类通过更改此方法来为分区提供不同的实现。
+ 
+@param p0 所需分区的开始处。此参数应 &gt;= getStartOffset() 且 &lt; getEndOffset()。此值也应 &lt; p1。
+@param p1 所需分区的结尾。此参数应 &gt; getStartOffset() 且 &lt;= getEndOffset()。此值也应 &gt; p0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.ZoneView.loadChildren(ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载所有子级来初始化视图。此方法由 <code>setParent</code> 方法调用。实现此方法以不直接加载任何子级（因为它们由分区创建）。此方法创建了初始的分区集。但是在试图显示分区或执行模型/视图坐标转换之前，并不实际组装这些分区。
+
+@param f 视图工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.ZoneView.getViewIndexAtPosition(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示模型中给定位置的子视图索引。  
+
+@param pos 位置，该值 &gt;= 0
+@return 表示给定位置的视图索引，如果没有任何视图表示该位置，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.ZoneView.updateChildren(DocumentEvent.ElementChange ec, DocumentEvent e, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+超类行为将试图更新子视图，而在这种情况下并不需要这样做，因为子级是分区并且不受关联元素变化的直接影响。重新实现此方法以不执行任何操作，并且返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ZoneView.insertUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+给出在文档中此视图负责的位置插入了某些内容的通知。此方法一般委托给超类，但是可重新实现此方法来更新相关的分区（即确定某个分区是否需要拆分为 2 个或更多分区的集合）。
+
+@param changes 来自关联文档的更改信息
+@param a 视图的当前分配
+@param f 视图有子级时用于重建的工厂
+@see View#insertUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.ZoneView.removeUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+给出从文档中此视图负责的位置移除了某些内容的通知。此方法一般委托给超类，但是可重新实现此方法来更新相关的分区（即确定分区是否需要被移除或跟其他分区合并）。
+
+@param changes 来自相关文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#removeUpdate
+
+<!-- END DATA -->

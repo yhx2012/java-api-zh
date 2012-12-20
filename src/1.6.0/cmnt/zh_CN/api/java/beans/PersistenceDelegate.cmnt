@@ -1,0 +1,82 @@
+<!-- BEGIN KEY -->
+public abstract class java.beans.PersistenceDelegate extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+PersistenceDelegate 类负责根据类的公共 API 中的方法表示给定类的实例状态。不是根据它完成时的样子，通过（例如）<code>ObjectOutputStream</code> 使用的 <code>readObject</code> 和 <code>writeObject</code> 方法，将持久存储的责任与类本身关联起来，而是让使用此委托模型的类似 <code>XMLEncoder</code> 的流可以拥有不依赖于类本身控制的自己的行为。通常，该类是放置信息的最佳地方，它可以很容易地在此委托方案中表示约定，以完成操作。不过有时会出现这样的情况，单个类中的一个很小的问题阻止了整个对象图形的写入，这可能会使得应用程序开发人员毫无办法，只有试图局部隐藏有问题的类，或使用替代的持久存储技巧。在这种情况下，委托模型提供了一个相关的清理机制，使应用程序开发人员干涉序列化过程的所有部分，不需要对不是应用程序本身一部分的类的实现进行修改。
+ <p>
+除了使用委托模型，此持久方案不同于传统序列化方案的地方在于，它需要 <code>writeObject</code> 方法的仿真，而不需要相应的 <code>readObject</code> 方法。根据此公共 API，<code>writeObject</code> 仿真对每个实例编码，并且不需要定义 <code>readObject</code> 仿真，因为读取序列化格式的过程由方法调用的语义定义，正如 Java Language Specification 中展示的那样。打破 <code>writeObject</code> 与 <code>readObject</code> 实现之前的依赖关系，这可能会改变版本，因此它是使此技术产生的档案不受它们所参考类的私有实现更改影响的关键。
+ <p>
+持久委托可以控制对象持久性的所有方面，其中包括：
+ <ul>
+ <li>
+确定某一实例是否可以转变成同一个类的另一个实例。
+ <li>
+通过调用公共构造方法或公共工厂方法实例化该对象。
+ <li>
+对该对象进行实例化。
+ </ul>
+@see XMLEncoder
+
+@since 1.4
+
+@version 1.12 11/17/05
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.PersistenceDelegate.writeObject(Object oldInstance, Encoder out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>writeObject</code> 是持久性的一个入口点，由传统委托模式中的 <code>Encoder</code> 使用。尽管此方法不是最终方法，但在普通环境下不必为其创建子类。
+ <p>
+此实现首先检查流是否已经遇到此对象。接着调用 <code>mutatesTo</code> 方法查看是否可以将从流中返回的候选者转变成 <code>oldInstance</code> 的精确副本。如果可以，则调用 <code>initialize</code> 方法执行初始化。如果不可以，则从流中移除该候选者，并调用 <code>instantiate</code> 方法为此对象创建一个新候选者。
+
+@param oldInstance 将由此表达式创建的实例。
+@param out 将在其中写入此表达式的流。
+@return 其值为 <code>oldInstance</code> 的表达式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.beans.PersistenceDelegate.mutatesTo(Object oldInstance, Object newInstance)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>oldInstance</code> 的<em>等效</em> 副本可以可以通过应用 <code>newInstance</code> 的一系列语句来创建，则返回 true。在此方法的规范中，等效是指修改后的实例其公共 API 中相关方法的行为与 <code>oldInstance</code> 没有区别。[注：在这里使用短语<em>相关</em> 方法而不是使用<em>所有</em> 方法只是因为，为了保证完全正确，类似 <code>hashCode</code> 和 <code>toString</code> 这样的方法阻止大多数类实际产生其实例的无区别副本]。
+ <p>
+如果两个实例的类是相同的，则默认行为返回 <code>true</code>。
+
+@param oldInstance 要复制的实例。
+@param   newInstance   要修改的实例。
+@return 如果通过对 <code>oldInstance</code> 进行一系列的修改能够创建 <code>newInstance</code> 的等效副本，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.beans.Expression java.beans.PersistenceDelegate.instantiate(Object oldInstance, Encoder out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回其值为 <code>oldInstance</code> 的表达式。此方法用于描述应该用来创建给定对象的构造方法或工厂方法。例如，用于 <code>Field</code> 类的持久委托的 <code>instantiate</code> 方法可以定义如下：
+ <pre>
+ Field f = (Field)oldInstance;
+ return new Expression(f, f.getDeclaringClass(), &quot;getField&quot;, new Object[]{f.getName()});
+ </pre>
+注意，这里声明了所返回表达式的值，因此该表达式的值（由 <code>getValue</code> 返回）将等于 <code>oldInstance</code>。
+
+@param oldInstance 将由此表达式创建的实例。
+@param out 将在其中写入此表达式的流。
+@return 值为 <code>oldInstance</code> 的表达式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.beans.PersistenceDelegate.initialize(java.lang.Class<?> type, Object oldInstance, Object newInstance, Encoder out)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+产生一系列对 <code>newInstance</code> 有副作用的语句，使得新实例<em>等于</em> <code>oldInstance</code>。在此方法的规范中，等效是指在该方法返回之后，修改后的实例其公共 API 中所有方法的行为都与 <code>newInstance</code> 没有区别。
+ <p>
+该实现通常通过产生一系列涉及 <code>oldInstance</code> 及其公共可用状态的 &quot;what happened&quot; 语句来达到此目的。这些语句使用其 <code>writeExpression</code> 方法发送到输出流中，在输入流读取期间，在模拟输入流状态的复制环境中返回涉及元素的表达式。每个返回的语句都将使用新环境中所存在对象代替旧环境中的所有实例。特别是这些语句目标的引用，开始它们是 <code>oldInstance</code> 的引用，返回时成为 <code>newInstance</code> 的引用。执行这些语句会以新环境中对象的一系列修改的形式，实现两个对象状态的递增调整。到 initialize 方法返回时，则无法通过使用公共 API 来区别两个实例。最重要的是，用来使这些对象看起来相同的步骤顺序将被输出流记录，当刷新流时，将形成实际的输出。
+ <p>
+默认实现调用该类型超类的 <code>initialize</code> 方法。
+
+@param oldInstance 要复制的实例。
+@param   newInstance   要修改的实例。
+@param out 保存所有应该写入的初始化语句的流。
+
+<!-- END DATA -->

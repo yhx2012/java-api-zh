@@ -1,0 +1,376 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JLayeredPane extends javax.swing.JComponent implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JLayeredPane</code> 为 JFC/Swing 容器添加了深度，允许组件在需要时互相重叠。<code>Integer</code> 对象指定容器中每个组件的深度，其中编号较高的组件位于其他组件之上。有关面向任务的文档和使用分层窗格的示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/layeredpane.html">How to Use a Layered Pane</a> 一节。
+ <P>
+ <TABLE ALIGN="RIGHT" BORDER="0" SUMMARY="layout">
+ <TR>
+   <TD ALIGN="CENTER">
+<P ALIGN="CENTER"><IMG SRC="doc-files/JLayeredPane-1.gif" 
+     alt="以下文本是对此图像的描述。"
+     WIDTH="269" HEIGHT="264" ALIGN="BOTTOM" BORDER="0">
+   </TD>
+ </TR>
+ </TABLE>
+为方便起见，<code>JLayeredPane</code> 将该深度范围分成几个不同的层。将组件放入相应的层，这样更容易确保组件正确地重叠，而不必担心为具体的深度指定编号：
+ <DL>
+    <DT><FONT SIZE="2">DEFAULT_LAYER</FONT></DT>
+<DD>大多数组件位于的标准层。这是最底层。
+    <DT><FONT SIZE="2">PALETTE_LAYER</FONT></DT>
+<DD>调色板层位于默认层之上。它们对于浮动工具栏和调色板很有用，因此可以位于其他组件之上。
+    <DT><FONT SIZE="2">MODAL_LAYER</FONT></DT>
+<DD>该层用于模式对话框。它们将出现在容器中所有工具栏、调色板或标准组件的上面。
+    <DT><FONT SIZE="2">POPUP_LAYER</FONT></DT>
+<DD>弹出层显示在对话框的上面。这样，与组合框、工具提示和其他帮助文本关联的弹出式窗口将出现在组件、调色板或生成它们的对话框之上。
+    <DT><FONT SIZE="2">DRAG_LAYER</FONT></DT>
+<DD>拖动一个组件时，将该组件重分配到拖动层可确保将其定位在容器中的其他所有组件之上。完成拖动后，可将该组件重分配到其正常层。
+ </DL>
+可以使用 <code>JLayeredPane</code> 的方法 <code>moveToFront(Component)</code>、<code>moveToBack(Component)</code> 和 <code>setPosition</code> 在组件所在层中对其进行重定位。还可以使用 <code>setLayer</code> 方法更改该组件的当前层。
+
+<h2>详细信息</h2>
+<code>JLayeredPane</code> 以类似 <code>Container</code> 的方式管理其子级列表，但允许在其内部定义多个层。对同一层中子级的管理就像普通的 <code>Container</code> 对象一样，但添加的功能是，当子组件重叠时，高层中的子组件显示在低层中的子组件之上。
+ <p>  
+每一层都是一个不同的整数。可以在调用 add 的过程中通过传递 <code>Integer</code> 对象，从而在 <code>Component</code> 上设置 layer 属性。<br>例如：
+ <PRE>
+     layeredPane.add(child, JLayeredPane.DEFAULT_LAYER);
+或者
+layeredPane.add(child, new Integer(10));
+ </PRE>
+还可以通过在 <code>JLayeredPane</code> 上进行如下调用在 Component 上设置 layer 属性:<PRE>
+     layeredPaneParent.setLayer(child, 10)</PRE>
+<code>JLayeredPane</code> 是该 Component 的父组件。应该将子组件添加到父组件<i>之前</i> 设置 layer 属性。
+ <p>
+编号较高的层显示在编号较低的层之上。因此，对于每个组件，使用其层编号和字母即可，有代表性的列表顺序如下所示：<PRE>
+       5a, 5b, 5c, 2a, 2b, 2c, 1a </PRE>
+其中最左边的组件最接近显示区的顶部。
+ <p>
+可以通过调用 <code>moveToFront</code> 或 <code>moveToBack</code> 将组件移入到其所在层的顶部或底部位置。
+ <p>
+还可以直接指定某层中组件的位置。有效的位置范围是从 0 到该层中组件数减一所得的值。值 -1 指示最底层位置。值 0 指示最顶层位置。与层的编号不同，较高的位置值显示在<i>较低</i> 处。
+ <blockquote> 
+<b>注：</b> 此序列（通过 java.awt.Container 定义）与层的编号序列相反。可是通常使用的是 <code>moveToFront</code>、<code>moveToBack</code> 和 <code>setLayer</code> 方法。
+ </blockquote>
+以下是使用方法 add(Component, layer, position) 的一些示例：调用 add(5x, 5, -1) 得到：<PRE>
+       5a, 5b, 5c, 5x, 2a, 2b, 2c, 1a </PRE>
+
+调用 add(5z, 5, 2) 得到：<PRE>
+       5a, 5b, 5z, 5c, 5x, 2a, 2b, 2c, 1a </PRE>
+
+调用 add(3a, 3, 7) 得到：<PRE>
+       5a, 5b, 5z, 5c, 5x, 3a, 2a, 2b, 2c, 1a </PRE>
+
+使用正常的 paint/event 机制会使 1a 出现在底部，5a 出现在所有其他组件之上。
+ <p>
+<b>注：</b> 这些层只是一个逻辑构造，LayoutManager 将影响此容器的所有子组件，而不管其层设置如何。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+ 
+@version 1.36 02/02/00
+@author David Kloba
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.DEFAULT_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Default 层的便捷对象。等同于新的 Integer(0)。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.PALETTE_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Palette 层的便捷对象。等同于新的 Integer(100)。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.MODAL_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Modal 层的便捷对象。等同于新的 Integer(200)。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.POPUP_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Popup 层的便捷对象。等同于新的 Integer(300)。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.DRAG_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Drag 层的便捷对象。等同于新的 Integer(400)。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Integer javax.swing.JLayeredPane.FRAME_CONTENT_LAYER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义 Frame Content 层的便捷对象。此层通常只用于定位 JFrame 的 contentPane 和 menuBar 组件。等同于新的 Integer(-30000)。
+@see JFrame
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JLayeredPane.LAYER_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+绑定属性 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的 JLayeredPane
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.remove(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此窗格中移除已索引的组件。这是绝对索引，与层无关。 
+
+@param index  指定要移除组件的 int 值
+@see #getIndexOf
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.removeAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从此容器中移除所有组件。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JLayeredPane.isOptimizedDrawingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果窗格中的组件可以重叠，则返回 false（因为这会导致最优绘制无法进行）。否则返回 true。
+
+@return 如果组件可以重叠，则返回 false；否则返回 true
+@see JComponent#isOptimizedDrawingEnabled
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JLayeredPane.putLayer(JComponent c, int layer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 JComponent 上的 layer 属性。此方法不会产生与 setLayer() 类似的副作用（绘制、添加/移除等）。通常，为了获得所需的副作用（如重绘），应该使用实例方法 setLayer()。
+ 
+@param c  要移动的 JComponent
+@param layer  一个 int 值，指定要移入的层
+@see #setLayer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JLayeredPane.getLayer(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得 JComponent 的 layer 属性，此方法不会产生与 setLayer() 类似的副作用（绘制、添加/移除等）。要获得绘制、添加/移除等功能，通常应该使用实例方法 getLayer()。
+ 
+@param c  要检查的 JComponent
+@return   指定组件层的 int 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.JLayeredPane javax.swing.JLayeredPane.getLayeredPaneAbove(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个便捷方法，它返回包含指定组件的第一个 JLayeredPane。注意，所有 JFrame 在其根部都有一个 JLayeredPane，因此 JFrame 中的任何组件都具有 JLayeredPane 父级。
+
+@param c 要检查的 Component
+@return 包含该组件的 JLayeredPane，如果在组件层次结构中未找到 JLayeredPane，则返回 null
+@see JFrame
+@see JRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.setLayer(Component c, int layer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置指定组件的 layer 属性，使之成为该层中最底部的组件。应该在将组件添加到其父组件之前调用该方法。 
+ 
+@param c     要为其设置层的 Component
+@param layer 一个 int 值，指定要设置的层，其中较低编号更接近底部
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.setLayer(Component c, int layer, int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为指定组件设置 layer 属性，并设置它在该层中的位置。
+ 
+@param c 要为其设置层的 Component
+@param layer     一个 int 值，指定要设置的层，其中较低编号更接近底部
+@param position  指定层中位置的 int 值，其中 0 表示最顶层位置，-1 表示最底层位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.getLayer(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回指定 Component 的 layer 属性。
+ 
+@param c  要检查的 Component
+@return 指定组件当前层的 int 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.getIndexOf(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回指定 Component 的索引。这是绝对索引，与层无关。索引编号与位置编号一样，索引零表示最顶层组件。较大编号更接近底部。
+ 
+@param c  要检查的 Component
+@return 指定组件索引的 int 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.moveToFront(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将该组件移到当前层中所有组件的顶层（位置 0）。
+
+@param c 要移动的 Component
+@see #setPosition(Component, int) 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.moveToBack(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将该组件移到当前层中所有组件的底层（位置 -1）。
+
+@param c 要移动的 Component
+@see #setPosition(Component, int) 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.setPosition(Component c, int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该组件移到当前层中的 <code>position</code> 处，其中 0 表示该层中的最顶层位置，-1 表示最底层位置。 
+ <p>
+<b>注：</b>位置编号由 java.awt.Container 定义，且与层的编号相反。较低的位置编号更接近顶层（0 为最顶层），较高的位置编号更接近底层。
+
+@param c  要移动的 Component
+@param position  范围在 -1 到 N-1 之间的 int 值，其中 N 是该组件当前层中的组件数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.getPosition(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该组件在其所在层中的相对位置。
+
+@param c  要检查的 Component
+@return 给出组件位置的一个 int 值，其中 0 表示最顶层位置，且最高索引值等于该层中的组件数减一
+
+@see #getComponentCountInLayer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.highestLayer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有当前子组件的最高层值。如果没有子组件，则返回 0。
+
+@return 一个 int 值，指示窗格中最顶层组件的层，如果没有子组件，则返回 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.lowestLayer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所有当前子组件的最低层值。如果没有子组件，则返回 0。
+
+@return 一个 int 值，指示窗格中最底层组件的层；如果没有子组件，则返回 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JLayeredPane.getComponentCountInLayer(int layer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定层中当前的子组件数。
+
+@param layer  一个 int 值，指定要检查的层
+@return 一个 int 值，指定该层中的组件数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component[] javax.swing.JLayeredPane.getComponentsInLayer(int layer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定层中组件的数组。
+
+@param layer  一个 int 值，指定要检查的层
+@return 该层中包含的 Component 数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JLayeredPane.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的图形上下文中绘制此 JLayeredPane。
+
+@param g  要在其中进行绘制的 Graphics 上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Hashtable<java.awt.Component, java.lang.Integer> javax.swing.JLayeredPane.getComponentToLayer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将组件映射到层的哈希表。
+
+@return 用于将组件映射到对应层的 Hashtable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Integer javax.swing.JLayeredPane.getObjectForLayer(int layer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定层关联的 Integer 对象。
+
+@param layer 指定该层的 int 值
+@return 该层的 Integer 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JLayeredPane.insertIndexForLayer(int layer, int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+一个根据层和位置要求确定插入新子组件的正确位置的基本方法。
+ 
+@param layer     指定该层的 int 值
+@param position  指定层中位置的 int 值
+@return 给出（绝对的）插入索引的 int 值
+
+@see #getIndexOf
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JLayeredPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JLayeredPane 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 JLayeredPane 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JLayeredPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与此 JLayeredPane 关联的 AccessibleContext。对于分层窗格，AccessibleContext 采用 AccessibleJLayeredPane 的形式。如有必要，将创建一个新的 AccessibleJLayeredPane 实例。
+
+@return 一个 AccessibleJLayeredPane，它充当此 JLayeredPane 的 AccessibleContext
+
+<!-- END DATA -->

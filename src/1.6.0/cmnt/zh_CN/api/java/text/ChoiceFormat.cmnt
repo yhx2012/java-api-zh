@@ -1,0 +1,258 @@
+<!-- BEGIN KEY -->
+public class java.text.ChoiceFormat extends java.text.NumberFormat
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ChoiceFormat</code> 允许将格式应用到某个范围的数。它通常用于在 <code>MessageFormat</code> 中处理复数。使用按升序排列的 double 列表指定 choice，列表中每一项都指定一个到下一项的半开区间：
+ <blockquote>
+ <pre>
+当且仅当 limit[j] &lt;= X &lt; limit[j+1] 时，X 匹配 j
+ </pre>
+ </blockquote>
+如果不匹配，则根据数 (X) 的是太小还是太大，选择使用第一个或最后一个索引。如果 limit 数组不按升序排列，则格式化的结果将不正确。ChoiceFormat 还接受 <code>\u221E</code>（等同于无穷大 (INF)）。
+
+ <p>
+<strong>注：</strong><code>ChoiceFormat</code> 不同于其他 <code>Format</code> 类，因为 <code>ChoiceFormat</code> 对象是通过构造方法创建的（而不是通过 <code>getInstance</code> 样式工厂方法）。工厂方法不是必需的，因为 <code>ChoiceFormat</code> 不要求针对给定语言环境进行任何复杂的设置。事实上，<code>ChoiceFormat</code> 并不实现任何特定于语言环境的行为。
+
+ <p>
+创建 <code>ChoiceFormat</code> 时，必须指定一个 format 数组和一个 limit 数组。这些数组的长度必须相同。例如，
+ <ul>
+ <li>
+     <em>limits</em> = {1,2,3,4,5,6,7}<br> <em>formats</em> = {&quot;Sun&quot;,&quot;Mon&quot;,&quot;Tue&quot;,&quot;Wed&quot;,&quot;Thur&quot;,&quot;Fri&quot;,&quot;Sat&quot;}
+ <li>
+     <em>limits</em> = {0, 1, ChoiceFormat.nextDouble(1)}<br> <em>formats</em> = {&quot;no files&quot;, &quot;one file&quot;, &quot;many files&quot;}<br>（<code>nextDouble</code> 可用于获取下一个更大的 double 值，以形成半开区间。）
+ </ul>
+
+ <p>
+以下是一个显示格式化和解析的简单例子：
+ <blockquote>
+ <pre>
+ double[] limits = {1,2,3,4,5,6,7};
+ String[] dayOfWeekNames = {"Sun","Mon","Tue","Wed","Thur","Fri","Sat"};
+ ChoiceFormat form = new ChoiceFormat(limits, dayOfWeekNames);
+ ParsePosition status = new ParsePosition(0);
+ for (double i = 0.0; i &lt;= 8.0; ++i) {
+     status.setIndex(0);
+     System.out.println(i + &quot; -&gt; &quot; + form.format(i) + &quot; -&gt; &quot;
+                              + form.parse(form.format(i),status));
+ }
+ </pre>
+ </blockquote>
+以下是一个较复杂的带模式格式的例子：
+ <blockquote>
+ <pre>
+ double[] filelimits = {0,1,2};
+ String[] filepart = {&quot;are no files&quot;,&quot;is one file&quot;,&quot;are {2} files&quot;};
+ ChoiceFormat fileform = new ChoiceFormat(filelimits, filepart);
+ Format[] testFormats = {fileform, null, NumberFormat.getInstance()};
+ MessageFormat pattform = new MessageFormat(&quot;There {0} on {1}&quot;);
+ pattform.setFormats(testFormats);
+ Object[] testArgs = {null, &quot;ADisk&quot;, null};
+ for (int i = 0; i &lt; 4; ++i) {
+     testArgs[0] = new Integer(i);
+     testArgs[2] = testArgs[0];
+     System.out.println(pattform.format(testArgs));
+ }
+ </pre>
+ </blockquote>
+ <p>
+为 ChoiceFormat 对象指定一个模式是相当直接的。例如：
+ <blockquote>
+ <pre>
+ ChoiceFormat fmt = new ChoiceFormat(
+      &quot;-1#is negative| 0#is zero or fraction | 1#is one |1.0&lt;is 1+ |2#is two |2&lt;is more than 2.&quot;);
+ System.out.println(&quot;Formatter Pattern : &quot; + fmt.toPattern());
+
+ System.out.println(&quot;Format with -INF : &quot; + fmt.format(Double.NEGATIVE_INFINITY));
+ System.out.println(&quot;Format with -1.0 : &quot; + fmt.format(-1.0));
+ System.out.println(&quot;Format with 0 : &quot; + fmt.format(0));
+ System.out.println(&quot;Format with 0.9 : &quot; + fmt.format(0.9));
+ System.out.println(&quot;Format with 1.0 : &quot; + fmt.format(1));
+ System.out.println(&quot;Format with 1.5 : &quot; + fmt.format(1.5));
+ System.out.println(&quot;Format with 2 : &quot; + fmt.format(2));
+ System.out.println(&quot;Format with 2.1 : &quot; + fmt.format(2.1));
+ System.out.println(&quot;Format with NaN : &quot; + fmt.format(Double.NaN));
+ System.out.println(&quot;Format with +INF : &quot; + fmt.format(Double.POSITIVE_INFINITY));
+ </pre>
+ </blockquote>
+输出结果类似如下：
+ <pre>
+ <blockquote>
+   Format with -INF : is negative
+   Format with -1.0 : is negative
+   Format with 0 : is zero or fraction
+   Format with 0.9 : is zero or fraction
+   Format with 1.0 : is one
+   Format with 1.5 : is 1+
+   Format with 2 : is two
+   Format with 2.1 : is more than 2.
+   Format with NaN : is negative
+   Format with +INF : is more than 2.
+ </pre>
+ </blockquote>
+
+ <h4><a name="synchronization">Synchronization</a></h4>
+
+ <p>
+Choice 格式不是同步的。建议为每个线程创建单独的格式实例。如果多个线程并发访问一个格式，则它必须保持外部同步。
+
+
+@see          DecimalFormat
+@see          MessageFormat
+@version      1.22 09/21/98
+@author       Mark Davis
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private double[] java.text.ChoiceFormat.choiceLimits
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+choice 的较低边界的列表。如果正在格式化的数大于等于 <code>choiceLimits[i]</code> 且小于 <code>choiceLimits[i+1]</code>，则该格式器将返回 <code>choiceFormats[i]</code>。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String[] java.text.ChoiceFormat.choiceFormats
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+choice 字符串列表。如果正在格式化的数大于等于 <code>choiceLimits[i]</code> 且小于 <code>choiceLimits[i+1]</code>，则该格式器将返回 <code>choiceFormats[i]</code>。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.ChoiceFormat(String newPattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 limit 和相应的 format（基于模式）构造。
+@see #applyPattern
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.ChoiceFormat(double[] limits, java.lang.String[] formats)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 limit 和相应的 format 构造。
+@see #setChoices
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.ChoiceFormat.applyPattern(String newPattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置模式。
+@param newPattern 参见类描述。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.ChoiceFormat.toPattern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取模式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.ChoiceFormat.setChoices(double[] limits, java.lang.String[] formats)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要在格式化中使用的 choice。
+@param limits 包含要使用该格式进行解析的最大值，应该按升序排列。格式化 X 时，如果 limit[i] &lt;= X &lt; limit[i+1]，则 choice 为 i。如果 limit 数组不按升序排列，则格式化的结果将不正确。
+@param formats 要为每个 limit 使用的格式。格式可以是 Format 对象或 String。用对象 Y 格式化时，如果该对象是一个 NumberFormat，则调用 ((NumberFormat) Y).format(X)。否则调用 Y.toString()。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double[] java.text.ChoiceFormat.getLimits()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取传入构造方法的 limit。
+@return limit。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.text.ChoiceFormat.getFormats()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取传入构造方法的 format。
+@return format。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.ChoiceFormat.format(long number, StringBuffer toAppendTo, FieldPosition status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+特殊格式。此方法真正调用 <code>format(double, StringBuffer, FieldPosition)</code>，这样，受支持的 long 范围只等于 double 存储的范围。这不是一个实用的限制。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.ChoiceFormat.format(double number, StringBuffer toAppendTo, FieldPosition status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回带已格式化 double 的模式。
+@param number 要格式化或替换的数。
+@param toAppendTo 将文本添加到的地方。
+@param status 忽略，无有用的状态返回。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Number java.text.ChoiceFormat.parse(String text, ParsePosition status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析输入文本中的一个 Number。
+@param text 源文本。
+@param status 一个输入输出参数。输入时，status.index 字段指示应该解析的源文本中的第一个字符。退出时，如果没有发生错误，则将 status.index 设置为源文本中第一个未解析的字符。退出时，如果发生了错误，则 status.index 保持不变，将 status.errorIndex 设置为引起解析失败的第一个字符的索引。
+@return 一个表示已解析数值的 Number。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final double java.text.ChoiceFormat.nextDouble(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找大于 d 的最小 double 值。如果为 NaN，则返回相同的值。
+<p>用于形成半开区间。
+@see #previousDouble
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final double java.text.ChoiceFormat.previousDouble(double d)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找小于 d 的最大 double 值。如果为 NaN，则返回相同的值。
+@see #nextDouble
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.ChoiceFormat.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写 Cloneable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.ChoiceFormat.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为消息格式对象生成哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.ChoiceFormat.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+两个对象之间的相等性比较。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static double java.text.ChoiceFormat.nextDouble(double d, boolean positive)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找大于 d 的最小 double 值（如果 positive == true），或者小于 d 的最大值（如果 positive == false）。如果为 NaN，则返回相同的值。
+
+如果这些成员函数不调用以下方法，就不会影响浮点标志： Double.longBitsToDouble(long) Double.doubleToLongBits(double) Double.isNaN(double)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.text.ChoiceFormat.readObject(ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从输入流读取一个对象后，进行简单的验证，以维护类的不变量。
+@throws InvalidObjectException 如果从该流读取的对象无效。
+
+<!-- END DATA -->

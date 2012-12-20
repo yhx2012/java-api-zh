@@ -1,0 +1,256 @@
+<!-- BEGIN KEY -->
+public abstract class javax.security.auth.login.Configuration extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p> Configuration 对象负责指定应该将哪一个 LoginModule 用于某一特定应用程序，以及应该以什么样的顺序调用 LoginModule。
+
+<p> 登录配置包含以下信息。注意，此示例仅表示 <code>Configuration</code> 的默认语法。此类的子类实现可以实现替代语法，也可以从任何源（比如文件、数据库或服务器）中检索 <code>Configuration</code>。
+ <pre>
+      Name {
+	      ModuleClass  Flag    ModuleOptions;
+	      ModuleClass  Flag    ModuleOptions;
+	      ModuleClass  Flag    ModuleOptions;
+      };
+      Name {
+	      ModuleClass  Flag    ModuleOptions;
+	      ModuleClass  Flag    ModuleOptions;
+      };
+other {
+	      ModuleClass  Flag    ModuleOptions;
+	      ModuleClass  Flag    ModuleOptions;
+      };
+ </pre>
+
+<p> <code>Configuration</code> 中的每个条目都是通过应用程序名（<i>Name</i>）进行索引的，并且每个条目都包含为该应用程序配置的 LoginModules 的列表。每个 <code>LoginModule</code> 都是通过其完全限定类名来指定的。验证是按指定的具体顺序沿着模块列表向下进行。如果应用程序没有特定条目，则验证的条目默认为用于&ldquo;<i>其他方面</i>&rdquo;的特定条目。
+
+<p> 当顺着堆栈往下进行验证时，<i>Flag</i> 值控制整个行为。下面是 <i>Flag</i> 的有效值的描述和它们各自的语义：
+ <pre>
+1) Required - 要求 LoginModule 成功。
+              不管它成功或失败，验证都将沿着 LoginModule 列表继续向下进行。
+2) Requisite - 要求 LoginModule 成功。
+               如果它成功，则验证沿着 LoginModule 列表继续向下进行。
+               如果它失败，则该控制立即返回给应用程序（验证不再沿着 LoginModule 列表继续向下进行)。
+3) Sufficient - 不要求 LoginModule 成功。
+               如果成功，则控制立即返回到应用程序（验证不再沿着 LoginModule 列表继续向下进行）。
+               如果失败，则验证沿着 LoginModule 列表继续向下进行。
+4) Optional - 不要求 LoginModule 成功。
+              不管它成功或失败，验证都将沿着 LoginModule 列表继续向下进行。
+</pre>
+<p> 仅在所有 <i>Required</i> 和 <i>Requisite</i> LoginModules 成功时，整个验证才成功。如果配置了 <i>Sufficient</i> <code>LoginModule</code> 并且获得成功，则只要 <i>Sufficient</i> <code>LoginModule</code> 之前的 <i>Required</i> 和 <i>Requisite</i> LoginModules 是成功的，整个验证就会成功。如果没有为应用程序配置 <i>Required</i> 或 <i>Requisite</i> LoginModules，那么至少有一个 <i>Sufficient</i> 或 <i>Optional</i> <code>LoginModule</code> 必须成功。
+
+<p> <i>ModuleOptions</i> 是特定于 <code>LoginModule</code> 的值的空格隔开列表，这些值被直接传递给底层 LoginModules。这些选项由 <code>LoginModule</code> 自身定义，并在其自身中控制它的行为。例如，<code>LoginModule</code> 可以定义一些选项，以便支持调试/测试功能。在 <code>Configuration</code> 中指定选项的正确方法是使用如下的键-值对：<i>debug=&quot;true&quot;</i>。键和值应该用等号分隔，值应该用双引号括起来。如果在值中出现 ${system.property} 形式的 String，则将它扩展为系统属性值。注意，对 <code>LoginModule</code> 可以定义的选项个数的没有限制。
+
+<p> 下面展示基于以上语法的示例 <code>Configuration</code> 条目：
+ <pre>
+ Login {
+   com.sun.security.auth.module.UnixLoginModule required;
+   com.sun.security.auth.module.Krb5LoginModule optional
+                   useTicketCache=&quot;true&quot;
+                   ticketCache=&quot;${user.home}${/}tickets&quot;;
+ };
+ </pre>
+<p> 此 <code>Configuration</code> 指定一个名称为 &quot;Login&quot; 的应用程序，要求用户首先对 <i>com.sun.security.auth.module.UnixLoginModule</i> 进行验证，该验证必须成功。即使 <i>UnixLoginModule</i> 验证失败，<i>com.sun.security.auth.module.Krb5LoginModule</i> 仍将被调用。这有助于隐藏失败源。由于 <i>Krb5LoginModule</i> 是 <i>Optional</i>，所以仅在 <i>UnixLoginModule</i> (<i>Required</i>) 成功时，整个验证才获得成功。
+
+<p> 还要注意的是，特定于 LoginModule 的选项 <i>useTicketCache=&quot;true&quot;</i> 和 <i>ticketCache=${user.home}${/}tickets&quot;</i> 被传递到 <i>Krb5LoginModule</i>。这些选项指示 <i>Krb5LoginModule</i> 使用指定位置处缓存的票据。系统属性 <i>user.home</i> 和 <i>/</i> (file.separator) 扩展成它们各自的值。
+
+<p> 在任意给定时间，运行时中只安装了一个 Configuration 对象。可通过调用 <code>setConfiguration</code> 方法安装 Configuration 对象。已安装的 Configuration 对象可通过调用 <code>getConfiguration</code> 方法获取。
+
+<p> 如果运行时中没有安装 Configuration 对象，则对 <code>getConfiguration</code> 的调用将安装一个默认 Configuration 实现的实例（此抽象类的默认子类实现）。通过将 "login.configuration.provider" 的安全属性（在 Java 安全属性文件中）的值设置为所需的 Configuration 子类实现的完全限定名，可以更改默认的 Configuration 实现。Java 安全属性文件位于名称为 &lt;JAVA_HOME&gt;/lib/security/java.security 的文件中。&lt;JAVA_HOME&gt; 是指 java.home 系统属型的值，也指定安装 JRE 的目录。
+
+<p> 应用程序代码可直接子类化 Configuration 以提供自定义实现。此外，可通过调用带标准类型的某一个 <code>getInstance</code> 工厂方法构造 Configuration 对象的实例。默认策略类型为 "JavaLoginConfig"。有关标准 Configuration 类型的列表，请参见 <a href="../../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ @version 1.63, 04/21/06
+ @see javax.security.auth.login.LoginContext
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.security.auth.login.Configuration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。（由子类构造方法调用，通常是隐式的）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized javax.security.auth.login.Configuration javax.security.auth.login.Configuration.getConfiguration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取已安装的登录 Configuration。
+ <p>
+@return 登录 Configuration。如果 Configuration 对象是由 <code>Configuration.setConfiguration</code> 方法设置的，则返回该对象。否则返回默认的 Configuration 对象。
+
+@exception SecurityException 如果调用者没有检索此 Configuration 的权限。
+
+@see #setConfiguration
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.security.auth.login.Configuration.setConfiguration(Configuration configuration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置登录 <code>Configuration</code>。
+
+ <p>
+
+@param configuration 新的 <code>Configuration</code>
+
+@exception  SecurityException 如果当前线程没有设置 <code>Configuration</code> 的 Permission。
+
+@see #getConfiguration
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.security.auth.login.Configuration javax.security.auth.login.Configuration.getInstance(String type, Configuration.Parameters params) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Configuration 对象。
+
+ <p> 此方法从首选 Provider 开始遍历已注册安全提供者列表。返回一个封装 ConfigurationSpi 实现的新 Configuration 对象，该实现取自支持指定类型的第一个 Provider。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param type 指定的 Configuration 类型。有关标准 Configuration 类型的列表，请参见 <a href="../../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ @param params Configuration 的参数，可以为 null。
+
+ @return 新的 Configuration 对象。
+
+ @exception SecurityException 如果调用者没有获取指定类型的 Configuration 实例的权限。
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果取自选定 Provider 的 ConfigurationSpi 实现不理解指定参数。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定类型的 ConfigurationSpi 实现。
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.security.auth.login.Configuration javax.security.auth.login.Configuration.getInstance(String type, Configuration.Parameters params, String provider) throws java.security.NoSuchProviderException, java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Configuration 对象。
+
+ <p> 返回一个封装 ConfigurationSpi 实现的新 Configuration 对象，该实现取自指定的提供者。指定的提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param type 指定的 Configuration 类型。有关标准 Configuration 类型的列表，请参见 <a href="../../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ @param params Configuration 的参数，可以为 null。
+
+ @param provider 提供者。
+
+ @return 新的 Configuration 对象。
+
+ @exception SecurityException 如果调用者没有获取指定类型的 Configuration 实例的权限。
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果指定提供者为 null 或空，或者取自指定提供者的 ConfigurationSpi 实现不理解指定参数。
+
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception NoSuchAlgorithmException 如果指定提供者不支持指定类型的 ConfigurationSpi 实现。
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.security.auth.login.Configuration javax.security.auth.login.Configuration.getInstance(String type, Configuration.Parameters params, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定类型的 Configuration 对象。
+
+ <p> 返回一个封装 ConfigurationSpi 实现的新 Configuration 对象，该实现取自指定的 Provider 对象。 注意，指定的 Provider 对象无需在提供者列表中注册。
+
+ @param type 指定的 Configuration 类型。有关标准 Configuration 类型的列表，请参见 <a href="../../../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+    Java Cryptography Architecture API Specification &amp; Reference </a> 的附录 A。
+
+ @param params Configuration 的参数，可以为 null。
+
+ @param provider Provider。
+
+ @return 新的 Configuration 对象。
+
+ @exception SecurityException 如果调用者没有获取指定类型的 Configuration 实例的权限。
+
+ @exception NullPointerException 如果指定类型为 null。
+
+ @exception IllegalArgumentException 如果指定的 Provider 为 null，或者取自指定 Provider 的 ConfigurationSpi 实现不理解指定参数。
+
+ @exception NoSuchAlgorithmException 如果指定 Provider 不支持指定类型的 ConfigurationSpi 实现。
+
+ @see Provider
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Provider javax.security.auth.login.Configuration.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 Configuration 的 Provider。 
+
+ <p> 只有在此 Configuration 实例是通过调用 <code>Configuration.getInstance</code> 获得的时，它才有 Provider。否则，此方法返回 null。
+
+ @return 此 Configuration 的 Provider，或者返回 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.auth.login.Configuration.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此 Configuration 的类型。
+
+ <p> 只有在此 Configuration 实例是通过调用 <code>Configuration.getInstance</code> 获得的时，它才有类型。否则，此方法返回 null。
+
+ @return 此 Configuration 的类型，或者返回 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.login.Configuration.Parameters javax.security.auth.login.Configuration.getParameters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回 Configuration 参数。
+
+ <p> 只有在此 Configuration 实例是通过调用 <code>Configuration.getInstance</code> 获得的时，它才有参数。否则，此方法返回 null。
+
+ @return Configuration 参数，或者返回 null。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.security.auth.login.AppConfigurationEntry[] javax.security.auth.login.Configuration.getAppConfigurationEntry(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 Configuration 中指定 <i>name</i> 的 AppConfigurationEntry。
+
+ <p>
+
+@param name 用于索引 Configuration 的名称。
+ 
+@return 对应于此 Configuration 中指定 <i>name</i> 的 AppConfigurationEntries 数组，如果不存在指定的 <i>name</i> 条目，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.auth.login.Configuration.refresh()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新和重新加载 Configuration。
+
+<p> 此方法导致此 Configuration 对象以与实现有关的方式刷新/重新加载其内容。例如，如果此 Configuration 对象将其条目存储在文件中，则调用 <code>refresh</code> 可能导致重新读取该文件。
+
+<p> 此方法的默认实现不执行任何操作。如果该实现支持刷新操作，则应该重写此方法。
+
+@exception SecurityException 如果调用者没有刷新此 Configuration 的权限。
+
+<!-- END DATA -->

@@ -1,0 +1,57 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.cert.CertStoreSpi extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link CertStore CertStore} 类的<i>服务提供者接口</i> (<b>SPI</b>)。所有 <code>CertStore</code> 实现必须包括一个类（SPI 类），该类扩展此类 (<code>CertStoreSpi</code>) 、提供一个具有单个 <code>CertStoreParameters</code> 类型参数的构造方法，并实现其所有方法。通常，只应通过 <code>CertStore</code> 类来访问此类的实例。有关细节，请参阅 Java Cryptography Architecture。
+ <p>
+<b>并发访问</b>
+ <p>
+所有 <code>CertStoreSpi</code> 对象的公共方法必须是线程安全的。也就是说，多个线程在单个 <code>CertStoreSpi</code> 对象（或多个对象）上并发调用这些方法而不会产生坏的影响。例如，这就允许 <code>CertPathBuilder</code> 搜索 CRL 的同时搜索其他的证书。
+ <p>
+简单的 <code>CertStoreSpi</code> 实现可能会确保线程安全性，方法是向其 <code>engineGetCertificates</code> 和 <code>engineGetCRLs</code> 方法添加 <code>synchronized</code> 关键字。更复杂的实现可能允许真正并发的访问。
+
+@version 	1.7 12/19/03
+@since	1.4
+@author	Steve Hanna
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.CertStoreSpi(CertStoreParameters params) throws java.security.InvalidAlgorithmParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。
+
+@param params 初始化参数（可以为 <code>null</code>）
+@throws InvalidAlgorithmParameterException 如果初始化参数不适合此 <code>CertStoreSpi</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Collection<? extends java.security.cert.Certificate> java.security.cert.CertStoreSpi.engineGetCertificates(CertSelector selector) throws java.security.cert.CertStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定选择器匹配的 <code>Certificate</code> 的 <code>Collection</code>。如果没有与此选择器匹配的 <code>Certificate</code>，则返回一个空 <code>Collection</code>。
+ <p>
+对于某些 <code>CertStore</code> 类型，得到的 <code>Collection</code> 可能不包含与该选择器匹配的<b>所有</b> <code>Certificate</code>。例如，LDAP <code>CertStore</code> 可能不搜索目录中的所有项。相反，它可能只搜索那些很可能包含正要查找的 <code>Certificate</code> 的项。 
+ <p>
+如果未提供一个包括了用于查找证书的具体标准的非 null <code>CertSelector</code>，则某些 <code>CertStore</code> 实现（特别是 LDAP <code>CertStore</code>）可能抛出 <code>CertStoreException</code>。发布方和/或主体名称是特别有用的标准。
+
+@param selector 用于选择应该返回哪些 <code>Certificate</code> 的 <code>CertSelector。</code>指定 <code>null</code> 返回所有的 <code>Certificate</code>（如果受支持的话）。
+@return 与指定选择器匹配的 <code>Certificate</code> 的 <code>Collection</code>（不会为 <code>null</code>）
+@throws CertStoreException 如果出现异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Collection<? extends java.security.cert.CRL> java.security.cert.CertStoreSpi.engineGetCRLs(CRLSelector selector) throws java.security.cert.CertStoreException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定选择器匹配的 <code>CRL</code> 的 <code>Collection</code>。如果没有与此选择器匹配的 <code>CRL</code>，则返回一个空 <code>Collection</code>。
+ <p>
+对于某些 <code>CertStore</code> 类型，得到的 <code>Collection</code> 可能不包含与该选择器匹配的<b>所有</b> <code>CRL</code>。例如，LDAP <code>CertStore</code> 可能不搜索目录中的所有项。相反，它可能只搜索那些很可能包含正要查找的 <code>CRL</code> 的项。 
+ <p>
+如果未提供一个包括了用于查找 CRL 的具体标准的非 null <code>CRLSelector</code>，则某些 <code>CertStore</code> 实现（特别是 LDAP <code>CertStore</code>）可能抛出 <code>CertStoreException</code>。发布方名称和/或要检查的证书特别有用。
+
+@param selector 用于选择应该返回哪些 <code>CRL</code> 的 <code>CRLSelector</code>。指定 <code>null</code> 返回所有的 <code>CRL</code>（如果受支持的话）。
+@return 与指定选择器匹配的 <code>CRL</code> 的 <code>Collection</code>（不会为 <code>null</code>）
+@throws CertStoreException 如果出现异常
+
+<!-- END DATA -->

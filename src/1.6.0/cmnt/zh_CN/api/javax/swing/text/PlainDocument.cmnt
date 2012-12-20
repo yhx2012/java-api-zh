@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.PlainDocument extends javax.swing.text.AbstractDocument
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+维护无任何字符属性的普通文档。此文档的默认元素结构是文本中的行的映射。由 getDefaultRootElement 返回的 Element 是行的映射，且每个子元素表示一行。此模型不维护任何字符级属性，但每行都可以用一个任意的属性集来标记。使用默认的根元素可以快速执行从行到偏移量和从偏移量到行的转换。由编辑激发的 DocumentEvent 的结构信息将指示行结构的更改。
+ <p>
+默认的内容存储管理是通过间隙缓冲区实现 (GapContent) 执行的。如果编辑是连续的或集群化的（正如常见的那样），此操作支持对大型文档的高效合理编辑。
+ <p>
+<strong>警告：</strong>此类的已序列化对象与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@version 1.43 12/19/03
+@see     Document
+@see     AbstractDocument
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.PlainDocument.tabSizeAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定内容中包含的制表符大小的属性名称。值的类型为 Integer。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.text.PlainDocument.lineLimitAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定行的最大长度的属性名称（如果有最大长度）。值的类型为 Integer。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.PlainDocument()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个纯文本文档。构造和设置一个使用 <code>GapContent</code> 的默认模型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.PlainDocument(AbstractDocument.Content c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个纯文本文档。创建一个默认的根元素，并将制表符大小设置为 8。
+
+@param c  内容容器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.PlainDocument.insertString(int offs, String str, AttributeSet a) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向文档中插入某些内容。插入内容会导致在实际发生改变时存储写锁定，接着会向线程上抓取该写入锁定的观察者发出通知。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How
+ to Use Threads</A>。
+
+@param offs  起始偏移量，该值 &gt;= 0
+@param str  要插入的字符串；null/空字符串不执行任何操作
+@param a  插入内容的属性
+@exception BadLocationException 如果给定的插入位置不是文档中的有效位置
+@see Document#insertString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.PlainDocument.getDefaultRootElement()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文档模型的默认根元素。
+
+@return  根
+@see Document#getDefaultRootElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AbstractDocument.AbstractElement javax.swing.text.PlainDocument.createDefaultRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建用于表示默认文档结构的根元素。
+
+@return  基本元素
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Element javax.swing.text.PlainDocument.getParagraphElement(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取包含给定位置的段落元素。因为此文档只模型化行，所以返回的应为行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.PlainDocument.insertUpdate(AbstractDocument.DefaultDocumentEvent chng, AttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+随文本插入更新文档结构。这将在写锁定内发生。因为此文档只映射出行，所以只刷新行映射。
+
+@param chng 描述编辑的更改事件
+@param attr 插入文本的属性集
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.PlainDocument.removeUpdate(AbstractDocument.DefaultDocumentEvent chng)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+随文本的移除更新任何文档结构。这将在写锁定内发生。因为此结构只表示行映射，所以此方法只检查是否移除行间距。如果是，移除区域外的两行将合并在一起。
+
+@param chng  描述编辑的更改事件
+
+<!-- END DATA -->

@@ -1,0 +1,188 @@
+<!-- BEGIN KEY -->
+public class java.util.WeakHashMap extends java.util.AbstractMap implements java.util.Map
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以<em>弱键</em> 实现的基于哈希表的 <tt>Map</tt>。在 <tt>WeakHashMap</tt> 中，当某个键不再正常使用时，将自动移除其条目。更精确地说，对于一个给定的键，其映射的存在并不阻止垃圾回收器对该键的丢弃，这就使该键成为可终止的，被终止，然后被回收。丢弃某个键时，其条目从映射中有效地移除，因此，该类的行为与其他的 <tt>Map</tt> 实现有所不同。
+
+<p>  null 值和 null 键都被支持。该类具有与 <tt>HashMap</tt> 类相似的性能特征,并具有相同的效能参数<em>初始容量</em> 和<em>加载因子</em>。
+
+<p> 像大多数 collection 类一样，该类是不同步的。可以使用 {@link Collections#synchronizedMap Collections.synchronizedMap} 方法来构造同步的 <tt>WeakHashMap</tt>。
+
+<p> 该类主要与这样的键对象一起使用，其 <tt>equals</tt> 方法使用 <tt>==</tt> 运算符来测试对象标识。一旦这种键被丢弃，就永远无法再创建了，所以，过段时间后在 <tt>WeakHashMap</tt> 中查找此键是不可能的，不必对其项已移除而感到惊讶。该类十分适合与 <tt>equals</tt> 方法不是基于对象标识的键对象一起使用，比如，<tt>String</tt> 实例。然而，对于这种可重新创建的键对象，键若丢弃，就自动移除 <tt>WeakHashMap</tt> 条目，这种表现令人疑惑。
+
+<p> <tt>WeakHashMap</tt> 类的行为部分取决于垃圾回收器的动作，所以，几个常见的（虽然不是必需的）<tt>Map</tt> 常量不支持此类。因为垃圾回收器在任何时候都可能丢弃键，<tt>WeakHashMap</tt> 就像是一个被悄悄移除条目的未知线程。特别地，即使对 <tt>WeakHashMap</tt> 实例进行同步，并且没有调用任何赋值方法，在一段时间后 <tt>size</tt> 方法也可能返回较小的值，对于 <tt>isEmpty</tt> 方法，返回 <tt>false</tt>，然后返回 <tt>true</tt>，对于给定的键，<tt>containsKey</tt> 方法返回 <tt>true</tt> 然后返回 <tt>false</tt>，对于给定的键，<tt>get</tt> 方法返回一个值，但接着返回 <tt>null</tt>，对于以前出现在映射中的键，<tt>put</tt> 方法返回 <tt>null</tt>，而 <tt>remove</tt> 方法返回 <tt>false</tt>，对于键 set、值 collection 和条目 set 进行的检查，生成的元素数量越来越少。
+
+<p> <tt>WeakHashMap</tt> 中的每个键对象间接地存储为一个弱引用的指示对象。因此，不管是在映射内还是在映射之外，只有在垃圾回收器清除某个键的弱引用之后，该键才会自动移除。
+
+<p> <strong>实现注意事项：</strong><tt>WeakHashMap</tt> 中的值对象由普通的强引用保持。因此应该小心谨慎，确保值对象不会直接或间接地强引用其自身的键，因为这会阻止键的丢弃。注意，值对象可以通过 <tt>WeakHashMap</tt> 本身间接引用其对应的键；这就是说，某个值对象可能强引用某个其他的键对象，而与该键对象相关联的值对象转而强引用第一个值对象的键。处理此问题的一种方法是，在插入前将值自身包装在 <tt>WeakReferences</tt> 中，如：<tt>m.put(key, new WeakReference(value))</tt>，然后，分别用 <tt>get</tt> 进行解包。
+
+<p>collection 的 <tt>iterator</tt> 方法所返回的迭代器（由该类所有“collection 视图方法”返回）均是<i>快速失败的</i>：在迭代器创建之后，如果从结构上对映射进行修改，除非通过迭代器自身的 <tt>remove</tt> 或 <tt>add</tt> 方法,其他任何时间任何方式的修改，迭代器都将抛出 {@link
+ ConcurrentModificationException}。因此，面对并发的修改，迭代器很快就完全失败，而不是冒着在将来不确定的时间任意发生不确定行为的风险。
+
+<p>注意，迭代器的快速失败行为不能得到保证，一般来说，存在不同步的并发修改时，不可能作出任何坚决的保证。快速失败迭代器尽最大努力抛出 <tt>ConcurrentModificationException</tt>。因此，编写依赖于此异常程序的方式是错误的，正确做法是：<i>迭代器的快速失败行为应该仅用于检测 bug。</i>
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@param <K> 此映射所维护的键的类型
+@param <V> 映射值的类型
+
+@version	1.39, 05/24/06
+@author       Doug Lea
+@author       Josh Bloch 
+@author	Mark Reinhold
+@since 	1.2
+@see		java.util.HashMap
+@see		java.lang.ref.WeakReference
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.WeakHashMap(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的初始容量和加载因子构造一个新的空 <tt>WeakHashMap</tt>。
+
+@param  initialCapacity <tt>WeakHashMap</tt> 的初始容量
+@param  loadFactor   <tt>WeakHashMap</tt> 的加载因子
+@throws IllegalArgumentException  如果初始容量为负，或加载因子为非正。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.WeakHashMap(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定初始容量和默认加载因子 (0.75) 的新的空 <tt>WeakHashMap</tt>。
+
+@param  initialCapacity <tt>WeakHashMap</tt> 的初始容量
+@throws IllegalArgumentException  如果初始容量为负
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.WeakHashMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有默认初始容量 (16) 和加载因子 (0.75) 的新的空 <tt>WeakHashMap</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.WeakHashMap(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新 <tt>WeakHashMap</tt>，使其与指定的映射具有相同的映射关系。创建具有默认加载因子 (0.75) 的 <tt>WeakHashMap</tt>，初始容量足以容纳指定映射中的映射关系。
+
+@param   m 映射，其映射关系将存放在此映射中
+@throws  NullPointerException 如果指定的映射为 null
+@since   1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.WeakHashMap.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该映射中的键-值映射关系的数目。此结果是个快照，可能无法反映未处理的项，这些项因为不再引用而在下次试图访问前被移除。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.WeakHashMap.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射不包含键-值映射关系，则返回 <tt>true</tt>。此结果是个快照，可能无法反映未处理的项，这些项因为不再引用而在下次访问前被移除。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.WeakHashMap.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定键所映射的值，如果对于该键来说，此映射不包含任何映射关系，则返回 {@code null}。
+
+<p>更确切地讲，如果此映射包含一个满足以下条件的从键 {@code k} 到值 {@code v} 的映射关系：{@code (key==null ? k==null :
+ key.equals(k))}，则此方法返回 {@code v}；否则它返回 {@code null}。（最多只能有一个这样的映射关系）。
+
+<p>返回值为 {@code null} 并不<i>一定</i> 表示映射不包含该键的任何映射关系；也可能是映射显式地将键映射到 {@code null}。使用 {@link #containsKey containsKey} 操作可以区分这两种情况。
+
+@see #put(Object, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.WeakHashMap.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射对于指定的键包含映射关系，则返回 <tt>true</tt>。
+
+@param   key 要测试其是否在此映射中存在的键
+@return  如果有 <tt>key</tt> 的映射关系，则返回 <tt>true</tt>，否则返回 <tt>false</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.WeakHashMap.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关联此映射中的指定值与指定键。如果此映射以前包含了一个该键的映射关系，则替换旧值。
+
+@param key 指定值将要关联的键。
+@param value 指定键将要关联的值。
+@return 返回与 <tt>key</tt> 关联的先前值，如果 <tt>key</tt> 没有任何映射关系，则返回 <tt>null</tt>。（返回 <tt>null</tt> 还可以表示该映射以前关联了 <tt>null</tt> 与 <tt>key</tt>）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.WeakHashMap.putAll(java.util.Map<? extends K, ? extends V> m)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定映射的全部映射关系复制到此映射。这些映射关系将替换此映射针对当前指定映射中任何键所具有的任何映射关系。
+
+@param m 要在此映射中存储的映射关系。
+@throws NullPointerException 如果指定的映射为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.WeakHashMap.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此弱哈希映射中移除键的映射关系（如果存在）。更确切地讲，如果此映射包含一个满足以下条件的从键 <tt>k</tt> 到值 <tt>v</tt> 的映射关系：<code>(key==null ?  k==null :
+ key.equals(k))</code>，则移除该映射关系。（该映射最多只能包含一个这样的映射关系）。
+
+<p>返回此映射先前与该键关联的值，如果映射不包含该键的任何映射关系，则返回 <tt>null</tt>。返回值为 <tt>null</tt> 并不<i>一定</i> 表示映射不包含该键的任何映射关系；也可能是映射显式地将键映射到 <tt>null</tt>。
+
+<p>一旦调用返回，则该映射将不再包含指定键的映射关系。
+
+@param key 其映射关系要从映射中移除的键
+@return 与 <tt>key</tt> 相关联的先前值，如果 <tt>key</tt> 没有任何映射关系，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.WeakHashMap.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此映射中移除所有映射关系。此调用返回后，该映射将是空的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.WeakHashMap.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>。
+
+@param value 要测试其是否在此映射中存在的值
+@return 如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.WeakHashMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射所包含的键的 {@link Set} 视图。该 set 受映射支持，所以对映射的改变可在此 set 中反映出来，反之亦然。如果在该 set 上进行迭代时修改该映射（通过迭代器自己的 <tt>remove</tt> 操作除外），则迭代结果是不确定的。该 set 支持元素的移除，通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作可从该映射移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.WeakHashMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射所包含的值的 {@link Collection} 视图。该 collection 受映射支持，所以对映射的改变可在该 collection 中反映出来，反之亦然。如果在该 collection 上进行迭代时修改该映射（通过迭代器自己的 <tt>remove</tt> 操作除外），则迭代结果是不确定的。该 collection 支持元素的移除，通过 <tt>Iterator.remove</tt>、<tt>Collection.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作可从该映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.WeakHashMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射所包含的映射关系的 {@link Set} 视图。该 set 受映射支持，所以对映射的改变可在此 set 中反映出来，反之亦然。如果在该 set 上进行迭代时修改该映射（通过迭代器自己的 <tt>remove</tt> 操作，或者通过迭代器所返回的映射项上的 <tt>setValue</tt> 操作除外），则迭代结果是不确定的。该 set 支持元素的移除，通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作，从该映射移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+<!-- END DATA -->

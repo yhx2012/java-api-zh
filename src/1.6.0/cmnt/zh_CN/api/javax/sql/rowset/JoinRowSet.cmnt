@@ -1,0 +1,307 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.JoinRowSet extends javax.sql.rowset.WebRowSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JoinRowSet</code> 接口提供了一种机制，用于将取自不同 <code>RowSet</code> 对象的相关数据组合到一个 <code>JoinRowSet</code> 对象中，该对象表示一个 SQL <code>JOIN</code>。换句话说，<code>JoinRowSet</code> 对象可作为一个数据容器，这些数据取自那些形成 SQL <code>JOIN</code> 关系的 <code>RowSet</code> 对象。
+ <P>
+<code>Joinable</code> 接口提供了一些用于设置、获取和取消设置匹配列的方法，匹配列建立 SQL <code>JOIN</code> 关系的基础。通过将匹配列提供给恰当形式的 <code>JointRowSet</code> 方法 <code>addRowSet</code> 也可设置匹配列。
+ <P>
+ <p>
+<h3>1.0 概述</h3>
+无连接的 <code>RowSet</code> 对象（<code>CachedRowSet</code> 对象和扩展 <code>CachedRowSet</code> 接口的实现）没有一种能在 <code>RowSet</code> 之间建立 SQL <code>JOIN</code>且无需重新连接数据源（该操作开销很大）的标准方式。<code>JoinRowSet</code> 接口是专门为解决这一需求而设计的。 
+ <P>
+任何 <code>RowSet</code> 对象都可添加到 <code>JoinRowSet</code> 对象，以成为 SQL <code>JOIN</code> 关系的一部分。这意味着已连接和无连接的 <code>RowSet</code> 对象都可成为 <code>JOIN</code> 的一部分。鼓励在连接环境中运行的 <code>RowSet</code> 对象（<code>JdbcRowSet</code> 对象）使用它们已连接的数据库直接在表之间建立 SQL <code>JOIN</code> 关系。但必要时也可以将 <code>JdbcRowSet</code> 对象添加到 <code>JoinRowSet</code> 对象中。  
+ <P>
+可将任意数目的 <code>RowSet</code> 对象添加到 <code>JoinRowSet</code> 的实例中，前提是只要这些对象可以在 SQL <code>JOIN</code> 中关联起来。根据定义，SQL <code>JOIN</code> 语句用于将两个或多个基于某个公共属性的关系数据库表中所包含的数据组合在一起。<code>Joinable</code> 接口提供了用于建立公共属性的方法，可通过设置<i>匹配列</i> 来建立。匹配列通常与主键相符，但是不要求匹配列与主键相同。通过建立然后强制执行匹配列，<code>JoinRowSet</code> 对象可在 <code>RowSet</code> 对象之间建立 <code>JOIN</code> 关系，无需可用关系型数据库的协助。
+ <P>
+可通过使用方法 <code>setJoinType</code> 设置某个 <code>JoinRowSet</code> 常量来确定要建立的 <code>JOIN</code> 的类型。可设置以下 SQL <code>JOIN</code> 类型：
+ <UL>
+  <LI><code>CROSS_JOIN</code>
+  <LI><code>FULL_JOIN</code>
+  <LI><code>INNER_JOIN</code> - 未设置 <code>JOIN</code> 类型时使用的默认值
+  <LI><code>LEFT_OUTER_JOIN</code>
+  <LI><code>RIGHT_OUTER_JOIN</code>
+ </UL>
+注意，如果未设置类型，则 <code>JOIN</code> 将自动为 INNER_JOIN。<code>JoinRowSet</code> 接口中各字段的注释说明了这些 <code>JOIN</code> 类型，它们都是标准的 SQL <code>JOIN</code> 类型。 
+ <P>
+<h3>2.0 使用 <code>JoinRowSet</code> 对象创建 <code>JOIN</code></h3>
+当创建了一个 <code>JoinRowSet</code> 对象时，它是空的。要添加的第一个 <code>RowSet</code> 对象将成为 <code>JOIN</code> 关系的基础。应用程序必须确定在要添加到 <code>JoinRowSet</code> 对象的每个 <code>RowSet</code> 对象中，哪个列应该是匹配列。所有的 <code>RowSet</code> 对象必须包含匹配列，并且每个匹配列中的值必须可以与其他匹配列中的值相比较。这些列不必有相同的名称（虽然通常它们的名称相同），只要数据类型是可比较的，它们也不必存储完全相同的数据类型。  
+ <P>
+可用两种方式来设置匹配列： 
+ <ul>
+<li>通过调用 <code>Joinable</code> 的方法 <code>setMatchColumn</code><br> 将 <code>RowSet</code> 对象添加到 <code>JoinRowSet</code> 对象之前，这是可以设置匹配列的唯一方法。为了使用方法 <code>setMatchColumn</code>，<code>RowSet</code> 对象必须已经实现了 <code>Joinable</code> 接口。一旦设置了匹配列值，则可在任意时间使用此方法来重置匹配列。
+<li>通过调用某种形式的 <code>JoinRowSet</code> 方法 <code>addRowSet</code>（使用列名或列号，或者列名数组或列号数组）<BR> 5 个 <code>addRowSet</code> 方法中有 4 个采用匹配列作为参数。这 4 个方法可在将 <code>RowSet</code> 对象添加到 <code>JoinRowSet</code> 对象时设置或重置匹配列。
+ </ul>
+<h3>3.0 示例用法</h3>
+ <p>
+以下代码片断将两个 <code>CachedRowSet</code> 对象添加到 <code>JoinRowSet</code> 对象中。注意，在此示例中未设置 SQL <code>JOIN</code> 类型，所以建立了默认的 <code>JOIN</code> 类型，即 <i>INNER_JOIN</i>。 
+ <p>
+在以下代码片断中，表 <code>EMPLOYEES</code> 被添加到 <code>JoinRowSet</code> 对象 <i>jrs</i> 中，该表的匹配列被设置为第一列 (<code>EMP_ID</code>)。然后添加表 <code>ESSP_BONUS_PLAN</code>，其匹配列同样是 <code>EMP_ID</code> 列。将第二个表添加到 <i>jrs</i> 时，只添加 <code>EMP_ID</code> 值匹配 <code>EMPLOYEES</code> 表 <code>EMP_ID</code> 值的 <code>ESSP_BONUS_PLAN</code> 中的行。在这种情况下，红利分配中的所有人都是雇员，所以表 <code>ESSP_BONUS_PLAN</code> 中的所有行都被添加 <code>JoinRowSet</code> 对象中。在此示例中，两个被添加的 <code>CachedRowSet</code> 对象都已实现了 <code>Joinable</code> 接口，因此都可调用 <code>Joinable</code> 方法 <code>setMatchColumn</code>。
+ <PRE>
+     JoinRowSet jrs = new JoinRowSetImpl();
+ 
+     ResultSet rs1 = stmt.executeQuery(&quot;SELECT * FROM EMPLOYEES&quot;);
+     CachedRowSet empl = new CachedRowSetImpl();
+     empl.populate(rs1);
+     empl.setMatchColumn(1); 
+     jrs.addRowSet(empl);
+ 
+     ResultSet rs2 = stmt.executeQuery(&quot;SELECT * FROM ESSP_BONUS_PLAN&quot;);
+     CachedRowSet bonus = new CachedRowSetImpl();
+     bonus.populate(rs2);
+     bonus.setMatchColumn(1); // EMP_ID is the first column
+     jrs.addRowSet(bonus);
+ </PRE>
+ <P>
+此时，<i>jrs</i> 是两个 <code>RowSet</code> 对象基于其 <code>EMP_ID</code> 列的内部 JOIN。应用程序现在可以浏览已组合的数据，就好像在浏览单个 <code>RowSet</code> 对象一样。因为 <i>jrs</i> 本身是一个 <code>RowSet</code> 对象，所以应用程序可以使用 <code>RowSet</code> 方法浏览或修改它。
+ <PRE>
+     jrs.first();
+     int employeeID = jrs.getInt(1);
+     String employeeName = jrs.getString(2);
+ </PRE>
+ <P>
+注意，因为在应用程序添加第二个或后续 <code>RowSet</code> 对象时必须强制执行 SQL <code>JOIN</code>，所以在执行 <code>JOIN</code> 时最初会出现性能下降。
+ <P>
+以下代码片断添加了一个附加 <code>CachedRowSet</code> 对象。在这种情况下，将 <code>CachedRowSet</code> 对象添加到 <code>JoinRowSet</code> 对象时设置匹配列 (<code>EMP_ID</code>)。 
+ <PRE>
+     ResultSet rs3 = stmt.executeQuery(&quot;SELECT * FROM 401K_CONTRIB&quot;);
+     CachedRowSet fourO1k = new CachedRowSetImpl();
+     four01k.populate(rs3);
+     jrs.addRowSet(four01k, 1);
+ </PRE>
+ <P>
+<code>JoinRowSet</code> 对象 <i>jrs</i> 现在包含取自所有三个表的值。<code>EMP_ID</code> 列值匹配 <i>jrs</i> 中 <code>EMP_ID</code> 列值的 <i>four01k</i> 中的每行数据都被添加到 <i>jrs</i>。
+ <P>
+<h3>4.0 <code>JoinRowSet</code> 方法</h3>
+<code>JoinRowSet</code> 接口提供了多种方法用于添加 <code>RowSet</code> 对象和获得有关 <code>JoinRowSet</code> 对象的信息。
+ <UL>
+<LI>添加一个或多个 <code>RowSet</code> 对象的方法<BR> 这些方法允许应用程序一次添加一个 <code>RowSet</code> 对象，或者一次添加多个 <code>RowSet</code> 对象。无论是哪种情况，该方法可以为要添加的每个 <code>RowSet</code> 对象指定匹配列。
+<LI>获得信息的方法<BR> 一个方法获取 <code>JoinRowSet</code> 对象中的 <code>RowSet</code> 对象，另一个方法获取 <code>RowSet</code> 名称。第三个方法获取后台使用以形成 SQL <code>JOIN</code> 的 <code>WHERE</code>子句，或者有关 <code>WHERE</code> 子句作用的文本描述。
+<LI>与 <code>JOIN</code> 类型有关的方法<BR> 一个方法设置 <code>JOIN</code> 类型，5 个方法用于查找 <code>JoinRowSet</code> 对象是否支持给定的类型。
+<LI>制作 <code>JoinRowSet</code> 对象单独副本的方法<BR> 此方法创建一个副本，可与数据源保持一致。
+ </UL>
+ <P>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.JoinRowSet.CROSS_JOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ANSI 风格的 <code>JOIN</code>，提供两个表的交叉乘积。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.JoinRowSet.INNER_JOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ANSI 风格的 <code>JOIN</code>，提供两个表之间的内联合 (inner join)。任一联合表中的所有不匹配列都应被丢弃。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.JoinRowSet.LEFT_OUTER_JOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ANSI 风格的 <code>JOIN</code>，提供两个表之间的左外联合 (left outer join)。在 SQL 中，这可描述为应该从 JOIN 语句左侧表中返回所有记录的情况。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.JoinRowSet.RIGHT_OUTER_JOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ANSI 风格的 <code>JOIN</code>，提供两个表之间的右外联合 (right outer join)。在 SQL 中，这可描述为即使左侧的表没有匹配记录的情况下也应该从 JOIN 语句右侧表中返回所有记录的情况。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.sql.rowset.JoinRowSet.FULL_JOIN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ANSI 风格的 <code>JOIN</code>，提供一个完全 JOIN。指定不管在另一个表上是否有匹配的记录，都会返回任一表中的所有行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.addRowSet(Joinable rowset) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>RowSet</code> 对象添加到此 <code>JoinRowSet</code> 对象。如果该 <code>RowSet</code> 对象是第一个添加到此 <code>JoinRowSet</code> 对象中的对象，则它形成要建立的 <code>JOIN</code> 关系的基础。
+ <P>
+仅在给定的 <code>RowSet</code> 对象已经具有使用 <code>Joinable</code> 方法 <code>setMatchColumn</code> 所设置的匹配列时才应该使用此方法。
+ <p>
+注：<code>Joinable</code> 是所有已经实现了 <code>Joinable</code> 接口的 <code>RowSet</code> 对象。 
+
+@param rowset 要添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象；它必须实现 <code>Joinable</code> 接口并且具有已设置的匹配列
+@throws SQLException 如果 (1) 将空的 rowset 添加到此 <code>JoinRowSet</code> 对象，(2) 尚未设置 <i>rowset</i> 的匹配列，或 (3) <i>rowset</i> 违反了活动状态的 <code>JOIN</code>
+@see Joinable#setMatchColumn
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.addRowSet(RowSet rowset, int columnIdx) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>RowSet</code> 对象添加到此 <code>JoinRowSet</code> 对象，并将指定的列设置为 <code>RowSet</code> 对象的匹配列。如果该 <code>RowSet</code> 对象是第一个添加到此 <code>JoinRowSet</code> 对象中的对象，则它形成要建立的 <code>JOIN</code> 关系的基础。
+ <P>
+当尚未设置 <i>RowSet</i> 的匹配列时才应使用此方法。
+
+@param rowset 要添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象；它可以实现 <code>Joinable</code> 接口
+@param columnIdx 一个 <code>int</code> 值，它标识要成为匹配列的列
+@throws SQLException 如果 (1) <i>rowset</i> 是一个空 rowset 或 (2) <i>rowset</i> 违反了活动状态的 <code>JOIN</code>
+@see Joinable#unsetMatchColumn
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.addRowSet(RowSet rowset, String columnName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <i>rowset</i> 添加到此 <code>JoinRowSet</code> 对象，并将指定的列设置为匹配列。如果 <i>rowset</i> 是第一个添加到此 <code>JoinRowSet</code> 对象中的对象，则它形成要建立的 <code>JOIN</code> 关系的基础。 
+ <P>
+当给定的 <code>RowSet</code> 对象还没有匹配列时应该使用此方法。     
+ 
+@param rowset 要添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象；它可以实现 <code>Joinable</code> 接口
+@param columnName <code>String</code> 对象，它提供要设置为匹配列的列名
+@throws SQLException 如果 (1) <i>rowset</i> 是一个空 rowset 或 (2) <i>rowset</i> 的匹配列不满足 <code>JOIN</code> 的条件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.addRowSet(javax.sql.RowSet[] rowset, int[] columnIdx) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>RowSet</code> 对象数组中包含的一个或多个 <code>RowSet</code> 对象添加到此 <code>JoinRowSet</code> 对象，并且将每个 <code>RowSet</code> 对象的匹配列设置为给定列索引数组中的匹配列。将 <i>columnIdx</i> 中的第一个元素设置为 <i>rowset</i> 中第一个 <code>RowSet</code> 对象的匹配列，将 <i>columnIdx</i> 中的第二个元素设置为 <i>rowset</i> 中第二个元素的匹配列，依此类推。
+ <P>
+添加到此 <code>JoinRowSet</code> 对象的第一个 <code>RowSet</code> 对象形成 <code>JOIN</code> 关系的基础。
+ <P>
+当给定的 <code>RowSet</code> 对象还没有匹配列时应该使用此方法。
+
+@param rowset 要添加到 <code>JOIN</code> 的一个或多个 <code>RowSet</code> 对象所组成的数组；它可以实现 <code>Joinable</code> 接口
+@param columnIdx 一个 <code>int</code> 值数组，指示要设置为 <i>rowset</i> 中 <code>RowSet</code> 对象的匹配列的列索引
+@throws SQLException 如果 (1) 将空的 rowset 添加到此 <code>JoinRowSet</code> 对象，(2) 没有设置 <i>rowset</i> 中 <code>RowSet</code> 对象的匹配列，或 (3) 要添加的 <code>RowSet</code> 对象违反了活动状态的 <code>JOIN</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.addRowSet(javax.sql.RowSet[] rowset, java.lang.String[] columnName) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定 <code>RowSet</code> 对象数组中包含的一个或多个 <code>RowSet</code> 对象添加到此 <code>JoinRowSet</code> 对象，并且将每个 <code>RowSet</code> 对象的匹配列设置为给定列名数组中的匹配列。将 <i>columnName</i> 中的第一个元素设置为 <i>rowset</i> 中第一个 <code>RowSet</code> 对象的匹配列，将 <i>columnName</i> 中的第二个元素设置为 <i>rowset</i> 中第二个元素的匹配列，依此类推。
+ <P>
+添加到此 <code>JoinRowSet</code> 对象的第一个 <code>RowSet</code> 对象形成 <code>JOIN</code> 关系的基础。
+ <P>
+当给定的 <code>RowSet</code> 对象还没有匹配列时应该使用此方法。
+
+@param rowset 要添加到 <code>JOIN</code> 的一个或多个 <code>RowSet</code> 对象所组成的数组；它可以实现 <code>Joinable</code> 接口
+@param columnName 一个 <code>String</code> 值数组，指示要设置为 <i>rowset</i> 中 <code>RowSet</code> 对象的匹配列的列名
+@throws SQLException 如果 (1) 将空的 rowset 添加到此 <code>JoinRowSet</code> 对象，(2) 没有设置 <i>rowset</i> 中 <code>RowSet</code> 对象的匹配列，或 (3) 要添加的 <code>RowSet</code> 对象违反了活动状态的 <code>JOIN</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<?> javax.sql.rowset.JoinRowSet.getRowSets() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Collection</code> 对象，包含已经添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象。此方法应该返回 <code>JOIN</code> 内包含的 'n' 个 RowSet 并维持此并集中出现的所有更新。
+ 
+@return 一个 <code>Collection</code> 对象，由添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象组成
+@throws SQLException 如果生成要返回的 <code>Collection</code> 对象时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.sql.rowset.JoinRowSet.getRowSetNames() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，包含添加到此 <code>JoinRowSet</code> 对象的 <code>RowSet</code> 对象的名称。
+
+@return 此 <code>JoinRowSet</code> 对象中的 <code>RowSet</code> 对象名所组成的 <code>String</code> 数组
+@throws SQLException 如果获取 <code>RowSet</code> 对象的名称时发生错误
+@see CachedRowSet#setTableName
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sql.rowset.CachedRowSet javax.sql.rowset.JoinRowSet.toCachedRowSet() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个包含此 <code>JoinRowSet</code> 对象中数据的新 <code>CachedRowSet</code> 对象，可以使用 <code>CachedRowSet</code> 对象的 <code>SyncProvider</code> 对象将此 JoinRowSet 对象保存到数据源。
+ <P>
+如果对 JoinRowSet 进行了任何更新或修改，则该方法返回的 CachedRowSet 无法使其更改与数据源中的原始行和表保持一致。返回的 CachedRowSet 实例不应包含修改数据，并且应该清除其原始 SQL 语句的所有属性。应用程序应该使用 <code>RowSet.setCommand</code> 方法重置 SQL 语句。
+ <p>
+要允许更改与数据源中的原始表保持一致，应该使用 <code>acceptChanges</code> 方法并对 JoinRowSet 对象实例调用该方法。实现可以利用在其中跟踪的内部数据和更新来与 SyncProvider 进行交互，以保持所有更改不变。 
+
+@return 包含 JoinRowSet 内容的 CachedRowSet
+@throws SQLException 如果组合 CachedRowSet 对象时发生错误
+@see javax.sql.RowSet
+@see javax.sql.rowset.CachedRowSet
+@see javax.sql.rowset.spi.SyncProvider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JoinRowSet.supportsCrossJoin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 JoinRowSet 实现是否支持 CROSS_JOIN。
+
+@return 如果支持 CROSS_JOIN，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JoinRowSet.supportsInnerJoin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 JoinRowSet 实现是否支持 INNER_JOIN。
+
+@return 如果支持 INNER_JOIN，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JoinRowSet.supportsLeftOuterJoin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 JoinRowSet 实现是否支持 LEFT_OUTER_JOIN。
+
+@return 如果支持 LEFT_OUTER_JOIN，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JoinRowSet.supportsRightOuterJoin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 JoinRowSet 实现是否支持 RIGHT_OUTER_JOIN。
+
+@return 如果支持 RIGHT_OUTER_JOIN，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.rowset.JoinRowSet.supportsFullJoin()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示 JoinRowSet 实现是否支持 FULL_JOIN。
+
+@return 如果支持 FULL_JOIN，则返回 true；否则返回 false
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.JoinRowSet.setJoinType(int joinType) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许应用程序调整在 JoinRowSet 对象实例包含的表上强制应用的 <code>JOIN</code> 类型。如果实现不支持给定的 <code>JOIN</code> 类型，则应抛出 SQLException。
+
+@param joinType SQL <code>JOIN</code> 的标准 JoinRowSet.XXX 静态字段定义，用来在运行过程中重新配置 JoinRowSet 实例。
+@throws SQLException 如果设置了不支持的 <code>JOIN</code> 类型
+@see #getJoinType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.sql.rowset.JoinRowSet.getWhereClause() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 JoinRowSet 对象中使用的 WHERE 子句的类似 SQL 的描述。通过提供 <code>JOIN</code> 的 SQL 字符串描述或一个文本描述，一个实现可以描述 SQL <code>JOIN</code> 的 WHERE 子句，以协助应用程序使用 <code>JoinRowSet</code>。
+
+@return whereClause，JoinRowSet 实例中使用的逻辑 WHERE 子句的文本或 SQL 描述
+@throws SQLException 如果生成 WHERE 子句的表示形式时发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sql.rowset.JoinRowSet.getJoinType() throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>int</code> 值，它描述控制此 JoinRowSet 实例的已设置 SQL <code>JOIN</code> 类型。返回的类型是标准的 JoinRowSet 类型之一：<code>CROSS_JOIN</code>、<code>INNER_JOIN</code>、<code>LEFT_OUTER_JOIN</code>、<code>RIGHT_OUTER_JOIN</code> 或 <code>FULL_JOIN</code>。
+
+@return joinType，SQL <code>JOIN</code> 的某个标准 JoinRowSet 静态字段定义。在没有显式设置类型时，将 <code>JoinRowSet.INNER_JOIN</code> 作为默认的 <code>JOIN</code> 类型返回。
+@throws SQLException 如果在确定该 JoinRowSet 实例支持的 SQL <code>JOIN</code> 类型时发生错误。
+@see #setJoinType
+
+<!-- END DATA -->

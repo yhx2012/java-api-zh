@@ -1,0 +1,1246 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JOptionPane extends javax.swing.JComponent implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>JOptionPane</code> 有助于方便地弹出要求用户提供值或向其发出通知的标准对话框。有关使用 <code>JOptionPane</code> 的信息，请参见 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/components/dialog.html">How to Make Dialogs</a> 一节。
+
+ <p>
+
+虽然由于方法数多使 <code>JOptionPane</code> 类可能显得复杂，但几乎所有此类的使用都是对下列静态 <code>showXxxDialog</code> 方法之一的单行调用：
+ <blockquote>
+
+ <table border=1 summary="Common JOptionPane method names and their descriptions">
+ <tr>
+<th>方法名</th>
+<th>描述</th>
+ </tr>
+ <tr>
+    <td>showConfirmDialog</td>
+<td>询问一个确认问题，如 yes/no/cancel。</td>
+ </tr>
+ <tr>
+    <td>showInputDialog</td>
+<td>提示要求某些输入。</td>
+ </tr>
+ <tr>
+   <td>showMessageDialog</td>
+<td>告知用户某事已发生。</td>
+ </tr>
+ <tr>
+   <td>showOptionDialog</td>
+<td>上述三项的大统一 (Grand Unification)。</td>
+ </tr>
+ </table>
+
+ </blockquote>
+所有这些方法还可能以 <code>showInternalXXX</code> 风格出现，该风格使用内部窗体来保存对话框（请参见 {@link JInternalFrame}）。此外还定义了多种便捷方法，这些方法重载那些基本方法，使用不同的参数列表。
+ <p>
+所有对话框都是有模式的。在用户交互完成之前，每个 <code>showXxxDialog</code> 方法都一直阻塞调用者。
+ <p>
+
+<table cellspacing=6 cellpadding=4 border=0 align=right summary="layout">
+<tr>
+<td bgcolor=#FFe0d0 rowspan=2>图标</td>
+<td bgcolor=#FFe0d0>消息</td>
+ </tr>
+ <tr>
+<td bgcolor=#FFe0d0>输入值</td>
+ </tr>
+ <tr>
+<td bgcolor=#FFe0d0 colspan=2>选项按钮</td>
+ </tr>
+ </table>
+
+这些对话框的基本外形通常与右图类似，尽管各种外观从根本上决定着最后结果。尤其是，外观可以调整布局以适应选项窗格的 <code>ComponentOrientation</code> 属性。<br clear=all>
+ <p>
+<b>参数：</b><br>这些方法的参数遵守一致的模式：
+ <blockquote>
+ <dl compact>
+ <dt>parentComponent<dd>
+定义作为此对话框的父对话框的 <code>Component</code>。通过两种方式使用此参数：包含它的 <code>Frame</code> 可以用作对话框的父 <code>Frame</code>，在对话框的位置使用其屏幕坐标。一般情况下，将对话框紧靠组件置于其之下。此参数可以为 <code>null</code>，在这种情况下，默认的 <code>Frame</code> 用作父级，并且对话框将居中位于屏幕上（取决于 L&F）。
+ <dt><a name=message>message</a><dd>
+要置于对话框中的描述消息。在最常见的应用中，message 就是一个 <code>String</code> 或 <code>String</code> 常量。不过，此参数的类型实际上是 <code>Object</code>。其解释依赖于其类型：
+ <dl compact>
+ <dt>Object[]<dd>对象数组被解释为在纵向堆栈中排列的一系列 message（每个对象一个）。解释是递归式的，即根据其类型解释数组中的每个对象。 
+ <dt>Component<dd>该 <code>Component</code> 在对话框中显示。
+ <dt>Icon<dd>该 <code>Icon</code> 被包装在 <code>JLabel</code> 中并在对话框中显示。
+<dt>其他<dd>该对象通过调用其 <code>toString</code> 方法被转换为 <code>String</code>。结果被包装在 <code>JLabel</code> 中显示。
+ </dl>
+ <dt>messageType<dd>定义 message 的样式。外观管理器根据此值对对话框进行不同地布置，并且通常提供默认图标。可能的值为：
+ <ul>
+ <li><code>ERROR_MESSAGE</code>
+ <li><code>INFORMATION_MESSAGE</code>
+ <li><code>WARNING_MESSAGE</code>
+ <li><code>QUESTION_MESSAGE</code>
+ <li><code>PLAIN_MESSAGE</code>
+ </ul>
+ <dt>optionType<dd>定义在对话框的底部显示的选项按钮的集合：
+ <ul>
+ <li><code>DEFAULT_OPTION</code>
+ <li><code>YES_NO_OPTION</code>
+ <li><code>YES_NO_CANCEL_OPTION</code>
+ <li><code>OK_CANCEL_OPTION</code>
+ </ul>
+用户并非仅限于使用此选项按钮集合。使用 options 参数可以提供想使用的任何按钮。
+ <dt>options<dd>将在对话框底部显示的选项按钮集合的更详细描述。options 参数的常规值是 <code>String</code> 数组，但是参数类型是 <code>Object</code> 数组。根据对象的以下类型为每个对象创建一个按钮：
+ <dl compact>
+ <dt>Component<dd>该组件被直接添加到按钮行中。
+ <dt>Icon<dd>创建的 <code>JButton</code> 以此图标作为其标签。
+<dt>其他<dd>该 <code>Object</code> 通过使用其 <code>toString</code> 方法转换为字符串，并使用该结果作为 <code>JButton</code> 的标签。
+ </dl>
+ <dt>icon<dd>要置于对话框中的装饰性图标。图标的默认值由 <code>messageType</code> 参数确定。
+ <dt>title<dd>对话框的标题。
+ <dt>initialValue<dd>默认选择（输入值）。
+ </dl>
+ </blockquote>
+ <p>
+当选择更改时，调用生成 <code>PropertyChangeEvent</code> 的 <code>setValue</code> 方法。
+ <p>
+如果已为所有输入 <code>setWantsInput</code> 配置了 <code>JOptionPane</code>，则还可以侦听绑定属性 <code>JOptionPane.INPUT_VALUE_PROPERTY</code>，以确定何时用户输入或选择了值。
+ <p>
+当其中一个 <code>showXxxDialog</code> 方法返回整数时，可能的值为：
+ <ul>
+ <li><code>YES_OPTION</code>
+ <li><code>NO_OPTION</code>
+ <li><code>CANCEL_OPTION</code>
+ <li><code>OK_OPTION</code>
+ <li><code>CLOSED_OPTION</code>
+ </ul>
+<b>示例：</b>
+ <dl>
+<dt>显示一个错误对话框，该对话框显示的 message 为 'alert'：
+ <dd><code>JOptionPane.showMessageDialog(null, &quot;alert&quot;, &quot;alert&quot;, JOptionPane.ERROR_MESSAGE);</code><p>
+<dt>显示一个内部信息对话框，其 message 为 'information'：
+ <dd><code>JOptionPane.showInternalMessageDialog(frame, &quot;information&quot;,<br>
+             <ul><ul>&quot;information&quot;, JOptionPane.INFORMATION_MESSAGE);</ul></ul>
+ </code><p>
+<dt>显示一个信息面板，其 options 为 &quot;yes/no&quot;，message 为 'choose one'：
+ <dd><code>JOptionPane.showConfirmDialog(null,
+             <ul><ul>&quot;choose one&quot;, &quot;choose one&quot;, JOptionPane.YES_NO_OPTION);</ul></ul>
+ </code><p>
+<dt>显示一个内部信息对话框，其 options 为 &quot;yes/no/cancel&quot;，message 为 'please choose one'，并具有 title 信息：
+ <dd><code>JOptionPane.showInternalConfirmDialog(frame,
+             <ul><ul>&quot;please choose one&quot;, &quot;information&quot;,</ul></ul>
+             <ul><ul>JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);</ul></ul>
+ </code><p>
+<dt>显示一个警告对话框，其 options 为 OK、CANCEL，title 为 'Warning'，message 为 'Click OK to continue'：
+ <dd><code>Object[] options = { &quot;OK&quot;, &quot;CANCEL&quot; };<br> JOptionPane.showOptionDialog(null, &quot;Click OK to continue&quot;, &quot;Warning&quot;,
+             <ul><ul>JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,</ul></ul>
+             <ul><ul>null, options, options[0]);</ul></ul>
+ </code><p>
+<dt>显示一个要求用户键入 String 的对话框：
+ <dd><code>String inputValue = JOptionPane.showInputDialog(&quot;Please input a value&quot;);</code><p>
+<dt>显示一个要求用户选择 String 的对话框：
+ <dd><code>Object[] possibleValues = { &quot;First&quot;, &quot;Second&quot;, &quot;Third&quot; };<br> Object selectedValue = JOptionPane.showInputDialog(null,
+             <ul><ul>&quot;Choose one&quot;, &quot;Input&quot;,</ul></ul>
+             <ul><ul>JOptionPane.INFORMATION_MESSAGE, null,</ul></ul>
+             <ul><ul>possibleValues, possibleValues[0]);</ul></ul>
+ </code><p>
+ </dl>
+<b>直接使用：</b><br>要直接创建和使用 <code>JOptionPane</code>，标准模式大致如下：
+ <pre>
+     JOptionPane pane = new JOptionPane(<i>arguments</i>);
+     pane.set<i>.Xxxx(...); // Configure</i>
+     JDialog dialog = pane.createDialog(<i>parentComponent, title</i>);
+     dialog.show();
+     Object selectedValue = pane.getValue();
+     if(selectedValue == null)
+       return CLOSED_OPTION;
+     <i>//If there is <b>not</b> an array of option buttons:</i>
+     if(options == null) {
+       if(selectedValue instanceof Integer)
+          return ((Integer)selectedValue).intValue();
+       return CLOSED_OPTION;
+     }
+     <i>//If there is an array of option buttons:</i>
+     for(int counter = 0, maxCounter = options.length;
+        counter &lt; maxCounter; counter++) {
+        if(options[counter].equals(selectedValue))
+        return counter;
+     }
+     return CLOSED_OPTION;
+ </pre>
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see JInternalFrame
+
+@beaninfo attribute: isContainer true description: A component which implements standard dialog box controls.
+
+@version 1.91 03/04/04
+@author James Gosling
+@author Scott Violet
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Object javax.swing.JOptionPane.UNINITIALIZED_VALUE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示用户尚未选择值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.DEFAULT_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 意味着外观不应该提供任何选项的类型，即仅使用取自 <code>JOptionPane</code> 的选项。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.YES_NO_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>showConfirmDialog</code> 的类型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.YES_NO_CANCEL_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>showConfirmDialog</code> 的类型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.OK_CANCEL_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 <code>showConfirmDialog</code> 的类型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.YES_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择 YES 时从类方法返回的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.NO_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择 NO 时从类方法返回的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.CANCEL_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择 CANCEL 时从类方法返回的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.OK_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择 OK 时从类方法返回的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.CLOSED_OPTION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户没有做出任何选择而关闭了窗口时从类方法返回的值，很可能将此值视为 <code>CANCEL_OPTION</code> 或 <code>NO_OPTION</code>。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.ERROR_MESSAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于错误消息。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.INFORMATION_MESSAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于信息消息。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.WARNING_MESSAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于警告消息。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.QUESTION_MESSAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于问题。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JOptionPane.PLAIN_MESSAGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+未使用图标。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.ICON_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>icon</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.MESSAGE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>message</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.VALUE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>value</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.OPTIONS_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>option</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.INITIAL_VALUE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>initialValue</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.MESSAGE_TYPE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>type</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.OPTION_TYPE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>optionType</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.SELECTION_VALUES_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>selectionValues</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.INITIAL_SELECTION_VALUE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>initialSelectionValue</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.INPUT_VALUE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>inputValue</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.JOptionPane.WANTS_INPUT_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>wantsInput</code> 的绑定属性名。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.Icon javax.swing.JOptionPane.icon
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在窗格中使用的图标。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.JOptionPane.message
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要显示的消息。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object[] javax.swing.JOptionPane.options
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要向用户显示的选项。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.JOptionPane.initialValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+应该在 <code>options</code> 中最初选择的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JOptionPane.messageType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+消息类型。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JOptionPane.optionType
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选项类型，<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code> 之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.JOptionPane.value
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前选择的值，该值将为有效选项或者 <code>UNINITIALIZED_VALUE</code> 或 <code>null</code>。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object[] javax.swing.JOptionPane.selectionValues
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户可以从中选择值的数组。外观将提供从中做出选择的 UI 组件。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.JOptionPane.inputValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用户已输入的值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient java.lang.Object javax.swing.JOptionPane.initialSelectionValue
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要在 <code>selectionValues</code> 中选择的初始值。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JOptionPane.wantsInput
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则向用户提供 UI 窗口小部件以获取输入。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个带有测试消息的 <code>JOptionPane</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示消息的 <code>JOptionPane</code> 的实例，使其使用 UI 提供的普通消息消息类型和默认选项。
+
+@param message 要显示的 <code>Object</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message, int messageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示消息的 <code>JOptionPane</code> 的实例，使其具有指定的消息类型和默认选项。
+
+@param message 要显示的 <code>Object</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message, int messageType, int optionType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示消息的 <code>JOptionPane</code> 的实例，使其具有指定的消息类型和选项。
+
+@param message 要显示的 <code>Object</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param optionType 要在窗格中显示的选项：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code>、<code>OK_CANCEL_OPTION</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message, int messageType, int optionType, Icon icon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示消息的 <code>JOptionPane</code> 的实例，使其具有指定的消息类型、选项和图标。
+
+@param message 要显示的 <code>Object</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param optionType 要在窗格中显示的选项：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code>、<code>OK_CANCEL_OPTION</code>
+@param icon 要显示的 <code>Icon</code> 图像
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message, int messageType, int optionType, Icon icon, java.lang.Object[] options)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示消息的 <code>JOptionPane</code> 的实例，使其具有指定的消息类型、图标和选项。最初没有选择任何选项。
+ <p>
+options 对象应该包含 <code>Component</code>（直接添加的）或 <code>String</code>（包装在 <code>JButton</code> 中）的实例。如果提供 <code>Component</code>，则必须确保单击 <code>Component</code> 时，它向创建的 <code>JOptionPane</code> 传递消息 <code>setValue</code>。
+
+@param message 要显示的 <code>Object</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param optionType 要在窗格中显示的选项：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code>、<code>OK_CANCEL_OPTION</code>
+@param icon 要显示的 <code>Icon</code> 图像
+@param options  用户可以选择的选项
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JOptionPane(Object message, int messageType, int optionType, Icon icon, java.lang.Object[] options, Object initialValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定最初选择的选项的前提下，创建一个显示消息的 <code>JOptionPane</code> 的实例，使其具有指定的消息类型、图标和选项。
+
+@param message 要显示的 <code>Object</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param optionType 要在窗格中显示的选项：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code>、<code>OK_CANCEL_OPTION</code>
+@param icon 要显示的图标图像
+@param options  用户可以选择的选项
+@param initialValue 最初选择的选项；如果为 <code>null</code>，则不做最初选择；只有在使用 <code>options</code> 时才有意义
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInputDialog(Object message) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入的问题消息对话框。该对话框使用默认的边框，通常意味着在屏幕上居中显示。 
+
+@param message 要显示的 <code>Object</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInputDialog(Object message, Object initialSelectionValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入的问题消息对话框，它带有已初始化为 <code>initialSelectionValue</code> 的输入值。该对话框使用默认的窗体，通常意味着在屏幕上居中显示。 
+
+@param message 要显示的 <code>Object</code>
+@param initialSelectionValue 用于初始化输入字段的值
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInputDialog(Component parentComponent, Object message) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入内容的问题消息对话框，它以 <code>parentComponent</code> 为父级。该对话框显示于 <code>Component</code> 的窗体的上部，通常位于 <code>Component</code> 之下。 
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInputDialog(Component parentComponent, Object message, Object initialSelectionValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入内容的问题消息对话框，它以 <code>parentComponent</code> 为父级。输入值将被初始化为 <code>initialSelectionValue</code>。该对话框显示于 <code>Component</code> 的窗体的上部，通常位于 <code>Component</code> 之下。  
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message 要显示的 <code>Object</code>
+@param initialSelectionValue 用于初始化输入字段的值
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInputDialog(Component parentComponent, Object message, String title, int messageType) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入内容的对话框，它以 <code>parentComponent</code> 为父级，该对话框的标题为 <code>title</code>，消息类型为 <code>messageType</code>。
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+@param title    要在对话框的标题栏中显示的 <code>String</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.JOptionPane.showInputDialog(Component parentComponent, Object message, String title, int messageType, Icon icon, java.lang.Object[] selectionValues, Object initialSelectionValue) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提示用户在可以指定初始选择、可能选择及其他所有选项的模块化的对话框中输入内容。用户可以从 <code>selectionValues</code> 中进行选择，其中 <code>null</code> 表示用户可以输入想输入的任何内容，通常依靠 <code>JTextField</code> 来实现。<code>initialSelectionValue</code> 是用于提示用户的初始值。由 UI 决定如何最好的表示 <code>selectionValues</code>，但通常情况下将使用 <code>JComboBox</code>、<code>JList</code> 或 <code>JTextField</code>。
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+@param title    要在对话框的标题栏中显示的 <code>String</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon     要显示的 <code>Icon</code> 图像
+@param selectionValues 给出可能选择的 <code>Object</code> 数组
+@param initialSelectionValue 用于初始化输入字段的值
+@return 用户输入；返回 <code>null</code> 意味着用户取消了输入
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showMessageDialog(Component parentComponent, Object message) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出标题为 &quot;Message&quot; 的信息消息对话框。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showMessageDialog(Component parentComponent, Object message, String title, int messageType) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出对话框，它显示使用由 <code>messageType</code> 参数确定的默认图标的 message。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showMessageDialog(Component parentComponent, Object message, String title, int messageType, Icon icon) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个显示信息的对话框，为其指定了所有参数。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon      要在对话框中显示的图标，该图标可以帮助用户识别要显示的消息种类
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showConfirmDialog(Component parentComponent, Object message) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出带有选项 <i>Yes</i>、<i>No</i> 和 <i>Cancel</i> 的对话框；标题为 <b>Select an Option</b>。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@return 指示用户所选选项的整数
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showConfirmDialog(Component parentComponent, Object message, String title, int optionType) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个由 <code>optionType</code> 参数确定其中选项数的对话框。
+ 
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的 int：<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code>
+@return 指示用户所选选项的 int
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用一个由 <code>optionType</code> 参数确定其中选项数的对话框，<code>messageType</code> 参数确定要显示的图标。<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>。
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code>
+@param messageType 指定此消息种类的整数；主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@return 指示用户所选选项的整数
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个带有指定图标的对话框，其中的选项数由 <code>optionType</code> 参数确定。<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 Object
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的 int：<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code>
+@param messageType 指定此消息种类的 int，主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon 要在对话框中显示的图标
+@return 指示用户所选选项的 int
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showOptionDialog(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, java.lang.Object[] options, Object initialValue) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个带有指定图标的对话框，其中的初始选择由 <code>initialValue</code> 参数确定，选项数由 <code>optionType</code> 参数确定。
+ <p>
+如果 <code>optionType</code> 为 <code>YES_NO_OPTION</code> 或者 <code>YES_NO_CANCEL_OPTION</code>，并且 <code>options</code> 参数为 <code>null</code>，则由外观提供选项。 
+ <p>
+<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code>
+@param messageType 指定消息种类的整数，主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon      在对话框中显示的图标
+@param options   指示用户可能选择的对象组成的数组；如果对象是组件，则可以正确呈现；非 <code>String</code> 对象使用其 <code>toString</code> 方法呈现；如果此参数为 <code>null</code>，则由外观确定选项
+@param initialValue 表示对话框的默认选择的对象；只有在使用 <code>options</code> 时才有意义；可以为 <code>null</code>
+@return 指示用户所选选项的整数；如果用户关闭了对话框，则返回 <code>CLOSED_OPTION</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog javax.swing.JOptionPane.createDialog(Component parentComponent, String title) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个新 <code>JDialog</code>，它在 <code>parentComponent</code> 窗体中的 <code>parentComponent</code> 中央包装 <code>this</code>。<code>title</code> 是返回对话框的标题。用户不能调整返回的 <code>JDialog</code>，但是程序可以通过调用 <code>JDialog</code> 实例上的 <code>setResizable</code> 来更改此属性。返回的 <code>JDialog</code> 将被设置为：一旦将其关闭或者用户单击其中一个按钮，就会相应地设置选项窗格的值属性并关闭对话框。每次对话框变得可见时，它会将选项窗格的值属性重置为 <code>JOptionPane.UNINITIALIZED_VALUE</code>，从而确保用户的后续操作能够正确地关闭对话框。
+
+@param parentComponent 确定在其中显示对话框的窗体；如果 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param title 对话框的标题字符串
+@return 包含此实例的新 <code>JDialog</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog javax.swing.JOptionPane.createDialog(String title) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回一个新的带有指定标题的无父 <code>JDialog</code>。用户不能调整返回的 <code>JDialog</code>，但是程序可以通过调用 <code>JDialog</code> 实例上的 <code>setResizable</code> 来更改此属性。返回的 <code>JDialog</code> 将被设置为：一旦将其关闭或者用户单击其中一个按钮，就会相应地设置选项窗格的值属性并关闭对话框。每次对话框变得可见时，它会将选项窗格的值属性重置为 <code>JOptionPane.UNINITIALIZED_VALUE</code>，从而确保用户的后续动作能够正确地关闭对话框。
+
+ @param title     对话框的标题字符串
+ @return 包含此实例的新 <code>JDialog</code> 
+ @exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showInternalMessageDialog(Component parentComponent, Object message)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出内部确认对话框面板。该对话框是一个信息消息对话框，标题为 &quot;Message&quot;。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showInternalMessageDialog(Component parentComponent, Object message, String title, int messageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调出一个显示消息的内部对话框面板，它使用由 <code>messageType</code> 参数确定的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.showInternalMessageDialog(Component parentComponent, Object message, String title, int messageType, Icon icon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个显示消息的内部对话框面板，为其指定了所有参数。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@param title     对话框的标题字符串
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon      要在对话框中显示的图标，该图标可以帮助用户识别要显示的消息种类
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showInternalConfirmDialog(Component parentComponent, Object message)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出带有选项 <i>Yes</i>、<i>No</i> 和 <i>Cancel</i> 的内部对话框面板；标题为 <b>Select an Option</b>。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要显示的 <code>Object</code>
+@return 指示用户所选选项的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showInternalConfirmDialog(Component parentComponent, Object message, String title, int optionType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个由 <code>optionType</code> 参数确定其中选项数的内部对话框面板。
+ 
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要在对话框中显示的对象；<code>Component</code> 对象呈现为 <code>Component</code>；<code>String</code> 对象呈现为字符串；其他对象将通过 <code>toString</code> 方法被转换为 <code>String</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>YES_NO_OPTION</code> 或 <code>YES_NO_CANCEL_OPTION</code>
+@return 指示用户所选选项的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showInternalConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个由 <code>optionType</code> 参数确定其中选项数的内部对话框面板，<code>messageType</code> 参数确定要显示的图标。<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要在对话框中显示的对象；<code>Component</code> 对象呈现为 <code>Component</code>；<code>String</code> 对象呈现为字符串；其他对象将通过 <code>toString</code> 方法被转换为 <code>String</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>YES_NO_OPTION</code> 或 <code>YES_NO_CANCEL_OPTION</code>
+@param messageType 指定消息种类的整数，主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@return 指示用户所选选项的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showInternalConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个带有指定图标的内部对话框面板，其中的选项数由 <code>optionType</code> 参数确定。<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 parentComponent 不具有 Frame，则使用默认的 <code>Frame</code>
+@param message   要在对话框中显示的对象；<code>Component</code> 对象呈现为 <code>Component</code>；<code>String</code> 对象呈现为字符串；其他对象将通过 <code>toString</code> 方法被转换为 <code>String</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>YES_NO_OPTION</code> 或 <code>YES_NO_CANCEL_OPTION</code>。
+@param messageType 指定消息种类的整数，主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon      要在对话框中显示的图标
+@return 指示用户所选选项的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static int javax.swing.JOptionPane.showInternalOptionDialog(Component parentComponent, Object message, String title, int optionType, int messageType, Icon icon, java.lang.Object[] options, Object initialValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调出一个带有指定图标的内部对话框面板，其中的初始选择由 <code>initialValue</code> 参数确定，选项数由 <code>optionType</code> 参数确定。
+ <p>
+如果 <code>optionType</code> 为 <code>YES_NO_OPTION</code>，或者 <code>YES_NO_CANCEL_OPTION</code> 且 <code>options</code> 参数为 <code>null</code>，则由外观提供选项。 
+ <p>
+<code>messageType</code> 参数主要用于提供来自外观的默认图标。
+
+@param parentComponent 确定在其中显示对话框的 <code>Frame</code>；如果为 <code>null</code> 或者 <code>parentComponent</code> 不具有 <code>Frame</code>，则使用默认的 <code>Frame</code>
+@param message   要在对话框中显示的对象；<code>Component</code> 对象呈现为 <code>Component</code>；<code>String</code> 对象呈现为字符串。其他对象通过 <code>toString</code> 方法被转换为 <code>String</code>
+@param title     对话框的标题字符串
+@param optionType 指定可用于对话框的选项的整数：<code>YES_NO_OPTION</code> 或 <code>YES_NO_CANCEL_OPTION</code>
+@param messageType 指定消息种类的整数；主要用于确定来自可插入外观的图标：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon      在对话框中显示的图标
+@param options   指示用户可能选择的对象组成的数组；如果对象是组件，则可以正确呈现；非 <code>String</code> 对象使用其 <code>toString</code> 方法呈现；如果此参数为 <code>null</code>，则由外观确定选项
+@param initialValue 表示对话框的默认选择的对象；只有在使用 <code>options</code> 时才有意义；可以为 <code>null</code>
+@return 指示用户所选选项的整数；如果用户关闭了对话框，则返回 <code>CLOSED_OPTION</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInternalInputDialog(Component parentComponent, Object message)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入内容的内部问题消息对话框，它以 <code>parentComponent</code> 为父级。该对话框显示于 <code>Component</code> 的窗体中，通常位于 <code>Component</code> 之下。 
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.swing.JOptionPane.showInternalInputDialog(Component parentComponent, Object message, String title, int messageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+显示请求用户输入内容的内部对话框，它以 <code>parentComponent</code> 为父级。该对话框的标题为 <code>title</code>，消息类型为 <code>messageType</code>。
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+@param title    要在对话框的标题栏中显示的 <code>String</code>
+@param messageType 要显示的消息类型：ERROR_MESSAGE、INFORMATION_MESSAGE、WARNING_MESSAGE、QUESTION_MESSAGE 或 PLAIN_MESSAGE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.swing.JOptionPane.showInternalInputDialog(Component parentComponent, Object message, String title, int messageType, Icon icon, java.lang.Object[] selectionValues, Object initialSelectionValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提示用户在可以指定初始选择、可能选择及其他所有选项的模块化的内部对话框中输入内容。用户可以从 <code>selectionValues</code> 中进行选择，其中 <code>null</code> 表示用户可以输入想输入的任何内容，通常依靠 <code>JTextField</code> 来实现。<code>initialSelectionValue</code> 是用于提示用户的初始值。由 UI 决定如何最好的表示 <code>selectionValues</code>，但通常情况下将使用 <code>JComboBox</code>、<code>JList</code> 或 <code>JTextField</code>。
+
+@param parentComponent  对话框的父 <code>Component</code>
+@param message  要显示的 <code>Object</code>
+@param title    要在对话框的标题栏中显示的 <code>String</code>
+@param messageType 要显示的消息类型：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@param icon     要显示的 <code>Icon</code> 图像
+@param selectionValues 给出可能选择的 <code>Object</code> 数组
+@param initialSelectionValue 用于初始化输入字段的值
+@return 用户输入；返回 <code>null</code> 意味着用户取消了输入
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JInternalFrame javax.swing.JOptionPane.createInternalFrame(Component parentComponent, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回 <code>JInternalFrame</code> 的实例。内部窗体是利用指定标题创建的，同时包装了 <code>JOptionPane</code>。返回的 <code>JInternalFrame</code> 将被添加到 <code>parentComponent</code> 的 <code>JDesktopPane</code> 祖先中；如果其祖先之一不是 <code>JDesktopPane</code>，则添加到其父组件中；如果 <code>parentComponent</code> 不具有父级，则抛出 <code>RuntimeException</code>。
+
+@param parentComponent  内部窗体的父 <code>Component</code>
+@param title    要在窗体的标题栏中显示的 <code>String</code>
+@return 包含 <code>JOptionPane</code> 的 <code>JInternalFrame</code>
+@exception RuntimeException 如果 <code>parentComponent</code> 不具有有效的父级
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Frame javax.swing.JOptionPane.getFrameForComponent(Component parentComponent) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的 <code>Frame</code>。
+ 
+@param parentComponent 要检查 <code>Frame</code> 的 <code>Component</code>
+@return 包含组件的 <code>Frame</code>；如果组件为 <code>null</code> 或者不具有有效的 <code>Frame</code> 父级，则返回 <code>getRootFrame</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see #getRootFrame
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.swing.JDesktopPane javax.swing.JOptionPane.getDesktopPaneForComponent(Component parentComponent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的桌面窗格。
+ 
+@param parentComponent 要检查桌面的 <code>Component</code>
+@return 包含组件的 <code>JDesktopPane</code>；如果组件为 <code>null</code> 或者不具有作为 <code>JInternalFrame</code> 的祖先，则返回 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JOptionPane.setRootFrame(Frame newRootFrame)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置窗体，以用于不提供窗体的类方法。
+ <p>  
+<strong>注：</strong> 
+建议提供有效的父级而不是使用此方法。
+
+@param newRootFrame 要使用的默认 <code>Frame</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.awt.Frame javax.swing.JOptionPane.getRootFrame() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于不提供窗体的类方法中的 <code>Frame</code>。
+
+@return 要使用的默认 <code>Frame</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless</code> 返回 <code>true</code>
+@see #setRootFrame
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setUI(OptionPaneUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置实现此组件 L&F 的 UI 对象。
+
+@param ui  <code>OptionPaneUI</code> L&F 对象
+@see UIDefaults#getUI
+@beaninfo bound:true hidden:true description: The UI object that implements the optionpane's LookAndFeel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.OptionPaneUI javax.swing.JOptionPane.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现此组件 L&F 的 UI 对象。
+
+@return <code>OptionPaneUI</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>UIManager</code> 发出的关于 L&F 已改变的通知。根据 <code>UIManager</code> 的最新通知替换当前的 UI 对象。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JOptionPane.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回实现此组件 L&F 的 UI 类的名称。
+
+@return 字符串 &quot;OptionPaneUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setMessage(Object newMessage)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置选项窗格的消息对象。
+@param newMessage 要显示的 <code>Object</code>
+@see #getMessage
+
+@beaninfo preferred: true bound: true description: The optionpane's message object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JOptionPane.getMessage()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗格显示的消息对象。
+@see #setMessage
+
+@return 显示的 <code>Object</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setIcon(Icon newIcon)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要显示的图标。如果非 <code>null</code>，则外观不提供图标。
+@param newIcon 要显示的 <code>Icon</code>
+
+@see #getIcon
+@beaninfo preferred:true bound:true description: The option pane's type icon.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Icon javax.swing.JOptionPane.getIcon()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此窗格显示的图标。
+@return 显示的 <code>Icon</code>
+
+@see #setIcon
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setValue(Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置用户所选值。
+@param newValue  所选值
+
+@see #getValue
+@beaninfo preferred:true bound:true description: The option pane's value object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JOptionPane.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用户所选值。<code>UNINITIALIZED_VALUE</code> 表示用户尚未作出选择，而 <code>null</code> 则表示用户没有选取任何项便关闭了窗口。否则，返回值将为在此对象中所定义的选项之一。
+
+@return 用户所选 <code>Object</code>；如果用户尚未作出选择，则返回 <code>UNINITIALIZED_VALUE</code>；如果用户没有作出选择而关闭了窗口，则返回 <code>null</code>
+
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setOptions(java.lang.Object[] newOptions)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此窗格显示的选项。如果 <code>newOptions</code> 中的元素为 <code>Component</code>，则直接将其添加到窗格；否则为元素创建一个按钮。
+
+@param newOptions 用于创建用户可单击按钮的 <code>Object</code> 数组，或者要添加到窗格的任意 <code>Component</code>
+
+@see #getOptions
+@beaninfo bound: true description: The option pane's options objects.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.swing.JOptionPane.getOptions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用户可以作出的选择。
+@return 给出用户选择的 <code>Object</code> 数组
+
+@see #setOptions
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setInitialValue(Object newInitialValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要启用的初始值，即最初显示窗格时处于焦点状态的 <code>Component</code>。
+
+@param newInitialValue 获得初始键盘焦点的 <code>Object</code>
+
+@see #getInitialValue
+@beaninfo preferred: true bound: true description: The option pane's initial value object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JOptionPane.getInitialValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回初始值。
+
+@return 获得初始键盘焦点的 <code>Object</code>
+
+@see #setInitialValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setMessageType(int newType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置选项窗格的消息类型。消息类型供外观确定要显示的图标（如果未提供）及 <code>parentComponent</code> 的可能布局时使用。
+@param newType 指定要显示的消息种类的整数：<code>ERROR_MESSAGE</code>、<code>INFORMATION_MESSAGE</code>、<code>WARNING_MESSAGE</code>、<code>QUESTION_MESSAGE</code> 或 <code>PLAIN_MESSAGE</code>
+@exception RuntimeException 如果 <code>newType</code> 不是上面列出的合法值之一
+
+@see #getMessageType
+@beaninfo preferred:true bound:true description: The option pane's message type.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JOptionPane.getMessageType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回消息类型。
+
+@return 指定消息类型的整数
+
+@see #setMessageType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setOptionType(int newType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要显示的选项。选项类型供外观确定要显示的按钮时使用（除非已提供选项）。
+@param newType 指定 L&F 要显示的选项的整数：<code>DEFAULT_OPTION</code>、<code>YES_NO_OPTION</code>、<code>YES_NO_CANCEL_OPTION</code> 或 <code>OK_CANCEL_OPTION</code>
+@exception RuntimeException 如果 <code>newType</code> 不是上面列出的合法值之一
+
+@see #getOptionType
+@see #setOptions
+@beaninfo preferred:true bound:true description: The option pane's option type.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JOptionPane.getOptionType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回显示的选项类型。
+
+@return 指定用户可选择选项的整数
+
+@see #setOptionType
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setSelectionValues(java.lang.Object[] newValues)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置窗格的输入选择值，该窗格向用户提供可以从中进行选择的项列表。（UI 提供窗口小部件，以便用户从中选取其中一个值。）<code>null</code> 值表示用户可以输入想输入的任何值，通常依靠 <code>JTextField</code> 来实现。  
+ <p>
+将 <code>wantsInput</code> 设置为 true。使用 <code>setInitialSelectionValue</code> 指定最初选择的值。启用了窗格后，<code>inputValue</code> 将被设置为用户所选的值。
+@param newValues 用户要显示的 <code>Object</code> 数组（通常使用列表或组合框的形式），用户可以从中作出选择
+@see #setWantsInput
+@see #setInitialSelectionValue
+@see #getSelectionValues
+@beaninfo bound: true description: The option pane's selection values.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.swing.JOptionPane.getSelectionValues()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回输入选择值。
+
+@return 用户可以选择的 <code>Object</code> 数组
+@see #setSelectionValues
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setInitialSelectionValue(Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置（根据选择）最初向用户显示的输入值。仅当 <code>wantsInput</code> 为 true 时使用。
+@param newValue 最初选择的值
+@see #setSelectionValues
+@see #getInitialSelectionValue
+@beaninfo bound:true description: The option pane's initial selection value object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JOptionPane.getInitialSelectionValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回（根据最初选择）向用户显示的输入值。
+
+@return 最初选择值
+@see #setInitialSelectionValue
+@see #setSelectionValues
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setInputValue(Object newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置由用户选择或输入的输入值。仅当 <code>wantsInput</code> 为 true 时才使用。注意，此方法由选项窗格内部调用（响应用户操作），客户端程序一般不能调用。要设置（根据选择）最初向用户显示的输入值，请使用 <code>setInitialSelectionValue</code>。
+
+@param newValue 用于设置用户指定值的 <code>Object</code>（通常使用文本字段的形式）
+@see #setSelectionValues
+@see #setInitialSelectionValue
+@see #setWantsInput
+@see #getInputValue
+@beaninfo preferred:true bound: true description: The option pane's input value object.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.JOptionPane.getInputValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>wantsInput</code> 为 true，则返回用户已输入的值。
+
+@return 用户指定的 <code>Object</code>，如果它是这些对象之一；如果为键入字段中的值，则返回 <code>String</code>
+@see #setSelectionValues
+@see #setWantsInput
+@see #setInputValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JOptionPane.getMaxCharactersPerLineCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回要置于消息的行中的最大字符数。默认情况下返回 <code>Integer.MAX_VALUE</code>。在子类中重写此方法可更改该值。
+
+@return 给出行中最大字符数的整数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.setWantsInput(boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>wantsInput</code> 属性。如果 <code>newValue</code> 为 true，则提供其父级为 <code>parentComponent</code> 的输入组件（比如文本字段或组合框），以允许用户输入值。如果 <code>getSelectionValues</code> 返回非 <code>null</code> 数组，则输入值为该数组中的对象之一。否则，输入值就是用户输入的内容。
+ <p>
+这是一个绑定属性。
+
+@see #setSelectionValues
+@see #setInputValue
+@beaninfo preferred: true bound: true description: Flag which allows the user to input a value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JOptionPane.getWantsInput()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>wantsInput</code> 属性的值。
+
+@return 如果将提供输入组件，则返回 true
+@see #setWantsInput
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JOptionPane.selectInitialValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+请求选择初始值，该请求将焦点设置为初始值。应该在包含选项窗格的窗口变得可见后调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JOptionPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JOptionPane</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JOptionPane</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JOptionPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与此 JOptionPane 相关联的 <code>AccessibleContext</code>。对于选项窗格，<code>AccessibleContext</code> 采用 <code>AccessibleJOptionPane</code> 的形式。必要时创建一个新的 <code>AccessibleJOptionPane</code> 实例。
+
+@return 一个 AccessibleJOptionPane，它充当此 AccessibleJOptionPane 的 AccessibleContext
+@beaninfo expert:true description:The AccessibleContext associated with this option pane
+
+<!-- END DATA -->

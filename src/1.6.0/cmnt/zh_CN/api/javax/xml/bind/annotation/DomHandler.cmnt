@@ -1,0 +1,67 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.bind.annotation.DomHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在元素（及其子代）与 DOM（或类似对象）表示形式之间相互转换。
+
+ <p>
+此接口的实现将与 {@link XmlAnyElement} 注释一起使用，将 XML 的元素映射到信息集（如 W3C DOM）的表示形式。
+
+ <p>
+实现隐藏 XML 的一部分与这些类 DOM 表示形式之间相互转换的方式，并允许 JAXB 提供者处理任意这样的库。
+
+ <P>
+此接口将由库编写器实现，并由 JAXB 提供者使用。这些方法都不应该从应用程序调用。
+
+@author Kohsuke Kawaguchi
+@since JAXB2.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public ResultT extends javax.xml.transform.Result javax.xml.bind.annotation.DomHandler.createUnmarshaller(ValidationEventHandler errorHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当 JAXB 提供者需要将文档的一部分解组为信息集表示形式时，首先要调用此方法创建一个 {@link Result} 对象。
+
+ <p>
+然后 JAXB 提供者将 XML 的一部分发送到给定的结果中。这一部分 XML 总是可以形成整个 XML 文档（该文档以某个元素为根）的子树。
+
+@param errorHandler 如果在调用此方法和调用 {@link #getElement(Result)} 之间发生任何错误，则必须向此处理程序报告。
+
+调用者必须提供一个非 null 错误处理程序。
+
+从此方法创建的 {@link Result} 对象可以保存对此错误处理程序的引用。
+
+@return 如果操作失败，则返回 null。必须向错误处理程序报告错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public ElementT javax.xml.bind.annotation.DomHandler.getElement(ResultT rt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将部分发送到 {@link Result} 后，JAXB 提供者将调用此方法来获取已解组元素表示形式。
+
+ <p>
+多次调用此方法可能返回不同的对象。在将整个子树填充到 {@link Result} 对象时，才可以调用此方法。
+
+@param rt 由 {@link #createUnmarshaller(ValidationEventHandler)} 创建的 {@link Result} 对象。
+
+@return 如果操作失败，则返回 null。必须向错误处理程序报告错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.transform.Source javax.xml.bind.annotation.DomHandler.marshal(ElementT n, ValidationEventHandler errorHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 JAXB 提供者需要将元素编组为 XML 时调用此方法。
+
+ <p>
+如果为非 null，则返回的 {@link Source} 必须包含以一个元素为根的整个文档，该文档随后将被编制成一个将由 JAXB 提供者编组的更大文档。
+
+@param errorHandler 接收将元素转换成 {@link Source} 的过程中发生的任何错误。
+
+调用者必须提供一个非 null 错误处理程序。
+
+@return 如果有错误，则返回 null。应该向处理程序报告该错误。
+
+<!-- END DATA -->

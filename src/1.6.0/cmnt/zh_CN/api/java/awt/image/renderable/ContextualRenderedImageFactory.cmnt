@@ -1,0 +1,73 @@
+<!-- BEGIN KEY -->
+public interface java.awt.image.renderable.ContextualRenderedImageFactory extends java.awt.image.renderable.RenderedImageFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ContextualRenderedImageFactory 为在 RenderableImageOp 实例之间可能不同的功能提供接口。因此，单个类（如 RenderedImageOp）可以通过使用 ContextualRenderedImageFactory 的多个实例对 RenderableImage 执行不同的操作。名称 ContextualRenderedImageFactory 通常缩写为 "CRIF"。 
+
+<p> 所有要在与呈现无关的链中使用的操作必须实现 ContextualRenderedImageFactory。
+
+<p> 实现此接口的类必须提供不带参数的构造方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.RenderContext java.awt.image.renderable.ContextualRenderedImageFactory.mapRenderContext(int i, RenderContext renderContext, ParameterBlock paramBlock, RenderableImage image)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将该操作的输出 RenderContext 映射到每个操作源的 RenderContext。这对以下操作非常有用：可以在 RenderContext 中完整表达或仅作为替换的一部分表达的操作，如仿射映射；为节省处理工作或传输带宽，希望获取源的较低质量的呈现的操作。某些操作（如模糊处理）也可以使用此机制来避免获取高于所需质量的源。
+
+@param i 源图像的索引。
+@param renderContext 应用于操作的 RenderContext。
+@param paramBlock 包含操作的源和参数的 ParameterBlock。
+@param image 正被呈现的 RenderableImage。
+@return 源的 <code>RenderContext</code>，该源位于指定 ParameterBlock 包含的参数 Vector 的指定索引处。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RenderedImage java.awt.image.renderable.ContextualRenderedImageFactory.create(RenderContext renderContext, ParameterBlock paramBlock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定包含操作的源和参数的 RenderContext 和 ParameterBlock 创建一个呈现。输出一个用 RenderContext 确定其在图像平面上的尺寸和位置的 RenderedImage。此方法内含“智能”，允许与呈现无关的操作，以适合特定的 RenderContext。
+
+@param renderContext 指定呈现的 RenderContext
+@param paramBlock 包含操作的源和参数的 ParameterBlock
+@return 根据指定 ParameterBlock 中的源和参数并按照指定 RenderContext 的呈现指令确定的 <code>RenderedImage</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.image.renderable.ContextualRenderedImageFactory.getBounds2D(ParameterBlock paramBlock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回操作的输出的边界框，该操作在与呈现无关的空间中给定的一组源上执行。该边界作为一个 Rectangle2D 返回，即一个带浮点值角坐标的沿轴对齐的（axis-aligned）矩形。
+
+@param paramBlock 包含操作的源和参数的 ParameterBlock。
+@return 指定输出的与呈现无关的边界框的 Rectangle2D。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.ContextualRenderedImageFactory.getProperty(ParameterBlock paramBlock, String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取由 name 参数指定的属性的适当实例。如果存在多个源，并且每个源都指定某个属性，此方法必须确定返回该属性的哪个实例。
+
+@param paramBlock 包含操作的源和参数的 ParameterBlock。
+@param name 命名所需属性的字符串。
+@return 引用所请求属性的值的对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.awt.image.renderable.ContextualRenderedImageFactory.getPropertyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回由 getProperty 识别的名称列表。
+@return 属性名称的列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.renderable.ContextualRenderedImageFactory.isDynamic()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果使用相同参数的后续呈现（即调用 create(RenderContext, ParameterBlock)）可以生成不同的结果，则返回 true。可以使用此方法来确定某个现有呈现是否可以被缓存或重用。返回 true 表示始终安全。
+@return 如果使用相同参数的后续呈现可以生成不同结果，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->

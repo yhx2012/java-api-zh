@@ -1,0 +1,76 @@
+<!-- BEGIN KEY -->
+javax.print
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为 Java<sup><font size="-2">TM</font></sup> Print Service API 提供了主要类和接口。Java Print Service API 允许客户端和服务器应用程序具备如下功能：
+<ul>
+<li>根据其性能发现并选择 PrintService。
+<li>指定打印数据的格式。
+<li>向支持所打印文档类型的服务提交 PrintJob。
+</ul>
+
+<h3>PrintService 发现</h3>
+<p>
+应用程序可调用抽象类 {@link javax.print.PrintServiceLookup PrintServiceLookup} 的静态方法来查找 PrintService，这些 PrintService 具有满足应用程序打印要求的功能。例如，要打印双面文档，应用程序首先需要找到具有双面打印功能的打印机。
+<p>
+JDK 包括的 <code>PrintServiceLookup</code> 实现可查找标准的平台打印机。要查找其他类型的打印机（如 IPP 打印机或 JINI 打印机），PrintService 提供者可写入 <code>PrintServiceLookup</code> 实现。PrintService 提供者可使用 <a hrefhttp://java.sun.com/javase/6/docs/technotes/guides/jar/jar.html#Service%20Provider">SPI JAR 文件规范</a> 动态地安装这些 <code>PrintServiceLookup</code> 实现。
+
+<h3>属性定义</h3>
+
+{@link javax.print.attribute} 和 {@link javax.print.attribute.standard} 包定义了打印属性，这些属性描述了 PrintService 的功能、指定 PrintJob 的要求并跟踪 PrintJob 的进度。
+<p>
+<code>javax.print.attribute</code> 包描述了属性类型和属性分类方法。<code>javax.print.attribute.standard</code> 包枚举了 API 所支持的所有标准属性，其中大多数是在 IETF 规范 <a href="http://www.ietf.org/rfc/rfc2911.txt">RFC 2911 Internet Printing Protocol, 1.1:Model and Semantics</a>（2000 年 9 月）中所指定的属性实现。<code>javax.print.attribute.standard</code> 中指定的属性包括常见的功能，如：分辨率、份数、介质大小、作业优先级和页面范围。  
+
+<h3>文档类型规范</h3>
+
+{@link javax.print.DocFlavor DocFlavor} 类表示了打印数据的格式，如 JPEG 或 PostScript。<code>DocFlavor</code> 对象由 MIME 类型（描述了格式）和文档表示形式类名（指示如何将文档发送到打印机或输出流）所组成。应用程序使用 <code>DocFlavor</code> 和属性集来查找某些打印机，这些打印机可打印由 <code>DocFlavor</code> 所指定的文档类型且具有属性集所指定的功能。  
+
+<h3>使用 API</h3>
+
+典型的应用程序使用 Java Print Service API 执行以下步骤来处理打印请求：
+<ol>
+<li>选择一个 <code>DocFlavor</code>。</li>
+<li>创建一个属性集。</li>
+<li>找到一个可处理由 <code>DocFlavor</code> 和属性集所指定的打印请求的 PrintService。</li>
+<li>创建一个 {@link javax.print.Doc Doc} 对象，该对象封装 <code>DocFlavor</code> 和实际的打印数据，这些打印数据可采用很多形式，包括：Postscript 文件、JPEG 图像、URL 或纯文本。</li>
+<li>从 PrintService 获得一个由 {@link javax.print.DocPrintJob DocPrintJob} 表示的 PrintJob。</li>
+<li>调用 PrintJob 的 print 方法。</li>
+</ol>
+以下代码示例说明了 Java Print Service API 的典型用法：找到可在 A4 大小的纸张上打印 5 份 Postscript 文档双面副本的打印机、根据某个返回的 PrintService 创建 PrintJob 并调用 print 方法。
+
+<p>
+<pre>
+<blockquote>
+FileInputStream psStream;
+try {
+   psStream = new FileInputStream(&quot;file.ps&quot;);
+} catch (FileNotFoundException ffne) {
+}
+if (psStream == null) {
+    return;
+}
+
+DocFlavor psInFormat = DocFlavor.INPUT_STREAM.POSTSCRIPT;
+Doc myDoc = new SimpleDoc(psStream, psInFormat, null);  
+PrintRequestAttributeSet aset = 
+	new HashPrintRequestAttributeSet();
+aset.add(new Copies(5));
+aset.add(MediaSize.A4);
+aset.add(Sides.DUPLEX);
+PrintService[] services = 
+  PrintServiceLookup.lookupPrintServices(psInFormat, aset);
+if (services.length &gt; 0) {
+   DocPrintJob job = services[0].createPrintJob();
+   try {
+	job.print(myDoc, aset);
+   } catch (PrintException pe) {}
+}
+</blockquote>
+</pre>
+<P>
+请注意：在 javax.print API 中，只有在方法中显式记录传递给方法的 null 引用参数具有有意义的解释时，该参数才是正确的。否则就是错误的编码方式，并且可能立即或在稍后某时导致运行时异常。IllegalArgumentException 和 NullPointerException 是典型的异常示例，并且是这种情况可接受的运行时异常。
+<P>
+@since 1.4
+
+<!-- END DATA -->

@@ -1,0 +1,547 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JRootPane extends javax.swing.JComponent implements javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+该轻量级容器由 <code>JFrame</code>、<code>JDialog</code>、<code>JWindow</code>、<code>JApplet</code> 和 <code>JInternalFrame</code> 在后台使用。有关根窗格所提供功能的面向任务的信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/rootpane.html">How to Use Root Panes</a> 一节。
+ 
+ <p>
+下面的图像显示了使用根窗格的各个类之间的关系。
+<p align=center><img src="doc-files/JRootPane-1.gif" 
+ alt="以下文本是对此图像的描述。"
+ HEIGHT=484 WIDTH=629></p>
+&ldquo;重量级&rdquo;组件（指委托给主机系统上的同位体或本地组件的组件）用较暗的、更重的框来显示。四个重量级 JFC/Swing 容器（<code>JFrame</code>、<code>JDialog</code>、<code>JWindow</code> 和 <code>JApplet</code>）的显示与它们扩展的 AWT 类有关。这四个组件是 Swing 库中仅有的重量级容器。这里还显示了轻量级容器 <code>JInternalFrame</code>。所有这五个 JFC/Swing 容器都实现 <code>RootPaneContainer</code> 接口，并且它们都将其操作委托给 <code>JRootPane</code>（顶端显示有一个小 &quot;handle&quot;）。
+ <blockquote>
+<b>注：</b>使用 <code>JComponent</code> 的 <code>getRootPane</code> 方法可获取包含给定组件的 <code>JRootPane</code>。  
+ </blockquote>
+ <table align="right" border="0" summary="layout">
+ <tr>
+ <td align="center">
+<img src="doc-files/JRootPane-2.gif" 
+ alt="以下文本是对此图像的描述。" HEIGHT=386 WIDTH=349>
+ </td>
+ </tr>
+ </table>
+右图显示了 <code>JRootPane</code> 的结构。<code>JRootpane</code> 由一个 <code>glassPane</code> 和一个可选的 <code>menuBar</code> 以及一个 <code>contentPane</code> 组成。（<code>JLayeredPane</code> 负责管理 <code>menuBar</code> 和 <code>contentPane</code>。）<code>glassPane</code> 位于所有窗格之上，以便能够截取鼠标移动。由于 <code>glassPane</code>（与 <code>contentPane</code> 类似）可以是一个任意的组件，也可以设置 <code>glassPane</code> 来进行绘制。这样 <code>glassPane</code> 上的线条和图像可涵盖其下的窗体，不受其边界的限制。 
+ <p>
+尽管 <code>menuBar</code> 组件为可选，但 <code>layeredPane</code>、<code>contentPane</code> 和 <code>glassPane</code> 总是存在的。试图将它们设置为 <code>null</code> 将生成异常。 
+ <p>
+要将组件添加到 <code>JRootPane</code>（可选的菜单栏除外），您可以将对象添加到 <code>JRootPane</code> 的 <code>contentPane</code>，如下所示：
+ <pre>
+       rootPane.getContentPane().add(child);
+ </pre>
+可用同样的方法设置布局管理器、移除组件以及列出子级等。所有这些方法都是在 <code>contentPane</code> 上而不是 <code>JRootPane</code> 上调用的。
+ <blockquote>
+<b>注：</b><code>contentPane</code> 的默认布局管理器是 <code>BorderLayout</code> 管理器。但是，<code>JRootPane</code> 使用一个自定义的 <code>LayoutManager</code>。所以，如果您希望更改已添加到 <code>JRootPane</code> 中的组件的布局管理器，一定要确保使用如下代码：
+ <pre>
+    rootPane.getContentPane().setLayout(new BoxLayout());
+ </pre></blockquote>
+如果已在 <code>JRootPane</code> 上设置了 <code>JMenuBar</code> 组件，它将沿窗体的上边缘放置。<code>contentPane</code> 的位置和大小将进行调整以填充剩余的区域。（<code>JMenuBar</code> 和 <code>contentPane</code> 被添加到位于 <code>JLayeredPane.FRAME_CONTENT_LAYER</code> 层的 <code>layeredPane</code> 组件中。) 
+ <p>
+<code>layeredPane</code> 是 <code>JRootPane</code> 中所有子级的父级，既是菜单的直接父级，又是添加到 <code>contentPane</code> 中的所有组件的祖父级。它是 <code>JLayeredPane</code> 的实例，提供在若干层上添加组件的能力。在处理弹出菜单、对话框以及拖动时，即要求将组件置于窗格中所有其它组件之上的情况下，此功能非常有用。
+ <p>
+<code>glassPane</code> 位于 <code>JRootPane</code> 中所有其它组件之上。这为在所有其它组件上绘图和截取鼠标事件提供了方便，这对拖动和绘图都非常有用。开发人员可在 <code>glassPane</code> 上使用 <code>setVisible</code> 控制 <code>glassPane</code> 在所有其它子级上面显示的时间。默认情况下，<code>glassPane</code> 为不可见。 
+ <p>
+<code>JRootPane</code> 所使用的自定义 <code>LayoutManager</code> 可确保：
+ <OL>
+<LI><code>glassPane</code> 填充了 <code>JRootPane</code> 的整个可查看区域（边界 - insets）。
+<LI><code>layeredPane</code> 填充了 <code>JRootPane</code> 的整个可查看区域。（边界 - insets）
+<LI><code>menuBar</code> 位于 <code>layeredPane</code> 的上边缘。
+<LI><code>contentPane</code> 填充了整个可查看区域，减去 <code>menuBar</code>（如果有）。
+ </OL>
+<code>JRootPane</code> 视图层次结构中的任何其它视图均忽略。
+ <p>
+如果您替换 <code>JRootPane</code> 的 <code>LayoutManager</code>，您将负责管理所有这些视图。所以通常情况下，应该确保更改的是 <code>contentPane</code> 的布局管理器，而不是 <code>JRootPane</code> 自身的布局管理器。
+ <p>
+Swing 的绘制架构要求在所有其它组件之上的包含层次结构中有一个不透明的 <code>JComponent</code>。这通常通过使用内容窗格来实现。如果要替换内容窗格，建议使用 <code>setOpaque(true)</code> 将内容窗格设置为不透明。另外，如果内容窗格重写 <code>paintComponent</code>，还需要在 <code>paintComponent</code> 中用不透明颜色将背景完全填充。
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see JLayeredPane
+@see JMenuBar
+@see JWindow
+@see JFrame
+@see JDialog
+@see JApplet
+@see JInternalFrame
+@see JComponent
+@see BoxLayout
+
+@see <a href="http://java.sun.com/products/jfc/tsc/articles/mixing/">Mixing Heavy and Light Components</a>
+
+@version 1.86 05/18/04
+@author David Kloba
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.NONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 不应提供任何类型的 Window 装饰。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.FRAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Frame 的装饰。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.PLAIN_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.INFORMATION_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便显示一条报告消息。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.ERROR_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便显示一条错误消息。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.COLOR_CHOOSER_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便显示 <code>JColorChooser</code>。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.FILE_CHOOSER_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便显示 <code>JFileChooser</code>。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.QUESTION_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便向用户显示一个问题。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.JRootPane.WARNING_DIALOG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+供 windowDecorationStyle 属性使用的常量。指示 <code>JRootPane</code> 应提供适合 Dialog 的装饰以便显示一条警告消息。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JMenuBar javax.swing.JRootPane.menuBar
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+菜单栏。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Container javax.swing.JRootPane.contentPane
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+内容窗格。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JLayeredPane javax.swing.JRootPane.layeredPane
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+管理菜单栏和内容窗格的分层窗格。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JRootPane.glassPane
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+覆盖菜单栏和内容窗格的玻璃窗格，便于截取鼠标移动等操作。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JButton javax.swing.JRootPane.defaultButton
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+当窗格成为焦点并有类似按下 <b>Enter</b> 键的特定于 UI 的操作发生时被激活的按钮。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane.DefaultAction javax.swing.JRootPane.defaultPressAction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Java 2 platform v1.3 开始，此无用字段已不再使用。要重写默认的按钮，应在 <code>JRootPane</code> 的 <code>ActionMap</code> 中替换 <code>Action</code>。有关更多详细信息，请参阅键绑定规范。
+
+@deprecated 从 Java 2 platform v1.3 开始
+@see #defaultButton
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane.DefaultAction javax.swing.JRootPane.defaultReleaseAction
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 Java 2 platform v1.3 开始，此无用字段已不再使用。要重写默认的按钮，应在 <code>JRootPane</code> 的 <code>ActionMap</code> 中替换 <code>Action</code>。有关更多详细信息，请参阅键绑定规范。
+
+@deprecated 从 Java 2 platform v1.3 开始
+@see #defaultButton
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean javax.swing.JRootPane.useTrueDoubleBuffering
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否应该使用 true 双缓冲。通常为 true，但在特殊情况下可以设置为 false。例如，重量级弹出菜单（受窗口支持）将此设置为 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建 <code>JRootPane</code>，设置其 <code>glassPane</code>、<code>layeredPane</code> 以及 <code>contentPane</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setDoubleBuffered(boolean aFlag)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JRootPane.getWindowDecorationStyle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个常量，它标识 <code>JRootPane</code> 提供的 Window 装饰类型。
+
+@return <code>NONE</code>、<code>FRAME</code>、<code>PLAIN_DIALOG</code>、<code>INFORMATION_DIALOG</code>、<code>ERROR_DIALOG</code>、<code>COLOR_CHOOSER_DIALOG</code>、<code>FILE_CHOOSER_DIALOG</code>、<code>QUESTION_DIALOG</code> 或 <code>WARNING_DIALOG</code> 之一。
+@see #setWindowDecorationStyle
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setWindowDecorationStyle(int windowDecorationStyle)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>JRootPane</code> 应提供的 Window 装饰类型（例如，边界、关闭 Window 的小部件、标题等）。默认不提供任何 Window 装饰 (<code>NONE</code>)。
+ <p>
+这只是一个提示，有些外观可能不支持。这是一个绑定属性。
+
+@param windowDecorationStyle 标识要提供的 Window 装饰的常量。
+@see JDialog#setDefaultLookAndFeelDecorated
+@see JFrame#setDefaultLookAndFeelDecorated
+@see LookAndFeel#getSupportsWindowDecorations
+@throws IllegalArgumentException 如果 <code>style</code> 不是下列常量之一：<code>NONE</code>、<code>FRAME</code>、<code>PLAIN_DIALOG</code>、<code>INFORMATION_DIALOG</code>、<code>ERROR_DIALOG</code>、<code>COLOR_CHOOSER_DIALOG</code>、<code>FILE_CHOOSER_DIALOG</code>、<code>QUESTION_DIALOG</code> 或 <code>WARNING_DIALOG</code>。
+@since 1.4
+ @beaninfo
+        bound: true
+         enum: NONE                   JRootPane.NONE
+               FRAME                  JRootPane.FRAME
+               PLAIN_DIALOG           JRootPane.PLAIN_DIALOG
+               INFORMATION_DIALOG     JRootPane.INFORMATION_DIALOG
+               ERROR_DIALOG           JRootPane.ERROR_DIALOG
+               COLOR_CHOOSER_DIALOG   JRootPane.COLOR_CHOOSER_DIALOG
+               FILE_CHOOSER_DIALOG    JRootPane.FILE_CHOOSER_DIALOG
+               QUESTION_DIALOG        JRootPane.QUESTION_DIALOG
+               WARNING_DIALOG         JRootPane.WARNING_DIALOG
+       expert: true
+    attribute: visualUpdate true
+  description: Identifies the type of Window decorations to provide
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.RootPaneUI javax.swing.JRootPane.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的 L&F 对象。
+
+@return <code>LabelUI</code> 对象
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setUI(RootPaneUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的 L&F 对象。
+
+@param ui  <code>LabelUI</code> L&F 对象
+@see UIDefaults#getUI
+@beaninfo bound: true hidden: true expert: true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel.
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 UI 属性重置为当前外观对应的值。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JRootPane.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个指定呈现此组件的 L&F 类名称的字符串。
+
+@return &quot;RootPaneUI&quot; 字符串
+
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JLayeredPane javax.swing.JRootPane.createLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+由构造方法调用以便创建默认的 <code>layeredPane</code>。默认情况下创建一个新的 <code>JLayeredPane</code>。
+@return 默认的 <code>layeredPane</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Container javax.swing.JRootPane.createContentPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由构造方法调用以便创建默认的 <code>contentPane</code>。默认情况下，此方法创建新的 <code>JComponent</code> 并将 <code>BorderLayout</code> 设置为它的 <code>LayoutManager</code>。
+@return 默认的 <code>contentPane</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Component javax.swing.JRootPane.createGlassPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由构造方法调用以便创建默认的 <code>glassPane</code>。默认情况下，此方法创建新的 <code>JComponent</code>，其可见性设置为 false。
+@return 默认的 <code>glassPane</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.LayoutManager javax.swing.JRootPane.createRootLayout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由构造方法调用以便创建默认的 <code>layoutManager</code>。
+@return 默认的 <code>layoutManager</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setJMenuBar(JMenuBar menu)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+添加或更改在分层窗格中使用的菜单栏。
+@param menu 要添加的 <code>JMenuBar</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setMenuBar(JMenuBar menu)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定菜单栏的值。
+@deprecated 从 Swing 版本 1.0.3 开始，由 <code>setJMenuBar(JMenuBar menu)</code> 取代。
+@param menu 要添加的 <code>JMenuBar</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JMenuBar javax.swing.JRootPane.getJMenuBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回窗格层的菜单栏。
+@return 该窗格中使用的 <code>JMenuBar</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JMenuBar javax.swing.JRootPane.getMenuBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回菜单栏的值。
+@deprecated 从 Swing 版本 1.0.3 开始，由 <code>getJMenuBar()</code> 取代。
+@return 窗格中使用的 <code>JMenuBar</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setContentPane(Container content)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+设置内容窗格，它是保存以根窗格为父级的组件的容器。
+ <p>
+Swing 的绘制架构要求在包含层次结构中有一个不透明的 <code>JComponent</code>。这通常由内容窗格提供。如果要替换内容窗格，则建议用一个不透明的 <code>JComponent</code> 来替代。
+  
+@param content 供组件内容使用的 <code>Container</code>
+@exception java.awt.IllegalComponentStateException （运行时异常）如果内容窗格参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.JRootPane.getContentPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回内容窗格，它是保存以根窗格为父级的组件的容器。
+  
+@return 保存组件内容的 <code>Container</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setLayeredPane(JLayeredPane layered)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置供根窗格使用的分层窗格。分层窗格通常容纳一个内容窗格和一个可选的 <code>JMenuBar</code>。
+
+@param layered  要使用的 <code>JLayeredPane</code>
+@exception java.awt.IllegalComponentStateException （运行时异常）如果分层窗格参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JLayeredPane javax.swing.JRootPane.getLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取供根窗格使用的分层窗格。分层窗格通常保存一个内容窗格和一个可选的 <code>JMenuBar</code>。
+
+@return 当前使用的 <code>JLayeredPane</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setGlassPane(Component glass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的 <code>Component</code> 设置为此根窗格的玻璃窗格。玻璃窗格通常应该是一个轻量级的、透明的组件，因为每当根窗格需要抓取输入事件时会将它设置为可见。 
+ <p>
+更改新玻璃窗格的可见性，以匹配当前玻璃窗格的可见性。其含义是，当想要替换玻璃窗格并使其可见时必须要小心。以下代码之一将起作用：
+ <pre>
+   root.setGlassPane(newGlassPane);
+   newGlassPane.setVisible(true);
+ </pre>
+ 或者：
+ <pre>
+   root.getGlassPane().setVisible(true);
+   root.setGlassPane(newGlassPane);
+ </pre>
+
+@param glass 要用作此 <code>JRootPane</code> 的玻璃窗格的 <code>Component</code>
+@exception NullPointerException 如果 <code>glass</code> 参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JRootPane.getGlassPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JRootPane</code> 的当前玻璃窗格。
+@return 当前的玻璃窗格
+@see #setGlassPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JRootPane.isValidateRoot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>JRootPane</code> 的一个后代调用 <code>revalidate</code>，将从此位置开始进行验证。
+<p>
+推迟对一个组件及其后代再次布局的请求。例如，对 <code>revalidate</code> 的调用被上推至 <code>JRootPane</code> 或 <code>JScrollPane</code>，因为两个类都重写 <code>isValidateRoot</code> 以返回 true。
+ 
+@see JComponent#isValidateRoot
+@return true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JRootPane.isOptimizedDrawingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>glassPane</code> 和 <code>contentPane</code> 具有相同的边界，这意味着 <code>JRootPane</code> 并不对其子级平铺，应返回 false。另一方面，<code>glassPane</code> 通常为不可见，所以如果 <code>glassPane</code> 为不可见时，它会返回 true。因此，这里的返回值取决于 <code>glassPane</code> 的可见性。
+
+@return 如果此组件的子级不重叠，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将本身注册为 <code>SystemEventQueueUtils</code> 的新的根窗格。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.removeNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将本身从 <code>SystemEventQueueUtils</code> 注销。
+@see #addNotify
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JRootPane.setDefaultButton(JButton defaultButton)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>defaultButton</code> 属性，它确定此 <code>JRootPane</code> 的当前默认按钮。默认的按钮是根窗格中发生 UI 定义的激活事件（通常是 <b>Enter</b> 键）时将被激活的按钮，无论按钮是否成为键盘焦点（除非根窗格中另有一个组件使用此激活事件，例如一个 <code>JTextPane</code>）。为使默认的激活正常工作，在激活发生时该按钮必须是根窗格的一个已启用的后代。要从此根窗格移除一个默认的按钮，设置此属性为 <code>null</code>。
+
+@see JButton#isDefaultButton
+@param defaultButton 将成为默认按钮的 <code>JButton</code>
+
+@beaninfo description: The button activated by default in this root pane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JButton javax.swing.JRootPane.getDefaultButton()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>defaultButton</code> 属性的值。
+@return 当前为默认按钮的 <code>JButton</code>
+@see #setDefaultButton
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JRootPane.addImpl(Component comp, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重写以便将玻璃组件的位置强行设置成零位子级。
+
+@param comp 要增强的组件
+@param constraints 要遵守的约束条件
+@param index 索引
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JRootPane.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JRootPane</code> 的字符串表示形式。此方法仅在进行调试的时候使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JRootPane</code> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JRootPane.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>JRootPane</code> 相关联的 <code>AccessibleContext</code>。对于根窗格，<code>AccessibleContext</code> 采用 <code>AccessibleJRootPane</code> 的形式。必要时创建新的 <code>AccessibleJRootPane</code> 实例。
+
+@return 一个 <code>AccessibleJRootPane</code>，它充当此 <code>JRootPane</code> 的 <code>AccessibleContext</code>
+
+<!-- END DATA -->

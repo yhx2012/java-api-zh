@@ -1,0 +1,265 @@
+<!-- BEGIN KEY -->
+public final class java.awt.RadialGradientPaint extends java.awt.MultipleGradientPaint
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@code RadialGradientPaint} 类提供使用圆形辐射颜色渐变模式填充某一形状的方式。用户可以指定两种或多种渐变颜色，此绘制将在颜色与颜色之间提供一个插值。
+ <p>
+用户必须指定用于控制渐变模式的圆，可用中心点和半径对该圆进行描述。用户也可以在该圆内部指定一个独立焦点，由它控制渐变的第一种颜色的位置。默认情况下，该焦点被设置为圆心。
+ <p>
+此绘制将渐变的第一种颜色映射到焦点，将渐变的最后一种颜色映射到圆周，在两者之间平滑地插入用户指定的任意中间颜色。因此，从焦点到圆周之间绘制的任何直线都将跨越所有渐变颜色。
+ <p>
+在圆的半径外部指定焦点将导致焦点被设置为焦点-中心线与圆周的交点。
+ <p>
+用户必须提供一个 float 数组，用于指定如何沿渐变分布颜色。这些值的范围从 0.0 到 1.0，其作用与沿渐变的关键帧类似（它们标记渐变应完全变为某种特定颜色的位置）。
+ <p>
+在用户没有将第一个关键帧值设置为等于 0 和/或将最后一个关键帧值设置为等于 1 的情况下，将在这些位置创建关键帧，并且第一种颜色和最后一种颜色将在这些位置处重复。因此，如果用户指定以下数组来构造渐变：<br>
+ <pre>
+{Color.BLUE, Color.RED}, {.3f, .7f}
+ </pre>
+那么此渐变将转换为一个带有以下关键帧的渐变：<br>
+ <pre>
+{Color.BLUE, Color.BLUE, Color.RED, Color.RED}, {0f, .3f, .7f, 1f}
+ </pre>
+
+ <p>
+在填充圆的半径边界以外的颜色时，用户也可以选择 {@code RadialGradientPaint} 应执行的动作。如果没有指定循环方法，则将默认选择 {@code NO_CYCLE}，这意味着将使用最后一个关键帧的颜色来填充剩余的区域。
+ <p>
+colorSpace 参数允许用户指定应在哪一种颜色空间（默认 sRGB 或线性 RGB）中执行插值操作。
+
+ <p>
+以下代码演示了 {@code RadialGradientPaint} 的典型用法，其中中心点和焦点是同一个点：
+ <p>
+ <pre>
+Point2D center = new Point2D.Float(50, 50);
+float radius = 25;
+float[] dist = {0.0f, 0.2f, 1.0f};
+Color[] colors = {Color.RED, Color.WHITE, Color.BLUE};
+RadialGradientPaint p =
+new RadialGradientPaint(center, radius, dist, colors);
+ </pre>
+
+ <p>
+此图像用默认（居中）焦点演示了对以上示例代码使用三种循环方法时的情形：
+ <p>
+ <center>
+ <img src = "doc-files/RadialGradientPaint-1.png">
+ </center>
+
+ <p>
+它也可以使用以下代码指定一个非居中的焦点：
+ <p>
+ <pre>
+Point2D center = new Point2D.Float(50, 50);
+float radius = 25;
+Point2D focus = new Point2D.Float(40, 40);
+float[] dist = {0.0f, 0.2f, 1.0f};
+Color[] colors = {Color.RED, Color.WHITE, Color.BLUE};
+RadialGradientPaint p =
+new RadialGradientPaint(center, radius, focus,
+dist, colors,
+CycleMethod.NO_CYCLE);
+ </pre>
+
+ <p>
+此图像演示了对上述示例代码（使用了非居中焦点）使用三种循环方法时的情形：
+ <p>
+ <center>
+ <img src = "doc-files/RadialGradientPaint-2.png">
+ </center>
+
+@see java.awt.Paint
+@see java.awt.Graphics2D#setPaint
+@author Nicholas Talian, Vincent Hardy, Jim Graham, Jerry Evans
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(float cx, float cy, float radius, float[] fractions, java.awt.Color[] colors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用中心点作为焦点，构造一个具有默认 {@code NO_CYCLE} 重复方法和 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param cx 定义渐变的圆的中心点在用户空间中的 X 坐标。渐变的最后一种颜色被映射到圆周上。
+@param cy 定义渐变的圆的中心点在用户空间中的 Y 坐标。渐变的最后一种颜色被映射到圆周上。
+@param radius 定义颜色渐变范围的圆的半径
+@param fractions 范围从 0.0 到 1.0 之间的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+
+@throws NullPointerException 如果 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(Point2D center, float radius, float[] fractions, java.awt.Color[] colors)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用中心点作为焦点，构造一个具有默认 {@code NO_CYCLE} 重复方法和 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param center 用户空间中定义渐变的圆的中心点
+@param radius 圆的半径，用于定义颜色渐变的范围
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+
+@throws NullPointerException 如果 {@code center} 点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(float cx, float cy, float radius, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用中心点作为焦点，构造一个具有默认 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param cx 定义渐变的圆的中心点在用户空间中的 X 坐标。渐变的最后一种颜色被映射到圆周上。
+@param cy 定义渐变的圆的中心点在用户空间中的 Y 坐标。渐变的最后一种颜色被映射到圆周上。
+@param radius 定义颜色渐变范围的圆的半径
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+
+@throws NullPointerException 如果 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(Point2D center, float radius, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用中心点作为焦点，构造一个具有默认 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param center 用户空间中定义渐变的圆的中心点
+@param radius 圆的半径，用于定义颜色渐变的范围
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+
+@throws NullPointerException 如果 {@code center} 点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(float cx, float cy, float radius, float fx, float fy, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param cx 定义渐变的圆的中心点在用户空间中的 X 坐标。渐变的最后一种颜色被映射到圆周上。
+@param cy 定义渐变的圆的中心点在用户空间中的 Y 坐标。渐变的最后一种颜色被映射到圆周上。
+@param radius 圆的半径，用于定义颜色渐变的范围
+@param fx 第一种颜色所映射的点在用户空间中的 X 坐标
+@param fy 第一种颜色所映射的点在用户空间中的 Y 坐标
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+  
+@throws NullPointerException 如果 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(Point2D center, float radius, Point2D focus, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。
+
+@param center 用户空间中定义渐变的圆的中心点。渐变的最后一种颜色被映射到圆周上。
+@param radius 圆的半径，用于定义颜色渐变的范围
+@param focus 用户空间中第一种颜色映射到的点
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+  
+@throws NullPointerException 如果有一个点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(Point2D center, float radius, Point2D focus, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod, MultipleGradientPaint.ColorSpaceType colorSpace, AffineTransform gradientTransform)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 {@code RadialGradientPaint}。
+
+@param center 用户空间中定义渐变的圆的中心点。渐变的最后一种颜色被映射到圆周上。
+@param radius 圆的半径，用于定义颜色渐变的范围
+@param focus 用户空间中第一种颜色映射到的点
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+@param colorSpace 用于插值操作的颜色空间，该参数为 {@code SRGB} 或 {@code LINEAR_RGB}
+@param gradientTransform 要应用于渐变的变换
+
+@throws NullPointerException 如果有一个点为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null；或者 {@code colorSpace} 为 null；或者 {@code gradientTransform} 为 null
+@throws IllegalArgumentException 如果 {@code radius} 非正；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.RadialGradientPaint(Rectangle2D gradientBounds, float[] fractions, java.awt.Color[] colors, MultipleGradientPaint.CycleMethod cycleMethod)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有默认 {@code SRGB} 颜色空间的 {@code RadialGradientPaint}。{@code RadialGradientPaint} 的渐变圆是由给定的边界框定义的。
+ <p>
+此构造方法是表达以下（等效）代码的一种简便方式：<br>
+
+ <pre>
+double gw = gradientBounds.getWidth();
+double gh = gradientBounds.getHeight();
+double cx = gradientBounds.getCenterX();
+double cy = gradientBounds.getCenterY();
+Point2D center = new Point2D.Double(cx, cy);
+
+AffineTransform gradientTransform = new AffineTransform();
+gradientTransform.translate(cx, cy);
+gradientTransform.scale(gw / 2, gh / 2);
+gradientTransform.translate(-cx, -cy);
+
+RadialGradientPaint gp =
+new RadialGradientPaint(center, 1.0f, center,
+fractions, colors,
+cycleMethod,
+ColorSpaceType.SRGB,
+gradientTransform);
+ </pre>
+
+@param gradientBounds 用户空间中定义渐变最外层范围的边界框
+@param fractions 0.0 到 1.0 范围内的数字，用于指定沿渐变的颜色分布
+@param colors 在渐变中使用的颜色数组。第一种颜色用于焦点处，最后一种颜色环绕在圆周上。
+@param cycleMethod {@code NO_CYCLE}、{@code REFLECT} 或 {@code REPEAT}
+
+@throws NullPointerException 如果 {@code gradientBounds} 为 null；或者 {@code fractions} 数组为 null；或者 {@code colors} 数组为 null；或者 {@code cycleMethod} 为 null
+@throws IllegalArgumentException 如果 {@code gradientBounds} 为空；或者 {@code fractions.length != colors.length}；或者 {@code colors} 大小小于 2；或者 {@code fractions} 值小于 0.0 或大于 1.0；或者没有严格按升序提供 {@code fractions}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.PaintContext java.awt.RadialGradientPaint.createContext(ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds, AffineTransform transform, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Point2D java.awt.RadialGradientPaint.getCenterPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回辐射状渐变中心点的副本。
+
+@return {@code Point2D} 对象，它是中心点的副本     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Point2D java.awt.RadialGradientPaint.getFocusPoint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回渐变轴结束点的副本。
+
+@return {@code Point2D} 对象，它是焦点的副本     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.RadialGradientPaint.getRadius()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回定义辐射状渐变的圆的半径。
+
+@return 定义辐射状渐变的圆的半径
+
+<!-- END DATA -->

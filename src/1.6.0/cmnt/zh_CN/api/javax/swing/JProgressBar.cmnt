@@ -1,0 +1,596 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JProgressBar extends javax.swing.JComponent implements javax.swing.SwingConstants, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以可视化形式显示某些任务进度的组件。在任务的完成进度中，进度条显示该任务完成的百分比。此百分比通常由一个矩形以可视化形式表示，该矩形开始是空的，随着任务的完成逐渐被填充。此外，进度条可显示此百分比的文本表示形式。
+ <p>
+{@code JProgressBar} 使用 {@code BoundedRangeModel} 作为其数据模型，以 {@code value} 属性表示该任务的“当前”状态，{@code minimum} 和 {@code maximum} 属性分别表示开始点和结束点。
+ <p>
+要指示正在执行一个未知长度的任务，可以将进度条设置为不确定模式。不确定模式的进度条持续地显示动画来表示正进行的操作。一旦可以确定任务长度和进度量，则应该更新进度条的值，将其切换回确定模式。
+ 
+ <p>
+
+下面是一个创建进度条的示例，其中 <code>task</code> 为返回关于该任务进度信息的对象（表示某部分操作）：
+ 
+<pre>
+progressBar = new JProgressBar(0, task.getLengthOfTask());
+progressBar.setValue(0);
+progressBar.setStringPainted(true);
+</pre>
+
+下面是查询该任务的当前状态以及使用返回值更新进度条值的示例：
+
+<pre>
+progressBar.setValue(task.getCurrent());
+</pre>
+
+下面的示例将进度条设置为不确定模式，然后在知道任务长度后切换回确定模式：
+
+<pre>
+progressBar = new JProgressBar();
+<em>...//when the task of (initially) unknown length begins:</em>
+progressBar.setIndeterminate(true);
+<em>...//do some work; get length of task...</em>
+progressBar.setMaximum(newLength);
+progressBar.setValue(newValue);
+progressBar.setIndeterminate(false);
+</pre>
+
+ <p>
+ 
+有关进一步的文档和完整的示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/progress.html" target="_top">How to Monitor Progress</a> 一节。
+
+ <p>
+<strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see javax.swing.plaf.basic.BasicProgressBarUI
+@see javax.swing.BoundedRangeModel
+@see javax.swing.SwingWorker
+
+@beaninfo attribute: isContainer false description: A component that displays an integer value.
+
+@version 1.93 12/19/03
+@author Michael C. Albers
+@author Kathy Walrath
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.JProgressBar.orientation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+进度条是水平的还是垂直的。默认值为 <code>HORIZONTAL</code>。
+
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JProgressBar.paintBorder
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否显示围绕进度条的边框。默认值为 <code>true</code>。
+
+@see #setBorderPainted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.BoundedRangeModel javax.swing.JProgressBar.model
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保存进度条数据的对象。
+
+@see #setModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JProgressBar.progressString
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可以在进度条上显示的可选字符串。默认值为 <code>null</code>。将此值设置为非 <code>null</code> 值并不表示将显示该字符串。要显示该字符串，{@code paintString} 必须为 {@code true}。
+
+ @see #setString
+ @see #setStringPainted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JProgressBar.paintString
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+是否在进度条上显示文本的字符串。默认值为 <code>false</code>。将此值设置为 <code>true</code> 可在进度条上呈现进度的文本显示。如果 <code>progressString</code> 为 <code>null</code>，则在进度条上显示完成的百分比。否则，在进度条上呈现 <code>progressString</code>。
+
+@see #setStringPainted
+@see #setString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.event.ChangeEvent javax.swing.JProgressBar.changeEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每个实例只需要一个 <code>ChangeEvent</code>，因为事件的唯一感兴趣属性是不可变源，即进度条。首次触发该事件通知以延迟方式创建该事件。
+
+ @see #fireStateChanged
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JProgressBar.changeListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+侦听由进度条的模型发送的更改事件，并将其再次指派到在此进度条上注册的更改事件侦听器。
+
+@see #createChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.JProgressBar.indeterminate
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+进度条是不确定模式 (<code>true</code>) 还是常规模式 (<code>false</code>)；默认值为 <code>false</code>。
+
+@see #setIndeterminate
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JProgressBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个显示边框但不带进度字符串的水平进度条。初始值和最小值都为 0，最大值为 100。
+
+@see #setOrientation
+@see #setBorderPainted
+@see #setStringPainted
+@see #setString
+@see #setIndeterminate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JProgressBar(int orient)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定方向（{@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}）的进度条。默认情况下，绘制边框但不绘制进度字符串。初始值和最小值都为 0，最大值为 100。
+
+@param orient  所需进度条方向
+@throws IllegalArgumentException 如果 {@code orient} 为非法值
+
+@see #setOrientation
+@see #setBorderPainted
+@see #setStringPainted
+@see #setString
+@see #setIndeterminate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JProgressBar(int min, int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定最小值和最大值的水平进度条。将进度条的初始值设置为指定最小值。默认情况下，绘制边框但不绘制进度字符串。
+<p>
+保存进度条数据的 <code>BoundedRangeModel</code> 可处理由于在进度条上不正确地设置了最小值、初始值和最大值而引起的任何问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+
+@param min  进度条的最小值
+@param max  进度条的最大值
+
+@see BoundedRangeModel
+@see #setOrientation
+@see #setBorderPainted
+@see #setStringPainted
+@see #setString
+@see #setIndeterminate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JProgressBar(int orient, int min, int max)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定方向、最小值和最大值的进度条。默认情况下，绘制边框但不绘制进度字符串。将进度条的初始值设置为指定最小值。
+<p>
+保存进度条数据的 <code>BoundedRangeModel</code> 可处理由于在进度条上不正确地设置了最小值、初始值和最大值而引起的任何问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+
+@param orient  所需的进度条方向
+@param min  进度条的最小值
+@param max  进度条的最大值
+@throws IllegalArgumentException 如果 {@code orient} 为非法值
+
+@see BoundedRangeModel
+@see #setOrientation
+@see #setBorderPainted
+@see #setStringPainted
+@see #setString
+@see #setIndeterminate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JProgressBar(BoundedRangeModel newModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建使用指定的保存进度条数据模型的水平进度条。默认情况下，绘制边框但不绘制进度字符串。
+
+@param newModel  进度条的数据模型。
+
+@see #setOrientation
+@see #setBorderPainted
+@see #setStringPainted
+@see #setString
+@see #setIndeterminate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JProgressBar.getOrientation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据进度条的方向返回 {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}。默认方向为 {@code SwingConstants.HORIZONTAL}。
+
+@return <code>HORIZONTAL</code> 或 <code>VERTICAL</code>
+@see #setOrientation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setOrientation(int newOrientation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将进度条的方向设置为 <code>newOrientation</code>（必须为 {@code SwingConstants.VERTICAL} 或 {@code SwingConstants.HORIZONTAL}）。默认方向为 {@code SwingConstants.HORIZONTAL}。
+
+@param  newOrientation  <code>HORIZONTAL</code> 或 <code>VERTICAL</code>
+@exception  IllegalArgumentException  如果 <code>newOrientation</code> 为非法值
+@see #getOrientation
+
+@beaninfo preferred: true bound:true attribute: visualUpdate true description: Set the progress bar's orientation.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JProgressBar.isStringPainted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>stringPainted</code> 属性的值。
+
+@return <code>stringPainted</code> 属性的值
+@see    #setStringPainted
+@see    #setString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setStringPainted(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>stringPainted</code> 属性的值，该属性确定进度条是否应该呈现进度字符串。默认值为 <code>false</code>，意味着不绘制任何字符串。有些外观可能不支持进度字符串，或者只有在进度条处于确定模式时才支持它们。
+
+@param   b       如果进度条应该呈现字符串，则该参数为 <code>true</code>
+@see     #isStringPainted
+@see     #setString
+@beaninfo bound: true attribute: visualUpdate true description: Whether the progress bar should render a string.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JProgressBar.getString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前进度的 {@code String} 表示形式。默认情况下，此方法根据从 {@code getPercentComplete} 返回的值返回一个简单的百分比 {@code String}。比如说 "42%"。可通过调用 {@code setString} 更改该字符串。 
+
+ @return 进度字符串的值；如果进度字符串为 {@code null}，则返回一个简单的百分比字符串
+ @see    #setString
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setString(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置进度字符串的值。默认情况下，此字符串为 <code>null</code>，隐含使用简单百分比字符串的内置行为。如果已提供自定义进度字符串并要转换回内置状态，将字符串设置回 <code>null</code> 即可。
+<p>
+仅当 <code>isStringPainted</code> 方法返回 <code>true</code> 时绘制进度字符串。
+
+@param  s       进度字符串的值
+@see    #getString
+@see    #setStringPainted
+@see    #isStringPainted
+@beaninfo bound:true attribute: visualUpdate true description: Specifies the progress string to paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double javax.swing.JProgressBar.getPercentComplete()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回进度条的完成百分比。注意，此数介于 0.0 和 1.0 之间。
+
+@return 此进度条的完成百分比
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JProgressBar.isBorderPainted()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>borderPainted</code> 属性。
+
+@return <code>borderPainted</code> 属性的值
+@see    #setBorderPainted
+@beaninfo description: Does the progress bar paint its border
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setBorderPainted(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>borderPainted</code> 属性，如果进度条应该绘制其边框，则此属性为 <code>true</code>。此属性的默认值为 <code>true</code>。一些外观也许不实现绘制的边框；它们将忽略此属性。
+
+@param   b       如果进度条应该绘制边框，则为 <code>true</code>；否则为 <code>false</code>
+@see     #isBorderPainted
+@beaninfo bound:true attribute: visualUpdate true description: Whether the progress bar should paint its border.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JProgressBar.paintBorder(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>borderPainted</code> 属性为 <code>true</code>，则绘制进度条的边框。
+ 
+@param g  用于绘制边框的 <code>Graphics</code> 上下文
+@see #paint
+@see #setBorder
+@see #isBorderPainted
+@see #setBorderPainted
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.ProgressBarUI javax.swing.JProgressBar.getUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的外观对象。
+
+@return 呈现此组件的 <code>ProgressBarUI</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setUI(ProgressBarUI ui)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置呈现此组件的外观对象。
+
+@param ui  <code>ProgressBarUI</code> L&F 对象
+@see UIDefaults#getUI
+@beaninfo bound: true hidden:true attribute: visualUpdate true description: The UI object that implements the Component's LookAndFeel. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.updateUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 UI 属性重置为当前外观对应的值。
+
+@see JComponent#updateUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.JProgressBar.getUIClassID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回呈现此组件的外观类的名称。
+
+@return 字符串 &quot;ProgressBarUI&quot;
+@see JComponent#getUIClassID
+@see UIDefaults#getUI
+@beaninfo expert: true description: A string that specifies the name of the look-and-feel class.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.ChangeListener javax.swing.JProgressBar.createChangeListener()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要以不同方式处理来自模型的更改事件的子类可以重写此方法，以返回自定义 <code>ChangeListener</code> 实现的实例。默认 {@code ChangeListener} 调用 {@code fireStateChanged} 方法将 {@code ChangeEvent} 转发给直接添加到进度条的 {@code ChangeListener}。  
+
+ @see #changeListener
+ @see #fireStateChanged
+ @see javax.swing.event.ChangeListener
+ @see javax.swing.BoundedRangeModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的 <code>ChangeListener</code> 添加到进度条。
+
+@param l  要添加的 <code>ChangeListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从进度条移除 <code>ChangeListener</code>。
+
+@param l  要移除的 <code>ChangeListener</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.JProgressBar.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回通过 <code>addChangeListener</code> 添加到此进度条的所有 <code>ChangeListener</code> 组成的数组。
+
+@return 所有添加的 <code>ChangeListener</code>；如果没有添加任何侦听器，则返回一个空数组
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JProgressBar.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将一个 {@code ChangeEvent}（其源是此 {@code JProgressBar}）发送给针对 {@code ChangeEvent} 的所有已注册 {@code ChangeListener}。每次从该模型接收 {@code ChangeEvent} 时调用此方法。 
+ <p>
+
+ 如果需要，将创建事件实例并存储在 {@code changeEvent} 中。
+
+ @see #addChangeListener
+ @see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.BoundedRangeModel javax.swing.JProgressBar.getModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此进度条使用的数据模型。
+
+@return 当前使用的 <code>BoundedRangeModel</code>
+@see #setModel
+@see    BoundedRangeModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setModel(BoundedRangeModel newModel)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>JProgressBar</code> 使用的数据模型。注意，{@code BoundedRangeModel} 的 {@code extent} 未被使用，并设置为 {@code 0}。
+
+@param  newModel 要使用的 <code>BoundedRangeModel</code>
+
+@beaninfo expert: true description: The data model used by the JProgressBar.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JProgressBar.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>BoundedRangeModel</code> 返回进度条的当前 {@code value}。该值始终介于最小值和最大值之间（包括两者）。
+
+@return  进度条的当前值
+@see     #setValue
+@see     BoundedRangeModel#getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JProgressBar.getMinimum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>BoundedRangeModel</code> 返回进度条的 {@code minimum} 值。
+
+@return  进度条的最小值
+@see     #setMinimum
+@see     BoundedRangeModel#getMinimum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JProgressBar.getMaximum()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 <code>BoundedRangeModel</code> 返回进度条的 {@code maximum} 值。
+
+@return  进度条的最大值
+@see     #setMaximum
+@see     BoundedRangeModel#getMaximum
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setValue(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将进度条的当前值设置为 {@code n}。此方法将新值转发到该模型。  
+ <p>
+数据模型（{@code BoundedRangeModel} 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+如果新值不同于以前的值，则通知所有的更改侦听器。
+
+@param   n 新值
+@see     #getValue
+@see     #addChangeListener
+@see     BoundedRangeModel#setValue
+@beaninfo preferred:true description: The progress bar's current value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setMinimum(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将进度条的最小值（存储在进度条的数据模型中）设置为 <code>n</code>。
+ <p>
+数据模型（<code>BoundedRangeModel</code> 实例）处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+如果该最小值不同于以前的最小值，则通知所有的更改侦听器。
+
+@param  n       新值
+@see    #getMinimum
+@see    #addChangeListener
+@see    BoundedRangeModel#setMinimum
+@beaninfo preferred:true description: The progress bar's minimum value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setMaximum(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将进度条的最大值（存储在进度条的数据模型中）设置为 <code>n</code>。
+ <p>
+底层 <code>BoundedRangeModel</code> 处理因赋值不当而引起的所有数学问题。有关详细信息，请参阅 {@code BoundedRangeModel} 文档。
+ <p>
+如果该最大值不同于以前的最大值，则通知所有的更改侦听器。
+
+@param  n       新最大值
+@see    #getMaximum
+@see    #addChangeListener
+@see    BoundedRangeModel#setMaximum
+@beaninfo preferred:true description: The progress bar's maximum value.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JProgressBar.setIndeterminate(boolean newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置进度条的 <code>indeterminate</code> 属性，该属性确定进度条处于确定模式中还是处于不确定模式中。不确定进度条连续地显示动画，指示发生未知长度的操作。默认情况下，此属性为 <code>false</code>。有些外观可能不支持不确定进度条；它们将忽略此属性。
+ 
+ <p>
+
+请参阅 <a href="http://java.sun.com/docs/books/tutorial/uiswing/components/progress.html" target="_top">How to Monitor Progress</a> 以获取使用不确定进度条的示例。
+
+@param newValue	如果进度条应该更改为不确定模式，则为 <code>true</code>；如果应该转换回常规模式，则为 <code>false</code>。
+
+
+@see #isIndeterminate
+@see javax.swing.plaf.basic.BasicProgressBarUI
+ 
+@since 1.4
+
+@beaninfo bound: true attribute: visualUpdate true description: Set whether the progress bar is indeterminate (true) or normal (false).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.JProgressBar.isIndeterminate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>indeterminate</code> 属性的值。
+
+@return <code>indeterminate</code> 属性的值
+@see    #setIndeterminate
+
+@since 1.4
+
+@beaninfo description: Is the progress bar indeterminate (true) or normal (false)?
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JProgressBar.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JProgressBar</code> 的字符串表示形式。此方法仅用于调试目的。返回的字符串内容和格式在各种实现间可能各不相同。返回的字符串可能为空，但不可能为 <code>null</code>。
+ 
+@return  此 <code>JProgressBar</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JProgressBar.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得与此 <code>JProgressBar</code> 关联的 <code>AccessibleContext</code>。对于进度条，<code>AccessibleContext</code> 采用 <code>AccessibleJProgressBar</code> 的形式。必要时要创建新的 <code>AccessibleJProgressBar</code> 实例。
+
+@return 一个 <code>AccessibleJProgressBar</code>，它将充当此 <code>JProgressBar</code> 的 <code>AccessibleContext</code>
+@beaninfo expert: true description: The AccessibleContext associated with this ProgressBar.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.swing.JProgressBar.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+关于 Swing 中序列化的更多信息，请参阅 JComponent 中 readObject() 和 writeObject()。
+
+<!-- END DATA -->

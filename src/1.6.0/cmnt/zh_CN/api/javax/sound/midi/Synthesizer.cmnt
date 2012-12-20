@@ -1,0 +1,220 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.midi.Synthesizer extends javax.sound.midi.MidiDevice
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Synthesizer</code> 生成声音。这通常发生在某个 <code>Synthesizer</code> 的 {@link MidiChannel} 对象直接或通过 <code>Synthesizer</code> 对象接收到 {@link MidiChannel#noteOn(int, int) noteOn} 消息时。很多 <code>Synthesizer</code> 都支持 <code>Receiver</code>，通过后者可将 MIDI 事件发送至 <code>Synthesizer</code>。这种情况下，<code>Synthesizer</code> 通常的响应是发送一个相应的消息至合适的 <code>MidiChannel</code>，如果事件不是 MIDI 通道消息之一，则自己处理该事件。
+ <p>
+<code>Synthesizer</code> 接口包括可从音库加载和卸载乐器 (instrument) 的方法。一个乐器就是用于合成某种声音类型的规范，无论这种声音模仿的是传统乐器还是某种音效或其他想象出来的声音。音库是通过库和程序号组织的一组乐器（通过乐器的 <code>Patch</code> 对象）。不同的 <code>Synthesizer</code> 类可实现不同的声音合成技巧，这意味着某些乐器可以与给定的合成器兼容，而另一些则不行。同样，合成器可以为乐器保留有限的内存量，这意味着不是每种合成器都可使用每种音库和乐器，即使合成技术兼容时也是如此。要查看取自某种音库的乐器是否可由给定的合成器演奏，可调用 <code>Synthesizer</code> 的 {@link #isSoundbankSupported(Soundbank) isSoundbankSupported} 方法。
+ <p>
+&ldquo;加载&rdquo;乐器意味着该乐器可用于合成音符。乐器加载至由其 <code>Patch</code> 对象指定的库和程序位置。加载并不一定意味着后续演奏的音符将立即具有此新加载乐器的声音。要使乐器演奏音符，某个合成器的 <code>MidiChannel</code> 对象必须接收（或已经接收）可使该特定乐器的库和程序号被选中的程序更改消息。
+
+@see MidiSystem#getSynthesizer
+@see Soundbank
+@see Instrument
+@see MidiChannel#programChange(int, int)
+@see Receiver
+@see Transmitter
+@see MidiDevice
+
+@version 1.29, 06/04/05
+@author Kara Kytle
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.midi.Synthesizer.getMaxPolyphony()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此合成器可同时发声的最大音符数。
+@return 同时发声的最大音符数
+@see #getVoiceStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.sound.midi.Synthesizer.getLatency()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此合成器导致的处理延迟，用微秒表示。此延迟可衡量从 MIDI 消息发送至合成器的时刻到该合成器实际生成相应结果的时刻之间最坏的延迟情况。
+ <p>
+尽管延迟用微秒表示，但合成器实际延迟测量值的变化范围可能远大于此精度所建议的时间（微秒）。例如，合成器最坏的情况下可能延迟几个毫秒或更多。
+
+@return 最坏的延迟情况，以微秒为单位
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.MidiChannel[] javax.sound.midi.Synthesizer.getChannels()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得此合成器控制的一组 MIDI 通道。返回数组中的每个非 null 元素都是一个 <code>MidiChannel</code>，可接收该通道号上发送的 MIDI 消息。
+ <p>
+MIDI 1.0 规范提供 16 个通道，所以此方法返回一个至少有 16 个元素的数组。但是，如果此合成器不使用所有的 16 个通道，则数组中的某些元素可能为 <code>null</code>，所以应在使用前检查每个元素。
+@return 一个由此 <code>Synthesizer</code> 管理的 <code>MidiChannel</code> 对象数组。有些数组元素可能为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.VoiceStatus[] javax.sound.midi.Synthesizer.getVoiceStatus()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得由此合成器生成的声音的当前状态。如果此 <code>Synthesizer</code> 类未提供声音信息，则返回的数组长度将始终为 0。否则其长度始终等于声音总数，与 <code>getMaxPolyphony()</code> 的返回结果一样。（有关合成器声音的说明，请参阅 <code>VoiceStatus</code> 类描述。）
+
+@return 一个 <code>VoiceStatus</code> 对象数组，该对象提供关于相应合成器声音的信息
+@see #getMaxPolyphony
+@see VoiceStatus
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Synthesizer.isSoundbankSupported(Soundbank soundbank)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知调用者此合成器是否能够从指定的音库加载乐器。如果不支持该音库，则任何试图从中加载乐器的尝试将抛出 <code>IllegalArgumentException</code>。
+@param soundbank 查询其是否受支持的音库
+@return 如果支持该音库，则返回 <code>true</code>，否则返回 <code>false</code>
+@see #loadInstruments
+@see #loadAllInstruments
+@see #unloadInstruments
+@see #unloadAllInstruments
+@see #getDefaultSoundbank
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Synthesizer.loadInstrument(Instrument instrument)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+让特定的乐器可用于合成。此乐器加载至由其 <code>Patch</code> 对象指定的修补程序位置，所以如果接收到（或已经收到）导致该修补程序被选中的程序更改消息，则使用 <code>instrument</code> 的声音演奏随后的音符。如果已加载指定的乐器，则此方法不执行任何操作并返回 <code>true</code>。
+ <p>
+该乐器必须是此 <code>Synthesizer</code> 支持的音库的一部分。（可以使用 <code>Instrument</code> 的 <code>getSoundbank</code> 方法和 <code>Synthesizer</code> 的 <code>isSoundbankSupported</code> 方法验证。）
+@param instrument 要加载的乐器
+@return 如果乐器成功加载（或已经加载），则返回 <code>true</code>，如果乐器无法加载（例如，合成器内存不足无法加载），则返回 <code>false</code>
+@throws <code>IllegalArgumentException</code> 如果此 <code>Synthesizer</code> 不支持指定乐器的音库
+@see #unloadInstrument
+@see #loadInstruments
+@see #loadAllInstruments
+@see #remapInstrument
+@see SoundbankResource#getSoundbank
+@see MidiChannel#programChange(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Synthesizer.unloadInstrument(Instrument instrument)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+卸载特定的乐器。
+@param instrument 要卸载的乐器
+@throws <code>IllegalArgumentException</code> 如果此 <code>Synthesizer</code> 不支持指定乐器的音库
+@see #loadInstrument
+@see #unloadInstruments
+@see #unloadAllInstruments
+@see #getLoadedInstruments
+@see #remapInstrument	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Synthesizer.remapInstrument(Instrument from, Instrument to)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重新映射一个乐器。 乐器 <code>to</code> 将替换乐器 <code>from</code>。<br> 
+例如，如果 <code>from</code> 位于库号 2，即程序号 11 的位置，则重新映射导致该库和程序位置被 <code>to</code> 所占用。<br> 
+如果该函数获得成功，则乐器 <code>from</code> 被卸载。
+ <p>通过调用 {@link #loadInstrument}、{@link #loadInstruments} 或 {@link #loadAllInstruments} 之一，可以取消对重载乐器 <code>from</code> 的重新映射。 
+ 
+@param from 要替换的 <code>Instrument</code> 对象
+@param to 用来替换旧乐器的 <code>Instrument</code> 对象，应该将它加载到合成器中
+@return 如果成功地重新映射乐器，则返回 <code>true</code>，如果合成器没有实现此功能，则返回 <code>false</code>
+@throws <code>IllegalArgumentException</code> 如果乐器 <code>from</code> 或乐器 <code>to</code> 不受合成器的支持，或者没有加载乐器 <code>to</code>
+@throws <code>NullPointerException</code> 如果 <code>from</code> 或 <code>to</code> 参数使用 null 值
+@see #loadInstrument
+@see #loadInstruments
+@see #loadAllInstruments
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Soundbank javax.sound.midi.Synthesizer.getDefaultSoundbank()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得合成器的默认音库（如果合成器存在）。（有些合成器提供默认或内置的音库。）如果合成器没有默认音库，则必须从外部音库显式加载乐器。
+@return 默认音库，如果不存在，则返回 <code>null</code>。
+@see #isSoundbankSupported
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Instrument[] javax.sound.midi.Synthesizer.getAvailableInstruments()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得该合成器随附的乐器列表。这些乐器可能内置在合成器中，也可能是合成器提供的默认音库的一部分等等。
+ <p>  
+注意，不能使用此方法查找当前加载到合成器中的乐器；如果要查找，可使用 <code>getLoadedInstruments()</code>。此方法也不指示可加载到合成器中的所有乐器；它仅指示合成器随附的乐器子集。要了解是否可加载另一个乐器，可以调用 <code>isSoundbankSupported()</code>，如果支持该乐器的 <code>Soundbank</code>，则可尝试加载该乐器。
+  
+@return 可用乐器列表。
+@see #getLoadedInstruments
+@see #isSoundbankSupported(Soundbank)
+@see #loadInstrument	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.midi.Instrument[] javax.sound.midi.Synthesizer.getLoadedInstruments()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前加载到此 <code>Synthesizer</code> 中的乐器列表。
+@return 当前已加载乐器的列表
+@see #loadInstrument
+@see #getAvailableInstruments
+@see Soundbank#getInstruments	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Synthesizer.loadAllInstruments(Soundbank soundbank)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 <code>Soundbank</code> 中包含的所有乐器加载到 <code>Synthesizer</code> 中。
+@param soundbank 将被加载乐器的 <code>Soundbank</code>
+@return 如果所有乐器均成功加载（或已经加载），则返回 <code>true</code>；如果有乐器无法加载（例如，<code>Synthesizer</code> 没有足够的内存），则返回 <code>false</code>
+@throws IllegalArgumentException 如果所请求的音库与此合成器不兼容。
+@see #isSoundbankSupported
+@see #loadInstrument
+@see #loadInstruments	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Synthesizer.unloadAllInstruments(Soundbank soundbank)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+卸载指定 <code>Soundbank</code> 中包含的所有乐器。
+@param soundbank 包含要卸载的乐器的音库
+@throws IllegalArgumentException 如果不支持该音库。
+@see #isSoundbankSupported
+@see #unloadInstrument
+@see #unloadInstruments	 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.midi.Synthesizer.loadInstruments(Soundbank soundbank, javax.sound.midi.Patch[] patchList)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定 <code>Soundbank</code> 加载指定修补程序所引用的乐器。每个 <code>Patch</code> 对象都指示一个库和程序号；具有匹配的 <code>Patch</code> 的 <code>Instrument</code> 将被加载至该库和程序位置。
+@param soundbank 包含要加载的乐器的 <code>Soundbank</code>
+@param patchList 应为其加载乐器的修补程序列表
+@return 如果所有乐器均成功加载（或已经加载），则返回 <code>true</code>，如果有乐器无法加载（例如，<code>Synthesizer</code> 没有足够的内存），则返回 <code>false</code>
+@throws IllegalArgumentException 如果不支持该音库。
+@see #isSoundbankSupported
+@see Instrument#getPatch
+@see #loadAllInstruments
+@see #loadInstrument
+@see Soundbank#getInstrument(Patch)
+@see Sequence#getPatchList()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.midi.Synthesizer.unloadInstruments(Soundbank soundbank, javax.sound.midi.Patch[] patchList)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从指定的 MIDI 音库中卸载指定修补程序所引用的乐器。
+@param soundbank 包含要卸载的乐器的音库
+@param patchList 应为其卸载乐器的修补程序列表
+@throws IllegalArgumentException 如果不支持该音库。
+
+@see #unloadInstrument
+@see #unloadAllInstruments
+@see #isSoundbankSupported
+@see Instrument#getPatch
+@see #loadInstruments	 
+
+<!-- END DATA -->

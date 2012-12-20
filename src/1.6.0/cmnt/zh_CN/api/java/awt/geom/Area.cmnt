@@ -1,0 +1,324 @@
+<!-- BEGIN KEY -->
+public class java.awt.geom.Area extends java.lang.Object implements java.awt.Shape, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Area</code> 对象存储和操作 2 维空间封闭区域的与解析无关的描述。在与其他 <code>Area</code> 对象合并时，<code>Area</code> 对象可以被变换，并可执行各种构造区域几何形状 (Constructive Area Geometry，CAG) 操作。CAG 操作包括对区域进行{@link #add 加}、{@link #subtract 减}、{@link #intersect 交}和{@link #exclusiveOr 异或}。有关各种操作的示例，请参阅链接的方法文档。
+ <p>
+<code>Area</code> 类实现了 <code>Shape</code> 接口，并提供对所有目标测试和路径迭代设施的完全支持，但 <code>Area</code> 在许多方面比一般化的路径更具体：
+ <ul>
+<li>仅存储封闭的路径和子路径。在构造期间隐式关闭根据未封闭路径构造的 <code>Area</code> 对象，就像通过 <code>Graphics2D.fill</code> 方法填充这些路径一样。
+<li>单个存储子路径的内部都是非空且不重叠的。在构造期间，路径被分解为独立组件的不重叠部分，路径的空白部分被丢弃，然后通过所有后续 CAG 操作维护那些非空且不重叠的属性。不同组件子路径的轮廓可以互相接触，只要它们不相交从而造成封闭区域重叠即可。
+<li>描述 <code>Area</code> 轮廓的路径几何形状类似于为了描述同一封闭 2 维区域而构造的路径，但可以使用完全不同的类型和路径段排序来完成路径构造。
+ </ul>
+在使用 <code>Area</code> 时，一些并不总是很明显但值得注意的问题包括：
+ <ul>
+<li>在未封闭（开放）<code>Shape</code> 中创建一个 <code>Area</code> 导致在 <code>Area</code> 对象中产生一个封闭的轮廓。
+<li>在不封闭任何区域（甚至在&ldquo;封闭&rdquo;时）的 <code>Shape</code> 中创建一个 <code>Area</code> 将产生一个空的 <code>Area</code>。该问题的一个常见示例是：用一条直线生成的 <code>Area</code> 将是空的，因为该直线无法封闭任何区域。一个空的 <code>Area</code> 将不会迭代其 <code>PathIterator</code> 对象中的任何几何形状。
+<li>一个自相交的 <code>Shape</code> 可以分割成两条（或更多条）子路径，每条子路径都封闭原始路径的非相交部分之一。
+<li><code>Area</code> 可以采用更多路径段来描述相同的几何形状，即使在原始轮廓非常简单和明显时也是如此。正如人们所认识到的那样，<code>Area</code> 类必须在路径上执行的分析可能并不能反映&ldquo;简单而明显&rdquo;的概念。
+ </ul>
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Area()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建空区域的默认构造方法。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Area(Shape s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Area</code> 类可以根据指定的 {@link Shape} 对象创建区域几何形状。如果 <code>Shape</code> 还不是封闭的，则显式地封闭几何形状。由 <code>Shape</code> 的几何形状指定的填充规则（奇偶或缠绕）用于确定得到的封闭区域。
+@param s  据以构造区域的 <code>Shape</code>
+@throws NullPointerException 如果 <code>s</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.add(Area rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 <code>Area</code> 的形状添加到此 <code>Area</code> 的形状中。得到的 <code>Area</code> 形状将包括两个形状的并集，或者包含此 <code>Area</code> 或指定 <code>Area</code> 中的所有区域。
+ <pre>
+//Example:
+Area a1 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 0,8]);
+Area a2 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 8,8]);
+a1.add(a2);
+
+a1(before)     +         a2         =     a1(after)
+
+     ################     ################     ################
+     ##############         ##############     ################
+     ############             ############     ################
+     ##########                 ##########     ################
+     ########                     ########     ################
+     ######                         ######     ######    ######
+     ####                             ####     ####        ####
+     ##                                 ##     ##            ##
+ </pre>
+@param   rhs  将添加到当前形状的 <code>Area</code>
+@throws NullPointerException 如果 <code>rhs</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.subtract(Area rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>Area</code> 的形状中减去指定 <code>Area</code> 的形状。得到的 <code>Area</code> 形状将包括那些仅包括那些包含在此 <code>Area</code> 且不包含在指定 <code>Area</code> 中的区域。
+ <pre>
+//Example:
+Area a1 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 0,8]);
+Area a2 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 8,8]);
+a1.subtract(a2);
+
+a1(before)     -         a2         =     a1(after)
+
+     ################     ################
+     ##############         ##############     ##
+     ############             ############     ####
+     ##########                 ##########     ######
+     ########                     ########     ########
+     ######                         ######     ######
+     ####                             ####     ####
+     ##                                 ##     ##
+ </pre>
+@param   rhs  将从当前形状中删除的 <code>Area</code>
+@throws NullPointerException 如果 <code>rhs</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.intersect(Area rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Area</code> 的形状设置为其当前形状与指定 <code>Area</code> 形状的交集。得到的 <code>Area</code> 形状将仅包括那些既包含在此 <code>Area</code> 中也包含在指定 <code>Area</code> 中的区域。
+ <pre>
+//Example:
+Area a1 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 0,8]);
+Area a2 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 8,8]);
+a1.intersect(a2);
+
+a1(before)   intersect     a2         =     a1(after)
+
+     ################     ################     ################
+     ##############         ##############       ############
+     ############             ############         ########
+     ##########                 ##########           ####
+     ########                     ########
+     ######                         ######
+     ####                             ####
+     ##                                 ##
+ </pre>
+@param   rhs  将与此 <code>Area</code> 相交的 <code>Area</code>
+@throws NullPointerException 如果 <code>rhs</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.exclusiveOr(Area rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Area</code> 的形状设置为其当前形状与指定 <code>Area</code> 形状的组合区域，并减去其交集。得到的 <code>Area</code> 形状将仅包括那些包含在此 <code>Area</code> 或指定 <code>Area</code> 中、但不同时出现在两者中的区域。
+ <pre>
+//Example:
+Area a1 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 0,8]);
+Area a2 = new Area([triangle 0,0 =&gt; 8,0 =&gt; 8,8]);
+a1.exclusiveOr(a2);
+
+a1(before)    xor        a2         =     a1(after)
+
+     ################     ################
+     ##############         ##############     ##            ##
+     ############             ############     ####        ####
+     ##########                 ##########     ######    ######
+     ########                     ########     ################
+     ######                         ######     ######    ######
+     ####                             ####     ####        ####
+     ##                                 ##     ##            ##
+ </pre>
+@param   rhs  将与此 <code>Area</code> 进行异或运算的 <code>Area</code>。
+@throws NullPointerException 如果 <code>rhs</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 <code>Area</code> 删除所有几何形状，将其恢复为空区域。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>Area</code> 对象是否包括其他区域。
+@return    如果此 <code>Area</code> 对象表示空区域，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.isPolygonal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>Area</code> 是否完全由直边多边形组成。
+@return    如果此 <code>Area</code> 全部由线段组成，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.isRectangular()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>Area</code> 的形状是否为矩形。
+@return    如果此 <code>Area</code> 的几何形状是矩形，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.isSingular()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>Area</code> 是否由单个封闭子路径组成。如果路径包含 0 个或 1 个子路径，则此方法返回 <code>true</code>；如果路径包含 1 个以上的子路径，则返回 <code>false</code>。子路径是根据路径中出现的 {@link PathIterator#SEG_MOVETO SEG_MOVETO} 段数来计算的。
+@return    如果 <code>Area</code> 由单个基本几何形状组成，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.geom.Area.getBounds2D()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回完全包围此 <code>Area</code> 的高精度边界 {@link Rectangle2D}。
+ <p>
+Area 类将试图为 Shape 返回可能的最紧密的边界框。不要填充边界框以包含 Shape 轮廓上的曲线控制点，而应该让边界框紧密地适合轮廓本身的实际几何形状。
+@return    <code>Area</code> 的边界 <code>Rectangle2D</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.geom.Area.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回完全包围此 <code>Area</code> 的边界 {@link Rectangle}。
+ <p>
+Area 类将试图为 Shape 返回可能的最紧密的边界框。不要填充边界框以包含 Shape 轮廓上的曲线控制点，而应该让边界框紧密地适合轮廓本身的实际几何形状。因为返回的对象使用整数表示边界框，所以边界框只能是围绕 Shape 几何形状尽可能紧密的整数坐标。
+@return    <code>Area</code> 的边界 <code>Rectangle</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.geom.Area.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Area</code> 对象的精确副本。
+@return    创建的副本对象
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.equals(Area other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试两个 <code>Area</code> 对象的几何形状是否相等。如果参数为 null，则此方法将返回 false。
+@param   other  将与此 <code>Area</code> 比较的 <code>Area</code>
+@return  如果两个几何形状相等，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.Area.transform(AffineTransform t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的 {@link AffineTransform} 变换此 <code>Area</code> 的几何形状。适当地变换几何形状，它将永久更改由此对象定义的封闭区域。
+@param t  用于变换区域的变换
+@throws NullPointerException 如果 <code>t</code> 为 null
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Area java.awt.geom.Area.createTransformedArea(AffineTransform t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新 <code>Area</code> 对象，使它与由指定 <code>AffineTransform</code> 变换的 <code>Area</code> 包含相同的几何形状。此 <code>Area</code> 对象不变。
+@param t  用于变换新 <code>Area</code> 的指定 <code>AffineTransform</code>
+@throws NullPointerException 如果 <code>t</code> 为 null
+@return   表示已变换的几何形状的新 <code>Area</code> 对象。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.contains(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.contains(Point2D p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.contains(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.contains(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.intersects(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.Area.intersects(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.PathIterator java.awt.geom.Area.getPathIterator(AffineTransform at)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 <code>Area</code> 对象的轮廓创建一个 {@link PathIterator}。此 <code>Area</code> 对象不变。
+@param at 一个可选的 <code>AffineTransform</code>，应用于在迭代中返回的坐标；如果需要未变换的坐标，则为 <code>null</code>
+@return    返回此 <code>Area</code> 轮廓几何形状的 <code>PathIterator</code> 对象，一次一段。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.PathIterator java.awt.geom.Area.getPathIterator(AffineTransform at, double flatness)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 <code>Area</code> 对象的变平轮廓创建 <code>PathIterator</code>。迭代器只返回 SEG_MOVETO、SEG_LINETO 和 SEG_CLOSE 点类型所表示的非曲线路径段。此 <code>Area</code> 对象不变。
+@param at 一个可选的 <code>AffineTransform</code>，应用于在迭代中返回的坐标；如果需要未变换的坐标，则为 <code>null</code>
+@param flatness 在使用连接端点的直线取代分段曲线之前，给定曲线的控制点可以从共线变化的最大值
+@return    返回此 <code>Area</code> 轮廓几何形状的 <code>PathIterator</code> 对象，一次一段。
+@since 1.2
+
+<!-- END DATA -->

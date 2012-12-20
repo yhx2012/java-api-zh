@@ -1,0 +1,84 @@
+<!-- BEGIN KEY -->
+public final class java.security.Permissions extends java.security.PermissionCollection implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类表示一个不同种类的 Permission 集合。也就是说，它包含组编到 PermissionCollection 中的不同类型的 Permission 对象。例如，如果将任何 <code>java.io.FilePermission</code> 对象添加到此类的实例中，它们都将被存储在单个 PermissionCollection 中。调用 FilePermission 类的 <code>newPermissionCollection</code> 方法返回的是 PermissionCollection。类似的，任何 <code>java.lang.RuntimePermission</code> 对象都存储在调用 RuntimePermission 类的 <code>newPermissionCollection</code> 方法所返回的 PermissionCollection 中。因此，此类表示 PermissionCollection 的集合。
+ 
+<p>当调用 <code>add</code> 方法添加 Permission 时，Permission 将被存储在合适的 PermissionCollection 中。如果还没有这样的集合存在，则确定 Permission 对象的类并对该类调用 <code>newPermissionCollection</code> 方法来创建 PermissionCollection，然后将其添加到 Permissions 对象中。如果 <code>newPermissionCollection</code> 返回 null，那么将创建和使用一个默认使用 hashtable 的 PermissionCollection。每个 hashtable 项存储了一个 Permission 对象作为键和值。
+
+<p> 通过 <code>elements</code> 方法返回的枚举不是<em>快速失败</em> 的。正在对一个集合进行枚举时，不应该修改该集合。
+ 
+@see Permission
+@see PermissionCollection
+@see AllPermission
+ 
+@version 1.58, 04/05/05
+
+@author Marianne Mueller
+@author Roland Schemers
+
+@serial exclude
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.security.Permissions.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serialField perms java.util.Hashtable A table of the Permission classes and PermissionCollections.
+@serialField allPermission java.security.PermissionCollection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Permissions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个不包含任何 PermissionCollection 的新 Permissions 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Permissions.add(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个 permission 对象添加到该权限所属的类的 PermissionCollection 中。例如，如果 <i>permission</i> 是 FilePermission，则将它添加到存储在此 Permissions 对象中的 FilePermissionCollection 中。 
+ 
+如果不存在合适的 collection，则此方法创建一个新的 PermissionCollection 对象（并且向其中添加权限）。 <p>
+
+@param permission 要添加的 Permission 对象。
+ 
+@exception SecurityException 如果此 Permissions 对象被标记为只读。
+ 
+@see PermissionCollection#isReadOnly()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.Permissions.implies(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查看此对象用于指定 permission 类的 permissions 的 PermissionCollection 是否暗含了 <i>permission</i> 对象中表示的权限。如果合适的 PermissionCollection（例如，用于 FilePermission 的 FilePermissionCollection）中权限的组合一起暗含了指定的权限，则返回 true。
+ 
+<p>例如，假定在此 Permissions 对象中有一个 FilePermissionCollection，它包含一个指定对 &quot;/tmp&quot; 目录所有子目录下的所有文件进行 &quot;read&quot; 访问的 FilePermission，以及另一个指定对 &quot;/tmp/scratch/foo&quot; 目录下所有文件进行 &quot;write&quot; 访问的 FilePermission。那么如果使用指定对 &quot;/tmp/scratch/foo&quot; 目录下的文件进行 &quot;read&quot; 和 &quot;write&quot; 访问权限的 permission 作为参数调用 <code>implies</code> 方法，则返回 <code>true</code>。
+
+<p>此外，如果此 PermissionCollection 包含 AllPermission，此方法将总是返回 true。
+ <p>
+@param permission 要检查的 Permission 对象。
+
+@return 如果 &quot;permission&quot; 所属的 PermissionCollection 中的权限暗含了 &quot;permission&quot;，则返回 true；否则，返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Enumeration<java.security.Permission> java.security.Permissions.elements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Permissions 对象中所有 PermissionCollection 中的所有 Permission 对象的枚举。
+
+@return 所有 Permission 的枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.security.Permissions.writeObject(ObjectOutputStream out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serialData Default fields.
+
+<!-- END DATA -->

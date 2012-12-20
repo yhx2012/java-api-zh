@@ -1,0 +1,151 @@
+<!-- BEGIN KEY -->
+public class java.net.InetSocketAddress extends java.net.SocketAddress
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+此类实现 IP 套接字地址（IP 地址 + 端口号）。它还可以是一个对（主机名 + 端口号），在此情况下，将尝试解析主机名。如果解析失败，则该地址将被视为<I>未解析</I> 地址，但是其在某些情形下仍然可以使用，比如通过代理连接。
+ <p>
+它提供不可变对象，供套接字用于绑定、连接或用作返回值。
+ <p>
+<i>通配符</i> 是一个特殊的本地 IP 地址。它通常表示&ldquo;任何&rdquo;，只能用于 <code>bind</code> 操作。
+
+@see	java.net.Socket
+@see	java.net.ServerSocket
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetSocketAddress(int port)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建套接字地址，其中 IP 地址为通配符地址，端口号为指定值。
+ <p>
+有效端口值介于 0 和 65535 之间。端口号 <code>zero</code> 允许系统在 <code>bind</code> 操作中挑选暂时的端口。
+ <p>
+@param	port	端口号
+@throws IllegalArgumentException 如果 port 参数超出有效端口值的指定范围。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetSocketAddress(InetAddress addr, int port)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据 IP 地址和端口号创建套接字地址。
+ <p>
+有效端口值介于 0 和 65535 之间。端口号 <code>zero</code> 允许系统在 <code>bind</code> 操作中挑选暂时的端口。
+ <P>
+<code>null</code> 地址将分配<i>通配符</i> 地址。
+ <p>
+@param	addr	IP 地址
+@param	port	端口号
+@throws IllegalArgumentException 如果 port 参数超出有效端口值的指定范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.InetSocketAddress(String hostname, int port)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据主机名和端口号创建套接字地址。
+ <p>
+尝试将主机名解析为 InetAddress。如果尝试失败，则将地址标记为<I>未解析</I>。
+ <p>
+如果存在安全管理器，则将主机名用作参数调用其 <code>checkConnect</code> 方法，以检查解析它的权限。这可能会导致 SecurityException 异常。
+ <P>
+有效端口值介于 0 和 65535 之间。端口号 <code>zero</code> 允许系统在 <code>bind</code> 操作中挑选暂时的端口。
+ <P>
+@param	hostname 主机名
+@param	port	端口号
+@throws IllegalArgumentException 如果 port 参数超出有效端口值的范围，或者主机名参数为 <TT>null</TT>。
+@throws SecurityException 如果存在安全管理器，但拒绝解析主机名的权限。
+@see	#isUnresolved()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.net.InetSocketAddress java.net.InetSocketAddress.createUnresolved(String host, int port)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据主机名和端口号创建未解析的套接字地址。
+ <p>
+不会尝试将主机名解析为 InetAddress。将地址标记为<I>未解析</I>。
+ <p>
+有效端口值介于 0 和 65535 之间。端口号 <code>zero</code> 允许系统在 <code>bind</code> 操作中挑选暂时的端口。
+ <P>
+@param	host    主机名
+@param	port	端口号
+@throws IllegalArgumentException 如果 port 参数超出有效端口值的范围，或者主机名参数为 <TT>null</TT>。
+@see	#isUnresolved()
+@return  表示未解析套接字地址的 <code>InetSocketAddress</code>
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.net.InetSocketAddress.getPort()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取端口号。
+
+@return 端口号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.net.InetAddress java.net.InetSocketAddress.getAddress()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 
+获取 <code>InetAddress</code>。
+
+@return InetAdress；如果未解析，则返回 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.net.InetSocketAddress.getHostName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 <code>hostname</code>。
+
+@return	地址的主机名部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.net.InetSocketAddress.isUnresolved()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否已解析地址。
+
+@return 如果无法将主机名解析为 <code>InetAddress</code>，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.InetSocketAddress.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造此 InetSocketAddress 的字符串表示形式。此 String 通过在 InetAddress 上调用 toString() 并连接端口号（使用冒号）来构造。如果未解析地址，则冒号之前的部分将仅包含主机名。
+
+@return  此对象的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.net.InetSocketAddress.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象与指定对象比较。当且仅当参数不为 <code>null</code>，并且它表示与此对象相同的地址时，结果才为 <code>true</code>。
+ <p>
+如果 <code>InetSocketAddress</code> 的两个实例的 InetAddress（或主机名，如果未解析的话）和端口号都相等，则它们表示同一个地址。如果两个地址都未解析，则比较主机名和端口号。
+
+@param obj 要与之比较的对象。
+@return  如果对象相同，则返回 <code>true</code>；否则，返回 <code>false</code>。
+@see java.net.InetAddress#equals(java.lang.Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.net.InetSocketAddress.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此套接字地址的哈希码。
+
+@return 此套接字地址的哈希码值。
+
+<!-- END DATA -->

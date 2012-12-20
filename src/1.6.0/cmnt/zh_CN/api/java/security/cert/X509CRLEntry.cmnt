@@ -1,0 +1,114 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.cert.X509CRLEntry extends java.lang.Object implements java.security.cert.X509Extension
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>用于 CRL（证书撤消列表）中已撤消证书的抽象类。
+
+<em>revokedCertificates</em> 的 ASN.1 定义如下：
+ <pre>
+ revokedCertificates    SEQUENCE OF SEQUENCE  {
+     userCertificate    CertificateSerialNumber,
+     revocationDate     ChoiceOfTime,
+     crlEntryExtensions Extensions OPTIONAL
+                        -- if present, must be v2
+ }  OPTIONAL
+<p>
+ CertificateSerialNumber  ::=  INTEGER
+<p>
+ Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
+<p>
+ Extension  ::=  SEQUENCE  {
+     extnId        OBJECT IDENTIFIER,
+     critical      BOOLEAN DEFAULT FALSE,
+     extnValue     OCTET STRING
+                   -- contains a DER encoding of a value
+                   -- of the type registered for use with
+                   -- the extnId object identifier value
+ }
+ </pre>
+
+@see X509CRL
+@see X509Extension
+
+@author Hemma Prafullchandra
+@version 1.16 03/12/19
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.cert.X509CRLEntry.equals(Object other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此 CRL 项与给定对象的相等性。如果 <code>other</code> 对象是一个 <code>instanceof</code> <code>X509CRLEntry</code>，则获取其编码形式（内部 SEQUENCE）并且与此 CRL 项的编码形式进行比较。
+
+@param other 要与此 CRL 项进行相等性测试的对象。
+@return 当且仅当两个 CRL 项的编码形式匹配时才返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.cert.X509CRLEntry.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据此 CRL 项的编码形式返回该 CRL 项的哈希码值。
+
+@return 哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract byte[] java.security.cert.X509CRLEntry.getEncoded() throws java.security.cert.CRLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CRL Entry 的 ASN.1 DER 编码形式，即内部 SEQUENCE。
+
+@return 此证书的编码形式
+@exception CRLException 如果出现编码错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.math.BigInteger java.security.cert.X509CRLEntry.getSerialNumber()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 X509CRLEntry 的序列号 <em>userCertificate</em>。
+
+@return 序列号。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.auth.x500.X500Principal java.security.cert.X509CRLEntry.getCertificateIssuer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此项所描述的 X509Certificate 的发布方。如果该证书发布方也是 CRL 的发布方，则此方法返回 null。
+
+<p>此方法用于间接 CRL。默认实现始终返回 null。希望支持间接 CRL 的子类应该重写此方法。
+
+@return 此项所描述的 X509Certificate 的发布方，如果此证书由该 CRL 的发布方所发布，则返回 null。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Date java.security.cert.X509CRLEntry.getRevocationDate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 X509CRLEntry 的撤消日期 <em>revocationDate</em>。
+
+@return 撤消日期。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.security.cert.X509CRLEntry.hasExtensions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 CRL 项有扩展，则返回 true。
+
+@return 如果此 CRL 项有扩展，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.String java.security.cert.X509CRLEntry.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 CRL 项的字符串表示形式。
+
+@return 此 CRL 项的字符串表示形式。
+
+<!-- END DATA -->

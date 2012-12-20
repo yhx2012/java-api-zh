@@ -1,0 +1,203 @@
+<!-- BEGIN KEY -->
+public abstract class java.awt.Image extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抽象类 <code>Image</code> 是表示图形图像的所有类的超类。必须以特定于平台的方式获取图像。
+
+@version 	1.43, 04/07/06
+@author 	Sami Shaio
+@author 	Arthur van Hoff
+@since        JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float java.awt.Image.accelerationPriority
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于加速此图像的优先级。通过 <code>setAccelerationPriority(float)</code> 方法，子类可以随意设置不同的默认优先级，而应用程序可以随意设置特定图像的优先级。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.Object java.awt.Image.UndefinedProperty
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+每当获得某个不是为特定图像定义的属性时，应返回 <code>UndefinedProperty</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Image.SCALE_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认的图像缩放算法。
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Image.SCALE_FAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择一种图像缩放算法，在这种缩放算法中，缩放速度比缩放平滑度具有更高的优先级。
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Image.SCALE_SMOOTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择图像平滑度比缩放速度具有更高优先级的图像缩放算法。
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Image.SCALE_REPLICATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 <code>ReplicateScaleFilter</code> 类中包含的图像缩放算法。<code>Image</code> 对象可以随意替代不同的过滤器，以执行相同的算法，但它能更高效地集成工具包所提供的图像处理基础设施。
+@see        java.awt.image.ReplicateScaleFilter
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.Image.SCALE_AREA_AVERAGING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Area Averaging 图像缩放算法。图像对象可以随意替代不同的过滤器，以执行相同的算法，但它能更高效地集成工具包所提供的图像基础设施。
+@see java.awt.image.AreaAveragingScaleFilter
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.Image.getWidth(ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定图像的宽度。如果宽度未知，则此方法返回 <code>-1</code>，然后通知指定的 <code>ImageObserver</code> 对象。
+@param     observer 等待加载图像的对象。
+@return    此图像的宽度，如果宽度未知则返回 <code>-1</code>。
+@see       java.awt.Image#getHeight
+@see       java.awt.image.ImageObserver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.awt.Image.getHeight(ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定图像的高度。如果高度未知，则此方法返回 <code>-1</code>，然后通知指定的 <code>ImageObserver</code> 对象。
+@param     observer 等待加载图像的对象。
+@return    此图像的高度，如果高度未知则返回 <code>-1</code>。
+@see       java.awt.Image#getWidth
+@see       java.awt.image.ImageObserver
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.image.ImageProducer java.awt.Image.getSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取生成图像像素的对象。此方法由图像过滤类和执行图像转换及缩放的方法调用。
+@return     为此图像生成像素的图像生产者。
+@see        java.awt.image.ImageProducer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.awt.Graphics java.awt.Image.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建供绘制闭屏图像（off-screen image）使用的图形上下文。此方法仅供闭屏图像调用。
+@return  绘制闭屏图像的图形上下文。
+@exception UnsupportedOperationException 如果为非闭屏图像所调用。
+@see     java.awt.Graphics
+@see     java.awt.Component#createImage(int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.awt.Image.getProperty(String name, ImageObserver observer)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过名称获取此图像的属性。 
+ <p>
+各种图像格式都定义了自己的私人属性名。如果某属性不是为特定图像定义的，则此方法返回 <code>UndefinedProperty</code> 对象。
+ <p>
+如果此图像的属性目前未知，则此方法返回 <code>null</code>，然后通知 <code>ImageObserver</code> 对象。
+ <p>
+属性名 <code>&quot;comment&quot;</code> 应该用于存储可选注释，在应用程序中它显示为图像的描述、来源或作者。
+@param       name 属性名。
+@param       observer 等待加载此图像的对象。
+@return      指定属性的值。
+@throws      <code>NullPointerException</code> 如果属性名为 null。
+@see         java.awt.image.ImageObserver
+@see         java.awt.Image#UndefinedProperty
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Image java.awt.Image.getScaledInstance(int width, int height, int hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此图像的缩放版本。返回一个新的 <code>Image</code> 对象，默认情况下，该对象按指定的 <code>width</code> 和 <code>height</code> 呈现图像。即使已经完全加载了初始源图像，新的 <code>Image</code> 对象也可以被异步加载。  
+
+ <p>
+ 
+如果 <code>width</code> 或 <code>height</code> 为负数，则替换该值以维持初始图像尺寸的高宽比。如果 <code>width</code> 和 <code>height</code> 都为负，则使用初始图像尺寸。
+
+@param width 将图像缩放到的宽度。
+@param height 将图像缩放到的高度。
+@param hints 指示用于图像重新取样的算法类型的标志。
+@return     图像的缩放版本。
+@exception IllegalArgumentException 如果 <code>width</code> 或 <code>height</code> 为零。
+@see        java.awt.Image#SCALE_DEFAULT
+@see        java.awt.Image#SCALE_FAST
+@see        java.awt.Image#SCALE_SMOOTH
+@see        java.awt.Image#SCALE_REPLICATE
+@see        java.awt.Image#SCALE_AREA_AVERAGING
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Image.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新此 Image 对象正在使用的所有可重构的资源。这包括为呈现到屏幕而缓存的所有像素数据，以及用来存储图像数据或像素的所有系统资源（如果可以重新创建它们）。图像被重置为与初始创建时类似的状态，因此如果再次呈现图像，则必须重新创建图像数据或再次从源中获取这些数据。
+ <p>
+此方法如何影响特定类型的 Image 对象的示例如下：
+ <ul>
+ <li>
+BufferedImage 对象不改动存储其像素的主要 Raster，但是刷新有关像素的缓存信息，比如上传到用于加速位图的显示硬件的副本。
+ <li>
+Image 对象由带有 width 和 height 参数的 Component 方法创建，该方法不改动像素的主要缓冲区，但是释放所有缓存的信息，这与对 BufferedImage 对象的操作非常类似。
+ <li>
+VolatileImage 对象释放其所有像素资源，这些资源包括通常存储在缺乏资源的显示硬件上的主要副本。这些对象稍后可以使用其 {@link java.awt.image.VolatileImage#validate validate} 方法还原。
+ <li>
+卸载从文件、URL 中加载或由 {@link ImageProducer} 生成的 Toolkit 和 Component 类创建的 Image 对象，并释放所有本地资源。稍后可在呈现这些对象时根据需要从初始源重新加载它们，就像第一次创建它们时那样。
+ </ul>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.ImageCapabilities java.awt.Image.getCapabilities(GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 ImageCapabilities 对象，查询该对象便可以了解使用指定 GraphicsConfiguration 时此 Image 的功能。这允许程序员查找关于他们已经创建的特定 Image 对象的更多运行时信息。例如，用户可能创建一个 BufferedImage，但是系统所剩显存可能不足以在使用给定 GraphicsConfiguration 时创建该大小的图像，因此尽管该对象一般而言是可加速的，但在使用 GraphicsConfiguration 时它确实不具有该功能。
+@param gc <code>GraphicsConfiguration</code> 对象。此参数值为 null 将导致获取默认 <code>GraphicsConfiguration</code> 的图像功能。
+@return 包含使用指定 GraphicsConfiguration 时此 <code>Image</code> 的功能的 <code>ImageCapabilities</code> 对象。
+@see java.awt.image.VolatileImage.getCapabilities() VolatileImage#getCapabilities()
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.Image.setAccelerationPriority(float priority)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+就加速的重要性设置此图像的提示。此优先级提示用于在确定如何使用稀缺的加速资源（如显存）时与其他 Image 对象的优先级进行比较。如果可能加速此 Image，但在加速时进行该加速的可用资源不足，若可以通过取消加速具有较低优先级的其他图像来释放足够资源，则其他那些 Image 可能为了这一目的而被取消加速。具有相同优先级的图像利用资源的方式是先到先得。
+@param priority 介于 0 和 1 之间的值（包括 0 和 1），较大的值指示加速的重要性较高。值 0 意味着永远不应该加速此 Image。其他值用于确定相对于其他 Image 的加速优先级。
+@throws IllegalArgumentException 如果 <code>priority</code> 小于零或大于 1。
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.Image.getAccelerationPriority()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回加速优先级提示的当前值。
+@see #setAccelerationPriority(float priority) setAccelerationPriority
+@return 介于 0 和 1 之间的值（包括 0 和 1），表示当前优先级值
+@since 1.5
+
+<!-- END DATA -->

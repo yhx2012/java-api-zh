@@ -1,0 +1,161 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.text.FlowView extends javax.swing.text.BoxView
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图将其子级流入某个部分受约束的空间的视图。此视图可用于构建段落、页面等。该流由以下几项功能组成。
+ <ul>
+<li>子视图的逻辑集合，该集合用作组成物理视图的布局池。
+<li>将逻辑视图转换为物理（流动）视图的策略。
+<li>要依靠其工作的策略约束。
+<li>表示流的物理结构。此视图的子级位于为创建流而放置逻辑视图的片段的位置。
+ </ul>
+
+@author  Timothy Prinzing
+@version 1.43 06/24/04
+@see     View
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.FlowView.layoutSpan
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建流所依靠的默认约束。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.View javax.swing.text.FlowView.layoutPool
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这些都是表示此视图表示的元素（要转换为物理视图的逻辑视图）的子元素的视图。这些都不是此视图的直接子级。这些子级既可以直接放入行，也可以用于拆分较小存储块，以便形成物理视图。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.FlowView.FlowStrategy javax.swing.text.FlowView.strategy
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保持流更新的行为。默认情况下，这是所有 FlowView 实例共享的一个单独行为（FlowStrategy 是无状态的）。子类可以创建一个备用策略，该策略可用来保持状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.FlowView(Element elem, int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造给定元素的 FlowView。
+
+@param elem 此视图负责的元素
+@param axis 可以是 View.X_AXIS 或 View.Y_AXIS 之一
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.FlowView.getFlowAxis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取应沿其流入视图的轴。默认情况下，这将是与该流行沿其平铺的轴垂直的轴（默认流行自身的轴）。此操作通常由 <code>FlowStrategy</code> 使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.FlowView.getFlowSpan(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定子索引流入的约束区域。FlowStrategy 在更新该流时调用此方法。可以通过为行约束提供不同的值而形成流。默认情况下，返回沿流轴的 insets 内的整个区域。
+
+@param index 正在更新的行的索引。这应该是一个 &gt;= 0 且 &lt; getViewCount() 的值。
+@see #getFlowStart
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.FlowView.getFlowStart(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取沿流轴的流区域开始位置。FlowStrategy 在更新该流时调用此方法。可以通过为行约束提供不同的值而形成流。
+
+@param index 正在更新的行的索引。这应该是一个 &gt;= 0 且 &lt; getViewCount() 的值。
+@see #getFlowSpan
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract javax.swing.text.View javax.swing.text.FlowView.createRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建应在保持流中子级行值时使用的视图。在更新流的过程中添加或移除新子级（即添加或移除行）时，此方法由 FlowStrategy 调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.FlowView.loadChildren(ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载初始化该视图的所有子级。此方法由 <code>setParent</code> 方法调用。重新实现此方法，以便不直接加载任何子级（因为它们是在格式化进程中创建的）。如果 layoutPool 变量为 null，则创建一个 LogicalView 实例，表示在格式化进程中使用的逻辑视图。
+
+@param f 视图工厂
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.text.FlowView.getViewIndexAtPosition(int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此模型中表示给定位置的子视图索引。  
+
+@param pos 位置，该值 &gt;= 0
+@return 表示给定位置的视图的索引，如果没有视图表示该位置，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.FlowView.layout(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+布置子级。如果沿流轴的区域已改变，则布局将标记为无效，这样会导致沿框轴重新计算布局的超类行为。FlowStrategy.layout 方法将被调用以便相应地重建这些流行。如果此视图的高度改变（由沿框轴的首选大小确定），则调用 preferenceChanged。这一切做完后，将执行超类的正常框布局。
+
+@param width  要按其布置的宽度，该值 &gt;= 0。这是 inset 区域内的宽度。
+@param height 按其布置的高度，该值 &gt;= 0。这是 inset 区域内的高度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.SizeRequirements javax.swing.text.FlowView.calculateMinorAxisRequirements(int axis, SizeRequirements r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算沿辅轴的要求。实现此方法，以便通过在其上调用 getMinimumSpan、getPreferredSpan 和 getMaximumSpan 将此请求转到逻辑视图。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.FlowView.insertUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知在文档中此视图负责的某个位置已插入内容。
+
+@param changes 来自相关文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#insertUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.FlowView.removeUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知从文档中此视图负责的某个位置已移除内容。
+
+@param changes 来自相关文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#removeUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.FlowView.changedUpdate(DocumentEvent changes, Shape a, ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+发出通知，通知文档中此视图负责的某个位置的属性已更改。
+
+@param changes 来自相关文档的更改信息
+@param a 视图的当前分配区域
+@param f 用于重建的工厂（如果该视图有子级）
+@see View#changedUpdate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.FlowView.setParent(View parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+<!-- END DATA -->

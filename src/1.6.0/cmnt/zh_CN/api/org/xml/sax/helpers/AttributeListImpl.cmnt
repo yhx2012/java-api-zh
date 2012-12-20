@@ -1,0 +1,176 @@
+<!-- BEGIN KEY -->
+public class org.xml.sax.helpers.AttributeListImpl extends java.lang.Object implements org.xml.sax.AttributeList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+AttributeList 的默认实现。
+
+ <blockquote>
+<em>此模块（包括源代码和文档）位于公共域中，对该模块<strong>不提供担保</strong>。</em>有关更多信息，请参阅<a href='http://www.saxproject.org'>http://www.saxproject.org</a>。
+ </blockquote>
+
+<p>AttributeList 实现不推荐使用的 SAX1 {@link org.xml.sax.AttributeList AttributeList} 接口，它已被新的 SAX2 {@link org.xml.sax.helpers.AttributesImpl AttributesImpl} 接口取代。</p>
+
+<p>此类提供 SAX {@link org.xml.sax.AttributeList AttributeList} 接口的有用实现。此实现对于 SAX 解析器编写者（使用该实现向应用程序提供属性）和 SAX 应用程序编写者（使用该实现创建元素属性规范的持久副本）都有用：</p>
+
+ <pre>
+ private AttributeList myatts;
+
+ public void startElement (String name, AttributeList atts)
+ {
+              // create a persistent copy of the attribute list
+              // for use outside this method
+   myatts = new AttributeListImpl(atts);
+   [...]
+ }
+ </pre>
+
+<p>请注意，不要求 SAX 解析器使用此类来提供 AttributeList 的实现；仅作为可选的便捷方法提供它。尤其是，鼓励解析器编写者发明更有效的实现。</p>
+
+@deprecated 此类实现不推荐使用的接口 {@link org.xml.sax.AttributeList AttributeList}；该接口已被 {@link org.xml.sax.helpers.AttributesImpl AttributesImpl} 帮助器类中实现的 {@link org.xml.sax.Attributes Attributes} 取代。
+@since SAX 1.0
+@author David Megginson
+@version 2.0.1 (sax2r2)
+@see org.xml.sax.AttributeList
+@see org.xml.sax.DocumentHandler#startElement 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.helpers.AttributeListImpl()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建空的属性列表。
+
+<p>此构造方法对解析器编写者非常有用，解析器编写者将使用它创建单个的、可重用的属性列表，使用元素之间的 clear 方法可以重设该列表。</p>
+
+@see #addAttribute
+@see #clear
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.xml.sax.helpers.AttributeListImpl(AttributeList atts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造现有属性列表的持久副本。
+
+<p>此构造方法对应用程序编写者非常有用，应用程序编写者将使用它创建现有属性列表的持久副本。</p>
+
+@param atts 要复制的属性列表
+@see org.xml.sax.DocumentHandler#startElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.AttributeListImpl.setAttributeList(AttributeList atts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置属性列表，丢弃以前的内容。
+
+<p>此方法允许应用程序编写者容易地重用属性列表。</p>
+
+@param atts 要复制的属性列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.AttributeListImpl.addAttribute(String name, String type, String value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向属性列表添加属性。
+
+<p>为 SAX 解析器编写者提供此方法，以允许他们在将属性列表传递给应用程序之前以增量方式构建它。</p>
+
+@param name 属性名称。
+@param type 属性类型（对于枚举为 &quot;NMTOKEN&quot;)。
+@param value 属性值（不得为 null）。
+@see #removeAttribute
+@see org.xml.sax.DocumentHandler#startElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.AttributeListImpl.removeAttribute(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从列表移除属性。
+
+<p>SAX 应用程序编写者可以使用此方法从 AttributeList 中过滤属性。注意，调用此方法会更改属性列表的长度和一些属性的索引。</p>
+
+<p>如果请求的属性不在列表中，则这是无操作。</p>
+
+@param name 属性名称。
+@see #addAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void org.xml.sax.helpers.AttributeListImpl.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除属性列表。
+
+<p>SAX 解析器编写者可以使用此方法重设 DocumentHandler.startElement 事件之间的属性列表。通常，重用同一 AttributeListImpl 对象，而不每次分配一个新对象是有意义的。</p>
+
+
+@see org.xml.sax.DocumentHandler#startElement
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int org.xml.sax.helpers.AttributeListImpl.getLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回列表中的属性个数。
+
+@return 此列表中的属性个数。
+@see org.xml.sax.AttributeList#getLength
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.AttributeListImpl.getName(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取属性名称（按位置）。
+
+@param i 列表中属性的位置。
+@return 字符串形式的属性名称，如果在该位置没有属性，则返回 null。
+@see org.xml.sax.AttributeList#getName(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.AttributeListImpl.getType(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取属性的类型（按位置）。
+
+@param i 列表中属性的位置。
+@return 字符串形式的属性类型（对于枚举为&ldquo;NMTOKEN&rdquo;，如果没有读取声明，则为&ldquo;CDATA&rdquo;），如果在该位置没有属性，则返回 null。
+@see org.xml.sax.AttributeList#getType(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.AttributeListImpl.getValue(int i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取属性的值（按位置）。
+
+@param i 列表中属性的位置。
+@return 字符串形式的属性值，如果在该位置没有属性，则返回 null。
+@see org.xml.sax.AttributeList#getValue(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.AttributeListImpl.getType(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取属性的类型（按名称）。
+
+@param name 属性名称。
+@return 字符串形式的属性类型（对于枚举为&ldquo;NMTOKEN&rdquo;，如果没有读取声明，则为&ldquo;CDATA&rdquo;）。
+@see org.xml.sax.AttributeList#getType(java.lang.String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.xml.sax.helpers.AttributeListImpl.getValue(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取属性的值（按名称）。
+
+@param name 属性名称。
+@see org.xml.sax.AttributeList#getValue(java.lang.String)
+
+<!-- END DATA -->

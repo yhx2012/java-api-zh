@@ -1,0 +1,669 @@
+<!-- BEGIN KEY -->
+public class java.util.SimpleTimeZone extends java.util.TimeZone
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SimpleTimeZone</code> 是 <code>TimeZone</code> 的具体子类，表示一个使用格里高利历的时区。此类保持一个相对 GMT 的偏移量，称为<em>原始偏移量</em>，并保持夏令时安排的开始和结束规则。由于它仅为每一项保持单个值，因此它无法处理相对 GMT 的偏移量以及夏令时安排中的历史更改，除了 {@link #setStartYear setStartYear} 方法可以指定开始实施夏令时安排的年份之外。
+ <p>
+要构造一个带有夏令时安排的 <code>SimpleTimeZone</code>，可以使用一组规则，即<em>开始规则</em> 和<em>结束规则</em> 来描述该安排。夏令时开始或结束的那一天通过 <em>month</em>、<em>day-of-month</em> 和 <em>day-of-week</em> 值联合指定。<em>month</em> 值由 Calendar 的 {@link Calendar#MONTH MONTH} 字段值表示，如 {@link Calendar#MARCH}。<em>day-of-week</em> 值由 Calendar 的 {@link Calendar#DAY_OF_WEEK DAY_OF_WEEK} 值表示，如 {@link Calendar#SUNDAY SUNDAY}。这些值的组合含意如下。
+
+ <ul>
+<li><b>一个月的具体某一天</b><br> 要指定一个月的具体某一天，可将 <em>month</em> 和 <em>day-of-month</em> 设置为一个具体的值，并将 <em>day-of-week</em> 设置为 0。例如，要指定 3 月 1 日，可将 <em>month</em> 设置为 {@link Calendar#MARCH MARCH}，<em>day-of-month</em> 设置为 1，并将 <em>day-of-week</em> 设置为 0。</li>
+
+<li><b>一个月的某一天或之后的星期几</b><br> 要具体指定一个月的某一天或之后的星期几，可将<em> month</em> 设置为一个具体的月份值，将 <em>day-of-month</em> 设置为在该日期或在该日期之后应用规则的那一天，并将 <em>day-of-week</em> 设置为负的 {@link Calendar#DAY_OF_WEEK DAY_OF_WEEK} 字段值。例如，要指定 4 月的第二个星期天，可将<em> month</em> 设置为 {@link Calendar#APRIL APRIL}，<em>day-of-month</em> 设置为 8，并将 <em>day-of-week</em> 设置为 <code>-</code>{@link Calendar#SUNDAY SUNDAY}。</li>
+
+<li><b>一个月的某一天或之前的星期几</b><br> 要具体指定一个月的某一天或之前的星期几，可将 <em>day-of-month</em> 和 <em>day-of-week</em> 设置为负值。例如，要指定 3 月 21 日或之前的最后一个星期三，可将 <em>month</em> 设置为 {@link Calendar#MARCH MARCH}，将 <em>day-of-month</em> 设置为 -21，并将 <em>day-of-week</em> 设置为 <code>-</code>{@link Calendar#WEDNESDAY WEDNESDAY}。</li>
+
+<li><b>一个月的最后一个星期几</b><br> 要指定一个月的最后一个星期几，可将<em> day-of-week </em>设置为 {@link Calendar#DAY_OF_WEEK DAY_OF_WEEK} 值，并将 <em>day-of-month</em> 设置为 -1。例如，要设置 10 月的最后一个星期日，可将<em> month</em> 设置为 {@link Calendar#OCTOBER OCTOBER}，将 <em>day-of-week </em> 设置为 {@link Calendar#SUNDAY SUNDAY}，并将<em> day-of-month </em> 设置为 -1。  </li>
+
+ </ul>
+夏令时开始或结束的那一天的具体时间由该日期内的毫秒值指定。有三种指定时间的<em>模式</em>：{@link #WALL_TIME}、{@link #STANDARD_TIME} 和 {@link #UTC_TIME}。例如，如果夏令时在挂钟时间凌晨 2:00 结束，则可以在 {@link #WALL_TIME} 模式中用 7200000 毫秒指定该时间。在这种情况下，<em>结束规则</em> 的挂钟时间与夏令时时间是一样的。
+ <p>
+下面是构造时区对象的一些参数示例。
+ <pre><code>
+      // Base GMT offset: -8:00
+      // DST starts:      at 2:00am in standard time
+      //                  on the first Sunday in April
+      // DST ends:        at 2:00am in daylight time
+      //                  on the last Sunday in October
+      // Save:            1 hour
+      SimpleTimeZone(-28800000,
+                     &quot;America/Los_Angeles&quot;,
+                     Calendar.APRIL, 1, -Calendar.SUNDAY,
+                     7200000,
+                     Calendar.OCTOBER, -1, Calendar.SUNDAY,
+                     7200000,
+                     3600000)
+
+      // Base GMT offset: +1:00
+      // DST starts:      at 1:00am in UTC time
+      //                  on the last Sunday in March
+      // DST ends:        at 1:00am in UTC time
+      //                  on the last Sunday in October
+      // Save:            1 hour
+      SimpleTimeZone(3600000,
+                     &quot;Europe/Paris&quot;,
+                     Calendar.MARCH, -1, Calendar.SUNDAY,
+                     3600000, SimpleTimeZone.UTC_TIME,
+                     Calendar.OCTOBER, -1, Calendar.SUNDAY,
+                     3600000, SimpleTimeZone.UTC_TIME,
+                     3600000)
+ </code></pre>
+这些参数规则也适用于设置规则的方法，如 <code>setStartRule</code>。
+
+@since 1.1
+@see      Calendar
+@see      GregorianCalendar
+@see      TimeZone
+@version  1.49 01/12/04
+@author   David Goldsmith, Mark Davis, Chen-Lieh Huang, Alan Liu
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.SimpleTimeZone.WALL_TIME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定为挂钟时间的开始或结束时间模式的常量。挂钟时间是开始规则的标准时间，是结束规则的夏令时时间。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.SimpleTimeZone.STANDARD_TIME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定为标准时间的开始或结束时间模式的常量。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.util.SimpleTimeZone.UTC_TIME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定为 UTC 的开始或结束时间模式的常量。例如，欧盟规则就指定为 UTC 时间。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startMonth
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时开始的月份。此值必须介于 <code>Calendar.JANUARY</code> 和 <code>Calendar.DECEMBER</code>（包含）之间。此值必须不能等于 <code>endMonth</code>。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startDay
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段有两种可能的解释：
+ <dl>
+ <dt><code>startMode == DOW_IN_MONTH</code></dt>
+ <dd>
+<code>startDay</code> 指示夏令时是在 <code>startMonth</code> 月份中的哪个日期开始的，该日期可以是从 1 到 28、30 或 31，具体取决于 <code>startMonth</code>。
+ </dd>
+ <dt><code>startMode != DOW_IN_MONTH</code></dt>
+ <dd>
+<code>startDay</code> 指示夏令时是在 <code>startMonth</code> 月份中的哪个 <code>startDayOfWeek</code> 开始。例如，一个 +1 值和一个 <code>Calendar.SUNDAY</code> 的 <code>startDayOfWeek</code> 指示 <code>startMonth</code> 的第一个星期日。同样，+2 则指示第二个星期日，-1 指示最后一个星期日。0 值是非法的。
+ </dd>
+ </dl>
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startDayOfWeek
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时开始时是一周的星期几。此值必须介于 <code>Calendar.SUNDAY</code> 和 <code>Calendar.SATURDAY</code>（包括）之间。
+<p>如果 <code>useDaylight</code> 为 false 或 <code>startMode == DAY_OF_MONTH</code>，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时开始日的子夜之后以毫秒表示的时间。此值表示为挂钟时间、标准时间或 UTC 时间，具体取决于 <code>startTimeMode</code> 的设置。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startTimeMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+startTime 的格式，可为 WALL_TIME、STANDARD_TIME 或 UTC_TIME。
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endMonth
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时结束的月份。此值必须介于 <code>Calendar.JANUARY</code> 和 <code>Calendar.UNDECIMBER</code> 之间。此值必须不能等于 <code>startMonth</code>。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endDay
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段有两种可能的解释：
+ <dl>
+ <dt><code>endMode == DOW_IN_MONTH</code></dt>
+ <dd>
+ <code>endDay</code> 指示夏令时是在 <code>endMonth</code> 月份中的哪个日期结束的，该日期可以是从 1 到 28、30 或 31，具体取决于 <code>endMonth</code>。
+ </dd>
+ <dt><code>endMode != DOW_IN_MONTH</code></dt>
+ <dd>
+ <code>endDay</code> 指示夏令时是在 <code>endMonth</code> 月份中哪个 <code>endDayOfWeek</code> 结束。例如，一个 +1 值和一个 <code>Calendar.SUNDAY</code> 的 <code>endDayOfWeek</code> 指示 <code>endMonth</code> 的第一个星期日。同样，+2 则指示第二个星期日，-1 指示最后一个星期日。0 值是非法的。
+ </dd>
+ </dl>
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endDayOfWeek
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时结束时，一周的星期几。此值必须介于 <code>Calendar.SUNDAY</code> 和 <code>Calendar.SATURDAY</code>（包括）之间。
+<p>如果 <code>useDaylight</code> 为 false 或 <code>endMode == DAY_OF_MONTH</code>，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endTime
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时结束日的子夜之后以毫秒表示的时间。此值表示为挂钟时间、标准时间或 UTC 时间，具体取决于 <code>endTimeMode</code> 的设置。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endTimeMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+endTime 的格式，可为 <code>WALL_TIME</code>、<code>STANDARD_TIME</code> 或 <code>UTC_TIME</code>。
+@serial
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startYear
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+夏令时首次实施的年份。它是一个 {@link GregorianCalendar#AD AD} 值。如果此值小于 1，则在所有的 <code>AD</code> 年份中都实施夏令时。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.rawOffset
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此时区与 GMT 之间以毫秒为单位的偏移量。负偏移表示西时区。要获得本地<em>标准</em> 时间，可用偏移量加上 GMT 时间。要获取本地挂钟时间，则还须加上 <code>dstSavings</code>。 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.util.SimpleTimeZone.useDaylight
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个布尔值，当且仅当此时区使用夏令时时才为 true。如果此值为 false，则忽略其他几个字段。 
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final byte[] java.util.SimpleTimeZone.monthLength
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段在 JDK 1.1 中是序列化的，因此，我们必须保持该顺序，以维护序列化的兼容性。不过，无需在每次创建新时区时都重新创建此数组。
+@serial 包含值 {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31} 的字节数组。从 Java 2 平台 v1.2 开始忽略了此顺序，但为了保持与 JDK 1.1 的兼容性，还必须保持它的有序性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.startMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定开始规则模式的变量。采用下面的值：
+ <dl>
+ <dt><code>DOM_MODE</code></dt>
+ <dd>
+具体日期；例如，3 月 1 日。
+ </dd>
+ <dt><code>DOW_IN_MONTH_MODE</code></dt>
+ <dd>
+一个月中的星期几；例如，3 月的最后一个星期日。
+ </dd>
+ <dt><code>DOW_GE_DOM_MODE</code></dt>
+ <dd>
+一个月的某一天之后的星期几；例如，3 月 15 日或之后的星期日。
+ </dd>
+ <dt><code>DOW_LE_DOM_MODE</code></dt>
+ <dd>
+一个月的某一天之前的星期几；例如，3 月 15 日或之前的星期日。
+ </dd>
+ </dl>
+此字段的设置影响 <code>startDay</code> 字段的解释。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+@since 1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.endMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定结束规则模式的变量。采用下面的值：
+ <dl>
+ <dt><code>DOM_MODE</code></dt>
+ <dd>
+具体日期；例如，3 月 1 日。
+ </dd>
+ <dt><code>DOW_IN_MONTH_MODE</code></dt>    
+ <dd>
+一个月中的星期几；例如，3 月的最后一个星期日。
+ </dd>
+ <dt><code>DOW_GE_DOM_MODE</code></dt>
+ <dd>
+一个月的某一天之后的星期几；例如，3 月 15 日或之后的星期日。
+ </dd>
+ <dt><code>DOW_LE_DOM_MODE</code></dt>
+ <dd>
+一个月的某一天之前的星期几；例如，3 月 15 日或之前的星期日。
+ </dd>
+ </dl>
+此字段的设置影响 <code>endDay</code> 字段的解释。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+@since 1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.dstSavings
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+正值指示在 DST 期间节省的时间量（以毫秒为单位）。一般为 1 小时 (3600000)，有时为 30 分钟 (1800000)。
+<p>如果 <code>useDaylight</code> 为 false，则忽略此值。
+@serial
+@since 1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.SimpleTimeZone.serialVersionOnStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流上序列化数据的版本。可能的值：
+ <dl>
+<dt><b>0</b> 或者在流上不出现</dt>
+ <dd>
+JDK 1.1.3 或较早版本。
+ </dd>
+ <dt><b>1</b></dt>
+ <dd>
+JDK 1.1.4 或更高版本。包括三个新字段：<code>startMode</code>、<code>endMode</code> 和 <code>dstSavings</code>。
+ </dd>
+ <dt><b>2</b></dt>
+ <dd>
+JDK 1.3 或更高版本。包括两个新字段：<code>startTimeMode</code> 和 <code>endTimeMode</code>。
+ </dd>
+ </dl>
+在流出此类时，编写最新格式和所允许的最高 <code>serialVersionOnStream</code>。
+@serial
+@since 1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SimpleTimeZone(int rawOffset, String ID)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的相对于 GMT 的基准时区偏移量和不带夏令时安排的时区 ID 构造一个 SimpleTimeZone。
+
+@param rawOffset  相对于 GMT 的基准时区偏移量（以毫秒为单位）。
+@param ID         此实例给定的时区名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SimpleTimeZone(int rawOffset, String ID, int startMonth, int startDay, int startDayOfWeek, int startTime, int endMonth, int endDay, int endDayOfWeek, int endTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的相对于 GMT 的基准时区偏移量、时区 ID 和夏令时开始和结束的规则来构造一个 SimpleTimeZone。假定 <code>startTime</code> 和 <code>endTime</code> 都要以挂钟时间表示。夏令时节约的时间量假定为 3600000 毫秒（也就是 1 小时）。此构造方法等效于：
+ <pre><code>
+     SimpleTimeZone(rawOffset,
+                    ID,
+                    startMonth,
+                    startDay,
+                    startDayOfWeek,
+                    startTime,
+                    SimpleTimeZone.{@link #WALL_TIME},
+                    endMonth,
+                    endDay,
+                    endDayOfWeek,
+                    endTime,
+                    SimpleTimeZone.{@link #WALL_TIME},
+                    3600000)
+ </code></pre>
+
+@param rawOffset       GMT 的给定基准时区偏移量。
+@param ID              此对象给定的时区 ID。
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。有关此参数的特殊情形，请参阅类的描述。
+@param startDayOfWeek  夏令时开始时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param startTime       以本地挂钟时间表示的夏令时开始时间（此天中的毫秒数），在此情况下为本地标准时间。
+@param endMonth        夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay        夏令时结束的日期。有关此参数的特殊情形，请参阅类的描述。
+@param endDayOfWeek  夏令时结束时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param endTime       以本地挂钟时间表示的夏令时结束时间（此天中的毫秒数），在此情况下为本地标准时间。
+@exception IllegalArgumentException 如果月份、日期、星期或时间参数超出开始或结束规则的范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SimpleTimeZone(int rawOffset, String ID, int startMonth, int startDay, int startDayOfWeek, int startTime, int endMonth, int endDay, int endDayOfWeek, int endTime, int dstSavings)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的相对于 GMT 的基准时区偏移量、时区 ID 和夏令时开始和结束的规则来构造一个 SimpleTimeZone。指定 <code>startTime</code> 和 <code>endTime</code> 都要以挂钟时间表示。此构造方法等效于：
+ <pre><code>
+     SimpleTimeZone(rawOffset,
+                    ID,
+                    startMonth,
+                    startDay,
+                    startDayOfWeek,
+                    startTime,
+                    SimpleTimeZone.{@link #WALL_TIME},
+                    endMonth,
+                    endDay,
+                    endDayOfWeek,
+                    endTime,
+                    SimpleTimeZone.{@link #WALL_TIME},
+                    dstSavings)
+ </code></pre>
+
+@param rawOffset       GMT 的给定基准时区偏移量。
+@param ID              此对象给定的时区 ID。
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。有关此参数的特殊情形，请参阅类的描述。
+@param startDayOfWeek  夏令时开始时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param startTime       以本地挂钟时间表示的夏令时开始时间，在此情况下为本地标准时间。
+@param endMonth        夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay          夏令时结束的日期。有关此参数的特殊情形，请参阅类的描述。
+@param endDayOfWeek    夏令时结束时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param startTime       以本地挂钟时间表示的夏令时结束时间，在此情况下为本地标准时间。
+@param dstSavings      在夏令时期间节省的时间量（以毫秒为单位）。
+@exception IllegalArgumentException 如果月份、日期、星期或时间参数超出开始或结束规则的范围。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SimpleTimeZone(int rawOffset, String ID, int startMonth, int startDay, int startDayOfWeek, int startTime, int startTimeMode, int endMonth, int endDay, int endDayOfWeek, int endTime, int endTimeMode, int dstSavings)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定的相对于 GMT 的基准时区偏移量、时区 ID 和夏令时开始和结束的规则来构造一个 SimpleTimeZone。此构造方法采用一组完整的开始和结束规则参数，其中包括 <code>startTime</code> 和 <code>endTime</code> 模式。此模式指定{@link #WALL_TIME 挂钟时间}或{@link #STANDARD_TIME 标准时间}或 {@link #UTC_TIME UTC 时间}。
+
+@param rawOffset       GMT 的给定基准时区偏移量。
+@param ID              此对象给定的时区 ID。
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。有关此参数的特殊情形，请参阅类的描述。
+@param startDayOfWeek  夏令时开始时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param startTime       由 <code>startTimeMode</code> 指定的时间模式的夏令时开始时间。
+@param startTimeMode   由 startTime 指定的开始时间模式。
+@param endMonth        夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay        夏令时结束的日期。有关此参数的特殊情形，请参阅类的描述。
+@param endDayOfWeek  夏令时结束时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param endTime         由 <code>endTimeMode</code> 指定的时间模式的夏令时结束时间。
+@param endTimeMode     由 endTime 指定的结束时间的模式。
+@param dstSavings      在夏令时期间节省的时间量（以毫秒为单位）。
+
+@exception IllegalArgumentException 如果月份、日期、星期或时间参数超出开始或结束规则的范围，或者某个时间模式值无效。
+
+@see #WALL_TIME
+@see #STANDARD_TIME
+@see #UTC_TIME
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setStartYear(int year)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置夏令时的开始年份。
+
+@param year  夏令时的开始年份。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setStartRule(int startMonth, int startDay, int startDayOfWeek, int startTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置夏令时的开始规则。例如，如果夏令时在本地挂钟时间的 4 月第一个星期日的上午 2 点开始，则可以通过以下调用来设置开始规则：
+<pre><code>setStartRule(Calendar.APRIL, 1, Calendar.SUNDAY, 2*60*60*1000);</code></pre>
+
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。有关此参数的特殊情形，请参阅类的描述。
+@param startDayOfWeek  夏令时开始时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param startTime       以本地挂钟时间表示的夏令时开始时间，在此情况下为本地标准时间。
+@exception IllegalArgumentException 如果 <code>startMonth</code>、<code>startDay</code>、<code>startDayOfWeek</code> 或 <code>startTime</code> 参数超出范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setStartRule(int startMonth, int startDay, int startTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将夏令时开始规则设置为某个月份的固定日期。此方法等效于：
+ <pre><code>setStartRule(startMonth, startDay, 0, startTime)</code></pre>
+
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。
+@param startTime       以本地挂钟时间表示的夏令时开始时间，在此情况下为本地标准时间。有关此参数的特殊情形，请参阅类的描述。
+@exception IllegalArgumentException 如果 <code>startMonth</code>、<code>startDayOfMonth</code> 或 <code>startTime</code> 参数超出范围。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setStartRule(int startMonth, int startDay, int startDayOfWeek, int startTime, boolean after)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将夏令时开始规则设置为某个月份给定日期之前或之后的星期几，例如，8 号或之后的第一个星期一。
+
+@param startMonth      夏令时开始的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，0 代表 1 月）。
+@param startDay        夏令时开始的日期。
+@param startDayOfWeek  夏令时开始时是一周的星期几。
+@param startTime       以本地挂钟时间表示的夏令时开始时间，在此情况下为本地标准时间。
+@param after           如果为 true，则此规则将选择 <code>dayOfMonth</code> 或它<em>之后</em> 的第一个 <code>dayOfWeek</code>。如果为 false，则此规则将选择 <code>dayOfMonth</code> 或它<em>之前</em> 的最后一个 <code>dayOfWeek</code>。
+@exception IllegalArgumentException 如果 <code>startMonth</code>、<code>startDay</code>、<code>startDayOfWeek</code> 或 <code>startTime</code> 参数超出范围。 
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setEndRule(int endMonth, int endDay, int endDayOfWeek, int endTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置夏令时结束规则。例如，如果夏令时在本地挂钟时间的 10 月最后一个星期天的上午 2 点结束，则可以通过以下调用来设置结束规则：<code>setEndRule(Calendar.OCTOBER, -1, Calendar.SUNDAY, 2*60*60*1000);</code>
+
+@param endMonth        夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay        夏令时结束的日期。有关此参数的特殊情形，请参阅类的描述。
+@param endDayOfWeek  夏令时结束时是一周的星期几。有关此参数的特殊情形，请参阅类的描述。
+@param endTime       以本地挂钟时间表示的夏令时结束时间（此天中的毫秒数），在此情况下为本地标准时间。
+@exception IllegalArgumentException 如果 <code>endMonth</code>、<code>endDay</code>、<code>endDayOfWeek</code> 或 <code>endTime</code> 参数超出范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setEndRule(int endMonth, int endDay, int endTime)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将夏令时结束规则设置为某个月份的固定日期。此方法等效于：
+ <pre><code>setEndRule(endMonth, endDay, 0, endTime)</code></pre>
+
+@param endMonth      夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay        夏令时结束的日期。
+@param endTime       以本地挂钟时间表示的夏令时结束时间（此天中的毫秒数），在此情况下为本地标准时间。
+@exception IllegalArgumentException 如果 <code>endMonth</code>、<code>endDay</code> 或 <code>endTime</code> 参数超出范围。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setEndRule(int endMonth, int endDay, int endDayOfWeek, int endTime, boolean after)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将夏令时结束规则设置为某个月份给定日期之前或之后的星期几，例如，8 号或之后的第一个星期一。
+
+@param endMonth      夏令时结束的月份。月份是一个 {@link Calendar#MONTH MONTH} 字段值（基于 0。例如，9 代表 10 月）。
+@param endDay        夏令时结束的日期。
+@param endDayOfWeek  夏令时结束时是一周的星期几。
+@param endTime       以本地挂钟时间表示的夏令时结束时间（此天中的毫秒数），在此情况下为本地标准时间。
+@param after         如果为 true，则此规则将选择 <code>endDay</code> 或它<em>之后</em> 的第一个 <code>endDayOfWeek</code>。如果为 false，则此规则将选择该月份的 <code>endDay</code> 或它之前的最后一个 <code>endDayOfWeek</code>。
+@exception IllegalArgumentException 如果 <code>endMonth</code>、<code>endDay</code>、<code>endDayOfWeek</code> 或 <code>endTime</code> 参数超出范围。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.SimpleTimeZone.getOffset(long date)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定时间的 UTC 返回此时区的偏移量。如果夏令时在给定的时间是有效的，就使用夏令时节省值调整偏移值。
+
+@param date 出现时区偏移量的时间。
+@return 添加到 UTC 以获取本地时间的时间量（以毫秒为单位）。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.SimpleTimeZone.getOffset(int era, int year, int month, int day, int dayOfWeek, int millis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以毫秒为单位的本地时间与 UTC 之间的差别，对于指定日期和时间，把原始偏移量和夏令时的效果同时考虑在内。此方法假定开始和结束月份是不同的。它还使用默认的 {@link GregorianCalendar} 对象作为其基础日历，例如用于确定闰年。除默认的 <code>GregorianCalendar</code> 之外，请不要将此方法的结果与其他日历一起使用。
+
+<p><em>注：一般情况下，客户应使用 <code>Calendar.get(ZONE_OFFSET) + Calendar.get(DST_OFFSET)</code> 而不调用此方法。</em>
+
+@param era       给定日期的年代。
+@param year      给定日期的年份。
+@param month     给定日期的月份。月份是从 0 开始的，比如 0 代表 1 月。
+@param day       给定日期的月份中的某一天。
+@param dayOfWeek 给定日期的一周中的某一天。
+@param millis    <em>标准</em> 本地时间中天的毫秒数。
+@return          要添加到 UTC 以获取本地时间的毫秒数。
+@exception  IllegalArgumentException 如果 <code>era</code>、<code>month</code>、<code>day</code>、<code>dayOfWeek</code> 或 <code>millis</code> 参数超出范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.SimpleTimeZone.getRawOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此时区的 GMT 偏移量。
+@return 以毫秒为单位的 GMT 偏移量值。
+@see #setRawOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setRawOffset(int offsetMillis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+把基准时区偏移量设置到 GMT。这是添加到 UTC 以获取本地时间的偏移量。
+@see #getRawOffset
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.SimpleTimeZone.setDSTSavings(int millisSavedDuringDST)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置在夏令时期间时钟提前的时间量（以毫秒为单位）。
+@param millisSavedDuringDST 在夏令时规则生效时，相对于标准时间提前的毫秒数。一个正数，一般为 1 小时 (3600000)。
+@see #getDSTSavings
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.SimpleTimeZone.getDSTSavings()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回设置在夏令时期间时钟提前的时间量（以毫秒为单位）。
+
+@return 在夏令时规则生效时，相对于标准时间提前的毫秒数，如果此时区不实施夏令时，则为 0（零）。
+
+@see #setDSTSavings
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.SimpleTimeZone.useDaylightTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此时区使用夏令时，则执行查询。
+@return 如果此时区使用夏令时，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.SimpleTimeZone.inDaylightTime(Date date)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定日期在夏令时期间，则执行查询。
+@return 如果给定的日期在夏令时中，则返回 true，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.util.SimpleTimeZone.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SimpleTimeZone</code> 实例的一个副本。
+@return 此实例的一个副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.SimpleTimeZone.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成 SimpleDateFormat 对象的哈希码。
+@return 此对象的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.SimpleTimeZone.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个 <code>SimpleTimeZone</code> 对象的相等性。
+
+@param obj  要与之比较的 <code>SimpleTimeZone</code> 对象。
+@return     如果给定的 <code>obj</code> 与此 <code>SimpleTimeZone</code> 对象相同，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.SimpleTimeZone.hasSameRules(TimeZone other)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此时区与另一时区具有相同的规则和偏移量，则返回 <code>true</code>。
+@param other 要与之比较的 TimeZone 对象。
+@return 如果给定时区为 SimpleTimeZone，而且与此时区具有相同的规则和偏移量，则返回 <code>true</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.SimpleTimeZone.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此时区的字符串表示形式。
+@return 此时区的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.SimpleTimeZone.readObject(ObjectInputStream stream) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流重构此对象（也就是将其反序列化）。
+
+我们同时处理 JDK 1.1 二进制格式和具有打包字节数组的完全格式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.SimpleTimeZone.writeObject(ObjectOutputStream stream) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象的状态保存到流中（也就是将其序列化）。
+
+@serialData 我们编写了两种格式，JDK 1.1 兼容格式，它使用 <code>DOW_IN_MONTH_MODE</code> 规则，在必需部分中后跟完全规则，在可选部分中则使用打包格式。在流入时 JDK 1.1 代码将忽略可选部分。
+<p> 可选部分的内容：发出字节数组的长度 (int)；对于此版本为 4。发出给定长度的字节数组。字节数组的内容是字段 <code>startDay</code>、<code>startDayOfWeek</code>、<code>endDay</code> 和 <code>endDayOfWeek</code> 的 true 值。在必需部分中这些字段的值是适合于规则模式 <code>DOW_IN_MONTH_MODE</code> 的近似值，它是 JDK 1.1 唯一可识别的模式。
+
+<!-- END DATA -->

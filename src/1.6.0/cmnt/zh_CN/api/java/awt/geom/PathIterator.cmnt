@@ -1,0 +1,138 @@
+<!-- BEGIN KEY -->
+public interface java.awt.geom.PathIterator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>PathIterator</code> 接口通过允许调用者一次一段地获取边界的路径，为实现 {@link java.awt.Shape Shape} 接口的对象提供返回其边界几何形状的机制。此接口允许这些对象一次一段地获取其边界，方法是使用从一阶到三阶 B&eacute;zier 曲线，这些曲线是直线、二次或三次 B&eacute;zier 样条。
+ <p>
+多个子路径可以通过使用 &quot;MOVETO&quot; 段在几何形状中创建间断性以从一个子路径的结尾移动到下一个子路径的开头来表示。
+ <p>
+每个子路径都可以被手动关闭，方法是在该子路径的起始 &quot;MOVETO&quot; 段所在的坐标上结束子路径中的最后一段，或者使用 &quot;CLOSE&quot; 段追加一条线段连接最后一点和第一点。应该知道，相对于使用 &quot;CLOSE&quot; 段关闭路径而言，手动关闭轮廓可能导致在子路径的结束点使用不同的线风格装饰。例如，{@link java.awt.BasicStroke BasicStroke} 对象使用线 &quot;JOIN&quot; 装饰来连接第一点和最后一点（如果遇到 &quot;CLOSE&quot; 段），而在该开头坐标上结束路径将导致在结尾使用线 &quot;CAP&quot; 装饰。
+
+@see java.awt.Shape
+@see java.awt.BasicStroke
+
+@version 1.16, 12/19/03
+@author Jim Graham
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.WIND_EVEN_ODD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指定确定路径内部的奇偶规则的旋绕规则常量。奇偶规则规定，如果路径段穿过任意方向上从一点向无穷大绘制的射线的次数为奇数,则该点位于路径内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.WIND_NON_ZERO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指定确定路径内部的非零规则的旋绕规则常量。非零规则规定，如果路径段按逆时针方向与按顺时针方向穿过任意方向上从一点向无穷大绘制的射线的次数不同，则该点位于路径内。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.SEG_MOVETO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该段类型常量针对某个点，指定新子路径的起始位置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.SEG_LINETO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该段类型常量针对某个点，指定要根据最新指定点绘制的线的结束点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.SEG_QUADTO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该段类型常量针对某对点，指定要根据最新指定点绘制的二次参数曲线。该曲线通过使用最新指定的（当前）点 (CP)、第一个控制点 (P1) 和最后一个内插的控制点 (P2) 在 <code>(t=[0..1])</code> 范围内解参数控制方程来内插。此曲线的参数控制方程为：
+ <pre>
+          P(t) = B(2,0)*CP + B(2,1)*P1 + B(2,2)*P2
+          0 &lt;= t &lt;= 1
+
+        B(n,m) = mth coefficient of nth degree Bernstein polynomial
+               = C(n,m) * t^(m) * (1 - t)^(n-m)
+        C(n,m) = Combinations of n things, taken m at a time
+               = n! / (m! * (n-m)!)
+ </pre>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.SEG_CUBICTO
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该段类型常量针对某个 3 个点的集合，指定要根据最新指定点绘制的三次参数曲线。该曲线通过使用最新指定的（当前）点 (CP)、第一个控制点 (P1)、第二个控制点 (P2) 和最后一个内插的控制点 (P3) 在 <code>(t=[0..1])</code> 范围内解参数控制方程来内插。此曲线的参数控制方程为：
+ <pre>
+          P(t) = B(3,0)*CP + B(3,1)*P1 + B(3,2)*P2 + B(3,3)*P3
+          0 &lt;= t &lt;= 1
+
+        B(n,m) = mth coefficient of nth degree Bernstein polynomial
+               = C(n,m) * t^(m) * (1 - t)^(n-m)
+        C(n,m) = Combinations of n things, taken m at a time
+               = n! / (m! * (n-m)!)
+ </pre>
+ 这一形式的曲线通常称为 B&eacute;zier 曲线。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.geom.PathIterator.SEG_CLOSE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该段类型常量指定应该通过将线段追加到与最新 SEG_MOVETO 对应的点来关闭前面的子路径。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.geom.PathIterator.getWindingRule()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用于确定路径迭代的旋绕规则。
+@return 旋绕规则。
+@see #WIND_EVEN_ODD
+@see #WIND_NON_ZERO
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.geom.PathIterator.isDone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试迭代是否完成。
+@return 如果已经读取了所有的段，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.geom.PathIterator.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只要最初的遍历方向上还存在点，就沿该方向将迭代器移动到下一个路径段。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.geom.PathIterator.currentSegment(float[] coords)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用迭代返回当前路径段的坐标和类型。返回值就是路径段类型：SEG_MOVETO、SEG_LINETO、SEG_QUADTO、SEG_CUBICTO 或 SEG_CLOSE。必须传入长度为 6 的 float 数组，该数组可用于存储点的坐标。每个点都存储为一对 float x、y 坐标。SEG_MOVETO 和 SEG_LINETO 类型返回一个点，SEG_QUADTO 返回两个点，SEG_CUBICTO 返回 3 个点，SEG_CLOSE 不返回任何点。
+@param coords 保存从此方法返回数据的数组
+@return 当前路径段的路径段类型。
+@see #SEG_MOVETO
+@see #SEG_LINETO
+@see #SEG_QUADTO
+@see #SEG_CUBICTO
+@see #SEG_CLOSE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.geom.PathIterator.currentSegment(double[] coords)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用迭代返回当前路径段的坐标和类型。返回值就是路径段类型：SEG_MOVETO、SEG_LINETO、SEG_QUADTO、SEG_CUBICTO 或 SEG_CLOSE。必须传入长度为 6 的 double 数组，该数组可用于存储点的坐标。每个点都存储为一对 double x、y 坐标。SEG_MOVETO 和 SEG_LINETO 类型返回一个点，SEG_QUADTO 返回两个点，SEG_CUBICTO 返回 3 个点，SEG_CLOSE 不返回任何点。
+@param coords 保存从此方法返回数据的数组
+@return 当前路径段的路径段类型。
+@see #SEG_MOVETO
+@see #SEG_LINETO
+@see #SEG_QUADTO
+@see #SEG_CUBICTO
+@see #SEG_CLOSE
+
+<!-- END DATA -->

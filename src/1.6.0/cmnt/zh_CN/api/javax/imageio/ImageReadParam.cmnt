@@ -1,0 +1,252 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.ImageReadParam extends javax.imageio.IIOParam
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+描述如何对流进行解码的类。此类的实例或其子类用于提供 <code>ImageReader</code> 实例的规定&ldquo;入门&rdquo;信息。
+
+<p> 编码为文件或流的一部分的图像可以被认为是向多维扩展的：宽度和高度的空间维数、band 的数量以及逐步解码传递。此类允许选中所有这些维数中的图像的相邻（不相邻）矩形子区域来进行解码。此外，可以不连续地对空间维数进行二次取样。最后，颜色和格式转换可以通过控制目标图像的 <code>ColorModel</code> 和 <code>SampleModel</code> 来指定，或者通过提供 <code>BufferedImage</code> 或使用 <code>ImageTypeSpecifier</code> 来指定。
+
+<p> <code>ImageReadParam</code> 对象用于指定如何在输入时从 Java Image I/O 框架的上下文中的流转换一幅图像或一组图像。用于特定图像格式的插件将从其 <code>ImageReader</code> 实现的 <code>getDefaultReadParam</code> 方法中返回 <code>ImageReadParam</code> 的实例。
+
+<p> 由 <code>ImageReadParam</code> 实例维护的状态与将被解码的任何特定图像无关。在进行实际解码时，read 参数中设置的值与将解码的图像的实际属性组合在一起，这些属性来自将接收解码像素数据的流和目标 <code>BufferedImage</code>。例如，使用 <code>setSourceRegion</code> 设置的源区域将首先与实际有效源区域相交。结果将由 <code>getDestinationOffset</code> 返回的值转换，得到的矩形与实际有效目标区域相交，从而产生将被写入的目标区域。
+
+<p> 由 <code>ImageReadParam</code> 指定的参数将被应用于图像，如下所示。首先，如果已经通过 <code>setSourceRenderSize</code> 设置呈现大小，则整个解码图像将按 <code>getSourceRenderSize</code> 给出的大小来呈现。否则，图像的实际大小将由 <code>ImageReader.getWidth</code> 和 <code>ImageReader.getHeight</code> 给定。
+
+<p> 接下来，将根据 <code>getSourceXOffset</code>、<code>getSourceYOffset</code>、<code>getSourceWidth</code> 和 <code>getSourceHeight</code> 指定的源区域裁剪图像。
+
+<p> 然后根据 {@link IIOParam#setSourceSubsampling <code>IIOParam.setSourceSubsampling</code>} 中给出的因子对得到的区域进行二次取样。第一个像素、每一行的像素数和行数都取决于二次取样设置值。调用所得矩形的最小 X 和 Y 坐标 (<code>minX</code>, <code>minY</code>)、其宽度 <code>w</code> 及其高度 <code>h</code>。
+
+<p> 将此矩形偏移 (<code>getDestinationOffset().x</code>, <code>getDestinationOffset().y</code>)，并根据目标边界进行裁剪。如果没有设置目标图像，则定义目标图像的宽度为 <code>getDestinationOffset().x</code> + <code>w</code>，高度为 <code>getDestinationOffset().y</code> + <code>h</code>，以便源区域的所有像素都可以写入目标区域中。
+
+<p> 二次取样之后放入目标图像中的像素以及写入由 <code>getSourceMinProgressivePass</code> 和 <code>getSourceNumProgressivePasses</code> 指定的某一逐步传递中的那些像素都传递给下一步骤。
+
+<p> 最后，根据 <code>setDestinationBands</code> 的注释中描述的算法，将每个像素的源样本映射到目标 band。
+
+<p> 插件 writer 可以通过提供实现额外的、特定于插件的接口来扩展 <code>ImageReadParam</code> 的功能。由插件负责记录哪些接口可用以及如何使用。reader 将安静地忽略所有其未知的 <code>ImageReadParam</code> 子类扩展功能。此外，将忽略通常在通过 <code>getDefaultReadParam</code> 创建自己的 <code>ImageReadParam</code> 实例时禁用的所有可选功能。
+
+<p> 注意，如果不存在针对某一功能的查询方法，所有 <code>ImageReader</code> 实现就必须都支持该功能（<i>例如</i>，源呈现大小是可选的，但二次取样必须受支持）。
+
+@version 0.5
+
+@see ImageReader
+@see ImageWriter
+@see ImageWriteParam
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.imageio.ImageReadParam.canSetSourceRenderSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 <code>ImageReadParam</code> 允许设置源呈现维数，则为 <code>true</code>。默认情况下，该值为 <code>false</code>。子类必须手工设置此值。
+
+<p> 不支持设置源呈现大小的 <code>ImageReader</code> 应该将该值设置为 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Dimension javax.imageio.ImageReadParam.sourceRenderSize
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>canSetSourceRenderSize</code> 为 <code>true</code>，则为源的所需呈现宽度和高度；或者为 <code>null</code>。
+
+<p> 不支持设置源呈现大小的 <code>ImageReader</code> 可以忽略此值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.image.BufferedImage javax.imageio.ImageReadParam.destination
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前目标 <code>BufferedImage</code>；如果没有设置目标图像，则为 <code>null</code>。默认情况下，该值为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int[] javax.imageio.ImageReadParam.destinationBands
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要使用的目标 band 集合（<code>int</code> 数组的形式）。默认情况下，该值为 <code>null</code>，指示应该按顺序写入的所有目标 band。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageReadParam.minProgressivePass
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从源中读取的逐步传递的最小索引。默认情况下，该值被设置为 0，指示应该解码从第一个可用传递开始的传递。
+
+<p> 子类应该确保此值为非负。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.imageio.ImageReadParam.numProgressivePasses
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从源中读取的逐步传递的最大数量。默认情况下，该值被设置为 <code>Integer.MAX_VALUE</code>，指示应该解码直至最后一个可用传递（包括）的传递。
+
+<p> 子类应该确保此值为正数。此外，如果该值不是 <code>Integer.MAX_VALUE</code>，则 <code>minProgressivePass + numProgressivePasses - 1</code> 不应该超过 <code>Integer.MAX_VALUE</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.ImageReadParam()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>ImageReadParam</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageReadParam.setDestination(BufferedImage destination)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个 <code>BufferedImage</code>，将其用作解码像素数据的目标。当前设置的图像将由 <code>read</code>、<code>readAll</code> 和 <code>readRaster</code> 方法写入，对该图像的引用将由这些方法返回。
+
+<p> 来自上述那些方法的像素数据将从 <code>getDestinationOffset</code> 指定的偏移量开始写入。
+
+<p> 如果 <code>destination</code> 为 <code>null</code>，则新创建的 <code>BufferedImage</code> 将由这些方法返回。
+
+<p> 在读取时，检查该图像来验证其 <code>ColorModel</code> 和 <code>SampleModel</code> 是否对应于从 <code>ImageReader</code> 的 <code>getImageTypes</code> 方法返回的 <code>ImageTypeSpecifier</code> 之一。如果不对应，则 reader 将抛出 <code>IIOException</code>。
+
+@param destination 要写入数据的 BufferedImage，或者为 <code>null</code>。
+
+@see #getDestination
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BufferedImage javax.imageio.ImageReadParam.getDestination()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前由 <code>setDestination</code> 方法设置的 <code>BufferedImage</code>，如果没有设置，则返回 <code>null</code>。
+@return 要写入数据的 BufferedImage。
+
+@see #setDestination
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageReadParam.setDestinationBands(int[] destinationBands)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将在其中放置数据的目标 band 的索引。索引不能重复。
+
+<p> <code>null</code> 值指示所有目标 band 都将被使用。
+
+<p> 如果没有指定目标图像，选择目标 band 子集不会影响某一读取操作的输出图像中的 band 数；所创建的目标图像仍然拥有相同的 band 数，就像从未调用此方法一样。如果需要目标图像中不同数量的 band，则必须使用 <code>ImageReadParam.setDestination</code> 方法提供一幅图像。
+
+<p> 在读取或写入时，如果指定了大于最大目标 band 索引的值，或者要使用的源 band 的数量和目标 band 的数量不同，则 reader 或 writer 将抛出 <code>IllegalArgumentException</code>。可以使用 <code>ImageReader.checkReadParamBandSettings</code> 方法自动进行此测试。
+
+@param destinationBands 将要使用的整数 band 索引组成的数组。
+
+@exception IllegalArgumentException 如果 <code>destinationBands</code> 包含一个负数或重复的值。
+
+@see #getDestinationBands
+@see #getSourceBands
+@see ImageReader#checkReadParamBandSettings
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.imageio.ImageReadParam.getDestinationBands()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 band 索引的集合，数据将置于该集合中。如果没有设置任何值，则返回 <code>null</code>，指示将使用所有目标 band。
+
+@return 要使用的目标 band 的索引；或者 <code>null</code>。
+
+@see #setDestinationBands
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.ImageReadParam.canSetSourceRenderSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 reader 允许通过使用 <code>setSourceRenderSize</code> 方法以任意大小将源图像呈现为解码过程的一部分，则返回 <code>true</code>。如果此方法返回 <code>false</code>，那么调用 <code>setSourceRenderSize</code> 将抛出 <code>UnsupportedOperationException</code>。
+
+@return 如果支持设置源呈现大小，则返回 <code>true</code>。
+
+@see #setSourceRenderSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageReadParam.setSourceRenderSize(Dimension size) throws java.lang.UnsupportedOperationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果能够以任意大小呈现图像，则将源宽度和高度设置为所提供的值。注意，从 <code>ImageReader</code> 上的 <code>getWidth</code> 和 <code>getHeight</code> 方法返回的值不受此方法的影响；它们将继续返回图像的默认大小。类似地，如果图像被平铺，那么平铺宽度和高度也是根据默认大小给出的。
+
+<p> 通常应该选定宽度和高度，使宽度与高度的比率接近近似的图像高宽比（从 <code>ImageReader.getAspectRatio</code> 中返回）。
+
+<p> 如果此插件不允许设置呈现大小，则抛出 <code>UnsupportedOperationException</code>。
+
+<p> 要移除呈现大小设置值，为 <code>size</code> 传入一个 <code>null</code> 值。
+
+@param size 指示所需宽度和高度 <code>Dimension</code>。
+
+@exception IllegalArgumentException 如果宽度或高度为负数或 0。
+@exception UnsupportedOperationException 如果此插件不支持重新设置图像大小。
+
+@see #getSourceRenderSize
+@see ImageReader#getWidth
+@see ImageReader#getHeight
+@see ImageReader#getAspectRatio
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.imageio.ImageReadParam.getSourceRenderSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回解码期间将呈现的源图像的宽度和高度，如果已经通过 <code>setSourceRenderSize</code> 方法设置了的话。<code>null</code> 值指示没有进行设置。
+
+@return 源图像的呈现宽度和高度（<code>Dimension</code> 的形式）。
+
+@see #setSourceRenderSize
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.ImageReadParam.setSourceProgressivePasses(int minPass, int numPasses)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置将被解码的逐步传递的范围。此范围之外的传递将被忽略。
+
+<p> 逐步传递是整个图像的重新编码，通常以逐步变高的有效分辨率进行，但要求有更高的传输带宽。最常使用的逐步编码是以 JPEG 格式进行的，其中连续的传递包括高频图像内容的更详细的表示形式。
+
+<p> 将被解码的传递的实际数量是在解码期间根据流中可用的实际传递数来确定的。因此，如果 <code>minPass + numPasses - 1</code> 大于最后一个可用传递的索引，则解码将在该传递结束。
+
+<p> <code>Integer.MAX_VALUE</code> 的值为 <code>numPasses</code> 指示应该读取从 <code>minPass</code> 开始的所有传递。否则，最后一个传递的索引（<i>即</i> <code>minPass + numPasses - 1</code>）一定不能超过 <code>Integer.MAX_VALUE</code>。
+
+<p> 如果没有 <code>unsetSourceProgressivePasses</code> 方法，通过调用 <code>setSourceProgressivePasses(0, Integer.MAX_VALUE)</code> 可以达到相同的效果。
+
+@param minPass 要解码的第一个传递的索引。
+@param numPasses 要解码的传递的最大数量。
+
+@exception IllegalArgumentException 如果 <code>minPass</code> 为负数，<code>numPasses</code> 为负数或 0，或者 <code>numPasses</code> 小于 <code>Integer.MAX_VALUE</code>，但 <code>minPass + numPasses - 1</code> 大于 <code>INTEGER.MAX_VALUE</code>。
+
+@see #getSourceMinProgressivePass
+@see #getSourceMaxProgressivePass
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageReadParam.getSourceMinProgressivePass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将被解码的第一个逐步传递的索引。如果没有设置任何值，则返回 0（此为修正值）。
+
+@return 将被解码的第一个传递的索引。
+
+@see #setSourceProgressivePasses
+@see #getSourceNumProgressivePasses
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageReadParam.getSourceMaxProgressivePass()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>getSourceNumProgressivePasses</code> 等于 <code>Integer.MAX_VALUE</code>，则返回 <code>Integer.MAX_VALUE</code>。否则返回 <code>getSourceMinProgressivePass() + getSourceNumProgressivePasses() - 1</code>。
+
+@return 将被读取的最后一个传递的索引；或者 <code>Integer.MAX_VALUE</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.ImageReadParam.getSourceNumProgressivePasses()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回将被解码的逐步传递的数量。如果没有设置任何值，则返回 <code>Integer.MAX_VALUE</code>（此为修正值）。
+
+@return 将被解码的传递的数量。
+
+@see #setSourceProgressivePasses
+@see #getSourceMinProgressivePass
+
+<!-- END DATA -->

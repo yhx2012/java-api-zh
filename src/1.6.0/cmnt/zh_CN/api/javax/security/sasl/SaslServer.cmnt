@@ -1,0 +1,143 @@
+<!-- BEGIN KEY -->
+public interface javax.security.sasl.SaslServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以服务器的身份执行 SASL 验证。
+<p>
+为了执行具体 SASL 机制所定义的验证，服务器（例如 LDAP 服务器）要获得此类的一个实例。调用 <tt>SaslServer</tt> 实例上的方法可生成与 <tt>SaslServer</tt> 所实现的 SASL 机制相对应的 challenge。随着验证的进行，该实例会封装 SASL 服务器的验证交换状态。 
+<p>
+以下是 LDAP 服务器如何使用 <tt>SaslServer</tt> 的一个示例。它首先为客户端请求的 SASL 机制获得一个 <tt>SaslServer</tt> 实例：
+<blockquote><pre>
+ SaslServer ss = Sasl.createSaslServer(mechanism,
+     &quot;ldap&quot;, myFQDN, props, callbackHandler);
+</pre></blockquote>
+然后可继续为验证使用该服务器。例如，假设 LDAP 服务器接收到一个 LDAP BIND 请求，其中包含 SASL 机制的名称和（可选的）初始响应。然后它可按如下方式使用服务器：
+<blockquote><pre>
+ while (!ss.isComplete()) {
+     try {
+         byte[] challenge = ss.evaluateResponse(response);
+         if (ss.isComplete()) {
+             status = ldap.sendBindResponse(mechanism, challenge, SUCCESS);
+         } else {
+             status = ldap.sendBindResponse(mechanism, challenge, 
+                   SASL_BIND_IN_PROGRESS);
+             response = ldap.readBindRequest();
+         }
+     } catch (SaslException e) {
+ 	    status = ldap.sendErrorResponse(e);
+ 	    break;
+     }
+ }
+ if (ss.isComplete() &amp;&amp; status == SUCCESS) {
+    String qop = (String) sc.getNegotiatedProperty(Sasl.QOP);
+    if (qop != null 
+        &amp;&amp; (qop.equalsIgnoreCase(&quot;auth-int&quot;) 
+            || qop.equalsIgnoreCase(&quot;auth-conf&quot;))) {
+
+      // Use SaslServer.wrap() and SaslServer.unwrap() for future
+      // communication with client
+	ldap.in = new SecureInputStream(ss, ldap.in);
+	ldap.out = new SecureOutputStream(ss, ldap.out);
+    }
+ }
+</pre></blockquote>
+
+@since 1.5
+
+@see Sasl
+@see SaslServerFactory
+
+@author Rosanna Lee
+@author Rob Weltman
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.sasl.SaslServer.getMechanismName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 SASL 服务器的 IANA 注册机制名。（例如 &quot;CRAM-MD5&quot;、&quot;GSSAPI&quot;）。
+@return 表示 IANA 注册机制名的非 null 字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.security.sasl.SaslServer.evaluateResponse(byte[] response) throws javax.security.sasl.SaslException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+评估响应数据并生成一个 challenge。
+
+如果在验证处理期间接收到客户端的响应，则调用此方法来准备要提交给客户端的下一个合适 challenge。如果验证已成功并且没有其他 challenge 数据要发送给客户端，则 challenge 为 null。如果必须通过向客户端发送 challenge 来继续进行验证，或者如果验证已成功但客户端需要处理 challenge 数据，则 challenge 是非 null 的。每次调用 <tt>evaluateResponse()</tt> 后都应该调用 <tt>isComplete()</tt> 来确定是否还需要客户端的进一步响应。 
+
+@param response 客户端发送的非 null（但可能为空）响应。
+
+@return 要发送给客户端的 challenge，可能为 null。如果验证已成功并且没有其他 challenge 数据要发送给客户端，则 challenge 为 null。
+@exception SaslException 如果处理响应或生成 challenge 时发生错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.security.sasl.SaslServer.isComplete()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定验证交换是否已完成。通常在每次调用 <tt>evaluateResponse()</tt> 后调用此方法来确定验证是否已成功完成，还是应该继续进行。
+@return 如果验证交换已完成，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.security.sasl.SaslServer.getAuthorizationID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此会话客户端的有效授权 ID。仅在 isComplete() 返回 true 时才可调用此方法。
+@return 客户端的授权 ID。
+@exception IllegalStateException 如果未完成此次验证会话
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.security.sasl.SaslServer.unwrap(byte[] incoming, int offset, int len) throws javax.security.sasl.SaslException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解包接收自客户端的 byte 数组。仅在验证交换已完成（即 <tt>isComplete()</tt> 返回 true）后，并且仅在验证交换已经协商将完整性和/或机密性作为保护级别时才调用此方法；否则会抛出 <tt>IllegalStateException</tt>。
+<p>
+<tt>incoming</tt> 是 SASL 缓冲区的内容（在 RFC 2222 中定义），没有表示长度的前导 4 个八位组字段。<tt>offset</tt> 和 <tt>len</tt> 指定了要使用的 <tt>incoming</tt> 部分。
+
+@param incoming 非 null 的 byte 数组，包含取自客户端的已编码字节。
+@param offset 所用字节在 <tt>incoming</tt> 中的开始位置。
+@param len 使用 <tt>incoming</tt> 中的字节数。
+@return 包含已解码字节的非 null byte 数组。
+@exception SaslException 如果无法成功解包 <tt>incoming</tt>。
+@exception IllegalStateException 如果验证交换未完成，如果协商的保护级别既没有完整性，也没有机密性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public byte[] javax.security.sasl.SaslServer.wrap(byte[] outgoing, int offset, int len) throws javax.security.sasl.SaslException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+包装要发送到客户端的 byte 数组。仅在验证交换已完成（即 <tt>isComplete()</tt> 返回 true）后，并且仅在验证交换已经协商将完整性和/或机密性作为保护级别时才调用此方法；否则会抛出 <tt>SaslException</tt>。
+<p>
+此方法的结果会组成 SASL 缓冲区的内容（在 RFC 2222 中定义），没有表示长度的前导 4 个八位组字段。<tt>offset</tt> 和 <tt>len</tt> 指定了要使用的 <tt>outgoing</tt> 部分。
+
+@param outgoing 非 null 的 byte 数组，包含要编码的字节。
+@param offset 所用字节在 <tt>outgoing</tt> 中的开始位置。
+@param len 使用 <tt>outgoing</tt> 中的字节数。
+@return 包含已编码字节的非 null byte 数组。
+@exception SaslException 如果无法成功包装 <tt>outgoing</tt>。
+@exception IllegalStateException 如果验证交换未完成，如果协商的保护级别既没有完整性，也没有机密性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.security.sasl.SaslServer.getNegotiatedProperty(String propName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取已协商的属性。仅在验证交换已完成后（即当 <tt>isComplete()</tt> 返回 true）才调用此方法；否则会抛出 <tt>IllegalStateException</tt>。
+ 
+@param propName 属性
+@return 已协商属性的值。如果为 null，则未协商该属性，或者该属性不适用于此机制。
+@exception IllegalStateException 如果未完成此验证交换
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.security.sasl.SaslServer.dispose() throws javax.security.sasl.SaslException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处置 SaslServer 可能使用的所有系统资源或安全敏感信息。调用此方法会使 SaslServer 实例失效。此方法是幂等的。
+@throws SaslException 如果释放资源时遇到问题。
+
+<!-- END DATA -->

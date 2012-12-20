@@ -1,0 +1,653 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.DateFormat extends java.text.Format
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ DateFormat is an abstract class for date/time formatting subclasses which
+ formats and parses dates or time in a language-independent manner.
+ The date/time formatting subclass, such as SimpleDateFormat, allows for
+ formatting (i.e., date -> text), parsing (text -> date), and
+ normalization.  The date is represented as a <code>Date</code> object or
+ as the milliseconds since January 1, 1970, 00:00:00 GMT.
+
+ <p>DateFormat provides many class methods for obtaining default date/time
+ formatters based on the default or a given locale and a number of formatting
+ styles. The formatting styles include FULL, LONG, MEDIUM, and SHORT. More
+ detail and examples of using these styles are provided in the method
+ descriptions.
+
+ <p>DateFormat helps you to format and parse dates for any locale.
+ Your code can be completely independent of the locale conventions for
+ months, days of the week, or even the calendar format: lunar vs. solar.
+
+ <p>To format a date for the current Locale, use one of the
+ static factory methods:
+ <pre>
+  myString = DateFormat.getDateInstance().format(myDate);
+ </pre>
+ <p>If you are formatting multiple dates, it is
+ more efficient to get the format and use it multiple times so that
+ the system doesn't have to fetch the information about the local
+ language and country conventions multiple times.
+ <pre>
+  DateFormat df = DateFormat.getDateInstance();
+  for (int i = 0; i < myDate.length; ++i) {
+    output.println(df.format(myDate[i]) + "; ");
+  }
+ </pre>
+ <p>To format a date for a different Locale, specify it in the
+ call to getDateInstance().
+ <pre>
+  DateFormat df = DateFormat.getDateInstance(DateFormat.LONG, Locale.FRANCE);
+ </pre>
+ <p>You can use a DateFormat to parse also.
+ <pre>
+  myDate = df.parse(myString);
+ </pre>
+ <p>Use getDateInstance to get the normal date format for that country.
+ There are other static factory methods available.
+ Use getTimeInstance to get the time format for that country.
+ Use getDateTimeInstance to get a date and time format. You can pass in 
+ different options to these factory methods to control the length of the
+ result; from SHORT to MEDIUM to LONG to FULL. The exact result depends
+ on the locale, but generally:
+ <ul><li>SHORT is completely numeric, such as 12.13.52 or 3:30pm
+ <li>MEDIUM is longer, such as Jan 12, 1952
+ <li>LONG is longer, such as January 12, 1952 or 3:30:32pm
+ <li>FULL is pretty completely specified, such as
+ Tuesday, April 12, 1952 AD or 3:30:42pm PST.
+ </ul>
+
+ <p>You can also set the time zone on the format if you wish.
+ If you want even more control over the format or parsing,
+ (or want to give your users more control),
+ you can try casting the DateFormat you get from the factory methods
+ to a SimpleDateFormat. This will work for the majority
+ of countries; just remember to put it in a try block in case you
+ encounter an unusual one.
+
+ <p>You can also use forms of the parse and format methods with
+ ParsePosition and FieldPosition to
+ allow you to
+ <ul><li>progressively parse through pieces of a string.
+ <li>align any particular field, or find out where it is for selection
+ on the screen.
+ </ul>
+
+ <h4><a name="synchronization">Synchronization</a></h4>
+
+ <p>
+ Date formats are not synchronized.
+ It is recommended to create separate format instances for each thread.
+ If multiple threads access a format concurrently, it must be synchronized
+ externally.
+
+ @see          Format
+ @see          NumberFormat
+ @see          SimpleDateFormat
+ @see          java.util.Calendar
+ @see          java.util.GregorianCalendar
+ @see          java.util.TimeZone
+ @version      1.57 11/17/05
+ @author       Mark Davis, Chen-Lieh Huang, Alan Liu
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.Calendar java.text.DateFormat.calendar
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The calendar that <code>DateFormat</code> uses to produce the time field
+ values needed to implement date and time formatting.  Subclasses should
+ initialize this to a calendar appropriate for the locale associated with
+ this <code>DateFormat</code>.
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.NumberFormat java.text.DateFormat.numberFormat
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The number formatter that <code>DateFormat</code> uses to format numbers
+ in dates and times.  Subclasses should initialize this to a number format
+ appropriate for the locale associated with this <code>DateFormat</code>.
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.ERA_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for ERA field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.YEAR_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for YEAR field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.MONTH_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for MONTH field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.DATE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for DATE field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.HOUR_OF_DAY1_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for one-based HOUR_OF_DAY field alignment.
+ Used in FieldPosition of date/time formatting.
+ HOUR_OF_DAY1_FIELD is used for the one-based 24-hour clock.
+ For example, 23:59 + 01:00 results in 24:59.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.HOUR_OF_DAY0_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for zero-based HOUR_OF_DAY field alignment.
+ Used in FieldPosition of date/time formatting.
+ HOUR_OF_DAY0_FIELD is used for the zero-based 24-hour clock.
+ For example, 23:59 + 01:00 results in 00:59.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.MINUTE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for MINUTE field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.SECOND_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for SECOND field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.MILLISECOND_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for MILLISECOND field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.DAY_OF_WEEK_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for DAY_OF_WEEK field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.DAY_OF_YEAR_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for DAY_OF_YEAR field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.DAY_OF_WEEK_IN_MONTH_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for DAY_OF_WEEK_IN_MONTH field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.WEEK_OF_YEAR_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for WEEK_OF_YEAR field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.WEEK_OF_MONTH_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for WEEK_OF_MONTH field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.AM_PM_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for AM_PM field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.HOUR1_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for one-based HOUR field alignment.
+ Used in FieldPosition of date/time formatting.
+ HOUR1_FIELD is used for the one-based 12-hour clock.
+ For example, 11:30 PM + 1 hour results in 12:30 AM.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.HOUR0_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for zero-based HOUR field alignment.
+ Used in FieldPosition of date/time formatting.
+ HOUR0_FIELD is used for the zero-based 12-hour clock.
+ For example, 11:30 PM + 1 hour results in 00:30 AM.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.TIMEZONE_FIELD
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Useful constant for TIMEZONE field alignment.
+ Used in FieldPosition of date/time formatting.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.FULL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constant for full style pattern.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.LONG
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constant for long style pattern.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.MEDIUM
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constant for medium style pattern.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.SHORT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constant for short style pattern.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.DateFormat.DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Constant for default style pattern.  Its value is MEDIUM.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.DateFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Create a new date format.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.StringBuffer java.text.DateFormat.format(Object obj, StringBuffer toAppendTo, FieldPosition fieldPosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overrides Format.
+ Formats a time object into a time string. Examples of time objects
+ are a time value expressed in milliseconds and a Date object.
+ @param obj must be a Number or a Date.
+ @param toAppendTo the string buffer for the returning time string.
+ @return the string buffer passed in as toAppendTo, with formatted text appended.
+ @param fieldPosition keeps track of the position of the field
+ within the returned string.
+ On input: an alignment field,
+ if desired. On output: the offsets of the alignment field. For
+ example, given a time text "1996.07.10 AD at 15:08:56 PDT",
+ if the given fieldPosition is DateFormat.YEAR_FIELD, the
+ begin index and end index of fieldPosition will be set to
+ 0 and 4, respectively.
+ Notice that if the same time field appears
+ more than once in a pattern, the fieldPosition will be set for the first
+ occurrence of that time field. For instance, formatting a Date to
+ the time string "1 PM PDT (Pacific Daylight Time)" using the pattern
+ "h a z (zzzz)" and the alignment field DateFormat.TIMEZONE_FIELD,
+ the begin index and end index of fieldPosition will be set to
+ 5 and 8, respectively, for the first occurrence of the timezone
+ pattern character 'z'.
+ @see java.text.Format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.StringBuffer java.text.DateFormat.format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Formats a Date into a date/time string.
+ @param date a Date to be formatted into a date/time string.
+ @param toAppendTo the string buffer for the returning date/time string.
+ @param fieldPosition keeps track of the position of the field
+ within the returned string.
+ On input: an alignment field,
+ if desired. On output: the offsets of the alignment field. For
+ example, given a time text "1996.07.10 AD at 15:08:56 PDT",
+ if the given fieldPosition is DateFormat.YEAR_FIELD, the
+ begin index and end index of fieldPosition will be set to
+ 0 and 4, respectively.
+ Notice that if the same time field appears
+ more than once in a pattern, the fieldPosition will be set for the first
+ occurrence of that time field. For instance, formatting a Date to
+ the time string "1 PM PDT (Pacific Daylight Time)" using the pattern
+ "h a z (zzzz)" and the alignment field DateFormat.TIMEZONE_FIELD,
+ the begin index and end index of fieldPosition will be set to
+ 5 and 8, respectively, for the first occurrence of the timezone
+ pattern character 'z'.
+ @return the string buffer passed in as toAppendTo, with formatted text appended.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.text.DateFormat.format(Date date)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Formats a Date into a date/time string.
+ @param date the time value to be formatted into a time string.
+ @return the formatted time string.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.text.DateFormat.parse(String source) throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Parses text from the beginning of the given string to produce a date.
+ The method may not use the entire text of the given string.
+ <p>
+ See the {@link #parse(String, ParsePosition)} method for more information
+ on date parsing.
+
+ @param source A <code>String</code> whose beginning should be parsed.
+ @return A <code>Date</code> parsed from the string.
+ @exception ParseException if the beginning of the specified string
+            cannot be parsed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Date java.text.DateFormat.parse(String source, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Parse a date/time string according to the given parse position.  For
+ example, a time text "07/10/96 4:5 PM, PDT" will be parsed into a Date
+ that is equivalent to Date(837039928046).
+
+ <p> By default, parsing is lenient: If the input is not in the form used
+ by this object's format method but can still be parsed as a date, then
+ the parse succeeds.  Clients may insist on strict adherence to the
+ format by calling setLenient(false).
+
+ @see java.text.DateFormat#setLenient(boolean)
+
+ @param source  The date/time string to be parsed
+
+ @param pos   On input, the position at which to start parsing; on
+              output, the position at which parsing terminated, or the
+              start position if the parse failed.
+
+ @return      A Date, or null if the input could not be parsed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.DateFormat.parseObject(String source, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Parses text from a string to produce a <code>Date</code>.
+ <p>
+ The method attempts to parse text starting at the index given by
+ <code>pos</code>.
+ If parsing succeeds, then the index of <code>pos</code> is updated
+ to the index after the last character used (parsing does not necessarily
+ use all characters up to the end of the string), and the parsed
+ date is returned. The updated <code>pos</code> can be used to
+ indicate the starting point for the next call to this method.
+ If an error occurs, then the index of <code>pos</code> is not
+ changed, the error index of <code>pos</code> is set to the index of
+ the character where the error occurred, and null is returned.
+ <p>
+ See the {@link #parse(String, ParsePosition)} method for more information
+ on date parsing.
+
+ @param source A <code>String</code>, part of which should be parsed.
+ @param pos A <code>ParsePosition</code> object with index and error
+            index information as described above.
+ @return A <code>Date</code> parsed from the string. In case of
+         error, returns null.
+ @exception NullPointerException if <code>pos</code> is null.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getTimeInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the time formatter with the default formatting style
+ for the default locale.
+ @return a time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getTimeInstance(int style)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the time formatter with the given formatting style
+ for the default locale.
+ @param style the given formatting style. For example,
+ SHORT for "h:mm a" in the US locale.
+ @return a time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getTimeInstance(int style, Locale aLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the time formatter with the given formatting style
+ for the given locale.
+ @param style the given formatting style. For example,
+ SHORT for "h:mm a" in the US locale.
+ @param aLocale the given locale.
+ @return a time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date formatter with the default formatting style
+ for the default locale.
+ @return a date formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateInstance(int style)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date formatter with the given formatting style
+ for the default locale.
+ @param style the given formatting style. For example,
+ SHORT for "M/d/yy" in the US locale.
+ @return a date formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateInstance(int style, Locale aLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date formatter with the given formatting style
+ for the given locale.
+ @param style the given formatting style. For example,
+ SHORT for "M/d/yy" in the US locale.
+ @param aLocale the given locale.
+ @return a date formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateTimeInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date/time formatter with the default formatting style
+ for the default locale.
+ @return a date/time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateTimeInstance(int dateStyle, int timeStyle)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date/time formatter with the given date and time
+ formatting styles for the default locale.
+ @param dateStyle the given date formatting style. For example,
+ SHORT for "M/d/yy" in the US locale.
+ @param timeStyle the given time formatting style. For example,
+ SHORT for "h:mm a" in the US locale.
+ @return a date/time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getDateTimeInstance(int dateStyle, int timeStyle, Locale aLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the date/time formatter with the given formatting styles
+ for the given locale.
+ @param dateStyle the given date formatting style.
+ @param timeStyle the given time formatting style.
+ @param aLocale the given locale.
+ @return a date/time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.text.DateFormat java.text.DateFormat.getInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Get a default date/time formatter that uses the SHORT style for both the
+ date and the time.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.util.Locale[] java.text.DateFormat.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns an array of all locales for which the
+ <code>get*Instance</code> methods of this class can return
+ localized instances.
+ The returned array represents the union of locales supported by the Java 
+ runtime and by installed 
+ {@link java.text.spi.DateFormatProvider DateFormatProvider} implementations.  
+ It must contain at least a <code>Locale</code> instance equal to 
+ {@link java.util.Locale#US Locale.US}.
+
+ @return An array of locales for which localized
+         <code>DateFormat</code> instances are available.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DateFormat.setCalendar(Calendar newCalendar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set the calendar to be used by this date format.  Initially, the default
+ calendar for the specified or default locale is used.
+ @param newCalendar the new Calendar to be used by the date format
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Calendar java.text.DateFormat.getCalendar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the calendar associated with this date/time formatter.
+ @return the calendar associated with this date/time formatter.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DateFormat.setNumberFormat(NumberFormat newNumberFormat)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Allows you to set the number formatter.
+ @param newNumberFormat the given new NumberFormat.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.NumberFormat java.text.DateFormat.getNumberFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the number formatter which this date/time formatter uses to
+ format and parse a time.
+ @return the number formatter which this date/time formatter uses.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DateFormat.setTimeZone(TimeZone zone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the time zone for the calendar of this DateFormat object.
+ @param zone the given new time zone.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.TimeZone java.text.DateFormat.getTimeZone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the time zone.
+ @return the time zone associated with the calendar of DateFormat.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.DateFormat.setLenient(boolean lenient)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Specify whether or not date/time parsing is to be lenient.  With
+ lenient parsing, the parser may use heuristics to interpret inputs that
+ do not precisely match this object's format.  With strict parsing,
+ inputs must match this object's format.
+ @param lenient when true, parsing is lenient
+ @see java.util.Calendar#setLenient
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.DateFormat.isLenient()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Tell whether date/time parsing is to be lenient.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.DateFormat.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overrides hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.DateFormat.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overrides equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.DateFormat.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Overrides Cloneable
+
+<!-- END DATA -->

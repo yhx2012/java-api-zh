@@ -1,0 +1,143 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject extends java.lang.Object implements java.util.concurrent.locks.Condition, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+作为 {@link Lock} 实现基础的 {@link AbstractQueuedLongSynchronizer} 的条件实现。
+
+<p>此类的方法文档不是一个行为规范，而是从 Lock 和 Condition 用户的角度描述机制。此类的导出版本通常需要附带描述条件语义的文档，这些语义依赖关联 <tt>AbstractQueuedLongSynchronizer</tt> 的那些条件的语义。
+
+<p>此类是可序列化的，但所有字段都是瞬态的，因此序列化条件没有等待线程。
+
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <tt>ConditionObject</tt> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.signal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将等待时间最长的线程（如果有）从此条件的等待队列移动到拥有锁的等待队列。
+
+@throws IllegalMonitorStateException 如果 {@link #isHeldExclusively} 返回 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.signalAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将所有线程从此条件的等待队列移动到拥有锁的等待队列。
+
+@throws IllegalMonitorStateException 如果 {@link #isHeldExclusively} 返回 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.awaitUninterruptibly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现不可中断的条件等待。
+ <ol>
+<li> 保存 {@link #getState} 返回的锁定状态
+<li> 以保存的状态作为参数调用 {@link #release}，如果调用失败，则抛出 IllegalMonitorStateException。
+<li> 在收到信号之前，一直阻塞
+<li> 以保存的状态作为参数调用 {@link #acquire} 的特定版本重新获取。
+ </ol>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.await() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现可中断的条件等待。
+ <ol>
+<li> 如果当前线程被中断，则抛出 InterruptedException
+<li> 保存 {@link #getState} 返回的锁定状态
+<li> 以保存的状态作为参数调用 {@link #release}，如果调用失败，则抛出 IllegalMonitorStateException。
+<li> 在收到信号或中断之前，一直阻塞
+<li> 以保存的状态作为参数调用 {@link #acquire} 的特定版本重新获取。
+<li> 如果步骤 4 的阻塞过程中发生中断，则抛出异常
+ </ol>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final long java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.awaitNanos(long nanosTimeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现定时条件等待。
+ <ol>
+<li> 如果当前线程被中断，则抛出 InterruptedException
+<li> 保存 {@link #getState} 返回的锁定状态
+<li> 以保存的状态作为参数调用 {@link #release}，如果调用失败，则抛出 IllegalMonitorStateException。
+<li> 在收到信号、中断或超时之前，一直阻塞
+<li> 以保存的状态作为参数调用 {@link #acquire} 的特定版本重新获取。
+<li> 如果步骤 4 的阻塞过程中发生中断，则抛出 InterruptedException
+ </ol>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.awaitUntil(Date deadline) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现绝对定时条件等待。
+ <ol>
+<li> 如果当前线程被中断，则抛出 InterruptedException
+<li> 保存 {@link #getState} 返回的锁定状态
+<li> 以保存的状态作为参数调用 {@link #release}，如果调用失败，则抛出 IllegalMonitorStateException。
+<li> 在收到信号、中断或超时之前，一直阻塞
+<li> 以保存的状态作为参数调用 {@link #acquire} 的特定版本重新获取。
+<li> 如果步骤 4 的阻塞过程中发生中断，则抛出 InterruptedException
+<li> 如果步骤 4 的阻塞过程中发生超时，则返回 false，否则返回 true
+ </ol>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.await(long time, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现定时条件等待。
+ <ol>
+<li> 如果当前线程被中断，则抛出 InterruptedException
+<li> 保存 {@link #getState} 返回的锁定状态
+<li> 以保存的状态作为参数调用 {@link #release}，如果调用失败，则抛出 IllegalMonitorStateException。
+<li> 在收到信号、中断或超时之前，一直阻塞
+<li> 以保存的状态作为参数调用 {@link #acquire} 的特定版本重新获取。
+<li> 如果步骤 4 的阻塞过程中发生中断，则抛出 InterruptedException
+<li> 如果步骤 4 的阻塞过程中发生超时，则返回 false，否则返回 true
+ </ol>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.hasWaiters()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询是否有线程正在此条件等待。实现 {@link AbstractQueuedLongSynchronizer#hasWaiters}。
+
+@return {@code true} 如果没有任何正在等待的线程
+@throws IllegalMonitorStateException 如果 {@link #isHeldExclusively} 返回 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final int java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.getWaitQueueLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回正在此条件等待的线程估计数。实现 {@link AbstractQueuedLongSynchronizer#getWaitQueueLength}。
+
+@return 等待线程的估计数
+@throws IllegalMonitorStateException 如果 {@link #isHeldExclusively} 返回 {@code false}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final java.util.Collection<java.lang.Thread> java.util.concurrent.locks.AbstractQueuedLongSynchronizer.ConditionObject.getWaitingThreads()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 collection，该 collection 包含那些正在此条件等待的线程。实现 {@link AbstractQueuedLongSynchronizer#getWaitingThreads}。
+
+@return 线程 collection 
+@throws IllegalMonitorStateException 如果 {@link #isHeldExclusively} 返回 {@code false}
+
+<!-- END DATA -->

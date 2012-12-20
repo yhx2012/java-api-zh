@@ -1,0 +1,126 @@
+<!-- BEGIN KEY -->
+public final class java.rmi.server.UID extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>UID</code> 表示一个和生成它的主机的时间有关的唯一标识符，或者是 2<sup>16</sup> 个&ldquo;熟知&rdquo;标识符之一。
+
+<p>{@link #UID()} 构造方法可以用来生成一个和生成此标识符的主机的时间有关的唯一标识符。{@link #UID(short)} 构造方法可以用来创建 2<sup>16</sup> 个熟知标识符之一。
+
+<p><code>UID</code> 实例包含以下三个基本值：
+ <ul>
+<li><code>unique</code>，它是一个 <code>int</code> 值，唯一标识在其中生成此 <code>UID</code> 的 VM，并和主机和由 <code>time</code> 值表示的时间有关，（<code>unique</code> 值的示例实现是一个进程标识符），对于熟知 <code>UID</code> 此值为 0。
+<li><code>time</code>，它是一个 <code>long</code> 值，其等于此 <code>UID</code> 在其中生成的 VM 处于活动状态时的时间（由 {@link System#currentTimeMillis()} 返回），对于熟知 <code>UID</code> 为 0。
+<li><code>count</code>，它是一个 <code>short</code>值，以区分用同一 <code>time</code> 值在同一个 VM 中生成的 <code>UID</code>。
+ </ul>
+
+<p>单独生成的 <code>UID</code> 实例具有唯一性并和生成它的主机的时间有关，条件是主机启动所需时间超过一毫秒，并且系统时钟从不向后调。可以通过将唯一主机标识符（如 IP 地址）和 <code>UID</code> 实例配对来构造全局唯一标识符。
+
+@author	Ann Wollrath
+@author	Peter Jones
+@version	1.22, 03/12/19
+@since	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final int java.rmi.server.UID.unique
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一标识此 <code>UID</code> 在其中生成的 VM 的数字，该数字和主机和给定的时间有关
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final long java.rmi.server.UID.time
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 <code>UID</code> 在其中生成的 VM 处于活动状态时的时间（由 {@link System#currentTimeMillis()} 返回）
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final short java.rmi.server.UID.count
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来区分按同一时间在同一 VM 中创建的 <code>UID</code> 实例的 16 位数字
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.UID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成一个 <code>UID</code>，它和生成它的主机的时间有关且具有唯一性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.server.UID(short num)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个&ldquo;熟知&rdquo;<code>UID</code>。
+
+可能有 2<sup>16</sup> 个这样的熟知 ID。
+
+<p>通过此构造方法创建的 <code>UID</code> 将不与通过无参数构造方法生成的所有 <code>UID</code> 冲突。
+
+@param	num 表示熟知 <code>UID</code> 的数字
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.server.UID.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>UID</code> 的哈希码值。
+
+@return	此 <code>UID</code> 的哈希码值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.server.UID.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较给定对象与此 <code>UID</code> 的相等性。
+
+当且仅当指定对象为具有与此对象相同的 <code>unique</code>、<code>time</code> 和 <code>count</code> 值的 <code>UID</code> 实例时，此方法返回 <code>true</code>。
+
+@param	obj 要与此 <code>UID</code> 比较的对象
+
+@return	如果给定对象与此对象等效，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.rmi.server.UID.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>UID</code> 的字符串表示形式。
+
+@return	此 <code>UID</code> 的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.rmi.server.UID.write(DataOutput out) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>UID</code> 的二进制表示形式编组为一个 <code>DataOutput</code> 实例。
+
+<p>需要特别说明的是，此方法首先要用此 <code>UID</code> 的 <code>unique</code> 值调用给定流的 {@link DataOutput#writeInt(int)} 方法，然后用 <code>UID</code> 的 <code>time</code> 值调用该流的 {@link DataOutput#writeLong(long)} 方法，接着用此 <code>UID</code> 的 <code>count</code> 值调用该流的 {@link DataOutput#writeShort(int)} 方法。
+
+@param	out 要将此 <code>UID</code> 写入其中的 <code>DataOutput</code> 实例
+
+@throws	IOException 如果在执行此操作时发生 I/O 错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.server.UID java.rmi.server.UID.read(DataInput in) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过从 <code>DataInput</code> 实例解组二进制表示形式构造并返回一个新的 <code>UID</code>。
+
+<p>需要特别说明的是，此方法首先要调用给定流的 {@link DataInput#readInt()} 方法来读取 <code>unique</code> 值，然后调用该流的 {@link DataInput#readLong()} 方法来读取 <code>time</code> 值，接着调用该流的 {@link DataInput#readShort()} 方法来读取 <code>count</code> 值，接下来创建并返回一个包含从该流中读取的 <code>unique</code>、<code>time</code> 和 <code>count</code> 值的 <code>UID</code> 实例。
+
+@param	in  要从中读取 <code>UID</code> 的 <code>DataInput</code> 实例
+
+@return	已解组的 <code>UID</code> 实例
+
+@throws	IOException 如果在执行此操作时发生 I/O 错误
+
+<!-- END DATA -->

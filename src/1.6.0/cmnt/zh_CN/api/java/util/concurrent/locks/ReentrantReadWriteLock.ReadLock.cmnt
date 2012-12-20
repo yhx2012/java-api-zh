@@ -1,0 +1,150 @@
+<!-- BEGIN KEY -->
+public static class java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock extends java.lang.Object implements java.util.concurrent.locks.Lock, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@link ReentrantReadWriteLock#readLock} 方法返回的锁。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock(ReentrantReadWriteLock lock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+子类使用的构造方法
+@param lock 外部锁对象
+@throws NullPointerException 如果 lock 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.lock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取读取锁。 
+
+<p>如果另一个线程没有保持写入锁，则获取读取锁并立即返回。
+
+<p>如果另一个线程保持该写入锁，出于线程调度目的，将禁用当前线程，并且在获取读取锁之前，该线程将一直处于休眠状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.lockInterruptibly() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取读取锁，除非当前线程被{@linkplain Thread#interrupt 中断}。
+
+<p>如果另一个线程没有保持写入锁，则获取读取锁并立即返回。
+
+<p>如果另一个线程保持了该写入锁，出于线程调度目的，将禁用当前线程，并且在发生以下两种情况之一以前，该线程将一直处于休眠状态：
+
+ <ul>
+
+<li>读取锁由当前线程获得；或者
+
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程。
+
+ </ul>
+
+<p>如果当前线程：
+
+ <ul>
+
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+
+<li>在获取读取锁时被{@linkplain Thread#interrupt 中断}，
+
+ </ul>
+
+则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>在此实现中，因为此方法是一个显式中断点，所以要优先考虑响应中断，而不是响应锁的普通获取或重入获取。
+
+@throws  InterruptedException 如果当前线程是已中断的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.tryLock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅当写入锁在调用期间未被另一个线程保持时获取读取锁。
+
+<p>如果另一个线程没有保持写入锁，则获取读取锁并立即返回 {@code true} 值。即使已将此锁设置为使用公平排序策略，但是调用 {@code tryLock()} 仍<em>将</em> 立即获取读取锁（如果有可用的），不管其他线程当前是否正在等待该读取锁。在某些情况下，此&ldquo;闯入&rdquo;行为可能很有用，即使它会打破公平性也如此。如果希望遵守此锁的公平设置，则使用 {@link #tryLock(long, TimeUnit) tryLock(0, TimeUnit.SECONDS) }，它几乎是等效的（它也检测中断）。
+
+<p>如果写入锁被另一个线程保持，则此方法将立即返回 {@code false} 值。
+
+@return 如果获取了读取锁，则返回 {@code true} 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.tryLock(long timeout, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果另一个线程在给定的等待时间内没有保持写入锁，并且当前线程未被{@linkplain Thread#interrupt 中断}，则获取读取锁。
+
+<p>如果另一个线程没有保持写入锁，则获取读取锁并立即返回 {@code true} 值。如果已经设置此锁使用公平的排序策略，并且其他线程都在等待该锁，则<em>不会</em> 获取一个可用的锁。这与 {@link #tryLock()} 方法相反。如果想使用一个允许闯入公平锁的定时 {@code tryLock}，那么可以将定时形式和不定时形式组合在一起：
+
+ <pre>if (lock.tryLock() || lock.tryLock(timeout, unit) ) { ... }
+ </pre>
+
+<p>如果写入锁被另一个线程保持，则出于线程调度目的，禁用当前线程，并且在发生以下三种情况之一以前，该线程将一直处于休眠状态：
+
+ <ul>
+
+<li>读取锁由当前线程获得；或者
+
+<li>其他某个线程{@linkplain Thread#interrupt 中断}当前线程；或者
+
+<li>已超过指定的等待时间。
+
+ </ul>
+
+<p>如果获得了读取锁，则返回 {@code true} 值。
+
+<p>如果当前线程：
+
+ <ul>
+
+<li>在进入此方法时已经设置了该线程的中断状态；或者
+
+<li>在获取读取锁时被{@linkplain Thread#interrupt 中断}，
+
+</ul> 则抛出 {@link InterruptedException}，并且清除当前线程的已中断状态。
+
+<p>如果超出了指定的等待时间，则返回值为 {@code false}。如果该时间小于等于 0，则此方法根本不会等待。
+
+<p>在此实现中，因为此方法是一个显式中断点，所以要优先考虑响应中断，而不是响应锁的普通获取或重入获取，或者报告所用的等待时间。
+
+@param timeou 等待读取锁的时间
+@param unit timeout 参数的时间单位
+
+@return 如果获取了读取锁，则返回 {@code true}。
+
+@throws InterruptedException 如果当前线程被中断
+@throws NullPointerException 如果时间单位为 null
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.unlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图释放此锁。  
+
+<p> 如果读取者的数量目前为 0，则该锁可用于写入锁尝试。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.locks.Condition java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.newCondition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+因为  {@code ReadLocks} 不支持条件，所以将抛出 {@code UnsupportedOperationException}。
+@throws UnsupportedOperationException 总是如此
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此锁及其锁状态的字符串。括号中的状态包括字符串 {@code "Read locks ="}，后跟读取锁的数量。
+@return 标识此锁及其锁状态的字符串。
+
+<!-- END DATA -->

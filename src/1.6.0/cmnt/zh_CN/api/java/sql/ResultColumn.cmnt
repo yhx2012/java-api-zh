@@ -1,0 +1,85 @@
+<!-- BEGIN KEY -->
+public interface class java.sql.ResultColumn implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Annotation that allows for the field of a <i>data class</i> for a given
+ <a href="DataSet.html"><code>DataSet</code></a> to be mapped to a column 
+ of a <code>SQL</code> result set that is returned by invoking a method 
+ decorated by a <code><a href="Select.html">Select</a></code> annotation.
+
+ <h3>Overview</h3>
+ The <code>ResultColumn</code> annotation is used to decorate a field within 
+ a <i>data class</i>,
+ allowing the application developer to specify an alternative name for 
+ the column returned in a <code>SQL</code> result set. 
+ <p>
+ The <code>ResultColumn</code> annotation can also be used to indicate that a <i>data class</i>
+ field is to be used to uniquely identify a row when a <code>DataSet</code> is used in
+ a disconnected mode.  There must be at least one column specified to 
+ uniquely identify a row for a disconnected <code>DataSet</code> otherwise
+ a <code>SQLRuntimeException</code> will be thrown.
+ <p>  
+ In the example below, the <code>ResultColumn</code> annotation is used to specify that
+ the <code>Mammal.weight</code> field corresponds to the column <code>kilos</code>
+ in the result set that is returned by invoking the method <code>getAllMammals</code>.
+  
+ <p>
+ <pre>
+ public class Mammal {
+     public String name;
+     public String description;
+     public @ResultColumn("kilos") int weight;
+ }
+ </pre>
+ <p>
+ 
+ <pre>
+ // Obtain an instance of the Query interface, Queries
+ Queries myQueries = con.createQueryObject(Queries.class)
+ DataSet&lt;Mammal&gt; rows = myQueries.getAllMammals();
+ for( Mammal row :rows) {
+     System.out.print("name: " + row.name + ", weight: " + row.weight);
+ }
+ </pre>
+  
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultColumn.name()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The SQL column to map to.
+
+ <p><B>Note</B>: If the <code>name</code> and the <code>value</code> annotation
+ element are specified at the same time, a <code>SQLRuntimeException</code> will
+ be thrown. 
+ @return a <code>String</code> specifying the column's name. 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.ResultColumn.uniqueIdentifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Annotation element indicating whether this column is used to uniquely identify a row within
+ a disconnected <code>DataSet</code>.  This element is ignored when the <code>DataSet</code> is
+ used in a connected mode.
+
+ @return a <code>true</code> if the field is used to uniquely identify the row; false otherwise
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.ResultColumn.value()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The SQL column to map to.
+
+ <p><B>Note</B>: If the <code>name</code> and the <code>value</code> annotation
+ element are specified at the same time, a <code>SQLRuntimeException</code> will
+ be thrown. 
+ @return a <code>String</code> specifying the column's name.
+ @since 1.6
+
+<!-- END DATA -->

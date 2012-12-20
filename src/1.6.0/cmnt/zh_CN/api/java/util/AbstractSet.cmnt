@@ -1,0 +1,74 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.AbstractSet extends java.util.AbstractCollection implements java.util.Set
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供 <tt>Set</tt> 接口的骨干实现，从而最大限度地减少了实现此接口所需的工作。<p>
+
+通过扩展此类来实现一个 set 的过程与通过扩展 AbstractCollection 来实现 Collection 的过程是相同的，除了此类的子类中的所有方法和构造方法都必须服从 <tt>Set</tt> 接口所强加的额外限制（例如，add 方法必须不允许将一个对象的多个实例添加到一个 set 中）。<p>
+
+注意，此类并没有重写 <tt>AbstractCollection</tt> 类中的任何实现。它仅仅添加了 <tt>equals</tt> 和 <tt>hashCode</tt> 的实现。<p>
+
+此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@param <E> 此 set 所维护的元素的类型
+
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.29, 04/21/06
+@see Collection
+@see AbstractCollection
+@see Set
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.AbstractSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单独的构造方法。（由子类构造方法调用，通常是隐式的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractSet.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定对象与此 set 的相等性。如果给定对象也是一个 set，两个 set 的大小相等，并且给定 set 的每个成员都包含在此 set 中，则返回 <tt>true</tt>。这确保 <tt>equals</tt> 方法在 <tt>Set</tt> 接口的不同实现间正常工作。<p>
+
+此实现首先检查指定的对象是否是此 set；如果是，则返回 <tt>true</tt>。然后，它将检查指定的对象是否是一个大小与此 set 的大小相等的 set；如果不是，则返回 false。如果是，则返回 <tt>containsAll((Collection) o)</tt>。
+
+@param o 要与此 set 进行相等性比较的对象
+@return 如果指定的对象等于此 set，则返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.AbstractSet.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 set 的哈希码值。set 的哈希码被定义为该 set 中元素的哈希码的总和，其中 <tt>null</tt> 元素的哈希码被定义为 0。这确保了 <tt>s1.equals(s2)</tt> 意味着对于任何两个 set <tt>s1</tt> 和 <tt>s2</tt>，都有 <tt>s1.hashCode()==s2.hashCode()</tt>，正如 {@link Object#hashCode} 的常规协定所要求的。
+
+<p>此实现对 set 进行迭代，在 set 的每个元素上调用 <tt>hashCode</tt> 方法，并合计结果。
+
+@return 此 set 的哈希码值。
+@see Object#equals(Object)
+@see Set#equals(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.AbstractSet.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 set 中移除包含在指定 collection 中的所有元素（可选操作）。如果指定 collection 也是一个 set，则此操作有效地修改此 set，从而其值成为两个 set 的<i>不对称差集</i>。 
+
+<p>通过在此 set 和指定 collection 上调用 <tt>size</tt> 方法，此实现可以确定哪一个更小。如果此 set 中的元素更少，则该实现将在此 set 上进行迭代，依次检查迭代器返回的每个元素，查看它是否包含在指定的 collection 中。如果包含它，则使用迭代器的 <tt>remove</tt> 方法从此 set 中将其移除。如果指定 collection 中的元素更少，则该实现将在指定的 collection 上进行迭代，并使用此 set 的 <tt>remove</tt> 方法，从此 set 中移除迭代器返回的每个元素。
+
+<p>注意，如果 <tt>iterator</tt> 方法返回的迭代器没有实现 <tt>remove</tt> 方法，则此实现抛出 <tt>UnsupportedOperationException</tt>。
+
+@param c 包含将从此 set 中移除的元素的 collection
+@return 如果此 set 由于调用而发生更改，则返回 <tt>true</tt>
+@throws UnsupportedOperationException 如果此 set 不支持 <tt>removeAll</tt> 操作
+@throws ClassCastException 如果此 set 元素的类与指定 collection 不兼容（可选） 
+@throws NullPointerException 如果此 set 包含一个 null 元素并且指定 collection 不允许 null 元素（可选），或者指定 collection 为 null
+@see #remove(Object)
+@see #contains(Object)
+
+<!-- END DATA -->

@@ -1,0 +1,77 @@
+<!-- BEGIN KEY -->
+public class java.beans.Expression extends java.beans.Statement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Expression</code> 对象表示基本表达式，其中将单个方法应用于某一目标和一组参数，以返回结果，与在 <code>&quot;a.getFoo()&quot;</code> 中一样。<p> 
+除了超类的属性之外，<code>Expression</code> 对象还提供了一个<em>值</em>，它是在对这个表达式进行求值时所返回的对象。返回值通常不由调用者提供，而是通过动态查找方法并在第一次调用 <code>getValue</code> 时调用查找到的方法来计算。 
+ 
+@see #getValue
+@see #setValue
+
+@since 1.4
+ 
+@version 1.3 11/15/00
+@author Philip Milne
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.Expression(Object target, String methodName, java.lang.Object[] arguments)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照所给参数创建一个新的 <code>Statement</code> 对象，使其具有 <code>target</code>、<code>methodName</code> 和 <code>arguments</code>。 
+
+@param target 此表达式的 target。
+@param methodName 此表达式的 methodName。
+@param arguments 此表达式的 arguments。如果该参数为 <code>null</code>，则使用一个空数组。 
+     
+@see #getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.Expression(Object value, Object target, String methodName, java.lang.Object[] arguments)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为某个返回结果的方法创建一个新的 <code>Expression</code> 对象。但是永远都不会计算结果，因为此构造方法通过调用 <code>setValue</code> 方法，使用 <code>value</code> 参数来设置 value 属性。
+
+@param value 此表达式的 value。
+@param target 此表达式的 target。
+@param methodName 此表达式的 methodName。
+@param arguments 此表达式的 arguments。如果该参数为 <code>null</code>，则使用一个空数组。
+
+@see #setValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.beans.Expression.getValue() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此实例的 value 属性尚未设置，则此方法利用这些参数，在此目标上动态查找具有指定 methodName 的方法，并调用该方法。方法调用的结果首先被复制到此表达式的 value 属性中，然后作为 <code>getValue</code> 的结果返回。如果通过调用 <code>setValue</code> 或因为以前调用 <code>getValue</code> 已经设置 value 属性，则返回该 value 属性，无需查找或调用该方法。
+ <p>
+默认情况下，<code>Expression</code> 的 value 属性被设置为唯一私有（非 <code>null</code>）值，此值被用作指示该方法尚未被调用的内部指示。返回值 <code>null</code> 将替代此默认值，其他任何值也是如此操作，以确保表达式不会被多次求值。 
+ <p>
+关于如何使用动态类型的 target 和 arguments 选择方法的细节，请参见 <code>excecute</code> 方法。 
+ 
+@see Statement#execute
+@see #setValue
+ 
+@return 对这些 arguments 应用此方法的结果。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.beans.Expression.setValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此表达式的值设置为 <code>value</code>。此值将由 getValue 方法返回，无需调用与此表达式相关联的方法。 
+ 
+@param value 此表达式的 value。 
+ 
+@see #getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.beans.Expression.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 Java 风格的语法打印此表达式的值。 
+
+<!-- END DATA -->

@@ -1,0 +1,598 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.DefaultCaret extends java.awt.Rectangle implements javax.swing.text.Caret, java.awt.event.FocusListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+插入符的默认实现。插入符以垂直线形式呈现，颜色由相关的 JTextComponent 的 CaretColor 属性指定。它可以按 BlinkRate 属性中指定的速率闪烁。
+ <p>
+此实现需要两个异步通知源。计时器线程为异步触发，这使得插入符只需重绘最新的边界框。当修改文档时，插入符还跟踪更改。通常这发生在某些鼠标或键盘事件引起的事件调度线程中。同步和异步文档更新中的插入符的行为是由 <code>UpdatePolicy</code> 属性控制的。重绘新插入符位置在任何情况下都发生在事件线程上，因为只有在事件线程上对 <code>modelToView</code> 的调用才是安全的。
+ <p>
+插入符充当它所安装到的文本组件上的鼠标和焦点侦听器，并根据这些事件定义插入符的语义。侦听器方法可重新实现以更改其语义。默认情况下，第一个鼠标按钮将用于设置焦点和插入符位置。用第一个鼠标按钮拖动鼠标指针将在模型中划出一个连续选定。如果关联的文本组件为可编辑的，此插入符在获得焦点时将为可见，在失去焦点时为不可见。
+ <p>
+关联的文本组件的 Highlighter 边界默认用于呈现选定。通过提供高亮显示所用的 painter，可定制选定的外观。默认情况下，painter 用于需要用关联文本组件的 <code>SelectionColor</code> 属性中指定的纯色呈现的情况。通过重新实现 <a href="#getSelectionHighlighter">getSelectionHighlighter</a> 方法，可以很容易地更改此方法。
+ <p>
+通过重新实现该 paint 方法，可获得定制的插入符外观。如果 paint 方法已更改，damage 方法也应重新实现，这样可重新绘制需要的区域以便呈现插入符。插入符扩展了 Rectangle 类，它用于保持记录上次呈现插入符的位置的边界框。这有助于插入符以线程安全的方式重绘，因为在模型更新和视图修复期间移动插入符而不调用 modelToView 是不稳定的（即无法保证传递到 DocumentListeners 的顺序）。
+ <p>
+当插入符位置改变时，此变幻的插入符位置将设置为 null。使用计时器确定新的位置（在插入符改变后）。计时器触发后，如果变幻的插入符位置仍为 null，它将重置为当前的插入符位置。任何更改插入符位置和希望变幻的插入符位置保持不变的操作都必须记住变幻的插入符位置和更改光标，然后将变幻的插入符位置设置为原始值。这样做的好处是，只有希望变幻的插入符位置保持不变的操作（例如打开/向下）需要知道它的值。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@author  Timothy Prinzing
+@version 1.138 06/24/04
+@see     Caret
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.DefaultCaret.UPDATE_WHEN_ON_EDT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示只有在事件调度线程中执行文档更改时，才更新插入符位置。
+@see #setUpdatePolicy
+@see #getUpdatePolicy
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.DefaultCaret.NEVER_UPDATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示无论文档有任何更新，插入符都应在文档中保持同一绝对位置，由于删除使文档长度小于当前插入符位置除外。这种情况下，插入符位置将调整到文档的结尾。
+
+@see #setUpdatePolicy
+@see #getUpdatePolicy
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.swing.text.DefaultCaret.ALWAYS_UPDATE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示无论文档更新是否是在事件调度线程中执行，<b>始终</b>根据文档更改更新插入符位置。
+
+@see #setUpdatePolicy
+@see #getUpdatePolicy
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.EventListenerList javax.swing.text.DefaultCaret.listenerList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事件侦听器列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.event.ChangeEvent javax.swing.text.DefaultCaret.changeEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此模型的更改事件。由于事件的唯一状态（只读）为源属性，所以每个模型实例只需要一个 ChangeEvent。这里生成的事件源总是 &quot;this&quot;。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.text.DefaultCaret.ownsSelection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示插入符当前是否拥有选定。如果系统不支持系统剪贴板，则它始终为 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean javax.swing.text.DefaultCaret.forceCaretPositionChange
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果其为 true，无论当前位置如何，点的位置都将更新。这在 DocumentListener 中设置，这样即使点的模型位置未更改（或许是因为执行向前删除）可视位置也将更新。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int javax.swing.text.DefaultCaret.caretWidth
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+插入符的宽度，以像素为单位。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.DefaultCaret()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造默认的插入符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setUpdatePolicy(int policy)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置文档更新时的插入符移动策略。通常，当在插入符位置之前或当前位置插入时，以及在插入符位置之前删除时，插入符会更新其在文档中的绝对位置。这里的&ldquo;绝对位置&rdquo;指的是相对于文档开头的位置。例如，在一个可编辑的文本组件中输入一个字符时，它将插入到插入符位置，而插入符由于此插入将移动到文档中下一个绝对位置，如果输入的是 <code>BACKSPACE</code>，插入符的绝对位置将减小，因为在它之前删除了一个字符。有时候，关闭插入符位置更新很有用，这样无论文档怎么更新，插入符都将保持在文档中同一绝对位置。
+ <p>
+允许以下更新策略：
+ <ul>
+   <li><code>NEVER_UPDATE</code>：无论文档怎样更新，插入符在文档中都位于同一绝对位置，除非由于删除使文档长度小于当前插入符位置。这种情况下，插入符位置将被调整到文档的结尾。使用此策略时，插入符不会试图在滚动关联的视图时保持可见。 </li>
+   <li><code>ALWAYS_UPDATE</code>：插入符始终跟踪文档更改。对于一般的更改，如果在插入符位置之前或当前位置插入，则增加它的位置，如果在当前位置之前删除，则减小它的位置。对于撤消/恢复更新，它总是移动到更新发生的位置。插入符总是试图通过调用 <code>adjustVisibility</code> 方法保持可见。</li>
+   <li><code>UPDATE_WHEN_ON_EDT</code>：如果文档更新在事件调度线程上执行，则与 <code>ALWAYS_UPDATE</code> 动作类似；如果文档更新在其它线程上执行，则与 <code>NEVER_UPDATE</code> 类似。 </li>
+ </ul> <p>
+默认属性值为 <code>UPDATE_WHEN_ON_EDT</code>。
+
+@param policy 它是以下值之一：<code>UPDATE_WHEN_ON_EDT</code>、<code>NEVER_UPDATE</code>、<code>ALWAYS_UPDATE</code>
+@throws IllegalArgumentException 如果传入无效的值
+
+@see #getUpdatePolicy
+@see #adjustVisibility
+@see #UPDATE_WHEN_ON_EDT
+@see #NEVER_UPDATE
+@see #ALWAYS_UPDATE
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.DefaultCaret.getUpdatePolicy()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取文档更新时的插入符移动策略。
+
+@return 以下值之一：<code>UPDATE_WHEN_ON_EDT</code>、<code>NEVER_UPDATE</code>、<code>ALWAYS_UPDATE</code>
+
+@see #setUpdatePolicy
+@see #UPDATE_WHEN_ON_EDT
+@see #NEVER_UPDATE
+@see #ALWAYS_UPDATE
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.JTextComponent javax.swing.text.DefaultCaret.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此插入符所绑定的文本编辑器组件。
+
+@return 组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final synchronized void javax.swing.text.DefaultCaret.repaint()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使得重绘插入符。重绘区域为插入符的边界框（即插入符矩形或 <em>this</em>）。
+ <p>
+虽然大多数 Swing 方法不是线程安全的，但此方法是线程安全的。有关更多信息，请参阅 <A HREF="http://java.sun.com/docs/books/tutorial/uiswing/misc/threads.html">How to Use Threads</A>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void javax.swing.text.DefaultCaret.damage(Rectangle r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+毁坏围绕插入符的区域以使该区域在新的位置重绘。如果重新实现 paint()，此方法也应重新实现。此方法应更新插入符边界（x、y、width 和 height）。
+
+@param r  插入符的当前位置
+@see #paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultCaret.adjustVisibility(Rectangle nloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+滚动关联的视图（如果有）以使插入符可见。究竟应该如何动作在某种程度上是一个策略的问题，此方法可重新实现以更改此行为。默认情况下，scrollRectToVisible 方法在关联的组件中调用。
+
+@param nloc 要滚动到的新位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Highlighter.HighlightPainter javax.swing.text.DefaultCaret.getSelectionPainter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 Highlighter 的 painter。
+
+@return painter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultCaret.positionCaret(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图使用 viewToModel() 从鼠标事件的坐标设置插入符的位置。
+
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultCaret.moveCaret(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+试图使用 viewToModel() 从鼠标事件的坐标移动插入符的位置。如果点与标记不同，这将产生一个选定。
+
+@param e 鼠标事件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.focusGained(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在包含插入符的组件获得焦点时调用。如果组件为可编辑，实现此方法可将插入符设置为可见。
+
+@param e 鼠标事件
+@see FocusListener#focusGained
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.focusLost(FocusEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在包含插入符的组件失去焦点时调用。实现此方法可将插入符的可见性设置为 false。
+
+@param e 鼠标事件
+@see FocusListener#focusLost
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseClicked(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+单击鼠标时调用。如果单击是由 button1 生成的，则双击选中一个字，三击选中当前行。
+
+@param e 鼠标事件
+@see MouseListener#mouseClicked
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mousePressed(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果按下 button 1，实现它可请求将焦点置于关联的文本组件上，并设置插入符位置。如果按住 shift 键，插入符将移动，潜在导致一个选定，否则插入符位置将被设置为新位置。如果该组件未启用，则不会有任何焦点请求。
+
+@param e 鼠标事件
+@see MouseListener#mousePressed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseReleased(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放鼠标时调用。
+
+@param e 鼠标事件
+@see MouseListener#mouseReleased
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseEntered(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+鼠标进入某个区域时调用。
+
+@param e 鼠标事件
+@see MouseListener#mouseEntered
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseExited(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+鼠标退出某个区域时调用。
+
+@param e 鼠标事件
+@see MouseListener#mouseExited
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseDragged(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据鼠标指针当前位置移动插入符位置。这有效地扩展了选定。默认情况下，只有鼠标按键 1 才能完成这一操作。
+
+@param e 鼠标事件
+@see MouseMotionListener#mouseDragged
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.mouseMoved(MouseEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移动鼠标时调用。
+
+@param e 鼠标事件
+@see MouseMotionListener#mouseMoved
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.paint(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符作为垂直线呈现。如果重新实现此方法，则 damage 方法也应重新实现，因为它假定插入符的形状为垂直线。将插入符颜色设置为 getCaretColor() 返回的值。
+ <p>
+如果关联文档中有多个文本方向，将呈现一个指示插入符偏移的标志。只有当关联文档为 AbstractDocument 的子类并且在双向元素结构中有多个双向级别时（即文本关联了多个方向），才会发生这样的情况。
+
+@param g 图形上下文
+@see #damage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.install(JTextComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当 UI 装入一个 JTextComponent 的接口时调用。使用此方法可获得对由此接口的实现导航的模型的访问。将点和标记设置为 0，并建立文档、属性更改、焦点、鼠标及鼠标动作侦听器。
+
+@param c 组件
+@see Caret#install
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.deinstall(JTextComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当 UI 从一个 JTextComponent 的接口移除时调用。这可用于取消对任何所关联侦听器的注册。
+
+@param c 组件
+@see Caret#deinstall
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.addChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加一个侦听器，以便对插入符位置改变进行跟踪。
+
+@param l 侦听器
+@see Caret#addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.removeChangeListener(ChangeListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除跟踪位置更改的侦听器。
+
+@param l 侦听器
+@see Caret#removeChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.ChangeListener[] javax.swing.text.DefaultCaret.getChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此插入符上所有已注册的更改侦听器组成的数组。
+
+@return 此插入符的所有 <code>ChangeListener</code>， 如果当前未注册任何改侦听器，则返回一个空数组
+
+@see #addChangeListener
+@see #removeChangeListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.DefaultCaret.fireStateChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知所有需要此事件类型的通知的已注册侦听器。使用传入此触发方法的参数延后创建事件实例。从后向前处理侦听器列表。
+
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] javax.swing.text.DefaultCaret.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目前已在此插入符上注册为 <code><em>Foo</em>Listener</code> 的所有对象组成的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以使用以下代码查询 <code>DefaultCaret</code> <code>c</code> 以获得其更改侦听器：
+
+ <pre>ChangeListener[] cls = (ChangeListener[])(c.getListeners(ChangeListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 所请求的侦听器类型；此参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 返回一个在此组件上作为 <code><em>Foo</em>Listener</code> 注册的所有对象的数组，如果尚未添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定一个实现 <code>java.util.EventListener</code> 的类或接口
+
+@see #getChangeListeners
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setSelectionVisible(boolean vis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改选定的可见性。
+
+@param vis 新可见性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.DefaultCaret.isSelectionVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查当前选定是否可见。
+
+@return 如果选定为可见，则返回 true
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.DefaultCaret.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定插入符当前是否处于激活状态。
+ <p>
+此方法返回 <code>Caret</code> 当前是否处于闪烁状态。它不提供有关当前闪烁为打开或关闭的信息。要确定插入符当前是否绘制，请使用 <code>isVisible</code> 方法。
+
+@return 如果处于激活状态，则返回 <code>true</code>；否则返回 <code>false</code>
+@see #isVisible
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.DefaultCaret.isVisible()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示插入符当前是否可见。由于插入符闪烁打开和关闭，它的返回值将在 true 和 false 之间改变。当绘制插入符时，返回 true；当不绘制插入符时，返回 false。<code>isActive</code> 指示插入符是否处于闪烁状态，它<b>可能</b>为可见，而 <code>isVisible</code> 指示插入符是否确实<b>为</b>可见。
+ <p>
+希望呈现不同的闪烁插入符的子类应重写 paint，并只在此方法返回 true 时才绘制插入符。
+
+@return 如果可见，则返回 true；否则返回 false
+@see Caret#isVisible
+@see #isActive
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setVisible(boolean e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置插入符可见性，并重绘插入符。理解此方法、<code>isVisible</code> 以及 <code>isActive</code> 三者之间的关系非常重要。使用 <code>true</code> 值调用此方法可激活插入符闪烁。将它设置为 <code>false</code> 可彻底关闭闪烁。要确定闪烁是否激活，应调用 <code>isActive</code>。从实际效果来看，<code>isActive</code> 相当于它的 &quot;getter&quot; 方法，<code>isVisible</code> 可用于获取插入符的当前可见状态，即当前是否绘制的状态。此状态将随插入符的闪烁打开和关闭而更改。
+ <p>
+下面的列表显示了调用此方法后 <code>isActive</code> 和 <code>isVisible</code> 可能的返回值：
+ <p>
+<b><code>setVisible(true)</code></b>:
+ <ul>
+     <li>isActive():true</li>
+     <li>isVisible():true 或 false 取决于插入符闪烁为打开还是关闭</li>
+ </ul>
+ <p>
+ <b><code>setVisible(false)</code></b>:
+ <ul>
+     <li>isActive():false</li>
+     <li>isVisible():false</li>
+ </ul>
+
+@param e 可见性指示符
+@see #isActive
+@see Caret#setVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setBlinkRate(int rate)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置插入符闪烁率。
+
+@param rate 闪烁率，以毫秒为单位，0 为停止闪烁
+@see Caret#setBlinkRate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.DefaultCaret.getBlinkRate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取插入符闪烁率。
+
+@return 延迟，以毫秒为单位。如果为 0，则插入符不闪烁。
+@see Caret#getBlinkRate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.DefaultCaret.getDot()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取插入符的当前位置。
+
+@return 位置，该位置 &gt;= 0
+@see Caret#getDot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.DefaultCaret.getMark()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取标记的当前位置。如果有选定，点和标记将不同。
+
+@return 位置，该位置 &gt;= 0
+@see Caret#getMark
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setDot(int dot)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符位置和标记设置为指定位置，存在向前偏差。此方法将选择范围隐式地设置为 0。
+
+@param dot 位置，该位置 &gt;= 0
+@see #setDot(int, Position.Bias)
+@see Caret#setDot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.moveDot(int dot)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符位置移动到指定位置，存在向前偏差。
+
+@param dot 位置，该位置 &gt;= 0
+@see #moveDot(int, javax.swing.text.Position.Bias)
+@see Caret#moveDot
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.moveDot(int dot, Position.Bias dotBias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符位置移动到指定位置，存在指定偏差。
+
+@param dot &gt;= 0 的位置
+@param dotBias 此位置的偏差，不为 <code>null</code>
+@throws IllegalArgumentException 如果偏差为 <code>null</code>
+@see Caret#moveDot
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setDot(int dot, Position.Bias dotBias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将插入符位置和标记设置为指定位置，存在指定偏差。此方法将选择范围隐式地设置为 0。
+
+ @param dot &gt;= 0 的位置
+ @param dotBias 此位置的偏差，不为 <code>null</code>
+ @throws IllegalArgumentException 如果偏差为 <code>null</code>
+ @see Caret#setDot
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Position.Bias javax.swing.text.DefaultCaret.getDotBias()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回插入符位置的偏差。
+
+ @return 插入符位置的偏差
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.Position.Bias javax.swing.text.DefaultCaret.getMarkBias()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标记的偏差。
+
+ @return 标记的偏差
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.DefaultCaret.setMagicCaretPosition(Point p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+保存当前插入符位置。这在插入符有向上/向下动作时使用，方便在不均匀结束位置的行间移动。
+
+@param p 位置
+@see #getMagicCaretPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Point javax.swing.text.DefaultCaret.getMagicCaretPosition()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取保存的插入符位置。
+
+@return 位置 see #setMagicCaretPosition
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.text.DefaultCaret.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此对象与指定的对象进行比较。比较矩形的超类行为是不需要的，所以这将更改为 Object 行为。
+
+@param     obj   要与此字体比较的对象
+@return    如果对象相同，则返回 <code>true</code>；否则，返回 <code>false</code>
+
+<!-- END DATA -->

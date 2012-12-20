@@ -1,0 +1,150 @@
+<!-- BEGIN KEY -->
+public interface javax.sound.sampled.Mixer extends javax.sound.sampled.Line
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+混频器是一个具有一行或多行的音频设备。不需要将它设计用于混合音频信号。实际混合音频的混频器具有多个输入（源）行和至少一个输出（目标）行。前者常常是实现 <code>{@link SourceDataLine}</code> 的类的实例，后者是实现 <code>{@link TargetDataLine}</code> 的类的实例。<code>{@link Port}</code> 对象不是源行就是目标行。通过将其某些源行作为实现 <code>{@link Clip}</code> 接口的对象的实例，混频器可以接受事先录制的环绕声音作为输入。
+ <p>
+通过 <code>Line</code> 接口（该接口由 <code>Mixer</code> 扩展）的方法，混频器可以提供对该混频器而言全局可用的控件集。例如，该混频器可以有一个主音量控件。这些全局控件与属于该混频器的每个单行的控件明显不同。
+ <p>
+有些混频器（特别是那些具有内部数字混音功能的混频器）可能通过实现 <code>DataLine</code> 接口提供其他功能。
+ <p>
+混频器可以支持其行的同步。当启动或停止同步组中的一行时，该组中的其他行自动与明显受影响的行同时启动或停止。
+
+@author Kara Kytle
+@version 1.32, 05/11/17
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Mixer.Info javax.sound.sampled.Mixer.getMixerInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于此混频器的信息，包括产品名称、版本、供应商，等等。
+@return  描述此混频器的混频器信息对象 
+@see Mixer.Info
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line.Info[] javax.sound.sampled.Mixer.getSourceLineInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于此混频器支持的源行集合的信息。有些源行可能只在此混频器打开时可用。
+@return 表示此混频器的源行的 <code>Line.Info</code> 对象数组。如果不支持任何源行，则返回一个长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line.Info[] javax.sound.sampled.Mixer.getTargetLineInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于此混频器支持的目标行集合的信息。有些目标行可能只在此混频器打开时可用。
+@return  表示此混频器的目标行的 <code>Line.Info</code> 对象数组。如果不支持任何目标行，则返回一个长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line.Info[] javax.sound.sampled.Mixer.getSourceLineInfo(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于此混频器支持的特定类型源行的信息。有些源行可能只在此混频器打开时可用。
+@param  info  描述其信息被查询的那些行的 <code>Line.Info</code> 对象 
+@return  描述与所请求类型匹配的源行的 <code>Line.Info</code> 对象数组。如果不支持任何匹配源行，则返回一个长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line.Info[] javax.sound.sampled.Mixer.getTargetLineInfo(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得关于此混频器支持的特定类型目标行的信息。有些目标行可能只在此混频器打开时可用。
+@param  info  描述查询其信息的行的 <code>Line.Info</code> 对象 
+@return  描述与所请求类型匹配的目标行的 <code>Line.Info</code> 对象数组。如果不支持任何匹配的目标行，则返一个回长度为 0 的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.Mixer.isLineSupported(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示混频器是否支持与指定 <code>Line.Info</code> 对象匹配的一行（或多行）。有些行可能只在此混频器打开时受支持。
+@param  info  描述查询其是否受支持的行 
+@return  如果至少支持一个匹配行，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line javax.sound.sampled.Mixer.getLine(Line.Info info) throws javax.sound.sampled.LineUnavailableException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得可供使用并且与指定 <code>Line.Info</code> 对象中的描述匹配的行。
+
+<p>如果请求某一 <code>DataLine</code>，且 <code>info</code> 是 <code>DataLine.Info</code> 的实例（至少指定一个完全限定的音频格式），则将使用最后一种格式作为所返回 <code>DataLine</code> 的默认格式。
+
+@param  info  描述所需的行 
+@throws  LineUnavailableException  如果由于资源限制而使匹配行不可用 
+@throws  IllegalArgumentException  如果此 mixer 不支持与描述匹配的所有行 
+@throws  SecurityException  如果由于安全限制而使匹配行不可用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.sound.sampled.Mixer.getMaxLines(Line.Info info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得可以在此混频器上同时打开的所请求类型的行的最大近似数。
+
+某些类型的混频器没有绝对限制，可能允许打开多个行。由于某些行是共享资源，因此，如果另一个进程已打开此混频器的一些行，则混频器可能无法打开最大数量的行。
+
+所请求类型是与 <code>Line.Info</code> 对象中提供的描述匹配的任何一行。例如，如果 info 对象表示一个扬声器端口，且该混频器只支持一个扬声器端口，则此方法应该返回 1。  如果 info 对象表示一个源数据行，且该混频器支持同时使用 32 个源数据行，则返回值应该是 32。 如果没有限制，则此方法返回 <code>AudioSystem.NOT_SPECIFIED</code>。
+@param  info  描述将查询其受支持实例数的那些行的 <code>Line.Info</code> 
+@return  受支持的匹配行的最大数量，或 <code>AudioSystem.NOT_SPECIFIED</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line[] javax.sound.sampled.Mixer.getSourceLines()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前对此混频器打开的所有源行的集合。
+
+@return  当前对此混频器打开的源行。如果当前没有对此混频器打开的源行，则返回一个长度为 0 的数组。
+@throws  SecurityException  如果由于安全限制而使匹配行不可用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.sound.sampled.Line[] javax.sound.sampled.Mixer.getTargetLines()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得当前从此混频器打开的所有目标行的集合。
+
+@return  当前从此混频器打开的目标行。如果当前没有从此混频器打开的目标行，则返回一个长度为 0 的数组。
+@throws  SecurityException  如果由于安全限制而使匹配行不可用
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Mixer.synchronize(javax.sound.sampled.Line[] lines, boolean maintainSync)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+同步两个或多个行。启动或停止某个这些行的音频回放或捕获的任何后续命令都将对该组中的其他行产生相同的效果，所以它们同时启动或停止播放或捕获数据。
+
+@param  lines  应该同步的行 
+@param  maintainSync  如果在执行行操作的过程中必须始终精确地维护同步（即同步必须是样本精确的），则该参数为 <code>true</code>；如果只在启动和停止操作的过程中需要精确同步，则该参数为 <code>false</code>
+
+@throws  IllegalArgumentException  如果行无法同步。这可能在行属于不同类型或具有此混频器不支持其同步的不同格式，或在所有指定行不属于此混频器的情况下发生。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sound.sampled.Mixer.unsynchronize(javax.sound.sampled.Line[] lines)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+释放指定行的同步。该数组必须与已为其建立同步的数组相同；否则可能抛出异常。但可以指定 <code>null</code>，在此情况下，属于此混频器的所有当前同步行都将被解除同步。
+@param  lines  应该为其释放同步的同步行；对于此混频器的所有同步行，该参数都为 <code>null</code>。
+
+@throws  IllegalArgumentException  如果这些行无法解除同步。这可能在指定参数并不完全与已经为其建立同步的行集合匹配的情况下发生。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sound.sampled.Mixer.isSynchronizationSupported(javax.sound.sampled.Line[] lines, boolean maintainSync)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+报告此混频器是否支持指定行集合的同步。
+
+@param  lines  查询其是否支持同步的那些行的集合 
+@param  maintainSync  如果在指定行操作的过程中始终精确地维护同步（即同步必须是样本精确的），则该参数为 <code>true</code>；如果只在启动和停止操作的过程中需要精确同步，则该参数为 <code>false</code>
+
+@return  如果行可以同步，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->

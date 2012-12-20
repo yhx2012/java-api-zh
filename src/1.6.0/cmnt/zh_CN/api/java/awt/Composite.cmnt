@@ -1,0 +1,26 @@
+<!-- BEGIN KEY -->
+public interface java.awt.Composite
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Composite</code> 接口和 {@link CompositeContext} 一起定义了用基础图形区域组合绘图基本元素的方法。在 {@link Graphics2D} 上下文中设置 <code>Composite</code> 后，此接口组合形状、文本或图像，这些内容已经用根据预定义的规则所呈现的颜色进行了呈现。实现此接口的类提供规则和方法来创建特定操作的上下文。<code>CompositeContext</code> 是复合操作所使用的环境，由 <code>Graphics2D</code> 在操作开始前创建。<code>CompositeContext</code> 包含复合操作所需的私有信息和资源。当不再需要 <code>CompositeContext</code> 时，<code>Graphics2D</code> 对象会移除它，以便回收为操作所分配的资源。
+ <p>
+实现 <code>Composite</code> 的类实例必须是不可变的，因为将这些对象作为 <code>setComposite</code> 方法的属性来设置时，或者 <code>Graphics2D</code> 对象被复制时，<code>Graphics2D</code> 并不复制这些对象。这是为了避免 <code>Graphics2D</code> 未定义的呈现行为，这种行为是在 <code>Graphics2D</code> 上下文中设置 <code>Composite</code> 对象后再对其进行修改所导致的。
+ <p>
+由于此接口必须向可能的任意代码公开目标设备或图像上的像素内容，所以在直接向屏幕设备呈现内容时，由 <code>readDisplayPixels</code> {@link AWTPermission} 负责管理那些实现此接口的自定义对象的使用。将这样的自定义对象传递给 <code>Graphics2D</code>（从 {@link Component} 检索）的 <code>setComposite</code> 方法时会进行权限检查。
+@see AlphaComposite
+@see CompositeContext
+@see Graphics2D#setComposite
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.CompositeContext java.awt.Composite.createContext(ColorModel srcColorModel, ColorModel dstColorModel, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个上下文，其中包含用于执行复合操作的状态。在多线程环境中，单个 <code>Composite</code> 对象可同时有多个上下文。
+@param srcColorModel  源的 {@link ColorModel}
+@param dstColorModel  目标的 <code>ColorModel</code>
+@param hints 上下文对象用于选择呈现方法的提示
+@return 用于执行复合操作的 <code>CompositeContext</code> 对象。
+
+<!-- END DATA -->

@@ -1,0 +1,279 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.Identity extends java.lang.Object implements java.security.Principal, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>此类表示身份：现实世界的对象，比如人、公司或组织，它们的身份可以通过使用公钥验证。Identity 也可以是更抽象（或具体）的概念，例如守护线程或智能卡。
+
+<p>所有的 Identity 对象都具有一个名称和一个公钥。名称是不可变的。Identity 也可以有作用域。也就是说，如果一个 Identity 被指定具有一个特定的作用域，那么 Identity 的名称和公钥在该作用域内是唯一的。
+
+<p>Identity 也有一个证书集合（都证明其本身的公钥）。只要密钥相同，在这些证书中指定的主体名称不必相同。
+
+<p>可以为 Identity 创建子类，以包括邮政和电子邮件地址、电话号码、面部图像和徽标等等。
+
+@see IdentityScope
+@see Signer
+@see Principal
+
+@version 1.61
+@author Benjamin Renaud
+@deprecated 不再使用此类。其功能已经由 <code>java.security.KeyStore</code>、<code>java.security.cert</code> 包和 <code>java.security.Principal</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.security.Identity.name
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 Identity 的名称。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.security.PublicKey java.security.Identity.publicKey
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 Identity 的公钥。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.lang.String java.security.Identity.info
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关于 Identity 的一般的、描述性的信息。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.security.IdentityScope java.security.Identity.scope
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Identity 的作用域。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Vector java.security.Identity.certificates
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 Identity 的证书。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.Identity()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只用于序列化的构造器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Identity(String name, IdentityScope scope) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定名称和作用域的 Identity。
+
+@param name Identity 的名称。
+@param scope Identity 的作用域。
+
+@exception KeyManagementException 在此作用域内已经存在一个具有相同名称的 Identity。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Identity(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定名称且没有作用域的 Identity。
+
+@param name Identity 的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.Identity.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 的名称。
+
+@return  此 Identity 的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.IdentityScope java.security.Identity.getScope()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 的作用域。
+
+@return 此 Identity 的作用域。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PublicKey java.security.Identity.getPublicKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 的公钥。
+ 
+@return 此 Identity 的公钥。
+ 
+@see #setPublicKey
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Identity.setPublicKey(PublicKey key) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 Identity 的公钥。此操作移除旧的密钥和此 Identity 的所有证书。 
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;setIdentityPublicKey&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以设置公钥。 
+ 
+@param key 此 Identity 的公钥。
+
+@exception KeyManagementException 如果在此 Identity 的作用域内的另外一个 Identity 具有相同的公钥，或者发生其他异常。  
+ 
+@exception  SecurityException 如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许设置公钥。
+ 
+@see #getPublicKey
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Identity.setInfo(String info)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 Identity 指定一个常规信息字符串。
+
+<p>首先，如果有安全管理器，则用 <code>&quot;setIdentityInfo&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以指定信息字符串。 
+ 
+@param info 信息字符串。
+ 
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许设置信息字符串。
+ 
+@see #getInfo
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Identity.getInfo()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以前为此 Identity 指定的常规信息字符串。
+
+@return 关于此 Identity 的常规信息。
+
+@see #setInfo
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Identity.addCertificate(Certificate certificate) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为此 Identity 添加一个证书。如果 Identity 有一个公钥，则证书中的公钥必须相同，如果 Identity 没有公钥，则将 Identity 的公钥设置为证书中所指定的公钥。
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;addIdentityCertificate&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以添加一个证书。 
+ 
+@param certificate 要添加的证书。
+
+@exception KeyManagementException 如果证书是无效的；如果要添加到证书中的公钥和此 Identity 冲突；如果发生其他异常。
+ 
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许添加证书。
+ 
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Identity.removeCertificate(Certificate certificate) throws java.security.KeyManagementException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此 Identity 中移除证书。
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;removeIdentityCertificate&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以移除证书。 
+ 
+@param certificate 要移除的证书。
+
+@exception KeyManagementException 如果证书丢失，或者发生其他异常。
+ 
+@throws  SecurityException 如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许移除证书。
+ 
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Certificate[] java.security.Identity.certificates()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 所有证书的一个副本。  
+ 
+@return 此 Identity 所有证书的一个副本。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.security.Identity.equals(Object identity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定对象与此 Identity 的相等性。此方法首先测试两个实体是否实际引用的是同一对象，在这种情况下它返回 true。然后它检查两个实体是否有相同的名称和作用域。如果是这样，则该方法返回 true。否则，它调用子类应该重写的 {@link #identityEquals(Identity) identityEquals}。
+
+@param identity 要与此 Identity 进行相等性测试的对象。  
+
+@return 如果对象被视为相等，则返回 true；否则返回 false。
+
+@see #identityEquals 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.security.Identity.identityEquals(Identity identity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定 Identity 与此 Identity 的相等性。子类应该重写此方法来测试相等性。如果名称和公钥相等，默认的行为是返回 true。
+
+@param identity 要与此 Identity 进行相等性测试的 Identity。
+ 
+@return 如果 Identity 被视为相等，则返回 true；否则，返回 false。 
+
+@see #equals 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Identity.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 Identity 的短字符串，说明其名称和作用域（如果有的话）。
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;printIdentity&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以返回字符串。 
+
+@return 关于此 Identity 的信息，例如其名称和作用域（如果有的话）。
+ 
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许返回描述此 Identity 的字符串。
+ 
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Identity.toString(boolean detailed)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 的字符串表示形式，可以选择比不带任何参数的 <code>toString</code> 方法带有更多的详细信息。
+
+<p>首先，如果存在安全管理器，则用 <code>&quot;printIdentity&quot;</code> 作为参数调用其 <code>checkSecurityAccess</code> 方法，以查看它是否可以返回字符串。 
+
+@param detailed 是否提供详细的信息。  
+
+@return 关于此 Identity 的信息。如果 <code>detailed</code> 为 true，那么此方法比不带任何参数的 <code>toString</code> 方法返回更多的信息。
+
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkSecurityAccess</code> 方法不允许返回描述此 Identity 的字符串。
+ 
+@see #toString
+@see SecurityManager#checkSecurityAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.Identity.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Identity 的哈希码。
+
+@return 此 Identity 的哈希码。
+
+<!-- END DATA -->

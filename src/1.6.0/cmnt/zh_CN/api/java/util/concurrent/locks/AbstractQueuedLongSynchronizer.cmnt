@@ -1,0 +1,351 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.concurrent.locks.AbstractQueuedLongSynchronizer extends java.util.concurrent.locks.AbstractOwnableSynchronizer implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <tt>long</tt> 形式维护同步状态的一个 {@link AbstractQueuedSynchronizer} 版本。此类具有的结构、属性和方法与 <tt>AbstractQueuedSynchronizer</tt> 完全相同，但所有与状态相关的参数和结果都定义为 <tt>long</tt> 而不是 <tt>int</tt>。当创建需要 64 位状态的多级别锁和屏障等同步器时，此类很有用。
+
+<p>有关用法说明和示例，请参阅 {@link AbstractQueuedSynchronizer}。
+
+@since 1.6
+@author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private volatile long java.util.concurrent.locks.AbstractQueuedLongSynchronizer.state
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+同步状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.locks.AbstractQueuedLongSynchronizer()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个初始同步状态为 0 的新 <tt>AbstractQueuedLongSynchronizer</tt> 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final long java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getState()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回同步状态的当前值。此操作的内存语义 (memory semantics) 为 <tt>volatile</tt> 读。
+@return 当前状态值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.setState(long newState)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置同步状态的值。此操作的内存语义为 <tt>volatile</tt> 写。
+@param newState 新的状态值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.compareAndSetState(long expect, long update)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前状态值等于预期值，则以原子方式将同步状态设置为给定的更新值。此操作的内存语义为 <tt>volatile</tt> 写和读。
+
+@param expect 预期值
+@param update 新值
+@return 如果成功，则返回 true。返回 false 指示实际值与预期值不相等。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryAcquire(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试在独占模式下获取。此方法应该查询是否允许在独占模式下获取对象状态，如果允许，则获取它。
+
+<p>此方法总是由执行获取的线程调用。如果此方法报告失败，则 acquire 方法可以将线程加入队列（如果它还没有加入队列），直到收到其他线程的释放信号为止。可以使用此方法来实现 {@link Lock#tryLock()} 方法。
+
+<p>默认实现将抛出 {@link UnsupportedOperationException}。
+
+@param arg 获取参数。此值总是传递给 acquire 方法的那个值，或者是保存在某个条件等待条目上的值。该值在其他方面没有解释，可以表示任何内容。
+@return 如果成功，则返回 {@code true}。在成功时，此对象已经被获取。
+@throws IllegalMonitorStateException 如果获取操作会将此同步器变为非法状态。为了同步的正常运行，必须以统一的方式抛出此异常。
+@throws UnsupportedOperationException 如果不支持独占模式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryRelease(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试设置状态来反映独占模式下的释放。
+
+<p>此方法总是由执行释放的线程调用。
+
+<p>默认实现将抛出 {@link UnsupportedOperationException}。
+
+@param arg 释放参数。此值总是传递给 release 方法的那个值，或者是某个条件等待条目上的当前状态值。该值在其他方面没有解释，可以表示任何内容。
+@return 如果此对象现在处于完全释放状态，从而任何等待的线程都可以尝试获取，则返回 {@code true}；否则返回 {@code false}。
+@throws IllegalMonitorStateException 如果释放操作会将此同步器变为非法状态。为了同步的正常运行，必须以统一的方式抛出此异常。
+@throws UnsupportedOperationException 如果不支持独占模式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected long java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryAcquireShared(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试在共享模式下获取。此方法应该查询是否允许在共享模式下获取对象状态，如果允许，则获取它。
+
+<p>此方法总是由执行获取的线程调用。如果此方法报告失败，则 acquire 方法可以将线程加入队列（如果它还没有加入队列），直到收到其他线程的释放信号为止。
+
+<p>默认实现将抛出 {@link UnsupportedOperationException}。
+
+@param arg 获取参数。此值总是传递给 acquire 方法的那个值，或者是保存在某个条件等待条目上的值。该值在其他方面没有解释，可以表示任何内容。
+@return 在失败时返回负值；如果在共享模式下获取成功，但后续共享模式下的获取无法成功，则返回 0；如果在共享模式下获取成功，并且后续共享模式下的获取也能成功（在这种情况下，后续等待线程必须检查可用性），则返回正值。（支持三个不同返回值使得此方法可以在偶尔以独占方式进行获取的上下文中使用。）在成功时，此对象已经被获取。
+@throws IllegalMonitorStateException 如果获取操作会将此同步器变为非法状态。为了同步的正常运行，必须以统一的方式抛出此异常。
+@throws UnsupportedOperationException 如果不支持共享模式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryReleaseShared(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试设置状态来反映共享模式下的释放。
+
+<p>此方法总是由执行释放的线程调用。
+
+<p>默认实现将抛出 {@link UnsupportedOperationException}。
+
+@param arg 释放参数。此值总是传递给 release 方法的那个值，或者是某个条件等待条目上的当前状态值。该值在其他方面没有解释，可以表示任何内容。
+@return 如果此共享模式下的释放允许等待的获取（共享或独占）获得成功，则返回 {@code true}；否则返回 {@code false}
+@throws IllegalMonitorStateException 如果释放操作会将此同步器变为非法状态。为了同步的正常运行，必须以统一的方式抛出此异常。
+@throws UnsupportedOperationException 如果不支持共享模式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.isHeldExclusively()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果对于当前（调用的）线程，同步是以独占方式进行的，则返回 {@code true}。此方法是在每次调用非等待 {@link ConditionObject} 方法时调用的。（等待方法则调用 {@link #release}。）
+
+<p>默认实现将抛出 {@link UnsupportedOperationException}。此方法只在 {@link ConditionObject} 方法中进行内部调用，因此，如果不使用条件，则不需要定义它。
+
+@return 如果同步是以独占方式进行的，则返回 {@code true}；否则返回 {@code false}
+@throws UnsupportedOperationException 如果不支持这些条件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.acquire(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以独占模式获取，忽略中断。实现此方法要至少调用一次 {@link #tryAcquire}，并在成功时返回。否则，在成功之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquire}。可以使用此方法来实现 {@link Lock#lock} 方法。
+
+@param arg 获取参数。此值被传送给 {@link #tryAcquire}，但在其他方面没有解释，可以表示任何内容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.acquireInterruptibly(long arg) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以独占模式获取，如果被中断则中止。实现此方法首先要检查中断状态，然后至少调用一次 {@link #tryAcquire}，并在成功时返回。否则，在成功或线程中断之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquire}。可以使用此方法来实现 {@link Lock#lockInterruptibly} 方法。
+
+@param arg 获取参数。此值被传送给 {@link #tryAcquire}，但在其他方面没有解释，可以表示任何内容。
+@throws  InterruptedException 如果当前线程被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryAcquireNanos(long arg, long nanosTimeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试以独占模式获取，如果被中断则中止，如果超过给定超时期则失败。实现此方法首先要检查中断状态，然后至少调用一次 {@link #tryAcquire}，并在成功时返回。否则，在成功、线程中断或超过超时期之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquire}。可以使用此方法来实现 {@link Lock#tryLock(long, TimeUnit)} 方法。
+
+@param arg 获取参数。此值被传送给 {@link #tryAcquire}，但在其他方面没有解释，可以表示任何内容。
+@param nanosTimeout 等待的最大毫微秒数
+@return 如果获取，则返回 {@code true}；如果超时，则返回 {@code false}
+@throws InterruptedException 如果当前线程被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.release(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以独占模式释放。如果 {@link #tryRelease} 返回 true，则通过取消一个或多个线程的阻塞来实现此方法。可以使用此方法来实现 {@link Lock#unlock} 方法。
+
+@param arg 释放参数。此值被传送给 {@link #tryRelease}，但在其他方面没有解释，可以表示任何内容。
+@return 从 {@link #tryRelease} 返回的值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.acquireShared(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以共享模式获取，忽略中断。实现此方法要至少调用一次 {@link #tryAcquireShared}，并在成功时返回。否则，在成功之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquireShared}。
+
+@param arg 获取参数。此值被传送给 {@link #tryAcquireShared}，但在其他方面没有解释，可以表示任何内容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void java.util.concurrent.locks.AbstractQueuedLongSynchronizer.acquireSharedInterruptibly(long arg) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以共享模式获取，如果被中断则中止。实现此方法首先要检查中断状态，然后至少调用一次 {@link #tryAcquireShared}，并在成功时返回。否则，在成功或线程中断之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquireShared}。
+@param arg 获取参数。此值被传送给 {@link #tryAcquireShared}，但在其他方面没有解释，可以表示任何内容。
+@throws  InterruptedException 如果当前线程被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.tryAcquireSharedNanos(long arg, long nanosTimeout) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+尝试以共享模式获取，如果被中断则中止，如果超过给定超时期则失败。实现此方法首先要检查中断状态，然后至少调用一次 {@link #tryAcquireShared}，并在成功时返回。否则，在成功、线程中断或超过超时期之前，线程将加入队列，可能反复处于阻塞或未阻塞状态，并一直调用 {@link #tryAcquireShared}。
+
+@param arg 获取参数。此值被传送给 {@link #tryAcquireShared}，但在其他方面没有解释，可以表示任何内容。
+@param nanosTimeout 等待的最大毫微秒数
+@return 如果获取，则返回 {@code true}；如果超时，则返回 {@code false}
+@throws InterruptedException 如果当前线程被中断
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.releaseShared(long arg)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以共享模式释放。如果 {@link #tryReleaseShared} 返回 true，则通过取消一个或多个线程的阻塞来实现此方法。
+
+@param arg 释放参数。此值被传送给 {@link #tryReleaseShared}，但在其他方面没有解释，可以表示任何内容。
+@return 从 {@link #tryReleaseShared} 中返回的值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.hasQueuedThreads()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询是否有等待获取的线程。注意，随时可能因为中断和超时而导致取消操作，所以返回 {@code true} 并不能保证任何其他线程能一直获取。
+
+<p>在此实现中，此操作是以固定时间返回的。
+
+@return 如果有其他线程正在等待获取，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.hasContended()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询是否有线程曾经为获取此同步器而发生争用；也就是说，是否某个 acquire 方法曾被阻塞。
+
+<p>在此实现中，此操作是以固定时间返回的。
+
+@return 如果曾经出现争用，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Thread java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getFirstQueuedThread()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回队列中第一个（等待时间最长的）线程；如果当前没有将任何线程加入队列，则返回 {@code null}。
+
+<p>在此实现中，此操作通常是以固定时间返回的，但是，如果其他线程正在并发修改该队列，则可能出现循环争用。
+
+@return 队列中第一个（等待时间最长的）线程；如果当前没有将任何线程加入队列，则返回 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.isQueued(Thread thread)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果给定线程当前已加入队列，则返回 true。
+
+<p>此实现将遍历队列，以确定给定线程是否存在。
+
+@param thread 线程
+@return 如果给定线程在队列中，则返回 {@code true}
+@throws NullPointerException 如果线程为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getQueueLength()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回等待获取的线程估计数。该值只是一个估计值，因为在此方法遍历内部数据结构时，线程的数量可以动态地变化。此方法是为监视系统状态而设计的，不是为同步控制设计的。
+
+@return 等待获取的线程估计数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<java.lang.Thread> java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getQueuedThreads()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 collection，该 collection 包含正在等待获取的线程。因为在构造此结果时，实际线程集可能动态地变化，所以返回的 collection 只是一个尽可能准确的估计值。所返回 collection 中的元素没有特定的顺序。设计此方法是为了便于构造子类，提供更多的监视设施。
+
+@return 线程 collection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<java.lang.Thread> java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getExclusiveQueuedThreads()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 collection，该 collection 包含正以独占模式等待获取的线程。此方法的属性与 {@link #getQueuedThreads} 相同，但它只返回那些因独占获取而等待的线程。
+
+@return 线程 collection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<java.lang.Thread> java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getSharedQueuedThreads()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 collection，该 collection 包含正以共享模式等待获取的线程。此方法的属性与 {@link #getQueuedThreads} 相同，但它只返回那些因共享获取而等待的线程。
+
+@return 线程 collection
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.concurrent.locks.AbstractQueuedLongSynchronizer.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此同步器及其状态的字符串。该状态用括号括起来，包括 String {@code &quot;State =&quot;}，后跟 {@link #getState} 的当前值，再后面是 {@code &quot;nonempty&quot;} 或 {@code &quot;empty&quot;}，具体取决于队列是否为空。
+
+@return 标识此同步器及其状态的字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.owns(AbstractQueuedLongSynchronizer.ConditionObject condition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询给定 ConditionObject 是否使用此同步器作为它的锁。
+
+@param condition 条件
+@return 如果具备此条件，则返回 <tt>true</tt>
+@throws NullPointerException 如果 condition 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.util.concurrent.locks.AbstractQueuedLongSynchronizer.hasWaiters(AbstractQueuedLongSynchronizer.ConditionObject condition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查询是否有线程正在与此同步器关联的给定条件上等待。注意，因为随时可能发生超时和中断，所以返回 <tt>true</tt> 并不能保证将来某个 <tt>signal</tt> 将唤醒任何线程。此方法主要是为了监视系统状态而设计的。
+
+@param condition 条件
+@return 如果有正在等待的线程，则返回 <tt>true</tt>。
+@throws IllegalMonitorStateException 如果不进行独占同步
+@throws IllegalArgumentException 如果给定条件与此同步器没有关联
+@throws NullPointerException 如果 condition 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getWaitQueueLength(AbstractQueuedLongSynchronizer.ConditionObject condition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回正在与此同步器关联的给定条件上等待的线程估计数。注意，因为随时可能发生超时和中断，所以估计值只是实际等待线程数的上限。此方法是为监视系统状态而设计的，不是为同步控制设计的。
+
+@param condition 条件
+@return 等待线程的估计数
+@throws IllegalMonitorStateException 如果不进行独占同步
+@throws IllegalArgumentException 如果给定条件与此同步器没有关联
+@throws NullPointerException 如果 condition 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.util.Collection<java.lang.Thread> java.util.concurrent.locks.AbstractQueuedLongSynchronizer.getWaitingThreads(AbstractQueuedLongSynchronizer.ConditionObject condition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 collection，该 collection 包含那些正在与此同步器关联的给定条件上等待的线程。因为在构造此结果时，实际线程集可能动态地变化，所以返回的 collection 只是一个尽可能准确的估计值。所返回 collection 中的元素没有特定的顺序。
+
+@param condition 条件
+@return 线程 collection
+@throws IllegalMonitorStateException 如果不进行独占同步
+@throws IllegalArgumentException 如果给定条件与此同步器没有关联
+@throws NullPointerException 如果 condition 为 null
+
+<!-- END DATA -->

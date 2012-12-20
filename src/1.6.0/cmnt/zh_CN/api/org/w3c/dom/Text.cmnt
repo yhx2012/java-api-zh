@@ -1,0 +1,91 @@
+<!-- BEGIN KEY -->
+public interface org.w3c.dom.Text extends org.w3c.dom.CharacterData
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该 <code>Text</code> 接口继承自 <code>CharacterData</code>，并且表示 <code>Element</code> 或 <code>Attr</code> 的文本内容（在 XML 中称为<a href='http://www.w3.org/TR/2004/REC-xml-20040204#syntax'>字符数据</a>）。如果元素的内容中没有标记，则文本包含在实现 <code>Text</code> 接口的单个对象中，此接口是该元素的唯一子元素。如果有标记，则将它解析为信息项（元素、注释，等等）和组成该元素的子元素列表的 <code>Text</code> 节点。
+<p>首先通过 DOM 使文档可用时，文本的每个块只有一个 <code>Text</code> 节点。用户可以创建表示给定元素的内容的相邻的 <code>Text</code> 节点，没有任何插入标记，但应该知道无法在 XML 或 HTML 中表示这些节点之间的分隔，因此它们（通常）不会保持在 DOM 编辑会话之间。<code>Node.normalize()</code> 方法为每个文本块将所有这样的相邻 <code>Text</code> 对象合并为单个的节点。
+<p> 不对 <code>Text</code> 节点的内容进行任何词汇检查，并且根据节点在文档中的位置，有些字符必须在使用字符引用进行序列化期间转义；例如，在文本内容是元素或属性的一部分的字符 &quot;&lt;&amp;&quot;；文本内容是元素一部分的字符序列 &quot;]]&gt;&quot;；当文本内容是属性一部分的引号字符 &quot; 或省略符号字符 '。 
+<p>另请参见 <a href='http://www.w3.org/TR/2004/REC-DOM-Level-3-Core-20040407'>Document Object Model (DOM) Level 3 Core Specification</a>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.Text org.w3c.dom.Text.splitText(int offset) throws org.w3c.dom.DOMException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在指定的 <code>offset</code> 处将此节点拆分为两个节点，并将二者作为兄弟节点保持在树中。拆分之后，此节点将包含 <code>offset</code> 点之前的所有内容。返回相同类型的新节点，该节点包含 <code>offset</code> 点及其后面的所有内容。如果初始节点有父节点，则作为初始节点下一个兄弟节点插入新节点。当 <code>offset</code> 等于此节点的长度时，则新节点没有任何数据。
+@param offset 从 <code>0</code> 开始的16 位单元偏移量，在该位置拆分。
+@return 与此节点类型相同的新节点。
+@exception DOMException INDEX_SIZE_ERR: 如果指定偏移量为负或大于 <code>data</code> 中的 16 位单元数，则引发此异常。<br>NO_MODIFICATION_ALLOWED_ERR: 如果此节点为只读的，则引发此异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean org.w3c.dom.Text.isElementContentWhitespace()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此文本节点是否包含 <a href='http://www.w3.org/TR/2004/REC-xml-infoset-20040204#infoitem.character'>元素内容空白符</a>，即经常所称的&ldquo;可忽略的空白符&rdquo;。在加载文档期间确定文本节点在元素内容中是否包含空白符，或者在使用 <code>Document.normalizeDocument()</code> 时是否进行验证。
+@since DOM Level 3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String org.w3c.dom.Text.getWholeText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>Text</code> 节点（逻辑上与此节点相邻的节点）的以文档顺序串接的所有文本。<br>例如，下面的示例中，<code>wholeText</code> 在包含 &quot;bar&quot; 的 <code>Text</code> 节点上时返回 &quot;barfoo&quot;，而在包含 &quot;foo&quot; 的 <code>Text</code> 节点上时则返回 &quot;barfoo&quot;。
+
+
+ <pre>
+                     +-----+
+                     | &lt;p&gt; |
+                     +-----+
+                       /\
+                      /  \
+               /-----\    +-------+
+               | bar |    | &amp;ent; |
+               \-----/    +-------+
+                              |
+                              |
+                           /-----\
+                           | foo |
+                           \-----/
+ </pre>
+ <em>图：barTextNode.wholeText 的值为 "barfoo"</em>
+
+@since DOM Level 3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public org.w3c.dom.Text org.w3c.dom.Text.replaceWholeText(String content) throws org.w3c.dom.DOMException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前节点和所有逻辑上相邻的文本节点的文本替换为指定的文本。移除包括当前节点在内的所有逻辑上相邻的文本节点，除非它是替换文本的接收方。
+<p>此方法返回接收替换文本的节点。返回的节点为：</p>
+ <ul>
+<li><code>null</code>，此时替换文本为空字符串；
+ </li>
+<li>当前节点，当前节点为只读的时除外；
+ </li>
+<li> 与在替换位置插入的当前节点类型相同（<code>Text</code> 或 <code>CDATASection</code>）的新 <code>Text</code> 节点。
+ </li>
+ </ul>
+<p>例如，在上面的示例中，在参数中有 &quot;yo&quot; 的包含 &quot;bar&quot; 的 <code>Text</code> 上调用 <code>replaceWholeText</code> 将导致以下情况：</p>
+
+ <pre>
+                     +-----+
+                     | &lt;p&gt; |
+                     +-----+
+                        |
+                        |
+                     /-----\
+                     | yo  |
+                     \-----/
+ </pre>
+ <em>图：barTextNode.replaceWholeText("yo") 使用 "yo" 修改 barTextNode 的文本内容</em>
+
+<p>在要移除的节点为 <code>EntityReference</code> 的只读的后代时，必须移除 <code>EntityReference</code>，而不是移除只读节点。如果要移除的任何 <code>EntityReference</code> 都有不是 <code>EntityReference</code>、<code>Text</code> 或 <code>CDATASection</code> 的后代，则在对文档进行任何修改之前，<code>replaceWholeText</code> 方法一定失败，并引发具有代码 <code>NO_MODIFICATION_ALLOWED_ERR</code> 的 <code>DOMException</code>。</p>
+<p>例如，在下面的示例中，在包含 &quot;bar&quot; 的 <code>Text</code> 节点上调用 <code>replaceWholeText</code> 会失败，因为 <code>EntityReference</code> 节点 &quot;ent&quot; 包含无法移除的 <code>Element</code> 节点。</p>
+@param content 替换 <code>Text</code> 节点的内容。
+@return 使用指定内容创建的 <code>Text</code> 节点。
+@exception DOMException NO_MODIFICATION_ALLOWED_ERR: 如果正在替换的某个 <code>Text</code> 节点为只读的，则引发此异常。
+@since DOM Level 3
+
+<!-- END DATA -->

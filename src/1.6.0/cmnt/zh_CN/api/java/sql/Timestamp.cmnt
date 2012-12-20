@@ -1,0 +1,180 @@
+<!-- BEGIN KEY -->
+public class java.sql.Timestamp extends java.util.Date
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<P>一个与 <code>java.util.Date</code> 类有关的瘦包装器 (thin wrapper)，它允许 JDBC API 将该类标识为 SQL <code>TIMESTAMP</code> 值。它通过允许小数秒到纳秒级精度的规范来添加保存 SQL <code>TIMESTAMP</code> 小数秒值的能力。Timestamp 也提供支持时间戳值的 JDBC 转义语法的格式化和解析操作的能力。
+
+ <p>计算 Timestamp 对象的精度为二者之一：
+ <ul>
+ <li><code>19 </code>，其为 yyyy-mm-dd hh:mm:ss  格式下的字符数
+ <li> <code> 20 + s </code>，其为 yyyy-mm-dd hh:mm:ss.[fff...] 格式下的字符数，<code>s</code> 表示给定 Timestamp 的标度（其小数秒精度）。</ul>
+
+<P><B>注：</B>此类型由 <code>java.util.Date</code> 和单独的毫微秒值组成。只有整数秒才会存储在 <code>java.util.Date</code> 组件中。小数秒（毫微秒）是独立存在的。传递不是 <code>java.sql.Timestamp</code> 实例的对象时，<code>Timestamp.equals(Object)</code> 方法永远不会返回 <code>true</code>，因为日期的毫微秒组件是未知的。因此，相对于 <code>java.util.Date.equals(Object)</code> 方法而言，<code>Timestamp.equals(Object)</code> 方法是不对称的。此外，<code>hashcode</code> 方法使用底层 <code>java.util.Date</code> 实现并因此在其计算中不包括毫微秒。  
+ <P>
+鉴于 <code>Timestamp</code> 类和上述 <code>java.util.Date</code> 类之间的不同，建议代码一般不要将 <code>Timestamp</code> 值视为 <code>java.util.Date</code> 的实例。<code>Timestamp</code> 和 <code>java.util.Date</code> 之间的继承关系实际上指的是实现继承，而不是类型继承。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.sql.Timestamp.nanos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp(int year, int month, int date, int hour, int minute, int second, int nano)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>Timestamp</code> 对象，使用给定值对其进行初始化。
+
+@param year 年减去 1900
+@param month 0 到 11
+@param date 1 到 31
+@param hour 0 到 23
+@param minute 0 到 59
+@param second 0 到 59
+@param nano 0 到 999,999,999
+@deprecated 使用构造方法 <code>Timestamp(long millis)</code> 来代替
+@exception IllegalArgumentException 如果毫微参数超出范围
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.sql.Timestamp(long time)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用毫秒时间值构造 <code>Timestamp</code> 对象。整数秒存储在底层日期值中；小数秒存储在 <code>Timestamp</code> 对象的 <code>nanos</code> 字段中。
+
+@param time 自 1970 年 1 月 1 日 00:00:00 GMT 以来的毫秒数。负数表示 1970 年 1 月 1 日 00:00:00 GMT 之前的毫秒数。
+@see java.util.Calendar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.Timestamp.setTime(long time)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此 <code>Timestamp</code> 对象，以表示 1970 年 1 月 1 日 00:00:00 GMT 以后 <tt>time</tt> 毫秒的时间点。 
+
+@param   time   毫秒数。
+@see #getTime
+@see #Timestamp(long time)
+@see java.util.Calendar 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.sql.Timestamp.getTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>Timestamp</code> 对象表示的自 1970 年 1 月 1 日 00:00:00 GMT 以来的毫秒数。
+
+@return  此日期表示的自 1970 年 1 月 1 日 00:00:00 GMT 以来的毫秒数。
+@see #setTime
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.sql.Timestamp java.sql.Timestamp.valueOf(String s)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将使用 JDBC 时间戳转义格式的 <code>String</code> 对象转换为 <code>Timestamp</code> 值。
+
+@param s 使用 <code>yyyy-mm-dd hh:mm:ss[.f...]</code> 格式的时间戳。可以省略小数秒。
+@return 相应的 <code>Timestamp</code> 值
+@exception java.lang.IllegalArgumentException 如果给定的参数不具有 <code>yyyy-mm-dd hh:mm:ss[.f...]</code> 格式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.sql.Timestamp.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 JDBC 时间戳转义格式编排时间戳。<code>yyyy-mm-dd hh:mm:ss.fffffffff</code>，其中 <code>ffffffffff</code> 指示毫微秒。
+ <P>
+@return 使用 <code>yyyy-mm-dd hh:mm:ss.fffffffff</code> 格式的 <code>String</code> 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Timestamp.getNanos()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此 <code>Timestamp</code> 对象的 <code>nanos</code> 值。
+
+@return 此 <code>Timestamp</code> 对象的小数秒组件
+@see #setNanos
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.sql.Timestamp.setNanos(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Timestamp</code> 对象的 <code>nanos</code> 字段设置为给定值。
+
+@param n 新小数秒组件
+@exception java.lang.IllegalArgumentException 如果给定参数大于 999999999 或小于 0
+@see #getNanos
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Timestamp.equals(Timestamp ts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此 <code>Timestamp</code> 对象是否等于给定的 <code>Timestamp</code> 对象。
+
+@param ts 用于比较的 <code>Timestamp</code> 值
+@return 如果给定 <code>Timestamp</code> 对象等于此 <code>Timestamp</code> 对象，则返回 <code>true</code>，否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Timestamp.equals(Object ts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此对象是否等于给定的 <code>Timestamp</code> 对象。
+
+添加了此版本的 <code>equals</code> 方法，可以修复不正确的 <code>Timestamp.equals(Timestamp)</code> 签名，并保留与现有类文件的向后兼容性。
+
+注：相对于基类中的 <code>equals(Object)</code> 方法而言，此方法是不对称的。
+
+@param ts 要与之进行比较的 <code>Object</code> 值
+@return 如果给定 <code>Object</code> 是等于此 <code>Timestamp</code> 对象的 <code>Timestamp</code> 实例，则返回 <code>true</code>；否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Timestamp.before(Timestamp ts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此 <code>Timestamp</code> 对象是否早于给定的 <code>Timestamp</code> 对象。
+
+@param ts 要与之进行比较的 <code>Timestamp</code> 值
+@return 如果此 <code>Timestamp</code> 对象较早，则返回 <code>true</code>，否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.sql.Timestamp.after(Timestamp ts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指示此 <code>Timestamp</code> 对象是否晚于给定的 <code>Timestamp</code> 对象。
+
+@param ts 要与之进行比较的 <code>Timestamp</code> 值
+@return 如果此 <code>Timestamp</code> 对象较晚，则返回 <code>true</code>，否则返回 <code>false</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Timestamp.compareTo(Timestamp ts)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Timestamp</code> 对象与给定 <code>Timestamp</code> 对象相比较。
+
+@param   ts   要与此 <code>Timestamp</code> 对象进行比较的 <code>Timestamp</code> 对象
+@return  如果两个 <code>Timestamp</code> 对象相等，则返回值 <code>0</code>；如果此 <code>Timestamp</code> 对象早于给定参数，则返回小于 <code>0</code> 的值；如果此 <code>Timestamp</code> 对象晚于给定参数，则返回大于 <code>0</code> 的值。
+@since   1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.sql.Timestamp.compareTo(Date o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>Timestamp</code> 对象与给定的 <code>Date</code>（必须为 <code>Timestamp</code> 对象）相比较。如果参数不是 <code>Timestamp</code> 对象，则此方法抛出 <code>ClassCastException</code> 对象。（<code>Timestamp</code> 只有与其他的 <code>Timestamp</code> 对象相比较。）
+
+@param o 要比较的 <code>Date</code>，必须为 <code>Timestamp</code> 对象
+@return  如果此 <code>Timestamp</code> 对象与给定对象相等，则返回值 <code>0</code>；如果此 <code>Timestamp</code> 对象早于给定参数，则返回小于 <code>0</code> 的值；如果此 <code>Timestamp</code> 对象晚于给定参数，则返回大于 <code>0</code> 的值。
+
+@since	1.5
+
+<!-- END DATA -->

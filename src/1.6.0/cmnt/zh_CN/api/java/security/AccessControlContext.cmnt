@@ -1,0 +1,109 @@
+<!-- BEGIN KEY -->
+public final class java.security.AccessControlContext extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+AccessControlContext 用于基于它所封装的上下文作出系统资源访问决定。
+ 
+<p>更确切地说，它封装一个上下文并且具有单个方法 (<code>checkPermission</code>)，该方法等效于 AccessController 类中的 <code>checkPermission</code> 方法，只有一个不同点：AccessControlContext 的 <code>checkPermission</code> 方法基于它所封装的上下文而不是当前执行线程的上下文作出访问决定。
+ 
+<p>因此，AccessControlContext 的目的是用于那些实际需要在<i>另一个</i> 上下文（例如，在 worker 线程中）中执行应该在给定上下文中进行的安全检查的情形下。
+ 
+<p> AccessControlContext 通过调用 <code>AccessController.getContext</code> 方法创建。<code>getContext</code> 方法获取当前调用上下文&ldquo;快照&rdquo;，并将其置于它所返回的 AccessControlContext 对象中。示例调用如下：
+ 
+ <pre>
+ 
+   AccessControlContext acc = AccessController.getContext()
+ 
+ </pre>
+ 
+ <p>
+另一上下文中的代码可以随后在以前保存的 AccessControlContext 对象上调用 <code>checkPermission</code> 方法。示例调用如下：
+ 
+ <pre>
+ 
+   acc.checkPermission(permission)
+ 
+ </pre> 
+ 
+@see AccessController
+
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.AccessControlContext(java.security.ProtectionDomain[] context)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带有给定 ProtectionDomain 集合的 AccessControlContext。上下文不能为 null。重复的域将从上下文中被移除。
+
+@param context 与此上下文关联的 ProtectionDomain。从数组复制非重复域。数组的后续更改对此 AccessControlContext 没有影响。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.AccessControlContext(AccessControlContext acc, DomainCombiner combiner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有给定 <code>AccessControlContext</code> 和 <code>DomainCombiner</code> 的新 <code>AccessControlContext</code>。此构造方法将提供的 <code>DomainCombiner</code> 与提供的 <code>AccessControlContext</code> 关联起来。
+
+ <p>
+
+@param acc 与此提供的 <code>DomainCombiner</code> 关联的 <code>AccessControlContext</code>。 <p>
+
+@param combiner 要与提供的 <code>AccessControlContext</code> 关联的 <code>DomainCombiner</code>。
+
+@exception NullPointerException 如果提供的 <code>context</code> 为 <code>null</code>。 <p>
+
+@exception SecurityException 如果调用者没有调用此构造方法的权限。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.DomainCombiner java.security.AccessControlContext.getDomainCombiner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>AccessControlContext</code> 关联的 <code>DomainCombiner</code>。
+
+ <p>
+
+@return 与此 <code>AccessControlContext</code> 关联的 <code>DomainCombiner</code>；如果关联项不存在，则返回 <code>null</code>。
+
+@exception SecurityException 如果调用者没有获取与此 <code>AccessControlContext</code> 关联的 <code>DomainCombiner</code> 的权限。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.AccessControlContext.checkPermission(Permission perm) throws java.security.AccessControlException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+基于当前生效的安全策略和此对象中的上下文确定是否允许指定权限指示的访问请求。只有在上下文中每个 ProtectionDomain 都隐含该权限时，才允许该请求。否则拒绝该请求。
+
+ <p>
+如果允许访问请求，则此方法正常返回；否则抛出适当的 AccessControlException。 
+
+@param perm 请求的权限。
+ 
+@exception AccessControlException 如果基于当前的安全策略和此对象所封装的上下文不允许指定权限。
+@exception NullPointerException 如果要检查的权限为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.AccessControlContext.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 AccessControlContext 对象是否相等。检查 <i>obj</i> 是否为 AccessControlContext 且具有与此上下文相同的 ProtectionDomain 集合。
+ <P>
+@param obj 要与此对象进行相等性测试的对象。
+@return 如果 <i>obj</i> 为 AccessControlContext 且具有与此上下文相同的 ProtectionDomain 集合，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.security.AccessControlContext.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此上下文的哈希码值。该哈希码是通过对上下文中所有保护域的哈希码进行异或计算得到的。
+ 
+@return  此上下文的哈希码值。
+
+<!-- END DATA -->

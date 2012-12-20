@@ -1,0 +1,72 @@
+<!-- BEGIN KEY -->
+public interface java.awt.dnd.DropTargetListener extends java.util.EventListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>DropTargetListener</code> 接口是 <code>DropTarget</code> 类所使用的回调接口，用于提供所涉及的 <code>DropTarget</code> 的 DnD 操作的通知。在整个 Drag 和 Drop 操作中，可以实现此接口的方法，向用户提供 &quot;drag under&quot; 的可视化反馈。
+ <p>
+通过实现该接口，并使用 <code>DropTarget</code> 注册该接口，可以创建一个 listener 对象。当 drag 进入、移上或退出该 <code>DropTarget</code> 的 drop 位置的可操作部分时，当 drop 操作改变时，以及当 drop 操作发生时，调用 listener 对象的相关方法，并将 <code>DropTargetEvent</code> 传递到该方法。
+ <p>
+<code>DropTarget</code> 的 drop 位置的可操作部分是关联 <code>Component</code> 几何结构的一部分，该部分不会被重叠的顶层窗口或另一 Z-order（顺序）更高的并具有关联的活动 <code>DropTarget</code> 的 <code>Component</code> 遮掩。
+ <p>
+在 drag 过程中，通过对 <code>DropTargetDragEvent</code> 实例（该实例被传递给 listener 的方法）调用 <code>getTransferable()</code>，可以检索与当前 drag 操作相关的数据。 
+ <p>
+注意，<code>DropTargetDragEvent</code> 实例上的 <code>getTransferable()</code> 应该只在各自 listener 的方法中调用，并且应该在该方法返回前从返回的 <code>Transferable</code> 检索所有必需的数据。
+
+@version 	1.22, 12/19/03
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DropTargetListener.dragEnter(DropTargetDragEvent dtde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+正在进行 drag 操作时调用，此时鼠标指针进入 <code>DropTarget</code>（使用此 listener 注册）的 drop 位置的可操作部分。
+ 
+@param dtde <code>DropTargetDragEvent</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DropTargetListener.dragOver(DropTargetDragEvent dtde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+正在进行 drag 操作时调用，此时鼠标指针仍然处于 <code>DropTarget</code>（使用此 listener 注册）的 drop 位置的可操作部分。
+ 
+@param dtde <code>DropTargetDragEvent</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DropTargetListener.dropActionChanged(DropTargetDragEvent dtde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在用户已经修改了当前 drop 操作后调用。
+ <P>
+@param dtde <code>DropTargetDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DropTargetListener.dragExit(DropTargetEvent dte)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+正在进行 drag 操作时调用，此时鼠标指针已退出 <code>DropTarget</code>（使用此 listener 注册）的 drop 位置的可操作部分。
+ 
+@param dte <code>DropTargetEvent</code> 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DropTargetListener.drop(DropTargetDropEvent dtde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 drag 操作已终止时调用，此时 drop 处于 <code>DropTarget</code>（使用此 listener 注册）的 drop 位置的可操作部分。  
+ <p>
+此方法负责保证与操作相关的数据传输。<code>DropTargetDropEvent</code> 提供获得 <code>Transferable</code> 对象的手段，该对象表示要转换的数据对象。<P>
+利用此方法，<code>DropTargetListener</code> 将通过带 <code>DropTargetDropEvent</code> 参数的 acceptDrop(int dropAction) 或 rejectDrop() 方法来接受或拒绝 drop 操作。
+ <P>
+在 acceptDrop() 之后（而不是之前），可以调用 <code>DropTargetDropEvent</code> 的 getTransferable() 方法，还可以通过返回的 <code>Transferable</code> 的 getTransferData() 方法执行数据传输。
+ <P>
+完成 drop 之后，需要此方法实现指明 drop 成功还是失败，这通过传递合适的 <code>boolean</code> 给 <code>DropTargetDropEvent</code> 的 dropComplete(boolean success) 方法来完成。
+ <P>
+注：应该在调用 <code>DropTargetDropEvent</code> 的 dropComplete(boolean success) 方法之前完成数据传输。在此之后，调用由 <code>DropTargetDropEvent.getTransferable()</code> 返回的 <code>Transferable</code> 的 getTransferData() 方法，确保只有在数据传输限于本地时才会成功；也就是说，只有 <code>DropTargetDropEvent.isLocalTransfer()</code> 返回 <code>true</code> 时才会成功。否则，调用的行为是与实现相关的。
+ <P>
+@param dtde <code>DropTargetDropEvent</code> 
+
+<!-- END DATA -->

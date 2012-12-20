@@ -1,0 +1,60 @@
+<!-- BEGIN KEY -->
+public interface javax.imageio.IIOParamController
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该接口将由可以确定 <code>IIOParam</code> 对象设置值（通过提供一个 GUI 来从用户那里获取值或其他方式）的对象实现。此接口只指定调用控制器的一般 <code>activate</code> 方法，不考虑该控制器获得值的方式（<i>也就是说</i>，该控制器是提供一个 GUI 还是只计算一个值的集合与此接口无关）。
+
+<p> 在 <code>activate</code> 方法中，控制器通过查询 <code>IIOParam</code> 对象的 <code>get</code> 方法获得初始值，通过所有的方法修改这些值，然后调用 <code>IIOParam</code> 对象的 <code>set</code> 方法修改适当的设置。通常，在最终提交时，将马上调用所有这些 <code>set</code> 方法，以便删除操作不会干扰现有值。总之，应用程序可能期望在 <code>activate</code> 方法返回 <code>true</code> 时，<code>IIOParam</code> 对象已经准备好用于读取或写入操作。
+
+<p> 供应商可以选择为他们针对特定插件定义的 <code>IIOParam</code> 子类提供 GUI。其可以作为相应 <code>IIOParam</code> 子类中的默认控制器。
+
+<p> 应用程序可以重写任何默认 GUI，提供嵌套在其框架中属于自己的控制器。需要的所有事物就是 <code>activate</code> 方法有模式地运转（直到被取消或提交时才返回），尽管不需要提供一个显式的有模式对话框。这种无模式 GUI 组件大致将按如下方式进行编码：
+
+ <br>
+ <pre>
+ class MyGUI extends SomeComponent implements IIOParamController {
+
+    public MyGUI() {
+        // ...
+        setEnabled(false);
+    }
+
+    public boolean activate(IIOParam param) {
+        // disable other components if desired
+        setEnabled(true);
+        // go to sleep until either cancelled or committed
+        boolean ret = false;
+        if (!cancelled) {
+            // set values on param
+            ret = true;
+        }
+        setEnabled(false);
+        // enable any components disabled above
+        return ret;
+    }
+ </pre>
+
+<p> 作为选择，可以将算法过程（比如数据库查找或解析命令行）用作控制器，在这种情况下，<code>activate</code> 方法将只查找或计算设置值、调用 <code>IIOParam.setXXX</code> 方法以及返回 <code>true</code>。
+
+@see IIOParam#setController
+@see IIOParam#getController
+@see IIOParam#getDefaultController
+@see IIOParam#hasController
+@see IIOParam#activateController
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.IIOParamController.activate(IIOParam param)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活控制器。如果返回 <code>true</code>，则 <code>IIOParam</code> 对象中的所有设置值都应该已经准备好用于读取或写入操作。如果返回 <code>false</code>，则不会干扰 <code>IIOParam</code> 对象中的任何设置值（<i>也就是说</i>，用户取消了该操作）。
+
+@param param 要修改的 <code>IIOParam</code> 对象。
+
+@return 如果已经修改了 <code>IIOParam</code>，则返回 <code>true</code>，否则返回 <code>false</code>。
+ 
+@exception IllegalArgumentException 如果 <code>param</code> 为 <code>null</code> 或者不是正确类的实例。
+
+<!-- END DATA -->

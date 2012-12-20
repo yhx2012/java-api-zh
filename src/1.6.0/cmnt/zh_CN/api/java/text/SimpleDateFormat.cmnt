@@ -1,0 +1,462 @@
+<!-- BEGIN KEY -->
+public class java.text.SimpleDateFormat extends java.text.DateFormat
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SimpleDateFormat</code> 是一个以与语言环境有关的方式来格式化和解析日期的具体类。它允许进行格式化（日期 -&gt; 文本）、解析（文本 -&gt; 日期）和规范化。
+
+ <p>
+<code>SimpleDateFormat</code> 使得可以选择任何用户定义的日期-时间格式的模式。但是，仍然建议通过 <code>DateFormat</code> 中的 <code>getTimeInstance</code>、<code>getDateInstance</code> 或 <code>getDateTimeInstance</code> 来创建日期-时间格式器。每一个这样的类方法都能够返回一个以默认格式模式初始化的日期/时间格式器。可以根据需要使用 <code>applyPattern</code> 方法来修改格式模式。有关使用这些方法的更多信息，请参阅 {@link DateFormat}。
+
+<h4>日期和时间模式</h4>
+ <p>
+日期和时间格式由<em>日期和时间模式</em> 字符串指定。在日期和时间模式字符串中，未加引号的字母 <code>'A'</code> 到 <code>'Z'</code> 和 <code>'a'</code> 到 <code>'z'</code> 被解释为模式字母，用来表示日期或时间字符串元素。文本可以使用单引号 (<code>'</code>) 引起来，以免进行解释。<code>&quot;''&quot;</code> 表示单引号。所有其他字符均不解释；只是在格式化时将它们简单复制到输出字符串，或者在解析时与输入字符串进行匹配。
+ <p>
+定义了以下模式字母（所有其他字符 <code>'A'</code> 到 <code>'Z'</code> 和 <code>'a'</code> 到 <code>'z'</code> 都被保留）：
+ <blockquote>
+ <table border=0 cellspacing=3 cellpadding=0 summary="Chart shows pattern letters, date/time component, presentation, and examples.">
+     <tr bgcolor="#ccccff">
+<th align=left>字母
+<th align=left>日期或时间元素
+<th align=left>表示
+<th align=left>示例
+     <tr>
+         <td><code>G</code>
+<td>Era 标志符
+         <td><a href="#text">Text</a>
+         <td><code>AD</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>y</code>
+<td>年
+         <td><a href="#year">Year</a>
+         <td><code>1996</code>; <code>96</code>
+     <tr>
+         <td><code>M</code>
+<td>年中的月份
+         <td><a href="#month">Month</a>
+         <td><code>July</code>; <code>Jul</code>; <code>07</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>w</code>
+<td>年中的周数
+         <td><a href="#number">Number</a>
+         <td><code>27</code>
+     <tr>
+         <td><code>W</code>
+<td>月份中的周数
+         <td><a href="#number">Number</a>
+         <td><code>2</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>D</code>
+<td>年中的天数
+         <td><a href="#number">Number</a>
+         <td><code>189</code>
+     <tr>
+<td><code>d</code>
+<td>月份中的天数
+         <td><a href="#number">Number</a>
+         <td><code>10</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>F</code>
+<td>月份中的星期
+         <td><a href="#number">Number</a>
+         <td><code>2</code>
+     <tr>
+         <td><code>E</code>
+<td>星期中的天数
+         <td><a href="#text">Text</a>
+         <td><code>Tuesday</code>; <code>Tue</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>a</code>
+<td>Am/pm 标记
+         <td><a href="#text">Text</a>
+         <td><code>PM</code>
+     <tr>
+         <td><code>H</code>
+<td>一天中的小时数（0-23）
+         <td><a href="#number">Number</a>
+         <td><code>0</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>k</code>
+<td>一天中的小时数（1-24）
+         <td><a href="#number">Number</a>
+         <td><code>24</code>
+     <tr>
+         <td><code>K</code>
+<td>am/pm 中的小时数（0-11）
+         <td><a href="#number">Number</a>
+         <td><code>0</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>h</code>
+<td>am/pm 中的小时数（1-12）
+         <td><a href="#number">Number</a>
+         <td><code>12</code>
+     <tr>
+         <td><code>m</code>
+<td>小时中的分钟数
+         <td><a href="#number">Number</a>
+         <td><code>30</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>s</code>
+<td>分钟中的秒数
+         <td><a href="#number">Number</a>
+         <td><code>55</code>
+     <tr>
+         <td><code>S</code>
+<td>毫秒数
+         <td><a href="#number">Number</a>
+         <td><code>978</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>z</code>
+<td>时区
+         <td><a href="#timezone">General time zone</a>
+         <td><code>Pacific Standard Time</code>; <code>PST</code>; <code>GMT-08:00</code>
+     <tr>
+         <td><code>Z</code>
+<td>时区
+         <td><a href="#rfc822timezone">RFC 822 time zone</a>
+         <td><code>-0800</code>
+ </table>
+ </blockquote>
+模式字母通常是重复的，其数量确定其精确表示：
+ <ul>
+ <li><strong><a name="text">Text:</a></strong> 对于格式化来说，如果模式字母的数量大于等于 4，则使用完全形式；否则，在可用的情况下使用短形式或缩写形式。对于解析来说，两种形式都是可接受的，与模式字母的数量无关。
+ <li><strong><a name="number">Number:</a></strong> 对于格式化来说，模式字母的数量是最小的数位，如果数位不够，则用 0 填充以达到此数量。对于解析来说，模式字母的数量被忽略，除非必须分开两个相邻字段。
+ <li><strong><a name="year">Year:</a></strong> 如果格式器的 {@link #getCalendar() Calendar} 是格里高利历，则应用以下规则。<br>
+     <ul>
+     <li> 对于格式化来说，如果模式字母的数量为 2，则年份截取为 2 位数,否则将年份解释为 <a href="#number">number</a>。
+     <li>对于解析来说，如果模式字母的数量大于 2，则年份照字面意义进行解释，而不管数位是多少。因此使用模式 &quot;MM/dd/yyyy&quot;，将 &quot;01/11/12&quot; 解析为公元 12 年 1 月 11 日。
+     <li>在解析缩写年份模式（&quot;y&quot; 或 &quot;yy&quot;）时，<code>SimpleDateFormat</code> 必须相对于某个世纪来解释缩写的年份。这通过将日期调整为 <code>SimpleDateFormat</code> 实例创建之前的 80 年和之后 20 年范围内来完成。例如，在 &quot;MM/dd/yy&quot; 模式下，如果 <code>SimpleDateFormat</code> 实例是在 1997 年 1 月 1 日创建的，则字符串 &quot;01/11/12&quot; 将被解释为 2012 年 1 月 11 日，而字符串 &quot;05/04/64&quot; 将被解释为 1964 年 5 月 4 日。在解析时，只有恰好由两位数字组成的字符串（如 {@link Character#isDigit(char)} 所定义的）被解析为默认的世纪。其他任何数字字符串将照字面意义进行解释，例如单数字字符串，3 个或更多数字组成的字符串，或者不都是数字的两位数字字符串（例如&quot;-1&quot;）。因此，在相同的模式下， &quot;01/02/3&quot; 或 &quot;01/02/003&quot; 解释为公元 3 年 1 月 2 日。同样，&quot;01/02/-3&quot; 解析为公元前 4 年 1 月 2 日。
+      </ul>
+     否则，则应用日历系统特定的形式。对于格式化和解析，如果模式字母的数量为 4 或大于 4，则使用日历特定的 {@linkplain Calendar#LONG long form}。否则，则使用日历特定的 {@linkplain Calendar#SHORT short or abbreviated form}。
+ <li><strong><a name="month">Month:</a></strong> 如果模式字母的数量为 3 或大于 3，则将月份解释为 <a href="#text">text</a>；否则解释为 <a href="#number">number</a>。
+ <li><strong><a name="timezone">General time zone:</a></strong> 如果时区有名称，则将它们解释为 <a href="#text">text</a>。对于表示 GMT 偏移值的时区，使用以下语法：
+     <pre>
+     <a name="GMTOffsetTimeZone"><i>GMTOffsetTimeZone:</i></a>
+             <code>GMT</code> <i>Sign</i> <i>Hours</i> <code>:</code> <i>Minutes</i>
+     <i>Sign:</i> one of
+             <code>+ -</code>
+     <i>Hours:</i>
+             <i>Digit</i>
+             <i>Digit</i> <i>Digit</i>
+     <i>Minutes:</i>
+             <i>Digit</i> <i>Digit</i>
+     <i>Digit:</i> one of
+             <code>0 1 2 3 4 5 6 7 8 9</code></pre>
+<i>Hours</i> 必须在 0 到 23 之间，<i>Minutes</i> 必须在 00 到 59 之间。格式是与语言环境无关的，并且数字必须取自 Unicode 标准的 Basic Latin 块。
+<p>对于解析来说，<a href="#rfc822timezone">RFC 822 time zones</a> 也是可接受的。
+ <li><strong><a name="rfc822timezone">RFC 822 time zone:</a></strong> 对于格式化来说，使用 RFC 822 4-digit 时区格式：
+     <pre>
+     <i>RFC822TimeZone:</i>
+             <i>Sign</i> <i>TwoDigitHours</i> <i>Minutes</i>
+     <i>TwoDigitHours:</i>
+             <i>Digit Digit</i></pre>
+<i>TwoDigitHours</i> 必须在 00 和 23 之间。其他定义请参阅 <a href="#timezone">general time zones</a>。
+<p>对于解析来说，<a href="#timezone">general time zones</a> 也是可接受的。
+ </ul>
+<code>SimpleDateFormat</code> 还支持<em>本地化日期和时间模式</em> 字符串。在这些字符串中，以上所述的模式字母可以用其他与语言环境有关的模式字母来替换。<code>SimpleDateFormat</code> 不处理除模式字母之外的文本本地化；而由类的客户端来处理。
+ <p>
+
+<h4>示例</h4>
+
+以下示例显示了如何在美国语言环境中解释日期和时间模式。给定的日期和时间为美国太平洋时区的本地时间 2001-07-04 12:08:56。
+ <blockquote>
+ <table border=0 cellspacing=3 cellpadding=0 summary="Examples of date and time patterns interpreted in the U.S. locale">
+     <tr bgcolor="#ccccff">
+<th align=left>日期和时间模式
+<th align=left>结果
+     <tr>
+         <td><code>&quot;yyyy.MM.dd G 'at' HH:mm:ss z&quot;</code>
+         <td><code>2001.07.04 AD at 12:08:56 PDT</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>&quot;EEE, MMM d, ''yy&quot;</code>
+         <td><code>Wed, Jul 4, '01</code>
+     <tr>
+         <td><code>&quot;h:mm a&quot;</code>
+         <td><code>12:08 PM</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>&quot;hh 'o''clock' a, zzzz&quot;</code>
+         <td><code>12 o'clock PM, Pacific Daylight Time</code>
+     <tr>
+         <td><code>&quot;K:mm a, z&quot;</code>
+         <td><code>0:08 PM, PDT</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>&quot;yyyyy.MMMMM.dd GGG hh:mm aaa&quot;</code>
+         <td><code>02001.July.04 AD 12:08 PM</code>
+     <tr>
+         <td><code>&quot;EEE, d MMM yyyy HH:mm:ss Z&quot;</code>
+         <td><code>Wed, 4 Jul 2001 12:08:56 -0700</code>
+     <tr bgcolor="#eeeeff">
+         <td><code>&quot;yyMMddHHmmssZ&quot;</code>
+         <td><code>010704120856-0700</code>
+     <tr>
+         <td><code>&quot;yyyy-MM-dd'T'HH:mm:ss.SSSZ&quot;</code>
+         <td><code>2001-07-04T12:08:56.235-0700</code>
+ </table>
+ </blockquote>
+
+<h4><a name="synchronization">同步</a></h4>
+
+ <p>
+日期格式是不同步的。建议为每个线程创建独立的格式实例。如果多个线程同时访问一个格式，则它必须是外部同步的。
+
+@see          <a href="http://java.sun.com/docs/books/tutorial/i18n/format/simpleDateFormat.html">Java Tutorial</a>
+@see          java.util.Calendar
+@see          java.util.TimeZone
+@see          DateFormat
+@see          DateFormatSymbols
+@version      1.77, 01/22/04
+@author       Mark Davis, Chen-Lieh Huang, Alan Liu
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.text.SimpleDateFormat.serialVersionOnStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+流上序列化数据的版本。可能的值：
+ <ul>
+<li><b>0</b> 或者不出现在流上：JDK 1.1.3。此版本在流上没有 <code>defaultCenturyStart</code>。
+<li><b>1</b> JDK 1.1.4 或更高版本。此版本增加了 <code>defaultCenturyStart</code>。
+ </ul>
+在流出此类时，编写最新格式和所允许的最高 <code>serialVersionOnStream</code>。
+@serial
+@since JDK1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.text.SimpleDateFormat.pattern
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此格式器的模式字符串。这始终是一个非本地化的模式。不能为 null。有关详细信息，请参阅类文档。
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.text.DateFormatSymbols java.text.SimpleDateFormat.formatData
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此格式器为周名称、月名称等使用的符号。不能为 null。
+@serial
+@see java.text.DateFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Date java.text.SimpleDateFormat.defaultCenturyStart
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+我们将两位数字的年份日期映射到从 <code>defaultCenturyStart</code> 开始的世纪（可以为任何日期）。不能为 null。
+@serial
+@since JDK1.1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Locale java.text.SimpleDateFormat.locale
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 用于实例化此 <code>SimpleDateFormat</code> 的 Locale。如果此对象已由旧的 <code>SimpleDateFormat</code> 创建并且进行了反序列化，则值可以为 null。
+
+ @serial
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.SimpleDateFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用默认的模式和默认语言环境的日期格式符号构造 <code>SimpleDateFormat</code>。<b>注：</b>此构造方法可能不支持所有语言环境。要覆盖所有地区，请使用 {@link DateFormat} 类中的工厂方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.SimpleDateFormat(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的模式和默认语言环境的日期格式符号构造 <code>SimpleDateFormat</code>。<b>注：</b>此构造方法可能不支持所有语言环境。要覆盖所有语言环境，请使用 {@link DateFormat} 类中的工厂方法。
+
+@param pattern 描述日期和时间格式的模式
+@exception NullPointerException 如果给定的模式为 null
+@exception IllegalArgumentException 如果给定的模式无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.SimpleDateFormat(String pattern, Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的模式和给定语言环境的默认日期格式符号构造 <code>SimpleDateFormat</code>。<b>注：</b>此构造方法可能不支持所有语言环境。要覆盖所有语言环境，请使用 {@link DateFormat} 类中的工厂方法。
+
+@param pattern 描述日期和时间格式的模式
+@param locale 其日期格式符号要被使用的语言环境
+@exception NullPointerException 如果给定的模式或语言环境为 null
+@exception IllegalArgumentException 如果给定的模式无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.SimpleDateFormat(String pattern, DateFormatSymbols formatSymbols)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用给定的模式和日期符号构造 <code>SimpleDateFormat</code>。
+
+@param pattern 描述日期和时间格式的模式
+@param formatSymbols 要用来格式化的日期格式符号
+@exception NullPointerException 如果给定的模式或 formatSymbols 为 null
+@exception IllegalArgumentException 如果给定的模式无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.SimpleDateFormat.set2DigitYearStart(Date startDate)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 100 年周期的两位数年份，该年份将被解释为从用户指定的日期开始。
+
+@param startDate 在解析时，两位数年份将被置于 <code>startDate</code> 和 <code>startDate + 100 years</code> 之间的范围内。
+@see #get2DigitYearStart
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.text.SimpleDateFormat.get2DigitYearStart()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在 100 年周期内被解释的两位数字年份的开始日期。
+
+@return 在 100 年周期内被解析的两位数字年份的开始日期
+@see #set2DigitYearStart
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.StringBuffer java.text.SimpleDateFormat.format(Date date, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的 <code>Date</code> 格式化为日期/时间字符串，并将结果添加到给定的 <code>StringBuffer</code>。
+
+@param date 要被格式化为日期-时间字符串的日期-时间值。
+@param toAppendTo 新的日期-时间文本被添加的位置。
+@param pos 格式化的位置。输入时：如果需要，是一个对齐字段。输出时：为对齐字段的偏移量。
+@return 格式化的日期-时间字符串。
+@exception NullPointerException 如果给定的日期为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.text.SimpleDateFormat.formatToCharacterIterator(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化生成 <code>AttributedCharacterIterator</code> 的对象。可以使用返回的 <code>AttributedCharacterIterator</code> 来生成所得的字符串，以及确定关于所得字符串的信息。
+ <p>
+AttributedCharacterIterator 的每个属性键都是 <code>DateFormat.Field</code> 类型的，对应的属性值与属性键相同。
+
+@exception NullPointerException 如果 obj 为 null。
+@exception IllegalArgumentException 如果 Format 不能格式化给定的对象，或者 Format 的模式字符串无效。
+@param obj 要格式化的对象
+@return 描述格式化的值的 AttributedCharacterIterator。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Date java.text.SimpleDateFormat.parse(String text, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析字符串的文本，生成 <code>Date</code>。
+ <p>
+此方法试图解析从 <code>pos</code> 给定的索引处开始的文本。如果解析成功，则将 <code>pos</code> 的索引更新为所用最后一个字符后面的索引（不必对直到字符串结尾的所有字符进行解析），并返回解析得到的日期。更新后的 <code>pos</code> 可以用来指示下次调用此方法的起始点。如果发生错误，则不更改 <code>pos</code> 的索引，并将 <code>pos</code> 的错误索引设置为发生错误处的字符索引，并且返回 null。
+
+@param text  应该解析其中一部分的 <code>String</code>。
+@param pos  具有以上所述的索引和错误索引信息的 <code>ParsePosition</code> 对象。
+@return 从字符串进行解析的 <code>Date</code>。如果发生错误，则返回 null。
+@exception NullPointerException 如果 <code>text</code> 或 <code>pos</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.SimpleDateFormat.toPattern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此日期格式的模式字符串。
+
+@return 描述此日期格式的模式字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.text.SimpleDateFormat.toLocalizedPattern()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此日期格式的本地化模式字符串。
+
+@return 描述此日期格式的本地化模式字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.SimpleDateFormat.applyPattern(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定模式字符串应用于此日期格式。
+
+@param pattern 此日期格式的新的日期和时间模式
+@exception NullPointerException 如果给定的模式为 null
+@exception IllegalArgumentException 如果给定的模式无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.SimpleDateFormat.applyLocalizedPattern(String pattern)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的本地化模式字符串应用于此日期格式。
+
+@param pattern 要被映射到此格式的新的日期和时间格式模式的字符串
+@exception NullPointerException 如果给定的模式为 null
+@exception IllegalArgumentException 如果给定的模式无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.DateFormatSymbols java.text.SimpleDateFormat.getDateFormatSymbols()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此日期格式的日期和时间格式符号的一个副本。
+
+@return 此日期格式的日期和时间格式符号
+@see #setDateFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.SimpleDateFormat.setDateFormatSymbols(DateFormatSymbols newFormatSymbols)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此日期格式的日期和时间格式符号。
+
+@param newFormatSymbols 新的日期和时间格式符号
+@exception NullPointerException 如果给定的 newFormatSymbols 为 null
+@see #getDateFormatSymbols
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.SimpleDateFormat.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此 <code>SimpleDateFormat</code> 的一个副本。此副本也将复制格式的日期格式符号。
+
+@return 此 <code>SimpleDateFormat</code> 的一个副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.SimpleDateFormat.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>SimpleDateFormat</code> 对象的哈希码值。
+
+@return 此 <code>SimpleDateFormat</code> 对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.SimpleDateFormat.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较给定对象与此 <code>SimpleDateFormat</code> 的相等性。
+
+@return true 如果给定对象与此 <code>SimpleDateFormat</code> 相等
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.text.SimpleDateFormat.readObject(ObjectInputStream stream) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在从输入流中读取对象后，验证对象中的格式模式。
+ <p>
+@exception InvalidObjectException 如果模式无效
+
+<!-- END DATA -->

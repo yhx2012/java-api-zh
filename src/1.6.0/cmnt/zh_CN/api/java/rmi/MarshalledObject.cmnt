@@ -1,0 +1,90 @@
+<!-- BEGIN KEY -->
+public final class java.rmi.MarshalledObject extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>MarshalledObject</code> 包含一个字节流，该流具有给定了其构造方法的对象的序列化表示形式。在从包含的字节流进行反序列化时，<code>get</code> 方法会返回原始对象的一个新的副本。包含的对象使用相同的用来编组和解组参数的序列化语义进行序列化和反序列化，并返回 RMI 调用的值：创建序列化形式时：
+
+ <ul>
+<li> 使用可以从中加载类（如果可用）的基本代码 URL 对类进行注释，并且
+<li> <code>MarshalledObject</code> 中的任何远程对象都由其 stub 的序列化实例表示。
+ </ul>
+
+<p>当获取对象的副本时（通过 <code>get</code> 方法），如果本地没有提供此类，则从适当的位置加载它（该位置是由 URL 指定的，在对类序列化时就已经将此 URL 注释了该类的描述符）。
+
+<p><code>MarshalledObject</code> 便于将对象传入 RMI 调用，该调用不会立即通过远程同位体自动进行反序列化。
+
+@param <T> 包含在此 <code>MarshalledObject</code> 中的对象类型 
+
+@version 1.35, 11/17/05
+@author  Ann Wollrath
+@author  Peter Jones
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] java.rmi.MarshalledObject.objBytes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 字节的序列化表示形式。如果 <code>objBytes</code> 为 <code>null</code>，则已编组的对象为 <code>null</code> 引用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private byte[] java.rmi.MarshalledObject.locBytes
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 由 <code>equals</code> 忽略的字节位置注释。如果 <code>locBytes</code> 为 null，则在编组过程中存在非 <code>null</code> 注释。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.rmi.MarshalledObject.hash
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+@serial 所包含对象存储的哈希码。 
+
+@see #hashCode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.MarshalledObject(T obj) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的 <code>MarshalledObject</code>，它包含所提供对象的当前状态的序列化表示形式。使用用于 RMI 调用的编组参数的语义序列化该对象。
+
+@param obj  要序列化的对象（必须是可序列化的）
+@exception IOException 如果发生 <code>IOException</code>；如果 <code>obj</code> 不是可序列化的，则可能发生 <code>IOException</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T java.rmi.MarshalledObject.get() throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回所包含的 marshalledobject 的新副本。使用用于 RMI 调用的解编参数的语义反序列化内部表示形式。
+
+@return  所包含对象的副本
+@exception IOException 如果从其内部表示形式反序列化对象时发生 <code>IOException</code>。
+@exception ClassNotFoundException 如果无法找到从其内部表示形式进行反序列化的对象时发生 <code>ClassNotFoundException</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.MarshalledObject.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该 <code>MarshalledObject</code> 的哈希码。
+
+@return  哈希码
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.MarshalledObject.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>MarshalledObject</code> 与另一对象进行比较。当且仅当参数引用完全包含与此对象相同的对象序列化表示形式的 <code>MarshalledObject</code> 时，返回 true。该比较忽略任何基本代码注释，意味着如果两个对象具有相同的序列化表示形式（序列化表示形式中每个类的基本代码<i>除外</i>），则这两个对象等效。
+
+@param obj  要与此 <code>MarshalledObject</code> 比较的对象
+@return 如果参数包含等效的序列化对象，则返回 <code>true</code>；否则返回 <code>false</code>
+@since 1.2
+
+<!-- END DATA -->

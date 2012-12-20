@@ -1,0 +1,571 @@
+<!-- BEGIN KEY -->
+public interface javax.imageio.metadata.IIOMetadataFormat
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+描述从 <code>IIOMetadata.getAsTree</code> 返回并传递给 <code>IIOMetadata.setFromTree</code> 和 <code>mergeTree</code> 的元数据文档结构的对象。文档结构通过以下事物描述：一个关于可能属于某个给定父元素类型的子元素类型和数目的限制条件集合、可能属于某个元素的属性的名称、类型和值、以及可能存储在节点中的 <code>Object</code> 引用的类型和值。
+
+<p> N.B：实现此接口的类应该包含声明为 <code>public static getInstance()</code> 的方法，该方法返回该类的实例。通常，实现将仅构造单个实例并将其缓存以备将来调用 <code>getInstance</code> 时使用。
+
+<p> 可由此类描述的结构是一个可以使用 XML 文档类型定义 (DTD) 表示的子集，再加上一些关于属性的数据类型的基本信息和在节点中存储 <code>Object</code> 引用的能力。将来，使用 XML 模式即可表示这些结构及其他结构。
+
+<p> <code>IIOMetadataFormat</code> 描述的结构与 DTD 之间的区别如下所示：
+
+ <ul>
+<li> 元素不包含嵌入了标记的文本和混合文本。
+
+<li> 元素的子元素必须符合几个简单模式之一，这些简单模式在 <code>CHILD_*</code> 常量的文档中描述。
+
+<li> 元素的内存表示形式可能包含对 <code>Object</code> 的引用。没有提供对这些对象的文本表示。
+ </ul>
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_EMPTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示某个元素不具有任何子元素。换句话说，要求其为叶节点。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_ALL
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示某个元素必须具有按顺序排列的其每个合法子元素的单个实例。在使用 DTD 的情况下，元素的内容由序列 <code>a,b,c,d,...</code> 定义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_SOME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示元素必须具有按顺序排列的其每个合法子元素的零个或一个实例。在使用 DTD 的情况下，元素的内容由序列 <code>a?,b?,c?,d?,...</code> 定义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_CHOICE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示元素必须具有从其合法子元素中选择的零个或一个子元素。在使用 DTD 的情况下，元素的内容由选择 <code>a|b|c|d|...</code> 定义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_SEQUENCE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示元素必须具有其所有合法子元素的实例序列。在使用 DTD 的情况下，元素的内容由序列 <code>(a|b|c|d|...)*</code> 定义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_REPEAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getChildPolicy</code> 返回的常量，指示元素必须具有其唯一合法子元素的零个或多个实例。在使用 DTD 的情况下，元素的内容由带有星号的表达式 <code>a*</code> 定义。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.CHILD_POLICY_MAX
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最大有效 <code>CHILD_POLICY_*</code> 常量，将用于范围检查。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_NONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getObjectValueType</code> 返回的常量，指示缺少用户对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_ARBITRARY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可以将属性或用户对象设置为单个任意值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可能将属性或用户对象设置为某个值范围。范围的最小值和最大值都不包括在内。建议对于整数范围包括两端的值，只在使用浮点数据范围时才不包括两端的值。
+
+@see #VALUE_RANGE_MIN_MAX_INCLUSIVE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE_MIN_INCLUSIVE_MASK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该值可以与 <code>VALUE_RANGE</code> 进行&ldquo;或&rdquo;运算来获取 <code>VALUE_RANGE_MIN_INCLUSIVE</code>，可以与 <code>VALUE_RANGE_MAX_INCLUSIVE</code> 进行&ldquo;或&rdquo;运算来获取 <code>VALUE_RANGE_MIN_MAX_INCLUSIVE</code>。
+
+<p> 类似地，可以将该值与 <code>getAttributeValueType</code> 或 <code>getObjectValueType</code> 的值进行&ldquo;与&rdquo;运算来确定是否包括范围的最小值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE_MAX_INCLUSIVE_MASK
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该值可以与 <code>VALUE_RANGE</code> 进行&ldquo;或&rdquo;运算来获取 <code>VALUE_RANGE_MAX_INCLUSIVE</code>，可以与 <code>VALUE_RANGE_MIN_INCLUSIVE</code> 进行&ldquo;或&rdquo;运算来获取 <code>VALUE_RANGE_MIN_MAX_INCLUSIVE</code>。
+
+<p> 类似地，可以将该值与 <code>getAttributeValueType</code> 或 <code>getObjectValueType</code> 的值进行&ldquo;与&rdquo;运算来确定是否包括范围的最大值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE_MIN_INCLUSIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可以将属性或用户对象设置为某个值范围。范围的最小值包括在内（但不包括最大值）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE_MAX_INCLUSIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可将属性或用户对象设置为某个值范围。范围的最大值包括在内（但不包括最小值）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_RANGE_MIN_MAX_INCLUSIVE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可以将属性或用户对象设置为某个值范围。范围的最小值和最大值都包括在内。建议对于整数范围包括两端的值，只在使用浮点数据范围时才不包括两端的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_ENUMERATION
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可以将属性或用户对象设置为许多枚举值之一。对于属性来说，这些值为 <code>String</code>；对于对象，其为实现给定类或接口的 <code>Object</code>。
+
+<p> 应该将 <code>DATATYPE_BOOLEAN</code> 类型的属性值标记为枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.VALUE_LIST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeValueType</code> 和 <code>getObjectValueType</code> 返回的常量，指示可以将属性或用户对象设置为一个值的列表或数组。对于属性来说，列表将由在 <code>String</code> 中由空白分隔的值组成；对于对象，将使用数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.DATATYPE_STRING
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeDataType</code> 返回的常量，指示属性的值为通用的 Unicode 字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.DATATYPE_BOOLEAN
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeDataType</code> 返回的常量，指示属性的值为 'true' 或 'false'。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.DATATYPE_INTEGER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>getAttributeDataType</code> 返回的常量，指示属性的值为整数的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.DATATYPE_FLOAT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>getAttributeDataType</code> 返回的常量，指示属性的值为十进制浮点数的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int javax.imageio.metadata.IIOMetadataFormat.DATATYPE_DOUBLE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>getAttributeDataType</code> 返回的常量，指示属性的值为双精度十进制浮点数的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getRootName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回格式的根元素的名称。
+
+@return <code>String</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.metadata.IIOMetadataFormat.canNodeAppear(String elementName, ImageTypeSpecifier imageType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果允许元素（和它下面的子树）在给定类型（由 <code>ImageTypeSpecifier</code> 定义）的图像的元数据文档中出现，则返回 <code>true</code>。例如，元数据文档格式可能包含描述图像原色的元素，该元素在写入灰度级图像时是不允许出现的。
+
+@param elementName 要查询的元素的名称。
+@param imageType 指示将与元数据关联的图像类型的 <code>ImageTypeSpecifier</code>。
+
+@return 如果节点对于给定类型的图像有意义，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getElementMinChildren(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用子策略 <code>CHILD_POLICY_REPEAT</code> 的指定元素的最小子元素数。例如，表示原色信息的元素可能需要具有至少 3 个子元素，每种原色一个子元素。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>int</code>。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素不具有子策略 <code>CHILD_POLICY_REPEAT</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getElementMaxChildren(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回使用子策略 <code>CHILD_POLICY_REPEAT</code> 的指定元素的最大子元素数。例如，表示 8 位调色板条目的元素可能允许重复多达 256 次。<code>Integer.MAX_VALUE</code> 的值可用于指定不存在上限。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>int</code>。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素不具有子策略 <code>CHILD_POLICY_REPEAT</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getElementDescription(String elementName, Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含指定元素的描述的 <code>String</code>，或者 <code>null</code>。如果可能，应将该描述本地化为提供的 <code>Locale</code>。
+
+<p> 如果 <code>locale</code> 为 <code>null</code>，则使用 <code>Locale.getLocale</code> 返回的当前默认 <code>Locale</code>。
+
+@param elementName 元素的名称。
+@param locale 尝试进行本地化的 <code>Locale</code>。
+
+@return 元素描述。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getChildPolicy(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 <code>CHILD_POLICY_</code> 开头的常量之一，指示指定元素子元素的合法模式。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>CHILD_POLICY_*</code> 常量之一。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.metadata.IIOMetadataFormat.getChildNames(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个按出现顺序排列的 <code>String</code> 数组，指示允许作为指定元素子元素的元素的名称。如果元素不能有子元素，则返回 <code>null</code>。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>String</code> 数组，或 null。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.metadata.IIOMetadataFormat.getAttributeNames(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，该数组列出了与指定元素关联的属性的名称。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>String</code> 数组。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getAttributeValueType(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 <code>VALUE_</code> 开头的常量之一，指示指定元素中给定属性的值是任意值、被限制在指定范围中的值、被限制为一组枚举值之一，还是一个任意值的以空白分隔的列表。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return <code>VALUE_*</code> 常量之一。 
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getAttributeDataType(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 <code>DATATYPE_</code> 开头的常量之一，指示指定元素中给定属性的值的格式和解释。如果 <code>getAttributeValueType</code> 返回 <code>VALUE_LIST</code>，则合法值为返回数据类型的值的以空白分隔的列表。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return <code>DATATYPE_*</code> 常量之一。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.metadata.IIOMetadataFormat.isAttributeRequired(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定属性必须在指定元素中存在，则返回 <code>true</code>。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return 如果属性必须存在，则返回 <code>true</code>。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getAttributeDefaultValue(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定属性不显式存在于指定元素中，则以 <code>String</code> 的形式返回其默认值；如果不存在可用的默认值，则返回 <code>null</code>。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return 包含默认值的 <code>String</code>，或者 <code>null</code>。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.imageio.metadata.IIOMetadataFormat.getAttributeEnumerations(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>String</code> 数组，其包含指定元素中给定属性的合法枚举值。只应在 <code>getAttributeValueType</code> 返回 <code>VALUE_ENUMERATION</code>的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return <code>String</code> 数组。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+@exception IllegalArgumentException 如果没有将给定属性定义为枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getAttributeMinValue(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回属性的最小合法值。是否包括此值可由 <code>getAttributeValueType</code> 的值确定。该值以 <code>String</code> 的形式返回；其解释依赖于 <code>getAttributeDataType</code> 的值。只应在 <code>getAttributeValueType</code> 返回 <code>VALUE_RANGE_*</code> 的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return 包含属性的最小合法值的 <code>String</code>。
+ 
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+@exception IllegalArgumentException 如果没有将给定属性定义为范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getAttributeMaxValue(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回属性的最大合法值。是否包括此值可由 <code>getAttributeValueType</code> 的值确定。该值以 <code>String</code> 的形式返回；其解释依赖于 <code>getAttributeDataType</code> 的值。只应在 <code>getAttributeValueType</code> 返回 <code>VALUE_RANGE_*</code> 的情况下调用此方法。
+
+@param elementName 要查询的 <code>String</code> 形式的元素名称。
+@param attrName 要查询的属性的名称。
+
+@return 包含属性的最大合法值的 <code>String</code>。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+@exception IllegalArgumentException 如果没有将给定属性定义为范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getAttributeListMinLength(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可用于定义此属性的最小列表项数。属性本身被定义为一个包含多个由空白分隔的项的 <code>String</code>。只应在 <code>getAttributeValueType</code> 返回 <code>VALUE_LIST</code> 的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return 属性的列表项的最小合法数。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+@exception IllegalArgumentException 如果没有将给定属性定义为列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getAttributeListMaxLength(String elementName, String attrName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可用于定义此属性的最大列表项数。<code>Integer.MAX_VALUE</code> 的值可用于指定不存在上限。属性本身被定义为一个包含多个由空白分隔的项的 <code>String</code>。只应在 <code>getAttributeValueType</code> 返回 <code>VALUE_LIST</code> 的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+@param attrName 要查询的属性的名称。
+
+@return 属性的列表项的最大合法数。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+@exception IllegalArgumentException 如果没有将给定属性定义为列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.imageio.metadata.IIOMetadataFormat.getAttributeDescription(String elementName, String attrName, Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含指定属性的描述的 <code>String</code>，或者 <code>null</code>。如果可能，应将该描述本地化为提供的 <code>Locale</code>。
+
+<p> 如果 <code>locale</code> 为 <code>null</code>，则使用 <code>Locale.getLocale</code> 返回的当前默认 <code>Locale</code>。
+
+@param elementName 元素的名称。
+@param attrName 属性的名称。
+@param locale 尝试进行本地化的 <code>Locale</code>。
+
+@return 属性描述。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果 <code>attrName</code> 为 <code>null</code> 或者不是此元素的合法属性名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getObjectValueType(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回以 <code>VALUE_</code> 开头的枚举值之一，指示允许用于 <code>Object</code> 引用的值（枚举、范围或数组）的类型。如果在给定元素中无法存储任何对象值，则此方法的结果将为 <code>VALUE_NONE</code>。
+
+<p> 合法值被定义为范围的 <code>Object</code> 引用必须实现 <code>Comparable</code> 接口。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>VALUE_*</code> 常量之一。 
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+
+@see Comparable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Class<?> javax.imageio.metadata.IIOMetadataFormat.getObjectClass(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回存储在元素中的 <code>Class</code> 类型的 <code>Object</code> 引用。如果此元素不能包含 <code>Object</code> 引用，则抛出 <code>IllegalArgumentException</code>。如果类类型为数组，则此字段指示底层类类型（<i>例如</i>，对于 <code>int</code> 的数组，此方法将返回 <code>int.class</code>）。
+
+<p> 合法值被定义为范围的 <code>Object</code> 引用必须实现 <code>Comparable</code> 接口。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>Class</code> 对象。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.imageio.metadata.IIOMetadataFormat.getObjectDefaultValue(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含指定元素中 <code>Object</code> 引用的默认值的 <code>Object</code>。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>Object</code> 对象。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] javax.imageio.metadata.IIOMetadataFormat.getObjectEnumerations(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 <code>Object</code> 数组，该数组包含指定元素中 <code>Object</code> 引用的合法枚举值。只应在 <code>getObjectValueType</code> 返回 <code>VALUE_ENUMERATION</code>的情况下调用此方法。
+
+<p> 与接受枚举值的节点关联的 <code>Object</code> 必须等于此方法返回的值之一，这里的等于是由 <code>==</code> 运算符（而不是 <code>Object.equals</code> 方法）定义的。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>Object</code> 数组。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+@exception IllegalArgumentException 如果没有将 <code>Object</code> 定义为枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Comparable<?> javax.imageio.metadata.IIOMetadataFormat.getObjectMinValue(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定元素中 <code>Object</code> 引用的最小合法值。是否包括此值可由 <code>getObjectValueType</code> 的值确定。只应在 <code>getObjectValueType</code> 返回以 <code>VALUE_RANGE</code> 开头的常量之一的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+
+@return 属性的最小合法值。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+@exception IllegalArgumentException 如果没有将 <code>Object</code> 定义为范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Comparable<?> javax.imageio.metadata.IIOMetadataFormat.getObjectMaxValue(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定元素中 <code>Object</code> 引用的最大合法值。是否包括此值可由 <code>getObjectValueType</code> 的值确定。只应在 <code>getObjectValueType</code> 返回以 <code>VALUE_RANGE</code> 开头的常量之一的情况下调用此方法。
+
+@return 属性的最小合法值。
+
+@param elementName 要查询的元素的名称。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+@exception IllegalArgumentException 如果没有将 <code>Object</code> 定义为范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getObjectArrayMinLength(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定元素中可用于定义 <code>Object</code> 引用的最小数组元素数。只应在 <code>getObjectValueType</code> 返回 <code>VALUE_LIST</code> 的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>Object</code> 引用的最小有效数组长度。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+@exception IllegalArgumentException 如果 <code>Object</code> 不是数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.imageio.metadata.IIOMetadataFormat.getObjectArrayMaxLength(String elementName)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定元素中可用于定义 <code>Object</code> 引用的最大数组元素数。<code>Integer.MAX_VALUE</code> 的值可用于指定不存在上限。只应在 <code>getObjectValueType</code> 返回 <code>VALUE_LIST</code> 的情况下调用此方法。
+
+@param elementName 要查询的元素的名称。
+
+@return <code>Object</code> 引用的最大有效数组长度。
+
+@exception IllegalArgumentException 如果 <code>elementName</code> 为 <code>null</code> 或者不是此格式的合法元素名称。
+@exception IllegalArgumentException 如果指定元素无法包含对象值（<i>即</i>，如果 <code>getObjectValueType(elementName) == VALUE_NONE</code>）。
+@exception IllegalArgumentException 如果 <code>Object</code> 不是数组。
+
+<!-- END DATA -->

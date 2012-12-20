@@ -1,0 +1,245 @@
+<!-- BEGIN KEY -->
+public class java.util.concurrent.SynchronousQueue extends java.util.AbstractQueue implements java.util.concurrent.BlockingQueue, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一种{@linkplain BlockingQueue 阻塞队列}，其中每个插入操作必须等待另一个线程的对应移除操作 ，反之亦然。同步队列没有任何内部容量，甚至连一个队列的容量都没有。不能在同步队列上进行 <tt>peek</tt>，因为仅在试图要移除元素时，该元素才存在；除非另一个线程试图移除某个元素，否则也不能（使用任何方法）插入元素；也不能迭代队列，因为其中没有元素可用于迭代。队列的<em>头</em> 是尝试添加到队列中的首个已排队插入线程的元素；如果没有这样的已排队线程，则没有可用于移除的元素并且 <tt>poll()</tt> 将会返回 <tt>null</tt>。对于其他 <tt>Collection</tt> 方法（例如 <tt>contains</tt>），<tt>SynchronousQueue</tt> 作为一个空 collection。此队列不允许 <tt>null</tt> 元素。
+
+<p>同步队列类似于 CSP 和 Ada 中使用的 rendezvous 信道。它非常适合于传递性设计，在这种设计中，在一个线程中运行的对象要将某些信息、事件或任务传递给在另一个线程中运行的对象，它就必须与该对象同步。
+
+<p> 对于正在等待的生产者和使用者线程而言，此类支持可选的公平排序策略。默认情况下不保证这种排序。但是，使用公平设置为 <tt>true</tt> 所构造的队列可保证线程以 FIFO 的顺序进行访问。
+
+<p>此类及其迭代器实现 {@link Collection} 和 {@link Iterator} 接口的所有<em>可选</em> 方法。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@since 1.5
+@author Doug Lea、Bill Scherer 和 Michael Scott
+@param <E> 此 collection 保持的元素类型
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.SynchronousQueue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有非公平访问策略的 <tt>SynchronousQueue</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.concurrent.SynchronousQueue(boolean fair)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定公平策略的 <tt>SynchronousQueue</tt>。
+@param fair 如果为 true，则等待线程以 FIFO 的顺序竞争访问；否则顺序是未指定的。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.SynchronousQueue.put(E o) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定元素添加到此队列，如有必要则等待另一个线程接收它。
+
+@throws InterruptedException {@inheritDoc}
+@throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.offer(E o, long timeout, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将指定元素插入到此队列，如有必要则等待指定的时间，以便另一个线程接收它。
+
+ @return 如果成功，则返回 <tt>true</tt>，如果使用者出现前已超出指定的等待时间，则返回 <tt>false</tt>。
+ @throws InterruptedException {@inheritDoc}
+ @throws NullPointerException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.offer(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果另一个线程正在等待以便接收指定元素，则将指定元素插入到此队列。
+
+ @param e 要添加的元素
+ @return 如果该元素已添加到此队列，则返回 <tt>true</tt>；否则返回 <tt>false</tt>
+ @throws NullPointerException 如果指定元素 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.SynchronousQueue.take() throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此队列的头，如有必要则等待另一个线程插入它。
+
+@return  队列的头
+@throws InterruptedException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.SynchronousQueue.poll(long timeout, TimeUnit unit) throws java.lang.InterruptedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取并移除此队列的头，如有必要则等待指定的时间，以便另一个线程插入它。
+
+@return  队列的头，如果该元素出现前已超出指定的等待时间，则返回 <tt>null</tt>。
+@throws InterruptedException {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.SynchronousQueue.poll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果另一个线程当前正要使用某个元素，则获取并移除此队列的头。
+
+@return 队列的头，如果没有元素可用，则返回 <tt>null</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>true</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@return <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.SynchronousQueue.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 0。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@return 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.SynchronousQueue.remainingCapacity()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 0。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@return 0。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.concurrent.SynchronousQueue.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+不执行任何操作。<tt>SynchronousQueue</tt> 没有内部容量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>false</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@param o 元素
+@return <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>false</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@param o 要移除的元素
+@return <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.containsAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+除非给定 collection 为空，否则返回 <tt>false</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@param c  collection
+@return 除非给定 collection 为空，否则返回 <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.removeAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>false</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@param c  collection
+@return <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.SynchronousQueue.retainAll(java.util.Collection<?> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>false</tt>。<tt>SynchronousQueue</tt> 没有内部容量。
+
+@param c  collection
+@return <tt>false</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public E java.util.concurrent.SynchronousQueue.peek()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+始终返回 <tt>null</tt>。除非 <tt>SynchronousQueue</tt> 正在等待，否则不返回元素。
+
+@return <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.concurrent.SynchronousQueue.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个空迭代器，其中 <tt>hasNext</tt> 始终返回 <tt>false</tt>。
+
+@return 空迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.concurrent.SynchronousQueue.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个 0 长度的数组。
+@return 一个 0 长度的数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.util.concurrent.SynchronousQueue.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定数组的第 0 个元素设置为 <tt>null</tt>（如果该数组有非 0 的长度）并返回它。
+
+@param a 数组
+@return 指定的数组
+@throws NullPointerException 如果指定的数组为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.SynchronousQueue.drainTo(java.util.Collection<? super E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws UnsupportedOperationException {@inheritDoc}
+ @throws ClassCastException            {@inheritDoc}
+ @throws NullPointerException          {@inheritDoc}
+ @throws IllegalArgumentException      {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.concurrent.SynchronousQueue.drainTo(java.util.Collection<? super E> c, int maxElements)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws UnsupportedOperationException {@inheritDoc}
+ @throws ClassCastException            {@inheritDoc}
+ @throws NullPointerException          {@inheritDoc}
+ @throws IllegalArgumentException      {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.concurrent.SynchronousQueue.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 将该状态保存到流中（也就是将其序列化）。
+
+ @param s 流
+
+<!-- END DATA -->

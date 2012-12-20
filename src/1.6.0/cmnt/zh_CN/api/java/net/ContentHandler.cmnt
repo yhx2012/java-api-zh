@@ -1,0 +1,55 @@
+<!-- BEGIN KEY -->
+public abstract class java.net.ContentHandler extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+抽象类 <code>ContentHandler</code> 是从 <code>URLConnection</code> 读取 <code>Object</code> 的所有类的超类。 
+ <p>
+应用程序一般不直接调用此类中的 <code>getContent</code> 方法。而是调用 <code>URL</code> 或 <code>URLConnection</code> 类中的 <code>getContent</code> 方法。应用程序的内容处理程序工厂（实现 <code>ContentHandlerFactory</code> 接口的类的实例，该接口通过调用 <code>setContentHandler</code> 设置）通过某个 <code>String</code> 来调用，该 String 给出将在套接字上接收的对象的 MIME 类型。工厂返回 <code>ContentHandler</code> 的子类的实例，并调用其 <code>getContent</code> 方法创建对象。 
+ <p>
+如果找不到任何内容处理程序，则 URLConnection 将在用户自定义的地点集合中查找内容处理程序。默认情况下，它在 sun.net.www.content 中查找，但是用户可以定义一个以垂线分隔的类前缀集合，也可以通过定义 java.content.handler.pkgs 属性以供搜索。类名称必须具有以下形式：
+ <pre>
+     {package-prefix}.{major}.{minor}
+例如，
+     YoyoDyne.experimental.text.plain
+ </pre>
+如果由调用方委托链外部的加载器执行内容处理程序类的加载，则 JVM 需要 RuntimePermission &quot;getClassLoader&quot;。
+
+@author  James Gosling
+@version 1.17, 12/19/03
+@see     java.net.ContentHandler#getContent(java.net.URLConnection)
+@see     java.net.ContentHandlerFactory
+@see     java.net.URL#getContent()
+@see     java.net.URLConnection
+@see     java.net.URLConnection#getContent()
+@see     java.net.URLConnection#setContentHandlerFactory(java.net.ContentHandlerFactory)
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.net.ContentHandler.getContent(URLConnection urlc) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果给出位于对象表示形式开头的 URL 连接流，则此方法读取该流并根据其创建对象。 
+
+@param      urlc  URL 连接。
+@return     <code>ContentHandler</code> 读取的对象。
+@exception IOException 如果读取该对象时发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.net.ContentHandler.getContent(URLConnection urlc, java.lang.Class[] classes) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+如果给出位于对象表示形式开头的 URL 连接流，则此方法读取该流并创建与给定类型之一匹配的对象。 
+
+此方法的默认实现应该调用 getContent() 并在屏幕上显示建议类型的匹配项的返回类型。
+
+@param      urlc   URL 连接。
+@param      classes	请求类型的数组
+@return     由 <code>ContentHandler</code> 读取的对象，其为建议类型的第一个匹配项。如果所有请求类型都不受支持，则返回 null。
+@exception IOException 如果读取该对象时发生 I/O 错误。
+@since 1.3
+
+<!-- END DATA -->

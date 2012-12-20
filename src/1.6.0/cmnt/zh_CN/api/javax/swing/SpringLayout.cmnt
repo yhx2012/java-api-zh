@@ -1,0 +1,247 @@
+<!-- BEGIN KEY -->
+public class javax.swing.SpringLayout extends java.lang.Object implements java.awt.LayoutManager2
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>SpringLayout</code> 根据一组约束布置其相关容器的子组件。有关使用 <code>SpringLayout</code> 的示例，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/layout/spring.html">How to Use SpringLayout</a> 一节。
+
+ <p>
+每个由 <code>Spring</code> 对象表示的约束控制着两个组件边之间的垂直距离或水平距离。这两个边属于容器的任一子级，或属于该容器本身。例如，可以使用控制某组件东（右）和西（左）边之间距离的约束表示该组件允许的宽度。某个组件所允许的 <em>y</em> 坐标可以通过约束该组件北（上）边和其容器的北边之间的距离表示。
+
+ <P>
+<code>SpringLayout</code> 控制的容器的每个子级及其容器本身都有一组与其相关的约束。这些约束由一个 <code>SpringLayout.Constraints</code> 对象表示。默认情况下，<code>SpringLayout</code> 创建使其相关组件具有最小、首选和最大大小的约束，这几项大小都由该组件的 {@link java.awt.Component#getMinimumSize}、{@link java.awt.Component#getPreferredSize} 和 {@link java.awt.Component#getMaximumSize} 方法返回。<em>x</em> 和 <em>y</em> 的位置最初不受约束，以便在约束它们之前将该 <code>Component</code> 定位在对应于父 <code>Container</code> 的 <code>Insets</code> 的（0,0）位置。
+ 
+ <p>
+有好几种可以更改组件约束的方式。可以使用某个 {@link #putConstraint putConstraint} 方法建立一个连接同一个容器内两个组件边的 spring。或者使用 {@link #getConstraints getConstraints} 获取适当 <code>SpringLayout.Constraints</code>，然后修改其中一个或多个 spring。或者使用 {@link #getConstraint getConstraint} 获取某个组件特定边的 spring，并修改它。还可以在将某个组件添加到其容器（使用 {@link Container#add(Component, Object)}）时，通过指定自己的 <code>SpringLayout.Constraints</code> 对象，将该约束对象与该组件相关联。
+
+ <p>
+表示每项约束的 <code>Spring</code> 对象都有最小、首选、最大和当前值。按照 {@link Spring#sum} 方法描述中给定的公式，该 spring 的当前值介于最小值和最大值之间的某个位置。当最小、首选和最大值相同时，当前值始终与它们相等；此不灵活的 spring 被称作 <em>strut</em>。可以使用工厂方法 {@link Spring#constant(int)} 创建 strut。该 <code>Spring</code> 类还提供工厂方法，用于创建其他种类的 spring，包括依赖其他 spring 的 spring。
+
+ <p>
+在 <code>SpringLayout</code> 中，每个边的位置只与其他一个边的位置有关。如果随后添加一个约束来创建某个边的新绑定，则以前的绑定会被丢弃，且该边保持与某单个边相关。Spring 只应在容器的两个边及其直接子级之间连接；当出现连接到不同容器（内部或外部）中组件边缘的约束时，该 <code>SpringLayout</code> 的行为是不确定的。
+
+ <h3>
+SpringLayout 与其他布局管理器的比较
+ </h3>
+
+ <blockquote>
+ <hr>
+<strong>注：</strong>与多数布局管理器不同，<code>SpringLayout</code> 不自动设置它管理的组件的位置。如果手工编写一个使用 <code>SpringLayout</code> 的 GUI，则要记住通过约束东/西和南/北的位置初始化组件的位置。
+ <p>
+可能还需要明确设置容器的大小，具体取决于您使用的约束。
+ <hr>
+ </blockquote>
+
+ <p>
+尽管 <code>SpringLayout</code> 简单易用，但它还要仿效其他多数布局管理器的行为。对于某些功能（如 <code>FlowLayout</code> 提供的行断开），需要创建一个 <code>Spring</code> 类的专用子类。
+
+ <p>
+<code>SpringLayout</code> 还提供解决许多困难布局问题的方法，这些问题都不能通过嵌套 <code>Box</code> 的组合来解决。也就是说，<code>SpringLayout</code> 完全遵守 <code>LayoutManager2</code> 协定，因此可以使用其他布局管理器进行嵌套（一种创建其他布局管理器使用的约束的更好技术）。
+ <p>
+<code>SpringLayout</code> 布局操作的渐进复杂性与约束（和/或组件）的数量呈线关系。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。 
+
+@see Spring
+@see SpringLayout.Constraints
+
+@version  1.26 04/07/06
+@author 	Philip Milne
+@author 	Scott Violet
+@author 	Joe Winchester
+@since       1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.NORTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定组件的边界矩形的顶边。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.SOUTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定组件的边界矩形的底边。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.EAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定组件的边界矩形的右边。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.WEST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+指定组件的边界矩形的左边。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.HORIZONTAL_CENTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 指定组件边界矩形的水平中央位置。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.VERTICAL_CENTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 指定组件的边界矩形的垂直中央位置。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.BASELINE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 指定组件的基线。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.WIDTH
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 指定组件边界矩形的宽度。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.SpringLayout.HEIGHT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 指定组件边界矩形的高度。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SpringLayout()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个新 <code>SpringLayout</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpringLayout.addLayoutComponent(String name, Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+无效，因为此布局管理器不使用每组件字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpringLayout.removeLayoutComponent(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除与指定组件相关的约束。
+
+@param c 将从容器中移除的组件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpringLayout.addLayoutComponent(Component component, Object constraints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 <code>constraints</code> 是 <code>SpringLayout.Constraints</code> 的一个实例，则将该约束与指定组件相关联。
+ <p>
+@param   component 正添加的组件
+@param   constraints 该组件的约束
+
+@see SpringLayout.Constraints
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.SpringLayout.getLayoutAlignmentX(Container p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 0.5f（居中）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.SpringLayout.getLayoutAlignmentY(Container p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 0.5f（居中）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpringLayout.putConstraint(String e1, Component c1, int pad, String e2, Component c2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件 <code>c1</code> 的边 <code>e1</code> 连接到组件 <code>c2</code> 的边 <code>e2</code>，边与边之间的距离固定。此约束将导致赋值
+ <pre>
+     value(e1, c1) = value(e2, c2) + pad</pre>
+在以后的所有布局操作期间发生。
+ <p>
+@param   e1 该 dependent 的边
+@param   c1 该 dependent 的组件
+@param   pad dependent 和 anchor 之间的固定距离
+@param   e2 该 anchor 的边
+@param   c2 该 anchor 的组件
+
+@see #putConstraint(String, Component, Spring, String, Component)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.SpringLayout.putConstraint(String e1, Component c1, Spring s, String e2, Component c2)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将组件 <code>c1</code> 的边 <code>e1</code> 连接到组件 <code>c2</code> 的边 <code>e2</code>。因为边 <code>(e2, c2)</code> 会使值发生变化，所以边 <code>(e1, c1)</code> 将使用 <code>(e2, c2)</code> 加 <code>s</code> 的 (spring) 总和计算。每个边必须具有以下某个值：<code>SpringLayout.NORTH</code>、<code>SpringLayout.SOUTH</code>、<code>SpringLayout.EAST</code>、<code>SpringLayout.WEST</code>、<code>SpringLayout.VERTICAL_CENTER</code>、<code>SpringLayout.HORIZONTAL_CENTER</code> 或
+ <code>SpringLayout.BASELINE</code>。
+ <p>
+@param   e1 该 dependent 的边
+@param   c1 该 dependent 的组件
+@param   s 连接 dependent 和 anchor 的 spring
+@param   e2 该 anchor 的边
+@param   c2 该 anchor 的组件
+
+@see #putConstraint(String, Component, int, String, Component)
+@see #NORTH
+@see #SOUTH
+@see #EAST
+@see #WEST
+@see #VERTICAL_CENTER
+@see #HORIZONTAL_CENTER
+@see #BASELINE
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.SpringLayout.Constraints javax.swing.SpringLayout.getConstraints(Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定组件的约束。注意，与 <code>GridBagLayout</code> <code>getConstraints</code> 方法不同，此方法不复制约束。如果没有与此组件相关的约束，则此方法返回一个位置在 0,0 的默认约束对象，此位置相对于父级的 Insets 及其受该组件的最小、最大和首选大小约束的宽度/高度。该大小特征不会在调用此方法时冻结；相反，此方法会返回一个约束对象，其特征会随着该组件特征的更改而进行跟踪。
+
+@param       c 将返回其约束的组件
+
+@return      指定组件的约束
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.Spring javax.swing.SpringLayout.getConstraint(String edgeName, Component c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回控制该组件指定边及其父级的顶边或左边之间距离的 spring。此方法返回一个跟踪该边特征的代理，而不是返回该边当前绑定，即使该边随后反弹也一样。代理特别适用于生成器环境，在此环境中能够使用户以任意顺序定义布局约束。不过，代理确实会提供在布局约束之间创建周期依赖关系的方法。<code>SpringLayout</code> 将对此类周期进行内部检测，以使布局操作始终终止。
+
+@param edgeName 必须是以下值之一：<code>SpringLayout.NORTH</code>、<code>SpringLayout.SOUTH</code>、<code>SpringLayout.EAST</code>、<code>SpringLayout.WEST</code>、<code>SpringLayout.VERTICAL_CENTER</code>、<code>SpringLayout.HORIZONTAL_CENTER</code> 或 <code>SpringLayout.BASELINE</code>
+@param c 需要其边缘 spring 的组件
+
+@return 一个控制指定边及其父级的顶边或左边之间距离的 spring 代理
+
+@see #NORTH
+@see #SOUTH
+@see #EAST
+@see #WEST
+@see #VERTICAL_CENTER
+@see #HORIZONTAL_CENTER
+@see #BASELINE
+
+<!-- END DATA -->

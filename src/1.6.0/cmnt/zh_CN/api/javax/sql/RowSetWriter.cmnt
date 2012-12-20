@@ -1,0 +1,24 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.RowSetWriter
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实现 <code>RowSetWriter</code> 接口的对象，称为 <i>writer</i>。writer 可以在支持 reader/writer 范例的 <code>RowSet</code> 对象中注册。
+ <P>
+如果非连接 <code>RowSet</code> 对象修改它的某些数据，并且它具有与之关联的 writer，则可以实现它，使其在内部调用 writer 的 <code>writeData</code> 方法，以将更新写回数据源。要做到这一点，writer 必须首先建立一个与 rowset 的数据源的连接。
+ <P>
+如果在数据源中已经更改了要更新的数据，则会发生冲突；在此情况下，writer 不会将更改写入数据源。writer 用于防止或限制冲突而使用的算法完全依赖于其实现。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.sql.RowSetWriter.writeData(RowSetInternal caller) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 <code>RowSetWriter</code> 对象的 rowset 中的更改写回它从中获取数据的数据源。
+
+@param caller <code>RowSet</code> 对象，该对象 (1) 已经实现 <code>RowSetInternal</code> 接口, (2) 此 writer 在其中注册, 和(3) 内部调用此方法
+@return 如果写入了修改的数据，则返回 <code>true</code>；否则返回 <code>false</code>，在此情况下，存在冲突
+@exception SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->

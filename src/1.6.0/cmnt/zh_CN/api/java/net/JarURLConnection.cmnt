@@ -1,0 +1,207 @@
+<!-- BEGIN KEY -->
+public abstract class java.net.JarURLConnection extends java.net.URLConnection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+连接到 Java ARchive (JAR) 文件或 JAR 文件中条目的 URL Connection。
+
+<p>JAR URL 的语法为：
+
+ <pre>
+ jar:&lt;url&gt;!/{entry}
+ </pre>
+
+<p>例如：
+
+ <p><code>jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class<br></code>
+
+<p>应该使用 Jar URL 来引用 JAR 文件或 JAR 文件中的条目。上述示例是一个引用 JAR 条目的 JAR URL。如果省略条目名，则 URL 引用整个 JAR 文件：
+
+ <code>jar:http://www.foo.com/bar/baz.jar!/</code>
+ 
+<p>当用户知道他们创建的 URL 为 JAR URL 并且需要特定于 JAR 的功能时，应该将一般 URLConnection 强制转换为 JarURLConnection。例如：
+
+ <pre>
+ URL url = new URL(&quot;jar:file:/home/duke/duke.jar!/&quot;);
+ JarURLConnection jarConnection = (JarURLConnection)url.openConnection();
+ Manifest manifest = jarConnection.getManifest();
+ </pre>
+
+<p>JarURLConnection 实例只能用于从 JAR 文件读取内容。使用此类获取 {@link java.io.OutputStream} 从而修改或写入基础 JAR 文件是不可能的。
+<p>示例：
+ 
+ <dl>
+ 
+<dt>Jar 条目
+ <dd><code>jar:http://www.foo.com/bar/baz.jar!/COM/foo/Quux.class</code>
+
+<dt>Jar 文件
+ <dd><code>jar:http://www.foo.com/bar/baz.jar!/</code>
+
+<dt>Jar 目录
+ <dd><code>jar:http://www.foo.com/bar/baz.jar!/COM/foo/</code>
+
+ </dl>
+
+<p><code>!/</code> 被视为<em>分隔符</em>。
+
+<p>通过 <code>new URL(context, spec)</code> 构造 JAR url 时，将应用以下规则：
+
+ <ul>
+
+<li>如果不存在任何上下文 URL 并且传入 URL 构造方法的规范不包含分隔符，则 URL 被视为引用一个 JarFile。
+
+<li>如果存在上下文 URL，则假定该上下文 URL 引用 JAR 文件或 Jar 目录。
+
+<li>如果规范以 '/' 开头，则忽略 Jar 目录，并认为 spec 位于 Jar 文件的根。
+
+<p>示例：
+
+ <dl>
+
+<dt>上下文：<b>jar:http://www.foo.com/bar/jar.jar!/</b>, spec:<b>baz/entry.txt</b>
+
+ <dd>url:<b> jar：http://www.foo.com/bar/jar.jar!/baz/entry.txt</b>
+
+<dt>上下文：<b>jar:http://www.foo.com/bar/jar.jar!/baz</b>, spec:<b>entry.txt</b>
+
+<dd>url：<b>jar:http://www.foo.com/bar/jar.jar!/baz/entry.txt</b>
+
+<dt>上下文：<b>jar:http://www.foo.com/bar/jar.jar!/baz</b>, spec:<b>/entry.txt</b>
+
+<dd>url：<b>jar:http://www.foo.com/bar/jar.jar!/entry.txt</b>
+
+ </dl>
+
+ </ul>
+
+@see java.net.URL
+@see java.net.URLConnection
+
+@see java.util.jar.JarFile
+@see java.util.jar.JarInputStream
+@see java.util.jar.Manifest
+@see java.util.zip.ZipEntry
+
+@author Benjamin Renaud
+@since 1.2 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.URLConnection java.net.JarURLConnection.jarFileURLConnection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+到 JAR 文件 URL 的连接，如果已启动连接。此方法应该由连接设置。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.net.JarURLConnection(URL url) throws java.net.MalformedURLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建到指定 URL 的新 JarURLConnection。
+@param url URL
+@throws MalformedURLException 如果在规范字符串中找不到合法协议或者无法解析该字符串。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.URL java.net.JarURLConnection.getJarFileURL()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此连接的 Jar 文件的 URL。
+
+@return 此连接的 Jar 文件的 URL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.JarURLConnection.getEntryName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此连接的条目名称。如果对应于此连接的 JAR 文件 URL 指向 JAR 文件而不是 JAR 文件条目，则此方法返回 null。
+
+@return 此连接的条目名称（如果有）。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.jar.JarFile java.net.JarURLConnection.getJarFile() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此连接的 JAR 文件。 
+
+@return 此连接的 JAR 文件。如果连接是到 JAR 文件的条目的连接，则返回 JAR 文件对象
+
+@exception IOException 如果在试图连接到此连接的 JAR 文件时发生 IOException。
+
+@see #connect
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Manifest java.net.JarURLConnection.getManifest() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此连接的 Manifest；如果没有，则返回 null。
+
+@return 与此连接的 JAR 文件对象相对应的清单对象。
+
+@exception IOException 如果获取此连接的 JAR 文件导致抛出 IOException。
+
+@see #getJarFile
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.JarEntry java.net.JarURLConnection.getJarEntry() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此连接的 JAR 条目对象（如果有）。如果对应于此连接的 JAR 文件 URL 指向 JAR 文件而不是 JAR 文件条目，则此方法返回 null。
+
+@return 此连接的 JAR 条目对象；如果此连接的 JAR URL 指向 JAR 文件，则返回 null。
+
+@exception IOException 如果获取此连接的 JAR 文件导致抛出 IOException。
+
+@see #getJarFile
+@see #getJarEntry
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Attributes java.net.JarURLConnection.getAttributes() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此连接的 URL 指向 JAR 文件条目，则返回其 Attribute 对象；否则返回 null。
+ 
+@return 如果此连接的 URL 指向 JAR 文件条目，则返回其 Attribute 对象；否则返回 null。  
+
+@exception IOException 如果获取 JAR 条目导致抛出 IOException。
+
+@see #getJarEntry
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.jar.Attributes java.net.JarURLConnection.getMainAttributes() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此连接的 JAR 文件的主要 Attribute。
+
+@return 此连接的 JAR 文件的主要 Attribute。
+
+@exception IOException 如果获取清单导致抛出 IOException。
+
+@see #getJarFile
+@see #getManifest 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.Certificate[] java.net.JarURLConnection.getCertificates() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此连接的 URL 指向 JAR 文件条目，则返回其 Certificate 对象；否则返回 null。只有通过从条目输入流一直读取到流末尾的方式完全验证了连接之后，才能调用此方法。否则，此方法将返回 <code>null</code>。
+ 
+@return 如果此连接的 URL 指向 JAR 文件条目，则返回其 Certificate 对象；否则返回 null。  
+
+@exception IOException 如果获取 JAR 条目导致抛出 IOException。
+
+@see #getJarEntry
+
+<!-- END DATA -->

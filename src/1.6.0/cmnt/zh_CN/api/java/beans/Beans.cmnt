@@ -1,0 +1,140 @@
+<!-- BEGIN KEY -->
+public class java.beans.Beans extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类提供一些通用的 bean 控制方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object java.beans.Beans.instantiate(ClassLoader cls, String beanName) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+实例化 JavaBean。
+ </p>
+
+@param     cls         应该在其中创建 bean 的类加载器。如果该参数为 null，则使用系统类加载器。
+@param     beanName    类加载器中 bean 的名称。例如 "sun.beanbox.foobah"
+@exception java.lang.ClassNotFoundException 如果找不到序列化对象的类。
+@exception  java.io.IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object java.beans.Beans.instantiate(ClassLoader cls, String beanName, BeanContext beanContext) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+实例化 JavaBean。
+ </p>
+
+@param     cls         应该在其中创建 bean 的类加载器。如果该参数为 null，则使用系统类加载器。
+@param     beanName    类加载器中 bean 的名称。例如 "sun.beanbox.foobah"
+@param     beanContext 在其中嵌套新的 bean 的 BeanContext
+
+@exception java.lang.ClassNotFoundException 如果找不到序列化对象的类。
+@exception  java.io.IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object java.beans.Beans.instantiate(ClassLoader cls, String beanName, BeanContext beanContext, AppletInitializer initializer) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+实例化 bean。
+ <p>
+基于相对于某个类加载器的名称创建 bean。此名称应该是以句点分隔的名称，例如 "a.b.c"。
+ <p>
+在 Beans 1.0 中，给定名称可以指示一个序列化对象或一个类。其他机制可以在将来添加。在 beans 1.0 中，首先试着将 beanName 作为序列化的对象名称对待，然后将它作为类名称对待。
+ <p>
+在将 beanName 用作序列化对象名称时，要将给定的 beanName 转换为资源路径名，并添加后缀 &quot;.ser&quot;。然后试着从该资源加载序列化对象。
+ <p>
+例如，给定一个 beanName &quot;x.y&quot;，Beans.instantiate 首先将试着从资源 &quot;x/y.ser&quot; 中读取一个序列化对象，如果失败，它会试着加载类 &quot;x.y&quot; 并创建该类的一个实例。
+ <p>
+如果 bean 是 java.applet.Applet 的子类型，则为它提供一些特殊的初始化。首先，向它提供默认的 AppletStub 和 AppletContext。其次，如果根据类名称实例化 bean，则调用 applet 的 &quot;init&quot; 方法。（如果 bean 被反序列化，则跳过此步骤。）
+ <p>
+注意，对于作为 applet 的 bean，由调用者负责在 applet 上调用 &quot;start&quot;。为了运转正常，应该在已经将 applet 添加到可见 AWT 容器中后执行该步骤。
+ <p>
+注意，通过 beans.instantiate 创建的 applet 运行在与浏览器中运行的 applet 稍有不同的环境中。尤其要指出的是，bean applet 无法访问 &quot;parameters&quot;，因此它们可能希望提供属性 get/set 方法来设置参数值。建议 bean-applet 开发人员对照 JDK appletviewer（对于引用浏览器环境）和 BDK BeanBox（对于引用 bean 容器）来测试他们的 bean-applet。
+
+@param     cls         应该在其中创建 bean 的类加载器。如果该参数为 null，则使用系统类加载器。
+@param     beanName    类加载器中 bean 的名称。例如 &quot;sun.beanbox.foobah&quot;
+@param     beanContext 在其中嵌套新 bean 的 BeanContext
+@param     initializer 用于新 bean 的 AppletInitializer
+
+@exception java.lang.ClassNotFoundException 如果找不到序列化对象的类。
+@exception  java.io.IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object java.beans.Beans.getInstanceOf(Object bean, java.lang.Class<?> targetType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定 bean 中获得表示源对象的指定类型视图的对象。
+ <p>
+结果可能是相同的对象或不同的对象。如果所请求的目标视图不可用，则返回给定 bean。
+ <p>
+此方法在 Beans 1.0 中作为一个钩子 (hook) 提供，以允许以后添加更灵活的 bean 行为。
+
+@param bean       想从中获得视图的对象。
+@param targetType  想获得的视图类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.beans.Beans.isInstanceOf(Object bean, java.lang.Class<?> targetType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否可以将 bean 视为给定目标类型。如果可以在给定 bean 上使用 Beans.getInstanceof 方法来获得表示指定 targetType 类型视图的对象，则结果将为 true。
+
+@param bean       想从中获得视图的 bean。
+@param targetType  想获得的视图类型。
+@return  如果给定 bean 支持给定 targetType，则返回 &quot;true&quot;。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.beans.Beans.isDesignTime()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试是否正处于设计模式。
+
+@return  如果正运行在应用程序构造环境中，则返回 true。
+
+@see java.beans.DesignMode
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.beans.Beans.isGuiAvailable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定 bean 是否可以假定某个 GUI 是可用的。
+
+@return  如果正运行在这种环境：bean 可以假定交互 GUI 为可用，从而可以弹出对话框等，则返回 true。在窗口环境中，此方法通常将返回 true，而在服务器环境中，或者应用程序作为批处理任务的一部分运行时，此方法通常将返回 false。
+
+@see java.beans.Visibility
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.beans.Beans.setDesignTime(boolean isDesignTime) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示是否正运行在应用程序生成器环境中。  
+ 
+<p>注意，此方法是经过安全检查的，不可以用于（例如）不受信任的 applet。更明确地说，如果有安全管理器，则调用其 <code>checkPropertiesAccess</code> 方法。这可能会导致 SecurityException 异常。
+
+@param isDesignTime  如果正在使用应用程序生成器工具，则该参数为 true。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkPropertiesAccess</code> 方法不允许设置系统属性。
+@see SecurityManager#checkPropertiesAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.beans.Beans.setGuiAvailable(boolean isGuiAvailable) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于指示是否正运行在可进行 GUI 交互的环境中。  
+ 
+<p>注意，此方法是经过安全检查的，不可以用于（例如）不受信任的 applet。更明确地说，如果有安全管理器，则调用其 <code>checkPropertiesAccess</code> 方法。这可能会导致 SecurityException 异常。
+
+@param isGuiAvailable  如果可以进行 GUI 交互，则该参数为 true。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkPropertiesAccess</code> 方法不允许设置系统属性。
+@see SecurityManager#checkPropertiesAccess
+
+<!-- END DATA -->

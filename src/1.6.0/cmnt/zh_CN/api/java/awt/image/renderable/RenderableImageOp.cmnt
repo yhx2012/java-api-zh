@@ -1,0 +1,160 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.renderable.RenderableImageOp extends java.lang.Object implements java.awt.image.renderable.RenderableImage
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类借助其相关的 ContextualRenderedImageFactory 实例处理某个操作的可呈现方面。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.RenderableImageOp(ContextualRenderedImageFactory CRIF, ParameterBlock paramBlock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+根据给定 ContextualRenderedImageFactory 对象以及一个包含 RenderableImage 源和其他参数的 ParameterBlock 构造 RenderedImageOp。由 ParameterBlock 引用的任何 RenderedImage 源都将被忽略。
+
+@param CRIF 一个 ContextualRenderedImageFactory 对象
+@param paramBlock 一个包含此操作的源图像和该操作运行所必须的其他参数的 ParameterBlock。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Vector<java.awt.image.renderable.RenderableImage> java.awt.image.renderable.RenderableImageOp.getSources()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回作为此 RenderableImage 图像数据源的 RenderableImage 的向量。注意，此方法可能返回空向量，指示该图像没有源，或者返回 null，指示没有可用信息。
+
+@return RenderableImage 的 Vector（可能为空），或者 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.image.renderable.RenderableImageOp.getProperty(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此图像的属性集中获取某个属性。如果该属性名无法识别，将返回 java.awt.Image.UndefinedProperty。
+
+@param name 要获取的属性的名称（以 String 形式）。
+@return 对属性 Object 的引用，或者值 java.awt.Image.UndefinedProperty。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] java.awt.image.renderable.RenderableImageOp.getPropertyNames()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回由 getProperty 识别的名称列表。
+@return 属性名称列表。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.image.renderable.RenderableImageOp.isDynamic()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果使用相同参数的后续呈现（即调用 createRendering() 或 createScaledRendering()）可以生成不同结果，则返回 true。此方法可用于确定是否可以缓存和重用现有呈现。将调用 CRIF 的 isDynamic 方法。
+@return 如果使用相同参数的后续呈现可以生成不同结果，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.renderable.RenderableImageOp.getWidth()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取用户坐标空间中的宽度。按照惯例，RenderableImage 的常规宽度等于该图像的高宽比（宽度除以高度）。
+
+@return 用户坐标中图像的宽度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.renderable.RenderableImageOp.getHeight()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取用户坐标空间中的高度。按照惯例，RenderedImage 的常规高度等于 1.0F。
+
+@return 用户坐标中图像的高度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.renderable.RenderableImageOp.getMinX()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取与呈现无关的图像数据的最小 X 坐标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.awt.image.renderable.RenderableImageOp.getMinY()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取与呈现无关的图像数据的最小 Y 坐标。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.RenderableImageOp.setParameterBlock(ParameterBlock paramBlock)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改操作的当前 ParameterBlock，允许编辑图像呈现链。当根据此 RenderableImageOp 或任何相关 RenderableImageOp 创建新呈现时，此更改的效果将是可见的。
+
+@param paramBlock 新的 ParameterBlock。
+@return 旧的 ParameterBlock。
+@see #getParameterBlock
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.renderable.ParameterBlock java.awt.image.renderable.RenderableImageOp.getParameterBlock()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回到对当前参数块的一个引用。
+@return 此 <code>RenderableImageOp</code> 的 <code>ParameterBlock</code>。
+@see #setParameterBlock(ParameterBlock)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RenderedImage java.awt.image.renderable.RenderableImageOp.createScaledRendering(int w, int h, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此图像具有宽度 w 和高度 h（以像素为单位）的一个 RenderedImage 实例。使用适当的 usr2dev 变换和完整图像感兴趣的区域自动构建 RenderContext。所有呈现提示均来自传入的提示。
+
+<p> 如果 w == 0，则该值将等于 Math.round(h*(getWidth()/getHeight()))。类似地，如果 h == 0，则该值将等于 Math.round(w*(getHeight()/getWidth()))。w 和 h 中必须有一个不为零，否则将抛出 IllegalArgumentException。
+ 
+<p> 创建的 RenderedImage 可能有一个由字符串 HINTS_OBSERVED 标识的属性，以指示使用了哪些 RenderingHints 创建该图像。此外，通过创建的 RenderedImage 上的 getSources() 方法获得的任何 RenderedImage 都可能具有该属性。
+
+@param w 所呈现图像的宽度（以像素为单位），或者为 0。
+@param h 所呈现图像的高度（以像素为单位），或者为 0。
+@param hints 包含提示的 RenderingHints 对象。
+@return 包含所呈现数据的 RenderedImage。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RenderedImage java.awt.image.renderable.RenderableImageOp.createDefaultRendering()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获取此图像具有默认宽度和高度（以像素为单位）的一个 RenderedImage 实例。使用适当的 usr2dev 变换和完整图像感兴趣的区域自动构建 RenderContext。所有呈现提示均来自传入的提示。此接口的实现者必须保证存在已定义的默认宽度和高度。
+
+@return 包含所呈现数据的 RenderedImage。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.RenderedImage java.awt.image.renderable.RenderableImageOp.createRendering(RenderContext renderContext)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建一个表示根据给定 RenderContext 呈现的 RenderableImageOp（包括其 Renderable 源）的 RenderedImage。
+
+<p> 此方法支持 Renderable 或 RenderedImage 操作的链接。如果用于构造 RenderableImageOp 的 ParameterBlock 中的源为 RenderableImages，则遵循一个三步骤的过程：
+
+ <ol>
+<li> 对每个 RenderableImage 源在相关的 CRIF 上调用 mapRenderContext()；
+<li> 使用在第 1 步中获取的向后映射的 RenderContext 在每个 RenderableImage 源上调用 createRendering()，得到每个源的呈现；
+<li> 调用 ContextualRenderedImageFactory.create()，使用一个新 ParameterBlock，其包含通过调用 createRendering() 创建的 RenderedImage 和 RenderableImageOp 的参数。
+ </ol>
+
+<p> 如果用于构造 RenderableImageOp 的 ParameterBlock 源 Vector 的元素是 RenderedImage 实例，则立即使用初始 ParameterBlock 调用 CRIF.create() 方法。这为递归提供了一个基本方案。
+
+<p> 创建的 RenderedImage 可能有一个由字符串 HINTS_OBSERVED 标识的属性，以指示使用了哪些 RenderingHints（来自 RenderContext）创建该图像。此外，通过创建的 RenderedImage 上的 getSources() 方法获得的任何 RenderedImages 都可能具有该属性。
+
+@param renderContext 用于执行呈现的 RenderContext。
+@return 包含所需输出图像的 RenderedImage。
+
+<!-- END DATA -->

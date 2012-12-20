@@ -1,0 +1,75 @@
+<!-- BEGIN KEY -->
+public class java.security.cert.PolicyQualifierInfo extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 ASN.1 PolicyQualifierInfo 结构所表示的、不可变的策略限定符。
+
+<p>ASN.1 的定义如下：
+ <p><pre>
+   PolicyQualifierInfo ::= SEQUENCE {
+        policyQualifierId       PolicyQualifierId,
+        qualifier               ANY DEFINED BY policyQualifierId }
+ </pre>
+ <p>
+如果在 X.509 第 3 版的证书中有证书策略扩展，则该扩展包含一个或多个策略信息项的序列，每一项都由一个对象标识符 (OID) 和可选的限定符组成。在最终实体证书中，这些策略信息项指示了策略（根据此策略发布证书）和目的（该证书的可能用途）。在 CA 证书中，这些策略信息项则限制了包括此证书的证书路径的策略集。
+ <p>
+<code>PolicyQualifierInfo</code> 对象的 <code>Set</code> 由 {@link PolicyNode#getPolicyQualifiers PolicyNode.getPolicyQualifiers} 方法返回。这就允许带有具体策略要求的应用程序处理并验证每个策略限定符。处理策略限定符的应用程序在验证一个证书路径前，应该显式地将 <code>policyQualifiersRejected</code> 标志设置为 false（通过调用 {@link PKIXParameters#setPolicyQualifiersRejected PKIXParameters.setPolicyQualifiersRejected} 方法）。
+
+<p>注意，PKIX 证书路径验证算法规定，对标记为关键的证书策略扩展中的策略限定符必须加以处理和验证。否则必须放弃该证书路径。如果 <code>policyQualifiersRejected</code> 标志设置为 false，那么为了遵守 PKIX ，由应用程序以此方式来验证所有的策略限定符。
+
+<p><b>并发访问</b>
+
+<p>所有 <code>PolicyQualifierInfo</code> 对象必须是不可变的和线程安全的。也就是说，多个线程在单个 <code>PolicyQualifierInfo</code> 对象（或多个对象）上并发调用此类中所定义的各种方法不会产生坏的影响。要求 <code>PolicyQualifierInfo</code> 对象是不可变的并且是线程安全的，就允许将其传递到各种代码片断中，而无需担心协调访问。
+
+@author 	seth proctor
+@author 	Sean Mullan
+@version 	1.11 12/19/03
+@since 	1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.cert.PolicyQualifierInfo(byte[] encoded) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据已编码的字节创建一个 <code>PolicyQualifierInfo</code> 实例。在构造时复制该已编码的 byte 数组。
+
+@param encoded 包含 DER 编码中限定符的 byte 数组
+@exception IOException 如果该 byte 数组不表示一个有效并且可解析的策略限定符
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.cert.PolicyQualifierInfo.getPolicyQualifierId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>PolicyQualifierInfo</code> 的 <code>policyQualifierId</code> 字段。<code>policyQualifierId</code> 是一个对象标识符 (OID)，由一组句点分隔的非负整数来表示。
+
+@return OID（从不为 <code>null</code>）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] java.security.cert.PolicyQualifierInfo.getEncoded()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>PolicyQualifierInfo</code> 的 ASN.1 DER 编码形式。
+
+@return 以 ASN.1 DER 编码的字节（从不为 <code>null</code>）。注意，返回的是一个副本，所以每次调用此方法时都复制数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final byte[] java.security.cert.PolicyQualifierInfo.getPolicyQualifier()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>PolicyQualifierInfo</code> 的 <code>qualifier</code> 字段的 ASN.1 DER 编码形式。
+
+@return <code>qualifier</code> 字段以 ASN.1 DER 编码的字节。注意，返回的是一个副本，所以每次调用此方法时都复制数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.cert.PolicyQualifierInfo.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>PolicyQualifierInfo</code> 的可打印表示形式。
+
+@return 描述此 <code>PolicyQualifierInfo</code> 内容的 <code>String</code>
+
+<!-- END DATA -->

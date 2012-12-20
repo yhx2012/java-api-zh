@@ -1,0 +1,191 @@
+<!-- BEGIN KEY -->
+public interface java.awt.Shape
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Shape</code> 接口提供了表示一些几何形状的对象的定义。<code>Shape</code> 是由 {@link PathIterator} 对象描述的，它可以表示 <code>Shape</code> 的轮廓以及确定该轮廓如何将 2D 平面划分成内点和外点的规则。每个 <code>Shape</code> 对象都提供回调，以获取几何形状的边框，确定点或矩形是部分还是全部位于 <code>Shape</code> 内部，并检索一个描述 <code>Shape</code> 轮廓的轨迹路径的 <code>PathIterator</code> 对象。
+ <p>
+<b>内部定义：</b>当且仅当以下条件成立时，才认为某个点位于 <code>Shape</code> 内：
+ <ul>
+<li>该点完全位于 <code>Shape</code> 边界内，<i>或者</i> 
+ <li>
+该点恰好位于 <code>Shape</code> 边界上，<i>并且</i> <code>X</code> 轴正方向上紧邻该点的空间完全处于边界之内，<i>或者</i>
+ <li>
+该点恰好在水平边界分段上，<b>并且</b> <code>Y</code> 轴正方向上紧邻该点的空间完全处于边界之内。
+ </ul>
+<p><code>contains</code> 和 <code>intersects</code> 方法将 <code>Shape</code> 内部视为可以填充的封闭区域。这意味着为了确定某个 shape 是否包含矩形或与矩形相交，或者确定某个 shape 是否包含一个点，这些方法将隐式地认为未闭合的 shape 是闭合的。
+ 
+@see java.awt.geom.PathIterator
+@see java.awt.geom.AffineTransform
+@see java.awt.geom.FlatteningPathIterator
+@see java.awt.geom.GeneralPath
+
+@version 1.19 06/24/98
+@author Jim Graham
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle java.awt.Shape.getBounds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个完全包围 <code>Shape</code> 的整型 {@link Rectangle}。注意，不保证返回的 <code>Rectangle</code> 是包围 <code>Shape</code> 的最小边界框，只保证 <code>Shape</code> 完全位于指示的 <code>Rectangle</code> 中。如果 <code>Shape</code> 超出了整数数据类型的有效范围，则返回的 <code>Rectangle</code> 也可能不完全包围 <code>Shape</code>。<code>getBounds2D</code> 方法由于在表示形式上具有更大的灵活性，所以通常返回更紧密的边界框。
+@return 完全包围 <code>Shape</code> 的整型 <code>Rectangle</code>。
+@see #getBounds2D
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.Rectangle2D java.awt.Shape.getBounds2D()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个高精度的、比 <code>getBounds</code> 方法更准确的 <code>Shape</code> 边界框。注意，不保证返回的 {@link Rectangle2D} 是包围 <code>Shape</code> 的最小边界框，只保证 <code>Shape</code> 完全位于指示的 <code>Rectangle2D</code> 中。此方法返回的边界框通常比 <code>getBounds</code> 方法返回的更紧密，而且永远不会因为溢出问题而出错，因为返回值可以是一个使用双精度值存储尺寸的 <code>Rectangle2D</code> 实例。
+@return 一个 <code>Rectangle2D</code> 实例，它是 <code>Shape</code> 的高精度边界框。
+@see #getBounds
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.contains(double x, double y)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定坐标是否在 <code>Shape</code> 的边界内。
+@param x 要测试的指定的 X 坐标
+@param y 要测试的指定的 Y 坐标
+@return 如果指定坐标在 <code>Shape</code> 边界内，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.contains(Point2D p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定的 {@link Point2D} 是否在 <code>Shape</code> 的边界内。
+@param p 要测试的指定的 <code>Point2D</code>
+@return 如果指定的 <code>Point2D</code> 在 <code>Shape</code> 边界内，则返回 <code>true</code>；否则返回 <code>false</code>。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.intersects(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>Shape</code> 内部是否与指定矩形区域的内部相交。如果任何一个点既包含在 <code>Shape</code> 内，又包含在指定矩形区域内，则认为矩形区域与 <code>Shape</code> 相交。
+ <p>
+在下列情况下，{@code Shape.intersects()} 方法允许 {@code Shape} 实现谨慎地返回 {@code true}：
+ <ul>
+ <li>
+矩形区域与 <code>Shape</code> 相交的可能性很大，但是
+ <li>
+精确确定相交的计算代价太高。
+ </ul>
+这意味着对于某些 {@code Shape}，即使矩形区域没有与该 {@code Shape} 相交，此方法也可能返回 {@code true}。如果需要更精确的答案，由于 {@link java.awt.geom.Area Area} 类比大多数 {@code Shape} 对象更为准确地计算几何相交，因此可以使用该类。
+
+@param x 指定矩形区域左上角的 X 坐标
+@param y 指定矩形区域左上角的 Y 坐标
+@param w 指定矩形区域的宽度
+@param h 指定矩形区域的高度
+@return 如果 <code>Shape</code> 的内部区域与矩形的内部区域相交，或者相交的可能性很大且执行计算的代价太高，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see java.awt.geom.Area
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.intersects(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>Shape</code> 内部是否与指定 <code>Rectangle2D</code> 内部相交。在下列情况下，{@code Shape.intersects()} 方法允许 {@code Shape} 实现谨慎地返回 {@code true}：
+ <ul>
+ <li>
+<code>Rectangle2D</code> 与 <code>Shape</code> 相交的可能性很大，但是
+ <li>
+精确确定相交的计算代价太高。
+ </ul>
+这意味着对于某些 {@code Shape}，即使 {@code Rectangle2D} 没有与该 {@code Shape} 相交，此方法也可能返回 {@code true}。如果需要更精确的答案，由于 {@link java.awt.geom.Area Area} 类比大多数 {@code Shape} 对象更为准确地计算几何相交，因此可以使用该类。
+
+@param r 指定的 <code>Rectangle2D</code>
+@return 如果 <code>Shape</code> 内部与指定 <code>Rectangle2D</code> 内部相交，或者相交的可能性很大且执行计算的代价太高，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see #intersects(double, double, double, double)
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.contains(double x, double y, double w, double h)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>Shape</code> 内部是否完全包含指定矩形区域。矩形区域内的所有坐标都必须位于 <code>Shape</code> 中，才可以认为整个矩形区域包含在 <code>Shape</code>中。
+ <p>
+在下列情况下，{@code Shape.contains()} 方法允许 {@code Shape} 实现谨慎地返回 {@code false}：
+ <ul>
+ <li>
+<code>intersect</code> 方法返回 <code>true</code> 并且
+ <li>
+计算 <code>Shape</code> 是否完全包含矩形区域的代价太高。
+ </ul>
+这意味着对于某些 {@code Shape}，即使 {@code Shape} 包含矩形区域，此方法也可能返回 {@code false}。如果需要更精确的答案，由于 {@link java.awt.geom.Area Area} 类比大多数 {@code Shape} 对象更为准确地执行几何计算，因此可以使用该类。
+
+@param x 指定矩形区域左上角的 X 坐标
+@param y 指定矩形区域左上角的 Y 坐标
+@param w 指定矩形区域的宽度
+@param h 指定矩形区域的高度
+@return 如果 <code>Shape</code> 内部完全包含指定矩形区域，则返回 <code>true</code>；否则，如果 <code>Shape</code> 包含矩形区域、<code>intersects</code> 方法返回 <code>true</code> 且执行包含计算代价太高，则返回 <code>false</code>。
+@see java.awt.geom.Area
+@see #intersects
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.Shape.contains(Rectangle2D r)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试 <code>Shape</code> 内部是否完全包含指定的 <code>Rectangle2D</code>。在下列情况下，{@code Shape.contains()} 方法允许 {@code Shape} 实现谨慎地返回 {@code false}：
+ <ul>
+ <li>
+<code>intersect</code> 方法返回 <code>true</code> 并且
+ <li>
+计算 <code>Shape</code> 是否完全包含 <code>Rectangle2D</code> 的代价太高。
+ </ul>
+这意味着对于某些 {@code Shape}，即使 {@code Shape} 包含 {@code Rectangle2D}，此方法也可能返回 {@code false}。如果需要更精确的答案，由于 {@link java.awt.geom.Area Area} 类比大多数 {@code Shape} 对象更为准确地执行几何计算，因此可以使用该类。
+
+@param r 指定的 <code>Rectangle2D</code>
+@return 如果 <code>Shape</code> 内部完全包含 <code>Rectangle2D</code>，则返回 <code>true</code>；否则，如果 <code>Shape</code> 包含 <code>Rectangle2D</code>、<code>intersects</code> 方法返回 <code>true</code> 且执行包含计算代价太高，则返回 <code>false</code>。
+@see #contains(double, double, double, double)
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.PathIterator java.awt.Shape.getPathIterator(AffineTransform at)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个沿着 <code>Shape</code> 边界迭代并提供对 <code>Shape</code> 轮廓几何形状的访问的迭代器对象。如果指定一个可选 {@link AffineTransform}，则相应地转换迭代中返回的坐标。
+ <p>
+每次调用此方法都会返回一个最新的、遍历 <code>Shape</code> 对象几何形状的 <code>PathIterator</code> 对象，该对象独立于其他所有同时使用的 <code>PathIterator</code> 对象。
+ <p>
+建议但不保证实现 <code>Shape</code> 接口的对象将进行中的迭代与该迭代期间可能对原始对象几何形状所做的任何更改隔离开来。
+
+@param at 一个可选的 <code>AffineTransform</code>，用于在迭代中返回的坐标，如果需要未转换的坐标，则返回 <code>null</code>
+@return 一个新的、独立地遍历 <code>Shape</code> 的几何形状的 <code>PathIterator</code> 对象。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.geom.PathIterator java.awt.Shape.getPathIterator(AffineTransform at, double flatness)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个沿着 <code>Shape</code> 边界迭代并提供对 <code>Shape</code> 轮廓几何形状的平面视图访问的迭代器对象。
+ <p>
+迭代器只返回 SEG_MOVETO、SEG_LINETO 和 SEG_CLOSE 点类型。
+ <p>
+如果指定一个可选 <code>AffineTransform</code>，则相应地转换迭代中返回的坐标。
+ <p>
+<code>flatness</code> 参数控制曲线段分段的数量，指定转换的不平曲线上任一点能够偏离返回的变平路径段的最大距离。注意，变平路径的精度限制可能稍微受到影响，使非常小的变平参数作为较大的值来处理。如果有这样的限制，那么该限制是由使用的特定实现定义的。
+ <p>
+每次调用此方法都会返回一个最新的、遍历 <code>Shape</code> 对象几何形状的 <code>PathIterator</code> 对象，该对象独立于其他所有同时使用的 <code>PathIterator</code> 对象。
+ <p>
+建议但不保证实现 <code>Shape</code> 接口的对象将进行中的迭代与该迭代期间可能对原始对象几何形状所做的任何更改隔离开来。
+
+@param at 一个可选 <code>AffineTransform</code>，用于在迭代中返回的坐标，如果需要未转换的坐标，则返回 <code>null</code>
+@param flatness 用来近似曲线段的直线段偏离原始曲线上任一点的最大距离
+@return 一个新的、独立地遍历 <code>Shape</code> 几何形状的平面视图的 <code>PathIterator</code>。
+@since 1.2
+
+<!-- END DATA -->

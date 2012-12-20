@@ -1,0 +1,206 @@
+<!-- BEGIN KEY -->
+public class javax.naming.ldap.Rdn extends java.lang.Object implements java.io.Serializable, java.lang.Comparable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示相对标识名，或 RDN，它是一个 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 指定的标识名组件。RDN 的一个示例是 &quot;OU=Sales+CN=J.Smith&quot;。在此示例中，RDN 由多个属性类型/值对组成。RDN 根据 {@link javax.naming.ldap.LdapName <tt>LdapName</tt>} 类描述中的描述进行解析。
+ <p>
+Rdn 类将 RDN 表示为属性类型/值映射关系，可以使用 {@link javax.naming.directory.Attributes Attributes} 查看。此外，它还包含一些便捷方法，允许在 Rdn 由单个类型/值对组成（这是该类的典型使用方式）时对类型和值进行方便地检索。它还包含一些帮助器方法，允许根据 RFC2253 中定义的转义语法转义非格式化的属性值和取消格式化值的转义。对于采用或返回 Object 形式的属性值的方法，该值可能为 String（非转义形式的），也可能为字节数组。
+ <p>
+<code>Rdn</code> 将恰当地解析所有有效 RDN，但是在解析无效 RDN 时不会尝试检测所有可能的错误情况。在接受无效 RDN 时，它显得很&ldquo;大方&rdquo;。名称的&ldquo;有效性&rdquo;在将名称提供给 LDAP 服务器时最终确定，服务器将基于名称的模式信息和互操作性考虑之类的因素来决定接受还是拒绝该名称。
+
+ <p>
+以下示例代码展示了如何使用将类型和值用作参数的构造方法构造 Rdn：
+ <pre>
+	Rdn rdn = new Rdn(&quot;cn&quot;, &quot;Juicy, Fruit&quot;);
+	System.out.println(rdn.toString());
+ </pre>
+最后一行将打印 <tt>cn=Juicy\, Fruit</tt>。{@link #unescapeValue(String) <tt>unescapeValue()</tt>} 方法可用于取消在初始值 <tt>&quot;Juicy, Fruit&quot;</tt> 中所产生的转义逗号的转义。{@link #escapeValue(Object) <tt>escapeValue()</tt>} 方法在逗号之前添加转义。
+ <p>
+可以通过 RFC 2253 中定义的 RDN 的字符串表示形式实例化此类，如以下示例代码所示：
+ <pre>
+ 	Rdn rdn = new Rdn(&quot;cn=Juicy\\, Fruit&quot;);
+	System.out.println(rdn.toString());
+ </pre>
+最后一行将打印 <tt>cn=Juicy\, Fruit</tt>。
+ <p>
+<tt>Rdn</tt> 实例的并发多线程只读访问不必是同步的。
+ <p>
+除非另有说明，否则将 null 参数传递给此类中的构造方法或方法的行为都会导致抛出 NullPointerException。
+
+@version 1.9 05/11/17
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.Rdn(Attributes attrSet) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定属性集构造 Rdn。参见 {@link javax.naming.directory.Attributes Attributes}。
+ <p>
+字符串属性值不会被解释为 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 格式的 RDN 字符串。即这些值是按字面意义（不解析）使用的，假定被取消了转义。
+
+@param attrSet 包含类型/值映射关系的非 null 非空属性。
+@throws InvalidNameException 如果无法使用 <tt>attrSet</tt> 的内容构造有效的 RDN。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.Rdn(String rdnString) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定字符串构造 Rdn。此构造方法采用根据 <a href="http://ietf.org//rfc/rfc2253.txt">RFC 2253</a> 中定义和在 {@link javax.naming.ldap.LdapName} 类描述中描述的规则格式化的字符串。
+
+@param rdnString	非 null 和非空 RFC2253 格式化字符串。
+@throws InvalidNameException 如果在解析 rdnString 期间发生语法错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.Rdn(Rdn rdn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定 <tt>rdn</tt> 构造 Rdn。将 <tt>rdn</tt> 的内容简单地复制到新创建的 Rdn 中。
+@param rdn 要复制的非 null Rdn。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.ldap.Rdn(String type, Object value) throws javax.naming.InvalidNameException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据给定属性类型和值构造 Rdn。字符串属性值不会被解释为 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 格式的 RDN 字符串。即这些值是按字面意义（不解析）使用的，假定被取消了转义。
+
+@param type 非 null 和非空字符串属性类型。
+@param value 非 null 和非空属性值。
+@throws InvalidNameException 如果无法使用类型/值构造有效的 RDN。
+@see #toString()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.naming.ldap.Rdn.getValue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索一个此 Rdn 的值。当 RDN 包含单个类型和值的映射关系（常见的 RDN 用法）时，此为获取值的便捷方法。
+ <p>
+对于多值 RDN，此方法返回与 {@link #getType() getType()} 方法返回的类型相对应的值。
+
+@return 非 null 属性值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.Rdn.getType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索一个此 Rdn 的类型。当 RDN 包含单个类型和值的映射关系（常见的 RDN 用法）时，此为获取类型的便捷方法。
+ <p>
+对于多值 RDN，类型/值对不具有对其定义的任何特定顺序。在这种情况下，此方法返回一种类型/值对的类型。{@link #getValue() getValue()} 方法返回与此方法返回的类型相对应的值。
+
+@return 非 null 属性类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.naming.ldap.Rdn.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以字符串形式返回此 Rdn，该字符串使用由 <a href="http://ietf.org//rfc/rfc2253.txt">RFC 2253</a> 定义并在 {@link javax.naming.ldap.LdapName LdapName} 类描述中描述的格式表示。
+
+@return Rdn 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.Rdn.compareTo(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此 Rdn 与指定 Object 的顺序。根据此 Rdn 小于、等于还是大于指定 Object 分别返回负整数、零或正整数。
+ <p>
+如果 obj 为 null 或者不是一个 Rdn 实例，则抛出 ClassCastException。
+ <p>
+将 RDN 的属性类型和值对并肩排列起来，并按字典顺序进行比较。多值 Rdn 中组件的顺序（如 &quot;ou=Sales+cn=Bob&quot;）无关紧要。
+
+@param obj 要与之比较的非 null 对象。
+@return  根据此 Rdn 小于、等于还是大于指定 Object 分别返回负整数、零或正整数。
+@exception ClassCastException 如果 obj 为 null 或者不是一个 Rdn。
+ <p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.naming.ldap.Rdn.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较指定 Object 与此 Rdn 的相等性。如果给定对象也是 Rdn 并且两个 Rdn 表示相同的属性类型和值的映射关系，则返回 true。多值 Rdn 中组件的顺序（如 &quot;ou=Sales+cn=Bob&quot;）无关紧要。
+ <p>
+按照以下方式进行类型和值的相等性匹配：
+ <ul>
+<li> 比较类型的相等性，忽略大小写。
+<li> 值不同但使用等效的引用、转义或 UTF8 十六进制编码的字符串视为相等。在比较过程中忽略值的大小写。
+ </ul>
+ <p>
+如果 obj 为 null 或者不是一个 Rdn 实例，则返回 false。
+ <p>
+@param obj 要与此 Rdn 进行相等性比较的对象。
+@return 如果指定的对象与此 Rdn 相等，则返回 true。
+@see #hashCode()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.Rdn.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 RDN 的哈希码。两个相等的（根据 equals 方法） RDN 将具有相同的哈希码。
+
+@return 表示此 Rdn 哈希码的 int。
+@see #equals
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.naming.directory.Attributes javax.naming.ldap.Rdn.toAttributes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 Rdn 中包含的类型/值映射关系的 {@link javax.naming.directory.Attributes Attributes} 视图。
+
+@return	包含此 Rdn 的类型/值映射关系的非 null 属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.naming.ldap.Rdn.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索此 Rdn 中的属性类型/值对的数目。
+@return 此 Rdn 中非负的类型/值对的数目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.String javax.naming.ldap.Rdn.escapeValue(Object val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定属性值的情况下返回根据 <a href="http://ietf.org/rfc/rfc2253.txt">RFC 2253</a> 中指定的规则转义的字符串。
+ <p>
+例如，如果 val 为 &quot;Sue, Grabbit and Runn&quot;，则此方法返回的转义值为 &quot;Sue\, Grabbit and Runn&quot;。
+ <p>
+将字符串值表示为 String，将二进制值表示为字节数组。
+
+@param val 要转义的非 null 对象。
+@return 转义的字符串值。
+@throws ClassCastException 如果 val 不是 String 或字节数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Object javax.naming.ldap.Rdn.unescapeValue(String val)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在给定根据 <a href="http://ietf.org//rfc/rfc2253.txt">RFC 2253</a> 中指定的规则进行格式化的属性值字符串的情况下，返回未格式化的值。移除转义和引用，并将十六进制编码的 UTF-8 转换为等效的 UTF-16 字符。以 String 形式返回字符串值，以字节数组形式返回二进制值。
+ <p>
+合法值和非法值在 RFC 2253 中定义。此方法在接受值方面要求并不严格，它不会捕获所有的非法值。因此，传入非法值时，不一定触发 <tt>IllegalArgumentException</tt>。
+
+@param	val	要取消转义的非 null 字符串。
+@return		转义值。
+@throws		IllegalArgumentException 当提供非法值时。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void javax.naming.ldap.Rdn.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+仅序列化未解析的 RDN，以更紧密并避免任何实现依赖关系。
+
+
+@serialData	The RDN string
+
+<!-- END DATA -->

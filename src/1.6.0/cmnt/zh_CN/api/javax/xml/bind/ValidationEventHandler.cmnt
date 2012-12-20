@@ -1,0 +1,48 @@
+<!-- BEGIN KEY -->
+public interface javax.xml.bind.ValidationEventHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来验证错误的基本事件处理程序接口。
+
+ <p>
+如果应用程序需要实现自定义事件处理，那么它必须实现此接口，然后向 {@link Unmarshaller#setEventHandler(ValidationEventHandler) Unmarshaller}、{@link Validator#setEventHandler(ValidationEventHandler) Validator} 或 {@link Marshaller#setEventHandler(ValidationEventHandler) Marshaller} 注册。JAXB 提供者随后将向这些事件处理程序报告在执行解组、编组和验证操作期间遇到的验证错误和警告。
+
+ <p>
+如果 <tt>handleEvent</tt> 方法抛出未经检查的运行时异常，则 JAXB 提供者必须像该方法返回 false 那样作出相应对待，有效地终止当时正在运行的任何操作（解组、验证或编组）。
+ 
+ <p>
+在事件处理程序中修改 Java 内容树不是规范中定义的行为，并且可能导致不可预料的行为。
+
+ <p>
+遇到致命错误后未能从 <tt>handleEvent</tt> 方法返回 false 也不是一种规范中定义的行为，并且可能导致不可预料的行为。
+
+ <p>
+<b>默认事件处理程序</b>
+ <blockquote>
+请参阅：<a href="Validator.html#defaulthandler">Validator javadocs</a>
+ </blockquote>
+
+@author<ul><li>Ryan Shoemaker, Sun Microsystems, Inc.</li><li>Kohsuke Kawaguchi, Sun Microsystems, Inc.</li><li>Joe Fialli, Sun Microsystems, Inc.</li></ul> 
+@version $Revision: 1.6 $
+@see Unmarshaller
+@see Validator
+@see Marshaller
+@see ValidationEvent
+@see javax.xml.bind.util.ValidationEventCollector
+@since JAXB1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.bind.ValidationEventHandler.handleEvent(ValidationEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+接收验证警告或错误的通知。ValidationEvent 将 {@link ValidationEventLocator ValidationEventLocator} 嵌入通知中，以指示发生错误或警告的位置。
+
+ <p>
+如果从此方法抛出未经检查的运行时异常，则 JAXB 提供者会像该方法返回 false 那样作出相应对待，并中断当前的解组、验证和编组操作。
+ 
+@param event 封装的验证事件信息。如果为 null，则该信息是一个提供者错误。
+@return 如果 JAXB 提供者应该在处理此警告/错误之后尝试继续执行当前的解组、验证或编组操作，则返回 true；如果提供者应该使用适当的 <tt>UnmarshalException</tt>、<tt>ValidationException</tt> 或 <tt>MarshalException</tt> 终止当前操作，则返回 false。
+@throws IllegalArgumentException 如果事件对象为 null。
+
+<!-- END DATA -->

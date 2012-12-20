@@ -1,0 +1,145 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.Format extends java.lang.Object implements java.io.Serializable, java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Format</code> 是一个用于格式化语言环境敏感的信息（如日期、消息和数字）的抽象基类。
+
+ <p>
+<code>Format</code> 定义了编程接口，用于将语言环境敏感的对象格式化为 <code>String</code>（使用 <code>format</code> 方法）和将 <code>String</code> 重新解析为对象（使用 <code>parseObject</code> 方法）。
+
+ <p>
+通常，一个 format 的 <code>parseObject</code> 方法必须能解析任何由其 <code>format</code> 方法格式化的字符串。不过，也可能存在不能解析的异常情况。例如，<code>format</code> 方法可能创建中间无分隔符的两个相邻整数，在这种情况下，<code>parseObject</code> 无法判断哪个数字属于哪个数。
+
+<h4>子类化</h4>
+
+ <p>
+Java 平台为格式化日期、消息和数字分别提供了三个特殊的 <code>Format</code> 的子类：<code>DateFormat</code>、<code>MessageFormat</code> 和 <code>NumberFormat</code>。
+ <p>
+具体的子类必须实现三个方法：
+ <ol>
+ <li> <code>format(Object obj, StringBuffer toAppendTo, FieldPosition pos)</code>
+ <li> <code>formatToCharacterIterator(Object obj)</code>
+ <li> <code>parseObject(String source, ParsePosition pos)</code>
+ </ol>
+这些常规方法允许对对象进行多态解析和格式化，还可以被使用（如被 <code>MessageFormat</code> 使用）。子类通常也为特定的输入类型提供了另外的 <code>format</code> 方法，也为特定的结果类型提供了 <code>parse</code> 方法。当在输入文本的开始没有任何所需格式的文本时，则任何不带 <code>ParsePosition</code> 参数的 <code>parse</code> 方法都应该抛出 <code>ParseException</code>。
+
+ <p>
+大多数子类还将实现以下工厂方法：
+ <ol>
+ <li>
+<code>getInstance</code> 获取一个适合于当前语言环境的有用的格式对象
+ <li>
+<code>getInstance(Locale)</code> 获取一个适合于指定语言环境的有用的格式对象。
+ </ol>
+此外，某些子类还可能为了更特殊的控制实现其它 <code>getXxxxInstance</code> 方法。例如，<code>NumberFormat</code> 类提供了 <code>getPercentInstance</code> 和 <code>getCurrencyInstance</code> 方法来获取特殊的数字格式器。
+
+ <p>
+<code>Format</code> 的子类如果允许程序员能为不同语言环境（比如用 <code>getInstance(Locale)</code> ）创建对象，必须实现以下类方法：
+ <blockquote>
+ <pre>
+ public static Locale[] getAvailableLocales()
+ </pre>
+ </blockquote>
+
+ <p>
+最后子类定义一个常量集合来标识格式输出中的不同字段。这些常量用于创建一个 FieldPosition 对象，该对象标识字段中所包含的信息及其在格式化结果中的位置。这些常量应当命名为<code><em>item</em> _FIELD</code>，其中<code><em>item</em></code> 标识了该字段。有关这些常量的例子，请参阅 <code>ERA_FIELD</code> 及其在 {@link DateFormat} 中的同类。
+
+<h4><a name="synchronization">同步</a></h4>
+
+ <p>
+格式通常不是同步的。建议为每个线程创建独立的格式实例。如果多个线程同时访问一个格式，其它必须保持外部同步。
+
+@see          java.text.ParsePosition
+@see          java.text.FieldPosition
+@see          java.text.NumberFormat
+@see          java.text.DateFormat
+@see          java.text.MessageFormat
+@version      1.34, 12/19/03
+@author       Mark Davis
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.Format()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 单独的构造方法。（由子类的构造方法调用，通常是隐式的。）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.text.Format.format(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个对象以生成一个字符串。这等效于
+ <blockquote>
+ {@link #format(Object, StringBuffer, FieldPosition) format}<code>(obj, new StringBuffer(), new FieldPosition(0)).toString();</code>
+ </blockquote>
+
+@param obj 要格式化的对象
+@return 格式化后的字符串。
+@exception IllegalArgumentException 如果该 Format 不能格式化给定的对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.StringBuffer java.text.Format.format(Object obj, StringBuffer toAppendTo, FieldPosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个对象，并将得到的文本添加到给定的字符缓冲区。如果 <code>pos</code> 参数标识了一个由 format 使用的字段，那么其索引就设置为第一次出现的此类字段的起始和结束索引。
+
+@param obj 要格式化的对象
+@param toAppendTo 文本要添加的位置
+@param pos 标识格式化文本中字段的一个 <code>FieldPosition</code>。
+@return 添加了格式化文本并作为 <code>toAppendTo</code> 传入的字符串缓冲区
+@exception NullPointerException 如果 <code>toAppendTo</code> 或 <code>pos</code> 为 null
+@exception IllegalArgumentException 如果 Format 不能格式化给定的对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.text.AttributedCharacterIterator java.text.Format.formatToCharacterIterator(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化一个对象，生成一个 <code>AttributedCharacterIterator</code>。可以使用返回的 <code>AttributedCharacterIterator</code> 来生成得到的 String，并确定与得到的 String 有关的信息。
+ <p>
+AttributedCharacterIterator 的每一个属性键都是 <code>Field</code> 类型的。由每个 <code>Format</code> 实现为 <code>AttributedCharacterIterator</code> 中的每个属性定义其合法值，但是通常属性键也用作属性值。
+<p>默认的实现创建了一个没有任何属性的 <code>AttributedCharacterIterator</code>。支持字段的子类应该重写此方法并创建一个具有有意义属性的 <code>AttributedCharacterIterator</code>。
+
+@exception NullPointerException 如果 obj 为 null。
+@exception IllegalArgumentException 如果该 Format 无法格式化给定的对象。
+@param obj 要格式化的对象
+@return 描述格式化值的 AttributedCharacterIterator。  
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.text.Format.parseObject(String source, ParsePosition pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析字符串文本，生成一个对象。
+ <p>
+此方法试图解析从 <code>pos</code> 给定索引处开始的文本。如果解析成功，则将 <code>pos</code> 的索引更新到使用的最后一个字符之后的索引（不一定要解析直到字符串末尾的所有字符），并返回解析后的对象。更新的 <code>pos</code> 可以用来指示下一次调用此方法的起始点。如果发生错误，则不更改 <code>pos</code> 的索引，将 <code>pos</code> 的错误索引设置为错误发生处的字符的索引，并返回 null。
+
+@param source 其中一部分应该被解析的 <code>String</code>。
+@param pos 具有上面所描述的索引和错误索引信息的一个 <code>ParsePosition</code> 对象。
+@return 从字符串解析的一个 <code>Object</code>。如果有错误，返回 null。
+@exception NullPointerException 如果 <code>pos</code> 为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.Format.parseObject(String source) throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定字符串的开始处解析文本以生成一个对象。此方法不可以使用给定字符串的全部文本。
+
+@param source 必须解析其开头的 <code>String</code>。
+@return 从字符串进行解析的一个 <code>Object</code>。
+@exception ParseException 如果无法解析指定字符串的开头。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.Format.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回此对象的一个副本。
+
+@return 此实例的一个副本。
+
+<!-- END DATA -->

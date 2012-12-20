@@ -1,0 +1,122 @@
+<!-- BEGIN KEY -->
+public final class javax.print.attribute.standard.JobKOctets extends javax.print.attribute.IntegerSyntax implements javax.print.attribute.PrintRequestAttribute, javax.print.attribute.PrintJobAttribute
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+JobKOctets 类是整数值形式的打印属性类，它指定了以 K 字节为单位的文档总大小，即以要在作业中处理的所请求的 1024 字节为单位。必须对该值进行舍入操作，这样 1 字节和 1024 字节之间的作业必须指示为 1K 字节，1025 到 2048 必须指示为 2K 字节， 依此类推。对于多文档打印作业（具有多个文档的作业），JobKOctets 值的计算是通过累加单个文档的字节大小，然后舍入到最近的 K 字节值来实现的。 
+ <P>
+JobKOctets 属性描述了作业的大小。此属性不是计数器，它应是有用的路径和计划信息（如果已知）。如果在 Print Request 中未提供 JobKOctets 属性值，则打印机可能尝试计算该值。即使客户机在 Print Request 中提供了 JobKOctets 属性值，如果打印机能够计算出比客户机所提供的值更精确的值，则打印机可以选择更改该值。在刚好提交作业的时刻，或提交后的任意时刻，打印机可以确定 JobKOctets 属性的正确值。 
+ <P>
+JobKOctets 值不能包括由 {@link Copies Copies} 属性指定的副本数所产生的乘数，这与设备能否在无需多次传递作业或文档数据的情况下处理多个副本无关，并且与输出是否逐份打印无关。因此，该值与实现无关，它指示文档（或多个文档）大小，度量单位是与副本数无关的 K 字节。 
+ <P>
+JobKOctets 值不能包括由嵌入文档数据的副本指令产生的乘数。如果文档数据实际上包括文档数据的复制，则此值将包括这样的复制。换句话说，此值总是源文档数据的大小，而不是要生成的硬拷贝输出的度量。 
+ <P>
+文档大小是根据文档的 {@link javax.print.DocFlavor DocFlavor} 指定的打印数据表示形式类计算的，如下表所示。 
+ <P>
+ <TABLE BORDER=1 CELLPADDING=2 CELLSPACING=1 SUMMARY="Table showing computation of doc sizes">
+ <TR BGCOLOR="#E5E5E5">
+<TH>表示形式类</TH>
+<TH>文档大小</TH>
+ </TR>
+ <TR>
+ <TD>byte[]</TD>
+<TD>字节数组的长度</TD>
+ </TR>
+ <TR>
+ <TD>java.io.InputStream</TD>
+<TD>从流读取的字节数</TD>
+ </TR>
+ <TR>
+ <TD>char[]</TD>
+<TD>字符数组的长度 x 2</TD>
+ </TR>
+ <TR>
+<TD>java.lang.String</TD>
+<TD>字符串的长度 x 2</TD>
+ </TR>
+ <TR>
+ <TD>java.io.Reader</TD>
+<TD>从流读取的字符数 x 2</TD>
+ </TR>
+ <TR>
+ <TD>java.net.URL</TD>
+<TD>从给定的 URL 地址处的文件读取的字节数</TD>
+ </TR>
+ <TR>
+ <TD>java.awt.image.renderable.RenderableImage</TD>
+<TD>与实现有关*</TD>
+ </TR>
+ <TR>
+<TD>java.awt.print.Printable</TD>
+<TD>与实现有关*</TD>
+ </TR>
+ <TR>
+<TD>java.awt.print.Pageable</TD>
+<TD>与实现有关*</TD>
+ </TR>
+ </TABLE> 
+ <P>
+* 在这些情况下，Print Service 本身生成要发送到打印机的打印数据。如果 Print Service 支持 JobKOctets 属性，则对于这些情况，Print Service 本身必须计算打印数据的大小，替换客户机所指定的任何 JobKOctets 值。 
+ <P>
+ <B>IPP Compatibility:</B> 整数值给出了 IPP 整数值。<CODE>getName()</CODE> 所返回的类别名称给出了 IPP 属性名称。 
+ <P>
+
+@see JobKOctetsSupported
+@see JobKOctetsProcessed
+@see JobImpressions
+@see JobMediaSheets
+
+@author  Alan Kaminsky
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.print.attribute.standard.JobKOctets(int value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造具有给定整数值的新 JobKOctets  属性。 
+
+@param  value  整数值。
+
+@exception  IllegalArgumentException （未检查的异常）如果 <CODE>value</CODE> 小于 0，则抛出该异常。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.print.attribute.standard.JobKOctets.equals(Object object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 JobKOctets 属性是否等效于传入的对象。若要等效，以下所有条件都必须为 true： 
+ <OL TYPE=1>
+ <LI>
+<CODE>object</CODE> 不为 null。
+ <LI>
+<CODE>object</CODE> 为 JobKOctets 类的实例。
+ <LI>
+此 JobKOctets 属性值与 <CODE>object</CODE> 的值相等。 
+ </OL>
+
+@param  object  要比较的 Object。
+
+@return 如果 <CODE>object</CODE> 等效于此 JobKOctets  属性，则返回 true，否则返回 false。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.Class<? extends javax.print.attribute.Attribute> javax.print.attribute.standard.JobKOctets.getCategory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取将被用作此打印属性值的&ldquo;类别&rdquo;的打印属性类。
+ <P>
+对于 JobKOctets 类，类别为 JobKOctets 类本身。 
+
+@return  打印属性类（类别），它是 {@link java.lang.Class java.lang.Class} 类的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String javax.print.attribute.standard.JobKOctets.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取类别名称，此属性值为该类别的实例。 
+ <P>
+对于 JobKOctets 类，类别名称为 <CODE>&quot;job-k-octets&quot;</CODE>。 
+
+@return  属性类别名称。
+
+<!-- END DATA -->

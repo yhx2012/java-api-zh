@@ -1,0 +1,145 @@
+<!-- BEGIN KEY -->
+public class java.io.FilterInputStream extends java.io.InputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>FilterInputStream</code> 包含其他一些输入流，它将这些流用作其基本数据源，它可以直接传输数据或提供一些额外的功能。<code>FilterInputStream</code> 类本身只是简单地重写那些将所有请求传递给所包含输入流的 <code>InputStream</code> 的所有方法。<code>FilterInputStream</code> 的子类可进一步重写这些方法中的一些方法，并且还可以提供一些额外的方法和字段。
+
+@author  Jonathan Payne
+@version 1.33, 04/07/06
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected volatile java.io.InputStream java.io.FilterInputStream.in
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+要过滤的输入流。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.io.FilterInputStream(InputStream in)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将参数 <code>in</code> 分配给字段 <code>this.in</code>，以便记住它供以后使用，通过这种方式创建一个 <code>FilterInputStream</code>。
+
+@param   in   底层输入流，如果要在没有底层流的情况下创建此实例，则该参数为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.FilterInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中读取下一个数据字节。返回一个 <code>0</code> 到 <code>255</code> 范围内的 <code>int</code> 字节值。如果因为已经到达流末尾而没有字节可用，则返回 <code>-1</code>。在输入数据可用、检测到流末尾或抛出异常之前，此方法将一直阻塞。 
+ <p>
+此方法只执行 <code>in.read()</code> 并返回结果。
+
+@return 下一个数据字节；如果已到达流末尾，则返回 <code>-1</code>。
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.FilterInputStream#in
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.FilterInputStream.read(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中将 <code>byte.length</code> 个字节的数据读入一个 byte 数组中。在某些输入可用之前，此方法将阻塞。 
+ <p>
+此方法只执行 <code>read(b, 0, b.length)</code> 调用并返回结果。注意到它<i>不</i> 执行 <code>in.read(b)</code> 很重要；<code>FilterInputStream</code> 的某些子类依赖于实际使用的实现策略。
+
+@param     b   存储读取数据的缓冲区。
+@return     读入缓冲区的字节总数，如果因为已经到达流末尾而没有更多的数据，则返回 <code>-1</code>。
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.FilterInputStream#read(byte[], int, int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.FilterInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此输入流中将 <code>len</code> 个字节的数据读入一个 byte 数组中。如果 <code>len</code> 不为 0，则在输入可用前，此方法将阻塞；否则，不读取任何字节并且返回 <code>0</code>。 
+ <p>
+此方法只执行 <code>in.read(b, off, len)</code> 并返回结果。
+
+@param     b   存储读取数据的缓冲区。
+@param      off   目标数组 <code>b</code> 中的起始偏移量。
+@param   len       读取的最大字节数。
+@return     读入缓冲区的字节总数，如果因为已经到达流末尾而没有更多的数据，则返回 <code>-1</code>。
+@exception  NullPointerException 如果 <code>b</code> 为 <code>null</code>。
+@exception  IndexOutOfBoundsException 如果 <code>off</code> 为负、<code>len</code> 为负，或者 <code>len</code> 大于 <code>b.length - off</code>
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.FilterInputStream#in
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.io.FilterInputStream.skip(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc} 
+ <p>
+此方法只执行 <code>in.skip(n)</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.io.FilterInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一次对此输入流调用的方法可以不受阻塞地从此输入流读取（或跳过）的估计剩余字节数。下一个调用者可能是同一个线程，也可能是另一个线程。一次读取或跳过此数量个字节不会发生阻塞，但读取或跳过的字节可能小于该数。
+ <p>
+此方法返回 {@link #in in}.available() 的结果。
+
+@return     可以不受阻塞地从此输入流中读取（或跳过）的估计字节数。
+@exception  IOException 如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.FilterInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此输入流并释放与此流关联的所有系统资源。此方法只执行 <code>in.close()</code>。
+
+@exception  IOException 如果发生 I/O 错误。
+@see        java.io.FilterInputStream#in
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.FilterInputStream.mark(int readlimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在输入流中的当前位置上作标记。<code>reset</code> 方法的后续调用将此流重新定位在最后标记的位置上，以便后续读取操作重新读取相同的字节。
+ <p>
+<code>readlimit</code> 参数告知此输入流在标记位置无效之前允许读取的字节数。 
+ <p>
+此方法只执行 <code>in.mark(readlimit)</code>。
+
+@param   readlimit   在标记位置变得无效前可以读取字节的最大限制。
+@see     java.io.FilterInputStream#in
+@see     java.io.FilterInputStream#reset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.FilterInputStream.reset() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此流重新定位到对此输入流最后调用 <code>mark</code> 方法时的位置。 
+ <p>
+此方法只执行 <code>in.reset()</code>。
+ <p>
+在需要提前读取一小部分数据以查看流中有什么的情况下，可以使用流的标记。通过调用通用解析器常常最容易做到这一点。如果流属于通过解析处理的类型，那么解析起来就很容易。如果流不属于那种类型，那么解析器应该在解析失败时抛出一个异常。如果这发生在 readlimit 个字节内，那么它允许外部代码重置流，并尝试另一种解析器。
+
+@exception  IOException  如果已经标记了该流，或者标记已经无效。
+@see        java.io.FilterInputStream#in
+@see        java.io.FilterInputStream#mark(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.FilterInputStream.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此输入流是否支持 <code>mark</code> 和 <code>reset</code> 方法。此方法只执行 <code>in.markSupported()</code>。
+
+@return  如果此流类型支持 <code>mark</code> 和 <code>reset</code> 方法，则返回 <code>true</code>；否则返回 <code>false</code>。
+@see     java.io.FilterInputStream#in
+@see     java.io.InputStream#mark(int)
+@see     java.io.InputStream#reset()
+
+<!-- END DATA -->

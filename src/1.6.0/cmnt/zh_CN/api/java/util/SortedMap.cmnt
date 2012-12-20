@@ -1,0 +1,138 @@
+<!-- BEGIN KEY -->
+public interface java.util.SortedMap extends java.util.Map
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+进一步提供关于键的<i>总体排序</i> 的 {@link Map}。该映射是根据其键的{@linkplain Comparable 自然顺序}进行排序的，或者根据通常在创建有序映射时提供的 {@link Comparator} 进行排序。对有序映射的 collection 视图（由 <tt>entrySet</tt>、<tt>keySet</tt> 和 <tt>values</tt> 方法返回）进行迭代时，此顺序就会反映出来。要采用此排序方式，还需要提供一些其他操作（此接口是 {@link SortedSet} 的对应映射）。
+
+<p>插入有序映射的所有键都必须实现 <tt>Comparable</tt> 接口（或者被指定的比较器接受）。另外，所有这些键都必须是<i>可互相比较的</i>：对有序映射中的任意两个键 <tt>k1</tt> 和 <tt>k2</tt> 执行 <tt>k1.compareTo(k2)</tt>（或 <tt>comparator.compare(k1, k2)</tt>）都不得抛出 <tt>ClassCastException</tt>。试图违反此限制将导致违反规则的方法或者构造方法调用抛出 <tt>ClassCastException</tt>。
+
+<p>注意，如果有序映射要正确实现 <tt>Map</tt> 接口，则有序映射所维持的顺序（无论是否提供了明确的比较器）都必须<i>与 equals 一致</i>。（有关<i>与 equals 一致</i> 的精确定义，请参阅 <tt>Comparable</tt> 接口或 <tt>Comparator</tt> 接口）。这是因为 <tt>Map</tt> 接口是按照 <tt>equals</tt> 操作定义的，但有序映射使用它的 <tt>compareTo</tt>（或 <tt>compare</tt>）方法对所有键进行比较，因此从有序映射的角度来看，此方法认为相等的两个键就是相等的。即使顺序与 equals 不一致，树映射的行为仍然<i>是</i> 定义良好的，只不过没有遵守 <tt>Map</tt> 接口的常规协定。
+
+<p>所有通用有序映射实现类都应该提供 4 个“标准”构造方法：1) void（无参数）构造方法，它创建一个空的有序映射，按照键的自然顺序进行排序。2) 带有一个 <tt>Comparator</tt> 类型参数的构造方法，它创建一个空的有序映射，根据指定的比较器进行排序。3) 带有一个 <tt>Map</tt> 类型参数的构造方法，它创建一个新的有序映射，其键-值映射关系与参数相同，按照键的自然顺序进行排序。4) 带有一个 SortedMap 类型参数的构造方法，它创建一个新的有序映射，其键-值映射关系和排序方法与输入的有序映射相同。无法保证强制实施此建议，因为接口不能包含构造方法。<p>
+
+<p>注：一些方法返回具有受限键范围的子映射。这些范围区间是<i>半开的</i>，也就是说，它们包括低端点，但不包括高端点（如果适用）。如果需要一个<i>闭区间</i>（同时包括两个端点），且键类型允许计算给定键值的后继值，则只需要请求从 <tt>lowEndpoint</tt> 到 <tt>successor(highEndpoint)</tt> 的子区间。例如，假设 <tt>m</tt> 是一个用字符串作为键的映射。下面的语句将得到一个包含 <tt>m</tt> 中键在 <tt>low</tt> 和 <tt>high</tt>（包括）之间的所有键-值映射关系的视图：<pre>
+   SortedMap&lt;String, V&gt; sub = m.subMap(low, high+"\0");</pre>
+
+ 可使用类似的技术生成一个<i>开区间</i> （两个端点都不包括）。下面的语句将得到一个包含 <tt>m</tt> 中键在 <tt>low</tt> 和 <tt>high</tt>（不包括）之间的所有键-值映射关系的视图：<pre>
+   SortedMap&lt;String, V&gt; sub = m.subMap(low+"\0", high);</pre>
+
+ <p>此接口是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+
+@param <K> 此映射所维护的键的类型
+@param <V> 映射值的类型
+
+@author  Josh Bloch
+@version 1.28, 04/21/06
+@see Map
+@see TreeMap
+@see SortedSet
+@see Comparator
+@see Comparable
+@see Collection
+@see ClassCastException
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Comparator<? super K> java.util.SortedMap.comparator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对此映射中的键进行排序的比较器；如果此映射使用键的{@linkplain Comparable 自然顺序}，则返回 <tt>null</tt>。
+
+ @return 用来对此映射中的键进行排序的比较器；如果此映射使用键的自然顺序，则返回 <tt>null</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.SortedMap.subMap(K fromKey, K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此映射的部分视图，其键值的范围从 <tt>fromKey</tt>（包括）到 <tt>toKey</tt>（不包括）。（如果 <tt>fromKey</tt> 和 <tt>toKey</tt> 相等，则返回映射为空。）返回的映射受此映射支持，所以在返回映射中的更改将反映在此映射中，反之亦然。返回的映射支持此映射支持的所有可选映射操作。
+
+ <p>如果试图在返回映射的范围之外插入键，则返回的映射将抛出 <tt>IllegalArgumentException</tt>。
+
+@param fromKey 返回映射中键的低端点（包括）
+@param toKey 返回映射中键的高端点（不包括）
+@return 此映射的部分视图，其键值的范围从 <tt>fromKey</tt>（包括）到 <tt>toKey</tt>（不包括）
+@throws ClassCastException 如果无法使用此映射的比较器（如果此映射没有比较器，则使用自然顺序）比较 <tt>fromKey</tt> 和 <tt>toKey</tt>。如果 <tt>fromKey</tt> 或 <tt>toKey</tt> 不能与映射中当前键进行比较，则实现可以（但不是必须）抛出此异常。
+@throws NullPointerException 如果 <tt>fromKey</tt> 或 <tt>toKey</tt> 为 null，并且此映射不允许使用 null 键
+@throws IllegalArgumentException 如果 <tt>fromKey</tt> 大于 <tt>toKey</tt>；如果此映射本身有范围限制，并且 <tt>fromKey</tt> 或 <tt>toKey</tt> 位于范围的边界之外
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.SortedMap.headMap(K toKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射的部分视图，其键值严格小于 <tt>toKey</tt>。返回的映射受此映射支持，所以在返回映射中的更改将反映在映射中，反之亦然。返回的映射支持此映射支持的所有可选映射操作。
+
+ <p>如果试图在返回映射的范围之外插入键，则返回的映射将抛出 <tt>IllegalArgumentException</tt>。
+
+@param toKey 返回映射中键的高端点（不包括）
+@return 此映射的部分视图，该映射的键严格小于 <tt>toKey</tt>
+@throws ClassCastException 如果 <tt>toKey</tt> 与此映射的比较器不兼容（如果该映射没有比较器；如果 <tt>toKey</tt> 没有实现 {@link Comparable}）。如果 <tt>toKey</tt> 不能与映射中的当前键进行比较，则实现可以（但不是必须）抛出此异常。
+@throws NullPointerException 如果 <tt>toKey</tt> 为 null，并且此映射不允许使用 null 键
+@throws IllegalArgumentException 如果此映射本身有范围限制，并且 <tt>toKey</tt> 位于范围的边界之外
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.SortedMap<K, V> java.util.SortedMap.tailMap(K fromKey)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此映射的部分视图，其键大于等于 <tt>fromKey</tt>。返回的映射受此映射支持，所以在返回映射中的更改将反映在映射中，反之亦然。返回的映射支持此映射支持的所有可选映射操作。
+
+ <p>如果试图在返回映射的范围之外插入键，则返回的映射将抛出 <tt>IllegalArgumentException</tt>。
+
+@param fromKey 返回映射中键的低端点（包括）
+@return 此映射的部分视图，其键大于等于 <tt>fromKey</tt>
+@throws ClassCastException 如果 <tt>fromKey</tt> 与此映射的比较器不兼容（如果该映射没有比较器；如果 <tt>fromKey</tt> 没有实现 {@link Comparable}）。如果 <tt>fromKey</tt> 不能与映射中的当前键进行比较，则实现可以（但不是必须）抛出此异常。
+@throws NullPointerException 如果 <tt>fromKey</tt> 为 null，并且此映射不允许使用 null 键
+@throws IllegalArgumentException 如果此映射本身有范围限制，并且 <tt>fromKey</tt> 位于范围的边界之外
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.SortedMap.firstKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此映射中当前第一个（最低）键。
+
+ @return 此映射中当前第一个（最低）键
+ @throws NoSuchElementException 如果此映射为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public K java.util.SortedMap.lastKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回映射中当前最后一个（最高）键。
+
+ @return 此映射中当前最后一个（最高）键
+ @throws NoSuchElementException 如果此映射为空
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.SortedMap.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此映射中所包含键的 {@link Set} 视图。该 set 的迭代器将按升序返回这些键。该 set 受映射支持，所以对映射的更改将反映在此 set 中，反之亦然。如果对该 set 进行迭代的同时修改了映射（通过迭代器自己的 <tt>remove</tt> 操作除外），则迭代结果是不确定的。此 set 支持元素移除，通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+@return 此映射所包含的键的 set 视图，按升序排序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.SortedMap.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回在此映射中所包含值的 {@link Collection} 视图。该 collection 的迭代器将按对应键的升序返回这些值。该 collection 受映射支持，所以对映射的更改将反映在此 collection 中，反之亦然。如果对该 set 进行迭代的同时修改了映射（通过迭代器自己的 <tt>remove</tt> 操作除外），则迭代结果是不确定的。该 collection 支持元素的移除，通过 <tt>Iterator.remove</tt>、<tt>Collection.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+@return 此映射所包含的值的 collection 视图，按升序排序
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.SortedMap.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此映射中包含的映射关系的 {@link Set} 视图。该 set 的迭代器将按升序键顺序返回这些条目。该 set 受映射支持，所以对映射的更改将反映在此 set 中，反之亦然。如果修改映射的同时正在对该 set 进行迭代（除了通过迭代器自己的 <tt>remove</tt> 操作，或者通过在迭代器返回的映射项上执行 <tt>setValue</tt> 操作外），则迭代结果是不确定的。此 set 支持元素移除，通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、<tt>retainAll</tt> 和 <tt>clear</tt> 操作可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+
+@return 此映射所包含的映射关系的 set 视图，按升序键排序
+
+<!-- END DATA -->

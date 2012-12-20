@@ -1,0 +1,286 @@
+<!-- BEGIN KEY -->
+public abstract class javax.management.monitor.Monitor extends javax.management.NotificationBroadcasterSupport implements javax.management.monitor.MonitorMBean, javax.management.MBeanRegistration
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义所有监视器 MBean 的公共部分。监视器 MBean 监视所观察的 MBean 集的共同属性值。将根据粒度周期指定的区间监视 observed 属性。尺度值（派生尺度）从 observed 属性的值中派生。
+
+@version     4.55     12/29/05
+@author      Sun Microsystems, Inc
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.capacityIncrement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+监视器数组的大小大于其容量时，容量自动递增的量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.management.monitor.Monitor.elementCount
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+被观察对象的向量中的有效组件数。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.management.monitor.Monitor.alreadyNotified
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+已经通知的监视器错误。
+@deprecated 等效于 {@link #alreadyNotifieds}[0]。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int[] javax.management.monitor.Monitor.alreadyNotifieds
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>已经通知的选定监视器错误。</p>
+
+<p>此数组中的每个元素都对应于向量中的某个被观察对象。它包含标志 {@link #OBSERVED_OBJECT_ERROR_NOTIFIED} 等的位掩码，表示是否已经为要监视的 MBean 发送了相应的通知。</p>
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.management.MBeanServer javax.management.monitor.Monitor.server
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+对 MBean 服务器的引用。如果没有在 MBean 服务器中注册监视器 MBean，则此引用将为 null。在 MBean 服务器中注册监视器 MBean 之前，要先初始化此引用。
+@see #preRegister(MBeanServer server, ObjectName name)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.RESET_FLAGS_ALREADY_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此标志用来重新设置 {@link #alreadyNotifieds alreadyNotifieds} 监视器属性。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_OBJECT_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示在更改被观察对象之后已发出通知的标志。此标志用来检查在初次发出通知时是否已在 MBean 服务器中注册了新的被观察对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_ATTRIBUTE_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示已在更改被观察属性之后发出了通知的标志。此标志用来检查在初次发出通知时新的被观察属性是否属于被观察对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.OBSERVED_ATTRIBUTE_TYPE_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示已在更改被观察对象或被观察属性之后发出了通知的标志。此标志用来检查被观察属性的类型在初次发出通知时是否正确（取决正在使用的监视器）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int javax.management.monitor.Monitor.RUNTIME_ERROR_NOTIFIED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示已在更改被观察对象或被观察属性之后发出了通知的标志。此标志用来在初次发出通知后尝试获得被观察属性的值时通知任何异常（上述情况除外）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.management.monitor.Monitor.dbgTag
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+出于兼容的目的，对此字段进行了保留，但不建议引用它。
+
+@deprecated 无替代版本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.monitor.Monitor.preRegister(MBeanServer server, ObjectName name) throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许在 MBean 服务器中注册监视器 MBean 之前执行任何监视器 MBean 所需要的操作。
+ <P>
+初始化对 MBean 服务器的引用。
+
+@param server 将在其中注册监视器 MBean 的 MBean 服务器。
+@param name 监视器 MBean 的对象名称。
+
+@return 注册的监视器 MBean 的名称。
+
+@exception Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.postRegister(Boolean registrationDone)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许在 MBean 服务器中注册监视器 MBean 后或注册失败后执行所需的任何操作。
+ <P>
+未在此上下文中使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.preDeregister() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许在 MBean 服务器注销监视器 MBean 之前执行监视器 MBean 所需要的任何操作。
+ <P>
+停止监视器。
+
+@exception Exception
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.postDeregister()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+允许在 MBean 服务器注销监视器 MBean 之前执行所需的任何操作。
+ <P>
+未在此上下文中使用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.management.monitor.Monitor.start()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+启动监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.management.monitor.Monitor.stop()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+停止监视器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.ObjectName javax.management.monitor.Monitor.getObservedObject()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回观察到的 MBean 集中第一个对象的名称，如果没有此对象，则返回 <code>null</code>。
+
+@return 要观察的对象。
+
+@see #setObservedObject(ObjectName)
+
+@deprecated 从 JMX 1.2 开始，由 {@link #getObservedObjects} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.setObservedObject(ObjectName object) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 observed 对象集中移除所有的对象，然后添加指定的对象。
+
+@param object 要观察的对象。
+@exception IllegalArgumentException 指定的对象为 null。
+
+@see #getObservedObject()
+
+@deprecated 从 JMX 1.2 开始，由 {@link #addObservedObject} 取代
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.addObservedObject(ObjectName object) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果尚未显示此对象，则在观察到的 MBean 集中添加指定的对象。
+
+@param object 要观察的对象。
+@exception IllegalArgumentException 指定的对象为 null。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.removeObservedObject(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从所观察的 MBean 集中移除指定的对象。
+
+@param object 要移除的对象。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.Monitor.containsObservedObject(ObjectName object)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定的对象是否在所观察的 MBean 集中。
+
+@param object 要检查的对象。
+@return 如果指定的对象存在，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized javax.management.ObjectName[] javax.management.monitor.Monitor.getObservedObjects()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个包含要观察的对象的数组。
+
+@return 要观察的对象。
+
+@since.unbundled JMX 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String javax.management.monitor.Monitor.getObservedAttribute()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取要观察的属性。<BR>默认情况下被观察属性未被初始化（设置为 null）。
+
+@return 要观察的属性。
+
+@see #setObservedAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.monitor.Monitor.setObservedAttribute(String attribute) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置要观察的属性。<BR>默认情况下被观察属性未被初始化（设置为 null）。
+
+@param attribute 要观察的属性。
+@exception IllegalArgumentException 指定的属性为 null。
+
+@see #getObservedAttribute
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long javax.management.monitor.Monitor.getGranularityPeriod()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取粒度周期（以毫秒为单位）。<BR>粒度周期的默认值是 10 秒。
+
+@return 粒度周期值。
+
+@see #setGranularityPeriod
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.management.monitor.Monitor.setGranularityPeriod(long period) throws java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置粒度周期（以毫秒为单位）。<BR>粒度周期的默认值是 10 秒。
+
+@param period 粒度周期值。
+@exception IllegalArgumentException 粒度周期小于或等于零。
+
+@see #getGranularityPeriod
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean javax.management.monitor.Monitor.isActive()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试监视器 MBean 是否处于激活状态。当调用 {@link #start start} 方法时，监视器 MBean 被标记为激活。当调用 {@link #stop stop} 方法时，该标记变为非激活。
+
+@return 如果监视器 MBean 处于激活状态，则返回 <CODE>true</CODE>；否则返回 <CODE>false</CODE>。
+
+<!-- END DATA -->

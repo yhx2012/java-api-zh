@@ -1,0 +1,36 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.StatementEventListener extends java.util.EventListener
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册为能获得 Statement 池中 PreparedStatement 上所发生事件的通知的对象。
+ <p>
+JDBC 3.0 规范添加了 maxStatement <code>ConnectionPooledDataSource</code> 属性，以为启用 <code>PreparedStatement</code> 的池操作提供标准机制并指定语句池的大小。然而，当 <code>PreparedStatement</code> 变为无效时，驱动程序无法通知外部语句池。对于某些数据库，如果执行影响表的 DDL 操作，则语句将变为无效。例如，应用程序可以创建一个临时表，在表上进行某些操作然后销毁它。再次需要时，应用程序还可重新创建相同的表。销毁该表后，某些数据库将使所有引用该临时表的准备语句无效。
+ <p>
+与 <code>ConnectionEventListener</code> 接口中定义的方法类似，驱动程序检测到语句无效时将在抛出异常之前调用 <code>StatementEventListener.statementErrorOccurred</code> 方法。<code>PreparedStatement</code> 关闭时，驱动程序也将调用 <code>StatementEventListener.statementClosed</code> 方法。
+ <p>
+允许组件使用 <code>PooledConnection</code> 注册 StatementEventListener 的方法已经被添加到 <code>PooledConnection</code> 接口。
+ <p>
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.StatementEventListener.statementClosed(StatementEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检测到 <code>PreparedStatement</code> 关闭时，驱动程序对所有在连接上注册的 <code>StatementEventListener</code> 调用此方法。
+
+@param event 一个事件对象，它描述事件源以及 <code>PreparedStatement</code> 已经关闭。
+@since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.StatementEventListener.statementErrorOccurred(StatementEvent event)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检测到 <code>PreparedStatement</code> 无效时，驱动程序对所有在连接上注册的 <code>StatementEventListener</code> 调用此方法。驱动程序在向应用程序抛出包含于给定事件的 <code>SQLException</code> 之前调用此方法。
+ <p>
+@param event		一个事件对象，它描述事件源、无效的语句和驱动程序将要抛出的异常。事件源是与无效 <code>PreparedStatement</code> 关联的 <code>PooledConnection</code>。
+ <p>
+@since 1.6
+
+<!-- END DATA -->

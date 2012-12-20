@@ -1,0 +1,92 @@
+<!-- BEGIN KEY -->
+public class java.io.PipedOutputStream extends java.io.OutputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+可以将管道输出流连接到管道输入流来创建通信管道。管道输出流是管道的发送端。通常，数据由某个线程写入 <code>PipedOutputStream</code> 对象，并由其他线程从连接的 <code>PipedInputStream</code> 读取。不建议对这两个对象尝试使用单个线程，因为这样可能会造成该线程死锁。如果某个线程正从连接的管道输入流中读取数据字节，但该线程不再处于活动状态，则该管道被视为处于<a name=BROKEN> <i>毁坏</i> 状态。</a> 
+
+@author  James Gosling
+@version 1.28, 06/07/06
+@see     java.io.PipedInputStream
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedOutputStream(PipedInputStream snk) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建连接到指定管道输入流的管道输出流。写入此流的数据字节稍后将用作 <code>snk</code> 的输入。
+
+@param      snk   要连接的管道输入流。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.PipedOutputStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建尚未连接到管道输入流的管道输出流。必须在使用之前将管道输出流连接到管道输入流（既可由接收者连接，也可由发送者连接）。 
+
+@see     java.io.PipedInputStream#connect(java.io.PipedOutputStream)
+@see     java.io.PipedOutputStream#connect(java.io.PipedInputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.PipedOutputStream.connect(PipedInputStream snk) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此管道输出流连接到接收者。如果此对象已经连接到其他某个管道输入流，则抛出 <code>IOException</code>。
+ <p>
+如果 <code>snk</code> 是未连接的管道输入流，而 <code>src</code> 是未连接的管道输出流，则可以通过以下调用之一连接它们：
+ <blockquote><pre>
+ src.connect(snk)</pre></blockquote>
+或：
+ <blockquote><pre>
+ snk.connect(src)</pre></blockquote>
+这两个调用的效果相同。
+
+@param      snk   要连接的管道输入流。
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PipedOutputStream.write(int b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 <code>byte</code> 写入传送的输出流。
+ <p>
+实现 <code>OutputStream</code> 的 <code>write</code> 方法。
+
+@param      b   要写入的 <code>byte</code>。
+@exception IOException 如果管道处于<a href=#BROKEN>毁坏</a>或{@link #connect(java.io.PipedInputStream) 未连接}状态，或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PipedOutputStream.write(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 <code>len</code> 字节从初始偏移量为 <code>off</code> 的指定 byte 数组写入该管道输出流。在将所有字节写入输出流之前，此方法一直处于阻塞状态。
+
+@param      b     数据。
+@param      off   数据中的初始偏移量。
+@param      len   要写入的字节数。
+@exception IOException 如果管道处于<a href=#BROKEN> 毁坏</a>或{@link #connect(java.io.PipedInputStream) 未连接}状态，或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.PipedOutputStream.flush() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新此输出流并强制写出所有缓冲的输出字节。这将通知所有 reader，告知它们管道中的字符处于等待中。
+
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.PipedOutputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此管道输出流并释放与此流有关的所有系统资源。此流可能无法再用于写入字节。
+
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->

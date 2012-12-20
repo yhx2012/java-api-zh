@@ -1,0 +1,443 @@
+<!-- BEGIN KEY -->
+public class javax.swing.tree.DefaultTreeSelectionModel extends java.lang.Object implements java.lang.Cloneable, java.io.Serializable, javax.swing.tree.TreeSelectionModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+TreeSelectionModel 的默认实现。每当 selection 中的路径（不是行）发生更改时，侦听器就会获得通知。为了能够跟踪行的更改，您可能希望获得一个侦听器，用于树上的扩展事件，并从该位置测试更改。
+<p>从所有更新选择路径的方法中调用 resetRowSelection。如果对这些方法中的任何方法创建子类来过滤允许选择的内容，并且没有通知超类，请确定并通知 <code>resetRowSelection</code>。
+ 
+ <p>
+ 
+<strong>警告：</strong>此类的序列化对象将与以后的 Swing 版本不兼容。当前的序列化支持适用于短期存储或运行相同 Swing 版本的应用程序之间的 RMI。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see javax.swing.JTree
+
+@version 1.50 05/05/04
+@author Scott Violet
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.swing.tree.DefaultTreeSelectionModel.SELECTION_MODE_PROPERTY
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+selectionMode 的属性名称。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.SwingPropertyChangeSupport javax.swing.tree.DefaultTreeSelectionModel.changeSupport
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于接收通知的注册侦听器。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreePath[] javax.swing.tree.DefaultTreeSelectionModel.selection
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前选择的路径。如果当前没有选择任何内容，则路径为 null。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.event.EventListenerList javax.swing.tree.DefaultTreeSelectionModel.listenerList
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+事件侦听器列表。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected transient javax.swing.tree.RowMapper javax.swing.tree.DefaultTreeSelectionModel.rowMapper
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供给定路径的行。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.DefaultListSelectionModel javax.swing.tree.DefaultTreeSelectionModel.listSelectionModel
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+维护列表选择模型的句柄。RowMapper 用于从 TreePath 映射到行，并将该值放置在此处。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.tree.DefaultTreeSelectionModel.selectionMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于 selection 的模式，将是 SINGLE_TREE_SELECTION、CONTIGUOUS_TREE_SELECTION 或 DISCONTIGUOUS_TREE_SELECTION。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.tree.TreePath javax.swing.tree.DefaultTreeSelectionModel.leadPath
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加的最后一条路径。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.tree.DefaultTreeSelectionModel.leadIndex
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+selection 中前导路径的索引。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int javax.swing.tree.DefaultTreeSelectionModel.leadRow
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+前导行。
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.util.Hashtable javax.swing.tree.DefaultTreeSelectionModel.uniquePaths
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用来确保路径是惟一的，将包含 <code>selection</code> 中的所有路径。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.DefaultTreeSelectionModel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 DISCONTIGUOUS_TREE_SELECTION 的选择模式创建空的 DefaultTreeSelectionModel 新实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.setRowMapper(RowMapper newMapper)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 RowMapper 实例。此实例用于确定特定 TreePath 的行。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.RowMapper javax.swing.tree.DefaultTreeSelectionModel.getRowMapper()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回能够将 TreePath 映射到行的 RowMapper 实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.setSelectionMode(int mode)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置选择模式，它必须是 SINGLE_TREE_SELECTION、CONTIGUOUS_TREE_SELECTION 或 DISCONTIGUOUS_TREE_SELECTION 之一。如果模式不是定义的值之一，则假定模式为 <code>DISCONTIGUOUS_TREE_SELECTION</code>。
+<p>如果当前的 selection 对新模式无效，这可以更改该 selection。例如，如果将模式更改为 <code>SINGLE_TREE_SELECTION</code> 时选中三个 TreePath，则只有一个 TreePath 仍然被选中。由特定的实现来决定保留选定哪一个 TreePath。
+ <p>
+将该模式设置为定义的类型以外的其他类型，将导致该模式变成 <code>DISCONTIGUOUS_TREE_SELECTION</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultTreeSelectionModel.getSelectionMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选择模式，它是 <code>SINGLE_TREE_SELECTION</code>、<code>DISCONTIGUOUS_TREE_SELECTION</code> 或 <code>CONTIGUOUS_TREE_SELECTION</code> 之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.setSelectionPath(TreePath path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为该选择设置路径。如果这表示一个更改，则通知 TreeSelectionListener。如果 <code>path</code> 为 null，则这与调用 <code>clearSelection</code> 具有相同的效果。
+
+@param path 要选择的新路径
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.setSelectionPaths(javax.swing.tree.TreePath[] pPaths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为该选择设置路径中的路径。如果这表示一个更改，则通知 TreeSelectionListener。此对象将可能保持路径；换句话说，不更改传入数组中的任何对象。
+<p>如果 <code>paths</code> 为 null，则这与调用 <code>clearSelection</code> 具有相同的效果。
+<p>将前导路径设置为 <code>pPaths</code> 中的最后一个路径。
+<p>如果选择模式为 <code>CONTIGUOUS_TREE_SELECTION</code>，并且添加新路径会使该选择不连续，则将该选择重新设置为 <code>paths</code> 中的第一个 TreePath。
+
+@param pPaths 新的选择
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.addSelectionPath(TreePath path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将路径添加到当前的 selection 中。如果路径当前不在 selection 中，则通知 TreeSelectionListener。如果 <code>path</code> 为 null，则通知无效。
+
+@param path 添加到当前 selection 中的新路径
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.addSelectionPaths(javax.swing.tree.TreePath[] paths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向当前的 selection 中添加路径。如果路径中的任何路径当前不在 selection 中，则通知 TreeSelectionListener。如果 <code>paths</code> 为 null，则此方法无效。
+<p>将前导路径设置为 <code>paths</code> 中的最后元素。
+<p>如果选择模式为 <code>CONTIGUOUS_TREE_SELECTION</code>，则添加新的路径会使选择不连续。那么可导致两种结果：如果 <code>paths</code> 中的 TreePaths 是连续的，则该选择会变为这些 TreePaths，相反，如果 TreePaths 不是连续的，则该选择会变为 <code>paths</code> 中的第一个 TreePath。
+
+@param paths 添加到当前 selection 的新路径
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.removeSelectionPath(TreePath path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 selection 中移除路径。如果路径在 selection 中，则通知 TreeSelectionListener。如果 <code>path</code> 为 null，则此方法无效。
+
+@param path 要从选择中移除的路径
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.removeSelectionPaths(javax.swing.tree.TreePath[] paths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 selection 中移除路径。如果路径中的任何路径在 selection 中，则通知 TreeSelectionListeners。如果 <code>paths</code> 为 null，则此方法无效。
+
+@param paths 从 selection 中移除的路径
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath javax.swing.tree.DefaultTreeSelectionModel.getSelectionPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 selection 中的第一个路径。如果当前只选择一项，则此方法非常有用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath[] javax.swing.tree.DefaultTreeSelectionModel.getSelectionPaths()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 selection 中的路径。如果当前没有选择任何内容，则返回 null（或一个空数组）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultTreeSelectionModel.getSelectionCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回选择的路径数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultTreeSelectionModel.isPathSelected(TreePath path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果当前选择了路径 <code>path</code>，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultTreeSelectionModel.isSelectionEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 selection 当前为空，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.clearSelection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清空当前的 selection。如果这表示当前 selection 中的更改，则通知选择侦听器。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.addTreeSelectionListener(TreeSelectionListener x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向每次已选的 TreePaths 集合发生更改时都会得到通知的侦听器列表添加 x。
+
+@param x 要添加的新侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.removeTreeSelectionListener(TreeSelectionListener x)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从每次已选的 TreePaths 集合发生更改时都会得到通知的侦听器列表中移除 x。
+
+@param x 要移除的侦听器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.event.TreeSelectionListener[] javax.swing.tree.DefaultTreeSelectionModel.getTreeSelectionListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已在此模型上注册的所有树选择侦听器组成的数组。
+
+@return 此模型的所有 <code>TreeSelectionListener</code>，如果当前没有已注册的树选择侦听器，则返回一个空数组。
+
+@see #addTreeSelectionListener
+@see #removeTreeSelectionListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.tree.DefaultTreeSelectionModel.fireValueChanged(TreeSelectionEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知已注册此对象上的树选择事件的所有侦听器。
+@see #addTreeSelectionListener
+@see EventListenerList
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] javax.swing.tree.DefaultTreeSelectionModel.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前已在此模型上注册为 <code><em>Foo</em>Listener</code> 的所有对象组成的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以通过下面的代码查询 <code>DefaultTreeSelectionModel</code> <code>m</code> 的树选择侦听器：
+
+ <pre>TreeSelectionListener[] tsls = (TreeSelectionListener[])(m.getListeners(TreeSelectionListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 所请求侦听器的类型；该参数应该指定一个从 <code>java.util.EventListener</code> 继承的接口
+@return 在此容器上注册为 <code><em>Foo</em>Listener</code> 的所有对象的数组，如果没有添加这样的侦听器，则返回一个空数组
+@exception ClassCastException 如果 <code>listenerType</code> 没有指定实现 <code>java.util.EventListener</code> 的类或接口
+
+@see #getTreeSelectionListeners
+@see #getPropertyChangeListeners
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int[] javax.swing.tree.DefaultTreeSelectionModel.getSelectionRows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前已选的所有行。如果没有已选的 TreePath 或没有设置 RowMapper，此方法将返回 null（或一个空数组）。如果某些行不可见（即：对于与 TreePath 对应的行，RowMapper 返回 -1），则可能返回长度小于选择的 TreePath 长度的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultTreeSelectionModel.getMinSelectionRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从 RowMapper 获取的已选择的 TreePath 的当前集合中的最小值。如果没有选定任何内容，或不存在 RowMapper，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultTreeSelectionModel.getMaxSelectionRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从 RowMapper 获取的已选择的 TreePath 的当前集合中的最大值。如果没有选定任何内容，或不存在 RowMapper，则返回 -1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.swing.tree.DefaultTreeSelectionModel.isRowSelected(int row)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果选择了由 <code>row</code> 标识的行，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.tree.DefaultTreeSelectionModel.resetRowSelection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新此对象从 TreePath 到行的映射关系。当从 TreePaths 到整数的映射关系更改时（例如，扩展了节点），应调用此方法。
+<p>通常不必调用此方法，JTree 及其相关的侦听器将为您调用它。如果您正在实现自已的 View 类，则必须调用该方法。
+<p>这将调用 <code>insureRowContinuity</code>，以确保当前选择的 TreePath 基于选择模式仍然有效。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.tree.DefaultTreeSelectionModel.getLeadSelectionRow()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 lead selection 索引。它是添加的最后一个索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.tree.TreePath javax.swing.tree.DefaultTreeSelectionModel.getLeadSelectionPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回添加的最后一条路径。这可能与 JTree 维护的 leadSelectionPath 属性不同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.tree.DefaultTreeSelectionModel.addPropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 PropertyChangeListener 添加到侦听器列表。该侦听器是为所有属性注册的。
+ <p>
+当选择模式更改时，将激发 PropertyChangeEvent。
+
+@param   listener   要添加的 PropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.tree.DefaultTreeSelectionModel.removePropertyChangeListener(PropertyChangeListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从侦听器列表移除 PropertyChangeListener。此方法移除一个为所有属性注册的 PropertyChangeListener。
+
+@param listener  要移除的 PropertyChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.beans.PropertyChangeListener[] javax.swing.tree.DefaultTreeSelectionModel.getPropertyChangeListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>DefaultTreeSelectionModel</code> 上注册的所有属性更改侦听器组成的数组。
+
+@return 此模型的所有 <code>PropertyChangeListener</code>，如果当前没有注册的属性更改侦听器，则返回一个空数组
+
+@see #addPropertyChangeListener
+@see #removePropertyChangeListener
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.tree.DefaultTreeSelectionModel.insureRowContinuity()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确保当前选择的 <code>TreePath</code> 对于当前选择模式是有效的。如果选择模式为 <code>CONTIGUOUS_TREE_SELECTION</code>，并且 <code>RowMapper</code> 存在，则此方法将确保所有的行是连续的，即：排序时，所有的行都是有顺序的，并且没有间隙。如果选择不是连续的，则重设该选择，以包含在排序时连续行的第一个设置。
+ <p>
+如果选择模式为 <code>SINGLE_TREE_SELECTION</code>，并且选择了多个 TreePath，则重设该选择，以包含当前选择的第一个路径。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.tree.DefaultTreeSelectionModel.arePathsContiguous(javax.swing.tree.TreePath[] paths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果路径是连续的，或者此对象没有 RowMapper，则返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.tree.DefaultTreeSelectionModel.canPathsBeAdded(javax.swing.tree.TreePath[] paths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于测试是否可以添加特定的 <code>TreePath</code> 集合。如果 <code>paths</code> 为 null（或空），或此对象没有 RowMapper，或当前没有选择任何内容，或选择模式为 <code>DISCONTIGUOUS_TREE_SELECTION</code>，或将该路径添加到当前的 selection 仍得到 <code>TreePath</code> 的连续集，则此方法返回 true。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.tree.DefaultTreeSelectionModel.canPathsBeRemoved(javax.swing.tree.TreePath[] paths)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果可以移除该路径而不中断该模型的连续性，则返回 true。这样开销相当大。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.tree.DefaultTreeSelectionModel.notifyPathChange(java.util.Vector<javax.swing.tree.PathPlaceHolder> changedPaths, TreePath oldLeadSelection)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知侦听器路径中的更改。changePaths 应包含 PathPlaceHolder 的实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.tree.DefaultTreeSelectionModel.updateLeadIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新 leadIndex 实例变量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.tree.DefaultTreeSelectionModel.insureUniqueness()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此方法已过时，并且其实现现在是一个 noop。它仍由 setSelectionPaths 和 addSelectionPaths 调用，但只是用于向后兼容。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.tree.DefaultTreeSelectionModel.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回显示并标识此对象属性的字符串。
+
+@return 此对象的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object javax.swing.tree.DefaultTreeSelectionModel.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回具有相同 selection 的此对象的副本。此方法不复制选择侦听器和属性侦听器。
+
+@exception CloneNotSupportedException  此类的实例从不抛出
+
+<!-- END DATA -->

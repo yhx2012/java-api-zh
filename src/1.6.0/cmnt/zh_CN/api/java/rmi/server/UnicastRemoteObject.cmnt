@@ -1,0 +1,176 @@
+<!-- BEGIN KEY -->
+public class java.rmi.server.UnicastRemoteObject extends java.rmi.server.RemoteServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于导出带 JRMP 的远程对象和获得与该远程对象通信的 stub。
+
+<p>对于下面的构造方法和静态 <code>exportObject</code> 方法，正在导出的远程对象的 stub 按以下方式获得：
+
+ <p><ul>
+
+<li>如果使用 {@link #exportObject(Remote) UnicastRemoteObject.exportObject(Remote)} 方法导出该远程对象，则加载 stub 类（通常使用 <code>rmic</code> 工具从远程对象的类预生成）并按以下方式构造 stub 类的实例。
+ <ul>
+
+<li>&ldquo;根类&rdquo;按以下情形确定：如果远程对象的类直接实现扩展 {@link Remote} 的接口，则远程对象的类为根类；否则，根类为直接实现扩展 <code>Remote</code> 接口的远程对象类的最具派生能力的超类。
+
+<li>要加载的 stub 类的名称通过连接带有后缀 <code>&quot;_Stub&quot;</code> 的根类的二进制名称确定。
+
+<li>按使用根类的类加载器的名称加载 stub 类。该 stub 类必须扩展 {@link RemoteStub} 并且必须有公共构造方法，该构造方法有一个属于类型 {@link RemoteRef} 的参数。
+
+<li>最后，用 {@link RemoteRef} 构造 stub 类的实例。
+ </ul>
+
+<li>如果无法找到适当的 stub 类，或无法加载 stub 类，或创建 stub 实例时出现问题，则抛出 {@link StubNotFoundException}。
+
+ <p>
+<li>对于所有其他导出方式：
+ <p><ul>
+
+<li>如果无法加载远程对象的 stub 类（如上所述）或将系统属性 <code>java.rmi.server.ignoreStubClasses</code> 设置为 <code>&quot;true&quot;</code>（不分大小写），则用以下属性构造 {@link java.lang.reflect.Proxy} 实例：
+
+ <ul>
+
+<li>代理的实例由远程对象类的类加载器定义。
+
+<li>该代理实现由远程对象类实现的所有远程接口。
+
+<li>代理的调用处理程序是用 {@link RemoteRef} 构造的 {@link RemoteObjectInvocationHandler} 实例。
+
+<li>如果无法创建代理，则抛出 {@link StubNotFoundException}。
+ </ul>
+
+ <p>
+<li>否则，将远程对象的 stub 类（如上所述）的实例用作 stub。
+
+ </ul>
+ </ul>
+
+@version 1.32, 12/19/03
+@author  Ann Wollrath
+@author  Peter Jones
+@since   JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.rmi.server.UnicastRemoteObject.port
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 要在其上导出对象的端口号
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.server.RMIClientSocketFactory java.rmi.server.UnicastRemoteObject.csf
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@serial 客户端套接字工厂（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.rmi.server.RMIServerSocketFactory java.rmi.server.UnicastRemoteObject.ssf
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+@serial 导出对象时使用的服务器端套接字工厂（如果有）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.server.UnicastRemoteObject() throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用匿名端口创建并导出一个新 UnicastRemoteObject 对象。
+@throws RemoteException 如果导出对象失败
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.server.UnicastRemoteObject(int port) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的特定端口创建并导出一个新 UnicastRemoteObject 对象。
+@param port 远程对象在其上接收调用的端口号（如果 <code>port</code> 为 0，则选择匿名端口）
+@throws RemoteException 如果导出对象失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.server.UnicastRemoteObject(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的特定端口和套接字工厂创建并导出一个新 UnicastRemoteObject 对象。
+@param port 远程对象在其上接收调用的端口号（如果 <code>port</code> 为 0，则选择匿名端口）
+@param csf 用于调用远程对象的客户端套接字工厂
+@param ssf 用于接收远程调用的服务器端套接字工厂
+@throws RemoteException 如果导出对象失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.rmi.server.UnicastRemoteObject.clone() throws java.lang.CloneNotSupportedException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与初始对象不同的远程对象的副本。
+
+@exception CloneNotSupportedException 如果因为 RemoteException 复制失败。
+@return 新的远程对象
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.server.RemoteStub java.rmi.server.UnicastRemoteObject.exportObject(Remote obj) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用匿名端口导出远程对象，以便能够接收传入的调用。
+@param obj 要导出的远程对象
+@return 远程对象的 stub
+@exception RemoteException 如果导出失败
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.server.UnicastRemoteObject.exportObject(Remote obj, int port) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用提供的特定端口导出远程对象，以便能够接收传入的调用。
+@param obj 要导出的远程对象
+@param port 要在其上导出对象的端口
+@return 远程对象的 stub
+@exception RemoteException 如果导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.server.UnicastRemoteObject.exportObject(Remote obj, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用由给定的套接字工厂指定的传送方式导出远程对象，以便能够接收传入的调用。
+@param obj 要导出的远程对象
+@param port 在其上导出对象的端口
+@param csf 用于调用远程对象的客户端套接字工厂
+@param ssf 用于接收远程调用的服务器端套接字工厂
+@return 远程对象的 stub
+@exception RemoteException 如果导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.rmi.server.UnicastRemoteObject.unexportObject(Remote obj, boolean force) throws java.rmi.NoSuchObjectException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 RMI 运行时移除远程对象 obj。如果成功，该对象可以不再接受传入的 RMI 调用。如果 force 参数为 true，则不会强行导出该对象，即使挂起远程对象的调用或远程对象仍在进行调用也一样。如果 force 参数为 false，则只有在未挂起且未调用对象的情况下才不会导出该对象。
+
+@param obj 将不导出的远程对象
+@param force 如果为 true，则即便挂起或正在进行调用也不导出对象；如果为 false，则只有在不挂起或未进行调用时才不导出对象
+@return 如果操作成功，则返回 true；否则返回 false
+@exception NoSuchObjectException 如果当前未导出远程对象
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.rmi.server.UnicastRemoteObject.readObject(ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将远程对象进行反序列化时重新将其导出。
+
+<!-- END DATA -->

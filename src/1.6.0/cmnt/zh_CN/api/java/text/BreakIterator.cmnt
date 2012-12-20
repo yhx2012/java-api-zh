@@ -1,0 +1,349 @@
+<!-- BEGIN KEY -->
+public abstract class java.text.BreakIterator extends java.lang.Object implements java.lang.Cloneable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BreakIterator</code> 类实现用于查找文本中边界位置的方法。<code>BreakIterator</code> 的实例维护一个当前位置并扫描文本，同时返回边界出现处的字符索引。在内部，<code>BreakIterator</code> 使用 <code>CharacterIterator</code> 扫描文本，因此能扫描实现该协议的任何对象所保存的文本。<code>StringCharacterIterator</code> 用于扫描传递给 <code>setText</code> 的 <code>String</code> 对象。
+
+ <p>
+可以用此类提供的工厂方法创建不同类型的分解迭代器实例。具体来说，可以使用 <code>getWordIterator</code>、<code>getLineIterator</code>、<code>getSentenceIterator</code> 和 <code>getCharacterIterator</code> 分别创建执行单词、行、句子和字符边界分析的 <code>BreakIterator</code>。一个 <code>BreakIterator</code> 只能在一个单元（单词、行、句子等）上工作。对于希望执行的每个单元边界分析，必须使用不同的迭代器。
+
+ <p><a name="line"></a>
+行边界分析决定了文本字符串换行时如何分解。这种机制能正确处理标点符号和带连字符的单词。实际的行分解还需要考虑可用的行宽，是通过较高级别的软件处理的。
+
+ <p><a name="sentence"></a>
+句子边界分析使选中内容能正确解释数字和缩写中的句点，以及结尾的标点符号，如引号和圆括号。
+
+ <p><a name="word"></a>
+单词边界分析用于搜索和替换功能，以及允许用户使用鼠标双击选择单词的文本编辑应用程序。单词选择能正确地解释单词内及单词后的标点符号。符号或者标点符号之类不属于单词的字符在其两端都会分解。
+
+ <p><a name="character"></a>
+字符边界分析允许用户以期望的方式与字符交互，比如，将光标移过一个文本字符串。字符边界分析提供通过字符串的正确导航，而无需考虑字符如何存储。返回的边界可能是增补字符的边界，由字符序列或连字集群组成。例如，一个强调字符可能存储为一个基本字符和一个可区别的标记。被用户视为字符的内容随语言不同而不同。
+
+ <p>
+由此类的工厂方法返回的 <code>BreakIterator</code> 实例只用于自然语言，不用于编程语言文本。不过，可以定义标记某种编程语言的子类。
+
+ <P>
+<strong>示例</strong>：<P>
+创建并使用文本边界：
+ <blockquote>
+ <pre>
+ public static void main(String args[]) {
+      if (args.length == 1) {
+          String stringToExamine = args[0];
+          //print each word in order
+          BreakIterator boundary = BreakIterator.getWordInstance();
+          boundary.setText(stringToExamine);
+          printEachForward(boundary, stringToExamine);
+          //print each sentence in reverse order
+          boundary = BreakIterator.getSentenceInstance(Locale.US);
+          boundary.setText(stringToExamine);
+          printEachBackward(boundary, stringToExamine);
+          printFirst(boundary, stringToExamine);
+          printLast(boundary, stringToExamine);
+      }
+ }
+ </pre>
+ </blockquote>
+
+按顺序打印每个元素：
+ <blockquote>
+ <pre>
+ public static void printEachForward(BreakIterator boundary, String source) {
+     int start = boundary.first();
+     for (int end = boundary.next();
+          end != BreakIterator.DONE;
+          start = end, end = boundary.next()) {
+          System.out.println(source.substring(start,end));
+     }
+ }
+ </pre>
+ </blockquote>
+
+按逆序打印每个元素：
+ <blockquote>
+ <pre>
+ public static void printEachBackward(BreakIterator boundary, String source) {
+     int end = boundary.last();
+     for (int start = boundary.previous();
+          start != BreakIterator.DONE;
+          end = start, start = boundary.previous()) {
+         System.out.println(source.substring(start,end));
+     }
+ }
+ </pre>
+ </blockquote>
+
+打印第一个元素：
+ <blockquote>
+ <pre>
+ public static void printFirst(BreakIterator boundary, String source) {
+     int start = boundary.first();
+     int end = boundary.next();
+     System.out.println(source.substring(start,end));
+ }
+ </pre>
+ </blockquote>
+
+打印最后一个元素：
+ <blockquote>
+ <pre>
+ public static void printLast(BreakIterator boundary, String source) {
+     int end = boundary.last();
+     int start = boundary.previous();
+     System.out.println(source.substring(start,end));
+ }
+ </pre>
+ </blockquote>
+
+打印指定位置的元素：
+ <blockquote>
+ <pre>
+ public static void printAt(BreakIterator boundary, int pos, String source) {
+     int end = boundary.following(pos);
+     int start = boundary.previous();
+     System.out.println(source.substring(start,end));
+ }
+ </pre>
+ </blockquote>
+
+查找下一个单词：
+ <blockquote>
+ <pre>
+ public static int nextWordStartAfter(int pos, String text) {
+     BreakIterator wb = BreakIterator.getWordInstance();
+     wb.setText(text);
+     int last = wb.following(pos);
+     int current = wb.next();
+     while (current != BreakIterator.DONE) {
+         for (int p = last; p &lt; current; p++) {
+             if (Character.isLetter(text.codePointAt(p)))
+                 return last;
+         }
+         last = current;
+         current = wb.next();
+     }
+     return BreakIterator.DONE;
+ }
+ </pre>
+（BreakIterator.getWordInstance() 返回的迭代器是唯一的，因为它所返回的分解位置不表示迭代内容的开始和结束。也就是说，一个句子分解迭代器返回的每一个分解表示一个句子的结束和下一个句子的开始。使用单词分解迭代器，两个边界之间的字符可能是一个单词，也可能是两个单词之间的标点符号或空格。以上代码使用一个简单的示例来确定哪一个边界是单词的开始：如果此边界和下一边界之间的字符至少包含了一个字母（可以是字母表中的字母、中日韩 (CJK) 表意字符、韩文音节、日语假名字符等等），那么此边界和下一边界之间的文本就是一个单词；否则，它就是单词之间的内容。）
+ </blockquote>
+
+@see CharacterIterator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.text.BreakIterator.DONE
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在已经到达第一个或最后一个文本边界时，previous()、next()、next(int)、preceding(int) 和 following(int) 将返回 DONE。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.text.BreakIterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法。BreakIterator 是无状态的并且没有任何默认行为。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.text.BreakIterator.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此迭代器的副本。
+@return 此迭代器的副本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.first()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第一个边界。迭代器的当前位置被设置为第一个文本边界。
+@return  第一个文本边界的字符索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.last()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最后一个边界。迭代器的当前位置被设置为最后一个文本边界。
+@return 最后一个文本边界的字符索引。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.next(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从当前边界起第 n 个边界。如果已经到达第一个或最后一个文本边界，则返回 <code>BreakIterator.DONE</code>，当前位置被设置为第一个文本边界或最后一个文本边界，具体取决于所到达的边界。否则，迭代器的当前位置被设置为新边界。例如，如果迭代器的当前位置是第 m 个文本边界，并且从当前文本边界到最后一个文本边界之间还有三个边界，则 next(2) 调用将返回 m + 2。新文本位置被设置为第 (m + 2) 个文本边界。next(4) 调用将返回 <code>BreakIterator.DONE</code>，而最后一个文本边界将成为新的文本位置。
+
+@param n 要返回的边界。0 值表示不执行任何操作。负值移向前面的边界，正值移向后面的边界。
+@return 从当前位置起第 n 个边界的字符索引；如果已经到达第一个或最后一个文本边界，则返回 <code>BreakIterator.DONE</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.next()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前边界的后一个边界。如果当前边界是最后一个文本边界，则返回 <code>BreakIterator.DONE</code>，迭代器的当前位置不变。否则，迭代器的当前位置被设置为当前边界的后一个边界。
+@return 下一个文本边界的字符索引；如果当前边界是最后一个文本边界，则返回 <code>BreakIterator.DONE</code>。等效于 next(1)。
+@see #next(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.previous()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回当前边界的前一个边界。如果当前边界是第一个文本边界，则返回 <code>BreakIterator.DONE</code>，迭代器的当前位置不变。否则，迭代器的当前位置被设置为当前边界的前一个边界。
+ @return 前一个文本边界的字符索引；如果当前边界是第一个文本边界，则返回 <code>BreakIterator.DONE</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.following(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定字符偏移量后面的第一个边界。如果指定偏移量等于最后一个文本边界，则返回 <code>BreakIterator.DONE</code>，迭代器的当前位置不变。否则，迭代器的当前位置被设置为返回的边界。返回的值总是大于 offset，或者为值 <code>BreakIterator.DONE</code>。
+ @param offset 开始进行扫描的字符偏移量。
+ @return 指定偏移量之后的第一个边界；如果传入最后一个文本边界作为偏移量，则返回 <code>BreakIterator.DONE</code>。
+ @exception  IllegalArgumentException 如果指定偏移量小于第一个文本边界或者大于最后一个文本边界。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.text.BreakIterator.preceding(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回指定字符偏移量前面的最后一个边界。如果指定偏移量等于第一个文本边界，则返回 <code>BreakIterator.DONE</code>，迭代器的当前位置不变。否则，迭代器的当前位置被设置为返回的边界。返回的值总是小于 offset，或者为值 <code>BreakIterator.DONE</code>。
+ @param offset 开始进行扫描的字符偏移量。
+ @return 指定偏移量之前的最后一个边界；如果传入第一个文本边界作为偏移量，则返回 <code>BreakIterator.DONE</code>。
+ @exception   IllegalArgumentException 如果指定偏移量小于第一个文本边界或者大于最后一个文本边界。
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.text.BreakIterator.isBoundary(int offset)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果指定字符偏移量是一个文本边界，则返回 true。
+ @param offset 要检查的字符偏移量。
+ @return 如果 "offset" 是一个边界位置，则返回 <code>true</code>；否则返回 <code>false</code>。
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.text.BreakIterator.current()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回最近由 next()、next(int)、previous()、first()、last()、following(int) 或 preceding(int) 返回的文本边界的字符索引。如果这些方法因为到达第一个或最后一个文本边界而返回 <code>BreakIterator.DONE</code>，则返回第一个或最后一个文本边界，具体取决于到达的是哪一个边界。
+ @return 从上述方法返回的文本边界，即第一个或最后一个文本边界。
+ text boundary.
+ @see #next()
+ @see #next(int)
+ @see #previous()
+ @see #first() 
+ @see #last()
+ @see #following(int)
+ @see #preceding(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.text.CharacterIterator java.text.BreakIterator.getText()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取被扫描的文本 
+@return 被扫描的文本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.text.BreakIterator.setText(String newText)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置要被扫描的新文本字符串。当前扫描位置被重置为 first()。
+ @param newText 要扫描的新文本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.text.BreakIterator.setText(CharacterIterator newText)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 设置一个新文本用于扫描。当前扫描位置被重置为 first()。
+ @param newText 要扫描的新文本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getWordInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于{@linkplain Locale#getDefault() 默认语言环境}<a href="#word">单词分解</a>的新 <code>BreakIterator</code> 实例。
+ @return 用于单词分解的分解迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getWordInstance(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于给定语言环境<a href="#word">单词分解</a>的新 <code>BreakIterator</code> 实例。
+ @param locale 所需的语言环境
+ @return 用于单词分解的分解迭代器
+ @exception NullPointerException 如果 <code>locale</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getLineInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于{@linkplain Locale#getDefault() 默认语言环境}<a href="#line">行分解</a>的新 <code>BreakIterator</code> 实例。
+ @return 用于行分解的分解迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getLineInstance(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于给定语言环境<a href="#line">行分解</a>的新 <code>BreakIterator</code> 实例。
+ @param locale 所需的语言环境
+ @return 用于行分解的分解迭代器
+ @exception NullPointerException 如果 <code>locale</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getCharacterInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于{@linkplain Locale#getDefault() 默认语言环境}<a href="#character">字符分解</a>的新 <code>BreakIterator</code> 实例。
+ @return 用于字符分解的分解迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getCharacterInstance(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于给定语言环境<a href="#character">字符分解</a>的新 <code>BreakIterator</code> 实例。
+ @param locale 所需的语言环境
+ @return 用于字符分解的分解迭代器
+ @exception NullPointerException 如果 <code>locale</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getSentenceInstance()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于{@linkplain Locale#getDefault() 默认语言环境}<a href="#sentence">句子分解</a>的新 <code>BreakIterator</code> 实例。
+ @return 用于句子分解的分解迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.text.BreakIterator java.text.BreakIterator.getSentenceInstance(Locale locale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个用于给定语言环境<a href="#sentence">句子分解</a>的新 <code>BreakIterator</code> 实例。
+ @param locale 所需的语言环境
+ @return 用于句子分解的分解迭代器
+ @exception NullPointerException 如果 <code>locale</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.util.Locale[] java.text.BreakIterator.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个数组，它由此类的 <code>getInstance</code> 方法可为之返回本地化实例的所有语言环境组成。返回的数组表示 Java 运行时所支持的语言环境和已安装的 {@link java.text.spi.BreakIteratorProvider BreakIteratorProvider} 实现所支持的语言环境的并集。该数组至少必须包含一个等于 {@link java.util.Locale#US Locale.US} 的 <code>Locale</code> 实例。
+ @return 一个语言环境数组，可获得这些语言环境的本地化 <code>BreakIterator</code> 实例。
+
+<!-- END DATA -->

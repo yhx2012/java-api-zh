@@ -1,0 +1,48 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.concurrent.AbstractExecutorService extends java.lang.Object implements java.util.concurrent.ExecutorService
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 提供 {@link ExecutorService} 执行方法的默认实现。此类使用 <tt>newTaskFor</tt> 返回的 {@link RunnableFuture} 实现 <tt>submit</tt>、<tt>invokeAny</tt> 和 <tt>invokeAll</tt> 方法，默认情况下，{@link RunnableFuture} 是此包中提供的 {@link FutureTask} 类。例如，<tt>submit(Runnable)</tt> 的实现创建了一个关联 <tt>RunnableFuture</tt> 类，该类将被执行并返回。子类可以重写 <tt>newTaskFor</tt> 方法，以返回 <tt>FutureTask</tt> 之外的 <tt>RunnableFuture</tt> 实现。
+
+ <p> <b>扩展示例</b>。以下是一个类的简要介绍，该类定制 {@link ThreadPoolExecutor} 使用 <tt>CustomTask</tt> 类替代默认 <tt>FutureTask</tt>：
+ <pre>
+ public class CustomThreadPoolExecutor extends ThreadPoolExecutor {
+
+   static class CustomTask&lt;V&gt; implements RunnableFuture&lt;V&gt; {...}
+
+   protected &lt;V&gt; RunnableFuture&lt;V&gt; newTaskFor(Callable&lt;V&gt; c) {
+       return new CustomTask&lt;V&gt;(c);
+   }
+   protected &lt;V&gt; RunnableFuture&lt;V&gt; newTaskFor(Runnable r, V v) {
+       return new CustomTask&lt;V&gt;(r, v);
+   }
+   // ... add constructors, etc.
+ }
+ </pre>
+ @since 1.5
+ @author Doug Lea
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.RunnableFuture<T> java.util.concurrent.AbstractExecutorService.newTaskFor(Runnable runnable, T value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 为给定可运行任务和默认值返回一个 <tt>RunnableFuture</tt>。
+
+ @param runnable 将被包装的可运行任务
+ @param value 用于所返回的将来任务的默认值
+ @return 一个 <tt>RunnableFuture</tt>，在运行的时候，它将运行底层可运行任务，作为 <tt>Future</tt> 任务，它将生成给定值作为其结果，并为底层任务提供取消操作。
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.concurrent.RunnableFuture<T> java.util.concurrent.AbstractExecutorService.newTaskFor(java.util.concurrent.Callable<T> callable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 为给定可调用任务返回一个 <tt>RunnableFuture</tt>。
+
+ @param callable 将包装的可调用任务
+ @return 一个 <tt>RunnableFuture</tt>，在运行的时候，它将调用底层可调用任务，作为 <tt>Future</tt> 任务，它将生成可调用的结果作为其结果，并为底层任务提供取消操作。
+ @since 1.6
+
+<!-- END DATA -->

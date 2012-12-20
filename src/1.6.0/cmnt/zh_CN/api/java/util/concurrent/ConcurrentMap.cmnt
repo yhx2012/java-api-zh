@@ -1,0 +1,99 @@
+<!-- BEGIN KEY -->
+public interface java.util.concurrent.ConcurrentMap extends java.util.Map
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供其他原子 <tt>putIfAbsent</tt>、<tt>remove</tt>、<tt>replace</tt> 方法的 {@link java.util.Map}。
+
+<p>内存一致性效果：当存在其他并发 collection 时，将对象放入 {@code ConcurrentMap} 之前的线程中的操作 <a href="package-summary.html#MemoryVisibility"><i>happen-before</i></a> 随后通过另一线程从 {@code ConcurrentMap} 中访问或移除该元素的操作。
+
+<p>此接口是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+  
+@since 1.5
+@author Doug Lea
+@param <K> 此映射维护的键类型
+@param <V> 映射值的类型 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentMap.putIfAbsent(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果指定键已经不再与某个值相关联，则将它与给定值关联。这等价于：
+ <pre>
+   if (!map.containsKey(key)) 
+      return map.put(key, value);
+  else
+       return map.get(key);</pre>
+除了原子地执行此操作之外。
+
+@param key 与指定值相关联的键
+@param value 与指定键相关联的值
+@return 与指定键相关联的先前值，如果该键没有映射关系，则返回 <tt>null</tt>。（如果该实现支持 null 值，则返回 <tt>null</tt> 还可以指示此映射以前曾将 <tt>null</tt> 与该键相关联）。
+@throws UnsupportedOperationException 如果此映射不支持 <tt>put</tt> 操作
+@throws ClassCastException 如果指定键或值的类不允许将其存储在此映射中
+@throws NullPointerException 如果指定键或值为 null，并且此映射不允许 null 键或值
+@throws IllegalArgumentException 如果指定键或值的某些属性不允许将其存储在此映射中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentMap.remove(Object key, Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只有目前将键的条目映射到给定值时，才移除该键的条目。这等效于：
+ <pre>
+   if (map.containsKey(key) &amp;&amp; map.get(key).equals(value)) {
+       map.remove(key);
+       return true;
+   } else return false;</pre>
+不同之处在于该操作是以原子方式 (atomically) 执行的。
+
+@param key 与指定值相关联的键
+@param value 期望与指定键相关联的值
+@return 如果该值被移除，则返回 <tt>true</tt>
+@throws UnsupportedOperationException 如果此映射不支持 <tt>remove</tt> 操作
+@throws ClassCastException 如果该键或值是此映射的合适类型（可选）
+@throws NullPointerException 如果指定键或值为 null，并且此映射不允许 null 键或值（可选）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.concurrent.ConcurrentMap.replace(K key, V oldValue, V newValue)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只有目前将键的条目映射到给定值时，才替换该键的条目。这等效于：
+ <pre>
+   if (map.containsKey(key) &amp;&amp; map.get(key).equals(oldValue)) {
+       map.put(key, newValue);
+       return true;
+   } else return false;</pre>
+不同之处在于该操作是以原子方式执行的。
+
+@param key 与指定值相关联的键
+@param oldValue 期望与指定键相关联的值
+@param newValue 与指定键相关联的值
+@return 如果该值被替换，则返回 <tt>true</tt>
+@throws UnsupportedOperationException 如果此映射不支持 <tt>put</tt> 操作
+@throws ClassCastException 如果指定键或值的类不允许将其存储在此映射中
+@throws NullPointerException 如果指定键或值为 null，并且此映射不允许 null 键或值
+@throws IllegalArgumentException 如果指定键或值的某些属性不允许将其存储在此映射中
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public V java.util.concurrent.ConcurrentMap.replace(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+只有目前将键的条目映射到某一值时，才替换该键的条目。这等效于：
+ <pre>
+   if (map.containsKey(key)) {
+       return map.put(key, value);
+   } else return null;</pre>
+不同之处在于该操作是以原子方式执行的。
+
+@param key 与指定值相关联的键
+@param value 与指定键相关联的值
+@return 与指定键相关联的先前值，如果该键没有映射关系，则返回 <tt>null</tt>。（如果该实现支持 null 值，则返回 <tt>null</tt> 还可以指示此映射以前曾将 <tt>null</tt> 与该键相关联）。
+@throws UnsupportedOperationException 如果此映射不支持 <tt>put</tt> 操作
+@throws ClassCastException 如果指定键或值的类不允许将其存储在此映射中
+@throws NullPointerException 如果指定键或值为 null，并且此映射不允许 null 键或值
+@throws IllegalArgumentException 如果指定键或值的某些属性不允许将其存储在此映射中
+
+<!-- END DATA -->

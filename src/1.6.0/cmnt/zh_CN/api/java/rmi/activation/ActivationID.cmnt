@@ -1,0 +1,98 @@
+<!-- BEGIN KEY -->
+public class java.rmi.activation.ActivationID extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活利用特定的标识符来表示远程对象，对象能随着时间被激活。一个激活标识符（类 <code>ActivationID</code> 的一个实例）包含了激活一个对象所需的几部分信息：
+ <ul>
+<li> 到对象激活器的远程引用（一个 {@link java.rmi.server.RemoteRef RemoteRef} 实例），以及
+<li> 对象的惟一标识符（一个 {@link java.rmi.server.UID UID} 实例）。 </ul> <p>
+
+对象的激活标识符能通过利用激活系统注册一个对象获得。注册可通过以下几种方式完成： <ul>
+<li>通过 <code>Activatable.register</code> 方法
+<li>通过第一个 <code>Activatable</code> 构造方法（带有三个参数，并且注册和导出该对象)，以及
+<li>通过第一个 <code>Activatable.exportObject</code> 方法，它带有激活描述符、对象以及端口作为参数；此方法同时注册和导出对象。 </ul>
+
+@author	Ann Wollrath
+@version	1.28, 03/12/19
+@see		Activatable
+@since	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.activation.ActivationID(Activator activator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>ActivationID</code> 的构造方法带有单个参数 activator，这指定了一个对激活器（负责激活与此标识符相关联的对象）的远程引用。<code>ActivationID</code> 的实例是全局惟一的。
+
+@param activator 对负责激活对象的激活器的引用
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.rmi.Remote java.rmi.activation.ActivationID.activate(boolean force) throws java.rmi.activation.ActivationException, java.rmi.activation.UnknownObjectException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+激活此 id 的对象。
+
+@param force 如果为 true，则当激活对象时强制激活器与组联络（而不是返回一个缓存引用）；如果为 false，则返回一个缓存值也可以接受
+@return 对激活远程对象的引用
+@exception ActivationException 如果激活失败
+@exception UnknownObjectException 如果对象未知
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.rmi.activation.ActivationID.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回激活 id 的哈希码。引用同一个远程对象的两个标识符将具有相同的哈希码。
+
+@see java.util.Hashtable
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.rmi.activation.ActivationID.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较两个激活 id 的内容相等性。如果以下两个条件都为 true，则返回 true：1) 惟一标识符相等（从内容上）和 2) 每个标识符指定的激活器都引用相同的远程对象。
+
+@param	obj	要与之比较的 Object
+@return	如果这些 Object 相等，则返回 true；否则返回 false
+@see		java.util.Hashtable
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.rmi.activation.ActivationID.readObject(ObjectInputStream in) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对自定义序列化的 <code>readObject</code>。 
+
+<p>此方法为此类读取此对象的序列化形式，方式如下：
+ 
+<p><code>readObject</code> 方法在 <code>in</code> 被调用，以读取此对象的惟一标识符（一个 {@link java.rmi.server.UID UID} 实例）。
+
+<p>接下来，<code>readUTF</code> 方法在 <code>in</code> 上被调用，以读取此对象的激活器的 <code>RemoteRef</code> 实例的外部引用类型名称。然后，对应于外部引用类型名称（由 <code>readUTF</code> 返回），<code>RemoteRef</code> 实例由一个特定于实现的类创建，并且 <code>readExternal</code> 方法在该 <code>RemoteRef</code> 实例上被调用，以读取对应于外部引用类型名称的外部形式。
+
+<p>注：如果外部引用类型名称为 <code>&quot;UnicastRef&quot;</code>、<code>&quot;UnicastServerRef&quot;</code>、<code>&quot;UnicastRef2&quot;</code>、<code>&quot;UnicastServerRef2&quot;</code> 或 <code>&quot;ActivatableRef&quot;</code>，则必须找到对应的特定于实现的类，并且其 <code>readExternal</code> 方法必须为外部类型名称读取序列数据，正如指定将此类写入 <b>serialData</b> 文档一样。如果外部引用类型名称是任何其他字符串（长度不为零），则将抛出 <code>ClassNotFoundException</code>，除非该实现提供了对应于外部引用类型名称的特定于实现的类，在这种情况下，<code>RemoteRef</code> 将是特定于实现的类的一个实例。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.rmi.activation.ActivationID.writeObject(ObjectOutputStream out) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+针对自定义序列化的 <code>writeObject</code>。
+
+<p>此方法为此类写入此对象的序列化形式，方式如下：
+
+<p>传入此对象的惟一标识符（一个 {@link java.rmi.server.UID UID} 实例）作为参数，<code>writeObject</code> 方法在 <code>out</code> 上被调用。
+
+<p>接下来，{@link java.rmi.server.RemoteRef#getRefClass(java.io.ObjectOutput) getRefClass} 方法在激活器的 <code>RemoteRef</code> 实例上被调用，以获得其外部引用类型名称。然后，<code>writeUTF</code> 方法使用 <code>getRefClass</code> 返回的值在 <code>out</code> 上被调用，接着 <code>writeExternal</code> 方法传递 <code>out</code> 作为参数在 <code>RemoteRef</code> 实例上被调用。
+
+@serialData 此类的序列化数据组成一个 <code>java.rmi.server.UID</code>（用 <code>ObjectOutput.writeObject</code> 方法写入），后面紧跟激活器 <code>RemoteRef</code> 实例（用 <code>ObjectOutput.writeUTF</code> 写入的一个字符串）的外部类型名称，后面紧跟由其 <code>writeExternal</code> 方法写入的 <code>RemoteRef</code> 实例的外部形式。
+
+<p>使用在 {@link java.rmi.server.RemoteObject RemoteObject} 的 <code>writeObject</Code> 方法 <code>serialData</code> 规范中指定的外部引用类型名称的定义来确定 <b>RemoteRef</b> 实例的外部引用类型名称。类似地，通过 <code>RemoteRef</code> 实现类的 <code>writeExternal</code> 方法写入和通过 <code>readExternal</code> 方法读取的数据对应于在 {@link java.rmi.server.RemoteObject RemoteObject} <code>writeObject</code> 方法 <b>serialData</b> 规范中指定的每一个已定义外部引用类型名称。
+
+<!-- END DATA -->

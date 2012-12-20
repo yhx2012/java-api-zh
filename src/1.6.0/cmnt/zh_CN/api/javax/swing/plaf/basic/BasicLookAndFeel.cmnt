@@ -1,0 +1,187 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.plaf.basic.BasicLookAndFeel extends javax.swing.LookAndFeel implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 Swing 创建外观时要使用的基类。
+ <p>
+{@code BasicLookAndFeel} 提供的每个 {@code ComponentUI} 根据默认表派生其行为。除非另行说明，否则此包中的每个 {@code ComponentUI} 将记录他们所使用的默认值集合。除非另行说明，否则在调用 {@code installUI} 时将安装该默认值，并在安装默认值时遵循 {@code LookAndFeel} 中所描述的建议。 
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@version 1.238 03/05/04
+@author unattributed
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Object javax.swing.plaf.basic.BasicLookAndFeel.audioLock
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+操纵 clipPlaying 时使用的锁。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.sound.sampled.Clip javax.swing.plaf.basic.BasicLookAndFeel.clipPlaying
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当前播放的 Clip（在 AudioAction 中设置）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.UIDefaults javax.swing.plaf.basic.BasicLookAndFeel.getDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回外观默认值。通过按顺序调用 {@code initClassDefaults}、{@code initSystemColorDefaults} 和 {@code initComponentDefaults} 填充返回的 {@code UIDefaults}。
+ <p>
+尽管此方法是公共的，但它只有在外观被设置为当前外观并在调用 {@code initialize} 之后时才由 {@code UIManager} 调用。
+
+ @return 外观默认值
+
+ @see #initClassDefaults
+ @see #initSystemColorDefaults
+ @see #initComponentDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicLookAndFeel.initialize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicLookAndFeel.uninitialize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+{@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicLookAndFeel.initClassDefaults(UIDefaults table)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 用从 {@code uiClassID} 到 ui 类的完全限定名称的映射关系填充 {@code table}。特定 {@code uiClassID} 的值为 {@code "javax.swing.plaf.basic.Basic + uiClassID"}。例如，{@code uiClassID} {@code TreeUI} 的值为 {@code "javax.swing.plaf.basic.BasicTreeUI"}。
+
+ @param table 要添加项的 {@code UIDefaults} 实例 
+ @throws NullPointerException 如果 {@code table} 为 {@code null}
+
+ @see javax.swing.LookAndFeel
+ @see #getDefaults
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicLookAndFeel.initSystemColorDefaults(UIDefaults table)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 用系统颜色填充 {@code table}。此方法创建一个 {@code name-color} 对的数组并调用 {@code loadSystemColors}。
+ <p>
+ 该名称是对应于 {@code SystemColor} 类中一个静态 {@code SystemColor} 字段名称的 {@code String}。名称-颜色对用于创建每个这样的 {@code SystemColor} 字段。 
+ <p>
+ {@code color} 对应于 {@code Color.decode} 所理解的十六进制 {@code String}。例如，一个 {@code name-color} 对是 {@code "desktop"-"#005C5C"}。这对应于 {@code SystemColor} 字段 {@code desktop}，其颜色值为 {@code new Color(0x005C5C)}。
+ <p>
+以下显示了两个 {@code name-color} 对：
+ <pre>
+   String[] nameColorPairs = new String[] {
+          "desktop", "#005C5C",
+    "activeCaption", "#000080" };
+   loadSystemColors(table, nameColorPairs, isNativeLookAndFeel());
+ </pre>
+
+如前所述，此方法使用提供的 {@code table} 和 {@code name-color} 对数组调用 {@code loadSystemColors}。{@code loadSystemColors} 的最后一个参数指示是否应该使用 {@code SystemColor} 中字段的值。此方法将 {@code isNativeLookAndFeel()} 的值作为最后一个参数传递给 {@code loadSystemColors}。
+
+ @param table 要添加值的 {@code UIDefaults} 对象
+ @throws NullPointerException 如果 {@code table} 为 {@code null}
+
+ @see java.awt.SystemColor
+ @see #getDefaults
+ @see #loadSystemColors
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicLookAndFeel.loadSystemColors(UIDefaults table, java.lang.String[] systemColors, boolean useNative)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 用 {@code systemColors} 中的 {@code name-color} 对填充 {@code table}。有关 {@code systemColors} 格式的详细信息，请参阅 {@link #initSystemColorDefaults(UIDefaults)}。 
+ <p>
+为 {@code systemColors} 中的每个 {@code name-color} 对添加一个项到 {@code table}。该项键是 {@code name-color} 对的 {@code name}。
+ <p>
+该项的值对应于 {@code name-color} 对的 {@code color}。该项的值以两种方式之一进行计算。无论使用哪种方法，该值始终是 {@code ColorUIResource}。
+ <p>
+ 如果 {@code useNative} 为 {@code false}，则通过使用 {@code Color.decode} 将 {@code String} 转换为 {@code Color} 来创建 {@code color}。如果 {@code decode} 不能将 {@code String} 转换为 {@code Color}（抛出 {@code NumberFormatException}），则使用黑色的 {@code ColorUIResource}。
+ <p>
+ 如果 {@code useNative} 为 {@code true}，则 {@code color} 是 {@code SystemColor} 中字段的值，其名称与 {@code name-color} 对的 {@code name} 相同。如果该字段无效，则使用黑色的 {@code ColorUIResource}。 
+
+ @param table 要添加值的 {@code UIDefaults} 对象
+ @param systemColors {@link #initSystemColorDefaults(UIDefaults)} 中所述的 {@code name-color} 对数组
+ @param useNative 该颜色是否可以从 {@code SystemColor} 或 {@code Color.decode} 获得
+ @throws NullPointerException 如果 {@code systemColors} 为 {@code null}；或者 {@code systemColors} 不为空，并且 {@code table} 为 {@code null}；或者 {@code name-color} 对的 name 之一为 {@code null}；或者 {@code useNative} 为 {@code false} ，并且 {@code name-color} 对的 {@code color} 之一为 {@code null}
+ @throws ArrayIndexOutOfBoundsException 如果 {@code useNative} 为 {@code false} ，并且 {@code systemColors.length} 为奇数
+
+ @see #initSystemColorDefaults(javax.swing.UIDefaults)
+ @see java.awt.SystemColor
+ @see java.awt.Color#decode(String)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicLookAndFeel.initComponentDefaults(UIDefaults table)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 用基本外观的默认值填充 {@code table}。 
+
+ @param table 要添加值的 {@code UIDefaults} 
+ @throws NullPointerException 如果 {@code table} 为 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.ActionMap javax.swing.plaf.basic.BasicLookAndFeel.getAudioActionMap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回包含此外观音频动作的 <code>ActionMap</code>。
+ <P>
+返回的 <code>ActionMap</code> 包含具有呈现听觉提示能力的 <code>Action</code>。这些听觉提示映射到用户和可能帮助最终用户了解的系统活动（如对话框的出现）。
+ <P>
+ 在适当时间，{@code ComponentUI} 负责从 <code>ActionMap</code> 获得 <code>Action</code> 并将它传递给 <code>playSound</code>。
+ <P>
+此方法首先使用 {@code "AuditoryCues.actionMap"} 键从默认值中查找 {@code ActionMap}。 
+ <p>
+ 如果值为{@code 非 null}，则返回该值。如果默认 {@code "AuditoryCues.actionMap"} 的值为 {@code null} ，并且默认 {@code "AuditoryCues.cueList"} 的值为{@code 非 null}，则创建一个 {@code ActionMapUIResource} 并进行填充。通过对 {@code "AuditoryCues.cueList"} 数组中的每个元素进行迭代来完成填充，通过调用 {@code createAudioAction()} 为每个元素创建 {@code
+ Action}。以数组元素为键将所得的 {@code Action} 置于 {@code ActionMapUIResource} 中。例如，如果 {@code
+ "AuditoryCues.cueList"} 数组包含单个元素（{@code
+ "audioKey"}），则创建一个 {@code ActionMapUIResource}，然后通过 {@code actionMap.put(cueList[0],
+ createAudioAction(cueList[0]))} 填充。
+ <p>
+ 如果默认 {@code "AuditoryCues.actionMap"} 的值为 {@code null} ，并且默认 {@code "AuditoryCues.cueList"} 的值为 {@code null}，则创建一个空 {@code ActionMapUIResource}。
+ 
+
+ @return      包含负责播放听觉提示的 {@code Action} 的 ActionMap 
+ @throws ClassCastException 如果默认 {@code "AuditoryCues.actionMap"} 的值不为 {@code ActionMap}，或者默认 {@code "AuditoryCues.cueList"} 的值不为 {@code Object[]}
+ @see #createAudioAction
+ @see #playSound(Action)
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.Action javax.swing.plaf.basic.BasicLookAndFeel.createAudioAction(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建并返回用于播放音频的 {@code Action}。
+ <p>
+如果 {@code key} 为{@code 非 null}，则使用取自带有 {@code key} 键的默认值的值创建 {@code Action}。当在 {@code Action} 上调用 {@code actionPerformed} 时，该值标识要加载的音源。通过 {@code getClass().getResourceAsStream()} 将音源加载到 {@code byte[]}。 
+
+ @param key 标识音频动作的键 
+ @return      用于播放该源的 {@code Action}；如果 {@code key} 为 {@code null}，则返回 {@code null}
+ @see #playSound(Action)
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicLookAndFeel.playSound(Action audioAction)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如有必要，在 {@code audioAction} 上调用 {@code actionPerformed} 以播放声音。如果 {@code "AuditoryCues.playList"} 默认的值为{@code
+ 非 null} {@code Object[]}（包含与 {@code audioAction} 的名称相等的 {@code String} 项），则调用 {@code actionPerformed} 方法。
+
+ @param audioAction 知道如何呈现与系统或用户活动关联的正在发生的 Action；忽略 {@code null} 值
+ @throws ClassCastException 如果 {@code audioAction} 为{@code 非 null} ，并且默认 {@code "AuditoryCues.playList"} 的值不为 {@code Object[]}
+ @since 1.4
+
+<!-- END DATA -->

@@ -1,0 +1,109 @@
+<!-- BEGIN KEY -->
+public class java.util.logging.StreamHandler extends java.util.logging.Handler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+基于流的日志 <tt>Handler</tt>。
+ <p>
+此类主要作为基类,或支持实现其他日志 <tt>Handlers</tt> 所用的类。
+ <p>
+将 <tt>LogRecords</tt> 发布到给定 <tt>java.io.OutputStream</tt>。
+ <p>
+<b>配置：</b>默认情况下，每个 <tt>SocketHandler</tt> 都是使用以下 <tt>StreamHandler</tt> 配置属性执行初始化的。如果未定义属性（或者属性具有无效值），则使用指定的默认值。
+ <ul>
+<li>   java.util.logging.StreamHandler.level 指定 <tt>Handler</tt> 的默认级别（默认值为 <tt>Level.INFO</tt>）。
+<li>   java.util.logging.StreamHandler.filter 指定要使用的 <tt>Filter</tt> 类的名称（默认值非 <tt>Filter</tt>）。
+<li>   java.util.logging.StreamHandler.formatter 指定要使用的 <tt>Formatter</tt>（默认值为 <tt>java.util.logging.SimpleFormatter</tt>）。
+<li>   java.util.logging.StreamHandler.encoding 要使用的字符集编码的名称（默认值为默认平台编码）。
+ </ul>
+
+@version 1.18, 12/19/03
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.StreamHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建不带当前输出流的 <tt>StreamHandler</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.StreamHandler(OutputStream out, Formatter formatter)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带给定 <tt>Formatter</tt> 和输出流的 <tt>StreamHandler</tt>。
+ <p>
+@param out         目标输出流
+@param formatter   用于格式化输出的 Formatter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.util.logging.StreamHandler.setOutputStream(OutputStream out) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改输出流。
+ <P>
+如果存在当前输出流，则编写 <tt>Formatter</tt> 的尾部字符串，刷新并关闭流。然后使用新的输出流替换该输出流。
+
+@param out   新输出流。不能为 null。
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.StreamHandler.setEncoding(String encoding) throws java.lang.SecurityException, java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置（或更改）该 <tt>Handler</tt> 所用的字符编码。
+ <p>
+应在在任何 <tt>LogRecords</tt> 写入 <tt>Handler</tt> 之前设置编码。
+
+@param encoding 所支持字符编码的名称。可以为 null，以指示默认的平台编码。
+@exception SecurityException 如果存在安全管理器，且调用者不具有 <tt>LoggingPermission("control")</tt>。
+@exception UnsupportedEncodingException 如果不支持指定的编码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.StreamHandler.publish(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+格式化并发布 <tt>LogRecord</tt>。
+ <p>
+<tt>StreamHandler</tt> 首先检查是否存在 <tt>OutputStream</tt> 以及给定的 <tt>LogRecord</tt> 是否具有所需的最低日志级别。如果没有则默认返回。如果有，则调用所有关联的 <tt>Filter</tt> 来检查是否应该发布该记录。如果应该发布，则调用 <tt>Formatter</tt> 来格式化该记录，然后将结果写入当前输出流。
+ <p>
+如果这是要写入给定 <tt>OutputStream</tt> 的第一个 <tt>LogRecord</tt>，则在写入 <tt>LogRecord</tt> 之前首先将 <tt>Formatter</tt> 的&ldquo;头部&rdquo;字符串写入流。
+
+@param  record  对日志事件的描述。默认忽略 null 记录，并且不进行发布。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.logging.StreamHandler.isLoggable(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查该 <tt>Handler</tt> 是否实际记录给定的 <tt>LogRecord</tt>。
+ <p>
+该方法检查 <tt>LogRecord</tt> 是否具有适当的级别，以及是否满足所有 <tt>Filter</tt>。如果尚未分配任何输出流或 LogRecord 为 Null，则返回 false。
+ <p>
+@param record  一个 <tt>LogRecord</tt>
+@return 如果要记录 <tt>LogRecord</tt>，则返回 true。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.StreamHandler.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+刷新所有缓冲消息。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.StreamHandler.close() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭当前输出流。
+ <p>
+在关闭前，将 <tt>Formatter</tt> 的&ldquo;尾部&rdquo;字符串写入流。此外，如果尚未将 <tt>Formatter</tt> 的&ldquo;头部&rdquo;字符串写入流，则将其写入&ldquo;尾部&rdquo;字符串之前。
+
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 LoggingPermission("control")。
+@exception  SecurityException  如果存在安全管理器，且调用者不具有 LoggingPermission("control")。
+
+<!-- END DATA -->

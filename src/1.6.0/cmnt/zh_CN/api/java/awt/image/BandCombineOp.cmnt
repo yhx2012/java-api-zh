@@ -1,0 +1,103 @@
+<!-- BEGIN KEY -->
+public class java.awt.image.BandCombineOp extends java.lang.Object implements java.awt.image.RasterOp
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类使用一个指定矩阵对 <CODE>Raster</CODE> 中的 band 进行任意线性组合。  
+ <p>
+矩阵的宽度必须等于源 <CODE>Raster</CODE> 中的 band 数（可以加一）。如果矩阵中的列数比 band 数多 1，则在 band 样本向量的结尾处存在一个隐含的 1，它表示一个像素。矩阵的高度必须等于目标图像中的 band 数。
+ <p>
+例如，对于一个 band 数为 3 的 <CODE>Raster</CODE>，为了反转 <CODE>Raster</CODE> 的第二个 band，可以对每个像素应用以下变换。
+ <pre>
+   [ 1.0   0.0   0.0    0.0  ]     [ b1 ]    
+   [ 0.0  -1.0   0.0  255.0  ]  x  [ b2 ]
+   [ 0.0   0.0   1.0    0.0  ]     [ b3 ]
+                                   [ 1 ]
+ </pre>
+
+ <p>
+注意，源图像和目标图像可以是同一个对象。
+@version 10 Feb 1997
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.BandCombineOp(float[][] matrix, RenderingHints hints)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定矩阵的 <CODE>BandCombineOp</CODE>。矩阵的宽度必须等于源 <CODE>Raster</CODE> 中的 band 数（可以加一）。如果矩阵中的列数比 band 数多 1，则在 band 样本向量的结尾处存在一个隐含的 1，它表示一个像素。矩阵的高度必须等于目标图像中的 band 数。
+ <p>
+第一个下标是行索引，第二个下标是列索引。此操作没有使用当前定义的呈现提示；<CODE>RenderingHints</CODE> 参数可以为 null。
+ 
+@param matrix 进行 band 组合操作要使用的矩阵。
+@param hints 用于此操作的 <CODE>RenderingHints</CODE> 对象。当前没有使用提示，因此它可以为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final float[][] java.awt.image.BandCombineOp.getMatrix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回线性组合矩阵的一个副本。
+
+@return 与此 band 组合操作关联的矩阵。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BandCombineOp.filter(Raster src, WritableRaster dst)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用构造方法中指定的矩阵变换该 <CODE>Raster</CODE>。如果源图像或目标图像中的 band 数与矩阵不一致，则抛出 <CODE>IllegalArgumentException</CODE>。有关更多详细信息，请参阅类注释。  
+ <p>
+如果目标图像为 null，则将创建它，使 band 数等于矩阵中的行数。即使该操作引起数据溢出，也不会抛出异常。
+
+@param src 要过滤的 <CODE>Raster</CODE>。
+@param dst 要在其中存储过滤操作结果的 <CODE>Raster</CODE>。
+
+@return 过滤后的 <CODE>Raster</CODE>。
+
+@throws IllegalArgumentException 如果源图像或目标图像中的 band 数与矩阵不一致。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Rectangle2D java.awt.image.BandCombineOp.getBounds2D(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回变换后目标图像的边界框。由于这不是一个几何操作，因此源图像和目标图像的边界框相同。如果源图像中的 band 数与矩阵不一致，则抛出 <CODE>IllegalArgumentException</CODE>。有关更多详细信息，请参阅类注释。
+
+@param src 要过滤的 <CODE>Raster</CODE>。
+
+@return 表示目标图像边界框的 <CODE>Rectangle2D</CODE>。
+
+@throws IllegalArgumentException 如果源图像中的 band 数与矩阵不一致。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.image.WritableRaster java.awt.image.BandCombineOp.createCompatibleDestRaster(Raster src)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个经过检查的目标 <CODE>Raster</CODE>，它具有正确大小和 band 数。如果源图像中的 band 数与矩阵不一致，则抛出 <CODE>IllegalArgumentException</CODE>。有关更多详细信息，请参阅类注释。
+
+@param src 要过滤的 <CODE>Raster</CODE>。
+
+@return 经过检查的目标 <CODE>Raster</CODE>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.geom.Point2D java.awt.image.BandCombineOp.getPoint2D(Point2D srcPt, Point2D dstPt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与源 <CODE>Raster</CODE> 中给定点对应的目标点的位置。如果指定了 <CODE>dstPt</CODE>，则使用它来保存返回值。由于这不是一个几何操作，因此返回的点与指定的 <CODE>srcPt</CODE> 相同。
+
+@param srcPt 表示源 <code>Raster</code> 中点的 <code>Point2D</code>
+@param dstPt 用于存储结果的 <CODE>Point2D</CODE>。
+
+@return 与源图像中指定点对应的目标图像中的 <CODE>Point2D</CODE>。     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.awt.RenderingHints java.awt.image.BandCombineOp.getRenderingHints()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回针对此操作呈现的提示。 
+
+@return 与此操作关联的 <CODE>RenderingHints</CODE> 对象。如果没有设置提示，则返回 null。
+
+<!-- END DATA -->

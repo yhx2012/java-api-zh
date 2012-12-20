@@ -1,0 +1,96 @@
+<!-- BEGIN KEY -->
+public interface java.security.Certificate
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>这是一个用于管理多种身份证书的抽象方法的接口。身份证书是某个主体的保证，保证某个公钥是另一个主体的公钥。（主体表示实体，如个别用户、团体或公司。）
+
+<p>需要特别指出的是，此接口应为具有不同格式但重要的公共用途的那些构造的公共抽象。例如，不同的证书类型（如 X.509 证书和 PGP 证书）共享通用的证书功能（编码和解码证书所需要的）和某些类型的信息，如公钥、将公钥作为密钥的主体和保证公钥是指定主体的密钥的 guarantor。因此，X.509 证书的实现和 PGP 证书的实现都可以利用 Certificate 接口，尽管它们的格式和附加类型以及存储的信息量各不相同。
+
+<p><b>重要主意事项</b>：此接口对编目和分组共享某些公共用途的对象很有用。它本身没有任何语义。需要特别指出的是，Certificate 对象不作出任何关于绑定<i>有效性</i> 的声明。由实现此接口的应用程序来负责验证证书并赋予其本身有效性。
+
+@version  1.37, 05/18/04
+@author Benjamin Renaud
+@deprecated 在 Java 平台中创建了新的证书处理包。此 Certificate 接口已完全废弃，其仍存在是为了能平稳地过渡到新包。
+@see java.security.cert.Certificate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal java.security.Certificate.getGuarantor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回证书的保证人，即某个主体，其保证与此证书关联的公钥是与此证书关联的主体的公钥。对于 X.509 证书，保证人通常为 Certificate Authority（如美国邮政管理局或 Verisign 等）。
+
+@return 保证主体密钥绑定的保证人。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.Principal java.security.Certificate.getPrincipal()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回保证人所保证的主体密钥对的主体。
+
+@return 此证书绑定的主体。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PublicKey java.security.Certificate.getPublicKey()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回保证人所保证的主体密钥对的密钥。
+ 
+@return 此证书证明的属于特定主体的公钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Certificate.encode(OutputStream stream) throws java.security.KeyException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 <code>decode</code> 方法可以解码的格式将证书编码到输出流。
+
+@param stream 要将证书编码到的输出流。
+
+@exception KeyException 如果没有正确初始化证书，或者丢失数据，等等。
+
+@exception IOException 如果在试图将已编码的证书输出到输出流中时发生流异常。
+
+@see #decode
+@see #getFormat
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.Certificate.decode(InputStream stream) throws java.security.KeyException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从输入流解码证书。格式应为 <code>getFormat</code> 所返回的格式并且由 <code>encode</code> 产生。
+
+@param stream 从中获取要解码的数据的输入流。
+ 
+@exception KeyException 如果没有正确初始化证书，或者丢失数据，等等。
+
+@exception IOException 如果在试图从输入流输入已编码的证书时发生异常。
+
+@see #encode
+@see #getFormat
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Certificate.getFormat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回编码格式的名称。该名称用作查找适当解析器的提示。它可以为 &quot;X.509&quot;、&quot;PGP&quot; 等。这是由 <code>encode</code> 和 <code>decode</code> 方法产生被可以被它们理解的格式。
+ 
+@return 编码格式的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.Certificate.toString(boolean detailed)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示证书内容的字符串。
+
+@param detailed 是否给出关于证书的详细信息
+ 
+@return 表示证书内容的字符串
+
+<!-- END DATA -->

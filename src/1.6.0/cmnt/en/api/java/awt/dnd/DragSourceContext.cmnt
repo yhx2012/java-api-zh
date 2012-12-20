@@ -1,0 +1,405 @@
+<!-- BEGIN KEY -->
+public class java.awt.dnd.DragSourceContext extends java.lang.Object implements java.awt.dnd.DragSourceListener, java.awt.dnd.DragSourceMotionListener, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The <code>DragSourceContext</code> class is responsible for managing the
+ initiator side of the Drag and Drop protocol. In particular, it is responsible
+ for managing drag event notifications to the <code>DragSourceListener</code>s
+ and <code>DragSourceMotionListener</code>s, and providing the
+ <code>Transferable</code> representing the source data for the drag operation.
+ <p>
+ Note that the <code>DragSourceContext</code> itself 
+ implements the <code>DragSourceListener</code> and
+ <code>DragSourceMotionListener</code> interfaces. 
+ This is to allow the platform peer  
+ (the <code>DragSourceContextPeer</code> instance) 
+ created by the <code>DragSource</code> to notify 
+ the <code>DragSourceContext</code> of
+ state changes in the ongoing operation. This allows the
+ <code>DragSourceContext</code> to interpose 
+ itself between the platform and the
+ listeners provided by the initiator of the drag operation.
+
+ @see DragSourceListener
+ @see DragSourceMotionListener
+ @version 1.53, 04/04/06
+ @since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> used by updateCurrentCursor() 
+ indicating that the <code>Cursor</code> should change
+ to the default (no drop) <code>Cursor</code>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.ENTER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> used by updateCurrentCursor()
+ indicating that the <code>Cursor</code> 
+ has entered a <code>DropTarget</code>. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.OVER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> used by updateCurrentCursor()
+ indicating that the <code>Cursor</code> is 
+ over a <code>DropTarget</code>. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected static final int java.awt.dnd.DragSourceContext.CHANGED
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ An <code>int</code> used by updateCurrentCursor()
+ indicating that the user operation has changed. 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.dnd.DragGestureEvent java.awt.dnd.DragSourceContext.trigger
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The event which triggered the start of the drag.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.awt.Cursor java.awt.dnd.DragSourceContext.cursor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ The current drag cursor.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private boolean java.awt.dnd.DragSourceContext.useCustomCursor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <code>true</code> if the custom drag cursor is used instead of the
+ default one.
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final int java.awt.dnd.DragSourceContext.sourceActions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A bitwise mask of <code>DnDConstants</code> that represents the set of
+ drop actions supported by the drag source for the drag operation associated
+ with this <code>DragSourceContext.</code>  
+
+ @serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSourceContext(DragSourceContextPeer dscp, DragGestureEvent trigger, Cursor dragCursor, Image dragImage, Point offset, Transferable t, DragSourceListener dsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Called from <code>DragSource</code>, this constructor creates a new
+ <code>DragSourceContext</code> given the
+ <code>DragSourceContextPeer</code> for this Drag, the
+ <code>DragGestureEvent</code> that triggered the Drag, the initial
+ <code>Cursor</code> to use for the Drag, an (optional)
+ <code>Image</code> to display while the Drag is taking place, the offset
+ of the <code>Image</code> origin from the hotspot at the instant of the
+ triggering event, the <code>Transferable</code> subject data, and the 
+ <code>DragSourceListener</code> to use during the Drag and Drop
+ operation.
+ <br>
+ If <code>DragSourceContextPeer</code> is <code>null</code>
+ <code>NullPointerException</code> is thrown.
+ <br>
+ If <code>DragGestureEvent</code> is <code>null</code>
+ <code>NullPointerException</code> is thrown.
+ <br>
+ If <code>Cursor</code> is <code>null</code> no exception is thrown and
+ the default drag cursor behavior is activated for this drag operation.
+ <br>
+ If <code>Image</code> is <code>null</code> no exception is thrown.
+ <br>
+ If <code>Image</code> is not <code>null</code> and the offset is
+ <code>null</code> <code>NullPointerException</code> is thrown.
+ <br>
+ If <code>Transferable</code> is <code>null</code>
+ <code>NullPointerException</code> is thrown.
+ <br>
+ If <code>DragSourceListener</code> is <code>null</code> no exception 
+ is thrown.
+
+ @param dscp       the <code>DragSourceContextPeer</code> for this drag
+ @param trigger    the triggering event
+ @param dragCursor the initial <code>Cursor</code> 
+ @param dragImage  the <code>Image</code> to drag (or <code>null</code>)
+ @param offset     the offset of the image origin from the hotspot at the
+                   instant of the triggering event
+ @param t          the <code>Transferable</code>
+ @param dsl        the <code>DragSourceListener</code>
+
+ @throws IllegalArgumentException if the <code>Component</code> associated
+         with the trigger event is <code>null</code>.
+ @throws IllegalArgumentException if the <code>DragSource</code> for the 
+         trigger event is <code>null</code>.
+ @throws IllegalArgumentException if the drag action for the
+         trigger event is <code>DnDConstants.ACTION_NONE</code>.
+ @throws IllegalArgumentException if the source actions for the
+         <code>DragGestureRecognizer</code> associated with the trigger
+         event are equal to <code>DnDConstants.ACTION_NONE</code>. 
+ @throws NullPointerException if dscp, trigger, or t are null, or
+         if dragImage is non-null and offset is null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragSource java.awt.dnd.DragSourceContext.getDragSource()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <code>DragSource</code> 
+ that instantiated this <code>DragSourceContext</code>.
+ 
+ @return the <code>DragSource</code> that 
+   instantiated this <code>DragSourceContext</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component java.awt.dnd.DragSourceContext.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <code>Component</code> associated with this 
+ <code>DragSourceContext</code>.
+ 
+ @return the <code>Component</code> that started the drag
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.dnd.DragGestureEvent java.awt.dnd.DragSourceContext.getTrigger()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <code>DragGestureEvent</code>
+ that initially triggered the drag.
+ 
+ @return the Event that triggered the drag
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.dnd.DragSourceContext.getSourceActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns a bitwise mask of <code>DnDConstants</code> that
+ represent the set of drop actions supported by the drag source for the
+ drag operation associated with this <code>DragSourceContext</code>.
+ 
+ @return the drop actions supported by the drag source
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.setCursor(Cursor c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the cursor for this drag operation to the specified
+ <code>Cursor</code>.  If the specified <code>Cursor</code>
+ is <code>null</code>, the default drag cursor behavior is
+ activated for this drag operation, otherwise it is deactivated.
+ 
+ @param c the <code>Cursor</code> to display, or 
+   <code>null</code> to activate the default drag cursor
+   behavior
+ 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Cursor java.awt.dnd.DragSourceContext.getCursor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the current drag <code>Cursor</code>. 
+ <P>
+ @return the current drag <code>Cursor</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.addDragSourceListener(DragSourceListener dsl) throws java.util.TooManyListenersException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Add a <code>DragSourceListener</code> to this
+ <code>DragSourceContext</code> if one has not already been added.
+ If a <code>DragSourceListener</code> already exists, 
+ this method throws a <code>TooManyListenersException</code>.
+ <P>
+ @param dsl the <code>DragSourceListener</code> to add.
+ Note that while <code>null</code> is not prohibited,
+ it is not acceptable as a parameter.
+ <P>
+ @throws <code>TooManyListenersException</code> if
+ a <code>DragSourceListener</code> has already been added
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.dnd.DragSourceContext.removeDragSourceListener(DragSourceListener dsl)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Removes the specified <code>DragSourceListener</code>
+ from  this <code>DragSourceContext</code>.
+ 
+ @param dsl the <code>DragSourceListener</code> to remove;
+     note that while <code>null</code> is not prohibited,
+     it is not acceptable as a parameter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.transferablesFlavorsChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Notifies the peer that the <code>Transferable</code>'s
+ <code>DataFlavor</code>s have changed.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragEnter(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dragEnter</code> on the
+ <code>DragSourceListener</code>s registered with this
+ <code>DragSourceContext</code> and with the associated
+ <code>DragSource</code>, and passes them the specified
+ <code>DragSourceDragEvent</code>.
+
+ @param dsde the <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragOver(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dragOver</code> on the
+ <code>DragSourceListener</code>s registered with this
+ <code>DragSourceContext</code> and with the associated
+ <code>DragSource</code>, and passes them the specified
+ <code>DragSourceDragEvent</code>.
+
+ @param dsde the <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragExit(DragSourceEvent dse)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dragExit</code> on the
+ <code>DragSourceListener</code>s registered with this
+ <code>DragSourceContext</code> and with the associated
+ <code>DragSource</code>, and passes them the specified
+ <code>DragSourceEvent</code>.
+
+ @param dse the <code>DragSourceEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dropActionChanged(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dropActionChanged</code> on the
+ <code>DragSourceListener</code>s registered with this
+ <code>DragSourceContext</code> and with the associated
+ <code>DragSource</code>, and passes them the specified
+ <code>DragSourceDragEvent</code>.
+
+ @param dsde the <code>DragSourceDragEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragDropEnd(DragSourceDropEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dragDropEnd</code> on the
+ <code>DragSourceListener</code>s registered with this
+ <code>DragSourceContext</code> and with the associated
+ <code>DragSource</code>, and passes them the specified
+ <code>DragSourceDropEvent</code>.
+
+ @param dsde the <code>DragSourceDropEvent</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.dnd.DragSourceContext.dragMouseMoved(DragSourceDragEvent dsde)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Calls <code>dragMouseMoved</code> on the
+ <code>DragSourceMotionListener</code>s registered with the
+ <code>DragSource</code> associated with this
+ <code>DragSourceContext</code>, and them passes the specified
+ <code>DragSourceDragEvent</code>.
+
+ @param dsde the <code>DragSourceDragEvent</code>
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.Transferable java.awt.dnd.DragSourceContext.getTransferable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the <code>Transferable</code> associated with
+ this <code>DragSourceContext</code>.
+ 
+ @return the <code>Transferable</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void java.awt.dnd.DragSourceContext.updateCurrentCursor(int sourceAct, int targetAct, int status)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ If the default drag cursor behavior is active, this method
+ sets the default drag cursor for the specified actions
+ supported by the drag source, the drop target action,
+ and status, otherwise this method does nothing.
+ 
+ @param sourceAct the actions supported by the drag source
+ @param targetAct the drop target action
+ @param status one of the fields <code>DEFAULT</code>,
+               <code>ENTER</code>, <code>OVER</code>, 
+               <code>CHANGED</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.dnd.DragSourceContext.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Deserializes this <code>DragSourceContext</code>. This method first
+ performs default deserialization for all non-<code>transient</code>
+ fields. This object's <code>Transferable</code> and
+ <code>DragSourceListener</code> are then deserialized as well by using
+ the next two objects in the stream. If the resulting
+ <code>Transferable</code> is <code>null</code>, this object's
+ <code>Transferable</code> is set to a dummy <code>Transferable</code>
+ which supports no <code>DataFlavor</code>s.
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.dnd.DragSourceContext.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Serializes this <code>DragSourceContext</code>. This method first
+ performs default serialization. Next, this object's
+ <code>Transferable</code> is written out if and only if it can be
+ serialized. If not, <code>null</code> is written instead. In this case,
+ a <code>DragSourceContext</code> created from the resulting deserialized
+ stream will contain a dummy <code>Transferable</code> which supports no
+ <code>DataFlavor</code>s. Finally, this object's
+ <code>DragSourceListener</code> is written out if and only if it can be
+ serialized. If not, <code>null</code> is written instead.
+
+ @serialData The default serializable fields, in alphabetical order,
+             followed by either a <code>Transferable</code> instance, or
+             <code>null</code>, followed by either a
+             <code>DragSourceListener</code> instance, or
+             <code>null</code>.
+ @since 1.4
+
+<!-- END DATA -->

@@ -1,0 +1,405 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.rowset.WebRowSet extends javax.sql.rowset.CachedRowSet
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有 <code>WebRowSet</code> 的实现都必须实现的标准接口。 
+ <P>
+<h3>1.0 概述</h3>
+<code>WebRowSetImpl</code> 提供可在需要时扩展的标准参考实现。 
+ <P>
+标准的 WebRowSet XML 模式定义位于以下 URI 中：
+ <ul>
+ <pre>
+ <a href="http://java.sun.com/xml/ns/jdbc/webrowset.xsd">http://java.sun.com/xml/ns/jdbc/webrowset.xsd</a>
+ </pre>
+ </ul>
+它描述使用 XML 描述 <code>RowSet</code> 对象时所需的标准 XML 文档格式，所有 <code>WebRowSet</code> 接口的标准实现必须使用该文档格式以确保互操作性。此外，<code>WebRowSet</code> 模式使用特定的 SQL/XML 模式注释，从而确保较高的跨平台互操作性。目前 ISO 组织正在为此而努力。SQL/XML 定义可从以下 URI 中得到：
+ <ul>
+ <pre>
+ <a href="http://standards.iso.org/iso/9075/2002/12/sqlxml">http://standards.iso.org/iso/9075/2002/12/sqlxml</a>
+ </pre>
+ </ul>
+模式定义从以下三个不同方面描述 <code>RowSet</code> 对象的内部数据：
+ <UL>
+<li><b>属性</b></li>
+除了较为通用的 <code>RowSet</code> 属性之外，这些属性还描述标准同步提供者属性。
+ <p>
+<li><b>元数据</b></li>
+此项描述与 <code>WebRowSet</code> 对象管理的表格结构关联的元数据。描述的元数据与在底层 <code>java.sql.ResultSet</code> 接口中可访问的元数据是紧密联系在一起的。
+ <p>
+<li><b>数据</b></li>
+此项描述原始数据（自从 <code>WebRowSet</code> 对象的上一次填充或上一次同步以来的数据状态）和当前数据。通过跟踪原始数据和当前数据之间的 delta，<code>WebRowSet</code> 维持其数据中的更改与原始数据源同步的能力。
+ </ul>
+ <P>
+<h3>2.0 WebRowSet 状态</h3>
+以下几部分演示 <code>WebRowSet</code> 实现应该如何使用 XML 模式来描述更新、插入和删除操作，以及描述 XML 中 <code>WebRowSet</code> 对象的状态。 
+ <p>
+<h4>2.1 状态 1 - 将 <code>WebRowSet</code> 对象输出为 XML</h3>
+在此示例中，创建一个 <code>WebRowSet</code> 对象，并使用取自数据源的一个简单的 2 列、5 行表进行填充。具有 <code>WebRowSet</code> 对象中的 5 个行使以 XML 描述它们成为可能。描述在 RowSet 接口中定义的各种标准 JavaBeans 属性和在 <code>CachedRowSet</code><sup><font size=-2>TM</font></sup> 接口中定义的标准属性的元数据，提供描述 WebRowSet 属性的主要细节。使用标准 <code>writeXml</code> 方法将 WebRowSet 对象输出为 XML 将内部属性描述如下：
+ <PRE>
+&lt;<font color=red>properties</font>&gt;
+       &lt;<font color=red>command</font>&gt;select co1, col2 from test_table&lt;<font color=red>/command</font>&gt;
+	&lt;<font color=red>concurrency</font>&gt;1&lt;<font color=red>/concurrency</font>&gt;
+	&lt;<font color=red>datasource/</font>&gt;
+	&lt;<font color=red>escape-processing</font>&gt;true&lt;<font color=red>/escape-processing</font>&gt;
+	&lt;<font color=red>fetch-direction</font>&gt;0&lt;<font color=red>/fetch-direction</font>&gt;
+	&lt;<font color=red>fetch-size</font>&gt;0&lt;<font color=red>/fetch-size</font>&gt;
+	&lt;<font color=red>isolation-level</font>&gt;1&lt;<font color=red>/isolation-level</font>&gt;
+	&lt;<font color=red>key-columns/</font>&gt;
+	&lt;<font color=red>map/</font>&gt;
+	&lt;<font color=red>max-field-size</font>&gt;0&lt;<font color=red>/max-field-size</font>&gt;
+	&lt;<font color=red>max-rows</font>&gt;0&lt;<font color=red>/max-rows</font>&gt;
+	&lt;<font color=red>query-timeout</font>&gt;0&lt;<font color=red>/query-timeout</font>&gt;
+	&lt;<font color=red>read-only</font>&gt;false&lt;<font color=red>/read-only</font>&gt;
+	&lt;<font color=red>rowset-type</font>&gt;TRANSACTION_READ_UNCOMMITED&lt;<font color=red>/rowset-type</font>&gt;
+	&lt;<font color=red>show-deleted</font>&gt;false&lt;<font color=red>/show-deleted</font>&gt;
+	&lt;<font color=red>table-name/</font>&gt;
+	&lt;<font color=red>url</font>&gt;jdbc:thin:oracle&lt;<font color=red>/url</font>&gt;
+	&lt;<font color=red>sync-provider</font>&gt;
+		&lt;<font color=red>sync-provider-name</font>&gt;.com.rowset.provider.RIOptimisticProvider&lt;<font color=red>/sync-provider-name</font>&gt;
+		&lt;<font color=red>sync-provider-vendor</font>&gt;Sun Microsystems&lt;<font color=red>/sync-provider-vendor</font>&gt;
+		&lt;<font color=red>sync-provider-version</font>&gt;1.0&lt;<font color=red>/sync-provider-name</font>&gt;
+		&lt;<font color=red>sync-provider-grade</font>&gt;LOW&lt;<font color=red>/sync-provider-grade</font>&gt;
+              &lt;<font color=red>data-source-lock</font>&gt;NONE&lt;<font color=red>/data-source-lock</font>&gt;
+	&lt;<font color=red>/sync-provider</font>&gt;
+&lt;<font color=red>/properties</font>&gt; 
+ </PRE>
+描述 WebRowSet 的组成的元数据使用 XML 描述的细节如下所示。注意，两个列都在 <code>column-definition</code> 标识之间描述。
+ <PRE>
+&lt;<font color=red>metadata</font>&gt;
+	&lt;<font color=red>column-count</font>&gt;2&lt;<font color=red>/column-count</font>&gt;
+	&lt;<font color=red>column-definition</font>&gt;
+		&lt;<font color=red>column-index</font>&gt;1&lt;<font color=red>/column-index</font>&gt;
+		&lt;<font color=red>auto-increment</font>&gt;false&lt;<font color=red>/auto-increment</font>&gt;
+		&lt;<font color=red>case-sensitive</font>&gt;true&lt;<font color=red>/case-sensitive</font>&gt;
+		&lt;<font color=red>currency</font>&gt;false&lt;<font color=red>/currency</font>&gt;
+		&lt;<font color=red>nullable</font>&gt;1&lt;<font color=red>/nullable</font>&gt;
+		&lt;<font color=red>signed</font>&gt;false&lt;<font color=red>/signed</font>&gt;
+		&lt;<font color=red>searchable</font>&gt;true&lt;<font color=red>/searchable</font>&gt;
+		&lt;<font color=red>column-display-size</font>&gt;10&lt;<font color=red>/column-display-size</font>&gt;   
+		&lt;<font color=red>column-label</font>&gt;COL1&lt;<font color=red>/column-label</font>&gt;
+		&lt;<font color=red>column-name</font>&gt;COL1&lt;<font color=red>/column-name</font>&gt;
+		&lt;<font color=red>schema-name/</font>&gt;
+		&lt;<font color=red>column-precision</font>&gt;10&lt;<font color=red>/column-precision</font>&gt;
+		&lt;<font color=red>column-scale</font>&gt;0&lt;<font color=red>/column-scale</font>&gt;
+		&lt;<font color=red>table-name/</font>&gt;
+		&lt;<font color=red>catalog-name/</font>&gt;
+		&lt;<font color=red>column-type</font>&gt;1&lt;<font color=red>/column-type</font>&gt;
+		&lt;<font color=red>column-type-name</font>&gt;CHAR&lt;<font color=red>/column-type-name</font>&gt;
+	&lt;<font color=red>/column-definition</font>&gt;
+	&lt;<font color=red>column-definition</font>&gt;
+		&lt;<font color=red>column-index</font>&gt;2&lt;<font color=red>/column-index</font>&gt;
+		&lt;<font color=red>auto-increment</font>&gt;false&lt;<font color=red>/auto-increment</font>&gt;
+		&lt;<font color=red>case-sensitive</font>&gt;false&lt;<font color=red>/case-sensitive</font>&gt;
+		&lt;<font color=red>currency</font>&gt;false&lt;<font color=red>/currency</font>&gt;
+		&lt;<font color=red>nullable</font>&gt;1&lt;<font color=red>/nullable</font>&gt;
+		&lt;<font color=red>signed</font>&gt;true&lt;<font color=red>/signed</font>&gt;
+		&lt;<font color=red>searchable</font>&gt;true&lt;<font color=red>/searchable</font>&gt;
+		&lt;<font color=red>column-display-size</font>&gt;39&lt;<font color=red>/column-display-size</font>&gt;
+		&lt;<font color=red>column-label</font>&gt;COL2&lt;<font color=red>/column-label</font>&gt;
+		&lt;<font color=red>column-name</font>&gt;COL2&lt;<font color=red>/column-name</font>&gt;
+		&lt;<font color=red>schema-name/</font>&gt;
+		&lt;<font color=red>column-precision</font>&gt;38&lt;<font color=red>/column-precision</font>&gt;
+		&lt;<font color=red>column-scale</font>&gt;0&lt;<font color=red>/column-scale</font>&gt;
+		&lt;<font color=red>table-name/</font>&gt;
+		&lt;<font color=red>catalog-name/</font>&gt;
+		&lt;<font color=red>column-type</font>&gt;3&lt;<font color=red>/column-type</font>&gt;
+		&lt;<font color=red>column-type-name</font>&gt;NUMBER&lt;<font color=red>/column-type-name</font>&gt;
+	&lt;<font color=red>/column-definition</font>&gt;
+&lt;<font color=red>/metadata</font>&gt;
+ </PRE>
+详细说明如何描述属性和元数据之后，以下详细说明如何使用 XML 描述 <code>WebRowSet</code> 对象的内容。注意，它描述的是自从实例化以来没有经过任何修改的 <code>WebRowSet</code> 对象。<code>currentRow</code> 标记将被映射到 <code>WebRowSet</code> 对象所提供的表结构的每一个行。<code>columnValue</code> 标记可能包含 <code>stringData</code> 或 <code>binaryData</code> 标记，这取决于将 XML 值映射回的 SQL 类型。<code>binaryData</code> 标记包含 Base64 编码的数据，通常用于 <code>BLOB</code> 和 <code>CLOB</code> 类型数据。
+ <PRE>
+ &lt;<font color=red>data</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			firstrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			1
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			secondrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			2
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			thirdrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			3
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fourthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			4
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+ &lt;<font color=red>/data</font>&gt;
+ </PRE>
+<h4>2.2 状态 2 - 删除行</h4>
+在 <code>WebRowSet</code> 对象中删除行首先简单地移动到要删除的行，然后调用 <code>deleteRow</code> 方法，如任何其他 <code>RowSet</code> 对象一样。以下两个代码行（其中 <i>wrs</i> 为 <code>WebRowSet</code> 对象）将删除第三行。
+ <PRE>
+     wrs.absolute(3);
+     wrs.deleteRow();
+ </PRE>
+XML 描述显示第三行被标记为 <code>deleteRow</code>，这将在 <code>WebRowSet</code> 对象中删去第三行。
+ <PRE>
+ &lt;<font color=red>data</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			firstrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			1
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			secondrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			2
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>deleteRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			thirdrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			3
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/deleteRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fourthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			4
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+ &lt;<font color=red>/data</font>&gt;
+ </PRE>
+<h4>2.3 状态 3 - 插入行</h4>
+<code>WebRowSet</code> 对象插入新行的方式是，移动到插入行，为该行中的每一列调用适当的更新方法，然后调用 <code>insertRow</code> 方法。
+ <PRE>
+ wrs.moveToInsertRow();
+ wrs.updateString(1, &quot;fifththrow&quot;);
+ wrs.updateString(2, &quot;5&quot;);
+ wrs.insertRow();
+ </PRE>
+以下代码片段更改刚插入的行中第二列的值。注意，此代码在将新行直接插入到当前行的后面时应用，这就是 <code>next</code> 方法将指针移动到正确行的原因。调用方法 <code>acceptChanges</code> 将更改写入数据源。  
+ 
+ <PRE>
+ wrs.moveToCurrentRow();
+ wrs.next();
+ wrs.updateString(2, &quot;V&quot;);
+ wrs.acceptChanges();
+ :
+ </PRE>
+使用 XML 描述此操作演示了在新行中插入 Java 代码的位置，然后在个别字段上的新插入行上执行更新。
+ <PRE> 
+ &lt;<font color=red>data</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			firstrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			1
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			secondrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			2
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			newthirdrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			III
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>insertRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fifthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			5
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>updateValue</font>&gt;
+			V
+		&lt;<font color=red>/updateValue</font>&gt;
+	&lt;<font color=red>/insertRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fourthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			4
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+&lt;<font color=red>/date</font>&gt;
+ </PRE>
+<h4>2.4 状态 4 - 修改行</h4>
+修改行生成特定的 XML，该 XML 记录新值和被替换的值。被替换的值变成原始值，而新值变成当前值。以下代码将指针移动到特定行，执行一些修改，并在完成时更新行。
+ <PRE>
+ wrs.absolute(5);
+ wrs.updateString(1, &quot;new4thRow&quot;);
+ wrs.updateString(2, &quot;IV&quot;);
+ wrs.updateRow();
+ </PRE>
+在 XML 中，此操作用 <code>modifyRow</code> 标记描述。出于原始行跟踪目的，原始值和新值都包含在该标记中。
+ <PRE>
+ &lt;<font color=red>data</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			firstrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			1
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			secondrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			2
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			newthirdrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			III
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>currentRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fifthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			5
+		&lt;<font color=red>/columnValue</font>&gt;
+	&lt;<font color=red>/currentRow</font>&gt;
+	&lt;<font color=red>modifyRow</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			fourthrow
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>updateValue</font>&gt;
+			new4thRow
+		&lt;<font color=red>/updateValue</font>&gt;
+		&lt;<font color=red>columnValue</font>&gt;
+			4
+		&lt;<font color=red>/columnValue</font>&gt;
+		&lt;<font color=red>updateValue</font>&gt;
+			IV
+		&lt;<font color=red>/updateValue</font>&gt;
+	&lt;<font color=red>/modifyRow</font>&gt;
+ &lt;<font color=red>/data</font>&gt;
+ </PRE>
+
+@see javax.sql.rowset.JdbcRowSet
+@see javax.sql.rowset.CachedRowSet
+@see javax.sql.rowset.FilteredRowSet
+@see javax.sql.rowset.JoinRowSet
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.sql.rowset.WebRowSet.PUBLIC_XML_SCHEMA
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 <code>WebRowSet</code> 实现定义 XML 标记及其有效值的 XML 模式定义的公共标识符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.sql.rowset.WebRowSet.SCHEMA_SYSTEM_ID
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为 <code>WebRowSet</code> 实现定义 XML 标记及其有效值的 XML 模式定义的 URL。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.readXml(Reader reader) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从给定的 <code>Reader</code> 对象以其 XML 格式读取 <code>WebRowSet</code> 对象。
+ 
+@param reader 用于填充此 <code>WebRowSet</code> 对象的 <code>java.io.Reader</code> 流。
+
+@throws SQLException 如果发生数据库访问错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.readXml(InputStream iStream) throws java.sql.SQLException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取基于流的 XML 输入，以填充此 <code>WebRowSet</code> 对象。
+
+@param iStream 用来填充此 <code>WebRowSet</code> 对象的 <code>java.io.InputStream</code>
+@throws SQLException 如果发生数据源访问错误
+@throws IOException 如果发生 IO 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.writeXml(ResultSet rs, Writer writer) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定 <code>ResultSet</code> 对象的内容填充此 <code>WebRowSet</code> 对象，并以 XML 格式将其数据、属性和元数据写入给定的 <code>Writer</code> 对象。
+ <p>
+注：可以移动 <code>WebRowSet</code> 指针将内容写出到 XML 数据源中。如果以这种方式实现，则在调用 <code>writeXml()</code> 之前指针<b>必须</b>先返回其位置。
+
+@param rs 用于填充此 <code>WebRowSet</code> 对象的 <code>ResultSet</code> 对象
+@param writer 要写入的 <code>java.io.Writer</code> 对象。
+@throws SQLException 如果在以 XML 格式写出 rowset 内容时发生错误
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.writeXml(ResultSet rs, OutputStream oStream) throws java.sql.SQLException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定 <code>ResultSet</code> 对象的内容填充此 <code>WebRowSet</code> 对象，并以 XML 格式将其数据、属性和元数据写入给定的 <code>OutputStream</code> 对象。
+ <p>
+注：可以移动 <code>WebRowSet</code> 指针将内容写出到 XML 数据源中。如果以这种方式实现，则在调用 <code>writeXml()</code> 之前<b>必须</b>先将指针返回其位置。     
+
+@param rs 用于填充此 <code>WebRowSet</code> 对象的 <code>ResultSet</code> 对象
+@param oStream 要写入的 <code>java.io.OutputStream</code>
+@throws SQLException 如果发生数据源访问错误
+@throws IOException 如果发生 IO 异常
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.writeXml(Writer writer) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 XML 格式将此 <code>WebRowSet</code> 对象的数据、属性和元数据写入给定的 <code>Writer</code> 对象。
+
+@param writer 要写入的 <code>java.io.Writer</code> 流
+@throws SQLException 如果在将 rowset 内容写出到 XML 时出错
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.rowset.WebRowSet.writeXml(OutputStream oStream) throws java.sql.SQLException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 XML 格式将此 <code>WebRowSet</code> 对象的数据、属性和元数据写入给定的 <code>OutputStream</code> 对象。
+
+@param oStream 要写入的 <code>java.io.OutputStream</code> 流
+@throws SQLException 如果发生数据源访问错误
+@throws IOException 如果发生 IO 异常
+
+<!-- END DATA -->

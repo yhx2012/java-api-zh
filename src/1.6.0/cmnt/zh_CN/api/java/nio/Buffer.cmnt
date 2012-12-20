@@ -1,0 +1,321 @@
+<!-- BEGIN KEY -->
+public abstract class java.nio.Buffer extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个用于特定基本类型数据的容器。
+
+<p> 缓冲区是特定基本类型元素的线性有限序列。除内容外，缓冲区的基本属性还包括容量、限制和位置：</p>
+
+ <blockquote>
+
+<p> 缓冲区的<i>容量</i> 是它所包含的元素的数量。缓冲区的容量不能为负并且不能更改。  </p>
+
+<p> 缓冲区的<i>限制</i> 是第一个不应该读取或写入的元素的索引。缓冲区的限制不能为负，并且不能大于其容量。  </p>
+
+<p> 缓冲区的<i>位置</i> 是下一个要读取或写入的元素的索引。缓冲区的位置不能为负，并且不能大于其限制。  </p>
+
+ </blockquote>
+
+<p> 对于每个非 boolean 基本类型，此类都有一个子类与之对应。
+
+ 
+<h4> 传输数据 </h4>
+
+<p> 此类的每个子类都定义了两种<i>获取</i> 和<i>放置</i> 操作： </p>
+
+ <blockquote>
+
+<p> <i>相对</i> 操作读取或写入一个或多个元素，它从当前位置开始，然后将位置增加所传输的元素数。如果请求的传输超出限制，则相对<i>获取</i> 操作将抛出 {@link BufferUnderflowException}，相对<i>放置</i> 操作将抛出 {@link BufferOverflowException}；这两种情况下，都没有数据被传输。  </p>
+
+<p> <i>绝对</i> 操作采用显式元素索引，该操作不影响位置。如果索引参数超出限制，绝对<i>获取</i> 操作和<i>放置</i> 操作将抛出 {@link IndexOutOfBoundsException}。 </p>
+
+ </blockquote>
+
+<p> 当然，通过适当通道的 I/O 操作（通常与当前位置有关）也可以将数据传输到缓冲区或从缓冲区传出数据。
+
+
+<h4> 做标记和重置 </h4>
+
+<p> 缓冲区的<i>标记</i> 是一个索引，在调用 {@link #reset reset} 方法时会将缓冲区的位置重置为该索引。并非总是需要定义标记，但在定义标记时，不能将其定义为负数，并且不能让它大于位置。如果定义了标记，则在将位置或限制调整为小于该标记的值时，该标记将被丢弃。如果未定义标记，那么调用 {@link #reset reset} 方法将导致抛出 {@link InvalidMarkException}。
+
+
+<h4> 不变式 </h4>
+
+<p> 标记、位置、限制和容量值遵守以下不变式：
+
+ <blockquote>
+<tt>0</tt> <tt>&lt;=</tt> <i>标记</i> <tt>&lt;=</tt> <i>位置</i> <tt>&lt;=</tt> <i>限制</i> <tt>&lt;=</tt> <i>容量</i>
+ </blockquote>
+
+<p> 新创建的缓冲区总有一个 0 位置和一个未定义的标记。初始限制可以为 0，也可以为其他值，这取决于缓冲区类型及其构建方式。一般情况下，缓冲区的初始内容是未定义的。
+
+
+<h4> 清除、反转和重绕 </h4>
+
+<p> 除了访问位置、限制、容量值的方法以及做标记和重置的方法外，此类还定义了以下可对缓冲区进行的操作：
+
+ <ul>
+
+<li><p> {@link #clear} 使缓冲区为一系列新的通道读取或相对<i>放置</i> 操作做好准备：它将限制设置为容量大小，将位置设置为 0。  </p></li>
+
+<li><p> {@link #flip} 使缓冲区为一系列新的通道写入或相对<i>获取</i> 操作做好准备：它将限制设置为当前位置，然后将位置设置为 0。  </p></li>
+
+<li><p> {@link #rewind} 使缓冲区为重新读取已包含的数据做好准备：它使限制保持不变，将位置设置为 0。  </p></li>
+
+ </ul>
+
+
+<h4> 只读缓冲区 </h4>
+
+<p> 每个缓冲区都是可读取的，但并非每个缓冲区都是可写入的。每个缓冲区类的转变方法都被指定为<i>可选操作</i>，当对只读缓冲区调用时，将抛出 {@link ReadOnlyBufferException}。只读缓冲区不允许更改其内容，但其标记、位置和限制值是可变的。可以调用其 {@link #isReadOnly isReadOnly} 方法确定缓冲区是否为只读。
+
+
+<h4> 线程安全 </h4>
+
+<p> 多个当前线程使用缓冲区是不安全的。如果一个缓冲区由不止一个线程使用，则应该通过适当的同步来控制对该缓冲区的访问。
+
+
+<h4> 调用链</h4>
+
+<p> 指定此类中的方法返回调用它们的缓冲区（否则它们不会返回任何值）。此操作允许将方法调用组成一个链；例如，语句序列
+
+ <blockquote><pre>
+ b.flip();
+ b.position(23);
+ b.limit(42);</pre></blockquote>
+
+可以由以下更紧凑的一个语句代替
+
+ <blockquote><pre>
+ b.flip().position(23).limit(42);</pre></blockquote>
+
+@author Mark Reinhold
+@author JSR-51 Expert Group
+@version 1.34, 04/06/14
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.Buffer.capacity()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此缓冲区的容量。 </p>
+
+@return  此缓冲区的容量
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.Buffer.position()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此缓冲区的位置。 </p>
+
+@return  此缓冲区的位置
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.position(int newPosition)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此缓冲区的位置。如果标记已定义且大于新的位置，则丢弃该标记。 </p>
+
+@param  newPosition 新位置值；必须为非负且不大于当前限制
+
+@return  此缓冲区
+
+@throws  IllegalArgumentException 如果 <tt>newPosition</tt> 不满足先决条件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.Buffer.limit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此缓冲区的限制。 </p>
+
+@return  此缓冲区的限制
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.limit(int newLimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此缓冲区的限制。如果位置大于新的限制，则将它设置为新限制。如果标记已定义且大于新限制，则丢弃该标记。 </p>
+
+@param  newLimit 新限制值；必须为非负且不大于此缓冲区的容量
+
+@return  此缓冲区
+
+@throws  IllegalArgumentException 如果 <tt>newLimit</tt> 不满足先决条件
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.mark()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在此缓冲区的位置设置标记。 </p>
+
+@return  此缓冲区
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.reset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此缓冲区的位置重置为以前标记的位置。
+
+<p> 调用此方法不更改也不丢弃标记的值。 </p>
+
+@return  此缓冲区
+
+@throws  InvalidMarkException 如果尚未设置标记
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+清除此缓冲区。将位置设置为 0，将限制设置为容量，并丢弃标记。
+
+<p> 在使用一系列通道读取或<i>放置</i> 操作填充此缓冲区之前调用此方法。例如：
+
+ <blockquote><pre>
+ buf.clear();     // Prepare buffer for reading
+ in.read(buf);    // Read data</pre></blockquote>
+
+<p> 此方法不能实际清除缓冲区中的数据，但从名称来看它似乎能够这样做，这样命名是因为它多数情况下确实是在清除数据时使用。 </p>
+
+@return  此缓冲区
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.flip()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+反转此缓冲区。首先将限制设置为当前位置，然后将位置设置为 0。如果已定义了标记，则丢弃该标记。
+
+<p> 在一系列通道读取或<i>放置</i> 操作之后，调用此方法为一系列通道写入或相对<i>获取</i> 操作做好准备。例如：
+
+ <blockquote><pre>
+ buf.put(magic);    // Prepend header
+ in.read(buf);      // Read data into rest of buffer
+ buf.flip();        // Flip buffer
+ out.write(buf);    // Write header + data to channel</pre></blockquote>
+
+<p> 当将数据从一个地方传输到另一个地方时，经常将此方法与 {@link java.nio.ByteBuffer#compact compact} 方法一起使用。  </p>
+
+@return  此缓冲区
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.nio.Buffer java.nio.Buffer.rewind()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+重绕此缓冲区。将位置设置为 0 并丢弃标记。
+
+<p> 在一系列通道写入或<i>获取</i> 操作之前调用此方法（假定已经适当设置了限制）。例如：
+
+ <blockquote><pre>
+ out.write(buf);    // Write remaining data
+ buf.rewind();      // Rewind buffer
+ buf.get(array);    // Copy data into array</pre></blockquote>
+
+@return  此缓冲区
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final int java.nio.Buffer.remaining()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前位置与限制之间的元素数。 </p>
+
+@return  此缓冲区中的剩余元素数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final boolean java.nio.Buffer.hasRemaining()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知在当前位置和限制之间是否有元素。 </p>
+
+@return  当且仅当此缓冲区中至少还有一个元素时返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.Buffer.isReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知此缓冲区是否为只读缓冲区。 </p>
+
+@return  当且仅当此缓冲区为只读缓冲区时返回 <tt>true</tt>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.Buffer.hasArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+告知此缓冲区是否具有可访问的底层实现数组。
+
+ <p> 如果此方法返回 <tt>true</tt>，则可以安全地调用 {@link #array() array} 和 {@link #arrayOffset() arrayOffset} 方法。
+
+ </p>
+
+ @return  当且仅当此缓冲区有非只读的底层实现数组时返回 <tt>true</tt>。
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Object java.nio.Buffer.array()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此缓冲区的底层实现数组<i>（可选操作）</i>。
+
+ <p> 此方法旨在使具有底层实现数组的缓冲区能更有效地传递给本机代码。具体子类为此方法提供更强类型的返回值。
+
+ <p> 对此缓冲区内容进行修改将导致返回数组的内容被修改，反之亦然。
+
+ <p> 调用此方法前应调用 {@link #hasArray hasArray} 方法，以确保此缓冲区存在可访问的底层实现数组。</p>
+
+ @return  此缓冲区的底层实现数组
+
+ @throws  ReadOnlyBufferException
+          如果此缓冲区存在底层实现数组，但它是只读的
+
+ @throws  UnsupportedOperationException
+          如果此缓冲区不存在可访问的底层实现数组
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int java.nio.Buffer.arrayOffset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此缓冲区的底层实现数组中第一个缓冲区元素的偏移量<i>（可选操作）</i>。
+
+ <p> 如果此缓冲区存在底层实现数组，那么缓冲区位置 <i>p</i> 对应于数组索引 <i>p</i>&nbsp;+&nbsp;<tt>arrayOffset()</tt>。
+
+ <p> 调用此方法前应调用 {@link #hasArray hasArray} 方法，以确保此缓冲区存在可访问的底层实现数组。</p>
+
+ @return  此缓冲区数组中第一个缓冲区元素的偏移量
+
+ @throws  ReadOnlyBufferException
+          如果此缓冲区存在底层实现数组，但它是只读的
+
+ @throws  UnsupportedOperationException
+          如果此缓冲区不存在可访问的底层实现数组
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.nio.Buffer.isDirect()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 告知此缓冲区是否为<a href="ByteBuffer.html#direct"><i>直接缓冲区</i></a>。</p>
+
+ @return  当且仅当此缓冲区为直接缓冲区时返回 <tt>true</tt>。
+
+ @since 1.6
+
+<!-- END DATA -->

@@ -1,0 +1,55 @@
+<!-- BEGIN KEY -->
+public interface java.security.interfaces.DSAKeyPairGenerator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+能够生成 DSA 密钥对的对象的接口。 
+
+<p>可以对每个 <code>initialize</code> 方法调用任意多次。如果没有对 DSAKeyPairGenerator 调用 <code>initialize</code> 方法，则默认使用预计算的 p、q、g 参数并使用 SecureRandom 的某个实例作为随机位源，生成一个 1024 位的密钥。
+ 
+<p>希望指示特定于 DSA 参数的用户，以及希望生成适合于 DSA 算法使用的密钥对的用户通常可以进行以下操作：
+ 
+ <ol>
+ 
+<li>通过调用 KeyPairGenerator <code>getInstance</code> 方法并将 &quot;DSA&quot; 作为其参数，获取 DSA 算法的密钥对生成器。<p> 
+ 
+<li>通过将结果强制转换为 DSAKeyPairGenerator，并从此 DSAKeyPairGenerator 接口调用 <code>initialize</code> 方法之一，初始化该生成器。<p>
+ 
+<li>通过从 KeyPairGenerator 类调用 <code>generateKeyPair</code> 方法生成一个密钥对。
+ 
+ </ol> 
+
+<p>注：并非总是需要对 DSA 密钥对生成器执行特定于算法的初始化。也就是说，并非总是需要调用此接口中的 <code>initialize</code> 方法。接受特定于算法的参数的默认值时，只需要使用 KeyPairGenerator 接口 <code>initialize</code> 方法的与算法无关的初始化。
+ 
+@see java.security.KeyPairGenerator
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.interfaces.DSAKeyPairGenerator.initialize(DSAParams params, SecureRandom random) throws java.security.InvalidParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用 DSA 系列参数（p、q 和 g）和可选 SecureRandom 位源初始化密钥对生成器。如果需要 SecureRandom 位源但没有提供，即 SecureRandom 为 null，则使用默认 SecureRandom 实例。
+
+@param params 用于生成密钥的参数。
+
+@param random 用于生成密钥位的随机位源；可以为 null。
+
+@exception InvalidParameterException 如果 <code>params</code> 值无效或为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.interfaces.DSAKeyPairGenerator.initialize(int modlen, boolean genParams, SecureRandom random) throws java.security.InvalidParameterException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定系数长度（而不是参数）和可选 SecureRandom 位源初始化密钥对生成器。如果需要 SecureRandom 位源但没有提供，即 SecureRandom 为 null，则使用默认 SecureRandom 实例。
+
+<p>如果 <code>genParams</code> 为 true，则此方法生成新的 p、q 和 g 参数。如果为 false，则该方法使用对应于所请求系数长度的预计算参数。如果不存在对应于该系数长度的预计算参数，则将抛出一个异常。确保总是存在系数长度为 512 和 1024 位的对应默认参数。
+
+@param modlen 以位为单位的系数长度。有效值在 512 到 1024（包括两者）之间，且是 8 的倍数。
+
+@param random 用于生成密钥位的随机位源；可以为 null。
+
+@param genParams 是否生成对应所请求系数长度的新参数。
+
+@exception InvalidParameterException 如果 <code>modlen</code> 不在 512 到 1024 之间，或者 <code>genParams</code> 为 false，并且不存在对应所请求系数长度的预计算参数。  
+
+<!-- END DATA -->

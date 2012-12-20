@@ -1,0 +1,86 @@
+<!-- BEGIN KEY -->
+public interface class javax.xml.bind.annotation.XmlValue implements java.lang.annotation.Annotation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+支持将类映射到带有 simpleContent 的 XML 模式复杂类型或 XML 模式简单类型。 
+ </p>
+
+ <p>
+<b>用法： </b>
+ <p>
+<tt>@XmlValue</tt> 注释可以与以下程序元素一起使用： 
+ <ul> 
+<li> JavaBean 属性。</li>
+<li> 非 static、非 transient 字段。</li>
+ </ul>
+ 
+<p>有关其他公共信息，请参阅 javax.xml.bind.package javadoc 中的&ldquo;包规范&rdquo;。</p>
+
+用法受到以下使用约束的限制：
+ <ul>
+<li>可以使用 <tt>@XmlValue</tt> 注释注释最多一个字段或属性。 </li> 
+
+<li><tt>@XmlValue</tt> 可以与以下注释一起使用：{@link XmlList}。但是这是多余的，因为 {@link XmlList} 将类型映射到像 {@link XmlValue} 那样由列表派生的简单模式类型。 </li>
+
+<li>如果字段或属性的类型是集合类型，那么集合项类型必须映射到简单模式类型。  </li>
+ 
+<li>如果字段或属性的类型不是集合类型，那么类型必须映射到 XML 模式简单类型。 </li>
+
+ </ul>
+ </p>
+ <p>
+如果已注释的 JavaBean 属性是映射到 XML 模式构造的唯一类成员，那么该类将被映射到一个简单类型。 
+
+如果存在映射到 XML 属性的其他 JavaBean 属性（使用 <tt>@XmlValue</tt> 注释注释的 JavaBean 除外），那么类将被映射到带有 simpleContent 的复杂类型。
+ </p>
+
+<p> <b>示例 1：</b>将类映射到 XML 模式 simpleType</p>
+
+   <pre>
+ 
+     // Example 1: Code fragment
+     public class USPrice {
+         &#64;XmlValue
+         public java.math.BigDecimal price;
+     }
+  
+     &lt;!-- Example 1: XML Schema fragment -->
+     &lt;xs:simpleType name="USPrice">
+       &lt;xs:restriction base="xs:decimal"/>
+     &lt;/xs:simpleType>
+
+   </pre>
+
+ 
+<p><b>示例 2：</b>将类映射到带有 simpleContent的 XML 模式 complexType。</p>
+ 
+   <pre>
+
+   // Example 2: Code fragment
+   public class InternationalPrice {
+       &#64;XmlValue
+       public java.math.BigDecimal price;
+ 
+       &#64;XmlAttribute
+       public String currency;
+   }
+  
+   &lt;!-- Example 2: XML Schema fragment -->
+   &lt;xs:complexType name="InternationalPrice">
+     &lt;xs:simpleContent>
+       &lt;xs:extension base="xs:decimal">
+         &lt;xs:attribute name="currency" type="xs:string"/>
+       &lt;/xs:extension>
+     &lt;/xs:simpleContent>
+   &lt;/xs:complexType> 
+
+   </pre>
+ </p>
+
+@author Sekhar Vajjhala, Sun Microsystems, Inc.
+@see XmlType
+@since JAXB2.0
+@version $Revision: 1.4 $
+
+<!-- END DATA -->

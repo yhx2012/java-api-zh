@@ -1,0 +1,179 @@
+<!-- BEGIN KEY -->
+public class java.io.BufferedInputStream extends java.io.FilterInputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>BufferedInputStream</code> 为另一个输入流添加一些功能，即缓冲输入以及支持 <code>mark</code> 和 <code>reset</code> 方法的能力。在创建 <code>BufferedInputStream</code> 时，会创建一个内部缓冲区数组。在读取或跳过流中的字节时，可根据需要从包含的输入流再次填充该内部缓冲区，一次填充多个字节。<code>mark</code> 操作记录输入流中的某个点，<code>reset</code> 操作使得在从包含的输入流中获取新字节之前，再次读取自最后一次 <code>mark</code> 操作后读取的所有字节。
+
+@author  Arthur van Hoff
+@version 1.50, 05/03/04
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected volatile byte[] java.io.BufferedInputStream.buf
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+存储数据的内部缓冲区数组。必要时可用另一个不同大小的数组替换它。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.BufferedInputStream.count
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比缓冲区中最后一个有效字节的索引大 1 的索引。此值始终处于 <code>0</code> 到 <code>buf.length</code> 的范围内；从 <code>buf[0]</code> 到 <code>buf[count-1]</code> 的元素包含从底层输入流中获取的缓冲输入数据。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.BufferedInputStream.pos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+缓冲区中的当前位置。这是将从 <code>buf</code> 数组中读取的下一个字符的索引。
+ <p>
+此值始终处于 <code>0</code> 到 <code>count</code> 的范围内。如果此值小于 <code>count</code>，则 <code>buf[pos]</code> 将作为下一个输入字节；如果此值等于 <code>count</code>，则下一次 <code>read</code> 或 <code>skip</code> 操作需要从包含的输入流中读取更多的字节。
+
+@see     java.io.BufferedInputStream#buf
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.BufferedInputStream.markpos
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+最后一次调用 <code>mark</code> 方法时 <code>pos</code> 字段的值。
+ <p>
+此值始终处于 <code>-1</code> 到 <code>pos</code> 的范围内。如果输入流中没有被标记的位置，则此字段为 <code>-1</code>。如果输入流中有被标记的位置，则 <code>buf[markpos]</code> 将用作 <code>reset</code> 操作后的第一个输入字节。如果 <code>markpos</code> 不是 <code>-1</code>，则从位置 <code>buf[markpos]</code> 到 <code>buf[pos-1]</code> 之间的所有字节都必须保留在缓冲区数组中（尽管对 <code>count</code>、<code>pos</code> 和 <code>markpos</code> 的值进行适当调整后，这些字节可能移动到缓冲区数组中的其他位置）；除非 <code>pos</code> 与 <code>markpos</code> 的差超过 <code>marklimit</code>，否则不能将其丢弃。
+
+@see     java.io.BufferedInputStream#mark(int)
+@see     java.io.BufferedInputStream#pos
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.io.BufferedInputStream.marklimit
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 <code>mark</code> 方法后，在后续调用 <code>reset</code> 方法失败之前所允许的最大提前读取量。只要 <code>pos</code> 与 <code>markpos</code> 之差超过 <code>marklimit</code>，就可以通过将 <code>markpos</code> 设置为 <code>-1</code> 来删除该标记。
+
+@see     java.io.BufferedInputStream#mark(int)
+@see     java.io.BufferedInputStream#reset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.BufferedInputStream(InputStream in)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 <code>BufferedInputStream</code> 并保存其参数，即输入流 <code>in</code>，以便将来使用。创建一个内部缓冲区数组并将其存储在 <code>buf</code> 中。
+
+@param in 底层输入流。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.BufferedInputStream(InputStream in, int size)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建具有指定缓冲区大小的 <code>BufferedInputStream</code> 并保存其参数，即输入流 <code>in</code>，以便将来使用。创建一个长度为 <code>size</code> 的内部缓冲区数组并将其存储在 <code>buf</code> 中。
+
+@param in 底层输入流。
+@param   size   缓冲区大小。
+@exception IllegalArgumentException 如果 size &lt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.BufferedInputStream.read() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+参见 <code>InputStream</code> 的 <code>read</code> 方法的常规协定。
+
+@return   下一个数据字节，如果到达流末尾，则返回 <code>-1</code>。
+@exception  IOException  如果已经调用其 {@link #close()} 方法关闭了此输入流，或者发生 I/O 错误。
+@see        java.io.FilterInputStream#in
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.BufferedInputStream.read(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此字节输入流中给定偏移量处开始将各字节读取到指定的 byte 数组中。
+
+<p> 此方法实现了 <code>{@link InputStream}</code> 类相应 <code>{@link InputStream#read(byte[], int, int) read}</code> 方法的常规协定。另一个便捷之处在于，它将通过重复地调用底层流的 <code>read</code> 方法，尝试读取尽可能多的字节。这种迭代的 <code>read</code> 会一直继续下去，直到满足以下条件之一： <ul>
+
+<li> 已经读取了指定的字节数，
+
+<li> 底层流的 <code>read</code> 方法返回 <code>-1</code>，指示文件末尾（end-of-file），或者
+
+<li> 底层流的 <code>available</code> 方法返回 0，指示将阻塞后续的输入请求。
+
+</ul> 如果第一次对底层流调用 <code>read</code> 返回 <code>-1</code>（指示文件末尾），则此方法返回 <code>-1</code>。否则此方法返回实际读取的字节数。
+
+<p> 鼓励（但不是必须）此类的各个子类以相同的方式尝试读取尽可能多的字节。
+
+@param   b   目标缓冲区。
+@param      off   开始存储字节处的偏移量。
+@param   len    要读取的最大字节数。
+@return     读取的字节数；如果已到达流末尾，则返回 <code>-1</code>。
+@exception  IOException  如果已经调用其 {@link #close()} 方法关闭了此输入流，或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized long java.io.BufferedInputStream.skip(long n) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+参见 <code>InputStream</code> 的 <code>skip</code> 方法的常规协定。
+
+@exception  IOException  如果流不支持查找操作；或者已经调用其 {@link #close()} 方法关闭了此输入流；或者发生 I/O 错误。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.io.BufferedInputStream.available() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可以从此输入流读取（或跳过）、且不受此输入流接下来的方法调用阻塞的估计字节数。接下来的调用可能是同一个线程，也可能是不同的线程。一次读取或跳过这么多字节将不会受阻塞，但可以读取或跳过数量更少的字节。
+ <p>
+此方法返回缓冲区中剩余的待读取字节数 (<code>count&nbsp;- pos</code>) 与调用 {@link java.io.FilterInputStream#in in}.available() 的结果之和。
+
+@return     可以不受阻塞地从此输入流读取（或跳过）的估计字节数。
+@exception  IOException  如果已经调用其 {@link #close()} 方法关闭了此输入流，或者发生 I/O 错误。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.BufferedInputStream.mark(int readlimit)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+参见 <code>InputStream</code> 的 <code>mark</code> 方法的常规协定。
+
+@param   readlimit   在标记位置变为无效之前可以读取字节的最大限制。
+@see     java.io.BufferedInputStream#reset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.io.BufferedInputStream.reset() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+参见 <code>InputStream</code> 的 <code>reset</code> 方法的常规协定。
+ <p>
+如果 <code>markpos</code> 为 <code>-1</code>（尚未设置标记，或者标记已失效），则抛出 <code>IOException</code>。否则将 <code>pos</code> 设置为与 <code>markpos</code> 相等。
+
+@exception  IOException  如果尚未标记此流；或者标记已失效；或者已经调用其 {@link #close()} 方法关闭了此输入流；或者发生 I/O 错误。
+@see        java.io.BufferedInputStream#mark(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.io.BufferedInputStream.markSupported()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此输入流是否支持 <code>mark</code> 和 <code>reset</code> 方法。<code>BufferedInputStream</code> 的 <code>markSupported</code> 方法返回 <code>true</code>。 
+
+@return  一个 <code>boolean</code> 值，指示此流类型是否支持 <code>mark</code> 和 <code>reset</code> 方法。
+@see     java.io.InputStream#mark(int)
+@see     java.io.InputStream#reset()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.io.BufferedInputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+关闭此输入流并释放与该流关联的所有系统资源。关闭了该流之后，后续的 read()、available()、reset() 或 skip() 调用都将抛出 IOException。关闭之前已关闭的流不会产生任何效果。 
+
+@exception  IOException  如果发生 I/O 错误。
+
+<!-- END DATA -->

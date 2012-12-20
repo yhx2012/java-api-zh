@@ -1,0 +1,97 @@
+<!-- BEGIN KEY -->
+public abstract class java.security.PermissionCollection extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+表示 Permission 对象集合的抽象类。
+
+<p>使用 PermissionCollection，您可以：
+ <UL>
+<LI> 使用 <code>add</code> 方法向集合添加权限。
+<LI> 使用 <code>implies</code> 方法查看是否集合中暗含了特定的权限。
+<LI> 使用 <code>elements</code> 方法枚举所有的权限。
+ </UL>
+ <P>
+
+<p>当需要集合许多相同类型的 Permission 对象时，首先应该调用该特定 Permission 对象类型上的 <code>newPermissionCollection</code> 方法。默认的行为（来自 Permission 类）只是返回 null。如果 Permission 类的子类需要在一个特定的 PermissionCollection 对象中存储其权限，以便调用 <code>PermissionCollection.implies</code> 方法时能提供正确的语义，则它们应该重写此方法。如果返回非 null 值，一定要使用该 PermissionCollection。如果返回 null，那么 <code>newPermissionCollection</code> 的调用方可以在任何它们选择的 PermissionCollection（使用 Hashtable 的，使用 Vector 的，等等)中随意存储给定类型的权限。
+
+<p><code>Permission.newPermissionCollection</code> 方法返回的 PermissionCollection 是同类的集合，它们只存储给定 Permission 类型的 Permission 对象。PermissionCollection 也可以是不同种类的。例如，Permissions 是 PermissionCollection 的子类，表示 PermissionCollection 的集合。也就是说，它的每一个成员是一个同类的 PermissionCollection。例如，一个 Permissions 对象可能有一个用于所有 FilePermission 对象的 FilePermissionCollection，有一个用于所有的 SocketPermission 对象的 SocketPermissionCollection，等等。它的 <code>add</code> 方法将权限添加到恰当的集合。
+
+<p>只要将一个权限添加到不同种类的 PermissionCollection（如 Permissions），并且 PermissionCollection 尚未包含指定权限类型的 PermissionCollection，PermissionCollection 都应该对该权限的类调用 <code>newPermissionCollection</code> 方法来查看其是否需要特殊的 PermissionCollection。如果 <code>newPermissionCollection</code> 返回 null，则 PermissionCollection 可以将权限随意存储在它需要的任何类型的 PermissionCollection 中（使用 Hashtable 的，使用 Vector 的，等等）。例如，Permissions 对象使用默认的 PermissionCollection 实现，该实现将权限存储在 Hashtable 中。
+
+<p> PermissionCollection 的子类实现应该假定它们可能在多个线程中被同时调用，因此应该被正确地同步。此外，通过 <code>elements</code> 方法返回的枚举不是<em>快速失败</em> 的。正在对一个集合进行枚举时，不应该修改该集合。
+
+@see Permission
+@see Permissions
+
+@version 1.35 04/05/05
+
+@author Roland Schemers
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.security.PermissionCollection.add(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将一个权限对象添加到当前权限对象的集合。
+
+@param permission 要添加的 Permission 对象。
+
+@exception SecurityException 如果此 PermissionCollection 对象已被标记为只读。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean java.security.PermissionCollection.implies(Permission permission)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查看此 PermissionCollection 中保存的 Permission 对象集合是否暗含指定的权限。
+
+@param permission 要比较的 Permission 对象。
+
+@return  如果集合中的权限暗含 &quot;permission&quot;，则返回 true；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Enumeration<java.security.Permission> java.security.PermissionCollection.elements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回集合中所有 Permission 对象的枚举。
+
+@return 所有 Permission 的枚举。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.security.PermissionCollection.setReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此 PermissionCollection 对象标记为 &quot;readonly&quot;。当 PermissionCollection 对象被标记为只读后，不能使用 <code>add</code> 向其中添加任何新的 Permission 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.security.PermissionCollection.isReadOnly()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 PermissionCollection 对象被标记为只读，则返回 true。如果它是只读的，则不能使用 <code>add</code> 向其中添加任何新的 Permission 对象。
+
+<p>默认情况下，对象<i>不</i> 是只读的。它可以通过调用 <code>setReadOnly</code> 设置为只读。
+
+@return 如果此 PermissionCollection 对象被标记为只读，则返回 true ；否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.security.PermissionCollection.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回描述此 PermissionCollection 对象的字符串，提供该对象中包含的关于所有权限的信息。格式为：
+ <pre>
+super.toString() (
+   // enumerate all the Permission
+   // objects and call toString() on them,
+   // one per line..
+ )</pre>
+
+<code>super.toString</code> 调用此对象的超类的 <code>toString</code> 方法，其超类是 Object。结果是此 PermissionCollection 的类型名称，后跟此对象的哈希码，因此使客户端能区分不同的 PermissionCollections 对象，即使它们包含相同的权限。
+
+@return 有关此 PermissionCollection 对象的信息，如上所述。
+
+
+<!-- END DATA -->

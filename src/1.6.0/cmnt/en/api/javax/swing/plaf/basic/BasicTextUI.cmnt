@@ -1,0 +1,558 @@
+<!-- BEGIN KEY -->
+public abstract class javax.swing.plaf.basic.BasicTextUI extends javax.swing.plaf.TextUI implements javax.swing.text.ViewFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+ Basis of a text components look-and-feel.  This provides the
+ basic editor view and controller services that may be useful
+ when creating a look-and-feel for an extension of
+ <code>JTextComponent</code>.
+ <p>
+ Most state is held in the associated <code>JTextComponent</code>
+ as bound properties, and the UI installs default values for the 
+ various properties.  This default will install something for
+ all of the properties.  Typically, a LAF implementation will
+ do more however.  At a minimum, a LAF would generally install
+ key bindings.
+ <p>
+ This class also provides some concurrency support if the 
+ <code>Document</code> associated with the JTextComponent is a subclass of
+ <code>AbstractDocument</code>.  Access to the View (or View hierarchy) is
+ serialized between any thread mutating the model and the Swing
+ event thread (which is expected to render, do model/view coordinate
+ translation, etc).  <em>Any access to the root view should first
+ acquire a read-lock on the AbstractDocument and release that lock
+ in a finally block.</em>
+ <p>
+ An important method to define is the {@link #getPropertyPrefix} method
+ which is used as the basis of the keys used to fetch defaults
+ from the UIManager.  The string should reflect the type of 
+ TextUI (eg. TextField, TextArea, etc) without the particular 
+ LAF part of the name (eg Metal, Motif, etc).
+ <p>
+ To build a view of the model, one of the following strategies 
+ can be employed.
+ <ol>
+ <li>
+ One strategy is to simply redefine the 
+ ViewFactory interface in the UI.  By default, this UI itself acts
+ as the factory for View implementations.  This is useful
+ for simple factories.  To do this reimplement the 
+ {@link #create} method.
+ <li>
+ A common strategy for creating more complex types of documents
+ is to have the EditorKit implementation return a factory.  Since
+ the EditorKit ties all of the pieces necessary to maintain a type
+ of document, the factory is typically an important part of that
+ and should be produced by the EditorKit implementation.
+ </ol>
+ <p>
+ <strong>Warning:</strong>
+ Serialized objects of this class will not be compatible with
+ future Swing releases. The current serialization support is
+ appropriate for short term storage or RMI between applications running
+ the same version of Swing.  As of 1.4, support for long term storage
+ of all JavaBeans<sup><font size="-2">TM</font></sup>
+ has been added to the <code>java.beans</code> package.
+ Please see {@link java.beans.XMLEncoder}.
+
+ @author Timothy Prinzing
+ @author Shannon Hickey (drag and drop)
+ @version 1.120 08/25/06
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.plaf.basic.BasicTextUI()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a new UI.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Caret javax.swing.plaf.basic.BasicTextUI.createCaret()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates the object to use for a caret.  By default an
+ instance of BasicCaret is created.  This method
+ can be redefined to provide something else that implements
+ the InputPosition interface or a subclass of JCaret.
+
+ @return the caret object
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Highlighter javax.swing.plaf.basic.BasicTextUI.createHighlighter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates the object to use for adding highlights.  By default
+ an instance of BasicHighlighter is created.  This method
+ can be redefined to provide something else that implements
+ the Highlighter interface or a subclass of DefaultHighlighter.
+
+ @return the highlighter
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.plaf.basic.BasicTextUI.getKeymapName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches the name of the keymap that will be installed/used 
+ by default for this UI. This is implemented to create a
+ name based upon the classname.  The name is the the name
+ of the class with the package prefix removed.
+
+ @return the name
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.Keymap javax.swing.plaf.basic.BasicTextUI.createKeymap()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates the keymap to use for the text component, and installs
+ any necessary bindings into it.  By default, the keymap is
+ shared between all instances of this type of TextUI. The
+ keymap has the name defined by the getKeymapName method.  If the
+ keymap is not found, then DEFAULT_KEYMAP from JTextComponent is used.
+ <p>
+ The set of bindings used to create the keymap is fetched 
+ from the UIManager using a key formed by combining the
+ {@link #getPropertyPrefix} method
+ and the string <code>.keyBindings</code>.  The type is expected
+ to be <code>JTextComponent.KeyBinding[]</code>.
+
+ @return the keymap
+ @see #getKeymapName
+ @see javax.swing.text.JTextComponent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.propertyChange(PropertyChangeEvent evt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ This method gets called when a bound property is changed
+ on the associated JTextComponent.  This is a hook
+ which UI implementations may change to reflect how the
+ UI displays bound properties of JTextComponent subclasses.
+ This is implemented to do nothing (i.e. the response to
+ properties in JTextComponent itself are handled prior
+ to calling this method).
+
+ This implementation updates the background of the text
+ component if the editable and/or enabled state changes.
+
+ @param evt the property change event
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected abstract java.lang.String javax.swing.plaf.basic.BasicTextUI.getPropertyPrefix()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the name used as a key to look up properties through the
+ UIManager.  This is used as a prefix to all the standard
+ text properties.
+
+ @return the name
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.installDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Initializes component properties, e.g. font, foreground, 
+ background, caret color, selection color, selected text color,
+ disabled text color, and border color.  The font, foreground, and
+ background properties are only set if their current value is either null
+ or a UIResource, other properties are set if the current
+ value is null.
+ 
+ @see #uninstallDefaults
+ @see #installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.uninstallDefaults()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the component properties that haven't been explicitly overridden to 
+ null.  A property is considered overridden if its current value
+ is not a UIResource.
+ 
+ @see #installDefaults
+ @see #uninstallUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.installListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Installs listeners for the UI.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.uninstallListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Uninstalls listeners for the UI.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.paintBackground(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Paints a background for the view.  This will only be
+ called if isOpaque() on the associated component is
+ true.  The default is to paint the background color 
+ of the component.
+
+ @param g the graphics context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final javax.swing.text.JTextComponent javax.swing.plaf.basic.BasicTextUI.getComponent()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches the text component associated with this
+ UI implementation.  This will be null until
+ the ui has been installed.
+
+ @return the editor component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.modelChanged()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flags model changes.
+ This is called whenever the model has changed.
+ It is implemented to rebuild the view hierarchy
+ to represent the default root element of the
+ associated model.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected final void javax.swing.plaf.basic.BasicTextUI.setView(View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Sets the current root of the view hierarchy and calls invalidate().
+ If there were any child components, they will be removed (i.e.
+ there are assumed to have come from components embedded in views).
+
+ @param v the root view
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.plaf.basic.BasicTextUI.paintSafely(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Paints the interface safely with a guarantee that
+ the model won't change from the view of this thread.  
+ This does the following things, rendering from 
+ back to front.
+ <ol>
+ <li>
+ If the component is marked as opaque, the background
+ is painted in the current background color of the
+ component.
+ <li>
+ The highlights (if any) are painted.
+ <li>
+ The view hierarchy is painted.
+ <li>
+ The caret is painted.
+ </ol>
+
+ @param g the graphics context
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.installUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Installs the UI for a component.  This does the following
+ things.
+ <ol>
+ <li>
+ Set the associated component to opaque (can be changed
+ easily by a subclass or on JTextComponent directly),
+ which is the most common case.  This will cause the
+ component's background color to be painted.
+ <li>
+ Install the default caret and highlighter into the 
+ associated component.
+ <li>
+ Attach to the editor and model.  If there is no 
+ model, a default one is created.
+ <li>
+ create the view factory and the view hierarchy used
+ to represent the model.
+ </ol>
+
+ @param c the editor component
+ @see ComponentUI#installUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.uninstallUI(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Deinstalls the UI for a component.  This removes the listeners,
+ uninstalls the highlighter, removes views, and nulls out the keymap.
+
+ @param c the editor component
+ @see ComponentUI#uninstallUI
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.update(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Superclass paints background in an uncontrollable way
+ (i.e. one might want an image tiled into the background).
+ To prevent this from happening twice, this method is
+ reimplemented to simply paint.
+ <p>
+ <em>NOTE:</em> Superclass is also not thread-safe in 
+ it's rendering of the background, although that's not
+ an issue with the default rendering.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final void javax.swing.plaf.basic.BasicTextUI.paint(Graphics g, JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Paints the interface.  This is routed to the
+ paintSafely method under the guarantee that
+ the model won't change from the view of this thread
+ while it's rendering (if the associated model is
+ derived from AbstractDocument).  This enables the 
+ model to potentially be updated asynchronously.
+
+ @param g the graphics context
+ @param c the editor component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getPreferredSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the preferred size for the editor component.  If the component
+ has been given a size prior to receiving this request, it will
+ set the size of the view hierarchy to reflect the size of the component
+ before requesting the preferred size of the view hierarchy.  This
+ allows formatted views to format to the current component size before
+ answering the request.  Other views don't care about currently formatted
+ size and give the same answer either way.
+
+ @param c the editor component
+ @return the size
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getMinimumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the minimum size for the editor component.
+
+ @param c the editor component
+ @return the size
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.plaf.basic.BasicTextUI.getMaximumSize(JComponent c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the maximum size for the editor component.
+
+ @param c the editor component
+ @return the size
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.getVisibleEditorRect()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Gets the allocation to give the root View.  Due
+ to an unfortunate set of historical events this 
+ method is inappropriately named.  The Rectangle
+ returned has nothing to do with visibility.  
+ The component must have a non-zero positive size for 
+ this translation to be computed.
+
+ @return the bounding box for the root view
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.modelToView(JTextComponent tc, int pos) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts the given location in the model to a place in
+ the view coordinate system.
+ The component must have a non-zero positive size for 
+ this translation to be computed.
+
+ @param tc the text component for which this UI is installed
+ @param pos the local location in the model to translate >= 0
+ @return the coordinates as a rectangle, null if the model is not painted
+ @exception BadLocationException  if the given position does not
+   represent a valid location in the associated document
+ @see TextUI#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Rectangle javax.swing.plaf.basic.BasicTextUI.modelToView(JTextComponent tc, int pos, Position.Bias bias) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts the given location in the model to a place in
+ the view coordinate system.
+ The component must have a non-zero positive size for 
+ this translation to be computed.
+
+ @param tc the text component for which this UI is installed
+ @param pos the local location in the model to translate >= 0
+ @return the coordinates as a rectangle, null if the model is not painted
+ @exception BadLocationException  if the given position does not
+   represent a valid location in the associated document
+ @see TextUI#modelToView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.viewToModel(JTextComponent tc, Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts the given place in the view coordinate system
+ to the nearest representative location in the model.
+ The component must have a non-zero positive size for 
+ this translation to be computed.
+
+ @param tc the text component for which this UI is installed
+ @param pt the location in the view to translate.  This
+  should be in the same coordinate system as the mouse events.
+ @return the offset from the start of the document >= 0,
+   -1 if not painted
+ @see TextUI#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.viewToModel(JTextComponent tc, Point pt, javax.swing.text.Position.Bias[] biasReturn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Converts the given place in the view coordinate system
+ to the nearest representative location in the model.
+ The component must have a non-zero positive size for 
+ this translation to be computed.
+
+ @param tc the text component for which this UI is installed
+ @param pt the location in the view to translate.  This
+  should be in the same coordinate system as the mouse events.
+ @return the offset from the start of the document >= 0,
+   -1 if the component doesn't yet have a positive size.
+ @see TextUI#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.plaf.basic.BasicTextUI.getNextVisualPositionFrom(JTextComponent t, int pos, Position.Bias b, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.damageRange(JTextComponent tc, int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes the portion of the view responsible for the
+ given part of the model to be repainted.  Does nothing if
+ the view is not currently painted.
+
+ @param tc the text component for which this UI is installed
+ @param p0 the beginning of the range >= 0
+ @param p1 the end of the range >= p0
+ @see TextUI#damageRange
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.plaf.basic.BasicTextUI.damageRange(JTextComponent t, int p0, int p1, Position.Bias p0Bias, Position.Bias p1Bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Causes the portion of the view responsible for the 
+ given part of the model to be repainted.
+
+ @param p0 the beginning of the range >= 0
+ @param p1 the end of the range >= p0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.EditorKit javax.swing.plaf.basic.BasicTextUI.getEditorKit(JTextComponent tc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches the EditorKit for the UI.
+
+ @param tc the text component for which this UI is installed
+ @return the editor capabilities
+ @see TextUI#getEditorKit
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.getRootView(JTextComponent tc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Fetches a View with the allocation of the associated 
+ text component (i.e. the root of the hierarchy) that 
+ can be traversed to determine how the model is being
+ represented spatially.
+ <p>
+ <font color=red><b>NOTE:</b>The View hierarchy can
+ be traversed from the root view, and other things
+ can be done as well.  Things done in this way cannot
+ be protected like simple method calls through the TextUI.
+ Therefore, proper operation in the presence of concurrency
+ must be arranged by any logic that calls this method!
+ </font>
+
+ @param tc the text component for which this UI is installed
+ @return the view
+ @see TextUI#getRootView
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.swing.plaf.basic.BasicTextUI.getToolTipText(JTextComponent t, Point pt)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Returns the string to be used as the tooltip at the passed in location.
+ This forwards the method onto the root View.
+
+ @see javax.swing.text.JTextComponent#getToolTipText
+ @see javax.swing.text.View#getToolTipText
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.create(Element elem)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a view for an element.
+ If a subclass wishes to directly implement the factory
+ producing the view(s), it should reimplement this 
+ method.  By default it simply returns null indicating
+ it is unable to represent the element.
+
+ @param elem the element
+ @return the view
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.plaf.basic.BasicTextUI.create(Element elem, int p0, int p1)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Creates a view for an element.
+ If a subclass wishes to directly implement the factory
+ producing the view(s), it should reimplement this 
+ method.  By default it simply returns null indicating
+ it is unable to represent the part of the element.
+
+ @param elem the element
+ @param p0 the starting offset >= 0
+ @param p1 the ending offset >= p0
+ @return the view
+
+<!-- END DATA -->

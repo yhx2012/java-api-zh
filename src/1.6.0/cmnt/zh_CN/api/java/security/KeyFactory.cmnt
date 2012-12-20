@@ -1,0 +1,193 @@
+<!-- BEGIN KEY -->
+public class java.security.KeyFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+密钥工厂用于将<I>密钥</I>（<code>Key</code> 类型的不透明加密密钥）转换成<I>密钥规范</I>（底层密钥材料的透明表示），反之亦然。
+
+<P> 密钥工厂是双向的。也就是说，它们允许根据给定的密钥规范（密钥材料）构建不透明的密钥对象，也允许获取以恰当格式表示的密钥对象的底层密钥材料。
+
+<P> 对于同一个密钥可以存在多个兼容的密钥规范。例如，可以使用 <code>DSAPublicKeySpec</code> 或 <code>X509EncodedKeySpec</code> 指定 DSA 公钥。密钥工厂可用于兼容密钥规范之间的转换。
+
+<P> 以下是一个如何使用密钥工厂根据其编码实例化 DSA 公钥的示例。假定 Alice 收到了 Bob 的数字签名。Bob 也向她发送其公钥（以编码的格式）来验证他的签名。然后 Alice 执行以下操作：
+
+ <pre>
+ X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec(bobEncodedPubKey);
+ KeyFactory keyFactory = KeyFactory.getInstance(&quot;DSA&quot;);
+ PublicKey bobPubKey = keyFactory.generatePublic(bobPubKeySpec);
+ Signature sig = Signature.getInstance(&quot;DSA&quot;);
+ sig.initVerify(bobPubKey);
+ sig.update(data);
+ sig.verify(signature);
+ </pre>
+
+@author Jan Luehe
+
+@version 1.35, 04/21/06
+
+@see Key
+@see PublicKey
+@see PrivateKey
+@see java.security.spec.KeySpec
+@see java.security.spec.DSAPublicKeySpec
+@see java.security.spec.X509EncodedKeySpec
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.security.KeyFactory(KeyFactorySpi keyFacSpi, Provider provider, String algorithm)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个 KeyFactory 对象。
+
+@param keyFacSpi 代理
+@param provider 提供者
+@param algorithm 与此 <tt>KeyFactory</tt> 关联的算法名称
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyFactory java.security.KeyFactory.getInstance(String algorithm) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回转换指定算法的 public/private 关键字的 KeyFactory 对象。
+
+ <p> 此方法从首选 Provider 开始遍历已注册安全提供者列表。返回一个封装 KeyFactorySpi 实现的新 KeyFactory 对象，该实现取自第一个支持指定算法的 Provider。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 请求密钥算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @return 新的 KeyFactory 对象。
+
+ @exception NoSuchAlgorithmException 如果没有 Provider 支持指定算法的 KeyFactorySpi 实现。
+
+ @see Provider
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyFactory java.security.KeyFactory.getInstance(String algorithm, String provider) throws java.security.NoSuchAlgorithmException, java.security.NoSuchProviderException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回转换指定算法的 public/private 关键字的 KeyFactory 对象。
+
+ <p> 返回一个封装 KeyFactorySpi 实现的新 KeyFactory 对象，该实现取自指定提供者。指定提供者必须在安全提供者列表中注册。
+
+ <p> 注意，可以通过 {@link Security#getProviders() Security.getProviders()} 方法获取已注册提供者列表。
+
+ @param algorithm 请求密钥算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者的名称。
+
+ @return 新的 KeyFactory 对象。
+
+ @exception NoSuchAlgorithmException 如果不能从指定提供者获得指定算法的 KeyFactorySpi 实现。
+
+ @exception NoSuchProviderException 如果指定提供者未在安全提供者列表中注册。
+
+ @exception IllegalArgumentException 如果提供者的名称为 null 或空。 
+ 
+ @see Provider 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.security.KeyFactory java.security.KeyFactory.getInstance(String algorithm, Provider provider) throws java.security.NoSuchAlgorithmException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回转换指定算法的 public/private 关键字的 KeyFactory 对象。
+
+ <p> 返回一个封装 KeyFactorySpi 实现的新 KeyFactory 对象，该实现取自指定 Provider 对象。注意，指定 Provider 对象无需在提供者列表中注册。 
+
+ @param algorithm 请求密钥算法的名称。有关标准算法名称的信息，请参阅 <a href=
+ "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA">
+ Java Cryptography Architecture API Specification &amp; Reference </a> 中的附录 A。
+
+ @param provider 提供者。
+
+ @return 新的 KeyFactory 对象。
+
+ @exception NoSuchAlgorithmException 如果不能从指定 Provider 对象获得指定算法的 KeyFactorySpi 实现。
+
+ @exception IllegalArgumentException 如果指定提供者为 null。 
+
+ @see Provider
+
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Provider java.security.KeyFactory.getProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此密钥工厂对象的提供者。
+ 
+@return 此密钥工厂对象的提供者。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.lang.String java.security.KeyFactory.getAlgorithm()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <tt>KeyFactory</tt> 关联的算法的名称。
+
+@return 与此 <tt>KeyFactory</tt> 关联的算法的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.PublicKey java.security.KeyFactory.generatePublic(KeySpec keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据提供的密钥规范（密钥材料）生成公钥对象。
+
+@param keySpec 公钥的规范（密钥材料）。
+
+@return 公钥。
+
+@exception InvalidKeySpecException 如果给定的密钥规范不适合此密钥工厂生成公钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.PrivateKey java.security.KeyFactory.generatePrivate(KeySpec keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据提供的密钥规范（密钥材料）生成私钥对象。
+
+@param keySpec 私钥的规范（密钥材料）。
+
+@return 私钥。
+
+@exception InvalidKeySpecException 如果给定的密钥规范不适合此密钥工厂生成私钥。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final T extends java.security.spec.KeySpec java.security.KeyFactory.getKeySpec(Key key, java.lang.Class<T> keySpec) throws java.security.spec.InvalidKeySpecException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回给定密钥对象的规范（密钥材料）。<code>keySpec</code> 标识应接受返回密钥材料的规范类。例如，它可能是 <code>DSAPublicKeySpec.class</code>，指示密钥材料应该返回到 <code>DSAPublicKeySpec</code> 类的一个实例中。
+
+@param key 密钥。
+
+@param keySpec 应接受返回密钥材料的规范类。
+
+@return 请求规范类实例中的底层密钥规范（密钥材料）。
+
+@exception InvalidKeySpecException 如果请求的密钥规范不适合给定密钥，或无法处理给定密钥（例如，给定密钥具有不能识别的算法或格式）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public final java.security.Key java.security.KeyFactory.translateKey(Key key) throws java.security.InvalidKeyException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将提供者可能未知或不受信任的密钥对象转换成此密钥工厂对应的密钥对象。
+
+@param key 提供者未知或不受信任的密钥对象。
+
+@return 已转换的密钥。
+
+@exception InvalidKeyException 如果此密钥工厂无法处理给定密钥。
+
+<!-- END DATA -->

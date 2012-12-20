@@ -1,0 +1,95 @@
+<!-- BEGIN KEY -->
+public class javax.imageio.plugins.jpeg.JPEGImageReadParam extends javax.imageio.ImageReadParam
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类添加了使用内置 JPEG reader 插件时设置 JPEG 量化表和 Huffman 表的能力。此类的实例将从内置 JPEG <code>ImageReader</code> 的 <code>getDefaultImageReadParam</code> 方法返回。
+
+<p> 这些新增功能的唯一目的是允许在解码简写流中使用表的规范。内置 JPEG reader 还将接受普通 <code>ImageReadParam</code>，这足以满足解码非简写流的需要。
+
+<p> 简写流的表常常通过首先读取另一个仅包含表的简写流来获取，在有些应用程序中，这些表是提前准备好的。此类允许直接从客户端代码指定表。如果在流和 <code>JPEGImageReadParam</code> 中都没有指定任何表，则假定流使用&ldquo;标准&rdquo;视觉上无损失表。有关默认表的更多信息，请参见 {@link JPEGQTable <code>JPEGQTable</code>} 和 {@link JPEGHuffmanTable <code>JPEGHuffmanTable</code>}。
+
+<p> 内置 JPEG reader 的 <code>getDefaultReadParam</code> 方法返回的默认 <code>JPEGImageReadParam</code> 不包含任何表。默认表可以从表类 {@link JPEGQTable <code>JPEGQTable</code>} 和 {@link JPEGHuffmanTable <code>JPEGHuffmanTable</code>} 获取。
+
+<p> 如果流包含表，则忽略 <code>JPEGImageReadParam</code> 中给定的表。此外，如果流中的第一个图像包含表而后续图像不包含表，则在第一个图像中给定的表将用于所有简写图像。从流中读取表后，只有从相同流中后续读取的表才能重写它们。要指定新表，必须调用 reader 的 {@link javax.imageio.ImageReader#setInput <code>setInput</code>} 方法来更改流。
+
+<p> 注意，此类不提供用来获取流中的表的方法。可以通过考虑使用 reader 返回的 <code>IIOMetadata</code> 对象从流中提取表。
+
+ <p>
+有关内置 JPEG 插件的操作的更新信息，请参见 <A HREF="../../metadata/doc-files/jpeg_metadata.html">JPEG metadata format specification and usage notes</A>。
+
+@version 0.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGImageReadParam()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个 <code>JPEGImageReadParam</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.imageio.plugins.jpeg.JPEGImageReadParam.areTablesSet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果表是当前设置的，则返回 <code>true</code>。
+
+@return 如果表存在，则返回 <code>true</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageReadParam.setDecodeTables(javax.imageio.plugins.jpeg.JPEGQTable[] qTables, javax.imageio.plugins.jpeg.JPEGHuffmanTable[] DCHuffmanTables, javax.imageio.plugins.jpeg.JPEGHuffmanTable[] ACHuffmanTables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置量化表和 Huffman 表以在解码简写流中使用。每个类型可能至多有 4 个表。在流中遇到表后，将忽略这些表。所有参数都必须为非 <code>null</code>。两个 Huffman 表的数组必须具有相同的元素数。假定流中的帧和扫描标题的表说明符等效于这些数组中的索引。使用此方法复制参数数组。
+
+@param qTables 量化表对象所组成的数组。
+@param DCHuffmanTables Huffman 表对象所组成的数组。
+@param ACHuffmanTables Huffman 表对象所组成的数组。
+
+@exception IllegalArgumentException 如果这些参数中的任何一个为 <code>null</code>、具有 4 个以上的元素，或者 DC 和 AC 的表数不同。
+
+@see #unsetDecodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.imageio.plugins.jpeg.JPEGImageReadParam.unsetDecodeTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除当前设置的所有量化表和 Huffman 表。
+
+@see #setDecodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGQTable[] javax.imageio.plugins.jpeg.JPEGImageReadParam.getQTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setDecodeTables</code> 设置的量化表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGQTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setDecodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGHuffmanTable[] javax.imageio.plugins.jpeg.JPEGImageReadParam.getDCHuffmanTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setDecodeTables</code> 设置的 DC Huffman 表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGHuffmanTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setDecodeTables
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.imageio.plugins.jpeg.JPEGHuffmanTable[] javax.imageio.plugins.jpeg.JPEGImageReadParam.getACHuffmanTables()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回最近一次调用 <code>setDecodeTables</code> 设置的 AC Huffman 表所组成数组的一个副本；如果当前没有设置表，则返回 <code>null</code>。
+
+@return <code>JPEGHuffmanTable</code> 对象所组成的数组；或者 <code>null</code>。
+
+@see #setDecodeTables
+
+<!-- END DATA -->

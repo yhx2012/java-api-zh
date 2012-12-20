@@ -1,0 +1,229 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.html.HTMLDocument.HTMLReader extends javax.swing.text.html.HTMLEditorKit.ParserCallback
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个 HTML reader，用来加载具有 HTML 元素结构的 HTML 文档。这是一个从解析器的回调集合，实现的目的是为了创建用属性标记的元素集合。该解析构建用于描述所需元素子树的标记（ElementSpec），并使用文档外部类的插入方法以突发的形式将其插入处于写入锁定保护的文档中。
+ <p>
+reader 可以由注册的动作（类型为 <code>HTMLDocument.HTMLReader.TagAction</code>）来配置，该注册动作描述了如何处理动作。提供动作的意义在于，如果元素结构归结为其中具有某种样式的段落，则可以提供最自然的文本编辑操作。某些方面是更自然地从结构上指定的，因此应该允许段落具有任意结构，但需要用结构化动作来编辑它们。这里的含意在于，某些正在被解析的流中所指定的 HTML 元素将被折叠到属性中，并且在某些情况下将合成各个段落。当已经将 HTML 元素转换为属性时，属性键将为 HTML.Tag 类型，并且值将为 AttributeSet 类型，以便不丢失任何信息。这使许多现有动作得以工作，以便用户可以键入输入，单击回车键、退格键、删除键等等，并得到正确的结果。可以创建选项，应用或移除属性等等。考虑这点，reader 所做的工作可以分为以下几类任务：
+ <dl>
+<dt>块
+<dd>构建类似于它在流中被指定的结构。这生成包含其他元素的元素。
+<dt>段落
+<dd>类似于块，区别在于我们期望元素可用于段落视图，这样就不必合成段落元素。
+<dt>字符
+<dd>作为属性的元素，它可以在任意文本位置开始和停止。这最终被混合到文本的运行中，带有所有当前变平的 HTML 字符元素。
+<dt>特殊的
+<dd>生成嵌入式图形元素。
+<dt>表单
+<dd>生成类似于嵌入式图形元素的元素，区别在于它还带有与其关联的组件模型。
+<dt>隐藏的
+<dd>创建元素，当以只读方式查看文档时，此元素在视图中是隐藏的，编辑文档时，此元素是可见的。这可用于保持模型不丢失信息，并用于存储诸如注释和未识别标记等此类信息。
+
+ </dl>
+ <p>
+目前不支持 &lt;APPLET&gt;、&lt;PARAM&gt;、&lt;MAP&gt;、&lt;AREA&gt;、&lt;LINK&gt;、&lt;SCRIPT&gt; 和 &lt;STYLE&gt;。
+
+ <p>
+下表显示了为 <code>HTML.Tag</code> 中定义的标记所分配的动作。<P>
+ <table border=1 summary="HTML tags and assigned actions">
+<tr><th>标记</th><th>动作</th></tr>
+ <tr><td><code>HTML.Tag.A</code>         <td>CharacterAction
+ <tr><td><code>HTML.Tag.ADDRESS</code>   <td>CharacterAction
+ <tr><td><code>HTML.Tag.APPLET</code>    <td>HiddenAction
+ <tr><td><code>HTML.Tag.AREA</code>      <td>AreaAction
+ <tr><td><code>HTML.Tag.B</code>         <td>CharacterAction
+ <tr><td><code>HTML.Tag.BASE</code>      <td>BaseAction
+ <tr><td><code>HTML.Tag.BASEFONT</code>  <td>CharacterAction
+ <tr><td><code>HTML.Tag.BIG</code>       <td>CharacterAction
+ <tr><td><code>HTML.Tag.BLOCKQUOTE</code><td>BlockAction
+ <tr><td><code>HTML.Tag.BODY</code>      <td>BlockAction
+ <tr><td><code>HTML.Tag.BR</code>        <td>SpecialAction
+ <tr><td><code>HTML.Tag.CAPTION</code>   <td>BlockAction
+ <tr><td><code>HTML.Tag.CENTER</code>    <td>BlockAction
+ <tr><td><code>HTML.Tag.CITE</code>      <td>CharacterAction
+ <tr><td><code>HTML.Tag.CODE</code>      <td>CharacterAction
+ <tr><td><code>HTML.Tag.DD</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.DFN</code>       <td>CharacterAction
+ <tr><td><code>HTML.Tag.DIR</code>       <td>BlockAction
+ <tr><td><code>HTML.Tag.DIV</code>       <td>BlockAction
+ <tr><td><code>HTML.Tag.DL</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.DT</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.EM</code>        <td>CharacterAction
+ <tr><td><code>HTML.Tag.FONT</code>      <td>CharacterAction
+ <tr><td><code>HTML.Tag.FORM</code>      <td>从 1.4 版本开始，为 BlockAction
+ <tr><td><code>HTML.Tag.FRAME</code>     <td>SpecialAction
+ <tr><td><code>HTML.Tag.FRAMESET</code>  <td>BlockAction
+ <tr><td><code>HTML.Tag.H1</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.H2</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.H3</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.H4</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.H5</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.H6</code>        <td>ParagraphAction
+ <tr><td><code>HTML.Tag.HEAD</code>      <td>HeadAction
+ <tr><td><code>HTML.Tag.HR</code>        <td>SpecialAction
+ <tr><td><code>HTML.Tag.HTML</code>      <td>BlockAction
+ <tr><td><code>HTML.Tag.I</code>         <td>CharacterAction
+ <tr><td><code>HTML.Tag.IMG</code>       <td>SpecialAction
+ <tr><td><code>HTML.Tag.INPUT</code>     <td>FormAction
+ <tr><td><code>HTML.Tag.ISINDEX</code>   <td>IsndexAction
+ <tr><td><code>HTML.Tag.KBD</code>       <td>CharacterAction
+ <tr><td><code>HTML.Tag.LI</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.LINK</code>      <td>LinkAction
+ <tr><td><code>HTML.Tag.MAP</code>       <td>MapAction
+ <tr><td><code>HTML.Tag.MENU</code>      <td>BlockAction
+ <tr><td><code>HTML.Tag.META</code>      <td>MetaAction
+ <tr><td><code>HTML.Tag.NOFRAMES</code>  <td>BlockAction
+ <tr><td><code>HTML.Tag.OBJECT</code>    <td>SpecialAction
+ <tr><td><code>HTML.Tag.OL</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.OPTION</code>    <td>FormAction
+ <tr><td><code>HTML.Tag.P</code>         <td>ParagraphAction
+ <tr><td><code>HTML.Tag.PARAM</code>     <td>HiddenAction
+ <tr><td><code>HTML.Tag.PRE</code>       <td>PreAction
+ <tr><td><code>HTML.Tag.SAMP</code>      <td>CharacterAction
+ <tr><td><code>HTML.Tag.SCRIPT</code>    <td>HiddenAction
+ <tr><td><code>HTML.Tag.SELECT</code>    <td>FormAction
+ <tr><td><code>HTML.Tag.SMALL</code>     <td>CharacterAction
+ <tr><td><code>HTML.Tag.STRIKE</code>    <td>CharacterAction
+ <tr><td><code>HTML.Tag.S</code>         <td>CharacterAction
+ <tr><td><code>HTML.Tag.STRONG</code>    <td>CharacterAction
+ <tr><td><code>HTML.Tag.STYLE</code>     <td>StyleAction
+ <tr><td><code>HTML.Tag.SUB</code>       <td>CharacterAction
+ <tr><td><code>HTML.Tag.SUP</code>       <td>CharacterAction
+ <tr><td><code>HTML.Tag.TABLE</code>     <td>BlockAction
+ <tr><td><code>HTML.Tag.TD</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.TEXTAREA</code>  <td>FormAction
+ <tr><td><code>HTML.Tag.TH</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.TITLE</code>     <td>TitleAction
+ <tr><td><code>HTML.Tag.TR</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.TT</code>        <td>CharacterAction
+ <tr><td><code>HTML.Tag.U</code>         <td>CharacterAction
+ <tr><td><code>HTML.Tag.UL</code>        <td>BlockAction
+ <tr><td><code>HTML.Tag.VAR</code>       <td>CharacterAction
+ </table>
+ <p>
+一旦遇到 &lt;/html&gt;，则不再通知 Action。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.flush() throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 reader 上调用的最后一个方法。它允许将任何挂起的更改刷新到文档中。因为当前这是同步加载的，所以此时会压入整个更改的集合。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.handleText(char[] data, int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+解析器调用它来指示遇到一个文本块。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.handleStartTag(HTML.Tag t, MutableAttributeSet a, int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从解析器回调。路由到适当的标记处理程序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.handleEndTag(HTML.Tag t, int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从解析器回调。路由到适当的标记处理程序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.handleSimpleTag(HTML.Tag t, MutableAttributeSet a, int pos)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从解析器回调。路由到适当的标记处理程序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.html.HTMLDocument.HTMLReader.handleEndOfLineString(String eol)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+它的调用是在完成流的解析之后且在调用 <code>flush</code> 之前。<code>eol</code> 将是 \n、\r 或 \r\n 中的一个，它是在解析流时最常遇到的。
+
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.registerTag(HTML.Tag t, HTMLDocument.HTMLReader.TagAction a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册给定标记的处理程序。默认情况下所有已知的标记是已注册的。这可以用于更改特殊标记的处理，或者添加对自定义标记的支持。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.pushCharacterStyle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前字符样式压入堆栈，以准备形成新的嵌套字符样式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.popCharacterStyle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将以前压入堆栈的字符样式弹出，以返回以前的样式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.textAreaContent(char[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将给定的内容添加到 textarea 文档。处于 textarea 上下文中时调用此方法。因此，所有看到的文本均属于文本区，并因此添加到与该文本区关联的 TextAreaDocument 中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.preContent(char[] data)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加在 PRE 元素中遇到的给定内容。此方法合成行以保持文本的运行，并调用 addContent 来实际添加文本。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.blockOpen(HTML.Tag t, MutableAttributeSet attr)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向解析器缓冲区添加一条指令，以创建具有给定属性的块元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.blockClose(HTML.Tag t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向解析器缓冲区添加一条指令，以关闭给定类型的块元素。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.addContent(char[] data, int offs, int length)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加某个具有当前字符属性的文本。
+
+@param data 要添加的内容
+@param offs 初始偏移量
+@param length 长度
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.addContent(char[] data, int offs, int length, boolean generateImpliedPIfNecessary)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加某个具有当前字符属性的文本。
+
+@param data 要添加的内容
+@param offs 初始偏移量
+@param length 长度
+@param generateImpliedPIfNecessary 是否生成隐含段
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.html.HTMLDocument.HTMLReader.addSpecialElement(HTML.Tag t, MutableAttributeSet a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加基本上完全是在属性集中指定的内容。
+
+<!-- END DATA -->

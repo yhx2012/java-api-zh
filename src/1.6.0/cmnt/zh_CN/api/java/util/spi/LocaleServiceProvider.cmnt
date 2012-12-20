@@ -1,0 +1,50 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.spi.LocaleServiceProvider extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ <p>
+此类是所有与语言环境有关的服务提供者接口（SPI）的超类。  
+ <p>
+与语言环境有关的服务提供者接口是与 <code>java.text</code> 和 <code>java.util</code> 包中与语言环境有关的类相对应的接口。利用这些接口，可以构造与语言环境有关的对象，可以获取这些包的本地名称。对于 Java 运行时环境本身支持的语言环境集以外的语言环境，<code>java.text</code> 和 <code>java.util</code> 包中与语言环境有关的工厂方法以及获取名称的方法使用提供者接口的实现来提供支持。
+ <p>
+<h4>打包与语言环境有关的服务提供者实现</h4>
+使用 <a href="../../../../technotes/guides/extensions/index.html">Java 扩展机制</a>将这些与语言环境有关的服务的实现作为已安装的扩展打包。提供者使用资源目录 META-INF/services 中的提供者配置文件标识本身，使用完全限定的提供者接口类名称作为文件名。该文件应该包含一个完全限定的具体提供者类名称列表，每行一个。通过下列字符之一表示某行已终止：换行 ('\n')、回车 ('\r')或回车后紧跟换行。忽略各名称周围的空格、制表符和空行。注释字符是 '#' ('#')；每行的第一个注释字符后面的所有字符都被忽略。文件必须使用 UTF-8 编码。
+ <p>
+如果在多个配置文件中指定了一个特定的具体提供者类，或在同一配置文件中多次被指定，则忽略重复的指定。指定特定提供者的配置文件不必像提供者本身一样位于同一个 jar 文件或其他的分布式单元中。提供者必须可从最初为了定位配置文件而查询的类加载器访问，而不一定是加载文件的类加载器。 
+ <p>
+例如，{@link java.text.spi.DateFormatProvider DateFormatProvider} 类的实现应该采用包含以下文件的 jar 文件的形式： 
+ <pre>
+META-INF/services/java.text.spi.DateFormatProvider 
+ </pre>
+文件 <code>java.text.spi.DateFormatProvider</code> 应该具有如下的行： 
+ <pre>
+<code>com.foo.DateFormatProviderImpl</code>
+ </pre>
+这是实现 <code>DateFormatProvider</code> 的类的完全限定类名称。
+<h4>调用与语言环境有关的服务</h4>
+ <p>
+在需要支持请求的语言环境时，<code>java.text</code> 和 <code>java.util</code> 包中与语言环境有关的工厂方法和获取名称的方法调用服务提供者方法。这些方法先检查 Java 运行时环境本身是否支持请求的语言环境，如果是则使用它来支持。否则，这些方法对适当接口调用已安装提供者的 <code>getAvailableLocales()</code> 方法，以查找支持所请求语言环境的提供者。如果找到了这种提供者，则调用它的其他方法获取请求的对象或名称。如果 Java 运行时环境本身和已安装的提供者都不支持所请求的语言环境，那么使用空字符串替换语言环境的第一个非空的变量、国家/地区或语言字符串，以此构造一个回退语言环境，然后重新启动查找进程。如果变量包含一个或多个 '_'，则使用取消最后一个 '_' 及其后面部分的新变量替换该变量，以此构造一个回退语言环境。即使发生回退，返回所请求对象或名称的方法仍然使用回退之前的原语言环境进行调用。为了保证此进程能够终止，Java 运行时环境必须支持所有与语言环境有关的服务的根语言环境。
+ <p>
+允许名称提供者（但不是其他对象提供者）对某些名称请求，甚至对它们声称支持的语言环境（将其包括在 <code>getAvailableLocales</code> 的返回值中）环境返回 null。类似地，Java 运行时环境本身可能没有它所支持的所有语言环境的所有名称。这是因为其名称被请求的对象集可能很大，并可能随时变化，所以并非总是可以完全包括它们。如果 Java 运行时环境或提供者返回 null 而非名称，那么将按上述过程执行查找，就像该语言环境不受支持一样。
+ 
+@since        1.6
+@version     
+@(#)LocaleServiceProvider.java	1.4 06/04/21
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.spi.LocaleServiceProvider()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+唯一的构造方法。（由子类构造方法调用，通常是隐式的）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.util.Locale[] java.util.spi.LocaleServiceProvider.getAvailableLocales()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个数组，它包含此语言环境服务提供者可以为其提供本地化对象或名称的所有语言环境。
+
+@return 一个数组，它包含此语言环境服务提供者可以为其提供本地化对象或名称的所有语言环境。
+
+<!-- END DATA -->

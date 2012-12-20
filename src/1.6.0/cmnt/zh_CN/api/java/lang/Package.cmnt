@@ -1,0 +1,192 @@
+<!-- BEGIN KEY -->
+public class java.lang.Package extends java.lang.Object implements java.lang.reflect.AnnotatedElement
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Package</code> 对象包含有关 Java 包的实现和规范的版本信息。通过用于加载类的 {@link ClassLoader <code>ClassLoader</code>} 实例，可以获取并获得此版本信息。通常，此信息存储在与类一起分发的清单中。
+
+<p>组成包的类集可以实现一个特定规范，如此一来，就可以通过规范标题、版本号和供应商字符串来标识该规范。应用程序可以询问包是否与特定版本兼容，有关详细信息，请参阅 {@link #isCompatibleWith <code>isCompatibleWith</code>} 方法。
+
+<p>规范的版本号使用了一个由句点 "." 分隔的十进制正整数组成的语法，例如 "2.0" 或 "1.2.3.4.5.6.7"。这允许使用可扩展的编号来表示主版本号、次版本号、缩微版本号，等等。版本规范是由下列形式的语法描述的：
+ <blockquote>
+ <dl>
+ <dt><i>SpecificationVersion:
+ <dd>Digits RefinedVersion<sub>opt</sub></i>
+
+ <p><dt><i>RefinedVersion:</i>
+ <dd><code>.</code> <i>Digits</i>
+ <dd><code>.</code> <i>Digits RefinedVersion</i>
+
+ <p><dt><i>Digits:
+ <dd>Digit
+ <dd>Digits</i>
+
+ <p><dt><i>Digit:</i>
+<dd>{@link Character#isDigit} 会对其返回 <code>true</code> 的任何字符，如 0、1、2 等等。
+ </dl>
+ </blockquote>
+
+<p>实现标题、版本和供应商字符串共同标识了一个实现，并且可以很方便地使用它们来支持出现问题时所涉及的包的准确报告。三个实现字符串内容都是特定于供应商的。实现版本字符串没有特定的语法，并且应该只在为了使它们等同于所需的版本标识符时对它们进行比较。
+
+<p>在每一个 <code>ClassLoader</code> 实例中，相同 java 包中的所有类都有相同的 Package 对象。静态方法允许通过名称或当前类加载器已知的所有包的集合来找到包。
+
+ @see ClassLoader#definePackage
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此包的名称。
+
+@return 根据 <em>Java 语言规范第三版</em> <a href="http://java.sun.com/docs/books/jls/third_edition/html/names.html#6.5.3">
+          &sect;6.5.3</a> 中的定义，返回此包的完全限定名，例如 <tt>java.lang</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getSpecificationTitle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此包实现的规范标题。
+@return 规范的标题，如果不知道此标题，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getSpecificationVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此包实现的规范的版本号。该版本字符串必须是以 "." 分隔的十进制正整数的序列，并可能有前导零。在比较版本字符串时，比较最重要的数字。
+@return 规范版本，如果不知道该版本，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getSpecificationVendor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回拥有并维护实现此包的类规范的组织、供应商或公司的名称。
+@return 规范的供应商，如果不知道此供应商，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getImplementationTitle()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此包的标题。
+@return 实现的标题，如果不知道此标题，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getImplementationVersion()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该实现的版本。它由该实现的供应商分配的任何字符串组成，并且没有任何由 Java 运行时指定或需要的特定语法。可以对实现的版本进行比较，使其等同于此包的供应商用于该实现的其他包版本字符串。
+@return 实现的版本，如果不知道此版本，则返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.getImplementationVendor()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回提供该实现的组织、供应商或公司的名称。
+@return 实现此包的供应商。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Package.isSealed()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此包是密封的，则返回 ture。
+
+@return 如果包是密封的，则返回 ture，否则返回 false。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Package.isSealed(URL url)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此包对于指定的代码源 url 是密封的，则返回 ture。
+
+@param url 代码源 url
+@return 如果此包对于 url 是密封的，则返回 ture
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Package.isCompatibleWith(String desired) throws java.lang.NumberFormatException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较此包的规范版本和所需版本。如果此包的规范版本号大于或等于所需版本号，则返回 ture。 <p>
+
+通过按顺序比较所需字符串和规范字符串的对应组件，对版本号进行比较。每个组件都被转换为一个十进制整数和比较的值。如果规范值大于所需值，则返回 true。如果小于所需值，则返回 false。如果两个值相等，则跳过这一比较周期，比较下一对组件。
+
+@param desired 所需版本的版本字符串。
+@return 如果此包的版本号大于或等于所需的版本号，则返回 ture。
+
+@exception NumberFormatException 如果所需版本或当前版本的点形式不正确。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Package java.lang.Package.getPackage(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过调用方的 <code>ClassLoader</code> 实例中的名称找到一个包。调用方的 <code>ClassLoader</code> 实例用于找到对应于指定类的包实例。如果调用方的 <code>ClassLoader</code> 实例为 null，则搜索系统的 <code>ClassLoader</code> 实例加载的包集合，以找到指定包。<p>
+
+只有类加载器创建了具有适当属性的包实例，包中才会有规范和版本属性。通常，这些属性定义在随类一起提供的清单中。
+
+@param name 包名称，例如，java.lang。
+@return 具有所请求名称的包。如果不能从存档或基本代码中获得包信息，则可能返回 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.lang.Package[] java.lang.Package.getPackages()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得调用方的 <code>ClassLoader</code> 实例当前已知的所有包。这些包对应于通过 <code>ClassLoader</code> 实例中的名称加载或访问的类。如果调用方的 <code>ClassLoader</code> 实例是引导程序的 <code>ClassLoader</code> 实例（它在一些实现中可能用 <code>null</code> 表示），则只返回通过引导程序的 <code>ClassLoader</code> 实例加载的类所对应的包。
+
+@return 调用方的 <code>ClassLoader</code> 实例已知的包的新数组。如果没有已知的包，则返回零长度的数组。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.lang.Package.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从包名称计算的哈希码。
+@return 从包名称计算的哈希码。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.lang.Package.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 Package 的字符串表示形式。它的值是字符串 "package" 和包名称。如果定义了包的标题，则追加包的标题。如果定义了包的版本，则追加包的版本。
+@return 包的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public A extends java.lang.annotation.Annotation java.lang.Package.getAnnotation(java.lang.Class<A> annotationClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NullPointerException {@inheritDoc}
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.Package.isAnnotationPresent(java.lang.Class<? extends java.lang.annotation.Annotation> annotationClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @throws NullPointerException {@inheritDoc}
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.annotation.Annotation[] java.lang.Package.getAnnotations()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.annotation.Annotation[] java.lang.Package.getDeclaredAnnotations()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ @since 1.5
+
+<!-- END DATA -->

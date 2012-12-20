@@ -1,0 +1,346 @@
+<!-- BEGIN KEY -->
+public class java.util.Hashtable extends java.util.Dictionary implements java.util.Map, java.lang.Cloneable, java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类实现一个哈希表，该哈希表将键映射到相应的值。任何非 <code>null</code> 对象都可以用作键或值。<p>
+
+为了成功地在哈希表中存储和获取对象，用作键的对象必须实现 <code>hashCode</code> 方法和 <code>equals</code> 方法。<p>
+
+<code>Hashtable</code> 的实例有两个参数影响其性能：<i>初始容量</i> 和<i>加载因子</i>。<i>容量</i> 是哈希表中<i>桶</i> 的数量，<i>初始容量</i> 就是哈希表创建时的容量。注意，哈希表的状态为 <i>open</i>：在发生“哈希冲突”的情况下，单个桶会存储多个条目，这些条目必须按顺序搜索。<i>加载因子</i> 是对哈希表在其容量自动增加之前可以达到多满的一个尺度。初始容量和加载因子这两个参数只是对该实现的提示。关于何时以及是否调用 rehash 方法的具体细节则依赖于该实现。<p>
+
+通常，默认加载因子(.75)在时间和空间成本上寻求一种折衷。加载因子过高虽然减少了空间开销，但同时也增加了查找某个条目的时间（在大多数 <tt>Hashtable</tt> 操作中，包括 <tt>get</tt> 和 <tt>put</tt> 操作，都反映了这一点）。<p>
+
+初始容量主要控制空间消耗与执行 <code>rehash</code> 操作所需要的时间损耗之间的平衡。如果初始容量大于 <tt>Hashtable</tt> 所包含的最大条目数除以加载因子，则<i>永远</i> 不会发生 <code>rehash</code> 操作。但是，将初始容量设置太高可能会浪费空间。<p>
+
+如果很多条目要存储在一个 <code>Hashtable</code> 中，那么与根据需要执行自动 rehashing 操作来增大表的容量的做法相比，使用足够大的初始容量创建哈希表或许可以更有效地插入条目。<p>
+
+下面这个示例创建了一个数字的哈希表。它将数字的名称用作键：
+ <pre>   {@code
+   Hashtable<String, Integer> numbers
+     = new Hashtable<String, Integer>();
+   numbers.put("one", 1);
+   numbers.put("two", 2);
+   numbers.put("three", 3);}</pre>
+ <p>
+要获取一个数字，可以使用以下代码： 
+ <pre>   {@code
+   Integer n = numbers.get("two");
+     if (n != null) {
+         System.out.println("two = " + n);
+     }
+   }}</pre>
+
+<p>由所有类的“collection 视图方法”返回的 collection 的 <tt>iterator</tt> 方法返回的迭代器都是<em>快速失败</em> 的：在创建 Iterator 之后，如果从结构上对 Hashtable 进行修改，除非通过 Iterator 自身的 <tt>remove</tt> 方法，否则在任何时间以任何方式对其进行修改，Iterator 都将抛出{@link ConcurrentModificationException}。因此，面对并发的修改，Iterator 很快就会完全失败，而不冒在将来某个不确定的时间发生任意不确定行为的风险。由 Hashtable 的键和元素方法返回的 Enumeration <em>不</em> 是快速失败的。
+
+<p>注意，迭代器的快速失败行为无法得到保证，因为一般来说，不可能对是否出现不同步并发修改做出任何硬性保证。快速失败迭代器会尽最大努力抛出 <tt>ConcurrentModificationException</tt>。因此，为提高这类迭代器的正确性而编写一个依赖于此异常的程序是错误做法：<i>迭代器的快速失败行为应该仅用于检测程序错误。</i>
+
+<p>从Java 2 平台 v1.2起，此类就被改进以实现 {@link Map} 接口，使它成为 <a href="{@docRoot}/../technotes/guides/collections/index.html"> Java
+ Collections Framework</a> 中的一个成员。不像新的 collection 实现，{@code Hashtable} 是同步的
+
+@author  Arthur van Hoff
+@author  Josh Bloch
+@author  Neal Gafter
+@version 1.105, 12/19/03
+@see     Object#equals(java.lang.Object)
+@see     Object#hashCode()
+@see     Hashtable#rehash()
+@see     Collection
+@see	    Map
+@see	    HashMap
+@see	    TreeMap
+@since JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.Hashtable.threshold
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果表的大小超出此阈值，则要对其执行 rehash 操作。（阈值是一个 int 值，等于容量与加载因子的乘积。）
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private float java.util.Hashtable.loadFactor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+哈希表的加载因子。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable(int initialCapacity, float loadFactor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定初始容量和指定加载因子构造一个新的空哈希表。
+
+@param      initialCapacity   哈希表的初始容量。
+@param      loadFactor        哈希表的加载因子。
+@exception  IllegalArgumentException  如果初始容量小于零，或者加载因子为非正数。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用指定初始容量和默认的加载因子 (0.75) 构造一个新的空哈希表。
+
+@param     initialCapacity   哈希表的初始容量。
+@exception IllegalArgumentException 如果初始容量小于零。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用默认的初始容量 (11) 和加载因子 (0.75) 构造一个新的空哈希表。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Hashtable(java.util.Map<? extends K, ? extends V> t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个与给定的 Map 具有相同映射关系的新哈希表。该哈希表是用足以容纳给定 Map 中映射关系的初始容量和默认的加载因子（<tt>0.75</tt>）创建的。
+
+@param t 其映射关系将存放在此映射中的映射。
+@throws NullPointerException 如果指定映射为 null。
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Hashtable.size()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此哈希表中的键的数量。
+
+@return     此哈希表中的键的数量。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Hashtable.isEmpty()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此哈希表是否没有键映射到值。
+
+@return 如果此哈希表没有将任何键映射到值，则返回 <code>true</code>；否则返回 <code>false</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Enumeration<K> java.util.Hashtable.keys()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此哈希表中的键的枚举。
+
+@return  此哈希表中的键的枚举。
+@see     Enumeration
+@see     #elements()
+@see	#keySet()
+@see	Map
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.Enumeration<V> java.util.Hashtable.elements()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此哈希表中的值的枚举。对返回的对象使用 Enumeration 方法，以便按顺序获取这些元素。
+
+@return  此哈希表中的值的枚举。
+@see     java.util.Enumeration
+@see     #keys()
+@see	#values()
+@see	Map
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Hashtable.contains(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试此映射表中是否存在与指定值关联的键。此操作比 {@link #containsKey
+ containsKey} 方法的开销更大。<p>
+
+注意，此方法在功能上等同于 {@link #containsValue containsValue} 方法，containValue 是 collection 框架中 {@link Map} 接口的一部分。
+ 
+@param      value   要搜索的值。
+@return     当且仅当此哈希表中某个键映射到 <code>value</code> 参数（由 <tt>equals</tt> 方法确定）时，返回 <code>true</code>；否则返回 <code>false</code>。
+@exception  NullPointerException  如果该值为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Hashtable.containsValue(Object value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此 Hashtable 将一个或多个键映射到此值，则返回 true。<p>
+
+注意，此方法在功能上等同于{@link #contains contains}（它先于 {@link Map} 接口）。
+
+@param value 将要测试是否存在此哈希表中的值
+@return 如果此映射将一个或多个键映射到指定值，则返回 <tt>true</tt>
+@throws NullPointerException  如果该值为 <code>null</code>
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Hashtable.containsKey(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+测试指定对象是否为此哈希表中的键。
+ 
+@param   key 可能的键
+@return  当且仅当指定对象（由 <tt>equals</tt> 方法确定）是此哈希表中的键时，才返回 <code>true</code>；否则返回 <code>false</code>。
+@throws  NullPointerException 如果该键为 <code>null</code>
+@see     #contains(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized V java.util.Hashtable.get(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回指定键所映射到的值，如果此映射不包含此键的映射，则返回 {@code null}.
+
+ <p>更确切地讲，如果此映射包含满足 {@code (key.equals(k))} 的从键 {@code k} 到值 {@code v} 的映射，则此方法返回 {@code v}；否则，返回  {@code null}。（最多只能有一个这样的映射。） 
+
+ @param key 要返回其相关值的键
+ @return 指定键映射到的值，如果此映射不包含到键的映射，则返回 {@code null}。
+ @throws NullPointerException 如果指定键为 null
+@see     #put(Object, Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.Hashtable.rehash()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+增加此哈希表的容量并在内部对其进行重组，以便更有效地容纳和访问其元素。当哈希表中的键的数量超出哈希表的容量和加载因子时，自动调用此方法。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized V java.util.Hashtable.put(K key, V value)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定 <code>key</code> 映射到此哈希表中的指定 <code>value</code>。键和值都不可以为 <code>null</code>。 <p>
+
+通过使用与原来的键相同的键调用 <code>get</code> 方法，可以获取相应的值。 
+
+@param      key     哈希表的键
+@param      value   值
+@return     此哈希表中指定键的以前的值；如果不存在该值，则返回 <code>null</code>
+@exception  NullPointerException  如果键或值为 <code>null</code>
+@see     Object#equals(Object)
+@see     #get(Object)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized V java.util.Hashtable.remove(Object key)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从哈希表中移除该键及其相应的值。如果该键不在哈希表中，则此方法不执行任何操作。
+
+@param   key   需要移除的键
+@return  此哈希表中与该键存在映射关系的值；如果该键没有映射关系，则返回 <code>null</code>
+@throws  NullPointerException 如果该键为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Hashtable.putAll(java.util.Map<? extends K, ? extends V> t)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定映射的所有映射关系复制到此哈希表中，这些映射关系将替换此哈希表拥有的、针对当前指定映射中所有键的所有映射关系。 
+
+@param t 将存储在此映射中的映射关系。
+@throws NullPointerException 如果指定的映射为 null。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Hashtable.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此哈希表清空，使其不包含任何键。 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.Object java.util.Hashtable.clone()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建此哈希表的浅表副本。复制哈希表自身的所有结构，但不复制它的键和值。这是一个开销相对较大的操作。
+
+@return  哈希表的一个副本
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String java.util.Hashtable.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <tt>Hashtable</tt> 对象的字符串表示形式，其形式为 ASCII 字符 "<tt>,&nbsp;</tt>" （逗号加空格）分隔开的、括在括号中的一组条目。每个条目都按以下方式呈现：键，一个等号 <tt>=</tt> 和相关元素，其中 <tt>toString</tt> 方法用于将键和元素转换为字符串。
+
+@return  此哈希表的字符串表示形式
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<K> java.util.Hashtable.keySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回此映射中包含的键的 {@link Set} 视图。此 set 受映射支持，因此对映射的更改可在 set 中反映出来，反之亦然。如果在此 set 上的迭代器处于进行中时修改此映射（除非通过迭代器自身的 <tt>remove</tt> 操作），则迭代器的结果是不确定的。通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、 <tt>retainAll</tt>、和 <tt>clear</tt> 操作，此 set 支持元素移除，可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Set<java.util.Map.Entry<K, V>> java.util.Hashtable.entrySet()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ 返回此映射中包含的键的 {@link Set} 视图。此 set 受映射支持，因此对映射的更改可在 set 中反映出来，反之亦然。如果在此 set 上的迭代器处于进行中时修改此映射（除非通过迭代器自身的 <tt>remove</tt> 操作，或通过由迭代器返回的映射条目上的 <tt>setValue</tt> 操作），则迭代器的结果是不确定的。通过 <tt>Iterator.remove</tt>、<tt>Set.remove</tt>、<tt>removeAll</tt>、 <tt>retainAll</tt>、 和 <tt>clear</tt> 操作，此set 支持元素移除，可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Collection<V> java.util.Hashtable.values()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+  返回此映射中包含的键的 {@link Collection} 视图。此 collection 受映射支持，因此对映射的更改可在 collection 中反映出来，反之亦然。如果在此 collection 上的迭代器处于进行中时修改此映射（除非通过迭代器自身的 <tt>remove</tt> 操作），则迭代器的结果是不确定的。通过 <tt>Iterator.remove</tt>、<tt>Collection.remove</tt>、<tt>removeAll</tt>、 <tt>retainAll</tt>、 和 <tt>clear</tt> 操作，此set 支持元素移除，可从映射中移除相应的映射关系。它不支持 <tt>add</tt> 或 <tt>addAll</tt> 操作。
+
+
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized boolean java.util.Hashtable.equals(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照 Map 接口的定义，比较指定 Object 与此 Map 是否相等。
+
+@param  o 将与此哈希表进行比较相等性的对象
+@return 如果指定的 Object 与此 Map 相等，则返回 true。
+@see Map#equals(Object)
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.util.Hashtable.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+按照 Map 接口的定义，返回此 Map 的哈希码值。
+
+@see Map#hashCode()
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.Hashtable.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流重构 Hashtable（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.util.Hashtable.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 Hashtable 的状态保存到流中（也就是将其序列化）。
+
+@serialData 发出 Hashtable 的<i>容量</i>（桶数组的长度（为 int）），后跟 Hashtable 的<i>大小</i>（键-值映射关系的数量），再后面是由 Hashtable 表示的每个键-值映射关系的键（Object）和值（Object），发出这些键-值映射关系没有按照任何特定顺序。
+
+<!-- END DATA -->

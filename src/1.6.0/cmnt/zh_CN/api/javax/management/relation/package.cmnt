@@ -1,0 +1,77 @@
+<!-- BEGIN KEY -->
+javax.management.relation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>提供 Relation Service 的定义。Relation Service 用于记录 MBean Server 中各个 MBean 之间的关系。Relation Service 本身就是一个 MBean。在一个 MBean Server 中可以注册多个 {@link javax.management.relation.RelationService RelationService} MBean 实例。</p>
+
+<p><em>关系类型</em> 定义各个 MBean 之间的关系。它包含各个 MBean 在关系中充当的<em>角色</em>。通常，在一个关系类型中至少有两个角色。</p>
+
+<p><em>关系</em> 是关系类型的命名实例，其中具体的 MBean 将出现在由其 {@link javax.management.ObjectName ObjectName} 表示的角色中。</p>
+
+<p>例如，假定存在表示应用程序中的模块的 <code>Module</code> MBean。<code>DependsOn</code> 关系类型可以表达一些模块依赖于其他模块（这些模块可以用于定义模块开始和停止的顺序）的关系。<code>DependsOn</code> 关系类型应有两个角色，<code>dependent</code> 和 <code>dependedOn</code>。</p>
+
+<p>每个角色都经过了<em>类型化</em>，这意味着在该角色中出现的 MBean 必须是该角色类型的实例。在 <code>DependsOn</code> 示例中，两个角色都属于类型 <code>Module</code>。</p>
+
+<p>每个角色都有一个<em>容量</em>，它为给定关系实例的角色中出现的 MBean 的数量提供上下边界。通常，上下边界都是 1，这样可保证在此角色中只出现一个 MBean。该容量只限制每个关系实例的角色中的 MBean 的数量。同一个 MBean 可以在任意数量的关系类型实例中的同一个角色中出现。在 <code>DependsOn</code> 示例中，给定模块可能依赖于许多其他模块，也可以被许多其他模块所依赖，但是任何给定关系实例都只能将一个 <code>dependent</code> 模块与唯一对应的那个 <code>dependedOn</code> 模块连接。</p>
+
+<p>关系类型可以作为实现 {@link javax.management.relation.RelationType RelationType} 接口的对象显式地创建，此对象通常为 {@link javax.management.relation.RelationTypeSupport RelationTypeSupport}。或者，它可以使用 Relation Service 的 {@link javax.management.relation.RelationServiceMBean#createRelationType(String, RoleInfo[]) createRelationType} 方法隐式地创建。</p>
+
+<p>关系类型可以作为实现 {@link javax.management.relation.Relation Relation} 接口的对象显式地创建，此对象通常是为 {@link javax.management.relation.RelationSupport RelationSupport}。（<code>RelationSupport</code> 本身是一个有效的 MBean，因此它可以在 MBean Server 中注册，但不要求这样做。）或者，关系类型可以使用 Relation Service 的 {@link javax.management.relation.RelationServiceMBean#createRelation(String, String, RoleList) createRelation} 方法隐式地创建。</p>
+
+<p><code>DependsOn</code> 示例可以按以下方式进行编码。</p>
+
+<pre>
+import java.util.*;
+import javax.management.*;
+import javax.management.relation.*;
+
+// ...
+MBeanServer mbs = ...;
+
+// Create the Relation Service MBean
+ObjectName relSvcName = new ObjectName(&quot;:type=RelationService&quot;);
+RelationService relSvcObject = new RelationService(true);
+mbs.registerMBean(relSvcObject, relSvcName);
+
+// Create an MBean proxy for easier access to the Relation Service
+RelationServiceMBean relSvc = 
+    MBeanServerInvocationHandler.newProxyInstance(mbs, relSvcName,
+						  RelationServiceMBean.class,
+						  false);
+
+// Define the DependsOn relation type
+RoleInfo[] dependsOnRoles = {
+    new RoleInfo(&quot;dependent&quot;, Module.class.getName()),
+    new RoleInfo(&quot;dependedOn&quot;, Module.class.getName())
+};
+relSvc.createRelationType(&quot;DependsOn&quot;, dependsOnRoles);
+
+// Now define a relation instance &quot;moduleA DependsOn moduleB&quot;
+
+ObjectName moduleA = new ObjectName(&quot;:type=Module,name=A&quot;);
+ObjectName moduleB = new ObjectName(&quot;:type=Module,name=B&quot;);
+
+Role dependent = new Role(&quot;dependent&quot;, Collections.singletonList(moduleA));
+Role dependedOn = new Role(&quot;dependedOn&quot;, Collections.singletonList(moduleB));
+Role[] roleArray = {dependent, dependedOn};
+RoleList roles = new RoleList(Arrays.asList(roleArray));
+relSvc.createRelation(&quot;A-DependsOn-B&quot;, &quot;DependsOn&quot;, roles);
+
+// Query the Relation Service to find what modules moduleA depends on
+Map&lt;ObjectName,List&lt;String&gt;&gt; dependentAMap =
+    relSvc.findAssociatedMBeans(moduleA, "DependsOn", "dependent");
+Set&lt;ObjectName&gt; dependentASet = dependentAMap.keySet();
+// Set of ObjectName containing moduleB
+</pre>
+
+@see <a href="{@docRoot}/../technotes/guides/jmx/">
+      Java SE 6 Platform documentation on JMX technology</a>，
+    特别是 
+    <a href="{@docRoot}/../technotes/guides/jmx/JMX_1_4_specification.pdf">
+      JMX Specification, version 1.4</a>
+
+@since 1.5
+
+
+<!-- END DATA -->

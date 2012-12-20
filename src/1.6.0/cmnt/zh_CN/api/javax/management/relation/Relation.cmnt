@@ -1,0 +1,184 @@
+<!-- BEGIN KEY -->
+public interface javax.management.relation.Relation
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口必须由任何 MBean 类（期望表示为一种使用 Relation Service 管理的关系）来实现。
+<P>简单的关系（即只有角色，没有属性或方法）可以由 Relation Service 直接创建（表示为 RelationSupport 对象，由 Relation Service 内部处理）。
+<P>如果用户希望表示更复杂的关系（包括属性和/或方法），则其必须提供自己实现 Relation 接口的类。这可以通过从 RelationSupport 类继承得到，也可以通过实现该接口得到（全权或者委托给 RelationSupport 对象成员）。
+<P>指定这样的用户关系类是为了引入属性和/或方法。这些都要向远程管理公开。因此，这意味着任何用户关系类都必须是一个 MBean 类。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<javax.management.ObjectName> javax.management.relation.Relation.getRole(String roleName) throws java.lang.IllegalArgumentException, javax.management.relation.RoleNotFoundException, javax.management.relation.RelationServiceNotRegisteredException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索给定角色名称的角色值。
+<P>按照关系类型检查角色是否存在及是否可读。
+
+@param   roleName   角色名称
+
+@return   作为角色值的 ObjectName 对象的 ArrayList
+
+@exception   IllegalArgumentException   如果为 null 角色名称
+@exception   RoleNotFoundException   如果：
+<P>- 不存在具有给定名称的角色
+<P>- 角色不可读。
+@exception   RelationServiceNotRegisteredException   如果 Relation Service 未在 MBean Server 中注册
+
+@see #setRole
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.relation.RoleResult javax.management.relation.Relation.getRoles(java.lang.String[] roleNameArray) throws java.lang.IllegalArgumentException, javax.management.relation.RelationServiceNotRegisteredException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索具有给定名称的角色值。
+<P>按照关系类型检查每个角色是否存在及是否可读。
+
+@param   roleNameArray   要检索的角色名称的数组
+
+@return   RoleResult 对象，包括一个 RoleList（针对成功检索到的角色）和一个 RoleUnresolvedList（针对未检索到的角色）。
+
+@exception   IllegalArgumentException  如果是 null 角色名称
+@exception   RelationServiceNotRegisteredException  如果 Relation Service 未在 MBean Server 中注册。
+
+@see #setRoles
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Integer javax.management.relation.Relation.getRoleCardinality(String roleName) throws java.lang.IllegalArgumentException, javax.management.relation.RoleNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回当前在给定角色中引用的 MBean 数。
+
+@param   roleName   角色名称
+
+@return   当前在此角色中引用的 MBean 数
+
+@exception   IllegalArgumentException   如果是 null 角色名称
+@exception   RoleNotFoundException   如果不存在具有给定名称的角色
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.relation.RoleResult javax.management.relation.Relation.getAllRoles() throws javax.management.relation.RelationServiceNotRegisteredException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该关系中存在的所有角色。
+
+@return   RoleResult 对象，该对象包括一个 RoleList（针对成功检索到的角色）和一个 RoleUnresolvedList（针对不可读的角色）。
+
+@exception   RelationServiceNotRegisteredException   如果 Relation Service 未在 MBean Server 中注册
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.relation.RoleList javax.management.relation.Relation.retrieveAllRoles()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回关系中的所有角色，不检查读取模式。
+
+@return   一个 RoleList。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.relation.Relation.setRole(Role role) throws java.lang.IllegalArgumentException, javax.management.relation.RoleNotFoundException, javax.management.relation.RelationTypeNotFoundException, javax.management.relation.InvalidRoleValueException, javax.management.relation.RelationServiceNotRegisteredException, javax.management.relation.RelationNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置给定角色。
+<P>将按照其在关系的关系类型中提供的相应角色定义检查角色
+<P>将发送通知（带类型 RELATION_BASIC_UPDATE 或 RELATION_MBEAN_UPDATE 的 RelationNotification，具体取决于该关系是否为 MBean）
+
+@param   role   要设置的角色（名称和新值）
+
+@exception   IllegalArgumentException   如果是 null 角色。
+@exception   RoleNotFoundException   如果不存在具有指定名称的角色，或者该角色不可写（初始化角色时未执行写入访问模式测试）。
+@exception   InvalidRoleValueException   如果为角色提供的值无效，例如：
+<P>- 给定值中引用的 MBean 数小于期望的最小程度；
+<P>- 提供的值中引用的 MBean 数超过期望的最大程度；
+<P>- 该值中引用的 MBean 的一个对象不是该角色期望的 MBean 类的对象；
+<P>- 如果不存在为该角色提供的 MBean。
+@exception   RelationServiceNotRegisteredException   如果 Relation Service 未在 MBean Server 中注册。
+@exception   RelationTypeNotFoundException   如果在 Relation Service 中尚未声明该关系类型。
+@exception   RelationNotFoundException   如果尚未在 Relation Service 中添加关系。
+
+@see #getRole
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.relation.RoleResult javax.management.relation.Relation.setRoles(RoleList roleList) throws java.lang.IllegalArgumentException, javax.management.relation.RelationServiceNotRegisteredException, javax.management.relation.RelationTypeNotFoundException, javax.management.relation.RelationNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置给定的角色。
+<P>将按照其在关系的关系类型中提供的相应角色定义检查角色
+<P>每个更新的角色将发送一个通知（带类型 RELATION_BASIC_UPDATE 或 RELATION_MBEAN_UPDATE 的 RelationNotification，具体取决于该关系是否为 MBean）。
+
+@param   roleList   要设置的角色列表
+
+@return   RoleResult 对象，该对象包括一个 RoleList（针对成功设置的角色）和一个 RoleUnresolvedList（针对未成功设置的角色）。
+
+@exception   IllegalArgumentException   如果是 null 角色列表；
+@exception   RelationServiceNotRegisteredException   如果 Relation Service 未在 MBean Server 中注册；
+@exception   RelationTypeNotFoundException   如果在 Relation Service 中尚未声明该关系类型；
+@exception   RelationNotFoundException   如果尚未在 Relation Service 中添加关系 MBean。
+
+@see #getRoles
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.relation.Relation.handleMBeanUnregistration(ObjectName objectName, String roleName) throws java.lang.IllegalArgumentException, javax.management.relation.RoleNotFoundException, javax.management.relation.InvalidRoleValueException, javax.management.relation.RelationServiceNotRegisteredException, javax.management.relation.RelationTypeNotFoundException, javax.management.relation.RelationNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在注销角色中引用的 MBean 时由 Relation Service 使用的回调。
+<P>Relation Service 将调用此方法，以让该关系采取行动来反映这种注销的影响。
+<P>小心，不期望用户调用此方法。
+<P>当前实现是为了用其当前值（引用的 MBean 的 ObjectName 列表）而不用注销的值设置角色。
+
+@param   objectName   注销的 MBean 的 ObjectName
+@param   roleName   在其中引用 MBean 的角色名称
+
+@exception   IllegalArgumentException   如果是 null 参数；
+@exception   RoleNotFoundException   如果角色不在关系中或不可写；
+@exception   InvalidRoleValueException   如果角色值不遵循相关角色信息（这永远不会在从 Relation Service 中调用时发生）；
+@exception   RelationServiceNotRegisteredException   如果 Relation Service 未在 MBean Server 注册；
+@exception   RelationTypeNotFoundException   如果在 Relation Service 中尚未声明该关系类型；
+@exception   RelationNotFoundException   如果未在 Relation Service 中添加的关系 MBean 调用此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<javax.management.ObjectName, java.util.List<java.lang.String>> javax.management.relation.Relation.getReferencedMBeans()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检索在该关系的各种角色中引用的 MBean。
+
+@return   一个 HashMap 映射：
+<P> ObjectName -&gt; ArrayList of String（角色名）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.relation.Relation.getRelationTypeName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回相关关系类型的名称。
+
+@return   关系类型的名称。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.management.ObjectName javax.management.relation.Relation.getRelationServiceName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回处理关系的 Relation Service 的 ObjectName。
+
+@return   Relation Service 的 ObjectName。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.management.relation.Relation.getRelationId()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回关系标识符（用于唯一标识 Relation Service 内的关系）。
+
+@return   关系 id。
+
+<!-- END DATA -->

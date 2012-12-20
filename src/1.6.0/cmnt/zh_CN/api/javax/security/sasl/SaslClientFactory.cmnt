@@ -1,0 +1,44 @@
+<!-- BEGIN KEY -->
+public interface javax.security.sasl.SaslClientFactory
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于创建 <tt>SaslClient</tt> 实例的接口。实现此接口的类必须是线程安全的，并且可同时处理多个请求。它还必须具有不接受参数的公共构造方法。 
+<p>
+客户端通常不直接访问此接口，而是使用 <tt>Sasl</tt> 静态方法访问此接口。但是，特定的环境可以提供和安装一个新的或不同的 <tt>SaslClientFactory</tt>。
+ 
+@since 1.5
+
+@see SaslClient
+@see Sasl
+
+@author Rosanna Lee
+@author Rob Weltman
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.security.sasl.SaslClient javax.security.sasl.SaslClientFactory.createSaslClient(java.lang.String[] mechanisms, String authorizationId, String protocol, String serverName, java.util.Map<java.lang.String, ?> props, CallbackHandler cbh) throws javax.security.sasl.SaslException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用提供的参数创建 SaslClient。
+
+@param mechanisms 要试用的机制名称的非 null 列表。每个名称都是 SASL 机制的 IANA 注册名。（例如 &quot;GSSAPI&quot;、&quot;CRAM-MD5&quot;）。
+@param authorizationId 用于授权的标识，可能为 null，与协议有关。如果为 null 或空，则服务器根据客户端的验证证书派生出一个授权 ID。SASL 验证成功完成后，就允许指定的实体进行访问。
+@param protocol 非 null 的协议（例如 &quot;ldap&quot;）字符串名，将为它执行验证。
+@param serverName 服务器的非 null 完全限定主机名，要对该服务器进行验证。
+@param props 可能为 null 的属性集，用于选择 SASL 机制并配置所选机制的验证交换。有关标准属性的列表，请参阅 <tt>Sasl</tt> 类。也可包括其他可能特定于机制的属性。忽略与所选机制无关的属性，包括带有非字符串键的所有映射条目。
+ 
+@param cbh SASL 机制使用的回调处理程序（可能为 null），以便为完成验证而从应用程序/库获得更多的信息。例如，SASL 机制可能需要从调用者获得验证 ID、密码和领域。使用 <tt>NameCallback</tt> 来请求验证 ID。使用 <tt>PasswordCallback</tt> 来请求密码。如果要从领域列表中选择，则使用 <tt>RealmChoiceCallback</tt> 来请求领域，如果必须输入领域，则使用 <tt>RealmCallback</tt> 来请求领域。 
+
+@return 使用所提供参数创建的 <tt>SaslClient</tt>，可能为 null。如果为 null，则此工厂无法使用所提供的参数生成 <tt>SaslClient</tt>。
+@exception SaslException 如果因为错误而无法创建 <tt>SaslClient</tt>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String[] javax.security.sasl.SaslClientFactory.getMechanismNames(java.util.Map<java.lang.String, ?> props)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与指定的机制选择策略相符的机制的名称数组。
+@param props 可能为 null 的属性集，用于指定 SASL 机制的安全策略。例如，如果 <tt>props</tt> 包含值为 <tt>&quot;true&quot;</tt> 的属性 <tt>Sasl.POLICY_NOPLAINTEXT</tt>，则该工厂必须不返回任何易于受到简单被动式攻击危害的 SASL 机制。有关策略属性的完整列表，请参阅 <tt>Sasl</tt> 类。如果 <tt>props</tt> 中有与策略无关的属性则忽略该属性，包括带有非字符串键的所有映射条目。
+@return 非 null 的数组，包含 IANA 注册的 SASL 机制名。
+
+<!-- END DATA -->

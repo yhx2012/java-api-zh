@@ -1,0 +1,220 @@
+<!-- BEGIN KEY -->
+public class java.util.PriorityQueue extends java.util.AbstractQueue implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个基于优先级堆的无界优先级{@linkplain Queue 队列}。优先级队列的元素按照其{@linkplain Comparable 自然顺序}进行排序，或者根据构造队列时提供的 {@link Comparator} 进行排序，具体取决于所使用的构造方法。优先级队列不允许使用 {@code null} 元素。依靠自然顺序的优先级队列还不允许插入不可比较的对象（这样做可能导致 {@code ClassCastException}）。
+
+<p>此队列的<em>头</em> 是按指定排序方式确定的<em>最小</em> 元素。如果多个元素都是最小值，则头是其中一个元素&mdash;&mdash;选择方法是任意的。队列获取操作 {@code poll}、{@code remove}、{@code peek} 和 {@code element} 访问处于队列头的元素。
+
+<p>优先级队列是无界的，但是有一个内部<i>容量</i>，控制着用于存储队列元素的数组大小。它通常至少等于队列的大小。随着不断向优先级队列添加元素，其容量会自动增加。无需指定容量增加策略的细节。
+
+<p>此类及其迭代器实现了 {@link Collection} 和 {@link Iterator} 接口的所有<em>可选</em> 方法。方法 {@link #iterator()} 中提供的迭代器<em>不</em> 保证以任何特定的顺序遍历优先级队列中的元素。如果需要按顺序遍历，请考虑使用 {@code Arrays.sort(pq.toArray())}。
+
+<p><strong>注意，此实现不是同步的。</strong>如果多个线程中的任意线程修改了队列，则这些线程不应同时访问 {@code PriorityQueue} 实例。相反，请使用线程安全的 {@link java.util.concurrent.PriorityBlockingQueue} 类。
+
+ 
+<p>实现注意事项：此实现为排队和出队方法（{@code offer}、{@code poll}、{@code remove()} 和 {@code add}）提供 O(log(n)) 时间；为 {@code remove(Object)} 和 {@code contains(Object)} 方法提供线性时间；为获取方法（{@code peek}、{@code element} 和 {@code size}）提供固定时间。
+
+<p>此类是 <a href="{@docRoot}/../technotes/guides/collections/index.html">Java Collections Framework</a> 的成员。
+@since 1.5
+@version 1.16, 04/21/06
+@author Josh Bloch, Doug Lea
+@param <E> collection 中所保存元素的类型。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.util.PriorityQueue.size
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+优先级队列中的元素数目。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private final java.util.Comparator<? super E> java.util.PriorityQueue.comparator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+比较器，如果优先级队列使用元素的自然顺序，则为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用默认的初始容量（11）创建一个 {@code PriorityQueue}，并根据其{@linkplain Comparable 自然顺序}对元素进行排序。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue(int initialCapacity)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的初始容量创建一个 {@code PriorityQueue}，并根据其{@linkplain Comparable 自然顺序}对元素进行排序。
+
+@param initialCapacity 此优先级队列的初始容量
+@throws IllegalArgumentException 如果 {@code initialCapacity} 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue(int initialCapacity, java.util.Comparator<? super E> comparator)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用指定的初始容量创建一个 {@code PriorityQueue}，并根据指定的比较器对元素进行排序。
+
+@param initialCapacity 此优先级队列的初始容量
+@param comparator 用于对此优先级队列进行排序的比较器。如果该参数为 {@code null}，则将使用元素的{@linkplain Comparable
+         自然顺序}
+@throws IllegalArgumentException 如果 {@code initialCapacity} 小于 1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue(java.util.Collection<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定 collection 中元素的 {@code PriorityQueue}。如果指定的 collection 是 {@link java.util.SortedSet} 的一个实例或者是另一个 {@code PriorityQueue}，那么此优先级队列将根据相同顺序进行排序。否则，此优先级队列将根据元素的{@linkplain Comparable 自然顺序}进行排序。
+
+@param c collection，其元素要置于此优先级队列中
+@throws ClassCastException 如果根据优先级队列的排序规则无法比较指定 collection 中的各个元素
+@throws NullPointerException 如果指定 collection 或任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue(java.util.PriorityQueue<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定优先级队列元素的 {@code PriorityQueue}。此优先级队列将根据与给定优先级队列相同的顺序进行排序。
+
+@param c 优先级队列，其元素要置于此优先级队列中
+@throws ClassCastException 如果根据 {@code c} 的顺序无法比较 {@code c} 中的各个元素
+@throws NullPointerException 如果指定优先级队列或任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.PriorityQueue(java.util.SortedSet<? extends E> c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建包含指定有序 set 元素的 {@code PriorityQueue}。此优先级队列将根据与给定有序 set 相同的顺序进行排序。
+
+@param c 有序 set，其元素将置于此优先级队列中
+@throws ClassCastException 如果根据有序 set 的顺序无法比较该有序 set 中的各个元素
+@throws NullPointerException 如果指定有序 set 或任何元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.PriorityQueue.add(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素插入此优先级队列。
+
+@return {@code true}（正如 {@link Collection#add} 所指定的那样）
+@throws ClassCastException 如果根据优先级队列的顺序无法将指定元素与此优先级队列中当前元素进行比较
+@throws NullPointerException 如果指定的元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.PriorityQueue.offer(E e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将指定的元素插入此优先级队列。
+@return {@code true}（正如 {@link Queue#offer} 所指定的那样）
+@throws ClassCastException 如果根据优先级队列的顺序无法将指定元素与此优先级队列中当前元素进行比较
+@throws NullPointerException 如果指定元素为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.PriorityQueue.remove(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 从此队列中移除指定元素的单个实例（如果存在）。更确切地讲，如果此队列包含一个或多个满足 {@code o.equals(e)} 的元素 {@code e}，则移除一个这样的元素。当且仅当此队列包含指定的元素（或者此队列由于调用而发生更改），则返回 {@code true}。
+
+ @param o 要从此队列中移除的元素（如果存在）
+ @return 如果此队列由于调用而发生更改，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.PriorityQueue.contains(Object o)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 如果此队列包含指定的元素，则返回 {@code true}。更确切地讲，当且仅当此队列至少包含一个满足 {@code o.equals(e)} 的元素 {@code e} 时，才返回 {@code true}。
+
+ @param o 要检查是否包含于此队列的对象
+ @return 如果此队列包含指定元素，则返回 {@code true}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.util.PriorityQueue.toArray()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个包含此队列所有元素的数组。数组元素没有特定的顺序。
+
+ <p>由于此队列并不维护对返回数组的任何引用，因而它将是“安全的”。（换句话说，此方法必须分配一个新数组）。因此，调用者可以随意修改返回的数组。
+
+ <p>此方法充当基于数组的 API 与基于 collection 的 API 之间的桥梁。
+
+ @return 包含此队列所有元素的数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.util.PriorityQueue.toArray(T[] a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个包含此队列所有元素的数组；返回数组的运行时类型是指定数组的类型。返回数组的元素没有特定的顺序。如果指定的数组能容纳队列，则将该队列返回此处。否则，将根据指定数组的运行时类型和此队列的大小分配一个新数组。
+
+ <p>如果指定数组能容纳队列，且有剩余空间（即数组比队列元素多），则紧跟在 collection 末尾的数组元素将被设置为 {@code null}。
+
+ <p>像 {@link #toArray()} 方法一样，此方法充当基于数组 的 API 与基于 collection 的 API 之间的桥梁。进一步说，此方法允许对输出数组的运行时类型进行精确控制，在某些情况下，可以用来节省分配开销。
+
+ <p>假定 <tt>x</tt> 是只包含字符串的一个已知队列。以下代码可以用来将该队列转储到一个新分配的 <tt>String</tt> 数组：
+
+ <pre>
+     String[] y = x.toArray(new String[0]);</pre>
+
+ 注意，<tt>toArray(new Object[0])</tt> 和 <tt>toArray()</tt> 在功能上是相同的。
+
+ @param a 存储此队列元素的数组（如果该数组足够大）；否则，将为此分配一个具有相同运行时类型的新数组。
+ @return 包含此队列所有元素的数组
+ @throws 如果指定数组的运行时类型不是此队列每个元素的运行时类型的子类型
+ @throws NullPointerException 如果指定数组为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Iterator<E> java.util.PriorityQueue.iterator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在此队列中的元素上进行迭代的迭代器。迭代器并不以任意特定的顺序返回元素。
+
+@return 在此队列的元素上进行迭代的迭代器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.PriorityQueue.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此优先级队列中移除所有元素。此调用返回后队列为空。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Comparator<? super E> java.util.PriorityQueue.comparator()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用来对此队列中的元素进行排序的比较器；如果此队列根据其元素的{@linkplain Comparable 自然顺序}进行排序，则返回 {@code null}。
+
+@return 用于对此队列进行排序的比较器；如果此队列根据其元素的自然顺序进行排序，则返回 {@code null}
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.PriorityQueue.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流重构 {@code PriorityQueue} 实例（即将其反序列化）。
+@param s 流
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.PriorityQueue.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将实例的状态保存到流中（即将其序列化）。
+
+@serialData  底层实例数组的长度 (int)，然后是其按恰当顺序排列的所有元素（每个 {@code Object}）。
+@param s 流
+
+<!-- END DATA -->

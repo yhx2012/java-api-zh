@@ -1,0 +1,119 @@
+<!-- BEGIN KEY -->
+public interface javax.swing.RootPaneContainer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此接口由具有单个 JRootPane 子组件的组件来实现，这些子组件包括：JDialog、JFrame、JWindow、JApplet、JInternalFrame。此接口中的方法仅为 JRootPane 属性的<i>封面</i> (covers)，例如，<code>getContentPane()</code> 通常按以下方法实现：<pre>
+     public Container getContentPane() {
+         return getRootPane().getContentPane();
+     }
+ </pre>
+此接口用作 Swing GUI 生成器的<i>标记</i> (marker)，这些生成器需要处理 JFrame 之类的组件，特别是包含单个 JRootPane 的组件。例如，在 GUI 生成器中，删除 RootPaneContainer 上的组件将被解释为 <code>frame.getContentPane().add(child)</code>。
+ <p>
+为了便于使用 <code>JFrame</code>、<code>JDialog</code>、<code>JWindow</code>、<code>JApplet</code> 和 <code>JInternalFrame</code>，默认情况下，将 <code>add</code>、<code>remove</code> 和 <code>setLayout</code> 方法的所有调用转发到 <code>contentPane</code>。这意味着您可以调用：
+ <pre>
+ rootPaneContainer.add(component);
+ </pre>
+而不是：
+ <pre>
+ rootPaneContainer.getContentPane().add(component);
+ </pre>
+ <p>
+<code>rootPaneCheckingEnabled</code> 属性控制 <code>JFrame</code>、<code>JDialog</code>、 <code>JWindow</code>、<code>JApplet</code> 和 <code>JInternalFrame</code> 的 <code>add</code> 和 <code>setLayout</code> 方法的行为。如果此属性为 true（默认值），则将这些方法的调用转发到 <code>contentPane</code>；如果为 false，则这些方法直接在 <code>RootPaneContainer</code> 上操作。此属性仅用于子类，因此是受保护的。
+
+@see JRootPane
+@see JFrame
+@see JDialog
+@see JWindow
+@see JApplet
+@see JInternalFrame
+
+@version 1.15 12/19/03
+@author Hans Muller
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JRootPane javax.swing.RootPaneContainer.getRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此组件的单个 JRootPane 子组件。此接口的传统实现间接通过此接口获得所有其他方法。rootPane 有两个子组件：glassPane 和 layeredPane。
+
+@return 此组件的单个 JRootPane 子组件。
+@see JRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.RootPaneContainer.setContentPane(Container contentPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+&quot;contentPane&quot; 是应用程序特定组件的主要容器。应用程序应将子组件添加到 contentPane，设置它的布局管理器，等等。  
+ <p>
+contentPane 不能为 null。
+ <p>
+通常使用 <code>getRootPane().setContentPane(contentPane);</code> 实现
+ 
+@exception java.awt.IllegalComponentStateException （运行时异常）如果内容窗格参数为 null
+@param contentPane 用于此 JRootPane 内容的 Container
+@see JRootPane#getContentPane
+@see #getContentPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.RootPaneContainer.getContentPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 contentPane。
+
+@return contentPane 属性的值。
+@see #setContentPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.RootPaneContainer.setLayeredPane(JLayeredPane layeredPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+管理 contentPane 的 Container，在某些情况下为菜单栏。希望将子组件添加到不归布局管理的 RootPaneContainer 的后代可以使用 layeredPane。例如，内部对话框或拖放效果组件。
+ <p>
+layeredPane 不能为 null。
+ <p>
+通常使用以下方法实现<pre> 
+    getRootPane().setLayeredPane(layeredPane);</pre>
+ 
+@exception java.awt.IllegalComponentStateException （一个运行时异常）如果分层窗格参数为 null
+@see #getLayeredPane
+@see JRootPane#getLayeredPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JLayeredPane javax.swing.RootPaneContainer.getLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 layeredPane。
+
+@return layeredPane 属性的值。
+@see #setLayeredPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.RootPaneContainer.setGlassPane(Component glassPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+glassPane 始终为 rootPane 的第一个子组件，rootPanes 布局管理器确保它始终与 rootPane 一样大。默认情况下，它是透明的，不可见。通过添加侦听器并使它变得可见，可以将它用于临时捕获所有的键盘和鼠标输入。默认情况下，它不可见。
+ <p>
+glassPane 不能为 null。
+ <p>
+通常使用以下方法实现 <code>getRootPane().setGlassPane(glassPane);</code> 
+ 
+@see #getGlassPane
+@see JRootPane#setGlassPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.RootPaneContainer.getGlassPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 glassPane。
+
+@return glassPane 属性的值。
+@see #setGlassPane
+
+<!-- END DATA -->

@@ -1,0 +1,764 @@
+<!-- BEGIN KEY -->
+public class javax.swing.JDialog extends java.awt.Dialog implements javax.swing.WindowConstants, javax.accessibility.Accessible, javax.swing.RootPaneContainer, javax.swing.TransferHandler.HasGetTransferHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+创建对话框窗口的主要类。可以使用此类创建自定义的对话框，或者调用 {@link JOptionPane} 中的多个类方法来创建各种标准对话框。有关创建对话框的信息，请参阅 <em>The Java Tutorial</em> 中的 <a
+ href="http://java.sun.com/docs/books/tutorial/uiswing/components/dialog.html">How to Make Dialogs</a> 一节。
+
+ <p>
+
+<code>JDialog</code> 组件包含一个 <code>JRootPane</code> 作为其唯一子组件。<code>contentPane</code> 应该是所有 <code>JDialog</code> 子组件的父级。为了方便使用 <code>add</code> 及其变体，已经重写了 <code>remove</code> 和 <code>setLayout</code>，以在必要时将其转发到 <code>contentPane</code>。这意味着可以编写：
+ <pre>
+       dialog.add(child);
+ </pre>
+将子级添加到 contentPane。<code>contentPane</code> 始终是非 <code>null</code> 的。试图将其设置为 <code>null</code> 会生成异常。默认的 <code>contentPane</code> 有一个 <code>BorderLayout</code> 管理器。有关添加、移除和设置 <code>JDialog</code> 的 <code>LayoutManager</code> 的更多信息，请参阅 {@link javax.swing.RootPaneContainer}。
+ <p>
+有关 <code>contentPane</code>、<code>glassPane</code> 和 <code>layeredPane</code> 组件的完整描述，请参阅 <code>JRootPane</code> 文档。
+ <p>
+在多屏幕环境中，可以在不同于其所有者的屏幕设备上创建一个 <code>JDialog</code>。有关更多信息，请参阅 {@link java.awt.Frame}。
+ <p>
+ <strong>警告：</strong>Swing 不是线程安全的。有关更多信息，请参阅 <a
+ href="package-summary.html#threading">Swing's Threading
+ Policy</a>。
+ <p>
+<strong>警告：</strong>此类的序列化对象与以后的 Swing 版本不兼容。当前序列化支持适用于短期存储，或适用于在运行相同 Swing 版本的应用程序之间进行 RMI（Remote Method Invocation，远程方法调用）。从 1.4 版本开始，已在 <code>java.beans</code> 包中添加了支持所有 JavaBeans<sup><font size="-2">TM</font></sup> 长期存储的功能。请参见 {@link java.beans.XMLEncoder}。
+
+@see JOptionPane
+@see JRootPane
+@see javax.swing.RootPaneContainer
+
+@beaninfo attribute: isContainer true attribute: containerDelegate getContentPane description: A toplevel window for creating dialog boxes.
+
+@version 1.80 12/19/03
+@author David Kloba
+@author James Gosling
+@author Scott Violet
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane javax.swing.JDialog.rootPane
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@see #getRootPane
+@see #setRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JDialog.rootPaneCheckingEnabled
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果为 true，则将对 <code>add</code> 和 <code>setLayout</code> 的调用转发到 <code>contentPane</code>。此方法初始为 false，但在构造 <code>JDialog</code> 时将其设置为 true。
+
+@see #isRootPaneCheckingEnabled
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private javax.swing.TransferHandler javax.swing.JDialog.transferHandler
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 此对话框的 <code>TransferHandler</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个没有标题并且没有指定 <code>Frame</code> 所有者的无模式对话框。一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+ <p>
+注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Frame owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个没有标题但将指定的 <code>Frame</code> 作为其所有者的无模式对话框。如果 <code>owner</code> 为 <code>null</code>，则一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。
+ <p>
+ 注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@param owner 显示该对话框的 <code>Frame</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Frame owner, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定所有者 <code>Frame</code>、模式和空标题的对话框。如果 <code>owner</code> 为 <code>null</code>，则一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+ <p>
+注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@param owner 显示该对话框的 <code>Frame</code> 
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式     
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Frame owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题和指定所有者窗体的无模式对话框。如果 <code>owner</code> 为 <code>null</code>，则一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+ <p>
+注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@param owner 显示该对话框的 <code>Frame</code>
+@param title  该对话框的标题栏中所显示的 <code>String</code> 
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Frame owner, String title, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题、所有者 <code>Frame</code> 和模式的对话框。如果 <code>owner</code> 为 <code>null</code>，则一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+ <p>
+注：强制要求在有模式对话框中所创建的所有弹出式组件（<code>JComboBox</code>、<code>JPopupMenu</code>、<code>JMenuBar</code>）都是轻量级的。
+ <p>
+注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@param owner 显示该对话框的 <code>Frame</code>
+@param title  该对话框的标题栏中所显示的 <code>String</code> 
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式的。    
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+ 
+@see java.awt.Dialog.ModalityType 
+@see java.awt.Dialog.ModalityType#MODELESS 
+@see java.awt.Dialog#DEFAULT_MODALITY_TYPE 
+@see java.awt.Dialog#setModal 
+@see java.awt.Dialog#setModalityType 
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Frame owner, String title, boolean modal, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题、所有者 <code>Frame</code>、模式和 <code>GraphicsConfiguration</code> 的对话框。如果 <code>owner</code> 为 <code>null</code>，则一个共享的、隐藏的窗体将被设置为该对话框的所有者。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 返回的值。     
+ 
+ <p>
+注：强制要求在有模式对话框中所创建的所有弹出式组件（<code>JComboBox</code>、<code>JPopupMenu</code>、<code>JMenuBar</code>）都是轻量级的。
+ <p>
+注：此构造方法不允许创建没有所有者的 <code>JDialog</code>。要创建没有所有者的 <code>JDialog</code>，必须使用带有 <code>null</code> 参数的 <code>JDialog(Window)</code> 或 <code>JDialog(Dialog)</code> 构造方法。
+
+@param owner 显示该对话框的 <code>Frame</code> 
+@param title  该对话框的标题栏中所显示的 <code>String</code> 
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式的。
+@param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>。如果 <code>gc</code> 为 <code>null</code>，则使用与 Frame 相同的 <code>GraphicsConfiguration</code>。
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。       
+@see java.awt.Dialog.ModalityType 
+@see java.awt.Dialog.ModalityType#MODELESS 
+@see java.awt.Dialog#DEFAULT_MODALITY_TYPE 
+@see java.awt.Dialog#setModal 
+@see java.awt.Dialog#setModalityType 
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Dialog owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个没有标题但将指定的 <code>Dialog</code> 作为其所有者的无模式对话框。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。
+
+@param owner 显示该对话框的所有者 <code>Dialog</code>；如果此对话框没有所有者，则为 <code>null</code>
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Dialog owner, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定所有者 <code>Dialog</code> 和模式的对话框。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。
+
+@param owner 显示该对话框的所有者 <code>Dialog</code>；如果此对话框没有所有者，则为 <code>null</code>
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式的。
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.Dialog.ModalityType 
+@see java.awt.Dialog.ModalityType#MODELESS 
+@see java.awt.Dialog#DEFAULT_MODALITY_TYPE 
+@see java.awt.Dialog#setModal 
+@see java.awt.Dialog#setModalityType 
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Dialog owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题和指定所有者对话框的无模式对话框。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。
+
+@param owner 显示该对话框的所有者 <code>Dialog</code>；如果此对话框没有所有者，则为 <code>null</code>
+@param title  该对话框的标题栏中所显示的 <code>String</code> 
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Dialog owner, String title, boolean modal)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题、模式和指定所有者 <code>Dialog</code> 的对话框。 
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+@param owner 显示该对话框的所有者 <code>Dialog</code>；如果此对话框没有所有者，则为 <code>null</code>
+@param title  该对话框的标题栏中所显示的 <code>String</code>  
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式的。
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.Dialog.ModalityType 
+@see java.awt.Dialog.ModalityType#MODELESS 
+@see java.awt.Dialog#DEFAULT_MODALITY_TYPE 
+@see java.awt.Dialog#setModal 
+@see java.awt.Dialog#setModalityType 
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Dialog owner, String title, boolean modal, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个具有指定标题、所有者 <code>Dialog</code>、模式和 <code>GraphicsConfiguration</code> 的对话框。
+ 
+ <p>
+注：强制要求在有模式对话框中所创建的所有弹出式组件（<code>JComboBox</code>、<code>JPopupMenu</code>、<code>JMenuBar</code>）都是轻量级的。
+ <p>
+此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+@param owner 显示该对话框的所有者 <code>Dialog</code>；如果此对话框没有所有者，则为 <code>null</code>
+@param title  该对话框的标题栏中所显示的 <code>String</code> 
+@param modal 指定对话框在显示时是否阻塞用户向其他顶层窗口输入。如果为 <code>true</code>，则模式类型属性被设置为 <code>DEFAULT_MODALITY_TYPE</code>；否则对话框是无模式的。
+@param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>。如果 <code>gc</code> 为 <code>null</code>，则使用与 Dialog 相同的 <code>GraphicsConfiguration</code>。
+@exception HeadlessException 如果 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code>。
+@see java.awt.Dialog.ModalityType 
+@see java.awt.Dialog.ModalityType#MODELESS 
+@see java.awt.Dialog#DEFAULT_MODALITY_TYPE 
+@see java.awt.Dialog#setModal 
+@see java.awt.Dialog#setModalityType 
+@see java.awt.GraphicsEnvironment#isHeadless
+@see JComponent#getDefaultLocale
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Window owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个具有指定所有者 <code>Window</code> 和空标题的无模式对话框。
+ <p>
+ 此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+ @param owner 显示该对话框的 <code>Window</code>；如果此对话框没有所有者，则为 <code>null</code>
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see JComponent#getDefaultLocale
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Window owner, Dialog.ModalityType modalityType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个具有指定所有者 <code>Window</code>、模式和空标题的对话框。
+ <p>
+ 此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+ @param owner 显示该对话框的 <code>Window</code>；如果此对话框没有所有者，则为 <code>null</code>
+ @param modalityType 指定对话框在显示时是否阻塞向其他窗口输入。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @exception HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see JComponent#getDefaultLocale
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Window owner, String title)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个具有指定标题和所有者 <code>Window</code> 的无模式对话框。
+ <p>
+ 此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+ @param owner 显示该对话框的 <code>Window</code>；如果此对话框没有所有者，则为 <code>null</code>
+ @param title 该对话框的标题栏中所显示的 <code>String</code>；如果该对话框没有标题，则为 <code>null</code> 
+ @exception java.awt.HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see JComponent#getDefaultLocale
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Window owner, String title, Dialog.ModalityType modalityType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个具有指定标题、所有者 <code>Window</code> 和模式的对话框。
+ <p>
+ 此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+ @param owner 显示该对话框的 <code>Window</code>；如果此对话框没有所有者，则为 <code>null</code>
+ @param title 该对话框的标题栏中所显示的 <code>String</code>；如果该对话框没有标题，则为 <code>null</code>   
+ @param modalityType 指定对话框在显示时是否阻塞向其他窗口输入。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @exception java.awt.HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see JComponent#getDefaultLocale
+ 
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JDialog(Window owner, String title, Dialog.ModalityType modalityType, GraphicsConfiguration gc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 创建一个具有指定标题、所有者 <code>Window</code>、模式和 <code>GraphicsConfiguration</code> 的对话框。
+ <p>
+ 注：强制要求在有模式对话框中所创建的所有弹出式组件（<code>JComboBox</code>、<code>JPopupMenu</code>、<code>JMenuBar</code>）都是轻量级的。
+ <p>
+ 此构造方法将该组件的语言环境属性设置为 <code>JComponent.getDefaultLocale</code> 所返回的值。     
+
+ @param owner 显示该对话框的 <code>Window</code>；如果此对话框没有所有者，则为 <code>null</code>
+ @param title 该对话框的标题栏中所显示的 <code>String</code>；如果该对话框没有标题，则为 <code>null</code>   
+ @param modalityType 指定对话框在显示时是否阻塞向其他窗口输入。<code>null</code> 值和不受支持的模式类型等效于 <code>MODELESS</code>
+ @param gc 目标屏幕设备的 <code>GraphicsConfiguration</code>；如果为 <code>null</code>，则使用拥有窗口的 <code>GraphicsConfiguration</code>；如果 <code>owner</code> 也为 <code>null</code>，则假定它为系统默认的 <code>GraphicsConfiguration</code> 
+ @exception java.awt.HeadlessException 当 <code>GraphicsEnvironment.isHeadless()</code> 返回 <code>true</code> 时
+
+ @see java.awt.Dialog.ModalityType
+ @see java.awt.Dialog#setModal
+ @see java.awt.Dialog#setModalityType
+ @see java.awt.GraphicsEnvironment#isHeadless
+ @see JComponent#getDefaultLocale
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JDialog.dialogInit()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法调用此方法来正确初始化 <code>JDialog</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.JRootPane javax.swing.JDialog.createRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法调用此方法来创建默认的 <code>rootPane</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JDialog.processWindowEvent(WindowEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+根据 <code>defaultCloseOperation</code> 属性的状态处理窗口事件。
+
+@see #setDefaultCloseOperation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setDefaultCloseOperation(int operation)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置当用户在此对话框上启动 &quot;close&quot; 时默认执行的操作。必须指定以下选项之一：
+ <p>
+ <ul>
+<li><code>DO_NOTHING_ON_CLOSE</code>（在 <code>WindowConstants</code> 中定义）：不执行任何操作；需要程序在已注册的 <code>WindowListener</code> 对象的 <code>windowClosing</code> 方法中处理该操作。
+
+<li><code>HIDE_ON_CLOSE</code>（在 <code>WindowConstants</code> 中定义）：调用任意已注册的 <code>WindowListener</code> 对象后自动隐藏该对话框。
+
+<li><code>DISPOSE_ON_CLOSE</code>（<code>WindowConstants</code> 中定义的）：调用任意已注册的 <code>WindowListener</code> 对象后自动隐藏并处置该对话框。
+ </ul>
+ <p>
+默认将该值设置为 <code>HIDE_ON_CLOSE</code>。对此属性的值的更改将导致触发属性更改事件，带有属性名称 "defaultCloseOperation"。
+ <p>
+<b>注：</b>当 Java 虚拟机 (VM) 中最后的可显示窗口被移除后，虚拟机可能会终止。有关更多信息，请参阅 <a href="../../java/awt/doc-files/AWTThreadIssues.html">AWT Threading Issues</a>。
+
+@param operation 当用户关闭该对话框时应该执行的操作
+@throws IllegalArgumentException 如果 defaultCloseOperation 值不是上述有效值之一
+@see #addWindowListener
+@see #getDefaultCloseOperation
+@see WindowConstants
+
+@beaninfo
+   preferred: true
+       bound: true
+        enum: DO_NOTHING_ON_CLOSE WindowConstants.DO_NOTHING_ON_CLOSE
+              HIDE_ON_CLOSE       WindowConstants.HIDE_ON_CLOSE
+              DISPOSE_ON_CLOSE    WindowConstants.DISPOSE_ON_CLOSE
+description: The dialog's default close operation.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JDialog.getDefaultCloseOperation()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回用户在此对话框上启动 &quot;close&quot; 时所执行的操作。
+
+@return 一个指示窗口关闭操作的整数
+@see #setDefaultCloseOperation
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setTransferHandler(TransferHandler newHandler)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 {@code transferHandler} 属性，该属性是支持向此组件传输数据的机制。如果该组件不支持数据传输操作，那么请使用 {@code null}。
+ <p>
+如果系统属性 {@code suppressSwingDropSupport} 为 {@code false}（默认值），并且此组件上的当前放置目标为 {@code null} 或者不是用户设置的放置目标，则此方法将按如下方式更改放置目标：如果 {@code newHandler} 为 {@code null}，则它将清除放置目标。如果不为 {@code null}，则它将安装一个新的 {@code DropTarget}。
+ <p>
+注：当用于 {@code JDialog} 时，{@code TransferHandler} 只提供数据导入功能，与数据导出有关的方法当前用于 {@code JComponent}。
+ <p>
+有关更多信息，请参阅 <em>The Java Tutorial</em> 中的 <a href="http://java.sun.com/docs/books/tutorial/uiswing/misc/dnd.html">
+ How to Use Drag and Drop and Data Transfer</a> 一节。 
+ 
+ @param newHandler 新的 {@code TransferHandler}
+
+ @see TransferHandler
+ @see #getTransferHandler
+ @see java.awt.Component#setDropTarget
+ @since 1.6
+
+ @beaninfo
+        bound: true
+       hidden: true
+  description: Mechanism for transfer of data into the component
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.TransferHandler javax.swing.JDialog.getTransferHandler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 获取 <code>transferHandler</code> 属性。
+
+ @return <code>transferHandler</code> 属性的值
+
+ @see TransferHandler
+ @see #setTransferHandler
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.update(Graphics g)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+调用 <code>paint(g)</code>。重写此方法，以防止不必要的清除背景调用。
+
+@param g  在其中进行绘制的 <code>Graphics</code> 上下文
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setJMenuBar(JMenuBar menu)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此对话框的菜单栏。
+
+@param menu 该对话框中放置的菜单栏
+
+@see #getJMenuBar
+
+@beaninfo hidden: true description: The menubar for accessing pulldown menus from this dialog.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JMenuBar javax.swing.JDialog.getJMenuBar()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对话框上设置的菜单栏。
+
+@see #setJMenuBar
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.JDialog.isRootPaneCheckingEnabled()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否将对 <code>add</code> 和 <code>setLayout</code> 的调用转发到 <code>contentPane</code>。
+
+@return 如果转发 <code>add</code> 和 <code>setLayout</code>，则返回 true；否则返回 false
+
+@see #addImpl
+@see #setLayout
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JDialog.setRootPaneCheckingEnabled(boolean enabled)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置是否将对 <code>add</code> 和 <code>setLayout</code> 的调用转发到 <code>contentPane</code>。
+ 
+@param enabled   如果转发 <code>add</code> 和 <code>setLayout</code>，则为 true；如果应该直接在 <code>JDialog</code> 上操作，则为 false。
+
+@see #addImpl
+@see #setLayout
+@see #isRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+@beaninfo hidden: true description: Whether the add and setLayout methods are forwarded
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JDialog.addImpl(Component comp, Object constraints, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的子 <code>Component</code>。重写此方法，以有条件地将调用转发到 <code>contentPane</code>。默认情况下将子组件添加到 <code>contentPane</code>，而不是窗体中，有关此内容的详情，请参阅 {@link javax.swing.RootPaneContainer}。
+ 
+@param comp 要增强的组件
+@param constraints 要遵守的约束条件
+@param index 索引
+@exception IllegalArgumentException 如果 <code>index</code> 无效
+@exception IllegalArgumentException 如果将容器的父级添加到其本身
+@exception IllegalArgumentException 如果向容器内添加窗口
+ 
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.remove(Component comp)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从该容器中移除指定组件。如果 <code>comp</code> 不是 <code>rootPane</code>，则将该调用转发到 <code>contentPane</code>。如果 <code>comp</code> 不是 <code>JDialog</code> 或 <code>contentPane</code> 的子级，则不执行任何操作。
+
+@param comp 要移除的组件
+@throws NullPointerException 如果 <code>comp</code> 为 null
+@see #add
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setLayout(LayoutManager manager)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>LayoutManager</code>。重写此方法，以有条件地将调用转发到 <code>contentPane</code>。有关此内容的更多信息，请参阅 {@link javax.swing.RootPaneContainer}。
+
+@param manager the <code>LayoutManager</code>
+@see #setRootPaneCheckingEnabled
+@see javax.swing.RootPaneContainer
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JRootPane javax.swing.JDialog.getRootPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对话框的 <code>rootPane</code> 对象。
+
+@see #setRootPane
+@see RootPaneContainer#getRootPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.JDialog.setRootPane(JRootPane root)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>rootPane</code> 属性。此方法由构造方法调用。
+
+@param root 此对话框的 <code>rootPane</code> 对象
+
+@see #getRootPane
+
+@beaninfo hidden: true description: the RootPane object for this dialog.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Container javax.swing.JDialog.getContentPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对话框的 <code>contentPane</code> 对象。
+
+@return  <code>contentPane</code> 属性
+
+@see #setContentPane
+@see RootPaneContainer#getContentPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setContentPane(Container contentPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>contentPane</code> 属性。此方法由构造方法调用。
+ <p>
+Swing 的绘制架构要求在包含层次结构中有不透明的 <code>JComponent</code>。这通常由内容窗格提供。如果要替换内容窗格，建议用不透明的 <code>JComponent</code> 替换它。
+@see JRootPane
+
+@param contentPane 此对话框的 <code>contentPane</code> 对象
+
+@exception java.awt.IllegalComponentStateException （运行时异常）如果 contentPane 参数为 <code>null</code>
+@see #getContentPane
+@see RootPaneContainer#setContentPane
+
+@beaninfo hidden: true description: The client area of the dialog where child components are normally inserted.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JLayeredPane javax.swing.JDialog.getLayeredPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对话框的 <code>layeredPane</code> 对象。
+
+@return <code>layeredPane</code> 属性
+
+@see #setLayeredPane
+@see RootPaneContainer#getLayeredPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setLayeredPane(JLayeredPane layeredPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>layeredPane</code> 属性。此方法由构造方法调用。
+
+@param layeredPane 新的 <code>layeredPane</code> 属性
+
+@exception java.awt.IllegalComponentStateException （运行时异常）如果 layeredPane 参数为 null 
+@see #getLayeredPane
+@see RootPaneContainer#setLayeredPane
+
+@beaninfo hidden: true description: The pane which holds the various dialog layers.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component javax.swing.JDialog.getGlassPane()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对话框的 <code>glassPane</code> 对象。
+
+@return <code>glassPane</code> 属性
+
+@see #setGlassPane
+@see RootPaneContainer#getGlassPane
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.setGlassPane(Component glassPane)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 <code>glassPane</code> 属性。此方法由构造方法调用。
+
+@param glassPane 此对话框的 <code>glassPane</code> 对象
+@see #getGlassPane
+@see RootPaneContainer#setGlassPane
+
+@beaninfo hidden: true description: A transparent pane used for menu rendering.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Graphics javax.swing.JDialog.getGraphics()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ {@inheritDoc}
+
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JDialog.repaint(long time, int x, int y, int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 <code>time</code> 毫秒内重绘此组件的指定矩形区域。有关如何处理重绘的详细信息，请参阅 <code>RepaintManager</code>。
+ 
+ @param     time   更新前等待的最长时间（以毫秒为单位）
+ @param     x    <i>x</i> 坐标
+ @param     y    <i>y</i> 坐标
+ @param     width    宽度
+ @param     height   高度
+ @see       RepaintManager
+ @since     1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void javax.swing.JDialog.setDefaultLookAndFeelDecorated(boolean defaultLookAndFeelDecorated)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供一个关于是否应该通过当前外观为新创建的 <code>JDialog</code> 提供其 Window 装饰（如边界、关闭窗口的小部件、标题……）的提示。如果 <code>defaultLookAndFeelDecorated</code> 为 true、当前 <code>LookAndFeel</code> 支持提供 Window 装饰，并且当前窗口管理器支持未装饰的窗口，则通过当前 <code>LookAndFeel</code> 为新创建的 <code>JDialog</code> 提供其 Window 装饰。否则，通过当前窗口管理器为新创建的 <code>JDialog</code> 提供其 Window 装饰。
+ <p>
+执行下列操作可在单个 JDialog 上获取相同的效果：
+ <pre>
+    JDialog dialog = new JDialog();
+    dialog.setUndecorated(true);
+    dialog.getRootPane().setWindowDecorationStyle(JRootPane.PLAIN_DIALOG);
+ </pre>
+
+@param defaultLookAndFeelDecorated 关于当前外观是否应该提供 window 装饰的提示
+@see javax.swing.LookAndFeel#getSupportsWindowDecorations
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean javax.swing.JDialog.isDefaultLookAndFeelDecorated()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果应该通过当前外观为新创建的 <code>JDialog</code> 提供其 Window 装饰，则返回 true。这只是一个提示，因为某些外观可能不支持此功能。
+
+@return 如果外观应该提供 Window 装饰，则返回 true。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String javax.swing.JDialog.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此 <code>JDialog</code> 的字符串表示形式。此方法仅在进行调试时使用，对于各个实现，所返回字符串的内容和格式可能有所不同。返回的字符串可以为空，但不可以为 <code>null</code>。
+ 
+@return  此 <code>JDialog</code> 的字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext javax.swing.JDialog.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 JDialog 关联的 AccessibleContext。对于 JDialog 来说，AccessibleContext 采用 AccessibleJDialog 的形式。如有必要，可创建一个新的 AccessibleJDialog 实例。
+
+@return 一个 AccessibleJDialog，它充当此 JDialog 的 AccessibleContext
+
+<!-- END DATA -->

@@ -1,0 +1,155 @@
+<!-- BEGIN KEY -->
+public class java.awt.datatransfer.Clipboard extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类实现一种使用剪切/复制/粘贴操作传输数据的机制。
+ <p>
+{@link FlavorListener} 可以在 Clipboard 类的实例上注册，以接收对此剪贴板上可用的 {@link DataFlavor} 的集合更改的通知（参见 {@link #addFlavorListener}）。
+
+@see java.awt.Toolkit#getSystemClipboard
+@see java.awt.Toolkit#getSystemSelection
+
+@version 	1.22, 12/19/03
+@author	Amy Fowler
+@author      Alexander Gerasimov
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.Clipboard(String name)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建剪贴板对象。
+
+@see java.awt.Toolkit#getSystemClipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.datatransfer.Clipboard.getName()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此剪贴板对象的名称。
+
+@see java.awt.Toolkit#getSystemClipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.Clipboard.setContents(Transferable contents, ClipboardOwner owner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将剪贴板的当前内容设置到指定的 transferable 对象，并将指定的剪贴板所有者作为新内容的所有者注册。
+ <p>
+如果现有的所有者与参数 <code>owner</code> 不同，则该所有者将得到通知，它已不再保持剪贴板内容的所有关系，此操作是通过对该所有者调用 <code>ClipboardOwner.lostOwnership()</code> 完成的。<code>setContents()</code> 的实现可以不直接从此方法调用 <code>lostOwnership()</code>。例如，可以稍后在另一个线程上调用 <code>lostOwnership()</code>。在此剪贴板上注册的 <code>FlavorListener</code> 也是如此。
+ <p>
+如果剪贴板当前不可用，则该方法抛出 <code>IllegalStateException</code>。例如，在某些平台上，系统剪贴板在被别的应用程序访问时是不可用的。
+
+@param contents 表示剪贴板内容的 transferable 对象
+@param owner 拥有剪贴板内容的对象
+@throws IllegalStateException 如果剪贴板当前不可用
+@see java.awt.Toolkit#getSystemClipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.datatransfer.Transferable java.awt.datatransfer.Clipboard.getContents(Object requestor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示剪贴板当前内容的 transferable 对象。如果剪贴板目前没有任何内容，则返回 <code>null</code>。目前没有使用参数 Object requestor。如果剪贴板当前不可用，则该方法抛出 <code>IllegalStateException</code>。例如，在某些平台上，系统剪贴板在被别的应用程序访问时是不可用的。
+
+@param requestor 请求剪切数据（不使用）的对象
+@return 剪贴板上的当前 transferable
+@throws IllegalStateException 如果剪贴板当前不可用
+@see java.awt.Toolkit#getSystemClipboard
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.datatransfer.DataFlavor[] java.awt.datatransfer.Clipboard.getAvailableDataFlavors()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回 <code>DataFlavor</code> 的数组，其中提供了此剪贴板的当前内容。如果不存在任何可用的 <code>DataFlavor</code>，则此方法返回一个长度为零的数组。
+
+@return 一组 <code>DataFlavor</code>，在其中可以提供此剪贴板的当前内容
+
+@throws IllegalStateException 如果此剪贴板当前不可用
+ 
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.datatransfer.Clipboard.isDataFlavorAvailable(DataFlavor flavor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回是否能够以指定的 <code>DataFlavor</code> 形式提供此剪贴板的当前内容。
+
+@param flavor 为该内容请求的 <code>DataFlavor</code>
+
+@return 如果可以在指定的 <code>DataFlavor</code> 中提供此剪贴板的当前内容，则返回 <code>true</code>；否则返回 <code>false</code>
+
+@throws NullPointerException 如果 <code>flavor</code> 为 <code>null</code>
+@throws IllegalStateException 如果此剪贴板当前不可用
+ 
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object java.awt.datatransfer.Clipboard.getData(DataFlavor flavor) throws java.awt.datatransfer.UnsupportedFlavorException, java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个对象，表示此剪贴板中指定 <code>DataFlavor</code> 类型的当前内容。返回对象的类是由 <code>flavor</code> 的表示形式类定义的。
+
+@param flavor 为该内容请求的 <code>DataFlavor</code>
+
+@return 一个对象，表示指定的 <code>DataFlavor</code> 中此剪贴板的当前内容
+
+@throws NullPointerException 如果 <code>flavor</code> 为 <code>null</code>
+@throws IllegalStateException 如果此剪贴板目前不可用
+@throws UnsupportedFlavorException 如果请求的 <code>DataFlavor</code> 不可用
+@throws IOException 如果无法检索请求的 <code>DataFlavor</code> 中的数据
+
+@see DataFlavor#getRepresentationClass
+ 
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.Clipboard.addFlavorListener(FlavorListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定的 <code>FlavorListener</code>，以从此剪贴板接收 <code>FlavorEvent</code>。如果 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。
+
+@param listener 要添加的侦听器
+
+@see #removeFlavorListener
+@see #getFlavorListeners
+@see FlavorListener
+@see FlavorEvent
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.datatransfer.Clipboard.removeFlavorListener(FlavorListener listener)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的 <code>FlavorListener</code>，使其不再从此 <code>Clipboard</code> 接收 <code>FlavorEvent</code>。如果参数所指定的侦听器尚未添加到此 <code>Clipboard</code>，则此方法不起作用，也不抛出异常。如果 <code>listener</code> 为 <code>null</code>，则不会抛出异常并且不执行操作。
+
+@param listener 要移除的侦听器
+
+@see #addFlavorListener
+@see #getFlavorListeners
+@see FlavorListener
+@see FlavorEvent
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.datatransfer.FlavorListener[] java.awt.datatransfer.Clipboard.getFlavorListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一组目前在此 <code>Clipboard</code> 上注册的所有 <code>FlavorListener</code>。
+
+@return 此剪贴板的所有 <code>FlavorListener</code>，如果目前没有注册侦听器，则返回一个空数组
+@see #addFlavorListener
+@see #removeFlavorListener
+@see FlavorListener
+@see FlavorEvent
+@since 1.5
+
+<!-- END DATA -->

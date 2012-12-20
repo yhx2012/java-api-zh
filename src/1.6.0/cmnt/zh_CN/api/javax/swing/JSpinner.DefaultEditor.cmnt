@@ -1,0 +1,156 @@
+<!-- BEGIN KEY -->
+public static class javax.swing.JSpinner.DefaultEditor extends javax.swing.JPanel implements javax.swing.event.ChangeListener, java.beans.PropertyChangeListener, java.awt.LayoutManager
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个针对非常特殊编辑器的简单基类，该类在 <code>JFormattedTextField</code> 中显示模型的当前值的只读视图。子类可以配置 <code>JFormattedTextField</code> 以创建适合其支持的模型类型的编辑器，并且子类可能需要重写保持模型和文本字段同步的 <code>stateChanged</code> 和 <code>propertyChanged</code> 方法。
+ <p>
+此类定义了一个 <code>dismiss</code> 方法，可从 <code>JSpinner</code> 移除作为其一部分的编辑器 <code>ChangeListener</code>。<code>setEditor</code> 方法知道 <code>DefaultEditor.dismiss</code>，因此如果开发人员替换了一个从 <code>JSpinner.DefaultEditor</code> 派生的编辑器，将会移除返回 <code>JSpinner</code> 的 <code>ChangeListener</code> 连接。尽管如此，也会等到开发者管理其编辑器侦听器才移除。类似地，如果一个子类重写了 <code>createEditor</code>，子类也会等到处理了后续替换掉（通过 <code>setEditor</code>）的编辑器之后才移除。我们期望在大多数情况下不以任何形式替换，包括通过 <code>setEditor</code> 安装或者通过重写 <code>createEditor</code> 创建编辑器。
+ <p>
+此类是针对其单一 <code>JFormattedTextField</code> 子类的 <code>LayoutManager</code>。默认情况下，子级正好处于父 insets 的中间。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSpinner.DefaultEditor(JSpinner spinner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个针对指定 <code>JSpinner</code> 的编辑器组件。此 <code>DefaultEditor</code> 是其自身的布局管理器，并且它已被添加到 spinner 的 <code>ChangeListener</code> 列表中。此构造方法创建了单一的子 <code>JFormattedTextField</code>，其值被初始化为 spinner 模型的当前值，并且将其添加到了<code>此</code> <code>DefaultEditor</code> 中。  
+ 
+@param spinner <code>此</code>编辑器将要监视其模型的 spinner
+@see #getTextField
+@see JSpinner#addChangeListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.dismiss(JSpinner spinner)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将<code>此</code>编辑器从指定的 <code>JSpinner</code> 断开连接。默认情况下，此方法将从 spinner 的 <code>ChangeListener</code> 列表中移除其自身。
+ 
+@param spinner 要从其断开编辑器连接的 <code>JSpinner</code>；与构造方法传入的是同一个 spinner。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JSpinner javax.swing.JSpinner.DefaultEditor.getSpinner()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果此编辑器的 <code>JSpinner</code> 祖先，如果祖先都不为 <code>JSpinner</code>，则返回 <code>null</code>。 通常编辑器的父级是一个 <code>JSpinner</code>，尽管 <code>JSpinner</code> 的子类可能重写 <code>createEditor</code> 方法和在 <code>JSpinner</code> 及其编辑器之间插入一个到多个容器。
+ 
+@return <code>JSpinner</code> 祖先；如果祖先都不为 <code>JSpinner</code>，则返回 <code>null</code>
+@see JSpinner#createEditor
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.JFormattedTextField javax.swing.JSpinner.DefaultEditor.getTextField()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此编辑器的子 <code>JFormattedTextField</code>。默认情况下，文本字段是编辑器的第一个也是唯一的一个子级。
+ 
+@return 供用户访问 <code>SpinnerDateModel</code> 值的 <code>JFormattedTextField</code>。
+@see #getSpinner
+@see #getModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.stateChanged(ChangeEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当 spinner 的模型状态更改时调用此方法。它将文本字段的 <code>value</code> 设置成 spinner 模型的当前值。
+ 
+@param e 其源为模型已更改的 <code>JSpinner</code> 的 <code>ChangeEvent</code>。
+@see #getTextField
+@see JSpinner#getValue
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.propertyChange(PropertyChangeEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+由 <code>JFormattedTextField</code> 的 <code>PropertyChangeListener</code> 调用。当 <code>&quot;value&quot;</code> 属性更改时，这就意味着用户键入了一个新的数字，我们就设置 spinner 模型的值。
+ <p>
+此类忽略其源不是 <code>JFormattedTextField</code> 的 <code>PropertyChangeEvents</code>，因此子类能安全地使<code>此</code> <code>DefaultEditor</code> 成为其他对象的 <code>PropertyChangeListener</code>。
+ 
+@param e 此类创建的其源为 <code>JFormattedTextField</code> 的 <code>PropertyChangeEvent</code>。
+@see #getTextField
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.addLayoutComponent(String name, Component child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 <code>LayoutManager</code> 方法不执行任何操作。我们仅管理单个子级并且不支持布局约束。
+ 
+@param name 忽略
+@param child 忽略
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.removeLayoutComponent(Component child)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此 <code>LayoutManager</code> 方法不执行任何操作。没有任何每子级的状态。
+ 
+@param child 忽略
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JSpinner.DefaultEditor.preferredLayoutSize(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第一个（并且是唯一）子级的首选大小与其父 insets 的大小和。
+ 
+@param parent 管理布局的容器
+@return 布局指定容器子组件的首选维度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension javax.swing.JSpinner.DefaultEditor.minimumLayoutSize(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回第一个（并且是唯一）的子级最小大小与其父 insets 的大小和。
+ 
+@param parent 管理布局的 Container
+@return 布局指定容器子组件所需的最小维度。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.layoutContainer(Container parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调整一个（并且是唯一）子级的大小，以完全填充父 insets 中的区域。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.JSpinner.DefaultEditor.commitEdit() throws java.text.ParseException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将当前编辑值赋给 <code>SpinnerModel</code>。
+ <p>
+默认的实现调用 <code>JFormattedTextField</code> 上的 <code>commitEdit</code> 方法。
+
+@throws ParseException 如果编辑值不合法
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.JSpinner.DefaultEditor.getBaseline(int width, int height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回基线。
+
+ @throws IllegalArgumentException {@inheritDoc}
+ @see javax.swing.JComponent#getBaseline(int,int)
+ @see javax.swing.JComponent#getBaselineResizeBehavior()
+ @since 1.6
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Component.BaselineResizeBehavior javax.swing.JSpinner.DefaultEditor.getBaselineResizeBehavior()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 返回一个枚举，它指示组件的基线如何随大小的改变而发生更改。
+
+ @throws NullPointerException {@inheritDoc}
+ @see javax.swing.JComponent#getBaseline(int, int)
+ @since 1.6
+
+<!-- END DATA -->

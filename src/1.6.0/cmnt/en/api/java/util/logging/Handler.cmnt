@@ -1,0 +1,226 @@
+<!-- BEGIN KEY -->
+public abstract class java.util.logging.Handler extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ A <tt>Handler</tt> object takes log messages from a <tt>Logger</tt> and
+ exports them.  It might for example, write them to a console
+ or write them to a file, or send them to a network logging service,
+ or forward them to an OS log, or whatever.
+ <p>
+ A <tt>Handler</tt> can be disabled by doing a <tt>setLevel(Level.OFF)</tt>
+ and can  be re-enabled by doing a <tt>setLevel</tt> with an appropriate level.
+ <p>
+ <tt>Handler</tt> classes typically use <tt>LogManager</tt> properties to set
+ default values for the <tt>Handler</tt>'s <tt>Filter</tt>, <tt>Formatter</tt>,
+ and <tt>Level</tt>.  See the specific documentation for each concrete
+ <tt>Handler</tt> class.
+
+
+ @version 1.21, 04/07/06
+ @since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.util.logging.Handler()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Default constructor.  The resulting <tt>Handler</tt> has a log
+ level of <tt>Level.ALL</tt>, no <tt>Formatter</tt>, and no 
+ <tt>Filter</tt>.  A default <tt>ErrorManager</tt> instance is installed
+ as the <tt>ErrorManager</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.publish(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Publish a <tt>LogRecord</tt>.
+ <p>
+ The logging request was made initially to a <tt>Logger</tt> object,
+ which initialized the <tt>LogRecord</tt> and forwarded it here.
+ <p>
+ The <tt>Handler</tt>  is responsible for formatting the message, when and
+ if necessary.  The formatting should include localization.
+
+ @param  record  description of the log event. A null record is
+                 silently ignored and is not published
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.flush()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Flush any buffered output.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void java.util.logging.Handler.close() throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Close the <tt>Handler</tt> and free all associated resources.
+ <p>
+ The close method will perform a <tt>flush</tt> and then close the
+ <tt>Handler</tt>.   After close has been called this <tt>Handler</tt>
+ should no longer be used.  Method calls may either be silently
+ ignored or may throw runtime exceptions.
+
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setFormatter(Formatter newFormatter) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set a <tt>Formatter</tt>.  This <tt>Formatter</tt> will be used 
+ to format <tt>LogRecords</tt> for this <tt>Handler</tt>.
+ <p>
+ Some <tt>Handlers</tt> may not use <tt>Formatters</tt>, in 
+ which case the <tt>Formatter</tt> will be remembered, but not used.
+ <p>
+ @param newFormatter the <tt>Formatter</tt> to use (may not be null)
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.Formatter java.util.logging.Handler.getFormatter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Return the <tt>Formatter</tt> for this <tt>Handler</tt>.
+ @return the <tt>Formatter</tt> (may be null).
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setEncoding(String encoding) throws java.lang.SecurityException, java.io.UnsupportedEncodingException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set the character encoding used by this <tt>Handler</tt>.
+ <p>
+ The encoding should be set before any <tt>LogRecords</tt> are written
+ to the <tt>Handler</tt>.
+
+ @param encoding  The name of a supported character encoding.
+	      May be null, to indicate the default platform encoding.
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+ @exception  UnsupportedEncodingException if the named encoding is
+		not supported.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.util.logging.Handler.getEncoding()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Return the character encoding for this <tt>Handler</tt>.
+
+ @return  The encoding name.  May be null, which indicates the
+	    	default encoding should be used.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setFilter(Filter newFilter) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set a <tt>Filter</tt> to control output on this <tt>Handler</tt>.
+ <P>
+ For each call of <tt>publish</tt> the <tt>Handler</tt> will call
+ this <tt>Filter</tt> (if it is non-null) to check if the
+ <tt>LogRecord</tt> should be published or discarded.
+
+ @param   newFilter  a <tt>Filter</tt> object (may be null)
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.Filter java.util.logging.Handler.getFilter()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Get the current <tt>Filter</tt> for this <tt>Handler</tt>.
+
+ @return  a <tt>Filter</tt> object (may be null)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.logging.Handler.setErrorManager(ErrorManager em)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Define an ErrorManager for this Handler.
+ <p>
+ The ErrorManager's "error" method will be invoked if any
+ errors occur while using this Handler.
+
+ @param em  the new ErrorManager
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.logging.ErrorManager java.util.logging.Handler.getErrorManager()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Retrieves the ErrorManager for this Handler.
+
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.util.logging.Handler.reportError(String msg, Exception ex, int code)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Protected convenience method to report an error to this Handler's
+ ErrorManager.  Note that this method retrieves and uses the ErrorManager
+ without doing a security check.  It can therefore be used in
+ environments where the caller may be non-privileged.
+
+ @param msg    a descriptive string (may be null)
+ @param ex     an exception (may be null)
+ @param code   an error code defined in ErrorManager
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.logging.Handler.setLevel(Level newLevel) throws java.lang.SecurityException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Set the log level specifying which message levels will be
+ logged by this <tt>Handler</tt>.  Message levels lower than this
+ value will be discarded. 
+ <p>
+ The intention is to allow developers to turn on voluminous
+ logging, but to limit the messages that are sent to certain
+ <tt>Handlers</tt>.
+ 
+ @param newLevel   the new value for the log level
+ @exception  SecurityException  if a security manager exists and if
+             the caller does not have <tt>LoggingPermission("control")</tt>.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.util.logging.Level java.util.logging.Handler.getLevel()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Get the log level specifying which messages will be
+ logged by this <tt>Handler</tt>.  Message levels lower
+ than this level will be discarded.
+ @return	the level of messages being logged.
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.logging.Handler.isLoggable(LogRecord record)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ Check if this <tt>Handler</tt> would actually log a given <tt>LogRecord</tt>.
+ <p>
+ This method checks if the <tt>LogRecord</tt> has an appropriate 
+ <tt>Level</tt> and  whether it satisfies any <tt>Filter</tt>.  It also
+ may make other <tt>Handler</tt> specific checks that might prevent a
+ handler from logging the <tt>LogRecord</tt>. It will return false if 
+ the <tt>LogRecord</tt> is Null.
+ <p>
+ @param record  a <tt>LogRecord</tt>
+ @return true if the <tt>LogRecord</tt> would be logged.
+
+
+<!-- END DATA -->

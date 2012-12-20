@@ -1,0 +1,118 @@
+<!-- BEGIN KEY -->
+public interface javax.management.modelmbean.ModelMBeanNotificationBroadcaster extends javax.management.NotificationBroadcaster
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+ModelMBean 必须实现此接口。此接口的实现必须与每个 JMX Agent 一起发布。 
+ <P>
+Java 资源使用 MBeanServer 的 createMBean 方法来实例化 ModelMBean，以便具有可管理性。然后该资源设置 ModelMBean 实例的 ModelMBeanInfo（带有 Descriptor）。通过 ModelMBean 的 ModelMBeanInfo 公开的属性和操作像其他 MBean 一样，可以从 MBean、连接器/适配器进行访问。通过 ModelMBeanInfo Descriptor，可以定义托管应用程序中的值和方法，并可以将它们映射到 ModelMBean 的属性和操作。此映射可以在 XML 格式的文件的开发过程中定义，也可以以编程方式在运行时动态定义。 
+ <P>
+MBeanServer 中实例化的每个 ModelMBean 都是可管理的：通过连接到该 MBeanServer 的连接器/适配器可以远程访问其属性和操作。Java 对象不能在 MBeanServer 中进行注册，除非它是 JMX 兼容的 MBean。通过实例化 ModelMBean，资源可保证 MBean 是有效的。
+ <P>
+每个公共方法必须抛出 MBeanException 和 RuntimeOperationsException。这允许包装来自分布式通信（RMI 和 EJB 等）的异常。除规范和 javadoc 中描述的情况外，这些异常不必由实现抛出。
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.sendNotification(Notification ntfyObj) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+以 jmx.modelmbean.generic 通知形式将传入的 Notification 发送到 ModelMBean 上已注册的 Notification 侦听器。
+
+@param ntfyObj 要传递给侦听器对象的 'handleNotification' 方法的通知。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException：传入参数中的 Notification 对象为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.sendNotification(String ntfyText) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将包含传入文本字符串的 Notification 发送到 ModelMBean 上已注册的 Notification 侦听器。
+
+@param ntfyText Notification 中要传递到侦听器对象的 'handleNotification' 方法的文本。
+所构造的 Notification 将为：
+类型       &quot;jmx.modelmbean.generic&quot;
+源         此 ModelMBean 实例
+序列    1
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException：传入参数中的 Notification 文本字符串为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.sendAttributeChangeNotification(AttributeChangeNotification notification) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将传入的 attributeChangeNotification 发送到 ModelMBean 上已注册的 attributeChangeNotification 侦听器。
+
+@param notification 要传递给侦听器对象的 'handleNotification' 方法的通知。
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException：传入参数中的 AttributeChangeNotification 对象为 null。
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.sendAttributeChangeNotification(Attribute oldValue, Attribute newValue) throws javax.management.MBeanException, javax.management.RuntimeOperationsException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将包含属性的原有值和新值的 attributeChangeNotification 发送到 ModelMBean 上已注册的 AttributeChangeNotification 侦听器。
+ <P>
+@param oldValue 属性的原始值
+@param newValue 属性的当前值
+<P>
+ <PRE>  
+所构造的 attributeChangeNotification 将为：
+类型     &quot;jmx.attribute.change&quot;
+源      此 ModelMBean 实例
+序列    1
+   attributeName oldValue.getName()
+   attributeType oldValue's class
+   attributeOldValue oldValue.getValue()
+   attributeNewValue newValue.getValue()
+ </PRE>
+
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException：传入参数中的 Attribute 对象为 null，或参数中两个 Attribute 对象的名称不同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.addAttributeChangeNotificationListener(NotificationListener listener, String attributeName, Object handback) throws javax.management.MBeanException, javax.management.RuntimeOperationsException, java.lang.IllegalArgumentException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册一个将 NotificationListener 接口实现为侦听器的对象。当通过或由 ModelMBean 发布任何 attributeChangeNotification 时，将调用此对象的 'handleNotification()' 方法。这不包括其他 Notification。它们必须独立注册。将为此 attributeName 生成一个 AttributeChangeNotification。
+
+@param listener 将处理由已注册的 MBean 发出的通知的侦听器对象。
+@param attributeName 要为其接收更改通知的 ModelMBean 属性名称。如果参数为 null，则所有更改将导致发布 attributeChangeNotification。
+@param handback 当发出通知时，要发送到带有通知的侦听器的上下文。
+
+@exception IllegalArgumentException 侦听器不可以为 null。
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException。传入参数中的属性名称不存在。
+
+@see #removeAttributeChangeNotificationListener
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.management.modelmbean.ModelMBeanNotificationBroadcaster.removeAttributeChangeNotificationListener(NotificationListener listener, String attributeName) throws javax.management.MBeanException, javax.management.RuntimeOperationsException, javax.management.ListenerNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 RequiredModelMBean 移除一个 attributeChangeNotifications 的侦听器。
+
+@param listener 正在处理由注册的 MBean 发出的通知的侦听器名称。此方法将移除与此侦听器相关的所有信息。
+@param attributeName 侦听器不再为其接收 attributeChangeNotifications 的属性。如果为 null，则将移除所有 attributeChangeNotifications 的侦听器。 
+
+@exception ListenerNotFoundException 侦听器未在 MBean 中注册，或为 null。
+@exception MBeanException 包装一个分布式通信异常。
+@exception RuntimeOperationsException 包装一个 IllegalArgumentException 如果 inAttributeName 参数没有对应一个属性名称。
+
+@see #addAttributeChangeNotificationListener
+
+<!-- END DATA -->

@@ -1,0 +1,179 @@
+<!-- BEGIN KEY -->
+public class java.awt.event.InvocationEvent extends java.awt.AWTEvent implements java.awt.ActiveEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+当通过 AWT 事件调度线程进行调度时，在 <code>Runnable</code> 上执行 <code>run()</code> 方法的事件。此类可以用作 <code>ActiveEvent</code> 的参考实现，而不用于声明新类和定义 <code>dispatch()</code>。<p>
+
+通过调用 <code>invokeLater</code> 和 <code>invokeAndWait</code>，可以将此类的实例置于 <code>EventQueue</code> 上。客户端代码可以使用这一事实来编写 <code>invokeLater</code> 和 <code>invokeAndWait</code> 的替代函数，无需在任何 <code>AWTEventListener</code> 对象中编写特殊代码。
+
+@author	Fred Ecks
+@author	David Mendenhall
+@version	1.18, 02/05/04
+
+@see		java.awt.ActiveEvent
+@see		java.awt.EventQueue#invokeLater
+@see		java.awt.EventQueue#invokeAndWait
+@see		AWTEventListener
+
+@since 	1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_FIRST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记调用事件 id 范围内的第一个整数 id。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_DEFAULT
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+所有 InvocationEvent 的默认 id。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final int java.awt.event.InvocationEvent.INVOCATION_LAST
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+标记调用事件 id 范围内的最后一个整数 id。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Runnable java.awt.event.InvocationEvent.runnable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用其 run() 方法的 Runnable。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.Object java.awt.event.InvocationEvent.notifier
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Runnable.run() 方法返回之后立即调用其 notifyAll() 方法的对象（可能为 null）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean java.awt.event.InvocationEvent.catchExceptions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+如果 dispatch() 捕获了 Throwable 并将其存储在异常实例变量中，则设置为 true。如果设置为 false，则会将 Throwable 传播到 EventDispatchThread 的调度循环中。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Exception java.awt.event.InvocationEvent.exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在执行 Runnable.run() 方法期间抛出的 Exception（可能为 null）。如果特定实例没有捕获异常，则此变量也为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.Throwable java.awt.event.InvocationEvent.throwable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在执行 Runnable.run() 方法期间抛出的 Throwable（可能为 null）。如果特定实例没有捕获异常，则此变量也为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private long java.awt.event.InvocationEvent.when
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此事件发生时的时间戳。
+
+@serial
+@see #getWhen
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InvocationEvent(Object source, Runnable runnable)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源的 <code>InvocationEvent</code>，此源将在被指派时执行 runnable 的 <code>run</code> 方法。
+<p>这是一个很有用的构造方法。对于 <tt>InvocationEvent(source, runnable)</tt> 形式的调用而言，其行为与调用 <tt>{@link #InvocationEvent(Object, Runnable, Object, boolean) InvocationEvent}(source, runnable, null, false)</tt> 完全相同。
+<p>如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source	产生事件的 <code>Object</code>
+@param runnable 执行其 <code>run</code> 方法的 <code>Runnable</code>
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+@see     #InvocationEvent(Object, Runnable, Object, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.event.InvocationEvent(Object source, Runnable runnable, Object notifier, boolean catchThrowables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源的 <code>InvocationEvent</code>，此源将在被指派时执行 runnable 的 <code>run</code> 方法。如果 notifier 为非 <code>null</code>，则会在 <code>run</code> 返回之后立即对它调用 <code>notifyAll()</code>。
+<p>对于 <tt>InvocationEvent(source, runnable, notifier, catchThrowables)</tt> 形式的调用而言，其行为与调用 <tt>{@link #InvocationEvent(Object, int, Runnable, Object, boolean) InvocationEvent}(source, InvocationEvent.INVOCATION_DEFAULT, runnable, notifier, catchThrowables)</tt> 完全相同。
+<p>如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source		产生事件的 <code>Object</code>
+@param runnable	执行其 <code>run</code> 方法的 <code>Runnable</code>
+@param notifier	在 <code>Runnable.run</code> 返回之后调用其 <code>notifyAll</code> 方法的对象
+@param catchThrowables 指定 <code>dispatch</code> 是否应该在执行 <code>Runnable</code> 的 <code>run</code> 方法时捕获 Throwable，或者应该将那些 Throwable 传播到 EventDispatchThread 的调度循环中
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+@see     #InvocationEvent(Object, int, Runnable, Object, boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.awt.event.InvocationEvent(Object source, int id, Runnable runnable, Object notifier, boolean catchThrowables)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个具有指定源和 ID 的 <code>InvocationEvent</code>，此源和 ID 将在被指派时执行 runnable 的 <code>run</code> 方法。如果 notifier 为非 <code>null</code>，则将在 <code>run</code> 返回之后立即对它调用 <code>notifyAll</code>。
+<p>注意，传递无效 <code>id</code> 会导致不确定的行为。如果 <code>source</code> 为 <code>null</code>，则此方法抛出 <code>IllegalArgumentException</code>。
+
+@param source	  产生事件的 <code>Object</code>
+@param id	事件的 ID
+@param runnable		执行其 <code>run</code> 方法的 <code>Runnable</code>
+@param notifier		在 <code>Runnable.run</code> 返回之后调用其 <code>notifyAll</code> 方法的 <code>Object</code>
+@param catchThrowables	指定 <code>dispatch</code> 是否应该在执行 <code>Runnable</code> 的 <code>run</code> 方法时捕获 Throwable，或者应该将那些 Throwable 传播到 EventDispatchThread 的调度循环中
+@throws IllegalArgumentException 如果 <code>source</code> 为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.event.InvocationEvent.dispatch()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+执行 Runnable 的 <code>run()</code> 方法并在 <code>run()</code> 返回时通知 notifier（如果有）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Exception java.awt.event.InvocationEvent.getException()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在执行 Runnable 的 <code>run()</code> 方法时捕获的任何 Exception。
+
+@return	如果抛出 Exception，则返回对 Exception 的引用；如果没有抛出 Exception 或者此 InvocationEvent 没有捕获异常，则返回 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Throwable java.awt.event.InvocationEvent.getThrowable()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回在执行 Runnable 的 <code>run()</code> 方法时捕获的任何 Throwable。
+
+@return	如果抛出 Throwable，则返回对 Throwable 的引用；如果没有抛出 Throwable 或者此 InvocationEvent 没有捕获 Throwable，则返回 null
+
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.awt.event.InvocationEvent.getWhen()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此事件发生时的时间戳。
+
+@return 此事件的时间戳
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.event.InvocationEvent.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回标识此事件的参数字符串。此方法对事件日志记录和调试很有用。
+
+@return  标识事件及其属性的字符串
+
+<!-- END DATA -->

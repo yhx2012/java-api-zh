@@ -1,0 +1,114 @@
+<!-- BEGIN KEY -->
+public class javax.crypto.CipherOutputStream extends java.io.FilterOutputStream
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+CipherOutputStream 由一个 OutputStream 和一个 Cipher 组成，这样 write() 方法才能在将数据写出到底层 OutputStream 之前先对该数据进行处理。在由 CipherOutputStream 使用之前，密码必须充分初始化。
+
+<p> 例如，假设密码初始化为加密，CipherOutputStream 将在写出该加密数据之前，尝试加密数据。
+
+<p> 此类严格遵守此语义，尤其是其祖先类 java.io.OutputStream 和 java.io.FilterOutputStream 的失败语义。此类具有在其祖先类中指定的所有方法，并且对所有的这些方法进行了重写。除此之外，此类还对其祖先类未抛出的所有异常进行捕获。
+
+<p> 对程序员非常重要的一点是，不要使用未在此类中定义或重写的方法（例如，后来加入到某个超类的新方法或构造方法），因为那些方法的设计和实现有可能未考虑到对 CipherOutputStream 的安全影响。
+
+@author  Li Gong
+@version 1.23, 10/29/03
+@see     java.io.OutputStream
+@see     java.io.FilterOutputStream
+@see     javax.crypto.Cipher
+@see     javax.crypto.CipherInputStream
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.crypto.CipherOutputStream(OutputStream os, Cipher c)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从 OutputStream 和 Cipher 构造 CipherOutputStream。<br>注：如果指定的输出流或密码为 null，则在后续使用输出流或密码时可能抛出 NullPointerException 异常。
+
+@param os  OutputStream 对象
+@param c   已初始化的 Cipher 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.crypto.CipherOutputStream(OutputStream os)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从 OutputStream 构造 CipherOutputStream，不指定 Cipher。这与使用 NullCipher 构造 CipherOutputStream 具有相同的效果。<br>注：如果指定的输出流为 null，则在后续使用输出流时可能抛出 NullPointerException 异常。
+
+@param os  OutputStream 对象
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherOutputStream.write(int b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定的字节写入此输出流。 
+
+@param      b   <code>byte</code>。
+@exception  IOException 如果发生 I/O 错误。
+@since      JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherOutputStream.write(byte[] b) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+从指定的字节数组中将 <code>b.length</code> 个字节写入此输出流。
+ <p>
+<code>CipherOutputStream</code> 的 <code>write</code> 方法调用带三个参数的 <code>write</code> 方法，三个参数为 <code>b</code>、<code>0</code> 和 <code>b.length</code>。
+
+@param      b   数据。
+@exception  NullPointerException 如果 <code>b</code> 为 null。
+@exception  IOException 如果发生 I/O 错误。
+@see        javax.crypto.CipherOutputStream#write(byte[], int, int)
+@since JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherOutputStream.write(byte[] b, int off, int len) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将指定的字节数组中从 <code>off</code> 偏移量开始的 <code>len</code> 个字节写入此输出流。 
+
+@param      b   数据。
+@param      off   数据中的初始偏移量。
+@param      len  要写入的字节数。
+@exception  IOException 如果发生 I/O 错误。
+@since      JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherOutputStream.flush() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+强制写出已由封装的密码对象处理的任何缓存输出字节来刷新此输出流。
+
+<p>由封装的密码缓存并等待由其处理的任何字节将不被写出。例如，假设封装的密码为块密码，并且使用某个 <code>write</code> 方法写入的总字节数小于密码的块大小，将不写出任何字节。
+
+@exception  IOException 如果发生 I/O 错误。
+@since      JCE1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.crypto.CipherOutputStream.close() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+关闭此输出流并释放任何与此流关联的系统资源。
+ <p>
+此方法调用封装密码对象的 <code>doFinal</code> 方法，它使得由该封装密码缓存的任何字节都被处理。通过调用此输出流的 <code>flush</code> 方法写出结果。
+ <p>
+此方法将封装密码对象重置为其初始状态并调用底层输出流的 <code>close</code> 方法。
+
+@exception  IOException 如果发生 I/O 错误。
+@since      JCE1.2
+
+<!-- END DATA -->

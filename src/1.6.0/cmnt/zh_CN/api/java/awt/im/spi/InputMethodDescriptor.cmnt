@@ -1,0 +1,68 @@
+<!-- BEGIN KEY -->
+public interface java.awt.im.spi.InputMethodDescriptor
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+定义提供足够的关于输入方法启用选择和该输入方法加载信息的方法。输入方法只有在实际使用时才加载其自身。
+ 
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Locale[] java.awt.im.spi.InputMethodDescriptor.getAvailableLocales() throws java.awt.AWTException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回相应输入方法支持的语言环境。该语言环境可能只描述语言；如果需要，还可能包括国家/地区和变量信息。该信息用于按语言环境选择输入方法 ({@link java.awt.im.InputContext#selectInputMethod(Locale)})。还可以按用户可视输入方法列表的语言环境将它用于输入方法排序。
+ <p>
+只应返回输入方法的主要语言环境。例如，如果日语输入方法也有通向罗马字符的模式，通常仍只返回日语。因此，已返回的语言环境列表通常是相应输入方法的 {@link java.awt.im.spi.InputMethod#setLocale} 实现返回 true 的语言环境的子集。
+ <p>
+如果 {@link #hasDynamicLocaleList} 返回 true，则每次需要信息时就调用此方法。这就在资源变得可用或不可用时给依赖于网络资源的输入方法提供了添加或移除语言环境的机会。
+
+@return 输入方法支持的语言环境
+@exception AWTException 如果能够确定输入方法不可操作（例如，由于安装不完整）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.im.spi.InputMethodDescriptor.hasDynamicLocaleList()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回可用语言环境列表是否可在运行时更改。例如，通过网络访问实际输入方法的适配器可能会发生这种情况。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.im.spi.InputMethodDescriptor.getInputMethodDisplayName(Locale inputLocale, Locale displayLanguage)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用将显示该名称的语言返回用户可视名称，该名称与给定的输入语言环境的输入方法相对应。
+ <p>
+inputLocale 参数指定文本输入的语言环境。此参数只可以采取通过此描述符的 {@link #getAvailableLocales} 方法获得的值或 null。如果为 null，将返回该输入方法的某个独立于输入语言环境的名称。
+ <p>
+如果所需显示语言的名称不可用，该方法可能会转回到其他某种语言。
+
+@param inputLocale 支持文本输入的语言环境，或 null
+@param displayLanguage 显示名称的语言
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Image java.awt.im.spi.InputMethodDescriptor.getInputMethodIcon(Locale inputLocale)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回相应输入方法的图标。该图标可以用于用户界面，供选择输入方法使用。
+ <p>
+inputLocale 参数指定文本输入的语言环境。此参数只可以采取通过此描述符的 {@link #getAvailableLocales} 方法获得的值或 null。如果为 null，将返回该输入方法的某个独立于输入语言环境的图标。
+ <p>
+图标的大小应是 16&times;16 像素。
+
+@param inputLocale 支持文本输入的语言环境，或 null
+@return 相应输入方法的图标，或 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.im.spi.InputMethod java.awt.im.spi.InputMethodDescriptor.createInputMethod() throws java.lang.Exception
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建相应输入方法的新实例。
+ 
+@return 相应输入方法的新实例
+@exception Exception 可能在创建输入方法实例时发生的任何异常
+
+<!-- END DATA -->

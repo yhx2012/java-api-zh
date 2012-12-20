@@ -1,0 +1,217 @@
+<!-- BEGIN KEY -->
+public final class java.lang.ProcessBuilder extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类用于创建操作系统进程。
+
+<p>每个 <code>ProcessBuilder</code> 实例管理一个进程属性集。{@link #start()} 方法利用这些属性创建一个新的 {@link Process} 实例。{@link #start()} 方法可以从同一实例重复调用，以利用相同的或相关的属性创建新的子进程。
+
+<p>每个进程生成器管理这些进程属性：
+
+<ul>
+
+<li><i>命令</i> 是一个字符串列表，它表示要调用的外部程序文件及其参数（如果有）。在此，表示有效的操作系统命令的字符串列表是依赖于系统的。例如，每一个总体变量，通常都要成为此列表中的元素，但有一些操作系统，希望程序能自己标记命令行字符串&mdash;&mdash;在这种系统中，Java 实现可能需要命令确切地包含这两个元素。
+
+<li><i>环境</i> 是从<i>变量</i> 到<i>值</i> 的依赖于系统的映射。初始值是当前进程环境的一个副本（请参阅 {@link System#getenv()}）。
+
+<li><i>工作目录</i>。默认值是当前进程的当前工作目录，通常根据系统属性 <code>user.dir</code> 来命名。
+
+<li><i>redirectErrorStream</i> 属性。最初，此属性为 <code>false</code>，意思是子进程的标准输出和错误输出被发送给两个独立的流，这些流可以通过 {@link Process#getInputStream()} 和 {@link Process#getErrorStream()} 方法来访问。如果将值设置为 <code>true</code>，标准错误将与标准输出合并。这使得关联错误消息和相应的输出变得更容易。在此情况下，合并的数据可从 {@link Process#getInputStream()} 返回的流读取，而从 {@link Process#getErrorStream()} 返回的流读取将直接到达文件尾。
+
+</ul>
+
+<p>修改进程构建器的属性将影响后续由该对象的 {@link #start()} 方法启动的进程，但从不会影响以前启动的进程或 Java 自身的进程。
+
+<p>大多数错误检查由 {@link #start()} 方法执行。可以修改对象的状态，但这样 {@link #start()} 将会失败。例如，将命令属性设置为一个空列表将不会抛出异常，除非包含了 {@link #start()}。
+
+<p><strong>注意，此类不是同步的。</strong>如果多个线程同时访问一个 <code>ProcessBuilder</code>，而其中至少一个线程从结构上修改了其中一个属性，它<i>必须</i> 保持外部同步。
+
+<p>很容易启动一个使用默认工作目录和环境的新进程：
+
+ <blockquote><pre>
+ Process p = new ProcessBuilder("myCommand", "myArg").start();
+ </pre></blockquote>
+
+<p>下面是一个利用修改过的工作目录和环境启动进程的例子：
+
+ <blockquote><pre>
+ ProcessBuilder pb = new ProcessBuilder("myCommand", "myArg1", "myArg2");
+ Map&lt;String, String&gt; env = pb.environment();
+ env.put("VAR1", "myValue");
+ env.remove("OTHERVAR");
+ env.put("VAR2", env.get("VAR1") + "suffix");
+ pb.directory(new File("myDir"));
+ Process p = pb.start();
+ </pre></blockquote>
+
+<p>要利用一组明确的环境变量启动进程，在添加环境变量之前，首先调用 {@link java.util.Map#clear() Map.clear()}。
+
+ @since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder(java.util.List<java.lang.String> command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+利用指定的操作系统程序和参数构造一个进程生成器。此构造方法<i>不会</i> 制作一份 <code>command</code> 列表的副本。后续列表更新将在进程生成器的状态中反映出来。不必检查 <code>command</code> 是否为一个有效的操作系统命令。</p>
+
+@param   command  包含程序及其参数的列表
+
+@throws  NullPointerException 如果参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder(java.lang.String[] command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+利用指定的操作系统程序和参数构造一个进程生成器。这是一个有用的构造方法，它将进程生成器的命令设置为与 <code>command</code> 数组包含相同字符串的字符串列表，且顺序相同。不必检查 <code>command</code> 是否为一个有效的操作系统命令。</p>
+
+@param   command  包含程序及其参数的字符串数组
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder java.lang.ProcessBuilder.command(java.util.List<java.lang.String> command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此进程生成器的操作系统程序和参数。此方法<i>不会</i> 制作一份 <code>command</code> 列表的副本。后续列表更新将在进程生成器的状态中反映出来。不必检查 <code>command</code> 是否为一个有效的操作系统命令。</p>
+
+@param   command  包含程序及其参数的列表 
+@return  此进程生成器
+
+@throws  NullPointerException 如果参数为 <code>null</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder java.lang.ProcessBuilder.command(java.lang.String[] command)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此进程生成器的操作系统程序和参数。这是一个有用的方法，它将命令设置为与 <code>command</code> 数组包含相同字符串的字符串列表，且顺序相同。不必检查 <code>command</code> 是否为一个有效的操作系统命令。</p>
+
+@param   command  包含程序及其参数的字符串数组 
+@return  此进程生成器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.List<java.lang.String> java.lang.ProcessBuilder.command()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此进程生成器的操作系统程序和参数。该返回的列表<i>不是</i> 一份副本。后续列表更新将在此进程生成器的状态中反映出来。</p>
+
+@return  此进程生成器的程序及其参数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Map<java.lang.String, java.lang.String> java.lang.ProcessBuilder.environment()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此进程生成器环境的字符串映射视图。
+
+无论进程生成器何时创建，都需要将环境初始化为一份当前进程环境的副本（请参阅 {@link System#getenv()}）。由此对象的 {@link #start()} 方法启动的后续子进程将使用这一映射作为它们的环境。
+
+<p>可以使用普通的 {@link java.util.Map Map} 操作来修改返回的对象。对于通过 {@link #start()} 方法启动的子进程，这些修改是可见的。两个 <code>ProcessBuilder</code> 实例总是包含独立的进程环境，因此，针对返回的映射的更改从不会在任何其他 <code>ProcessBuilder</code> 实例或由 {@link System#getenv System.getenv} 返回的值中反映出来。
+
+<p>如果系统不支持环境变量，将返回空映射。
+
+<p>返回的映射不允许空键或空值。试图插入空键或空值或者试图查询它们的存在，都将抛出 {@link NullPointerException}。试图查询非 {@link String} 类型的键或值的存在，都将抛出 {@link ClassCastException}。
+
+<p>返回的映射的行为取决于系统。系统可能不允许修改环境变量或禁止某些变量名或变量值。出于此原因，如果不允许操作系统修改的话，试图修改映射可能失败，并抛出 {@link UnsupportedOperationException} 或 {@link IllegalArgumentException}。
+
+<p>由于环境变量名和值的外部格式取决于系统，在它们与 Java 的 Unicode 字符串之间不可能是一对一映射。此外，映射以这种方式实现：不能由 Java 代码修改的环境变量在子进程中将有一个不可修改的本机表示形式。
+
+<p>返回的映射及其集合视图不能遵守 {@link Object#equals} 和 {@link Object#hashCode} 方法的常规协定。
+
+<p>返回的映射通常在所有平台上都是区分大小写的。
+
+<p>如果安全管理器存在，则其 {@link SecurityManager#checkPermission checkPermission} 方法通过 <code>{@link RuntimePermission}(&quot;getenv.*&quot;)</code> 权限进行调用。这可能导致抛出 {@link SecurityException}。
+
+<p>当将信息传递给 Java 子进程时，<a href=System.html#EnvironmentVSSystemProperties>系统属性</a>通常优先于环境变量。</p>
+
+@return  此进程生成器的环境
+
+@throws  SecurityException 如果安全管理器存在并且其 {@link SecurityManager#checkPermission checkPermission} 方法不允许访问进程环境
+
+@see     Runtime#exec(String[],String[],java.io.File) 
+@see     System#getenv()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.io.File java.lang.ProcessBuilder.directory()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此进程生成器的工作目录。由此对象的 {@link #start()} 方法启动的后续子进程将使用此目录作为它们的工作目录。返回值可以为 <code>null</code>，这意味着要使用当前 Java 进程的工作目录，通常是由系统属性 <code>user.dir</code> 指定的目录作为子进程的工作目录。</p>
+
+@return  此进程生成器的工作目录
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder java.lang.ProcessBuilder.directory(File directory)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此进程生成器的工作目录。
+
+由此对象的 {@link #start()} 方法启动的后续子进程将使用此目录作为它们的工作目录。参数可以为 <code>null</code>，这意味着要使用当前 Java 进程的工作目录，通常是由系统属性 <code>user.dir</code> 指定的目录作为子进程的工作目录。</p>
+
+@param   directory  新的工作目录 
+@return  此进程生成器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.lang.ProcessBuilder.redirectErrorStream()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知进程生成器是否合并标准错误和标准输出。
+
+<p>如果此属性为 <code>true</code>，则任何由通过此对象的 {@link #start()} 方法启动的后续子进程生成的错误输出都将与标准输出合并，因此两者均可使用 {@link Process#getInputStream()} 方法读取。这使得关联错误消息和相应的输出变得更容易。初始值为 <code>false</code>。</p>
+
+@return  此进程生成器的 <code>redirectErrorStream</code> 属性
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.ProcessBuilder java.lang.ProcessBuilder.redirectErrorStream(boolean redirectErrorStream)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置此进程生成器的 <code>redirectErrorStream</code> 属性。
+
+<p>如果此属性为 <code>true</code>，则任何由通过此对象的 {@link #start()} 方法启动的后续子进程生成的错误输出都将与标准输出合并，因此两者均可使用 {@link Process#getInputStream()} 方法读取。这使得关联错误消息和相应的输出变得更容易。初始值为 <code>false</code>。</p>
+
+@param   redirectErrorStream  新的属性值 
+@return  此进程生成器
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Process java.lang.ProcessBuilder.start() throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用此进程生成器的属性启动一个新进程。
+
+<p>在 {@link #directory()} 指定的工作目录中，利用 {@link #environment()} 指定的进程环境，新进程将调用由 {@link #command()} 给出的命令和参数。
+
+<p>此方法检查命令是否为一条有效的操作系统命令。哪条命令是有效的呢？这取决于系统，但至少命令必须是非空字符串的非空列表。
+
+<p>如果有安全管理器，则用此对象的 <code>command</code> 数组的首个元素作为其参数来调用安全管理器的 {@link SecurityManager#checkExec checkExec} 方法。这可能导致抛出 {@link SecurityException}。
+
+<p>启动操作系统进程的方式完全取决于系统。其中有很多方面会导致错误：
+<ul>
+<li>未找到操作系统程序文件。
+<li>对程序文件的访问被拒绝。
+<li>工作目录不存在。
+</ul>
+
+<p>在这些情况中将会抛出一个异常。该异常的具体本质取决于系统，但它总是 {@link IOException} 的一个子类。
+
+<p>针对此进程生成器的后续修改将不会影响返回的 {@link Process}。</p>
+
+@return  一个新的 {@link Process} 对象，用于管理子进程
+
+@throws  NullPointerException 如果命令列表的元素为空
+
+@throws  IndexOutOfBoundsException 如果命令是一个空列表（大小为 <code>0</code>）
+
+@throws  SecurityException 如果安全管理器存在并且其 {@link SecurityManager#checkExec checkExec} 方法不允许创建子进程
+
+@throws  IOException 如果发生 I/O 错误
+
+@see     Runtime#exec(String[], String[], java.io.File) 
+@see     SecurityManager#checkExec(String)
+
+<!-- END DATA -->

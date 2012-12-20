@@ -1,0 +1,107 @@
+<!-- BEGIN KEY -->
+public class javax.management.remote.JMXConnectorServerFactory extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>用于创建 JMX API 连接器服务器的工厂。此类没有实例。</p>
+
+<p>每个连接器服务器都是由 {@link JMXConnectorServerProvider} 的实例创建的。此实例如下所示。假设给定的 {@link JMXServiceURL} 类似于 <code>&quot;service:jmx:<em>protocol</em>:<em>remainder</em>&quot;</code>。则工厂将尝试查找适当的 {@link JMXConnectorServerProvider} 以供 <code><em>protocol</em></code> 使用。<code><em>protocol</em></code> 中出现的每个 <code>+</code> 或 <code>-</code> 字符都分别由 <code>.</code> 或 <code>_</code> 替换。</p>
+
+<p>对<em>提供者包列表</em> 的搜索如下所示：</p>
+
+ <ol>
+
+<li>如果传给 {@link #newJMXConnectorServer(JMXServiceURL,Map,MBeanServer) newJMXConnectorServer} 的 <code>environment</code> 参数包含关键字 <code>jmx.remote.protocol.provider.pkgs</code>，则关联的值为提供者包列表。
+
+<li>否则，如果存在系统属性 <code>jmx.remote.protocol.provider.pkgs</code>，则其值为提供者包列表。
+
+<li>否则，没有任何提供者包列表。
+
+ </ol>
+
+<p>提供者包列表是一个表现为由竖直线 (<code>|</code>) 分隔的非空 Java 包名称列表的字符串。如果该字符串为空，则提供者包列表也为空。如果提供者包列表不是一个字符串，或者如果它包含空字符串元素，则抛出 {@link JMXProviderException} 异常。</p>
+
+<p>如果存在提供者包列表并且不为空，则对于列表中的每个 <code><em>pkg</em></code> 元素，此工厂将尝试加载以下类
+
+ <blockquote>
+ <code><em>pkg</em>.<em>protocol</em>.ServerProvider</code>
+ </blockquote>
+
+<p>如果传给 {@link #newJMXConnectorServer(JMXServiceURL, Map, MBeanServer) newJMXConnectorServer} 的 <code>environment</code> 参数包含关键字 <code>jmx.remote.protocol.provider.class.loader</code>，则关联的值为用于加载提供者的类加载器。如果关联的值不是一个 {@link java.lang.ClassLoader} 的实例，则抛出 {@link java.lang.IllegalArgumentException}。</p>
+
+<p>如果 <code>environment</code> 参数中没有 <code>jmx.remote.protocol.provider.class.loader</code> 关键字，则使用调用线程的上下文类加载器。</p>
+
+<p>如果尝试加载该类时生成 {@link ClassNotFoundException}，则继续对列表中的下一个元素搜索处理程序。</p>
+
+<p>否则，提供者查找的问题将由 {@link JMXProviderException} 通过其 {@link JMXProviderException#getCause() <em>cause</em>} 指示如下所示的基础异常来通知：</p>
+
+ <ul>
+
+<li>如果尝试加载类时生成了一个 <code>ClassNotFoundException</code> 之外的异常，则它就是 <em>cause</em>；
+
+<li>如果该类的 {@link Class#newInstance()} 生成了异常，则这就是 <em>cause</em>。
+
+ </ul>
+
+<p>如果上述步骤中未找到任何提供者，包括无提供者包列表的默认情况，则实现将使用 <code><em>protocol</em></code> 自身的提供者，或者如果也没有自身的提供者，则抛出 <code>MalformedURLException</code>。实现也可以选择通过其他途径查找提供者。例如，它可能支持 <a  href="{@docRoot}/../technotes/guides/jar/jar.html#Service Provider">JAR conventions for service providers</a>，其服务接口为 <code>JMXConnectorServerProvider</code>。</p>
+
+<p>每个实现都必须支持由字符串 <code>rmi</code> 或 <code>iiop</code> 指定的 RMI 连接器协议。</p>
+
+<p>一旦找到了提供者，<code>newJMXConnectorServer</code> 方法的结果就是在该提供者上调用 {@link JMXConnectorServerProvider#newJMXConnectorServer(JMXServiceURL, Map, MBeanServer) newJMXConnectorServer} 的结果。</p>
+
+<p>传给 <code>JMXConnectorServerProvider</code> 的 <code>Map</code> 参数为一个新的只读 <code>Map</code>，它包含了原先传给 {@link #newJMXConnectorServer(JMXServiceURL,Map,MBeanServer) JMXConnectorServerFactory.newJMXConnectorServer} 的 <code>environment</code> 参数中的所有条目（如果有）。此外，如果 <code>environment</code> 参数中没有 <code>jmx.remote.protocol.provider.class.loader</code> 关键字，则将此关键字添加到新的只读 <code>Map</code> 中。关联的值为调用线程的上下文类加载器。</p>
+
+@since 1.5
+@since.unbundled 1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.remote.JMXConnectorServerFactory.DEFAULT_CLASS_LOADER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>指定默认的类加载器的属性名称。此类加载器用于反序列化从客户端收到请求对象（之前可能参考了一个特定于 MBean 的类加载器）。与此属性关联的值为 {@link ClassLoader} 的实例。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.remote.JMXConnectorServerFactory.DEFAULT_CLASS_LOADER_NAME
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>指定默认的类加载器 MBean 名称的属性名称。此类加载器用于反序列化从客户端收到请求对象（之前可能参考了一个特定于 MBean 的类加载器）。与此属性关联的值为 {@link ObjectName} 的实例。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.remote.JMXConnectorServerFactory.PROTOCOL_PROVIDER_PACKAGES
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>指定查找协议的处理程序时需参考的提供者包的属性名称。与此属性关联的值为由竖直线 (<code>|</code>) 分隔的包名称的字符串。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static final java.lang.String javax.management.remote.JMXConnectorServerFactory.PROTOCOL_PROVIDER_CLASS_LOADER
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>指定用于加载协议提供者的类加载器的属性名称。与此属性关联的值为 {@link ClassLoader} 的实例。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static javax.management.remote.JMXConnectorServer javax.management.remote.JMXConnectorServerFactory.newJMXConnectorServer(JMXServiceURL serviceURL, java.util.Map<java.lang.String, ?> environment, MBeanServer mbeanServer) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>创建位于给定地址的连接器服务器。结果服务器直到调用其 {@link JMXConnectorServer#start() start} 方法时才启动。</p>
+
+@param serviceURL 新的连接器服务器的地址。新的连接器服务器的 {@link JMXConnectorServer#getAddress() getAddress} 方法返回的连接器服务器的实际地址不一定完全相同。例如，它可能包含一个端口号，而原始地址中并没有该端口号。
+
+@param environment 用于控制新连接器服务器的行为的一组属性。此参数可以为 null。此映射中关键字必须为字符串。每个关联值的适当类型取决于属性。此调用不改变 <code>environment</code> 的内容。
+
+@param mbeanServer 该连接器服务器连接到的 MBean 服务器。如果该连接器服务器将通过注册的方式连接到 MBean 服务器，则为 Null。
+
+@return 代表新的连接器服务器的 <code>JMXConnectorServer</code>。每次对此方法的成功调用都生成不同的对象。
+
+@exception NullPointerException 如果 <code>serviceURL</code> 为 null。
+
+@exception IOException 如果由于存在通信问题而导致无法建立连接器服务器。
+
+@exception MalformedURLException 如果 <code>serviceURL</code> 中的协议无提供者。
+
+@exception JMXProviderException 如果 <code>serviceURL</code> 中的协议有提供者，但提供者由于某种原因而无法使用。
+
+<!-- END DATA -->

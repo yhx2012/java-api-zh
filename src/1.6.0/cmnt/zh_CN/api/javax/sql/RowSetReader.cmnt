@@ -1,0 +1,21 @@
+<!-- BEGIN KEY -->
+public interface javax.sql.RowSetReader
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+该设施供非连接 <code>RowSet</code> 对象调用以填充数据行。reader（实现 <code>RowSetReader</code> 接口的对象）可以在支持 reader/writer 范例的 <code>RowSet</code> 对象中注册。调用 <code>RowSet</code> 对象的 <code>execute</code> 方法时，它将依次调用 reader 的 <code>readData</code> 方法。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.sql.RowSetReader.readData(RowSetInternal caller) throws java.sql.SQLException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取调用 <code>RowSet</code> 对象的新内容。要调用此方法，<code>RowSet</code> 对象必须已经实现了 <code>RowSetInternal</code> 接口并作为其 reader 注册了此 <code>RowSetReader</code> 对象。<code>readData</code> 方法由支持 reader/writer 范例的 rowset 的 <code>RowSet.execute</code> 方法在内部调用。 
+ 
+<P><code>readData</code> 方法为调用者添加行。此操作可以使用许多种方式实现，甚至可以使用没有关系的数据源中的行来填充调用者。一般情况下，reader 可以调用 rowset 的任何方法，但有一种例外。调用 <code>execute</code> 方法将导致抛出 <code>SQLException</code>，因为 <code>execute</code> 不能以递归方式调用。此外，当 reader 调用 <code>RowSet</code> 方法时，任何侦听器都不会得到通知；即不会生成任何 <code>RowSetEvent</code> 对象，也不会调用任何 <code>RowSetListener</code> 方法。出现此情况的原因是，侦听器已经从 <code>execute</code> 方法得到了通知。
+ 
+@param caller <code>RowSet</code> 对象，该对象 (1) 已经实现了 <code>RowSetInternal</code> 接口， (2) 此 reader 在其中注册， 和(3) 其 <code>execute</code> 方法调用了此 reader
+@exception SQLException 如果发生数据库访问错误或者此方法调用 <code>RowSet.execute</code> 方法
+
+<!-- END DATA -->

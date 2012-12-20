@@ -1,0 +1,189 @@
+<!-- BEGIN KEY -->
+public final class java.net.SocketPermission extends java.security.Permission implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类表示通过套接字对网络的访问。SocketPermission 由主机规范和一组指定到该主机的连接方式的&ldquo;动作&rdquo;组成。主机被指定为
+ <pre>
+    host = (hostname | IPv4address | iPv6reference) [:portrange]
+    portrange = portnumber | -portnumber | portnumber-[portnumber]
+ </pre>
+主机被表达为 DNS 名称、数字 IP 地址或&ldquo;本地主机&rdquo;（对于本地机器而言）。在 DNS 名称主机规范中，可能包括通配符 &quot;*&quot;。如果包括，则其必须位于最左边的位置，如 &quot;*.sun.com&quot;。
+ <p>
+IPv6reference 的格式应该按照 <a
+ href="http://www.ietf.org/rfc/rfc2732.txt"><i>RFC&nbsp;2732:Format for Literal IPv6 Addresses in URLs</i></a> 中指定的格式： 
+ <pre>
+    ipv6reference = &quot;[&quot; IPv6address &quot;]&quot;
+</pre>
+例如，可以按照以下代码构造 SocketPermission 实例：
+ <pre>
+    String hostAddress = inetaddress.getHostAddress();
+    if (inetaddress instanceof Inet6Address) {
+        sp = new SocketPermission(&quot;[&quot; + hostAddress + &quot;]:&quot; + port, action);
+    } else {
+        sp = new SocketPermission(hostAddress + &quot;:&quot; + port, action);
+    }
+ </pre>
+或者
+ <pre>
+    String host = url.getHost();
+    sp = new SocketPermission(host + &quot;:&quot; + port, action);
+ </pre>
+ <p>
+IPv6 字面值地址的<A HREF="Inet6Address.html#lform">完全未压缩形式</A>也有效。
+ <p>
+端口或端口范围是可选的。&quot;N-&quot; 形式的端口规范（其中 <i>N</i> 为端口号）表示端口号为 <i>N</i> 及以上的所有端口；而 &quot;-N&quot; 形式的端口规范则指示端口号为 <i>N</i> 及以下的所有端口。
+ <p>
+连接到主机的可能方式为
+ <pre>
+ accept
+ connect
+ listen
+ resolve
+ </pre>
+&ldquo;侦听&rdquo;动作仅在与&ldquo;本地主机&rdquo;一起使用时才有意义。任何其他动作出现时，都会暗含&ldquo;解析&rdquo;动作。&ldquo;解析&rdquo;动作指的是主机/ip 名称服务查找。
+ 
+<p>作为 SocketPermission 的创建和含义的示例，注意如果将以下权限：
+ 
+ <pre>
+   p1 = new SocketPermission(&quot;puffin.eng.sun.com:7777&quot;, &quot;connect,accept&quot;);
+ </pre>
+ 
+授予某个代码，则其允许该代码连接到 <code>puffin.eng.sun.com</code> 上的 7777 端口，并接受该端口上的连接。
+ 
+<p>类似地，如果将以下权限：
+ 
+ <pre>
+   p1 = new SocketPermission(&quot;puffin.eng.sun.com:7777&quot;, &quot;connect,accept&quot;);
+   p2 = new SocketPermission(&quot;localhost:1024-&quot;, &quot;accept,connect,listen&quot;);
+ </pre>
+ 
+授予某个代码，则其允许该代码接受本地机器上 1024 和 65535 之间任何端口上的连接、连接到这些端口或者在这些端口上进行侦听。
+
+<p>注：授予代码接受远程主机上的连接或连接到远程主机的权限可能是危险的，因为恶意代码可以更加容易地在对保密数据不具访问权限的各方中传输和共享保密数据。
+ 
+@see java.security.Permissions
+@see SocketPermission
+
+@version 1.59 04/02/12
+
+@author Marianne Mueller
+@author Roland Schemers 
+
+@serial exclude
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private java.lang.String java.net.SocketPermission.actions
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+动作字符串。 
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.net.SocketPermission(String host, String action)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建带指定动作的新 SocketPermission 对象。主机被表达为 DNS 名称或数字 IP 地址。可以选择支持端口还是端口范围（用冒号分隔 DNS 名称或 IP 地址）。
+ <p>
+要支持本地机器，请使用&ldquo;本地主机&rdquo;作为 <i>host</i>。还要注意：空的 <i>host</i> String (&quot;&quot;) 等效于&ldquo;本地主机&rdquo;。
+ <p>
+<i>action</i> 参数包含指定主机（和端口）获准的以逗号分隔的动作列表。可能的动作为&ldquo;连接&rdquo;、&ldquo;侦听&rdquo;、&ldquo;接受&rdquo;、&ldquo;解析&rdquo;或这些动作的任意组合。当指定了其他三个动作时，会自动添加&ldquo;解析&rdquo;。
+ <p>
+以下是 SocketPermission 实例化的示例：
+ <pre>
+    nr = new SocketPermission(&quot;www.catalog.com&quot;, &quot;connect&quot;);
+    nr = new SocketPermission(&quot;www.sun.com:80&quot;, &quot;connect&quot;);
+    nr = new SocketPermission(&quot;*.sun.com&quot;, &quot;connect&quot;);
+    nr = new SocketPermission(&quot;*.edu&quot;, &quot;resolve&quot;);
+    nr = new SocketPermission(&quot;204.160.241.0&quot;, &quot;connect&quot;);
+    nr = new SocketPermission(&quot;localhost:1024-65535&quot;, &quot;listen&quot;);
+    nr = new SocketPermission(&quot;204.160.241.0:1024-65535&quot;, &quot;connect&quot;);
+ </pre>
+ 
+@param host 计算机的主机名或 IP 地址，可以选择是否包括后跟端口或端口范围的冒号。
+@param actions 动作字符串。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.SocketPermission.implies(Permission p)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查此套接字权限对象是否&ldquo;暗含&rdquo;指定的权限。
+ <P>
+更明确地说，此方法首先确保以下情况全部为 true（如果其中任意一项不为 true，则返回 false）：<p>
+ <ul>
+<li> <i>p</i> 是 SocketPermission 的一个实例，<p>
+<li> <i>p</i> 的动作是此对象的动作的一个真子集，并且<p>
+<li> <i>p</i> 的端口范围包括在此端口范围中。注：当 p 仅包含动作&ldquo;解析&rdquo;时，将忽略端口范围。<p>
+ </ul>
+ 
+然后 <code>implies</code> 将按顺序检查以下每一项，如果所述条件为 true，则为每一项返回 true：<p>
+ <ul>
+<li> 如果此对象是使用单个 IP 地址初始化的，<i>p</i> 的其中一个 IP 地址等于此对象的 IP 地址。<p>
+<li>如果此对象为通配符域（如 *.sun.com），并且 <i>p</i> 的规范名称（不带任何前置 * 的名称）以此对象的规范主机名结尾。例如，*.sun.com 暗指 *.eng.sun.com。<p>
+<li>如果此对象不是使用单个 IP 地址初始化的，并且此对象的其中一个 IP 地址等于其中一个 <i>p</i> 的 IP 地址。<p>
+<li>如果此规范名称等于 <i>p</i> 的规范名称。<p>
+ </ul>
+ 
+如果上述条件都不为 true，则 <code>implies</code> 返回 false。
+@param p 所要检查的权限。
+
+@return  如果对象隐含指定的权限，则返回 true；否则返回 false。  
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.net.SocketPermission.equals(Object obj)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查两个 SocketPermission 对象的相等性。 
+ <P>
+@param obj 要与此对象进行相等性测试的对象。
+ 
+@return 如果 <i>obj</i> 为 SocketPermission，并且此 SocketPermission 对象具有相同的主机名、端口范围和动作，则返回 true。但是，如果 <i>obj</i> 仅包含动作&ldquo;解析&rdquo;，则比较中将忽略端口范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.net.SocketPermission.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回此对象的哈希码值。
+
+@return  此对象的哈希码值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.net.SocketPermission.getActions()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回动作的规范化字符串表示形式。返回始终按以下顺序显示动作：连接、侦听、接受、解析。  
+
+@return 动作的规范化字符串表示形式。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.security.PermissionCollection java.net.SocketPermission.newPermissionCollection()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+用于存储 SocketPermission 对象的新 PermissionCollection 对象。
+ <p>
+SocketPermission 对象必须以允许将它们按任意顺序插入集合的方式来存储，但同时也允许以有效（并一致）的方式实现 PermissionCollection 的 <code>implies</code> 方法。
+
+@return 适合存储 PropertyPermissions 的新 SocketPermissions 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.net.SocketPermission.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 readObject，从流中恢复 SocketPermission 的状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.net.SocketPermission.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用 WriteObject，将 SocketPermission 的状态保存到流中。动作已被序列化，超类负责管理名称。
+
+<!-- END DATA -->

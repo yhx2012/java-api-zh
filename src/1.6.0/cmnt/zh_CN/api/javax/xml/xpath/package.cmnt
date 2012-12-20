@@ -1,0 +1,193 @@
+<!-- BEGIN KEY -->
+javax.xml.xpath
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>此包提供了用于 XPath 表达式的计算和访问计算环境的 <em>object-model neutral</em> API。
+</p>
+
+<p>应用以下 XML 标准：</p>
+
+<ul>
+<li><a href="http://www.w3.org/TR/xpath">XML Path Language (XPath) Version 1.0</a></li>
+</ul>
+
+<hr />
+
+<h2>XPath 概述</h2>
+
+<p>XPath 语言提供了用于从 XML 文档选择节点的简单、简洁的语法。XPath 还提供了将 XML 文档对象模型（DOM）树中的节点转换为布尔值、double 值或字符串值的规则。XPath 是 W3C 定义的语言和正式的 W3C 推荐，W3C 拥有 XML Path Language (XPath) Version 1.0 规范。
+</p>
+
+<p>XPath 诞生于 1999 年，作为对 XSLT 和 XPointer 语言的补充，但近来已成为流行的独立语言，因为单个 XPath 表达式可用于替代多行 DOM API 代码。
+</p>
+
+<h3>XPath 表达式</h3>
+
+<p>XPath <em>表达式</em> 由一个<em>位置路径</em> 和一个或多个可选的<em>谓词</em> 组成。表达式还可以包含 XPath 变量。
+</p>
+
+<p>以下是一个简单的 XPath 表达式的示例：</p>
+
+<pre>
+/foo/bar
+</pre>
+
+<p>此示例将选择如下所示的 XML 文档中的 <code>&lt;bar&gt;</code> 元素：</p>
+
+<pre>
+&lt;foo&gt;
+&lt;bar/&gt;
+&lt;/foo&gt;
+</pre>
+
+<p>表达式 <code>/foo/bar</code> 是位置路径的一个示例。虽然 XPath 位置路径类似于 Unix-style 文件系统路径，但它们存在重要的区别，即 XPath 表达式返回与表达式匹配的<em>所有</em> 节点。因此，<code>/foo/bar</code> 表达式将选中以下文档中的所有三种 <code>&lt;bar&gt;</code> 元素：</p>
+
+<pre>
+&lt;foo&gt;
+&lt;bar/&gt;
+&lt;bar/&gt;
+&lt;bar/&gt;
+&lt;/foo&gt;
+</pre>
+
+<p>特殊位置路径操作符 <code>//</code> 选择位于 XML 文档中任何深度的节点。以下示例选择所有 <code>&lt;bar&gt;</code> 元素，不管它们在文档中处于什么位置：</p>
+
+<pre>
+//bar
+</pre>
+
+<p>通配符 * 用于选择所有元素节点。以下示例选择 <code>&lt;foo&gt;</code> 元素的所有子元素：</p>
+
+<pre>
+/foo/*
+</pre>
+
+<p>除元素节点外，XPath 位置路径还可用于寻找属性节点、文本节点、注释节点和指令处理节点。下表给出了每种节点类型的位置路径的示例：</p>
+
+<table border="1">
+<tr>
+<td>位置路径</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>
+<code>/foo/bar/<strong>@id</strong></code>
+</td>
+<td>选择 <code>&lt;bar&gt;</code> 元素的属性 <code>id</code>
+</td>
+</tr>
+<tr>
+<td><code>/foo/bar/<strong>text()</strong></code>
+</td>
+<td>选择 <code>&lt;bar&gt;</code> 元素的文本节点。转义和非转义字符数据之间没有区别。
+</td>
+</tr>
+<tr>
+<td><code>/foo/bar/<strong>comment()</strong></code>
+</td>
+<td>选择 <code>&lt;bar&gt;</code> 元素中包含的所有注释节点。
+</td>
+</tr>
+<tr>
+<td><code>/foo/bar/<strong>processing-instruction()</strong></code>
+</td>
+<td>选择 <code>&lt;bar&gt;</code> 元素中包含的所有指令处理节点。
+</td>
+</tr>
+</table>
+
+<p>谓词允许修改 XPath 位置路径所选中的节点。谓词的形式为 <code>[<em>expression</em>]</code>。以下示例选择包含值为 <code>true</code> 的 <code>include</code> 属性的所有 <code>&lt;foo&gt;</code> 元素：</p>
+
+<pre>
+//foo[@include='true']
+</pre>
+
+<p>谓词可互相追加以进一步修改表达式，例如：</p>
+
+<pre>
+//foo[@include='true'][@mode='bar']
+</pre>
+
+<h3>使用 XPath API</h3>
+
+<p>
+以下示例演示了使用 XPath API 来选择一个或多个来自 XML 文档的节点：</p>
+
+<pre>
+XPath xpath = XPathFactory.newInstance().newXPath();
+String expression = &quot;/widgets/widget&quot;;
+InputSource inputSource = new InputSource(&quot;widgets.xml&quot;);
+NodeList nodes = (NodeList) xpath.evaluate(expression, inputSource, XPathConstants.NODESET);
+</pre>
+
+<h3>XPath 表达式和类型</h3>
+
+<p>虽然 XPath 表达式选择的是 XML 文档的节点，但 XPath API 允许将选中的节点组合到以下其他数据类型中：</p>
+
+<ul>
+<li><code>布尔值</code></li>
+<li><code>数字</code></li>
+<li><code>字符串</code></li>
+</ul>
+
+<p>用于计算表示式的方法调用中的 {@link javax.xml.namespace.QName} 参数指定了所需的返回类型，其中方法调用要么是调用 <code>XPathExpression.evalute(...)</code>，要么是调用 <code>XPath.evaluate(...)</code> 便捷方法之一。允许的 QName 值指定为 {@link javax.xml.xpath.XPathConstants} 类中的常量，它们是：</p>
+
+<ul>
+<li>{@link javax.xml.xpath.XPathConstants#NODESET}</li>
+<li>{@link javax.xml.xpath.XPathConstants#NODE}</li>
+<li>{@link javax.xml.xpath.XPathConstants#STRING}</li>
+<li>{@link javax.xml.xpath.XPathConstants#BOOLEAN}</li>
+<li>{@link javax.xml.xpath.XPathConstants#NUMBER}</li>
+</ul>
+
+<p>当请求 <code>Boolean</code> 返回类型时，如果选中了一个或多个节点，则返回 <code>Boolean.TRUE</code>，否则返回 <code>Boolean.FALSE</code>。</p>
+
+<p><code>String</code> 返回类型是从文本节点、注释节点或指令处理节点检索字符数据的便捷方法。当用于元素节点上时，返回子文本节点的值。
+</p>
+
+<p><code>Number</code> 返回类型尝试将节点的文本组合到 <code>double</code> 数据类型。
+</p>
+
+<h3>XPath 上下文</h3>
+
+<p>XPath 位置路径可以相对于文档中的特殊节点，称为 <code>context</code>。考虑以下 XML 文档：</p>
+
+<pre>
+&lt;widgets&gt;
+&lt;widget&gt;
+&lt;manufacturer/&gt;
+&lt;dimensions/&gt;
+&lt;/widget&gt;
+&lt;/widgets&gt;
+</pre>
+
+<p>可以通过以下 XPath API 代码选择 <code>&lt;widget&gt;</code> 元素：</p>
+
+<pre>
+// parse the XML as a W3C Document
+DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+Document document = builder.parse(new File(&quot;/widgets.xml&quot;));
+
+XPath xpath = XPathFactory.newInstance().newXPath();
+String expression = &quot;/widgets/widget&quot;;
+Node widgetNode = (Node) xpath.evaluate(expression, document, XPathConstants.NODE);
+</pre>
+
+<p>通过引用 <code>&lt;widget&gt;</code> 元素，现在可以编写相对 XPath 表达式来选择 <code>&lt;manufacturer&gt;</code> 子元素：</p>
+
+<pre>
+XPath xpath = XPathFactory.newInstance().newXPath();
+<strong>String expression = &quot;manufacturer&quot;;</strong>
+Node manufacturerNode = (Node) xpath.evaluate(expression, <strong>widgetNode</strong>, XPathConstants.NODE);
+</pre>
+
+<ul>
+<li>Author <a href="mailto:Ben@galbraiths.org">Ben Galbraith</a></li>
+<li>Author <a href="mailto:Norman.Walsh@Sun.com">Norman Walsh</a></li>
+<li>Author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a></li>
+<li>See <a href="http://www.w3.org/TR/xpath">XML Path Language (XPath) Version 1.0</a></li>
+<li>Since 1.5</li>
+</ul>		
+
+<!-- END DATA -->

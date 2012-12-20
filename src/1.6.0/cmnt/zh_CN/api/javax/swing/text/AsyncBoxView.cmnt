@@ -1,0 +1,399 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.AsyncBoxView extends javax.swing.text.View
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+异步执行布局处理的框。此类很有用，因为它可通过不在 GUI 事件线程中执行任何布局处理来保持该线程的持续活动。布局是在子视图的操作粒度上完成的。访问某部分布局的每个子视图后（可能是耗时的操作），可放弃剩余的任务，或者可执行新的、具有更高优先级的任务（如响应一个同步请求或对一个可见区域进行操作）。
+ <p>
+访问子视图的同时，要获得关联文档上的读取锁定，这样该模型在被访问时是稳定的。
+
+@author  Timothy Prinzing
+@version 1.16 12/19/03
+@since   1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AsyncBoxView.ChildLocator javax.swing.text.AsyncBoxView.locator
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+这是管理子视图偏移量的对象。用于管理子视图位置的所有锁定都位于此对象上。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.AsyncBoxView(Element elem, int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造执行异步布局处理的 BoxView。
+
+@param elem 要表示的模型元素
+@param axis 平铺时沿用的轴。这可以是 X_AXIS 或 Y_AXIS 之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.getMajorAxis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取主轴（即子级平铺时沿用的轴）。这将是 X_AXIS 或 Y_AXIS 值之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.getMinorAxis()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取辅轴（与平铺轴垂直的轴）。这将是 X_AXIS 或 Y_AXIS 值之一。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getTopInset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得视图四周顶部的空白部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setTopInset(float i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图四周顶部的空白部分。
+
+@param i inset 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getBottomInset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得视图四周底部的空白部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setBottomInset(float i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图四周底部的空白部分。
+
+@param i inset 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getLeftInset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得视图四周左侧的空白部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setLeftInset(float i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图四周左侧的空白部分。
+
+@param i inset 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getRightInset()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得视图四周右侧的空白部分。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setRightInset(float i)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图四周右侧的空白部分。
+
+@param i inset 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected float javax.swing.text.AsyncBoxView.getInsetSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取 insets 所占据的沿某个轴的跨距。
+
+@param axis 确定总的 insets 所沿用的轴，为 X_AXIS 或 Y_AXIS 之一。
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AsyncBoxView.setEstimatedMajorSpan(boolean isEstimated)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置 estimatedMajorSpan 属性，它确定是否应该将主跨距视为估计值。如果此属性为 true，则沿主轴方向的 setSize 值将更改沿主轴方向的要求，并且在更新所有子级之前（更新子级会导致自动将该属性设置为 false）忽略递增量。如果该属性为 false，则认为 majorSpan 的值是准确的，并且在计算时将递增量添加到总值中。
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected boolean javax.swing.text.AsyncBoxView.getEstimatedMajorSpan()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+主跨距当前是估计值吗？
+
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AsyncBoxView.ChildState javax.swing.text.AsyncBoxView.getChildState(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取对象，该对象表示在给定索引位置的子视图的布局状态。
+
+@param index 子视图索引。这应该是一个 &gt;= 0 且 &lt; getViewCount() 的值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.LayoutQueue javax.swing.text.AsyncBoxView.getLayoutQueue()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取用于布局处理的队列。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected javax.swing.text.AsyncBoxView.ChildState javax.swing.text.AsyncBoxView.createChildState(View v)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通过此方法创建新的 ChildState 记录，以允许扩展 ChildState 记录的子类执行/保存更多状态。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void javax.swing.text.AsyncBoxView.majorRequirementChange(AsyncBoxView.ChildState cs, float delta)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+沿主轴上的要求更改。当执行布局处理的线程完成获取子视图新首选项的任务后，由该线程为给定的 ChildState 对象调用此方法。通常这是布局线程，但是如果要尝试立即更新某些内容（例如执行模型/视图转换），则它也可能是事件线程。
+ <p>
+实现此方法以便将主轴标记为已更改，所以如果需要将要求发布到父视图，后续的检查可查看是否将主轴考虑在内。如果沿主轴的跨距不是估计值，则通过给定的 delta 更新它，以反映递增量。如果主跨距是估计值，则忽略 delta。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized void javax.swing.text.AsyncBoxView.minorRequirementChange(AsyncBoxView.ChildState cs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+沿辅轴上的要求更改。当执行布局处理的线程完成获取子视图新首选项的任务后，由该线程为给定的 ChildState 对象调用此方法。通常这是布局线程，但是如果要尝试立即更新某些内容（例如执行模型/视图转换），则它也可能是 GUI 线程。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AsyncBoxView.flushRequirementChanges()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将首选项中的更改向上发布到父视图。它通常由布局线程调用。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.replace(int offset, int length, javax.swing.text.View[] views)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+调用超类以更新子视图，并且更新子视图的状态记录。应该在模型持有写入锁定的同时调用此方法，这样将不会发生与布局线程的交互（例如，布局线程获得读取锁定后才能执行任何操作）。 
+
+@param offset 子视图中的起始偏移量，该值 &gt;= 0
+@param length 要替换的现有视图数，该值 &gt;= 0
+@param views 要插入的子视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AsyncBoxView.loadChildren(ViewFactory f)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+加载初始化该视图的所有子级。此方法由 <a href="#setParent">setParent</a> 方法调用。子类可重新实现此方法，从而以不同的方式初始化其子视图。默认的实现为每个子元素创建一个子视图。
+ <p>
+通常在更改子元素时 Document 上会持有写入锁定，这可保持呈现和布局线程的安全。例外情况是初始化视图以表示现有的元素时（通过此方法），所以在进行初始化的时候它是同步的，以将 preferenceChanged 排除在外。
+
+@param f 视图工厂
+@see #setParent
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected synchronized int javax.swing.text.AsyncBoxView.getViewIndexAtPosition(int pos, Position.Bias b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此模型中表示给定位置的子视图索引。在每个子元素都有一个子视图的情况下，实现此方法可获取该视图。
+
+@param pos 位置，该值 &gt;= 0
+@return 表示给定位置的视图的索引，如果没有视图表示该位置，则返回 -1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void javax.swing.text.AsyncBoxView.updateLayout(DocumentEvent.ElementChange ec, DocumentEvent e, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更新布局，以响应从模型接收的更改通知。实现此方法可记录 ChildLocator 上的更改，这样可正确地计算子级的偏移量。
+
+@param ec 对此视图所负责的元素的更改（如果没有更改则可能为 null）。
+@param e 来自相关文档的更改信息
+@param a 该视图的当前分配区域 
+@see #insertUpdate
+@see #removeUpdate
+@see #changedUpdate     
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setParent(View parent)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的父级。如果此视图没有子级，则可重新实现此方法以提供超类行为并调用 <code>loadChildren</code> 方法。子级不应在构造方法中加载，因为设置父级的操作可能会导致其尝试向上搜索层次结构（例如获得宿主 Container）。如果此视图具有子视图（将该视图从视图层次结构中的一个位置移到另一个位置），则不调用 <code>loadChildren</code> 方法。
+
+@param parent 视图的父级，如果没有，则为 null
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void javax.swing.text.AsyncBoxView.preferenceChanged(View child, boolean width, boolean height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+子视图可以在父级上调用此方法，以指示首选项已更改并且应该重新考虑布局。重新实现此方法可在布局线程上对新工作进行排队。此方法通过子视图获得来自多个线程的消息。
+
+@param child 子视图
+@param width 如果已更改宽度首选项，则为 true
+@param height 如果已更改高度首选项，则为 true 
+@see javax.swing.JComponent#revalidate
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.setSize(float width, float height)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置视图的大小。如果该视图缓存了任何布局信息，则此操作会导致视图进行布局处理。
+ <p>
+由于主轴是异步更新的，并且应该是已平铺子级的和，所以对于主轴应忽略该调用。由于辅轴是很灵活的，所以如果辅跨距更改了，则将工作放入队列以调整子视图的大小。
+
+@param width 宽度，该值 &gt;= 0
+@param height 高度，该值 &gt;= 0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.AsyncBoxView.paint(Graphics g, Shape alloc)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用给定的分配和呈现表面呈现该视图。
+ <p>
+实现此方法可确定要呈现的所需区域（如非剪贴区域）是否为最新的。如果是最新的，则呈现子视图。如果不是最新的，则将构建所需区域的任务作为最高优先级的任务放入布局队列中。在准备就绪时，此方法通过事件线程和渲染来持续运行，在尚未准备就绪时推迟一段时间（因为可以重新安排绘制请求）。
+
+@param g 要使用的呈现表面
+@param alloc 要在其中进行呈现的已分配区域
+@see View#paint
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getPreferredSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某轴的首选跨距。
+
+@param axis 可以为 View.X_AXIS 或 View.Y_AXIS
+@return   视图可能要在其中呈现的跨距，该值 &gt;= 0。通常会通知该视图呈现到返回的跨距中，但并不能保证。父级可选择重新调整视图大小或分解视图。
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getMinimumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某轴的最小跨距。
+
+@param axis 可以为 View.X_AXIS 或 View.Y_AXIS
+@return   视图可能要在其中呈现的跨距，该值 &gt;= 0。通常会通知该视图呈现到返回的跨距中，但并不能保证。父级可选择重新调整视图大小或拆分视图。
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float javax.swing.text.AsyncBoxView.getMaximumSpan(int axis)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此视图沿某轴的最大跨距。
+
+@param axis 可以为 View.X_AXIS 或 View.Y_AXIS
+@return   视图可能要在其中呈现的跨距，该值 &gt;= 0。通常会通知该视图呈现到返回的跨距中，但并不能保证。父级可选择重新调整视图大小或拆分视图。
+@exception IllegalArgumentException 如果轴类型无效
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.getViewCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+返回此视图中的视图数。由于默认不应是复合视图，因此此方法返回 0。
+
+@return 视图数，该值 &gt;= 0
+@see View#getViewCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.swing.text.View javax.swing.text.AsyncBoxView.getView(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+获得第 n 个子视图。由于默认没有子视图，所以此方法返回 null。
+
+@param n 要获得的视图编号，该值 &gt;= 0 &amp;&amp; &lt; getViewCount()
+@return 视图
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.AsyncBoxView.getChildAllocation(int index, Shape a)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取给定子视图的分配区域。这就允许找出各种视图的位置，而无需假定视图存储其位置。由于默认没有任何子视图，所以此方法返回 null。
+
+@param index 子视图的索引，该值 &gt;= 0 &amp;&amp; &lt; getViewCount()
+@param a  此视图的分配区域。
+@return 子视图的分配区域
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.getViewIndex(int pos, Position.Bias b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回该模型中表示给定位置的子视图索引。默认情况下视图没有子视图，所以此方法的实现返回 -1，以指示任何位置都没有有效的子视图索引。
+
+@param pos 位置，该值 &gt;= 0
+@return 表示给定位置的视图的索引，如果没有视图表示该位置，则返回 -1
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Shape javax.swing.text.AsyncBoxView.modelToView(int pos, Shape a, Position.Bias b) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从文档模型坐标空间到所映射的视图坐标空间的映射。
+
+@param pos 要转换的位置，该值 &gt;= 0
+@param a 要呈现于其中的已分配区域 
+@param b 在该位置是两个视图的边界时，为偏向前一个字符或下一个字符的偏差，由偏移量表示。
+@return 返回给定位置的边界框
+@exception BadLocationException  如果给定的位置不表示关联文档内的有效位置 
+@exception IllegalArgumentException 如果 bias 参数无效
+@see View#viewToModel
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.viewToModel(float x, float y, Shape a, javax.swing.text.Position.Bias[] biasReturn)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供从视图坐标空间到模型逻辑坐标空间的映射。填入 biasReturn 参数可指示给定的点是靠近模型中的下一个字符还是模型中的前一个字符。
+ <p>
+预计由 GUI 线程调用此方法，在关联的模型上保持读取锁定。实现此方法可定位子视图，并通过对 ChildLocator 对象执行锁定来确定其分配，以及通过对 ChildLocator 对象执行锁定对子视图调用 viewToModel，以避免与布局线程相互干扰。
+
+@param x X 坐标，该值 &gt;= 0
+@param y Y 坐标，该值 &gt;= 0
+@param a 要在其中进行呈现的已分配区域
+@return 模型中的位置，它可最佳地表示视图中的给定点，该值 &gt;= 0。填入 biasReturn 参数可指示给定的点是靠近模型中的下一个字符还是模型中的前一个字符。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.AsyncBoxView.getNextVisualPositionFrom(int pos, Position.Bias b, Shape a, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+提供确定下一个以可视化形式表示的模型位置的方法，用户可以在此位置放置一个插入符。有些视图可能是不可见的，它们的顺序可能与模型中的顺序不同，或者它们可能不允许访问模型中的某些位置。
+
+@param pos 要转换的位置，该值 &gt;= 0
+@param a 要在其中进行呈现的已分配区域
+@param direction 从当前位置开始的方向，可以将它们设想为通常可在键盘上找到的箭头键；可为下列值： 
+  <ul>
+  <code>SwingConstants.WEST</code> <code>SwingConstants.EAST</code> <code>SwingConstants.NORTH</code> <code>SwingConstants.SOUTH</code>  
+  </ul>
+@param biasRet 包含要检查的偏差的数组 
+@return 模型中的位置，它可最佳地以可视化定位方式表示视图中的下一个位置
+@exception BadLocationException
+@exception IllegalArgumentException 如果 <code>direction</code> 无效
+
+<!-- END DATA -->

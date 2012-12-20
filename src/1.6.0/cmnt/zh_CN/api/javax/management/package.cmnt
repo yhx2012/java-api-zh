@@ -1,0 +1,155 @@
+<!-- BEGIN KEY -->
+javax.management
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+<p>提供 Java Management Extensions 的核心类。</p>
+
+<p>Java Management Extensions (JMX<sup><font size="-1">TM</font></sup>) API 是一个用于管理和监视的标准 API。典型用途包括：</p>
+
+      <ul>
+	<li>查询并更改应用程序配置</li>
+
+	<li>累积有关应用程序行为的统计数据并使其可用</li>
+
+	<li>通知状态更改及错误状况。</li>
+      </ul>
+
+<p>JMX API 还可以作为解决方案的一部分来管理系统、网络等。</p>
+
+<p>API 包括远程访问，因此，远程管理程序可以基于这些目的与正在运行的应用程序进行交互。</p>
+
+      <h2>MBean</h2>
+
+<p>JMX API 的基本概念是 <em>MBean</em>。MBean 是表示资源的指定<em>管理对象</em>。它有一个<em>管理接口</em>，该接口包括以下内容：</p>
+
+      <ul>
+	<li>可以读取和/或写入的指定名称和类型的属性</li>
+	
+	<li>可以调用的指定名称和类型的操作</li>
+
+	<li>可以由 MBean 发送的指定类型的通知。</li>
+      </ul>
+
+<p>例如，一个表示应用程序配置的 MBean 可以有一些表示不同配置项的属性。读取 <code>CacheSize</code> 属性可以返回该项的当前值。写入该属性可以更新该项，从而可能会更改正在运行的应用程序的行为。诸如 <code>save</code> 之类的操作可以持久保存当前配置。每次更改配置时都会发送 <code>ConfigurationChangedNotification</code> 之类的通知。</p>
+
+<p>在 JMX API 的标准用法中，可以像实现 Java 对象那样来实现 MBean。不过，如下所述，通常不直接引用这些对象。</p>
+
+
+<h3>Standard MBean</h3>
+
+<p>为了简化 MBean 实现，JMX API 包括 <em>Standard MBean</em> 这一概念。Standard MBean 的属性和操作来源于 Java 接口，使用特定的命名模式，与 JavaBeans<sup><font size="-1">TM</font></sup> 使用的属性和操作类似。例如，假定具有如下所示接口：</p>
+
+      <pre>
+    public interface ConfigurationMBean {
+	public int getCacheSize();
+	public void setCacheSize(int size);
+	public long getLastChangedTime();
+	public void save();
+    }
+      </pre>
+
+<p>方法 <code>getCacheSize</code> 和 <code>setCacheSize</code> 定义了名为 <code>CacheSize</code> 的 <code>int</code> 类型的读写属性（首字母大写，这与 JavaBeans 惯例不同）。</p>
+
+<p>方法 <code>getLastChangedTime</code> 定义了名为 <code>LastChangedTime</code> 的 <code>long</code> 类型的属性。这是一种只读属性，原因是没有方法 <code>setLastChangedTime</code>。</p>
+
+<p>方法 <code>save</code> 定义了名为 <code>save</code> 的操作。它不是属性，原因是它的名称没有以 <code>get</code>、<code>set</code> 或 <code>is</code> 开头。</p>
+
+<p>Standard MBean 的准确命名模式将在 <a href="#spec">JMX 规范</a>中详述。</p>
+
+<p>制做作为带有此管理接口的 MBean 的 Java 对象的方法有两种。一种用于具有与 Java 接口完全相同的名称、但没有 <code>MBean</code> 后缀的类的对象。因此，在该示例中，对象将是 <code>Configuration</code> 类的对象，与 <code>ConfigurationMBean</code> 在相同的 Java 包中。第二种方法是使用 {@link javax.management.StandardMBean StandardMBean} 类。</p>
+
+<h3>MXBean</h3>
+      
+<p><em>MXBean</em> 是标准 MBean 的一个变体，其中复合类型将映射到 {@link javax.management.openmbean} 包中定义的标准类型集。如果需要引用 MBean 接口中特定于应用程序的类，则可以使用 MXBean。在 {@link javax.management.MXBean MXBean} 规范中有 MXBean 的详细描述。
+
+
+<h3>Dynamic MBean</h3>
+
+<p><em>Dynamic MBean</em> 是一种在运行时定义其管理接口的 MBean。例如，配置 MBean 可以通过解析 XML 文件来确定它所公开的属性名称和类型。</p>
+
+<p>任何实现 {@link javax.management.DynamicMBean DynamicMBean} 接口的类的 Java 对象都是 Dynamic MBean。</p>
+
+
+<h3>Open MBean</h3>
+
+<p><em>Open MBean</em> 是一种 Dynamic MBean，在这种 MBean 中，属性类型、操作参数类型和返回值都是使用一个预定义 Java 类的小集合来构建的。Open MBean 使用其远程管理程序加快了操作，这些远程管理程序不必使用特定于应用程序的类型，其中包括非 Java 程序。Open MBean 由包 <a href="openmbean/package-summary.html"><code>javax.management.openmbean</code></a> 定义。</p>
+
+
+<h3>Model MBean</h3>
+
+<p><em>Model MBean</em> 是一种 Dynamic MBean，它充当管理接口和基础托管资源之间的桥梁。管理接口和托管资源都被指定为 Java 对象。相同的 Model MBean 实现可以重复多次用于不同的管理接口和托管资源，并且还可以提供诸如持久性和缓存之类的共有功能。Model MBean 由包 <a href="modelmbean/package-summary.html"><code>javax.management.modelmbean</code></a> 定义。</p>
+
+
+<h2>MBean 服务器</h2>
+      
+<p>要想让 MBean 有用，必须在 <em>MBean 服务器</em>中注册它。MBean 服务器是一个 MBean 存储库。通常情况下，只能通过 MBean 服务器访问 MBean。换句话说，代码不再直接访问实现 MBean 的 Java 对象，而是通过 MBean 服务器根据名称访问该 MBean。每个 MBean 在 MBean 服务器内都有一个由 {@link javax.management.ObjectName ObjectName} 类定义的唯一名称。</p>
+      
+<p>MBean 服务器是一个实现了接口 {@link javax.management.MBeanServer MBeanServer} 的对象。最便于使用的 MBean Server 是 <em>Platform MBean Server</em>。这是可以由相同 Java 虚拟机中运行的不同托管组件共享的单独 MBean 服务器。平台 MBean 服务器可以通过方法 {@link java.lang.management.ManagementFactory#getPlatformMBeanServer()} 访问。</p>
+
+<p>使用 {@link javax.management.MBeanServerFactory MBeanServerFactory} 类，应用程序代码还可以创建一个新的 MBean 服务器，或者访问已经创建的 MBean 服务器。</p>
+
+
+<h3>在 MBean 服务器中创建 MBean</h3>
+
+<p>创建 MBean 有两种方法。一种方法是构造将作为 MBean 的 Java 对象，然后使用 {@link javax.management.MBeanServer#registerMBean registerMBean} 方法在 MBean 服务器中注册它。另一种方法是使用其中一个 {@link javax.management.MBeanServer#createMBean(String, javax.management.ObjectName) createMBean} 方法在单一操作中创建并注册 MBean。</p>
+
+<p><code>registerMBean</code> 方法对于本地使用较为简单，但不能远程使用。<code>createMBean</code> 方法可以远程使用，但有时需要注意类加载问题。</p>
+
+<p>如果实现了 {@link javax.management.MBeanRegistration MBeanRegistration} 接口，则 MBean 可以在向 MBean 服务器注册或从中注销时执行操作。</p>
+
+
+<h3>在 MBean 服务器中访问 MBean</h3>
+
+<p>在给定一个 <code>ObjectName</code> <code>name</code> 和一个 <code>MBeanServer</code> <code>mbs</code> 的情况下，可以访问一些属性和操作，如下所示：</p>
+
+      <pre>
+    int cacheSize = mbs.getAttribute(name, &quot;CacheSize&quot;);
+    {@link javax.management.Attribute Attribute} newCacheSize =
+    	new Attribute(&quot;CacheSize&quot;, new Integer(2000));
+    mbs.setAttribute(name, newCacheSize);
+    mbs.invoke(name, &quot;save&quot;, new Object[0], new Class[0]);
+      </pre>
+
+<p>另外，如果有一个与 MBean 管理接口对应的 Java 接口，那么可以使用 <em>MBean 代理</em>，如下所示：</p>
+
+      <pre>
+     ConfigurationMBean conf =
+        {@link javax.management.JMX#newMBeanProxy
+            JMX.newMBeanProxy}(mbs, name, ConfigurationMBean.class);
+    	    	    	    	    	    	      
+    int cacheSize = conf.getCacheSize();
+    conf.setCacheSize(2000);
+    conf.save();
+      </pre>
+
+<p>使用 MBean 代理只是为了方便。与第一个示例相同，第二个示例的结尾同样调用了 <code>MBeanServer</code> 操作。</p>
+
+<p>可以通过查询 MBean 服务器查找其名称与特定模式匹配和/或其属性满足特定约束的 MBean。名称模式可以使用 {@link javax.management.ObjectName ObjectName} 类构造，而约束可以使用 {@link javax.management.Query Query} 类构造。然后方法 {@link javax.management.MBeanServer#queryNames queryNames} 和 {@link javax.management.MBeanServer#queryMBeans queryMBeans} 将执行查询。</p>
+
+
+<h2>通知</h2>
+
+<p><em>通知</em> 是 {@link javax.management.Notification Notification} 类或子类的一个实例。除其 Java 类之外，它还有一个可以将它与相同类的其他通知区分开的<em>类型</em> 字符串。</p>
+
+<p>一个将发送通知的 MBean 必须实现 {@link javax.management.NotificationBroadcaster NotificationBroadcaster} 或 {@link javax.management.NotificationEmitter NotificationEmitter} 接口。通常情况下，它通过创建 {@link javax.management.NotificationBroadcasterSupport NotificationBroadcasterSupport} 子类或委派该类的一个实例来实现这一点。</p>
+
+<p>通知可以由<em>侦听器</em> 接收，该侦听器是一个实现了 {@link javax.management.NotificationListener NotificationListener} 接口的对象。可以使用方法 {@link javax.management.MBeanServer#addNotificationListener（ObjectName、NotificationListener、NotificationFilter、Object）} 将侦听器添加到 MBean 中。可以选择向此方法提供<em>过滤器</em>，以便只选择感兴趣的通知。过滤器是一个实现了 {@link javax.management.NotificationFilter NotificationFilter} 接口的对象。</p>
+
+<p>MBean 可以是由同一个 MBean 服务器中其他 MBean 发出的通知的侦听器。在此情况下，它实现 {@link javax.management.NotificationListener NotificationListener}，并使用方法 {@link javax.management.MBeanServer#addNotificationListener（ObjectName、ObjectName、NotificationFilter、Object）} 来侦听。</p>
+
+
+<h2>远程访问 MBean</h2>
+
+<p>可以通过<em>连接器</em> 远程访问 Bean 服务器。连接器允许远程 Java 应用程序以实质上与本地 Java 应用程序相同的方式访问 MBean 服务器。包 <a href="remote/package-summary.html"><code>javax.management.remote</code></a> 定义了连接器。</p>
+
+<p>JMX 规范还定义了<em>适配器</em> 的概念。适配器可以在协议中（如 SNMP 或 HTML ）的请求与对 MBean 服务器的访问之间进行转换。所以，像 SNMP GET 这样的操作可能会导致对 MBean 服务器 <code>getAttribute</code>。</p>
+
+ <p id="spec">
+@see <a href="{@docRoot}/../technotes/guides/jmx/index.html">
+      Java SE 6 Platform documentation on JMX technology</a>，尤其是 <a href="{@docRoot}/../technotes/guides/jmx/JMX_1_4_specification.pdf">
+      JMX Specification, version 1.4(pdf)。</a> 
+@since 1.5
+
+    
+<!-- END DATA -->

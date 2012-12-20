@@ -1,0 +1,748 @@
+<!-- BEGIN KEY -->
+public class java.awt.List extends java.awt.Component implements java.awt.ItemSelectable, javax.accessibility.Accessible
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>List</code> 组件为用户提供了一个可滚动的文本项列表。可设置此 list，使其允许用户进行单项或多项选择。 
+ <p>
+例如以下代码：
+<p>
+ <hr><blockquote><pre>
+ List lst = new List(4, false);
+ lst.add(&quot;Mercury&quot;);
+ lst.add(&quot;Venus&quot;);
+ lst.add(&quot;Earth&quot;);
+ lst.add(&quot;JavaSoft&quot;);
+ lst.add(&quot;Mars&quot;);
+ lst.add(&quot;Jupiter&quot;);
+ lst.add(&quot;Saturn&quot;);
+ lst.add(&quot;Uranus&quot;);
+ lst.add(&quot;Neptune&quot;);
+ lst.add(&quot;Pluto&quot;);
+ cnt.add(lst);
+ </pre></blockquote><hr>
+ <p>
+当 <code>cnt</code> 为容器时，将生成以下滚动列表：
+ <p>
+<img src="doc-files/List-1.gif"
+ alt="显示一个包含这些项的列表：Venus、Earth、JavaSoft 和 Mars。Javasoft 为选中状态。" ALIGN=center HSPACE=10 VSPACE=7>
+ <p>
+如果 List 允许进行多项选择，则单击已选中的项时，将取消选中该项。在上面的示例中，一次只能从滚动列表中选择一项，因为创建新的滚动列表时，第二个参数为 <code>false</code>。如果 List 不允许进行多项选择，则选择某一项会导致其他选中的项取消选中。
+ <p>
+注意，本示例中显示的列表是用四个可视行创建的。创建该列表之后，不可更改可视行的数量。默认的 <code>List</code> 是用四行创建的，所以 <code>lst = new List()</code> 与 <code>list = new List(4, false)</code> 等效。
+ <p>
+从 Java 1.1 开始，AWT（Abstract Window Toolkit，抽象窗口工具包）会把列表上发生的所有鼠标、键盘和焦点事件发送给 <code>List</code> 对象。（维护旧的 AWT 事件模型的目的是为了向后兼容，不推荐使用它。）
+ <p>
+当用户选中或取消选中某项时，AWT 将向列表发送一个 <code>ItemEvent</code> 实例。当用户双击滚动列表中的某一项时，AWT 会在紧随项事件后向列表发送一个 <code>ActionEvent</code> 实例。当用户选中列表中的某项，按下 return 键时，AWT 也会生成一个动作事件。
+ <p>
+如果应用程序需要基于此列表中用户选中或激活的项执行某个动作，则应该相应地实现 <code>ItemListener</code> 或 <code>ActionListener</code>，并注册新的侦听器，以便在此列表中接收事件。
+ <p>
+对于多项选择滚动列表，使用外部动作（如单击按钮）来触发动作被认为是一种更好的用户界面。
+@version 	1.110, 07/11/06
+@author 	Sami Shaio
+@see         java.awt.event.ItemEvent
+@see         java.awt.event.ItemListener
+@see         java.awt.event.ActionEvent
+@see         java.awt.event.ActionListener
+@since       JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ java.util.Vector java.awt.List.items
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+一个向量，它包含作为此 List Component 一部分的项。
+
+@serial
+@see #addItem(String)
+@see #getItem(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.List.rows
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此字段将表示 <code>List</code> Component 中的可视行数。只需指定一次，而且是在 list 组件实际创建时。它将永远不变。
+
+@serial
+@see #getRows()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ boolean java.awt.List.multipleMode
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>multipleMode</code> 是一个变量，当 list 组件设置为多项选择模式时，该变量将被设置为 <code>true</code>，这就是用户可在列表中一次选择多项的原因。如果 list 组件设置为单项选择模式，则 <code>multipleMode</code> 将被设置为 false，这就是为什么用户任何时候只能一次选择一项。
+
+@serial
+@see #isMultipleMode()
+@see #setMultipleMode(boolean)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int[] java.awt.List.selected
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>selected</code> 是一个数组，它将包含已选中项的索引。
+
+@serial
+@see #getSelectedIndexes()
+@see #getSelectedIndex()
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+ int java.awt.List.visibleIndex
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此变量包含试图让某个特殊列表项可视时使用的值。
+
+@serial
+@see #makeVisible(int)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private int java.awt.List.listSerializedDataVersion
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>List</code> 组件的序列化数据版本 (Serialized Data Version)。
+
+@serial
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.List() throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建新的滚动列表。默认情况下，有四个可视行，并且不允许进行多项选择。注意，这是 <code>List(0, false)</code> 的一种便捷方法。还要注意，列表中的可视行数一旦创建就不能更改。
+@exception HeadlessException 如果为 GraphicsEnvironment.isHeadless()，则返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.List(int rows) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个用指定可视行数初始化的新滚动列表。默认情况下，不允许进行多项选择。注意，这是 <code>List(rows, false)</code> 的一种便捷方法。还要注意，列表中的可视行数一旦创建就不能更改。
+@param       rows 要显示的项数。
+@exception HeadlessException 如果为 GraphicsEnvironment.isHeadless()，则返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.List(int rows, boolean multipleMode) throws java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个初始化为显示指定行数的新滚动列表。注意，如果指定了零行，则会按默认的四行创建列表。还要注意，列表中的可视行数一旦创建就不能更改。如果 <code>multipleMode</code> 的值为 <code>true</code>，则用户可从列表中选择多项。如果为 <code>false</code>，则一次只能选择一项。
+@param       rows 要显示的项数。
+@param       multipleMode   如果为 <code>true</code>，则允许进行多项选择；否则，一次只能选择一项。
+@exception HeadlessException 如果为 GraphicsEnvironment.isHeadless()，则返回 true。
+@see java.awt.GraphicsEnvironment#isHeadless
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.addNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建列表的同位体。同位体允许我们在不更改列表功能的情况下修改其外观。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.removeNotify()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除此列表的同位体。同位体允许我们在不更改列表功能的情况下修改其外观。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.List.getItemCount()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取列表中的项数。
+@return     列表中的项数
+@see        #getItem
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.List.countItems()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated   从 JDK version 1.1 开始，由 <code>getItemCount()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String java.awt.List.getItem(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与指定索引关联的项。
+@return       一个与指定索引关联的项
+@param        index 项的位置
+@see          #getItemCount
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String[] java.awt.List.getItems()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取列表中的项。
+@return       一个包含列表中项的字符串数组
+@see          #select
+@see          #deselect
+@see          #isIndexSelected
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.add(String item)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向滚动列表的末尾添加指定的项。
+@param item 要添加的项
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.addItem(String item)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated      由 <code>add(String)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.add(String item, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+向滚动列表中索引指示的位置添加指定的项。索引是从零开始的。如果索引值小于零，或者索引值大于或等于列表中的项数，则将该项添加到列表的末尾。
+@param       item   要添加的项；如果此参数为 <code>null</code>，则该项被视为空字符串 <code>&quot;&quot;</code>
+@param       index 添加项的位置
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.addItem(String item, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated      由 <code>add(String, int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.replaceItem(String newValue, int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用新字符串替换滚动列表中指定索引处的项。
+@param       newValue   一个替换现有项的新字符串
+@param       index     要替换项的位置
+@exception ArrayIndexOutOfBoundsException 如果 <code>index</code> 超出范围。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.removeAll()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此列表中移除所有项。
+@see #remove
+@see #delItems
+@since JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.clear()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>removeAll()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.remove(String item)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从列表中移除项的第一次出现。如果选中了指定的项，并且该项是列表中唯一选中的项，则列表将被设置为无选择。
+@param        item  从列表中移除的项
+@exception    IllegalArgumentException 如果列表中不存在该项
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.remove(int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从此滚动列表中移除指定位置处的项。如果选中了指定位置的项，并且该项是列表中惟一选中的项，则列表将被设置为无选择。
+@param      position   要删除项的索引
+@see        #add(String, int)
+@since      JDK1.1
+@exception    ArrayIndexOutOfBoundsException 如果 <code>position</code> 小于零或大于 <code>getItemCount()-1</code>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.delItem(int position)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated     由 <code>remove(String)</code> 和 <code>remove(int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int java.awt.List.getSelectedIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取列表中选中项的索引。
+ 
+@return        选中项的索引；如果没有选中的项，或者选中了多项，则返回 <code>-1</code>。
+@see           #select
+@see           #deselect
+@see           #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized int[] java.awt.List.getSelectedIndexes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取列表中选中的索引。
+ 
+@return        此滚动列表中选中索引的一个数组；如果没有选中的项，则返回一个零长度的数组。
+@see           #select
+@see           #deselect
+@see           #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String java.awt.List.getSelectedItem()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动列表中选中的项。
+ 
+@return        列表中选中的项；如果没有选中的项，或者选中了多项，则返回 <code>null</code>。
+@see           #select
+@see           #deselect
+@see           #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.lang.String[] java.awt.List.getSelectedItems()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动列表中选中的项。
+ 
+@return        此滚动列表中选中项的数组；如果没有选中的项，则返回一个零长度的数组。
+@see           #select
+@see           #deselect
+@see           #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.Object[] java.awt.List.getSelectedObjects()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取对象数组中此滚动列表的选中项。
+@return        表示此滚动列表中选中项的 <code>Object</code> 数组；如果没有选中的项，则会返回一个零长度的数组。
+@see #getSelectedItems
+@see ItemSelectable
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.select(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+选择滚动列表中指定索引处的项。
+<p>
+注意，超出参数范围是无效的，并且将导致未指定的行为。
+
+<p>注意，此方法应主要用于初始选择此组件中的项。以编程方式调用此方法<i>不</i> 会触发 <code>ItemEvent</code>。触发 <code>ItemEvent</code> 的唯一方式是通过用户交互。
+
+@param        index 要选择的项位置
+@see          #getSelectedItem
+@see          #deselect
+@see          #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.deselect(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+取消选择指定索引处的项。
+ <p>
+注意，超出参数范围是无效的，并且将导致未指定的行为。
+ <p>
+如果指定索引处的项未选中，则忽略操作。
+@param        index 要取消选择项的位置
+@see          #select
+@see          #getSelectedItem
+@see          #isIndexSelected
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.List.isIndexSelected(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定是否已选中此滚动列表中的指定项。
+@param      index 要检查的项
+@return     如果已选中指定的项，则返回 <code>true</code>；否则返回 <code>false</code>
+@see        #select
+@see        #deselect
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.List.isSelected(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>isIndexSelected(int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.List.getRows()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此列表中的可视行数。注意，一旦完成 <code>List</code> 创建，行数将永远不变。
+@return     此滚动列表的可视行数
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.List.isMultipleMode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此列表是否允许进行多项选择。
+@return     如果此列表允许进行多项选择，则返回 <code>true</code>；否则返回 <code>false</code>
+@see        #setMultipleMode
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.awt.List.allowsMultipleSelections()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>isMultipleMode()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.List.setMultipleMode(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+设置确定此列表是否允许进行多项选择的标志。当选择模式从多项选择更改为单项选择时，选中的项将会发生以下变化：如果选中的项具有位置光标，则只有该项仍保持选中。如果无选中项具有位置光标，则所有项都将取消选中。
+@param       b   如果为 <code>true</code>，则允许进行多项选择；否则，只能一次从列表中选择一项。
+@see         #isMultipleMode
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.setMultipleSelections(boolean b)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>setMultipleMode(boolean)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.awt.List.getVisibleIndex()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取上次由 <code>makeVisible</code> 方法使其可视的项的索引。
+@return      上次变得可视的项的索引
+@see         #makeVisible
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.makeVisible(int index)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使指定索引处的项可视。
+@param       index    项的位置
+@see         #getVisibleIndex
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.getPreferredSize(int rows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取具有指定行数的列表的首选维数。
+@param      rows    列表的行数
+@return     给出此滚动列表必须可视的指定行数，返回用于显示滚动列表的首选维数 
+@see        java.awt.Component#getPreferredSize
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.preferredSize(int rows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getPreferredSize(int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.getPreferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取此滚动列表的首选大小。
+@return     用于显示此滚动列表的首选维数
+@see        java.awt.Component#getPreferredSize
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.preferredSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getPreferredSize()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.getMinimumSize(int rows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取具有指定行数的列表的最少维数。
+@param      rows    列表的行数
+@return     给出此滚动列表必须可视的指定行数，返回用于显示滚动列表的最少维数
+@see        java.awt.Component#getMinimumSize
+@since      JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.minimumSize(int rows)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getMinimumSize(int)</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.getMinimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+确定此滚动列表的最小大小。
+@return       显示此滚动列表所需的最少维数
+@see          java.awt.Component#getMinimumSize()
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.awt.Dimension java.awt.List.minimumSize()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，由 <code>getMinimumSize()</code> 取代。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.addItemListener(ItemListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的项侦听器以接收此列表的项事件。发送项事件以响应用户输入，但不响应对 <code>select</code> 或 <code>deselect</code> 的调用。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常，并且不执行动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"
+ >AWT 线程问题</a>。
+
+@param         l 项侦听器
+@see           #removeItemListener
+@see           #getItemListeners
+@see           #select
+@see           #deselect
+@see           java.awt.event.ItemEvent
+@see           java.awt.event.ItemListener
+@since         JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.removeItemListener(ItemListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的项侦听器，以便不再从此列表接收项事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常，并且不执行动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param	l 项侦听器
+@see           	#addItemListener
+@see           	#getItemListeners
+@see           	java.awt.event.ItemEvent
+@see           	java.awt.event.ItemListener
+@since         	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.ItemListener[] java.awt.List.getItemListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已在此列表上注册的所有项侦听器的数组。
+
+@return 此列表的所有 <code>ItemListener</code>，如果当前没有已注册的项侦听器，则返回一个空数组。
+
+@see           	#addItemListener
+@see           	#removeItemListener
+@see           	java.awt.event.ItemEvent
+@see           	java.awt.event.ItemListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.addActionListener(ActionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+添加指定的动作侦听器以从此列表接收动作事件。当用户双击列表项时或者在此列表具有键盘焦点时按 Enter 键，将发生动作事件。
+ <p>
+如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常，并且不执行动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param         l 动作侦听器
+@see           #removeActionListener
+@see           #getActionListeners
+@see           java.awt.event.ActionEvent
+@see           java.awt.event.ActionListener
+@since         JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.removeActionListener(ActionListener l)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+移除指定的动作侦听器，以便不再从此列表接收动作事件。当用户双击列表项时，将发生动作事件。如果侦听器 <code>l</code> 为 <code>null</code>，则不会抛出异常，并且不执行动作。
+<p>有关 AWT 的线程模型的详细信息，请参阅 <a href="doc-files/AWTThreadIssues.html#ListenersThreads"  >AWT 线程问题</a>。
+
+@param			l     动作侦听器
+@see           	#addActionListener
+@see           	#getActionListeners
+@see           	java.awt.event.ActionEvent
+@see           	java.awt.event.ActionListener
+@since         	JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized java.awt.event.ActionListener[] java.awt.List.getActionListeners()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回已在此列表上注册的所有动作侦听器的数组。
+
+@return 此列表的所有 <code>ActionListener</code>，如果当前没有已注册的动作侦听器，则返回一个空数组。
+
+
+@see           	#addActionListener
+@see           	#removeActionListener
+@see           	java.awt.event.ActionEvent
+@see           	java.awt.event.ActionListener
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public T[] java.awt.List.getListeners(java.lang.Class<T> listenerType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回目前已在此 <code>List</code> 上注册为 <code><em>Foo</em>Listener</code> 的所有对象的数组。<code><em>Foo</em>Listener</code> 是用 <code>add<em>Foo</em>Listener</code> 方法注册的。
+
+ <p>
+可以使用 class 字面值来指定 <code>listenerType</code> 参数，如 <code><em>Foo</em>Listener.class</code>。例如，可以查询其项侦听器具有以下代码的 <code>List</code> <code>l</code>：
+
+ <pre>ItemListener[] ils = (ItemListener[])(l.getListeners(ItemListener.class));</pre>
+
+如果不存在这样的侦听器，则此方法将返回一个空数组。
+
+@param listenerType 请求的侦听器类型；此参数应该指定一个从 <code>java.util.EventListener</code> 遗传下来的接口
+@return 在此列表上注册为 <code><em>Foo</em>Listener</code> 的所有对象的数组
+@exception ClassCastException 如果 <code>listenerType</code> 未指定实现 <code>java.util.EventListener</code> 的类或接口。
+
+@see #getItemListeners
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.List.processEvent(AWTEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此滚动列表的进程事件。如果事件是 <code>ItemEvent</code> 的一个实例，则该事件将调用 <code>processItemEvent</code> 方法。另外，如果事件是 <code>ActionEvent</code> 的一个实例，则它将调用 <code>processActionEvent</code>。如果事件不是一个项事件或动作事件，则它将调用超类的 <code>processEvent</code>。
+<p>注意，如果事件参数为 <code>null</code>，则行为未指定，并可能抛出异常。
+
+@param        e 事件
+@see          java.awt.event.ActionEvent
+@see          java.awt.event.ItemEvent
+@see          #processActionEvent
+@see          #processItemEvent
+@since        JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.List.processItemEvent(ItemEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理发生在此列表上的项事件，方法是将这些事件指派给所有已注册的 <code>ItemListener</code> 对象。
+ <p>
+除非此组件启用了项事件，才会调用此方法。当出现以下情况时，将启用项事件：
+ <p><ul>
+<li><code>ItemListener</code> 对象通过 <code>addItemListener</code> 注册。
+<li>项事件通过 <code>enableEvents</code> 启用。
+</ul>
+<p>注意，如果事件参数为 <code>null</code>，则行为未指定，并可能抛出异常。
+
+@param       e 项事件
+@see         java.awt.event.ItemEvent
+@see         java.awt.event.ItemListener
+@see         #addItemListener
+@see         java.awt.Component#enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected void java.awt.List.processActionEvent(ActionEvent e)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+处理发生在此列表上的动作事件，方法是将这些事件指派给所有已注册的 <code>ActionListener</code> 对象。
+ <p>
+除非此组件启用了动作事件，才会调用此方法。当出现以下情况时，将启用动作事件：
+ <p><ul>
+<li><code>ActionListener</code> 对象通过 <code>addActionListener</code> 注册。
+<li>动作事件通过 <code>enableEvents</code> 启用。
+ </ul>
+<p>注意，如果事件参数为 <code>null</code>，则行为未指定，并可能导致一个异常。
+
+@param       e 动作事件
+@see         java.awt.event.ActionEvent
+@see         java.awt.event.ActionListener
+@see         #addActionListener
+@see         java.awt.Component#enableEvents
+@since       JDK1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.lang.String java.awt.List.paramString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回表示此滚动列表状态的参数字符串。此字符串对调试很有用。
+@return    此滚动列表的参数字符串
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.awt.List.delItems(int start, int end)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+@deprecated 从 JDK version 1.1 开始，后来不再公开使用。只希望作为包私有方法时保留此方法。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.accessibility.AccessibleContext java.awt.List.getAccessibleContext()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取与此 <code>List</code> 关联的 <code>AccessibleContext</code>。对于列表，<code>AccessibleContext</code> 采用 <code>AccessibleAWTList</code> 的形式。如有必要，可以创建一个新的 <code>AccessibleAWTList</code> 实例。
+
+@return 一个 <code>AccessibleAWTList</code>，它将充当此 <code>List</code> 的 <code>AccessibleContext</code>。
+@since 1.3
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.List.readObject(ObjectInputStream s) throws java.lang.ClassNotFoundException, java.io.IOException, java.awt.HeadlessException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+读取 <code>ObjectInputStream</code>，如果它不为 <code>null</code>，则添加侦听器以接收由 <code>List</code> 激活的项事件和动作事件（由存储在流中的键指定）。未识别的键或值将被忽略。
+
+@param s 要写入的 <code>ObjectInputStream</code>
+@exception HeadlessException 如果为 <code>GraphicsEnvironment.isHeadless</code>，则返回 <code>true</code>
+@see #removeItemListener(ItemListener)
+@see #addItemListener(ItemListener)
+@see java.awt.GraphicsEnvironment#isHeadless
+@see #writeObject(ObjectOutputStream)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.awt.List.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将默认的可序列化字段写入流中。写入可序列化的 <code>ItemListeners</code> 和 <code>ActionListeners</code> 的列表作为可选数据。检测不可序列化的侦听器并且不尝试对其进行序列化。
+
+@serialData <code>null</code> 终止 0 或更多对的序列；这些对由一个 <code>String</code> 和一个 <code>Object</code> 组成；<code>String</code> 指示对象类型，为以下任意一种：<code>itemListenerK</code> 指示一个 <code>ItemListener</code> 对象；<code>actionListenerK</code> 指示一个 <code>ActionListener</code> 对象。
+
+@param s 要写入的 <code>ObjectOutputStream</code>
+@see AWTEventMulticaster#save(ObjectOutputStream, String, EventListener)
+@see java.awt.Component#itemListenerK
+@see java.awt.Component#actionListenerK
+@see #readObject(ObjectInputStream)
+
+<!-- END DATA -->

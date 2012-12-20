@@ -1,0 +1,60 @@
+<!-- BEGIN KEY -->
+public class javax.swing.text.NavigationFilter extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>NavigationFilter</code> 可用于限制光标的定位。当默认光标定位操作尝试重新定位光标时，它们将调用 <code>NavigationFilter</code>，（假定 <code>JTextComponent</code> 有一个非 null <code>NavigationFilter</code> 集合）。通过这种方式，<code>NavigationFilter</code> 可以有效地限制光标定位。同样，当用户更改选定内容以进一步限定光标的位置时，<code>DefaultCaret</code> 将调用 <code>NavigationFilter</code>。
+ <p>
+子类可以有条件地调用超类实现以限制可以放置光标的位置，或者直接调用 <code>FilterBypass</code>。
+
+@see javax.swing.text.Caret
+@see javax.swing.text.DefaultCaret
+@see javax.swing.text.View
+
+@version 1.4 12/19/03
+@since 1.4
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.NavigationFilter.setDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Caret 设置点之前调用。默认实现直接调用具有传入参数的 <code>FilterBypass</code>。子类可能希望有条件地调用具有不同位置的超类，或在 <code>FilterBypass</code> 上调用必需的方法。
+
+@param fb  可用于改变插入符位置的 FilterBypass
+@param dot  位置，该值 &gt;= 0
+@param bias  距所在点的偏差
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.swing.text.NavigationFilter.moveDot(NavigationFilter.FilterBypass fb, int dot, Position.Bias bias)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+在 Caret 移动点之前调用。默认实现直接调用具有传入参数的 <code>FilterBypass</code>。子类可能希望有条件地调用具有不同位置的超类，或在 <code>FilterBypass</code> 上调用必需的方法。
+
+@param fb  可用于改变插入符位置的 FilterBypass
+@param dot  位置，该值 &gt;= 0
+@param bias  新位置的偏差
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.swing.text.NavigationFilter.getNextVisualPositionFrom(JTextComponent text, int pos, Position.Bias bias, int direction, javax.swing.text.Position.Bias[] biasRet) throws javax.swing.text.BadLocationException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回从现在位置起的下一个放置插入符的可视位置。默认实现只将该方法转发给根视图。子类可能希望根据其他标准进一步限制放置插入符的位置。
+
+@param text 包含文本的 JTextComponent
+@param pos 用于确定下一个位置的位置
+@param bias 用于确定下一个位置的偏差
+@param direction 相对于当前位置的方向，可以视为通常在键盘上找到的方向键。它将是以下值之一：
+ <ul>
+ <li>SwingConstants.WEST
+ <li>SwingConstants.EAST
+ <li>SwingConstants.NORTH
+ <li>SwingConstants.SOUTH
+ </ul>
+@param biasRet 用于返回下一个位置的偏差结果
+@return  此模型中最能表示下一个可见位置的位置
+@exception BadLocationException
+@exception IllegalArgumentException 如果 <code>direction</code> 不是上面的合法值之一
+
+<!-- END DATA -->

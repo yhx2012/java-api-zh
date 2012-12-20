@@ -1,0 +1,22 @@
+<!-- BEGIN KEY -->
+public interface java.awt.ActiveEvent
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+知道如何对自身进行指派的事件的接口。通过实现此接口，可以使用 <code>EventDispatchThread</code> 将一个事件放置到事件队列，并且指派该事件时将调用其 <code>dispatch()</code> 方法。
+ <p>
+这是一种非常有用的避免死锁的机制。如果线程正在执行某个关键部分（即它已经进入了一个或多个监视器），调用其他同步代码可能导致死锁。为了避免潜在的死锁，可以创建一个 <code>ActiveEvent</code>，以便以后运行代码的第二部分。如果存在监视器争用，那么在第一个线程已经完成工作并退出监视器之前，第二个线程将一直处于阻塞状态。
+ <p>
+出于安全性考虑，使用 <code>ActiveEvent</code> 来避免从一个关键线程中调用不受信任的代码通常是很值得的。例如，同位体实现可以使用此设施来避免从系统线程调用用户代码。这样做可以避免潜在的死锁和拒绝服务攻击。
+
+@author  Timothy Prinzing
+@version 1.13 12/19/03
+@since   1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.awt.ActiveEvent.dispatch()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将事件指派给目标、事件源侦听器，或者做任何希望此事件去做的事情。
+
+<!-- END DATA -->

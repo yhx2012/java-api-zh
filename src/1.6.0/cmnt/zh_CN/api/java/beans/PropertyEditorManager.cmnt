@@ -1,0 +1,60 @@
+<!-- BEGIN KEY -->
+public class java.beans.PropertyEditorManager extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+PropertyEditorManager 可用于查找任何给定类型名称的属性编辑器。此属性编辑器必须支持 java.beans.PropertyEditor 接口，以编辑给定的对象。
+ <P>
+PropertyEditorManager 使用三种技术来查找给定类型的编辑器。首先，它提供一个 registerEditor 方法，允许专门为某一给定类型注册编辑器。其次，它试图通过将 &quot;Editor&quot; 添加到给定类型的完全限定类名中（例如 &quot;foo.bah.FozEditor&quot;）来查找合适的类。最后，它使用简单的类名称（没有包名称）添加 &quot;Editor&quot;，并在包的搜索路径中查找匹配类。
+ <P>
+因此，对于输入类 foo.bah.Fred，PropertyEditorManager 首先将查看其表以确定是否已经为 foo.bah.Fred 注册了编辑器，若已注册，则使用它。然后它将查找 foo.bah.FredEditor 类。接着将查找（比如说）standardEditorsPackage.FredEditor 类。
+ <p>
+默认 PropertyEditor 将被提供给 Java 基本类型 &quot;boolean&quot;、&quot;byte&quot;、&quot;short&quot;、&quot;int&quot;、&quot;long&quot;、&quot;float&quot; 和 &quot;double&quot;；并提供给类 java.lang.String、java.awt.Color 和 java.awt.Font。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.beans.PropertyEditorManager.registerEditor(java.lang.Class<?> targetType, java.lang.Class<?> editorClass)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册一个将用来编辑给定目标类的值的编辑器类。
+ 
+<p>如果有安全管理器，则首先调用其 <code>checkPropertiesAccess</code> 方法。这可能会导致 SecurityException 异常。
+ 
+@param targetType 要被编辑类型的 Class 对象
+@param editorClass 编辑器类的 Class 对象。如果该参数为 null，则将移除所有现有定义。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkPropertiesAccess</code> 方法不允许设置系统属性。
+@see SecurityManager#checkPropertiesAccess
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.beans.PropertyEditor java.beans.PropertyEditorManager.findEditor(java.lang.Class<?> targetType)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+查找给定目标类型的值编辑器。
+
+@param targetType  要被编辑类型的 Class 对象
+@return 给定目标类的编辑器对象。如果没有发现合适的编辑器，则结果为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized java.lang.String[] java.beans.PropertyEditorManager.getEditorSearchPath()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获得用来搜索属性编辑器的包名称。
+
+@return  为了查找属性编辑器而被搜索的包名称数组。
+<p>     此数组的默认值与实现有关，例如，Sun 实现最初被设置为 {&quot;sun.beans.editors&quot;}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static synchronized void java.beans.PropertyEditorManager.setEditorSearchPath(java.lang.String[] path)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+更改将用来查找属性编辑器的包名称的列表。
+ 
+<p>如果有安全管理器，则首先调用其 <code>checkPropertiesAccess</code> 方法。这可能会导致 SecurityException 异常。
+
+@param path  包名称数组。
+@exception  SecurityException  如果安全管理器存在并且其 <code>checkPropertiesAccess</code> 方法不允许设置系统属性。
+@see SecurityManager#checkPropertiesAccess
+
+<!-- END DATA -->

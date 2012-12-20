@@ -1,0 +1,265 @@
+<!-- BEGIN KEY -->
+public class java.util.Random extends java.lang.Object implements java.io.Serializable
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+此类的实例用于生成伪随机数流。此类使用 48 位的种子，使用线性同余公式 (linear congruential form) 对其进行了修改（请参阅 Donald Knuth 的<i>The Art of Computer Programming, Volume 3</i>，第 3.2.1 节）。
+ <p>
+如果用相同的种子创建两个 {@code Random} 实例，则对每个实例进行相同的方法调用序列，它们将生成并返回相同的数字序列。为了保证此属性的实现，为类 {@code Random} 指定了特定的算法。为了 Java 代码的完全可移植性，Java 实现必须让类 {@code Random} 使用此处所示的所有算法。但是允许 {@code Random} 类的子类使用其他算法，只要其符合所有方法的常规协定即可。
+ <p>
+{@code Random} 类实现的算法使用一个 {@code protected} 实用工具方法，每次调用它最多可提供 32 个伪随机生成的位。
+ <p>
+很多应用程序会发现 {@link Math#random} 方法更易于使用。
+
+@author  Frank Yellin
+@version 1.47, 02/07/06
+@since   JDK1.0
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private static final java.io.ObjectStreamField[] java.util.Random.serialPersistentFields
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+Random 的可序列化字段。
+
+@serialField    seed long； 随机计算的种子
+@serialField    nextNextGaussian double；要返回的下一个 Gaussian
+@serialField    haveNextNextGaussian boolean nextNextGaussian 是有效的 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Random()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+创建一个新的随机数生成器。此构造方法将随机数生成器的种子设置为某个值，该值与此构造方法的所有其他调用所用的值完全不同。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.util.Random(long seed)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+使用单个 {@code long} 种子创建一个新的随机数生成器。该种子是伪随机数生成器的内部状态的初始值，该生成器可通过方法 {@link #next} 维护。
+
+ <p>调用 {@code new Random(seed)} 等效于：
+  <pre> {@code
+ Random rnd = new Random();
+ rnd.setSeed(seed);}</pre>
+
+ @param seed 初始种子
+ @see   #setSeed(long)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized void java.util.Random.setSeed(long seed)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+使用单个 {@code long} 种子设置此随机数生成器的种子。{@code setSeed} 的常规协定是它更改此随机数生成器对象的状态，使其状态好像是刚刚使用参数 {@code seed} 作为种子创建它的状态一样。通过将种子自动更新为 <pre>{@code (seed ^ 0x5DEECE66DL) & ((1L << 48) - 1)}</pre> 并清除 {@link
+ #nextGaussian} 使用的 {@code haveNextNextGaussian} 标志，{@code Random} 类可实现 {@code setSeed} 方法。
+<p>{@code Random} 类实现的 {@code setSeed} 恰好只使用 48 位的给定种子。但是，通常重写方法可能使用 {@code long} 参数的所有 64 位作为种子值。
+@param   seed   初始种子。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected int java.util.Random.next(int bits)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成下一个伪随机数。当被所有其他方法使用时，子类应该重写此方法。
+<p>{@code next} 的常规协定是，返回一个 {@code int} 值，如果参数 {@code bits} 位处于 {@code 1} 和 {@code 32}（包括）之间，那么返回值的多数低位都将（大致）是单独选择的位值，每个位值是 {@code 0} 或 {@code 1} 的机会（大致）相等。通过将种子自动更新为 <pre>{@code (seed * 0x5DEECE66DL + 0xBL) & ((1L << 48) - 1)}</pre> 并返回 <pre>{@code (int)(seed >>> (48 - bits))}，{@code Random} 类可实现 {@code next} 方法。</pre>
+
+这是一个线性同余伪随机数生成器，由 D. H. Lehmer 定义，Donald E. Knuth 在 <i>The Art of Computer Programming,</i> Volume 3: <i>Seminumerical Algorithms</i> 的第 3.2.1 节中进行了描述。 
+
+@param   bits 随机位。
+@return  随机数生成器序列的下一个伪随机值。
+@since   1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void java.util.Random.nextBytes(byte[] bytes)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+生成随机字节并将其置于用户提供的 byte 数组中。所生成的随机字节数等于该 byte 数组的长度。
+ 
+<p>{@code Random} 类按如下方式实现 {@code nextBytes} 方法：
+ <pre> {@code
+ public void nextBytes(byte[] bytes) {
+   for (int i = 0; i < bytes.length; )
+     for (int rnd = nextInt(), n = Math.min(bytes.length - i, 4);
+          n-- > 0; rnd >>= 8)
+       bytes[i++] = (byte)rnd;
+ }}</pre>
+
+ @param  bytes 用随机字节填充的 byte 数组
+ @throws NullPointerException 如果 byte 数组为 null
+ @since  1.1
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Random.nextInt()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是此随机数生成器的序列中均匀分布的 {@code int} 值。{@code nextInt} 的常规协定是，伪随机地生成并返回一个 {@code int} 值。所有 2<font size="-1"><sup>32</sup></font> 个可能 {@code int} 值的生成概率（大致）相同。
+<p>{@code Random} 类按如下方式实现 {@code nextInt} 方法：
+ <pre> {@code
+ public int nextInt() {
+   return next(32);
+ }}</pre>
+
+@return  下一个伪随机数，它是此随机数生成器的序列中均匀分布的 {@code int} 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int java.util.Random.nextInt(int n)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回一个伪随机数，它是取自此随机数生成器序列的、在 0（包括）和指定值（不包括）之间均匀分布的 {@code int} 值。{@code nextInt} 的常规协定是，伪随机地生成并返回指定范围中的一个 {@code int} 值。所有可能的 <tt>n</tt> 个 {@code int} 值的生成概率（大致）相同。{@code Random} 类按如下方式实现 {@code nextInt(int n)} 方法：
+ <pre> {@code
+ public int nextInt(int n) {
+     if (n<=0)
+		throw new IllegalArgumentException("n must be positive");
+
+     if ((n & -n) == n)  // i.e., n is a power of 2
+         return (int)((n * (long)next(31)) >> 31);
+
+     int bits, val;
+     do {
+         bits = next(31);
+         val = bits % n;
+     } while(bits - val + (n-1) < 0);
+     return val;
+  }}</pre>
+ 
+<p>前面的描述中使用了不确定的词“大致”，因为 next 方法只是一个大致上独自选择位的无偏源。如果它是一个随机选择位的最佳源，那么给出的算法应该从规定范围完全一致地选择 {@code int} 值。
+ <p>
+该算法稍微有些复杂。它拒绝那些会导致不均匀分布的值（由于 2^31 无法被 n 整除）。某个值被拒绝的概率取决于 n。最坏的情况是 n=2^30+1，拒绝的概率是 1/2，循环终止前的预计迭代次数是 2。
+ <p>
+该算法特别对待 n 是 2 的次幂的情况：它从底层伪随机数生成器中返回正确的高位数。在不是特殊处理的情况中，将返回正确的<i>低</i> 位数。众所周知，线性同余伪随机数生成器（比如此类所实现的）在其低位的值序列中周期较短。因此，如果 n 是 2 的次幂（幂值较小），则这种特殊情况将大大增加此方法的后续调用所返回的值序列长度。
+
+@param n 要返回的随机数的范围。必须为正数。
+@return  下一个伪随机数，在此随机数生成器序列中 {@code 0}（包括）和 {@code n}（不包括）之间均匀分布的 {@code int} 值。
+@exception IllegalArgumentException 如果 n 不是正数
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long java.util.Random.nextLong()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是取自此随机数生成器序列的均匀分布的 {@code long} 值。{@code nextLong} 的常规协定是，伪随机地生成并返回一个 {@code long} 值。
+<p>{@code Random} 类按如下方式实现 {@code nextLong} 方法：
+  <pre> {@code
+ public long nextLong() {
+       return ((long)next(32) << 32) + next(32);
+  }}</pre>
+ 
+因为 {@code Random} 类使用只以 48 位表示的种子，所以此算法不会返回所有可能的 {@code long} 值。
+
+@return  下一个伪随机数，它是此随机数生成器序列中均匀分布的 {@code long} 值。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean java.util.Random.nextBoolean()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是取自此随机数生成器序列的均匀分布的 {@code boolean} 值。{@code nextBoolean} 的常规协定是，伪随机地生成并返回一个 {@code boolean} 值。值 {@code true} 和 {@code false} 的生成概率（大致）相同。
+<p>{@code Random} 类按如下方式实现 {@code nextBoolean} 方法：
+  <pre> {@code
+ public boolean nextBoolean() {
+   return next(1) != 0;
+ }}</pre>
+@return  下一个伪随机数，它是此随机数生成器的序列中均匀分布的 {@code boolean} 值。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public float java.util.Random.nextFloat()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是取自此随机数生成器序列的、在 {@code 0.0} 和 {@code 1.0} 之间均匀分布的 {@code float} 值。
+<p>{@code nextFloat} 的常规协定是，伪随机地生成并返回一个从 {@code 0.0f}（包括）到 {@code 1.0f}（包括）范围内均匀选择（大致）的 {@code float} 值。所有可能的 2<font
+ size="-1"><sup>24</sup></font> 个 {@code float} 值（其形式为 <i>m&nbsp;x&nbsp</i>2<font size="-1"><sup>-24</sup></font>，其中 <i>m</i> 是一个小于 2<font size="-1"><sup>24</sup> </font> 的正整数）的生成概率（大致）相同。
+<p>{@code Random} 类按如下方式实现 {@code nextFloat} 方法：
+ <pre> {@code
+ public float nextFloat() {
+      return next(24) / ((float)(1 << 24));
+ }}</pre>
+<p>前面的描述中使用了不确定的词“大致”，因为 next 方法只是一个大致上独立选择位的无偏源。如果它是一个随机选择位的最佳来源，那么给出的算法应该从规定范围完全一致地选择 {@code float} 值。<p>
+[在 Java 的早期版本中，结果被错误地计算为：
+ <pre> {@code
+   return next(30) / ((float)(1 << 30));}</pre>
+这可能看似等效（如果不是更好的话），但实际上由于浮点数舍入中的偏差，它会导致轻微的不均匀性：有效数的低位更可能是 0 而不是 1。] 
+
+@return  下一个伪随机数，它是取自此随机数生成器序列的、在 {@code 0.0} 和 {@code 1.0} 之间均匀分布的 {@code float} 值
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public double java.util.Random.nextDouble()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是取自此随机数生成器序列的、在 {@code 0.0} 和 {@code 1.0} 之间均匀分布的 {@code double} 值。 
+<p>{@code nextDouble} 的常规协定是，伪随机地生成并返回一个从 {@code 0.0d}（包括）到 {@code 1.0d}（不包括）范围内均匀选择（大致）的 {@code double} 值。
+<p>{@code Random} 类按如下方式实现 {@code nextDouble} 方法：
+<pre> {@code
+public double nextDouble() {
+       return (((long)next(26) << 27) + next(27))
+           / (double)(1L << 53);
+ }}</pre>
+<p>前面的描述中使用了不确定的词“大致”，因为 {@code next} 方法只是一个大致上独立选择位的无偏源。如果它是一个随机选择位的最佳源，那么给出的算法应该从规定范围完全一致地选择 {@code double} 值。 
+<p>[在 Java 的早期版本中，结果被错误地计算为：
+ <pre> {@code
+  return (((long)next(27) << 27) + next(27))
+      / (double)(1L << 54);}</pre>
+这可能看似等效（如果不是更好的话），但实际上由于浮点数舍入中的偏差，它会引入较大的不均匀性：有效数的低位出现 0 的可能性是 1 的三倍！这种不均匀性在实践中可能没什么关系，但我们总是力求完美。] 
+
+@return  下一个伪随机数，它是此随机数生成器序列中 {@code 0.0} 和 {@code 1.0} 之间均匀分布的 {@code double} 值
+@see Math#random
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public synchronized double java.util.Random.nextGaussian()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回下一个伪随机数，它是取自此随机数生成器序列的、呈高斯（“正态”）分布的 {@code double} 值，其平均值是 {@code 0.0}，标准差是 {@code 1.0}。
+ <p>
+{@code nextGaussian} 的常规协定是，伪随机地生成并返回一个 {@code double} 值，该值从（大致）具有平均值 {@code 0.0} 和标准差 {@code 1.0} 的标准正态分布中选择。
+<p>{@code Random} 类按以下这种线程安全的方式实现 {@code nextGaussian} 方法：
+ <pre> {@code
+ private double nextNextGaussian;
+ private boolean haveNextNextGaussian = false;
+
+ public double nextGaussian() {
+   if (haveNextNextGaussian) {
+     haveNextNextGaussian = false;
+     return nextNextGaussian;
+   } else {
+     double v1, v2, s;
+     do {
+       v1 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+       v2 = 2 * nextDouble() - 1;   // between -1.0 and 1.0
+       s = v1 * v1 + v2 * v2;
+     } while (s >= 1 || s == 0);
+     double multiplier = StrictMath.sqrt(-2 * StrictMath.log(s)/s);
+     nextNextGaussian = v2 * multiplier;
+     haveNextNextGaussian = true;
+     return v1 * multiplier;
+   }
+ }}</pre>
+这使用了 G. E. P. Box、M. E. Muller 和 G. Marsaglia 的<i>极坐标法 (polar method)</i>，该方法在 Donald E. Knuth 的 <i>The Art of Computer Programming</i>, Volume 3:<i>Seminumerical Algorithms</i> 的第 3.4.1 节，小节 C，算法 P 中进行了描述。注意，它只需调用一次 {@code StrictMath.log} 和调用一次 {@code StrictMath.sqrt}> 就可以生成两个独立的值。
+
+@return  下一个伪随机数，它是取自此随机数生成器序列的、呈高斯（“正态”）分布的 {@code double} 值，其平均值是 {@code 0.0}，标准差是 {@code 1.0}。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private void java.util.Random.readObject(ObjectInputStream s) throws java.io.IOException, java.lang.ClassNotFoundException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从流中重构 {@code Random} 实例（也就是将其反序列化）。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+private synchronized void java.util.Random.writeObject(ObjectOutputStream s) throws java.io.IOException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将 {@code Random} 实例保存到流中。
+
+
+<!-- END DATA -->

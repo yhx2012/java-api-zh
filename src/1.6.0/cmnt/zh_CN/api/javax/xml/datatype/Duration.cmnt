@@ -1,0 +1,594 @@
+<!-- BEGIN KEY -->
+public abstract class javax.xml.datatype.Duration extends java.lang.Object
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>W3C XML 模式 1.0 规范中定义的时间范围的不可变表示形式。</p>
+ 
+<p>Duration 对象表示一段阳历时间，它由六个字段（years、months、days、hours、minutes 和 seconds）加上符号 (+/-) 字段组成。</p>
+ 
+<p>前五个字段为非负 (&gt;=0) 整数或 null（表示不设置字段），seconds 字段为非负小数或 null。负号指示负的持续时间。</p> 
+ 
+<p>此类提供大量的方法，使 XML 模式 1.0 及勘误中的 duration 数据类型的使用更简单。</p>
+ 
+<h2>顺序关系</h2>
+<p>Duration 对象只有部分顺序，其中值 A 和 B 可以是以下任一顺序：</p>
+ <ol>
+<li>A&lt;B（A 比 B 短）
+<li>A&gt;B（A 比 B 长）
+<li>A==B（A 和 B 的持续时间相同）
+<li>A&lt;&gt;B（A 和 B 之间的比较是不确定的）
+ </ol>
+
+<p>例如，将 30 天与一个月比较没有意义。{@link #compare(Duration duration)} 方法实现此关系。</p>
+ 
+<p>有关 <code>Duration</code> 对象之间顺序关系的详细信息，请参阅 {@link #isLongerThan(Duration)} 方法。</p>
+ 
+<h2>对 Duration 的操作</h2>
+<p>此类提供一组基本的算术运算，如加、减和乘。因为持续时间没有整体顺序，对一些组合操作，操作可能失败。例如，不能从 1 个月减去 15 天。有关发生此情形的详细情况，请参阅这些方法的 javadoc。</p>
+ 
+<p>另外，不提供持续时间除以数字的除法，因为 <code>Duration</code> 类仅处理有限精度的十进制数字。例如，无法表示 1 秒除以 3。</p> 
+ 
+<p>但可以用乘以数字（如 0.3 或 0.333）替代除以 3 的除法。</p>
+ 
+<h2>允许值的范围</h2>
+ <p>
+即使 {@link Duration} 可以保持非常大或非常小的值，因为某些 <code>Duration</code> 的操作依赖于 {@link Calendar}，所以一些方法不能在此类 <code>Duration</code> 上正常工作。受影响的方法记录其对 {@link Calendar} 的依赖。
+ 
+  
+@author <a href="mailto:Joseph.Fialli@Sun.COM">Joseph Fialli</a>
+@author <a href="mailto:Kohsuke.Kawaguchi@Sun.com">Kohsuke Kawaguchi</a>
+@author <a href="mailto:Jeff.Suttor@Sun.com">Jeff Suttor</a>
+@author <a href="mailto:Sunitha.Reddy@Sun.com">Sunitha Reddy</a>
+@version $Revision: 1.4 $, $Date: 2006-09-18 09:03:05 $
+@see XMLGregorianCalendar#add(Duration)
+@since 1.5
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.datatype.Duration()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+ 默认的无参数构造方法。
+
+ <p>注：总是使用 {@link DatatypeFactory} 来构造 <code>Duration</code> 实例。无法保证此类上的构造方法生成具有一致状态并可在以后移除的对象。</p>
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.namespace.QName javax.xml.datatype.Duration.getXMLSchemaType()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此实例映射到的 XML 模式日期/时间类型的名称。类型根据设置的字段来计算，即 {@link #isSet(DatatypeConstants.Field field)} == <code>true</code>。</p>
+
+ <table border="2" rules="all" cellpadding="2">
+   <thead>
+     <tr>
+       <th align="center" colspan="7">
+XML 模式 1.0 日期/时间数据类型的必需字段。<br/><i>（对于所有日期/时间数据类型，时区是可选的）</i>
+       </th>
+     </tr>
+   </thead>
+   <tbody>
+     <tr>
+<td>数据类型</td>
+       <td>year</td>
+       <td>month</td>
+       <td>day</td>
+       <td>hour</td>
+       <td>minute</td>
+       <td>second</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#DURATION}</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#DURATION_DAYTIME}</td>
+       <td></td>
+       <td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+     </tr>
+     <tr>
+       <td>{@link DatatypeConstants#DURATION_YEARMONTH}</td>
+<td>X</td>
+<td>X</td>
+       <td></td>
+       <td></td>
+       <td></td>
+       <td></td>
+     </tr>
+   </tbody>
+ </table>
+ 
+@return 以下常量之一：{@link DatatypeConstants#DURATION}、{@link DatatypeConstants#DURATION_DAYTIME} 或 {@link DatatypeConstants#DURATION_YEARMONTH}。
+  
+@throws IllegalStateException 如果设置字段的组合与 XML 模式日期/时间数据类型之一不匹配。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.Duration.getSign()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+以 -1、0 或 1 的形式返回此持续时间的符号。
+ 
+@return 如果此持续时间为负，则返回 -1；如果持续时间为零，则返回 0；如果持续时间为正，则返回 1。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getYears()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>获取此 <code>Duration</code> 以 <code>int</code> 表示的 years 值，如果不存在，则值为 <code>0</code>。</p>
+ 
+<p><code>getYears()</code> 是 {@link #getField(DatatypeConstants.Field field) getField(DatatypeConstants.YEARS)} 的一个便捷方法。</p>
+ 
+<p>由于返回值是 <code>int</code>，所以对于具有超出 <code>int</code> 范围的年值的 <code>Duration</code>，返回不正确的值。使用 {@link #getField(DatatypeConstants.Field field) getField(DatatypeConstants.YEARS)} 避免可能的精度丢失。</p>
+ 
+@return 如果存在 years 字段，则返回以 <code>int</code> 表示的值，否则返回 <code>0</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getMonths()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取整数值形式的 MONTHS 字段的值，如果不存在，则值为 0。
+ 
+除了对 MONTHS 字段的作用之外，此方法的其他功能与 {@link #getYears()} 相似。
+ 
+@return 此 <code>Duration</code> 的月。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getDays()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取整数值形式的 DAYS 字段的值，如果不存在，则值为 0。
+ 
+除了对 MONTHS 字段的作用之外，此方法的其他功能与 {@link #getYears()} 相似。
+ 
+@return 此 <code>Duration</code> 的日。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getHours()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取整数值形式的 HOURS 字段的值，如果不存在，则值为 0。
+ 
+除了对 HOURS 字段的作用之外，此方法的其他功能与 {@link #getYears()} 相似。 
+ 
+@return 此 <code>Duration</code> 的时。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getMinutes()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取整数值形式的 MINUTES 字段的值，如果不存在，则值为 0。
+ 
+除了对 MINUTES 字段的作用之外，此方法的其他功能与 {@link #getYears()} 相似。  
+ 
+@return 此 <code>Duration</code> 的分。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public int javax.xml.datatype.Duration.getSeconds()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取整数值形式的 SECONDS 字段的值，如果不存在，则值为 0。
+ 
+除了对 SECONDS 字段的作用之外，此方法的其他功能与 {@link #getYears()} 相似。 
+ 
+@return 秒的整数值。将丢弃秒的小数部分（例如，如果实际值是 2.5，则此方法返回 2）
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.xml.datatype.Duration.getTimeInMillis(Calendar startInstant)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回以毫秒为单位的持续时间的长度。</p>
+ 
+<p>如果秒字段比毫秒字段带的位数更多，则丢弃多余的位数（即去尾舍入）。例如，对于任何日历值 <code>x</code>，</p>
+ <pre>
+<code>new Duration(&quot;PT10.00099S&quot;).getTimeInMills(x) == 10000</code>。
+<code>new Duration(&quot;-PT10.00099S&quot;).getTimeInMills(x) == -10000</code>。
+ </pre>
+ 
+ <p>
+注意，此方法使用 {@link #addTo(Calendar)} 方法，使用在其字段中具有更大值的 <code>Duration</code> 对象可能无法正确工作。有关详细信息，请参阅 {@link #addTo(Calendar)} 方法。
+ 
+@param startInstant 月/年的长度不同。使用 <code>startInstant</code> 确定此偏差。明确地说，此方法返回 <code>startInstant</code> 和 <code>startInstant+duration</code> 之间的差异
+ 
+@return <code>startInstant</code> 和 <code>startInstant</code> 之间的毫秒加上此 <code>Duration</code>
+
+@throws NullPointerException 如果 <code>startInstant</code> 参数为 null。
+ 
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public long javax.xml.datatype.Duration.getTimeInMillis(Date startInstant)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回以毫秒为单位的持续时间的长度。</p>
+ 
+<p>如果秒字段比毫秒字段带的位数更多，则丢弃多余的位数（即去尾舍入）。例如，对于任何 <code>Date</code> 值 <code>x</code>，</p>   
+ <pre>
+<code>new Duration(&quot;PT10.00099S&quot;).getTimeInMills(x) == 10000</code>。
+<code>new Duration(&quot;-PT10.00099S&quot;).getTimeInMills(x) == -10000</code>。
+ </pre>
+ 
+ <p>
+注意，此方法使用 {@link #addTo(Date)} 方法，该方法对于具有较大字段值的 <code>Duration</code> 对象工作正常。有关详细信息，请参阅 {@link #addTo(Date)} 方法。
+ 
+@param startInstant 月/年的长度不同。使用 <code>startInstant</code> 确定此偏差。明确地说，此方法返回 <code>startInstant</code> 和 <code>startInstant+duration</code> 之间的差异
+ 
+@throws NullPointerException 如果 startInstant 参数为 null。
+ 
+@return <code>startInstant</code> 和 <code>startInstant</code> 之间的毫秒加上此 <code>Duration</code>
+
+
+@see #getTimeInMillis(Calendar)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract java.lang.Number javax.xml.datatype.Duration.getField(DatatypeConstants.Field field)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+获取字段的值。 
+ 
+duration 对象的字段可以包含任意大的值。因此，设计此方法的目的是返回 {@link Number} 对象。
+ 
+就 YEARS、MONTHS、DAYS、HOURS 和 MINUTES 来说，返回的数字将是一个非负整数。就 seconds 来说，返回的数字可以是一个非负的十进制值。
+ 
+@param field 六个字段常量之一（YEARS、MONTHS、DAYS、HOURS、MINUTES 或 SECONDS。）
+@return 如果指定的字段存在，则此方法返回表示其值的非 null 的非负 {@link Number} 对象。如果不存在，则返回 null。对于 YEARS、MONTHS、DAYS、HOURS 和 MINUTES，此方法返回 {@link java.math.BigInteger} 对象。对于 SECONDS，此方法返回 {@link java.math.BigDecimal}。 
+ 
+@throws NullPointerException 如果 <code>field</code> 为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract boolean javax.xml.datatype.Duration.isSet(DatatypeConstants.Field field)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+检查是否设置了字段。
+ 
+duration 对象的字段不一定存在。可以使用此方法测试字段是否存在。
+ 
+@param field 六个字段常量之一（YEARS、MONTHS、DAYS、HOURS、MINUTES 或 SECONDS。）
+@return 如果字段存在，则返回 true，否则返回 false。
+ 
+@throws NullPointerException 如果字段参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.datatype.Duration javax.xml.datatype.Duration.add(Duration rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>计算值为 <code>this+rhs</code> 的新持续时间。</p>
+ 
+<p>例如，</p>
+ <pre>
+ &quot;1 day&quot; + &quot;-3 days&quot; = &quot;-2 days&quot;
+ &quot;1 year&quot; + &quot;1 day&quot; = &quot;1 year and 1 day&quot;
+ &quot;-(1 hour,50 minutes)&quot; + &quot;-20 minutes&quot; = &quot;-(1 hours,70 minutes)&quot;
+ &quot;15 hours&quot; + &quot;-3 days&quot; = &quot;-(2 days,9 hours)&quot;
+ &quot;1 year&quot; + &quot;-1 day&quot; = IllegalStateException
+ </pre>
+ 
+<p>由于从 1 月减去 1 天没有意义，所以 {@link IllegalStateException} 中存在操作失败的情况。</p> 
+ 
+ <p>
+正式地说，应按以下方法定义计算。</p>
+ <p>
+首先，在一般意义下，可以假设要添加的两个 <code>Duration</code> 是两个正数（即 <code>(-X)+Y=Y-X</code>、<code>X+(-Y)=X-Y</code>、<code>(-X)+(-Y)=-(X+Y)</code>）
+ 
+ <p>
+根据逐字段相加定义两个正 <code>Duration</code> 的相加，其中缺少的字段视为 0。
+ <p>
+当且仅当未设置两个输入 <code>Duration</code> 的各自字段时，将不设置产生的 <code>Duration</code> 的字段。 
+ <p>
+注意，如果 <code>lhs.signum()*rhs.signum()!=-1</code>，或将它们两个标准化，则 <code>lhs.add(rhs)</code> 将总是成功的。</p>
+ 
+@param rhs 要添加到此 <code>Duration</code> 的 <code>Duration</code>
+ 
+@return 非 null 的有效 Duration 对象。
+ 
+@throws NullPointerException 如果 rhs 参数为 null。
+@throws IllegalStateException 如果两个持续时间的相加没有意义。例如，将负的一天添加到一月将导致此异常。
+ 
+@see #subtract(Duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract void javax.xml.datatype.Duration.addTo(Calendar calendar)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此持续时间添加到 {@link Calendar} 对象。
+ 
+ <p>
+按 YEARS、MONTHS、DAYS、HOURS、MINUTES、SECONDS 和 MILLISECONDS 的顺序调用 {@link java.util.Calendar#add(int,int)}，如果这些字段存在的话。因为 {@link Calendar} 类使用整数保持值，所以存在此方法不能正确工作的情况（例如，如果字段的值超出整数的范围。） 
+ </p>
+ 
+ <p>
+另外，由于此 duration 类是阳历持续时间，所以如果给定的 {@link Calendar} 对象基于一些其他日历系统，则此方法将不能正确工作。 
+ </p>
+ 
+ <p>
+对于此 <code>Duration</code> 对象的小数部分，只忽略毫秒之外的数字。例如，如果此持续时间是&ldquo;P1.23456S&rdquo;，那么将 1 添加到 SECONDS，将 234 添加到 MILLISECONDS，不使用其余部分。 
+ </p>
+ 
+ <p>
+注意，因为 {@link Calendar#add(int, int)} 正在使用 <code>int</code>，所以带有超出其字段中 <code>int</code> 范围值的 <code>Duration</code> 将导致给定 {@link Calendar} 的上溢/下溢。link XMLGregorianCalendar#add(Duration)} 提供与此方法相同的基本操作，同时避免上溢/下溢问题。
+ 
+@param calendar 值将被修改的日历对象。
+@throws NullPointerException 如果日历参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public void javax.xml.datatype.Duration.addTo(Date date)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+将此持续时间添加到 {@link Date} 对象。
+ 
+ <p>
+将给定的数据首先转换为 {@link java.util.GregorianCalendar}，然后完全按照 {@link #addTo(Calendar)} 方法添加持续时间。
+ 
+ <p>
+然后将更新的时间点转换回 {@link Date} 对象，并用于更新给定的 {@link Date} 对象。
+ 
+ <p>
+此冗余计算对明确地确定月和年的持续时间是必需的。
+ 
+@param date 值将被修改的日期对象。
+@throws NullPointerException 如果日期参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.datatype.Duration javax.xml.datatype.Duration.subtract(Duration rhs)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>计算值为 <code>this-rhs</code> 的新持续时间。</p>
+ 
+<p>例如：</p>
+ <pre>
+ &quot;1 day&quot; - &quot;-3 days&quot; = &quot;4 days&quot;
+ &quot;1 year&quot; - &quot;1 day&quot; = IllegalStateException
+ &quot;-(1 hour,50 minutes)&quot; - &quot;-20 minutes&quot; = &quot;-(1hours,30 minutes)&quot;
+ &quot;15 hours&quot; - &quot;-3 days&quot; = &quot;3 days and 15 hours&quot;
+ &quot;1 year&quot; - &quot;-1 day&quot; = &quot;1 year and 1 day&quot;
+ </pre>
+ 
+<p>由于从 1 月减去 1 天没有意义，所以 {@link IllegalStateException} 中存在操作失败的情形。</p> 
+ 
+<p>正式地说，应按以下方法定义计算。首先，在一般意义下，可以假设两个 <code>Duration</code> 都是两个正数。（即 <code>(-X)-Y=-(X+Y)</code>、<code>X-(-Y)=X+Y</code>、<code>(-X)-(-Y)=-(X-Y)</code>）</p>
+  
+<p>然后，逐字段减去两个持续时间。如果任何非零字段 <code>F</code> 的符号与最重要的字段的符号不同，则将从 <code>F</code> 的下一个较大单位借用 1（如果 <code>F</code> 为负）或 -1（如果为非负）。</p>
+ 
+<p>重复此过程，直到所有的非零字段具有相同符号。</p> 
+ 
+<p>如果在 days 字段中发生借用（换句话说，如果计算需要借用 1 或 -1 月，以补偿 days），那么计算会失败，并抛出 {@link IllegalStateException}。</p>
+ 
+@param rhs 从 <code>Duration</code> 减去的 <code>Duration</code>。
+  
+@return 通过从此 <code>Duration</code> 减去 <code>rhs</code> 创建的新 <code>Duration</code>。
+ 
+@throws IllegalStateException 如果两个持续时间的相减没有意义。例如，从一月减去一天会导致此异常。
+ 
+@throws NullPointerException 如果 rhs 参数为 null。
+ 
+@see #add(Duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public javax.xml.datatype.Duration javax.xml.datatype.Duration.multiply(int factor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>计算新的持续时间，值为此持续时间值的 <code>factor</code> 倍。</p>
+ 
+<p>提供此方法是为了方便使用。它在功能上等同于以下代码：</p>
+ <pre>
+ multiply(new BigDecimal(String.valueOf(factor)))
+ </pre>
+ 
+@param factor 要创建的新 <code>Duration</code> 的 Factor 倍数。
+ 
+@return 作为此 <code>Duration</code> 的 <code>factor</code> 倍的新 <code>Duration</code>。
+ 
+@see #multiply(BigDecimal)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.datatype.Duration javax.xml.datatype.Duration.multiply(BigDecimal factor)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+计算新的持续时间，其值是此持续时间值的 <code>factor</code> 倍。
+ 
+ <p>
+例如，
+ <pre>
+ &quot;P1M&quot; (1 month) * &quot;12&quot; = &quot;P12M&quot; (12 months)
+ &quot;PT1M&quot; (1 min) * &quot;0.3&quot; = &quot;PT18S&quot; (18 seconds)
+ &quot;P1M&quot; (1 month) * &quot;1.5&quot; = IllegalStateException
+ </pre>
+  
+ <p>
+由于 <code>Duration</code> 类是不可变的，所以此方法不更改此对象的值。它仅计算新的 Duration 对象，并返回它。
+ 
+ <p>
+将通过 {@link BigDecimal} 的精度逐字段执行操作。由于除 seconds 外的所有字段限于保持整数，计算产生的任何小数向下进位到下一个低单位。例如，如果 &quot;P1D&quot;（1 天）乘 &quot;0.5&quot;，那么将得到 0.5 天，它将向下进位到 &quot;PT12H&quot;（12 小时）。当月的小数向下进位到日或年的小数向下进位到月没有意义时，将导致抛出 {@link IllegalStateException}。例如，将一个月乘以 0.5 时将抛出上述异常。</p>
+ 
+ <p>
+要避免 {@link IllegalStateException}，请使用 {@link #normalizeWith(Calendar)} 方法移除 years 和 months 字段。
+ 
+@param factor 相乘的因子
+ 
+@return 返回非 null 的有效 <code>Duration</code> 对象
+
+@throws IllegalStateException 如果操作在 months 字段中生成小数。
+
+@throws NullPointerException 如果 <code>factor</code> 参数为 <code>null</code>。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.datatype.Duration javax.xml.datatype.Duration.negate()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回值为 <code>-this</code> 的新 <code>Duration</code> 对象。
+ 
+ <p>
+由于 <code>Duration</code> 类是不可变的，所以此方法不更改此对象的值。它仅计算新的 Duration 对象，并返回它。
+ 
+@return 总是返回非 null 的有效 <code>Duration</code> 对象。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract javax.xml.datatype.Duration javax.xml.datatype.Duration.normalizeWith(Calendar startTimeInstant)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>通过使用特定的时间点作为参考点，将 years 和 months 字段转换为 days 字段。</p>
+ 
+<p>例如，一个月的持续时间可以标准化为 31 天，给出的时间点是 &quot;July 8th 2003, 17:40:32&quot;。</p>
+ 
+<p>正式地说，应按以下方法进行计算：</p>
+ <ol>
+<li>复制给定的 Calendar 对象</li>
+<li>使用 {@link Calendar#add(int,int)} 方法将 years、months 和 days 字段添加到 {@link Calendar} 对象</li> 
+<li>两个 Calendar 在以毫秒计算并转换为天数上存在差异，如果由于夏令时 (Daylight Savings Time) 而发生余数，则丢弃该余数。</li>
+<li>计算的 days 以及此持续时间对象的 hours、minutes 和 seconds 字段用于构造新的持续时间对象。</li>
+ </ol>
+ 
+<p>注意，由于 Calendar 类使用 <code>int</code> 保持年和月的值，所以如果此持续时间对象在 years 或 months 字段中保持非常大的值，则此方法可能产生不可预料的结果。</p>
+
+@param startTimeInstant <code>Calendar</code> 引用点。
+  
+@return 以日为单位返回此 <code>Duration</code> 的年和月的 <code>Duration</code>。
+ 
+@throws NullPointerException 如果 startTimeInstant 参数为 null。
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.Duration.compare(Duration duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>与此 <code>Duration</code> 实例的部分顺序关系比较。</p>
+ 
+<p>比较结果必须依照 <a href="http://www.w3.org/TR/xmlschema-2/#duration-order">W3C XML 模式 1.0 第二部分 3.2.7.6.2 节 <i>Order relation on duration</i></a>。</p>
+ 
+<p>返回：</p>
+ <ul>
+<li>{@link DatatypeConstants#LESSER} 如果此 <code>Duration</code> 比 <code>duration</code> 参数短</li>
+<li>{@link DatatypeConstants#EQUAL} 如果此 <code>Duration</code> 等于 <code>duration</code> 参数</li>
+<li>{@link DatatypeConstants#GREATER} 如果此 <code>Duration</code> 比 <code>duration</code> 参数长</li>
+<li>{@link DatatypeConstants#INDETERMINATE} 如果无法确定最终的部分顺序关系</li>
+ </ul>
+
+@param duration 要比较的持续时间
+ 
+@return  <code>此</code> <code>Duration</code> 和 <code>duration</code> 参数之间的关系：{@link DatatypeConstants#LESSER}、{@link DatatypeConstants#EQUAL}、{@link DatatypeConstants#GREATER} 或 {@link DatatypeConstants#INDETERMINATE}。
+ 
+@throws UnsupportedOperationException 如果底层实现无法合理处理该请求，例如，W3C XML 模式允许任意大/小/精确的值，该请求可能超出实现功能。
+@throws NullPointerException 如果 <code>duration</code> 为 <code>null</code>。 
+
+@see #isShorterThan(Duration)
+@see #isLongerThan(Duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.datatype.Duration.isLongerThan(Duration duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>检查此持续时间对象是否严格长于另一个 <code>Duration</code> 对象。</p>
+ 
+<p>根据 XML 模式 1.0 规范的第 3.2.6.2 节中的定义，当且仅当 X&gt;Y 时，持续时间 X 比 Y“长”。</p>
+ 
+<p>例如，&quot;P1D&quot;（一天）&gt; &quot;PT12H&quot;（12 小时），并且 &quot;P2Y&quot;（两年）&gt;&quot;P23M&quot;（23 月）。</p> 
+ 
+@param duration 测试此 <code>Duration</code> 的 <code>Duration</code>。
+ 
+@throws UnsupportedOperationException 如果底层实现无法合理处理该请求，例如，W3C XML 模式允许任意大/小/精确的值，该请求可能超出实现功能。
+@throws NullPointerException 如果 <code>duration</code> 为 null。
+ 
+@return 如果此对象表示的持续时间比给定的持续时间长，则返回 true，否则返回 false。
+ 
+
+@see #isShorterThan(Duration)
+@see #compare(Duration duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.datatype.Duration.isShorterThan(Duration duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>检查此持续时间对象是否严格短于另一个 <code>Duration</code> 对象。</p>
+ 
+@param duration 测试此 <code>Duration</code> 的 <code>Duration</code>。
+ 
+@return 如果 <code>duration</code> 参数比此 <code>Duration</code> 短，则返回 <code>true</code>，否则返回 <code>false</code>。 
+ 
+@throws UnsupportedOperationException 如果底层实现无法合理处理该请求，例如，W3C XML 模式允许任意大/小/精确的值，该请求可能超出实现功能。
+@throws NullPointerException 如果 <code>duration</code> 为 <code>null</code>。
+
+
+@see #isLongerThan(Duration duration)
+@see #compare(Duration duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public boolean javax.xml.datatype.Duration.equals(Object duration)
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>检查此持续时间对象是否与另一个 <code>Duration</code> 对象具有相同的持续时间。</p>
+ 
+<p>例如，&quot;P1D&quot;（1 天）等于 &quot;PT24H&quot;（24 小时）。</p>
+ 
+<p>当且仅当时间点 t+X 和 t+Y 对 XML 模式 1.0 规范的第 3.2.6.2 节中指定的所有测试时间点都相同时，持续时间 X 才等于 Y。</p>
+ 
+<p>注意，存在两个 <code>Duration</code> 互相“不能比较”的情况，如一个月和 30 天。例如，</p>
+ <pre>
+ !new Duration(&quot;P1M&quot;).isShorterThan(new Duration(&quot;P30D&quot;))
+ !new Duration(&quot;P1M&quot;).isLongerThan(new Duration(&quot;P30D&quot;))
+ !new Duration(&quot;P1M&quot;).equals(new Duration(&quot;P30D&quot;))
+ </pre>
+ 
+@param duration 用来对照比较此 <code>Duration</code> 的对象。
+ 
+@return 如果此持续时间与 <code>duration</code> 长度相同，则返回 <code>true</code>。如果 <code>duration</code> 是 <code>null</code>，而不是 <code>Duration</code> 对象，或者其长度与此持续时间不同，则返回 <code>false</code>。
+ 
+@throws UnsupportedOperationException 如果底层实现无法合理处理该请求，例如，W3C XML 模式允许任意大/小/精确的值，该请求可能超出实现功能。
+
+
+@see #compare(Duration duration)
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public abstract int javax.xml.datatype.Duration.hashCode()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回与 equals 方法的定义一致的哈希码。
+ 
+
+@see Object#hashCode() 
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public java.lang.String javax.xml.datatype.Duration.toString()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<p>返回此 <code>Duration</code> <code>Object</code> 的 <code>String</code> 表示形式。</p>
+ 
+<p>根据 XML 模式 1.0 规范格式化该结果，之后始终可以通过 {@link DatatypeFactory#newDuration(String  lexicalRepresentation)} 将其解析为等效的 <code>Duration</code> <code>Object</code>。</p>
+ 
+<p>正式地说，以下内容保持任何 <code>Duration</code> <code>Object</code> x：</p> 
+ <pre>
+ new Duration(x.toString()).equals(x)
+ </pre>
+ 
+@return 此 <code>Duration</code> 的非 <code>null</code> 有效 <code>String</code> 表示形式。
+
+<!-- END DATA -->

@@ -1,0 +1,253 @@
+<!-- BEGIN KEY -->
+public abstract class java.rmi.activation.Activatable extends java.rmi.server.RemoteServer
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+<code>Activatable</code> 类为那些需要进行持久访问并能由系统激活的远程对象提供支持。
+
+<p>对于构造方法和静态 <code>exportObject</code> 方法，可以像 {@link java.rmi.server.UnicastRemoteObject} 中所描述的那样获得将被导出的远程对象的 stub。
+
+ <p>试图显式序列化此类的实例将失败。
+
+@author	Ann Wollrath
+@version	1.34, 03/12/19
+@since	1.2
+@serial	exclude
+
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.Activatable(String location, java.rmi.MarshalledObject<?> data, boolean restart, int port) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个可激活的远程对象：注册此对象的激活描述符（使用指定的位置、数据和重启模式），并使用指定的端口输出该对象。
+
+ <p><strong>注：</strong>建议最好使用同时注册和输出可激活远程对象的 <code>Activatable</code> 构造方法，因为<i>不</i> 保证注册和输出远程对象操作是原子操作。相反，应用程序应该分开注册激活描述符和输出远程对象操作，这样才能正确地处理异常。
+
+ <p>此方法使用该对象、指定位置、数据、重启模式和端口调用 {@link
+ exportObject(Remote,String,MarshalledObject,boolean,port)
+ exportObject} 方法。{@link #getID} 的后续调用将返回从 <code>exportObject</code> 调用中返回的激活标识符。
+
+@param location 此对象的类的位置
+@param data 对象的初始化数据
+@param port 导出对象的端口（如果 port=0，则使用匿名端口）
+@param restart 如果该参数为 true，那么在一次意外崩溃之后，如果重启激活器或者重启对象激活组，则该对象也会被重启（激活）；如果参数为 false，则只能根据需要激活该对象。指定 <code>restart</code> 为 <code>true</code>，不强制对新注册的对象立即进行初始激活操作；初始激活是延后进行的。
+@exception ActivationException 如果对象注册失败。
+@exception RemoteException 如果下列操作之一失败：a) 通过激活系统注册对象 b) 将对象导出到 RMI 运行库。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.Activatable(String location, java.rmi.MarshalledObject<?> data, boolean restart, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造一个可激活远程对象：注册此对象的激活描述符（使用指定的位置、数据和重启模式），并使用指定的端口、指定的客户端和服务器套接字工厂输出该对象。
+
+<p><strong>注：</strong>建议最好使用同时注册和输出可激活远程对象的 <code>Activatable</code> 构造方法，因为<i>不</i> 保证注册和输出远程对象操作是原子操作。相反，应用程序应该分开注册激活描述符和输出远程对象操作，这样才能正确地处理异常。
+
+<p>此方法使用该对象、指定位置、数据、重启模式、端口、客户端和服务器套接字工厂调用 {@link
+ exportObject(Remote,String,MarshalledObject,boolean,port,RMIClientSocketFactory,RMIServerSocketFactory)
+ exportObject} 方法。{@link #getID} 的后续调用将返回从 <code>exportObject</code> 调用中返回的激活标识符。
+
+@param location 此对象的类的位置
+@param data 对象的初始化数据
+@param restart 如果该参数为 true，那么在一次意外崩溃之后，如果重启激活器或者重启对象激活组，则该对象也会被重启（激活）；如果该参数为 false，则只能根据需要激活该对象。指定 <code>restart</code> 为 <code>true</code>，不强制对新注册的对象立即进行初始激活操作；初始激活是延后进行的。
+@param port param port 导出对象的端口（如果 port=0，则使用匿名端口）
+@param csf 进行远程对象调用的客户端套接字工厂
+@param ssf 接收远程调用的服务器端套接字工厂
+@exception ActivationException 如果注册失败。
+@exception RemoteException 如果下列操作之一失败：a) 通过激活系统注册对象 b) 将对象导出到 RMI 运行库。
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.Activatable(ActivationID id, int port) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法用于在指定端口上激活/导出对象。一个&ldquo;可激活的&rdquo;远程对象必须具有带两个参数的构造方法： <ul>
+<li>对象的激活标识符（<code>ActivationID</code>），以及
+<li>对象的初始化数据（<code>MarshalledObject</code>）。
+ </ul><p>
+
+当此类的具体子类通过上述带两个参数的构造方法<i>激活</i> 时，它必须调用此构造方法。作为构造的副作用，远程对象被&ldquo;导出&rdquo;到 RMI 运行库中（在指定 <code>port</code> 上），并且可用于接受从客户端传入的调用。
+
+@param id 对象的激活标识符
+@param port 导出对象的端口的端口号
+@exception RemoteException 如果将对象导出到 RMI 运行库中失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.Activatable(ActivationID id, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+构造方法用于在指定端口上激活/导出对象。一个&ldquo;可激活的&rdquo;远程对象必须具有带两个参数的构造方法： <ul>
+<li>对象的激活标识符（<code>ActivationID</code>），以及
+<li>对象的初始化数据（<code>MarshalledObject</code>）。
+ </ul><p>
+
+当此类的具体子类通过上述带两个参数的构造方法<i>激活</i> 时，它必须调用此构造方法。作为构造的副作用，远程对象被&ldquo;导出&rdquo;到 RMI 运行库中（在指定 <code>port</code> 上），并且可用于接受从客户端传入的调用。
+
+@param id 对象的激活标识符
+@param port 导出对象的端口的端口号
+@param csf 进行远程对象调用的客户端套接字工厂
+@param ssf 接收远程调用的服务器端套接字工厂
+@exception RemoteException 如果将对象导出到 RMI 运行库中失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+protected java.rmi.activation.ActivationID java.rmi.activation.Activatable.getID()
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+返回对象的激活标识符。此方法是受保护的，因此只有子类能获取对象的标识符。
+@return 对象的激活标识符
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.activation.Activatable.register(ActivationDesc desc) throws java.rmi.activation.UnknownGroupException, java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+为可激活远程对象注册一个对象描述符，以便可以根据需要激活它。
+
+@param desc  对象的描述符
+@return 可激活远程对象的 stub
+@exception UnknownGroupException 如果 <code>desc</code> 中的组 id 未使用激活系统注册
+@exception ActivationException 如果激活系统未运行
+@exception RemoteException 如果远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.rmi.activation.Activatable.inactive(ActivationID id) throws java.rmi.activation.UnknownObjectException, java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+通知系统具有相应激活 <code>id</code> 的对象目前没有处于活动状态的。如果对象当前处于活动状态的，则该对象从 RMI 运行库&ldquo;取消导出&rdquo;（仅在没有任何挂起或者进程内调用时），使其无法再接收传入的调用。此调用通知此 VM 的 ActivationGroup，告诉它对象处于不活动状态，并依次通知其 ActivationMonitor。如果成功完成此调用，则对激活器的后续激活请求将导致对象被重新激活。如果对象被认为是活动的，但是其自身已经取消导出，此操作仍能获得成功。
+
+@param id 对象的激活标识符
+@return 如果操作成功（如果已知对象目前处于活动状态并且已经取消导出，或者对象目前已被导出并且没有任何正在挂起/执行的调用，则此操作能够获得成功），则返回 true；否则，如果对象具有正在挂起/执行的调用，无法对其取消激活，则返回 false
+@exception UnknownObjectException 如果对象未知（可能已经处于不活动状态）
+@exception ActivationException 如果组处于不活动状态
+@exception RemoteException 如果调用通知监视器失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static void java.rmi.activation.Activatable.unregister(ActivationID id) throws java.rmi.activation.UnknownObjectException, java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+为与 <code>id</code> 关联的激活描述符撤消前面的注册。无法再通过该 <code>id</code> 激活对象。
+
+@param id 对象的激活标识符
+@exception UnknownObjectException 如果对象（<code>id</code>）未知
+@exception ActivationException 如果激活系统未运行
+@exception RemoteException 如果对激活系统的远程调用失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.activation.ActivationID java.rmi.activation.Activatable.exportObject(Remote obj, String location, java.rmi.MarshalledObject<?> data, boolean restart, int port) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定对象的激活描述符（使用指定的位置、数据和重启模式），并使用指定的端口输出该对象。
+ 
+ <p><strong>注：</strong>建议最好使用此方法（以及同时注册和输出可激活远程对象的 <code>Activatable</code> 构造方法），因为<i>不</i> 保证注册和输出远程对象操作是原子操作。相反，应用程序应该分开注册激活描述符和输出远程对象操作，这样才能正确地处理异常。
+
+<p>此方法使用指定对象、位置、数据、重启模式、端口、客户端和服务器套接字工厂（为 <code>null</code>）调用 {@link
+ exportObject(Remote,String,MarshalledObject,boolean,port,RMIClientSocketFactory,RMIServerSocketFactory)
+ exportObject} 方法，然后返回得到的激活标识符。
+
+@param obj 将被导出的对象
+@param location 对象的代码基
+@param data 对象的引导数据
+@param restart 如果该参数为 true，那么在一次意外崩溃之后，如果重启激活器或者重启对象激活组，则该对象也会被重启（激活）；如果该参数为 false，则只能根据需要激活该对象。指定 <code>restart</code> 为 <code>true</code>，不强制对新注册的对象立即进行初始激活操作；初始激活是延后进行的。
+@param port 导出对象的端口的端口号（如果 port=0，则使用匿名端口）
+@return 通过激活系统注册描述符 <code>desc</code> 所获得的激活标识符
+@exception ActivationException 如果激活组处于不活动状态
+@exception RemoteException 如果对象注册或者导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.activation.ActivationID java.rmi.activation.Activatable.exportObject(Remote obj, String location, java.rmi.MarshalledObject<?> data, boolean restart, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.activation.ActivationException, java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+注册指定对象的激活描述符（使用指定的位置、数据和重启模式），并使用指定的端口、指定的客户端和服务器套接字工厂输出该对象。
+
+
+<p><strong>注：</strong>建议最好使用此方法（以及同时注册和输出可激活远程对象的 <code>Activatable</code> 构造方法），因为<i>不</i> 保证注册和输出远程对象操作是原子操作。相反，应用程序应该分开注册激活描述符和输出远程对象操作，这样才能正确地处理异常。
+      
+ <p>此方法首先按以下步骤注册指定对象的激活描述符。它通过调用 {@link ActivationGroup#getSystem
+ ActivationGroup.getSystem} 方法来获取激活系统。然后，此方法通过使用 {@link ActivationDesc} 调用激活系统的 {@link ActivationSystem#registerObject registerObject} 方法来获取 {@link
+ ActivationID}，其中，ActivationDesc 是使用指定对象的类名称、指定位置、数据和重启模式构造的。如果在获取激活系统或注册激活描述符时发生异常，则将向调用者抛出该异常。
+
+ <p>然后，此方法使用指定的远程对象、通过注册获取的激活标识符、指定的端口、指定的客户端和服务器套接字工厂调用 {@link
+ #exportObject(Remote,ActivationID,int,RMIClientSocketFactory,RMIServerSocketFactory)
+ exportObject} 方法输出对象。如果输出对象时发生异常，那么此方法将尝试使用激活标识符调用激活系统的 {@link
+ ActivationSystem#unregisterObject unregisterObject} 方法来注销激活标识符（通过注册获得）。如果注销标识符时发生异常，则忽略该异常，并向调用者抛出输出对象时发生的原异常。
+
+ <p>最后，此方法使用激活标识符和指定远程对象对此 VM 中的激活组调用 {@link
+ ActivationGroup#activeObject activeObject} 方法，并向调用者返回激活标识符。
+
+@param obj 将被导出的对象
+@param location 对象的代码基
+@param data 对象的引导数据
+@param restart 如果该参数为 true，那么在一次意外崩溃之后，如果重启激活器或者重启对象激活组，则该对象也会被重启（激活）；如果该参数为 false，则只能根据需要激活该对象。指定 <code>restart</code> 为 <code>true</code>，不强制对新注册的对象立即进行初始激活操作；初始激活是延后进行的。
+@param port 导出对象的端口的端口号（如果 port=0，则使用匿名端口）
+@param csf 进行远程对象调用的客户端套接字工厂
+@param ssf 接收远程调用的服务器端套接字工厂
+@return 通过向激活系统注册描述符所获得的激活标识符
+@exception ActivationException 如果激活组处于不活动状态
+@exception RemoteException 如果对象注册或者导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.activation.Activatable.exportObject(Remote obj, ActivationID id, int port) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将可激活远程对象导出到 RMI 运行库中，使该对象能接收传入的调用。如果 <code>port</code> 为零，则在匿名端口上导出对象。 <p>
+
+在激活过程中，此 <code>exportObject</code> 方法应当由一个未扩展 <code>Activatable</code> 类的&ldquo;可激活&rdquo;对象显式调用。对于确实扩展了 <code>Activatable</code> 类的对象，无需直接调用此方法，因为该对象是在构造期间输出的。 
+@return 可激活远程对象的 stub
+@param obj 远程对象实现
+@param id 对象的激活标识符
+@param port 导出对象的端口的端口号（如果 port=0，则使用匿名端口）
+@exception RemoteException 如果对象导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static java.rmi.Remote java.rmi.activation.Activatable.exportObject(Remote obj, ActivationID id, int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws java.rmi.RemoteException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+
+将可激活远程对象导出到 RMI 运行库中，使该对象能接收传入的调用。如果 <code>port</code> 为零，则在匿名端口上导出对象。 <p>
+
+在激活过程中，此 <code>exportObject</code> 方法应当由一个未扩展 <code>Activatable</code> 类的&ldquo;可激活&rdquo;对象显式调用。对于确实扩展了 <code>Activatable</code> 类的对象，无需直接调用此方法，因为该对象是在构造期间输出的。 
+ 
+@return 可激活远程对象的 stub
+@param obj 远程对象实现
+@param id 对象的激活标识符
+@param port 导出对象的端口的端口号（如果 port=0，则使用匿名端口）
+@param csf 进行远程对象调用的客户端套接字工厂
+@param ssf 接收远程调用的服务器端套接字工厂
+@exception RemoteException 如果对象导出失败
+@since 1.2
+
+<!-- END DATA -->
+<!-- BEGIN KEY -->
+public static boolean java.rmi.activation.Activatable.unexportObject(Remote obj, boolean force) throws java.rmi.NoSuchObjectException
+<!-- END KEY -->
+<!-- BEGIN DATA -->
+从 RMI 运行库中移除远程对象 obj。如果成功，该对象无法再接受传入的 RMI 调用。如果 force 参数为 true，那么即使存在挂起的远程对象调用，或者远程对象在进程中仍有调用，对象也会被强制取消导出。如果 force 为 false，则仅当不存在挂起或者进程内调用时，才取消导出对象。
+
+@param obj 要取消导出的远程对象
+@param force 如果该参数为 true，则即使存在挂起或者进程内调用，仍取消导出对象；如果该参数为 false，则仅当不存在挂起或者进程内调用时，才取消导出对象
+@return 如果操作成功，则返回 true；否则返回 false
+@exception NoSuchObjectException 如果远程对象目前没有被导出
+@since 1.2
+
+<!-- END DATA -->
